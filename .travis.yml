@@ -20,7 +20,6 @@ android:
     # The BuildTools version used by your project
     - build-tools-26.0.1
     # The SDK version used to compile your projects
-    - android-21
     - android-22
     # Additional components
     - extra-google-google_play_services
