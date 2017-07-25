@@ -1,0 +1,2 @@
+rootProject.name = 'opensrp-app-path'
+include ':android-json-form-wizard', ':sample'
