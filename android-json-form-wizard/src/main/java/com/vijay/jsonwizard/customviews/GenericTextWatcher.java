@@ -4,20 +4,14 @@ import org.json.JSONException;
 
 import android.support.v7.internal.widget.TintContextWrapper;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 
-import com.rengwuxian.materialedittext.MaterialEditText;
 import com.vijay.jsonwizard.R;
-import com.vijay.jsonwizard.activities.JsonFormActivity;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.presenters.JsonFormFragmentPresenter;
-import com.vijay.jsonwizard.utils.ValidationStatus;
-import com.vijay.jsonwizard.views.JsonFormFragmentView;
-import com.vijay.jsonwizard.widgets.EditTextFactory;
 
 import java.util.ArrayList;
 

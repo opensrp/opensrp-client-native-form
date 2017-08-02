@@ -3,7 +3,6 @@ package com.vijay.jsonwizard.views;
 import java.util.List;
 import java.util.Map;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;

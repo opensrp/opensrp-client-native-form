@@ -129,8 +129,8 @@ public class DatePickerFactory implements FormWidgetFactory {
                     context.getResources().getString(R.string.badly_formed_date),
                     DATE_FORMAT_REGEX));
 
-            Calendar date = getDate(editText.getText().toString());
-            final DatePickerDialog datePickerDialog = new DatePickerDialog(context);
+            final DatePickerDialog datePickerDialog = new DatePickerDialog();
+            datePickerDialog.setContext(context);
 
             datePickerDialog.setOnDateSetListener(new android.app.DatePickerDialog.OnDateSetListener() {
                 @Override
@@ -358,9 +358,9 @@ public class DatePickerFactory implements FormWidgetFactory {
                     }
 
                     int field = Calendar.DATE;
-                    if (matcher.group(3).toLowerCase().equals("y")) {
+                    if (matcher.group(3).equalsIgnoreCase("y")) {
                         field = Calendar.YEAR;
-                    } else if (matcher.group(3).toLowerCase().equals("m")) {
+                    } else if (matcher.group(3).equalsIgnoreCase("m")) {
                         field = Calendar.MONTH;
                     }
 

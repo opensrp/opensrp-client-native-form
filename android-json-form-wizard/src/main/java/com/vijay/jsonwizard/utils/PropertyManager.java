@@ -37,8 +37,6 @@ public class PropertyManager {
 
     private String t = "PropertyManager";
 
-    private Context mContext;
-
     private TelephonyManager mTelephonyManager;
     private HashMap<String, String> mProperties;
 
@@ -50,9 +48,9 @@ public class PropertyManager {
     public PropertyManager(Context context) {
         Log.i(t, "calling constructor");
 
-        mContext = context;
+        Context mContext = context;
 
-        mProperties = new HashMap<String, String>();
+        mProperties = new HashMap<>();
         mTelephonyManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
 
         String deviceId = mTelephonyManager.getDeviceId();

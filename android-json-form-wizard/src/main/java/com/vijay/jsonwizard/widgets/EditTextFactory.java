@@ -95,11 +95,10 @@ public class EditTextFactory implements FormWidgetFactory {
         JSONObject requiredObject = jsonObject.optJSONObject("v_required");
         if (requiredObject != null) {
             String requiredValue = requiredObject.getString("value");
-            if (!TextUtils.isEmpty(requiredValue)) {
-                if (Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
-                    editText.addValidator(new RequiredValidator(requiredObject.getString("err")));
-                }
+            if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
+                editText.addValidator(new RequiredValidator(requiredObject.getString("err")));
             }
+
         }
 
         JSONObject minLengthObject = jsonObject.optJSONObject("v_min_length");
@@ -178,9 +177,9 @@ public class EditTextFactory implements FormWidgetFactory {
         // edit type check
         String editType = jsonObject.optString("edit_type");
         if (!TextUtils.isEmpty(editType)) {
-            if (editType.equals("number")) {
+            if ("number".equals(editType)) {
                 editText.setRawInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-            } else if (editType.equals("name")) {
+            } else if ("name".equals(editType)) {
                 editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
             }
         }

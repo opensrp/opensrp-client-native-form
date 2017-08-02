@@ -42,8 +42,6 @@ public class BarcodeFactory implements FormWidgetFactory {
     private static final String SCAN_MODE = "SCAN_MODE";
     private static final String QR_MODE = "QR_MODE";
     private static final String TYPE_QR = "qrcode";
-    private static final String TYPE_BARCODE = "barcode";
-    private static final String DEFAULT_TYPE= TYPE_BARCODE;
 
     @Override
     public List<View> getViewsFromJson(String stepName, final Context context,

@@ -77,7 +77,7 @@ public class CompoundButton extends android.widget.CompoundButton {
 
     @Override
     public void setOnClickListener(OnClickListener l) {
-        if (l == mRippleManager)
+        if (l.equals(mRippleManager))
             super.setOnClickListener(l);
         else {
             mRippleManager.setOnClickListener(l);

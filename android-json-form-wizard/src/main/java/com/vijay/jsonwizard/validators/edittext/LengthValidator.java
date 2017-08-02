@@ -7,8 +7,8 @@ import com.rengwuxian.materialedittext.validation.METValidator;
  */
 public class LengthValidator extends METValidator {
 
-    int minLength = 0;
-    int maxLength = Integer.MAX_VALUE;
+    protected int minLength = 0;
+    protected int maxLength = Integer.MAX_VALUE;
 
     public LengthValidator(String errorMessage, int minLength, int maxLength) {
         super(errorMessage);
@@ -18,10 +18,10 @@ public class LengthValidator extends METValidator {
 
     @Override
     public boolean isValid(CharSequence charSequence, boolean isEmpty) {
-        if(!isEmpty) {
-            if(charSequence.length() >= minLength && charSequence.length() <= maxLength) {
+        if(!isEmpty && (charSequence.length() >= minLength && charSequence.length() <= maxLength)) {
+
                 return true;
-            }
+
         }
         return false;
     }

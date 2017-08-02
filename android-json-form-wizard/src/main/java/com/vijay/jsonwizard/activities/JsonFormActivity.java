@@ -129,9 +129,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 JSONObject item = fields.getJSONObject(i);
                 String keyAtIndex = item.getString("key");
                 if (key.equals(keyAtIndex)) {
-                    if(item.has("text")){
+                    if (item.has("text")) {
                         item.put("text", value);
-                    }else{
+                    } else {
                         item.put("value", value);
 
                     }
@@ -178,18 +178,16 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     @Override
     public void writeMetaDataValue(String metaDataKey, Map<String, String> values) throws JSONException {
         synchronized (mJSONObject) {
-            if (mJSONObject.has(FormUtils.METADATA_PROPERTY) && !values.isEmpty()) {
-                if (mJSONObject.getJSONObject(FormUtils.METADATA_PROPERTY).has(metaDataKey)) {
-                    JSONObject metaData = mJSONObject.getJSONObject(FormUtils.METADATA_PROPERTY).getJSONObject(metaDataKey);
-                    for (Map.Entry<String, String> entry : values.entrySet()) {
-                        String key = entry.getKey();
-                        String value = entry.getValue();
-                        if (value == null) value = "";
-                        metaData.put(key, value);
-                    }
+            if (mJSONObject.has(FormUtils.METADATA_PROPERTY) && !values.isEmpty() && (mJSONObject.getJSONObject(FormUtils.METADATA_PROPERTY).has(metaDataKey))) {
+                JSONObject metaData = mJSONObject.getJSONObject(FormUtils.METADATA_PROPERTY).getJSONObject(metaDataKey);
+                for (Map.Entry<String, String> entry : values.entrySet()) {
+                    String key = entry.getKey();
+                    String value = entry.getValue();
+                    if (value == null) value = "";
+                    metaData.put(key, value);
                 }
-
             }
+
         }
     }
 
@@ -470,7 +468,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 JSONArray resultArray = new JSONArray();
                 JSONArray options = object.getJSONArray("options");
                 for (int j = 0; j < options.length(); j++) {
-                    if (options.getJSONObject(j).getString("value").toLowerCase().equals("true")) {
+                    if (options.getJSONObject(j).getString("value").equalsIgnoreCase("true")) {
                         resultArray.put(options.getJSONObject(j).getString("key"));
                     }
                 }
@@ -559,7 +557,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             for (int i = 0; i < splitArgs.length; i++) {
                 String curArg = splitArgs[i].trim();
 
-                if (curArg.equals(".")) {
+                if (".".equals(curArg)) {
                     args[i] = value;
                 } else {
                     Matcher valueMatcher = valueRegex.matcher(curArg);

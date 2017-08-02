@@ -59,6 +59,8 @@ public class NotEqualToComparison extends Comparison {
                         Log.e(TAG, Log.getStackTraceString(e));
                     }
                     return false;
+                default:
+                    break;
             }
         } catch (Exception e) {
             e.printStackTrace();

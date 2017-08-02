@@ -14,7 +14,6 @@ import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -25,7 +24,6 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.animation.ValueAnimator;
@@ -346,11 +344,6 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
         final DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
         float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, displayMetrics);
         return Math.round(px);
-    }
-
-    private float pxToDp(float px) {
-        final DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
-        return px * displayMetrics.density;
     }
 
     private void updatePadding() {
@@ -815,31 +808,6 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
         return hintAdapter != null ? hintAdapter.getWrappedAdapter() : null;
     }
 
-    private float getFloatingLabelPercent() {
-        return floatingLabelPercent;
-    }
-
-    private void setFloatingLabelPercent(float floatingLabelPercent) {
-        this.floatingLabelPercent = floatingLabelPercent;
-    }
-
-    private int getErrorLabelPosX() {
-        return errorLabelPosX;
-    }
-
-    private void setErrorLabelPosX(int errorLabelPosX) {
-        this.errorLabelPosX = errorLabelPosX;
-    }
-
-    private float getCurrentNbErrorLines() {
-        return currentNbErrorLines;
-    }
-
-    private void setCurrentNbErrorLines(float currentNbErrorLines) {
-        this.currentNbErrorLines = currentNbErrorLines;
-        updateBottomPadding();
-    }
-
     @Override
     public Object getItemAtPosition(int position) {
         if (hint != null) {
@@ -886,8 +854,8 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
         }
 
         @Override
-        public int getItemViewType(int position) {
-            position = hint != null ? position - 1 : position;
+        public int getItemViewType(int position_) {
+            int position = hint != null ? position_ - 1 : position_;
             return (position == -1) ? HINT_TYPE : mSpinnerAdapter.getItemViewType(position);
         }
 
@@ -898,14 +866,14 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
         }
 
         @Override
-        public Object getItem(int position) {
-            position = hint != null ? position - 1 : position;
+        public Object getItem(int position_) {
+            int position = hint != null ? position_ - 1 : position_;
             return (position == -1) ? hint : mSpinnerAdapter.getItem(position);
         }
 
         @Override
-        public long getItemId(int position) {
-            position = hint != null ? position - 1 : position;
+        public long getItemId(int position_) {
+            int position = hint != null ? position_ - 1 : position_;
             return (position == -1) ? 0 : mSpinnerAdapter.getItemId(position);
         }
 

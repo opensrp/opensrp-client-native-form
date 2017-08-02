@@ -1,12 +1,9 @@
 package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
-import android.graphics.drawable.ColorDrawable;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 

@@ -28,7 +28,6 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
     private ArrayList<String> value;
     private ArrayList<String> name;
     private HashMap<TreeNode, String> treeNodeHashMap;
-    private TreeNode rootNode;
 
     public TreeViewDialog(Context context, JSONArray structure, ArrayList<String> defaultValue, ArrayList<String> value) throws
             JSONException {
@@ -66,7 +65,7 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
         rootObject.put(KEY_NAME, "");
         rootObject.put(KEY_LEVEL, "");
         rootObject.put(KEY_NODES, nodes);
-        rootNode = constructTreeView(rootObject, null, value == null || value.size() == 0 ? defaultValue : value);
+        TreeNode rootNode = constructTreeView(rootObject, null, value == null || value.size() == 0 ? defaultValue : value);
 
         AndroidTreeView androidTreeView = new AndroidTreeView(context, rootNode);
         androidTreeView.setDefaultContainerStyle(R.style.TreeNodeStyle);

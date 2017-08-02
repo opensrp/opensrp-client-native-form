@@ -23,6 +23,8 @@ public class LessThanComparison extends Comparison {
                     Date dateA = DatePickerFactory.DATE_FORMAT.parse(a);
                     Date dateB = DatePickerFactory.DATE_FORMAT.parse(b);
                     return dateA.getTime() < dateB.getTime();
+                default:
+                    break;
             }
         } catch (Exception e) {
             e.printStackTrace();

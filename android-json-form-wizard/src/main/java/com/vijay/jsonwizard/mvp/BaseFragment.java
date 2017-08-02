@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 public abstract class BaseFragment<VS extends ViewState> extends Fragment {
 
     // @Icicle
-    VS mViewState;
+    protected VS mViewState;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

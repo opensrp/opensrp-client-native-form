@@ -18,6 +18,7 @@ import com.vijay.jsonwizard.utils.DatePickerUtils;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
 
 import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 
@@ -36,22 +37,28 @@ public class DatePickerDialog extends DialogFragment {
     private boolean calendarViewShown;
     private Context context;
 
-    public DatePickerDialog(Context context) {
-        this.context = context;
+    public DatePickerDialog() {
         this.minDate = -1;
         this.maxDate = -1;
         this.calendarViewShown = true;
+    }
+
+    public void setContext(Context context) throws IllegalStateException{
+        this.context = context;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if(context == null){
+            throw new IllegalStateException("The Context is not set. Did you forget to set context with DatePickerDialog.setContext method?");
+        }
         setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Light_Dialog);
     }
 
-    public void setOnShowListener(DialogInterface.OnShowListener onShowListener) {
-        this.onShowListener = onShowListener;
+    public void setOnShowListener(DialogInterface.OnShowListener onShowListener_) {
+         onShowListener = onShowListener_;
     }
 
     @Nullable

@@ -7,29 +7,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.github.johnkil.print.PrintView;
 import com.unnamed.b.atv.model.TreeNode;
 import com.vijay.jsonwizard.R;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 /**
  * Created by Bogdan Melnychuk on 2/15/15.
  */
 public class SelectableItemHolder extends TreeNode.BaseNodeViewHolder<String> {
-    private RelativeLayout canvas;
-    private TextView tvValue;
-    private CheckBox nodeSelector;
+   private CheckBox nodeSelector;
     private String levelLabel;
-    private int level;
     private PrintView arrowView;
     private Context context;
-    private TreeNode treeNode;
 
     public SelectableItemHolder(Context context, String levelLabel) {
         super(context);
@@ -43,8 +35,7 @@ public class SelectableItemHolder extends TreeNode.BaseNodeViewHolder<String> {
         final LayoutInflater inflater = LayoutInflater.from(context);
         final View view = inflater.inflate(R.layout.layout_selectable_item, null, false);
 
-        this.treeNode = node;
-        tvValue = (TextView) view.findViewById(R.id.node_value);
+        TextView tvValue = (TextView) view.findViewById(R.id.node_value);
         if(TextUtils.isEmpty(levelLabel)) {
             tvValue.setText(value);
         } else {

@@ -12,6 +12,7 @@ import java.util.Date;
 
 public class EqualToComparison extends Comparison {
     private static final String TAG = "EqualToComparison";
+
     @Override
     public boolean compare(String a, String type, String b) {
         try {
@@ -40,12 +41,12 @@ public class EqualToComparison extends Comparison {
                         JSONArray bArray = new JSONArray(b);
 
                         ArrayList<String> aList = new ArrayList<>();
-                        for(int i = 0; i < aArray.length(); i++) {
+                        for (int i = 0; i < aArray.length(); i++) {
                             aList.add(aArray.getString(i));
                         }
 
                         ArrayList<String> bList = new ArrayList<>();
-                        for(int i = 0; i < bArray.length(); i++) {
+                        for (int i = 0; i < bArray.length(); i++) {
                             bList.add(bArray.getString(i));
                         }
 
@@ -56,6 +57,8 @@ public class EqualToComparison extends Comparison {
                         Log.e(TAG, Log.getStackTraceString(e));
                     }
                     return false;
+                default:
+                    break;
             }
         } catch (Exception e) {
             e.printStackTrace();

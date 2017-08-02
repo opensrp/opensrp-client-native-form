@@ -1,8 +1,6 @@
 package com.vijay.jsonwizard.utils;
 
-import android.util.Log;
 import android.view.View;
-
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
 /**
