@@ -4,13 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
-import android.text.Layout;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rey.material.util.ViewUtil;
@@ -75,13 +73,12 @@ public class BarcodeFactory implements FormWidgetFactory {
             if (jsonObject.has("v_required")) {
                 JSONObject requiredObject = jsonObject.optJSONObject("v_required");
                 String requiredValue = requiredObject.getString("value");
-                if (!TextUtils.isEmpty(requiredValue)) {
-                    if (Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
-                        editText.addValidator(
-                                new RequiredValidator(requiredObject.getString("err")));
-                    }
+                if (!TextUtils.isEmpty(requiredValue) && (Boolean.TRUE.toString().equalsIgnoreCase(requiredValue))) {
+                    editText.addValidator(
+                            new RequiredValidator(requiredObject.getString("err")));
                 }
             }
+
 
             if (!TextUtils.isEmpty(jsonObject.optString("value"))) {
                 editText.setText(jsonObject.optString("value"));
@@ -110,7 +107,7 @@ public class BarcodeFactory implements FormWidgetFactory {
                             @Override
                             public void onActivityResult(int requestCode,
                                                          int resultCode, Intent data) {
-                                if(resultCode == Activity.RESULT_OK) {
+                                if (resultCode == Activity.RESULT_OK) {
                                     IntentResult res = IntentIntegrator.parseActivityResult(
                                             requestCode,
                                             resultCode,
@@ -119,7 +116,7 @@ public class BarcodeFactory implements FormWidgetFactory {
                                     editText.setText(res.getContents());
                                 }
                             }
-                });
+                        });
             }
 
             GenericTextWatcher textWatcher = new GenericTextWatcher(stepName,
@@ -183,7 +180,7 @@ public class BarcodeFactory implements FormWidgetFactory {
                 Context.INPUT_METHOD_SERVICE);
         inputManager.hideSoftInputFromWindow(editText.getWindowToken(), HIDE_NOT_ALWAYS);
         IntentIntegrator intentIntegrator = new IntentIntegrator(activity);
-        if(barcodeType != null && barcodeType.equals(TYPE_QR)) {
+        if (barcodeType != null && barcodeType.equals(TYPE_QR)) {
             intentIntegrator.addExtra(SCAN_MODE, QR_MODE);
         }
         intentIntegrator.initiateScan();

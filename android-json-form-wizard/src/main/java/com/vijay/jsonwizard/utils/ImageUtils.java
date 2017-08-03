@@ -73,7 +73,7 @@ public class ImageUtils {
      * @param selectedImage
      * @return
      */
-    private static Bitmap rotateImageIfRequired(Context context,Bitmap img, Uri selectedImage) {
+    private static Bitmap rotateImageIfRequired(Bitmap img, Uri selectedImage) {
 
         // Detect rotation
         int rotation = getRotation(selectedImage);
@@ -136,7 +136,7 @@ public class ImageUtils {
         imageStream = context.getContentResolver().openInputStream(selectedImage);
         Bitmap img = BitmapFactory.decodeStream(imageStream, null, options);
 
-        img = rotateImageIfRequired(context, img, selectedImage);
+        img = rotateImageIfRequired(img, selectedImage);
         return img;
     }
 }

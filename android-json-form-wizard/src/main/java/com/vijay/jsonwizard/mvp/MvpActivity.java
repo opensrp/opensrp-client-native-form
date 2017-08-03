@@ -2,7 +2,7 @@ package com.vijay.jsonwizard.mvp;
 
 import android.os.Bundle;
 
-public abstract class MvpActivity<P extends MvpPresenter, VS extends ViewState> extends BaseActivity<VS> implements
+public abstract class MvpActivity<P extends MvpPresenter, V extends ViewState> extends BaseActivity<V> implements
         MvpView {
 
     protected P presenter;

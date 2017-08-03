@@ -66,11 +66,10 @@ public class TreeViewFactory implements FormWidgetFactory {
             if (jsonObject.has("v_required")) {
                 JSONObject requiredObject = jsonObject.optJSONObject("v_required");
                 String requiredValue = requiredObject.getString("value");
-                if (!TextUtils.isEmpty(requiredValue)) {
-                    if (Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
-                        editText.addValidator(new RequiredValidator(requiredObject.getString("err")));
-                    }
+                if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
+                    editText.addValidator(new RequiredValidator(requiredObject.getString("err")));
                 }
+
             }
             final String defaultValueString = jsonObject.optString("default");
             final String valueString = jsonObject.optString("value");
@@ -133,7 +132,7 @@ public class TreeViewFactory implements FormWidgetFactory {
             editText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    showTreeDialog(editText, treeViewDialog);
+                    showTreeDialog(treeViewDialog);
                 }
             });
 
@@ -150,7 +149,7 @@ public class TreeViewFactory implements FormWidgetFactory {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
                     if (hasFocus) {
-                        showTreeDialog(editText, treeViewDialog);
+                        showTreeDialog(treeViewDialog);
                     }
                 }
             });
@@ -175,7 +174,7 @@ public class TreeViewFactory implements FormWidgetFactory {
         return views;
     }
 
-    private static void showTreeDialog(MaterialEditText editText, TreeViewDialog treeViewDialog) {
+    private static void showTreeDialog(TreeViewDialog treeViewDialog) {
         treeViewDialog.show();
     }
 

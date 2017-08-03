@@ -375,7 +375,7 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
         return targetNbLines;
     }
 
-    private boolean isSpinnerEmpty() {
+    public boolean isSpinnerEmpty() {
         return (hintAdapter.getCount() == 0 && hint == null) || (hintAdapter.getCount() == 1 && hint != null);
     }
 

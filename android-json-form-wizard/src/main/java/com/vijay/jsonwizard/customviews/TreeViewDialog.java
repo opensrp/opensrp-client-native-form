@@ -94,7 +94,7 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
         }
 
         if (parent != null) {
-            if(parent.getLevel() == 0) {
+            if (parent.getLevel() == 0) {
                 setSelectedValue(curNode, 0, defaultValue, treeNodeHashMap);
             }
             parent.addChild(curNode);
@@ -132,7 +132,7 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
         }
     }
 
-    private static void retrieveValue(HashMap<TreeNode, String> treeNodeHashMap,TreeNode node,
+    private static void retrieveValue(HashMap<TreeNode, String> treeNodeHashMap, TreeNode node,
                                       ArrayList<String> value) {
         if (node.getParent() != null) {
             value.add(getTreeNodeKey(treeNodeHashMap, node));
@@ -140,7 +140,7 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
         }
     }
 
-    private static String getTreeNodeKey(HashMap<TreeNode, String> treeNodeHashMap,TreeNode node) {
+    private static String getTreeNodeKey(HashMap<TreeNode, String> treeNodeHashMap, TreeNode node) {
         if (treeNodeHashMap.containsKey(node)) {
             return treeNodeHashMap.get(node);
         }
@@ -162,18 +162,16 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
 
     private static void setSelectedValue(TreeNode treeNode, int level, ArrayList<String> defaultValue, HashMap<TreeNode, String> treeNodeHashMap) {
         if (treeNode != null) {
-            if (defaultValue != null) {
-                if (level >= 0 && level < defaultValue.size()) {
-                    String levelValue = defaultValue.get(level);
-                    String nodeValue = getTreeNodeKey(treeNodeHashMap, treeNode);
-                    if (nodeValue != null && nodeValue.equals(levelValue)) {
-                        treeNode.setExpanded(true);
-                        List<TreeNode> children = treeNode.getChildren();
-                        for (TreeNode curChild : children) {
-                            setSelectedValue(curChild, level + 1, defaultValue, treeNodeHashMap);
-                        }
-                        return;
+            if (defaultValue != null && level >= 0 && level < defaultValue.size()) {
+                String levelValue = defaultValue.get(level);
+                String nodeValue = getTreeNodeKey(treeNodeHashMap, treeNode);
+                if (nodeValue != null && nodeValue.equals(levelValue)) {
+                    treeNode.setExpanded(true);
+                    List<TreeNode> children = treeNode.getChildren();
+                    for (TreeNode curChild : children) {
+                        setSelectedValue(curChild, level + 1, defaultValue, treeNodeHashMap);
                     }
+                    return;
                 }
             }
 

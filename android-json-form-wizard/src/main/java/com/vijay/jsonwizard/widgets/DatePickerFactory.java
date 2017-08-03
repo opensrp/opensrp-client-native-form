@@ -43,7 +43,6 @@ import java.util.regex.Pattern;
  */
 public class DatePickerFactory implements FormWidgetFactory {
     private static final String TAG = "DatePickerFactory";
-    private static final long DAY_MILLSECONDS = 86400000;
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
     public static final String DATE_FORMAT_REGEX = "(^(((0[1-9]|1[0-9]|2[0-8])[-](0[1-9]|1[012]))|((29|30|31)[-](0[13578]|1[02]))|((29|30)[-](0[4,6,9]|11)))[-](19|[2-9][0-9])\\d\\d$)|(^29[-]02[-](19|[2-9][0-9])(00|04|08|12|16|20|24|28|32|36|40|44|48|52|56|60|64|68|72|76|80|84|88|92|96)$)|\\s*";
 
@@ -77,7 +76,7 @@ public class DatePickerFactory implements FormWidgetFactory {
         return views;
     }
 
-    protected void attachJson(String stepName, final Context context, JsonFormFragment formFragment, JSONObject jsonObject, final MaterialEditText editText, final TextView duration){
+    protected void attachJson(String stepName, final Context context, JsonFormFragment formFragment, JSONObject jsonObject, final MaterialEditText editText, final TextView duration) {
 
         try {
             String openMrsEntityParent = jsonObject.getString("openmrs_entity_parent");
@@ -105,10 +104,8 @@ public class DatePickerFactory implements FormWidgetFactory {
             if (jsonObject.has("v_required")) {
                 JSONObject requiredObject = jsonObject.optJSONObject("v_required");
                 String requiredValue = requiredObject.getString("value");
-                if (!TextUtils.isEmpty(requiredValue)) {
-                    if (Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
-                        editText.addValidator(new RequiredValidator(requiredObject.getString("err")));
-                    }
+                if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
+                    editText.addValidator(new RequiredValidator(requiredObject.getString("err")));
                 }
             }
 
@@ -168,7 +165,7 @@ public class DatePickerFactory implements FormWidgetFactory {
                 datePickerDialog.setMaxDate(maxDate.getTimeInMillis());
             }
 
-            if (jsonObject.has("expanded") && jsonObject.getBoolean("expanded") == true
+            if (jsonObject.has("expanded") && jsonObject.getBoolean("expanded")
                     && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                 datePickerDialog.setCalendarViewShown(true);
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
@@ -215,7 +212,6 @@ public class DatePickerFactory implements FormWidgetFactory {
         }
 
     }
-
 
 
     private static void updateDateText(MaterialEditText editText, TextView duration, String date) {
@@ -285,13 +281,12 @@ public class DatePickerFactory implements FormWidgetFactory {
                     months++;
                 }
 
-                if(months < 12) {
+                if (months < 12) {
                     duration = months + "m";
                     if (weeks > 0 && months < 12) {
                         duration += " " + weeks + "w";
                     }
-                }
-                else if (months >= 12) {
+                } else if (months >= 12) {
                     duration = "1y";
                 }
             } else {
@@ -339,21 +334,21 @@ public class DatePickerFactory implements FormWidgetFactory {
      * the format specified in {@code DATE_FORMAT} or a day in reference to today e.g today,
      * today-1, today+10
      *
-     * @param dayString The string to be converted to a date
+     * @param dayString_ The string to be converted to a date
      * @return The calendar object corresponding to the day, or object corresponding to today's
      * date if an error occurred
      */
-    private static Calendar getDate(String dayString) {
+    private static Calendar getDate(String dayString_) {
         Calendar calendarDate = Calendar.getInstance();
 
-        if (dayString != null && dayString.trim().length() > 0) {
-            dayString = dayString.trim().toLowerCase();
+        if (dayString_ != null && dayString_.trim().length() > 0) {
+            String dayString = dayString_.trim().toLowerCase();
             if (!dayString.equals("today")) {
                 Pattern pattern = Pattern.compile("today\\s*([-\\+])\\s*(\\d+)([dmyDMY]{1})");
                 Matcher matcher = pattern.matcher(dayString);
                 if (matcher.find()) {
                     int timeValue = Integer.parseInt(matcher.group(2));
-                    if (matcher.group(1).equals("-")) {
+                    if ("-".equals(matcher.group(1))) {
                         timeValue = timeValue * -1;
                     }
 

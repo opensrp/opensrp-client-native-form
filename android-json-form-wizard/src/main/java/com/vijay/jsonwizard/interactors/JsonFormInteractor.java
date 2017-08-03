@@ -1,15 +1,5 @@
 package com.vijay.jsonwizard.interactors;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.content.Context;
 import android.util.Log;
 import android.view.View;
 
@@ -28,6 +18,15 @@ import com.vijay.jsonwizard.widgets.RadioButtonFactory;
 import com.vijay.jsonwizard.widgets.SectionFactory;
 import com.vijay.jsonwizard.widgets.SpinnerFactory;
 import com.vijay.jsonwizard.widgets.TreeViewFactory;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by vijay on 5/19/15.

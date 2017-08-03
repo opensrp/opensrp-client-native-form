@@ -37,7 +37,7 @@ public class PropertyManager {
 
     private String t = "PropertyManager";
 
-    private TelephonyManager mTelephonyManager;
+
     private HashMap<String, String> mProperties;
 
     public final static String DEVICE_ID_PROPERTY = "deviceid"; // imei
@@ -46,6 +46,7 @@ public class PropertyManager {
     public final static String PHONE_NUMBER_PROPERTY = "phonenumber";
 
     public PropertyManager(Context context) {
+        TelephonyManager mTelephonyManager;
         Log.i(t, "calling constructor");
 
         Context mContext = context;
@@ -54,28 +55,27 @@ public class PropertyManager {
         mTelephonyManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
 
         String deviceId = mTelephonyManager.getDeviceId();
-        if (deviceId != null ) {
-        	if ((deviceId.contains("*") || deviceId.contains("000000000000000"))) {
-        		deviceId =
-        				Settings.Secure
-                        	.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID);
-        	}
+        if (deviceId != null && (deviceId.contains("*") || deviceId.contains("000000000000000"))) {
+            deviceId =
+                    Settings.Secure
+                            .getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID);
+
         }
 
-        if ( deviceId == null ) {
-        	// no SIM -- WiFi only
-        	// Retrieve WiFiManager
-        	WifiManager wifi = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
+        if (deviceId == null) {
+            // no SIM -- WiFi only
+            // Retrieve WiFiManager
+            WifiManager wifi = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
 
-    		// Get WiFi status
-    		WifiInfo info = wifi.getConnectionInfo();
-    		if ( info != null && !ANDROID6_FAKE_MAC.equals(info.getMacAddress())) {
-    			deviceId = info.getMacAddress();
-    		}
+            // Get WiFi status
+            WifiInfo info = wifi.getConnectionInfo();
+            if (info != null && !ANDROID6_FAKE_MAC.equals(info.getMacAddress())) {
+                deviceId = info.getMacAddress();
+            }
         }
 
         // if it is still null, use ANDROID_ID
-        if ( deviceId == null ) {
+        if (deviceId == null) {
             deviceId =
                     Settings.Secure
                             .getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -86,21 +86,21 @@ public class PropertyManager {
         String value;
 
         value = mTelephonyManager.getSubscriberId();
-        if ( value != null ) {
-        	mProperties.put(SUBSCRIBER_ID_PROPERTY, value);
+        if (value != null) {
+            mProperties.put(SUBSCRIBER_ID_PROPERTY, value);
         }
         value = mTelephonyManager.getSimSerialNumber();
-        if ( value != null ) {
-        	mProperties.put(SIM_SERIAL_PROPERTY, value);
+        if (value != null) {
+            mProperties.put(SIM_SERIAL_PROPERTY, value);
         }
         value = mTelephonyManager.getLine1Number();
-        if ( value != null ) {
-        	mProperties.put(PHONE_NUMBER_PROPERTY, value);
+        if (value != null) {
+            mProperties.put(PHONE_NUMBER_PROPERTY, value);
         }
     }
 
     public String getSingularProperty(String propertyName) {
-    	// for now, all property names are in english...
+        // for now, all property names are in english...
         return mProperties.get(propertyName.toLowerCase(Locale.ENGLISH));
     }
 

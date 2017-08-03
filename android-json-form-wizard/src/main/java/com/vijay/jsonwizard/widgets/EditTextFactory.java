@@ -35,7 +35,6 @@ import java.util.List;
  * Created by vijay on 24-05-2015.
  */
 public class EditTextFactory implements FormWidgetFactory {
-    private static final String TAG = "EditTextFactory";
     public static final int MIN_LENGTH = 0;
     public static final int MAX_LENGTH = 100;
 
@@ -133,21 +132,19 @@ public class EditTextFactory implements FormWidgetFactory {
         JSONObject emailObject = jsonObject.optJSONObject("v_email");
         if (emailObject != null) {
             String emailValue = emailObject.optString("value");
-            if (!TextUtils.isEmpty(emailValue)) {
-                if (Boolean.TRUE.toString().equalsIgnoreCase(emailValue)) {
-                    editText.addValidator(new RegexpValidator(emailObject.getString("err"), android.util.Patterns.EMAIL_ADDRESS.toString()));
-                }
+            if (!TextUtils.isEmpty(emailValue) && Boolean.TRUE.toString().equalsIgnoreCase(emailValue)) {
+                editText.addValidator(new RegexpValidator(emailObject.getString("err"), android.util.Patterns.EMAIL_ADDRESS.toString()));
             }
+
         }
 
         JSONObject urlObject = jsonObject.optJSONObject("v_url");
         if (urlObject != null) {
             String urlValue = urlObject.optString("value");
-            if (!TextUtils.isEmpty(urlValue)) {
-                if (Boolean.TRUE.toString().equalsIgnoreCase(urlValue)) {
+            if (!TextUtils.isEmpty(urlValue) && Boolean.TRUE.toString().equalsIgnoreCase(urlValue)) {
                     editText.addValidator(new RegexpValidator(urlObject.getString("err"), Patterns.WEB_URL.toString()));
                 }
-            }
+
         }
 
         JSONObject numericObject = jsonObject.optJSONObject("v_numeric");

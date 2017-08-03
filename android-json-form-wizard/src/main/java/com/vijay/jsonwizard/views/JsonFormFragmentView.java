@@ -21,7 +21,7 @@ import com.vijay.jsonwizard.mvp.ViewState;
 /**
  * Created by vijay on 5/14/15.
  */
-public interface JsonFormFragmentView<VS extends ViewState> extends MvpView {
+public interface JsonFormFragmentView<V extends ViewState> extends MvpView {
     Bundle getArguments();
 
     void setActionBarTitle(String title);

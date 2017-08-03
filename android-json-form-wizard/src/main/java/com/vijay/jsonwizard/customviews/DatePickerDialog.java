@@ -18,7 +18,6 @@ import com.vijay.jsonwizard.utils.DatePickerUtils;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.concurrent.ExecutionException;
 
 import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 
@@ -28,7 +27,6 @@ import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 
 public class DatePickerDialog extends DialogFragment {
     private DatePicker datePicker;
-    private Button cancelButton, okButton;
     private android.app.DatePickerDialog.OnDateSetListener onDateSetListener;
     private DialogInterface.OnShowListener onShowListener;
     private Date date;
@@ -43,7 +41,7 @@ public class DatePickerDialog extends DialogFragment {
         this.calendarViewShown = true;
     }
 
-    public void setContext(Context context) throws IllegalStateException{
+    public void setContext(Context context) throws IllegalStateException {
         this.context = context;
     }
 
@@ -51,14 +49,14 @@ public class DatePickerDialog extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(context == null){
+        if (context == null) {
             throw new IllegalStateException("The Context is not set. Did you forget to set context with DatePickerDialog.setContext method?");
         }
         setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Light_Dialog);
     }
 
     public void setOnShowListener(DialogInterface.OnShowListener onShowListener_) {
-         onShowListener = onShowListener_;
+        onShowListener = onShowListener_;
     }
 
     @Nullable
@@ -66,7 +64,9 @@ public class DatePickerDialog extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup dialogView = (ViewGroup) inflater.inflate(R.layout.dialog_date_picker, container, false);
 
-        this.setOnShowListener(new DialogInterface.OnShowListener() {
+        Button cancelButton, okButton;
+
+        setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
                 InputMethodManager inputManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);

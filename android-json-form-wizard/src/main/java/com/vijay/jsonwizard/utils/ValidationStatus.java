@@ -7,10 +7,10 @@ import com.vijay.jsonwizard.views.JsonFormFragmentView;
  * Created by vijay.rawat01 on 7/21/15.
  */
 public class ValidationStatus {
-    boolean isValid;
-    String errorMessage;
-    JsonFormFragmentView formFragmentView;
-    View view;
+    protected boolean isValid;
+    protected String errorMessage;
+    protected JsonFormFragmentView formFragmentView;
+    protected View view;
 
     public ValidationStatus(boolean isValid, String errorMessage,
                             JsonFormFragmentView formFragmentView, View view) {

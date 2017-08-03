@@ -8,9 +8,9 @@ import android.view.ViewGroup;
 /**
  * Created by vijay on 4/21/15.
  */
-public abstract class BaseActivity<VS extends ViewState> extends ActionBarActivity {
+public abstract class BaseActivity<V extends ViewState> extends ActionBarActivity {
     // @Icicle
-    VS mViewState;
+    V mViewState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,9 +50,9 @@ public abstract class BaseActivity<VS extends ViewState> extends ActionBarActivi
         super.addContentView(view, params);
     }
 
-    protected abstract VS createViewState();
+    protected abstract V createViewState();
 
-    public VS getViewState() {
+    public V getViewState() {
         return mViewState;
     }
 }
