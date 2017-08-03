@@ -6,10 +6,13 @@ buildscript {
         classpath 'com.android.tools.build:gradle:2.3.3'
         classpath 'org.apache.commons:commons-lang3:3.3.2'
         classpath 'org.robolectric:robolectric-gradle-plugin:1.1.0'
+        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1'
     }
 }
 
 apply plugin: 'com.android.library'
+apply plugin: 'jacoco'
+apply plugin: 'com.github.kt3k.coveralls'
 
 android {
     compileSdkVersion 22
@@ -26,10 +29,21 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+            testCoverageEnabled true
+        }
     }
 
     lintOptions {
         abortOnError false
+    }
+
+    testOptions {
+        unitTests.all {
+            jacoco {
+                includeNoLocationClasses = true
+            }
+        }
     }
 }
 
@@ -41,7 +55,6 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile group: 'com.github.bmelnychuk', name: 'atv', version: '1.2.9'
     compile 'com.github.johnkil.print:print:1.3.1'
-    compile 'com.android.support:appcompat-v7:22.0.0'
     compile 'com.github.rey5137:material:1.1.0'
     compile 'com.rengwuxian.materialedittext:library:2.1.4'
     compile('com.github.riadhnet:MaterialSpinner:1.2@aar') {
@@ -50,6 +63,43 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-v4'
         exclude group: 'com.android.support', module: 'support-annotations'
     }
+}
+
+dependencies {
+    androidTestCompile 'com.jayway.android.robotium:robotium-solo:4.3'
+    androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
+    androidTestCompile 'junit:junit:4.12'
+
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.apache.maven:maven-ant-tasks:2.1.3'
+    testCompile 'org.mockito:mockito-core:2.8.47'
+    testCompile('com.squareup:fest-android:1.0.+') { exclude module: 'support-v4' }
+    testCompile 'org.robolectric:robolectric:3.4'
+}
+
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'createDebugCoverageReport']) {
+
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+
+    getReports().getXml().setDestination(file("${buildDir}/reports/jacoco/jacocoRootReport/merged.xml"))
+    getReports().getHtml().setDestination(file("${buildDir}/reports/jacoco/jacocoRootReport/html"))
+
+    def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*', '**/*$ViewBinder*.*']
+    def debugTree = fileTree(dir: "$project.buildDir/intermediates/classes/debug", excludes: fileFilter)
+    def mainSrc = "$project.projectDir/src/main/java"
+
+    sourceDirectories = files([mainSrc])
+    classDirectories = files([debugTree])
+    executionData = fileTree(dir: project.buildDir, includes: [
+            'jacoco/testDebugUnitTest.exec', 'outputs/code-coverage/connected/*coverage.ec'
+    ])
+}
+
+coveralls {
+    jacocoReportPath = "${buildDir}/reports/jacoco/jacocoRootReport/merged.xml"
 }
 
 
