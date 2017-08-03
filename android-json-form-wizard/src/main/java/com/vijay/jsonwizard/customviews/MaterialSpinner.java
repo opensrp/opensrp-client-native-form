@@ -889,9 +889,10 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
             return buildView(position, convertView, parent, true);
         }
 
-        private View buildView(int position, View convertView, ViewGroup parent, boolean isDropDownView) {
+        private View buildView(int position, View convertView_, ViewGroup parent, boolean isDropDownView) {
+            View convertView = convertView_;
             if (getItemViewType(position) == HINT_TYPE) {
-                return getHintView(convertView, parent, isDropDownView);
+                return getHintView(parent, isDropDownView);
             }
             //workaround to have multiple types in spinner
             if (convertView != null) {
@@ -901,7 +902,7 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
             return isDropDownView ? mSpinnerAdapter.getDropDownView(position, convertView, parent) : mSpinnerAdapter.getView(position, convertView, parent);
         }
 
-        private View getHintView(final View convertView, final ViewGroup parent, final boolean isDropDownView) {
+        private View getHintView(final ViewGroup parent, final boolean isDropDownView) {
 
             final LayoutInflater inflater = LayoutInflater.from(mContext);
             final int resid = isDropDownView ? mDropDownHintView : mHintView;

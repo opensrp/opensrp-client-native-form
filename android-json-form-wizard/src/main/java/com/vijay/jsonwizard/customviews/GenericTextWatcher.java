@@ -35,9 +35,13 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
     }
 
     public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        Log.d("GenericTextWatcher", "beforeTextChanged called");
     }
 
     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        Log.d("GenericTextWatcher", "beforeTextChanged called");
     }
 
     public void afterTextChanged(Editable editable) {

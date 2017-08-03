@@ -371,7 +371,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-
+        Log.d("JsonFormFragment", "onNothingSelected called");
     }
 
     public LinearLayout getMainView() {
