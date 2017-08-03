@@ -10,10 +10,10 @@ import android.view.ViewGroup;
 /**
  * Created by vijay on 4/19/15.
  */
-public abstract class BaseFragment<VS extends ViewState> extends Fragment {
+public abstract class BaseFragment<V extends ViewState> extends Fragment {
 
     // @Icicle
-    protected VS mViewState;
+    protected V mViewState;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,9 +65,9 @@ public abstract class BaseFragment<VS extends ViewState> extends Fragment {
         return 0;
     }
 
-    protected abstract VS createViewState();
+    protected abstract V createViewState();
 
-    public VS getViewState() {
+    public V getViewState() {
         return mViewState;
     }
 }

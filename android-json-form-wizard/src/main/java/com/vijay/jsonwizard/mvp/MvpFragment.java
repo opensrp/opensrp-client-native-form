@@ -6,7 +6,7 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
-public abstract class MvpFragment<P extends MvpPresenter, VS extends ViewState> extends BaseFragment<VS> implements
+public abstract class MvpFragment<P extends MvpPresenter, V extends ViewState> extends BaseFragment<V> implements
         MvpView {
 
     protected P presenter;

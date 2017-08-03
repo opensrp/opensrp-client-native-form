@@ -10,7 +10,7 @@ import android.view.ViewGroup;
  */
 public abstract class BaseActivity<V extends ViewState> extends ActionBarActivity {
     // @Icicle
-    V mViewState;
+    protected V mViewState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

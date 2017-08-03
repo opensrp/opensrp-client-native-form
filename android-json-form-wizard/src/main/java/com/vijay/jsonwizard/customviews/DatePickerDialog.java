@@ -64,7 +64,8 @@ public class DatePickerDialog extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup dialogView = (ViewGroup) inflater.inflate(R.layout.dialog_date_picker, container, false);
 
-        Button cancelButton, okButton;
+        Button cancelButton;
+        Button okButton;
 
         setOnShowListener(new DialogInterface.OnShowListener() {
             @Override

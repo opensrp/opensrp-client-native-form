@@ -34,8 +34,6 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
 
     public static final int DEFAULT_ARROW_WIDTH_DP = 12;
 
-    private static final String TAG = MaterialSpinner.class.getSimpleName();
-
     private Context context;
 
     //Paint objects
@@ -498,6 +496,8 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
                 case MotionEvent.ACTION_CANCEL:
                     isSelected = false;
                     break;
+                default:
+                    break;
             }
             invalidate();
         }
@@ -809,7 +809,8 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
     }
 
     @Override
-    public Object getItemAtPosition(int position) {
+    public Object getItemAtPosition(int position_) {
+        int position = position_;
         if (hint != null) {
             position++;
         }
@@ -817,7 +818,8 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
     }
 
     @Override
-    public long getItemIdAtPosition(int position) {
+    public long getItemIdAtPosition(int position_) {
+        int position = position_;
         if (hint != null) {
             position++;
         }

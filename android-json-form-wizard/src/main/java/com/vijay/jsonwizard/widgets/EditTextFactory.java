@@ -142,31 +142,29 @@ public class EditTextFactory implements FormWidgetFactory {
         if (urlObject != null) {
             String urlValue = urlObject.optString("value");
             if (!TextUtils.isEmpty(urlValue) && Boolean.TRUE.toString().equalsIgnoreCase(urlValue)) {
-                    editText.addValidator(new RegexpValidator(urlObject.getString("err"), Patterns.WEB_URL.toString()));
-                }
+                editText.addValidator(new RegexpValidator(urlObject.getString("err"), Patterns.WEB_URL.toString()));
+            }
 
         }
 
         JSONObject numericObject = jsonObject.optJSONObject("v_numeric");
         if (numericObject != null) {
             String numericValue = numericObject.optString("value");
-            if (!TextUtils.isEmpty(numericValue)) {
-                if (Boolean.TRUE.toString().equalsIgnoreCase(numericValue)) {
-                    editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                    editText.addValidator(new RegexpValidator(numericObject.getString("err"),
-                            "[0-9]*\\.?[0-9]*"));
+            if (!TextUtils.isEmpty(numericValue) && Boolean.TRUE.toString().equalsIgnoreCase(numericValue)) {
+                editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                editText.addValidator(new RegexpValidator(numericObject.getString("err"),
+                        "[0-9]*\\.?[0-9]*"));
 
-                    if (jsonObject.has("v_min")) {
-                        JSONObject minValidation = jsonObject.getJSONObject("v_min");
-                        editText.addValidator(new MinNumericValidator(minValidation.getString("err"),
-                                Double.parseDouble(minValidation.getString("value"))));
-                    }
+                if (jsonObject.has("v_min")) {
+                    JSONObject minValidation = jsonObject.getJSONObject("v_min");
+                    editText.addValidator(new MinNumericValidator(minValidation.getString("err"),
+                            Double.parseDouble(minValidation.getString("value"))));
+                }
 
-                    if (jsonObject.has("v_max")) {
-                        JSONObject minValidation = jsonObject.getJSONObject("v_min");
-                        editText.addValidator(new MaxNumericValidator(minValidation.getString("err"),
-                                Double.parseDouble(minValidation.getString("value"))));
-                    }
+                if (jsonObject.has("v_max")) {
+                    JSONObject minValidation = jsonObject.getJSONObject("v_min");
+                    editText.addValidator(new MaxNumericValidator(minValidation.getString("err"),
+                            Double.parseDouble(minValidation.getString("value"))));
                 }
             }
         }

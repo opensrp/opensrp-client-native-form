@@ -343,7 +343,7 @@ public class DatePickerFactory implements FormWidgetFactory {
 
         if (dayString_ != null && dayString_.trim().length() > 0) {
             String dayString = dayString_.trim().toLowerCase();
-            if (!dayString.equals("today")) {
+            if (!"today".equals(dayString)) {
                 Pattern pattern = Pattern.compile("today\\s*([-\\+])\\s*(\\d+)([dmyDMY]{1})");
                 Matcher matcher = pattern.matcher(dayString);
                 if (matcher.find()) {

@@ -155,7 +155,6 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                     getView().writeValue(mStepName, parentKey, childKey, openMrsEntityParent,
                             openMrsEntity, openMrsEntityId);
                 }
-            } else {
             }
         }
 
