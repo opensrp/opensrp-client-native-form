@@ -11,7 +11,7 @@ public class RequiredValidatorTest extends BaseTest {
     @Test
     public void isValidShouldReturnFalseWhenWhenStringIsEmpty() {
 
-        RequiredValidator validator = new RequiredValidator(DEFAULT_ERROR_MESSAGE);
+        RequiredValidator validator = new RequiredValidator(DEFAULT_ERROR_MSG);
         Assert.assertEquals(false, validator.isValid(DEFAULT_TEST_MESSAGE, true));
 
     }
@@ -19,7 +19,7 @@ public class RequiredValidatorTest extends BaseTest {
     @Test
     public void isValidShouldReturnTrueWhenStringExists() {
 
-        RequiredValidator validator = new RequiredValidator(DEFAULT_ERROR_MESSAGE);
+        RequiredValidator validator = new RequiredValidator(DEFAULT_ERROR_MSG);
         Assert.assertEquals(true, validator.isValid(DEFAULT_TEST_MESSAGE, false));
     }
 

@@ -11,7 +11,7 @@ public class MaxLengthValidatorTest extends BaseTest {
     @Test
     public void isValidShouldReturnFalseWhenStringLengthGreaterThanMaxSetValue() {
 
-        MaxLengthValidator validator = new MaxLengthValidator(DEFAULT_ERROR_MESSAGE, CONSTANT_INT_1);
+        MaxLengthValidator validator = new MaxLengthValidator(DEFAULT_ERROR_MSG, CONSTANT_INT_1);
         Assert.assertEquals(false, validator.isValid(DEFAULT_TEST_MESSAGE, false));
 
     }
@@ -19,7 +19,7 @@ public class MaxLengthValidatorTest extends BaseTest {
     @Test
     public void isValidShouldReturnTrueWhenStringLengthLessThanMaxSetValue() {
 
-        MaxLengthValidator validator = new MaxLengthValidator(DEFAULT_ERROR_MESSAGE, CONSTANT_INT_50);
+        MaxLengthValidator validator = new MaxLengthValidator(DEFAULT_ERROR_MSG, CONSTANT_INT_50);
         Assert.assertEquals(true, validator.isValid(DEFAULT_TEST_MESSAGE, false));
 
     }
@@ -27,7 +27,7 @@ public class MaxLengthValidatorTest extends BaseTest {
     @Test
     public void isValidShouldReturnTrueWhenStringLengthEqualToMaxSetValue() {
 
-        MaxLengthValidator validator = new MaxLengthValidator(DEFAULT_ERROR_MESSAGE, CONSTANT_INT_16);
+        MaxLengthValidator validator = new MaxLengthValidator(DEFAULT_ERROR_MSG, CONSTANT_INT_16);
         Assert.assertEquals(true, validator.isValid(DEFAULT_TEST_MESSAGE, false));
 
     }

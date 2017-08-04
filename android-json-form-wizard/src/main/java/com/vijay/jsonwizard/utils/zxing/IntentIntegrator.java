@@ -145,10 +145,15 @@ public class IntentIntegrator {
     private final Fragment fragment;
 
     private String title;
+
     private String message;
+
     private String buttonYes;
+
     private String buttonNo;
+
     private List<String> targetApplications;
+
     private final Map<String, Object> moreExtras = new HashMap<String, Object>(3);
 
     /**

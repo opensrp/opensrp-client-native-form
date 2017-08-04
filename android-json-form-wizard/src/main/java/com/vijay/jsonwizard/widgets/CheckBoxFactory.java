@@ -22,12 +22,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.vijay.jsonwizard.utils.FormUtils.FONT_BOLD_PATH;
-import static com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT;
-import static com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT;
-import static com.vijay.jsonwizard.utils.FormUtils.getLayoutParams;
-import static com.vijay.jsonwizard.utils.FormUtils.getTextViewWith;
-
 /**
  * Created by vijay on 24-05-2015.
  */
@@ -41,10 +35,10 @@ public class CheckBoxFactory implements FormWidgetFactory {
         String openMrsEntity = jsonObject.getString("openmrs_entity");
         String openMrsEntityId = jsonObject.getString("openmrs_entity_id");
         String relevance = jsonObject.optString("relevance");
-        TextView textView = getTextViewWith(context, 27, jsonObject.getString("label"), jsonObject.getString("key"),
+        TextView textView = com.vijay.jsonwizard.utils.FormUtils.getTextViewWith(context, 27, jsonObject.getString("label"), jsonObject.getString("key"),
                 jsonObject.getString("type"), openMrsEntityParent, openMrsEntity, openMrsEntityId,
                 relevance,
-                getLayoutParams(MATCH_PARENT, WRAP_CONTENT, 0, 0, 0, 0), FONT_BOLD_PATH);
+                com.vijay.jsonwizard.utils.FormUtils.getLayoutParams(com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT, com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT, 0, 0, 0, 0), com.vijay.jsonwizard.utils.FormUtils.FONT_BOLD_PATH);
         canvasIds.put(textView.getId());
         views.add(textView);
 
@@ -87,7 +81,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
             checkBox.setEnabled(!readOnly);
             checkBox.setFocusable(!readOnly);
             if (i == options.length() - 1) {
-                checkboxLayout.setLayoutParams(getLayoutParams(MATCH_PARENT, WRAP_CONTENT, 0, 0, 0, (int) context
+                checkboxLayout.setLayoutParams(com.vijay.jsonwizard.utils.FormUtils.getLayoutParams(com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT, com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT, 0, 0, 0, (int) context
                         .getResources().getDimension(R.dimen.extra_bottom_margin)));
             }
 

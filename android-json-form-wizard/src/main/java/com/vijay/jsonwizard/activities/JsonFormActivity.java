@@ -59,12 +59,6 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     private HashMap<String, Comparison> comparisons;
     private HashMap<Integer, OnActivityResultListener> onActivityResultListeners;
 
-    private static class KEY {
-        public static final String TEXT = "text";
-        public static final String KEY = "key";
-        public static final String READ_ONLY = "read_only";
-    }
-
     public void init(String json) {
         try {
             mJSONObject = new JSONObject(json);
@@ -651,6 +645,14 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             }
         }
         return result;
+    }
+
+    private static class KEY {
+        public static final String TEXT = "text";
+
+        public static final String KEY = "key";
+
+        public static final String READ_ONLY = "read_only";
     }
 
 }

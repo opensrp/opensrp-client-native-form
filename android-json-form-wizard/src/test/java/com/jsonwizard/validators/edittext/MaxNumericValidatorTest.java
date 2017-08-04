@@ -11,7 +11,7 @@ public class MaxNumericValidatorTest extends BaseTest {
     @Test
     public void isValidShouldReturnFalseWhenNumberIsGreaterThanMaxSetValue() {
 
-        MaxNumericValidator validator = new MaxNumericValidator(DEFAULT_ERROR_MESSAGE, CONSTANT_INT_1);
+        MaxNumericValidator validator = new MaxNumericValidator(DEFAULT_ERROR_MSG, CONSTANT_INT_1);
         Assert.assertEquals(false, validator.isValid("5", false));
 
     }
@@ -19,7 +19,7 @@ public class MaxNumericValidatorTest extends BaseTest {
     @Test
     public void isValidShouldReturnTrueWhenNumberIsLessThanMaxSetValue() {
 
-        MaxNumericValidator validator = new MaxNumericValidator(DEFAULT_ERROR_MESSAGE, CONSTANT_INT_50);
+        MaxNumericValidator validator = new MaxNumericValidator(DEFAULT_ERROR_MSG, CONSTANT_INT_50);
         Assert.assertEquals(true, validator.isValid("10", false));
 
     }
@@ -27,7 +27,7 @@ public class MaxNumericValidatorTest extends BaseTest {
     @Test
     public void isValidShouldReturnTrueWhenNumberIsEqualToMaxSetValue() {
 
-        MaxNumericValidator validator = new MaxNumericValidator(DEFAULT_ERROR_MESSAGE, CONSTANT_INT_16);
+        MaxNumericValidator validator = new MaxNumericValidator(DEFAULT_ERROR_MSG, CONSTANT_INT_16);
         Assert.assertEquals(true, validator.isValid("16", false));
 
     }
@@ -35,7 +35,7 @@ public class MaxNumericValidatorTest extends BaseTest {
     @Test
     public void isValidShouldReturnFalseWhenValueSetToNull() {
 
-        MaxNumericValidator validator = new MaxNumericValidator(DEFAULT_ERROR_MESSAGE, CONSTANT_INT_1);
+        MaxNumericValidator validator = new MaxNumericValidator(DEFAULT_ERROR_MSG, CONSTANT_INT_1);
         Assert.assertEquals(false, validator.isValid(null, false));
 
     }

@@ -11,7 +11,7 @@ public class MinLengthValidatorTest extends BaseTest {
     @Test
     public void isValidShouldReturnTrueWhenStringLengthIsGreaterThanMinSetValue() {
 
-        MinLengthValidator validator = new MinLengthValidator(DEFAULT_ERROR_MESSAGE, CONSTANT_INT_1);
+        MinLengthValidator validator = new MinLengthValidator(DEFAULT_ERROR_MSG, CONSTANT_INT_1);
         Assert.assertEquals(true, validator.isValid(DEFAULT_TEST_MESSAGE, false));
 
     }
@@ -19,7 +19,7 @@ public class MinLengthValidatorTest extends BaseTest {
     @Test
     public void isValidShouldReturnFalseWhenStringLengthIsLessThanMinSetValue() {
 
-        MinLengthValidator validator = new MinLengthValidator(DEFAULT_ERROR_MESSAGE, CONSTANT_INT_50);
+        MinLengthValidator validator = new MinLengthValidator(DEFAULT_ERROR_MSG, CONSTANT_INT_50);
         Assert.assertEquals(false, validator.isValid(DEFAULT_TEST_MESSAGE, false));
 
     }
@@ -27,7 +27,7 @@ public class MinLengthValidatorTest extends BaseTest {
     @Test
     public void isValidShouldReturnTrueWhenStringLengthIsEqualToMinSetValue() {
 
-        MinLengthValidator validator = new MinLengthValidator(DEFAULT_ERROR_MESSAGE, CONSTANT_INT_16);
+        MinLengthValidator validator = new MinLengthValidator(DEFAULT_ERROR_MSG, CONSTANT_INT_16);
         Assert.assertEquals(true, validator.isValid(DEFAULT_TEST_MESSAGE, false));
 
     }

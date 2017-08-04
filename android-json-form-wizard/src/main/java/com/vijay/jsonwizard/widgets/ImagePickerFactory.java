@@ -26,11 +26,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT;
-import static com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT;
-import static com.vijay.jsonwizard.utils.FormUtils.dpToPixels;
-import static com.vijay.jsonwizard.utils.FormUtils.getLayoutParams;
-
 /**
  * Created by vijay on 24-05-2015.
  */
@@ -54,7 +49,7 @@ public class ImagePickerFactory implements FormWidgetFactory {
         imageView.setTag(R.id.openmrs_entity, openMrsEntity);
         imageView.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         imageView.setTag(R.id.type, jsonObject.getString("type"));
-        imageView.setTag(R.id.address,  stepName + ":" + jsonObject.getString("key"));
+        imageView.setTag(R.id.address, stepName + ":" + jsonObject.getString("key"));
         if (relevance != null && context instanceof JsonApi) {
             imageView.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(imageView);
@@ -70,13 +65,13 @@ public class ImagePickerFactory implements FormWidgetFactory {
         }
 
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        imageView.setLayoutParams(getLayoutParams(MATCH_PARENT, dpToPixels(context, 200), 0, 0, 0, (int) context
+        imageView.setLayoutParams(com.vijay.jsonwizard.utils.FormUtils.getLayoutParams(com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT, com.vijay.jsonwizard.utils.FormUtils.dpToPixels(context, 200), 0, 0, 0, (int) context
                 .getResources().getDimension(R.dimen.default_bottom_margin)));
         String imagePath = jsonObject.optString("value");
         Button uploadButton = new Button(context);
         if (!TextUtils.isEmpty(imagePath)) {
             imageView.setTag(R.id.imagePath, imagePath);
-            imageView.setImageBitmap(ImageUtils.loadBitmapFromFile(context, imagePath, ImageUtils.getDeviceWidth(context), dpToPixels(context, 200)));
+            imageView.setImageBitmap(ImageUtils.loadBitmapFromFile(context, imagePath, ImageUtils.getDeviceWidth(context), com.vijay.jsonwizard.utils.FormUtils.dpToPixels(context, 200)));
         }
 
         if (jsonObject.has("read_only")) {
@@ -97,7 +92,7 @@ public class ImagePickerFactory implements FormWidgetFactory {
                 context.getResources().getDimensionPixelSize(R.dimen.button_padding),
                 context.getResources().getDimensionPixelSize(R.dimen.button_padding),
                 context.getResources().getDimensionPixelSize(R.dimen.button_padding));
-        uploadButton.setLayoutParams(getLayoutParams(WRAP_CONTENT, WRAP_CONTENT, 0, 0, 0, (int) context
+        uploadButton.setLayoutParams(com.vijay.jsonwizard.utils.FormUtils.getLayoutParams(com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT, com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT, 0, 0, 0, (int) context
                 .getResources().getDimension(R.dimen.default_bottom_margin)));
         uploadButton.setOnClickListener(listener);
         uploadButton.setTag(R.id.key, jsonObject.getString("key"));

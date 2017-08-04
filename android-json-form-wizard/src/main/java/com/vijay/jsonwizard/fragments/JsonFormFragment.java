@@ -51,7 +51,9 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     private Menu mMenu;
     private JsonApi mJsonApi;
     private Map<String, List<View>> lookUpMap = new HashMap<>();
+
     private static String CONST_REAL_TIME_VALIDATION = "RealtimeValidation";
+
     private static String CONST_FRAGMENT_WRITEVALUE_CALLED = "Fragment write value called";
 
 

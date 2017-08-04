@@ -12,7 +12,7 @@ public class LengthValidatorTest extends BaseTest {
     @Test
     public void isValidShouldReturnFalseWhenIsEmptyTrue() {
 
-        LengthValidator validator = new LengthValidator(DEFAULT_ERROR_MESSAGE, CONSTANT_INT_0, CONSTANT_INT_50);
+        LengthValidator validator = new LengthValidator(DEFAULT_ERROR_MSG, CONSTANT_INT_0, CONSTANT_INT_50);
         Assert.assertEquals(false, validator.isValid(DEFAULT_TEST_MESSAGE, true));
 
     }
@@ -20,7 +20,7 @@ public class LengthValidatorTest extends BaseTest {
     @Test
     public void isValidShouldReturnTrueWhenIsEmptyFalse() {
 
-        LengthValidator validator = new LengthValidator(DEFAULT_ERROR_MESSAGE, CONSTANT_INT_0, CONSTANT_INT_50);
+        LengthValidator validator = new LengthValidator(DEFAULT_ERROR_MSG, CONSTANT_INT_0, CONSTANT_INT_50);
         Assert.assertEquals(true, validator.isValid(DEFAULT_TEST_MESSAGE, false));
     }
 }
