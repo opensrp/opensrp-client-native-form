@@ -22,6 +22,7 @@ public class MaxNumericValidator extends METValidator {
             try {
                 if (Double.parseDouble(text.toString()) > maxValue) return false;
             } catch (Exception e) {
+                return false;
             }
         }
         return true;

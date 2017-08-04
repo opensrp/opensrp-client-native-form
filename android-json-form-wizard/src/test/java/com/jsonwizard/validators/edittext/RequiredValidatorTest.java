@@ -9,25 +9,25 @@ import org.junit.Test;
 
 public class RequiredValidatorTest extends BaseTest {
     @Test
-    public void isValidShouldReturnFalseWhenWhenStringIsEmpty(){
+    public void isValidShouldReturnFalseWhenWhenStringIsEmpty() {
 
         RequiredValidator validator = new RequiredValidator("Default Error Message");
-        Assert.assertEquals(false,validator.isValid("Native Form Test",true));
+        Assert.assertEquals(false, validator.isValid("Native Form Test", true));
 
     }
 
     @Test
-    public void isValidShouldReturnTrueWhenStringExists(){
+    public void isValidShouldReturnTrueWhenStringExists() {
 
         RequiredValidator validator = new RequiredValidator("Default Error Message");
-        Assert.assertEquals(true,validator.isValid("Native Form Test",false));
+        Assert.assertEquals(true, validator.isValid("Native Form Test", false));
     }
 
     @Test
-    public void isValidShouldReturnTrueWhenStringExistsAndEnterDateChildSeenErrorMessageSet(){
-
-        RequiredValidator validator = new RequiredValidator("Enter the date that the child was first seen at a health facility for immunization services");
-        Assert.assertEquals(true,validator.isValid("Native Form Test",false));
+    public void isValidShouldReturnTrueWhenStringExistsAndEnterDateChildSeenErrorMessageSet() {
+        String error = "Enter the date that the child was first seen at a health facility for immunization services";
+        RequiredValidator validator = new RequiredValidator(error);
+        Assert.assertEquals(true, validator.isValid("Native Form Test", false));
     }
 
 }

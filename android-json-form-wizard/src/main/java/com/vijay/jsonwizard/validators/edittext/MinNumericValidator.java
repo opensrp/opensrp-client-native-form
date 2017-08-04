@@ -22,6 +22,7 @@ public class MinNumericValidator extends METValidator {
             try {
                 if (Double.parseDouble(text.toString()) < minValue) return false;
             } catch (Exception e) {
+                return false;
             }
         }
         return true;
