@@ -59,6 +59,12 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     private HashMap<String, Comparison> comparisons;
     private HashMap<Integer, OnActivityResultListener> onActivityResultListeners;
 
+    private static class KEY {
+        public static final String TEXT = "text";
+        public static final String KEY = "key";
+        public static final String READ_ONLY = "read_only";
+    }
+
     public void init(String json) {
         try {
             mJSONObject = new JSONObject(json);
@@ -126,10 +132,10 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             JSONArray fields = fetchFields(jsonObject);
             for (int i = 0; i < fields.length(); i++) {
                 JSONObject item = fields.getJSONObject(i);
-                String keyAtIndex = item.getString("key");
+                String keyAtIndex = item.getString(KEY.KEY);
                 if (key.equals(keyAtIndex)) {
-                    if (item.has("text")) {
-                        item.put("text", value);
+                    if (item.has(KEY.TEXT)) {
+                        item.put(KEY.TEXT, value);
                     } else {
                         item.put("value", value);
 
@@ -156,12 +162,12 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             JSONArray fields = fetchFields(jsonObject);
             for (int i = 0; i < fields.length(); i++) {
                 JSONObject item = fields.getJSONObject(i);
-                String keyAtIndex = item.getString("key");
+                String keyAtIndex = item.getString(KEY.KEY);
                 if (parentKey.equals(keyAtIndex)) {
                     JSONArray jsonArray = item.getJSONArray(childObjectKey);
                     for (int j = 0; j < jsonArray.length(); j++) {
                         JSONObject innerItem = jsonArray.getJSONObject(j);
-                        String anotherKeyAtIndex = innerItem.getString("key");
+                        String anotherKeyAtIndex = innerItem.getString(KEY.KEY);
                         if (childKey.equals(anotherKeyAtIndex)) {
                             innerItem.put("value", value);
                             refreshSkipLogic(parentKey, childKey);
@@ -357,7 +363,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             String[] address = addressString.split(":");
             JSONObject object = getObjectUsingAddress(address);
             boolean enabled = visible;
-            if (object.has("read_only") && object.getBoolean("read_only") && visible) {
+            if (object.has(KEY.READ_ONLY) && object.getBoolean(KEY.READ_ONLY) && visible) {
                 enabled = false;
             }
             view.setEnabled(enabled);
@@ -446,7 +452,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                         JSONObject questionObject = getObjectUsingAddress(address);
                         for (int i = 0; i < questionObject.getJSONArray("options").length(); i++) {
                             JSONObject curOption = questionObject.getJSONArray("options").getJSONObject(i);
-                            if (curOption.getString("key").equals(checkBoxKey)) {
+                            if (curOption.getString(KEY.KEY).equals(checkBoxKey)) {
                                 curOption.put("value", "false");
                                 break;
                             }
@@ -468,7 +474,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 JSONArray options = object.getJSONArray("options");
                 for (int j = 0; j < options.length(); j++) {
                     if (options.getJSONObject(j).getString("value").equalsIgnoreCase("true")) {
-                        resultArray.put(options.getJSONObject(j).getString("key"));
+                        resultArray.put(options.getJSONObject(j).getString(KEY.KEY));
                     }
                 }
 
@@ -488,7 +494,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         if (address != null && address.length == 2) {
             JSONArray fields = fetchFields(mJSONObject.getJSONObject(address[0]));
             for (int i = 0; i < fields.length(); i++) {
-                if (fields.getJSONObject(i).getString("key").equals(address[1])) {
+                if (fields.getJSONObject(i).getString(KEY.KEY).equals(address[1])) {
                     return fields.getJSONObject(i);
                 }
             }

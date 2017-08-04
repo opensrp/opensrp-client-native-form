@@ -22,7 +22,11 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.vijay.jsonwizard.utils.FormUtils.*;
+import static com.vijay.jsonwizard.utils.FormUtils.FONT_BOLD_PATH;
+import static com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT;
+import static com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT;
+import static com.vijay.jsonwizard.utils.FormUtils.getLayoutParams;
+import static com.vijay.jsonwizard.utils.FormUtils.getTextViewWith;
 
 /**
  * Created by vijay on 24-05-2015.
@@ -102,7 +106,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
             }
         }
 
-        for(CheckBox checkBox : checkBoxes) {
+        for (CheckBox checkBox : checkBoxes) {
             checkBox.setTag(R.id.canvas_ids, canvasIds.toString());
         }
         return views;

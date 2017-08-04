@@ -26,14 +26,14 @@ public class JsonFormFragmentViewState extends ViewState implements android.os.P
     }
 
     public static final Creator<JsonFormFragmentViewState> CREATOR = new Creator<JsonFormFragmentViewState>() {
-                                                                       public JsonFormFragmentViewState createFromParcel(
-                                                                               Parcel source) {
-                                                                           return new JsonFormFragmentViewState(source);
-                                                                       }
+        public JsonFormFragmentViewState createFromParcel(
+                Parcel source) {
+            return new JsonFormFragmentViewState(source);
+        }
 
-                                                                       public JsonFormFragmentViewState[] newArray(
-                                                                               int size) {
-                                                                           return new JsonFormFragmentViewState[size];
-                                                                       }
-                                                                   };
+        public JsonFormFragmentViewState[] newArray(
+                int size) {
+            return new JsonFormFragmentViewState[size];
+        }
+    };
 }

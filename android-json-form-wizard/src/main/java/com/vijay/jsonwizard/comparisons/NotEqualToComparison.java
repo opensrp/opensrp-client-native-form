@@ -12,6 +12,7 @@ import java.util.Date;
 
 public class NotEqualToComparison extends Comparison {
     private static final String TAG = "NotEqualToComparison";
+
     @Override
     public boolean compare(String a, String type, String b) {
         try {
@@ -40,7 +41,7 @@ public class NotEqualToComparison extends Comparison {
                         JSONArray bArray = new JSONArray(b);
 
                         ArrayList<String> aList1 = new ArrayList<>();
-                        for(int i = 0; i < aArray.length(); i++) {
+                        for (int i = 0; i < aArray.length(); i++) {
                             aList1.add(aArray.getString(i));
                         }
                         ArrayList<String> aList2 = new ArrayList<>(aList1);

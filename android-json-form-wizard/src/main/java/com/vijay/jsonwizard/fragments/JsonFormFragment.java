@@ -51,6 +51,9 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     private Menu mMenu;
     private JsonApi mJsonApi;
     private Map<String, List<View>> lookUpMap = new HashMap<>();
+    private static String CONST_REAL_TIME_VALIDATION = "RealtimeValidation";
+    private static String CONST_FRAGMENT_WRITEVALUE_CALLED = "Fragment write value called";
+
 
     @Override
     public void onAttach(Activity activity) {
@@ -184,7 +187,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     public void writeValue(String stepName, String prentKey, String childObjectKey, String childKey,
                            String value, String openMrsEntityParent, String openMrsEntity,
                            String openMrsEntityId) {
-        Log.d("RealtimeValidation", "Fragment write value called");
+        Log.d(CONST_REAL_TIME_VALIDATION, CONST_FRAGMENT_WRITEVALUE_CALLED);
         try {
             mJsonApi.writeValue(stepName, prentKey, childObjectKey, childKey, value,
                     openMrsEntityParent, openMrsEntity, openMrsEntityId);
@@ -196,7 +199,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     @Override
     public void writeMetaDataValue(String metaDataKey, Map<String, String> values) {
-        Log.d("RealtimeValidation", "Fragment write value called");
+        Log.d(CONST_REAL_TIME_VALIDATION, CONST_FRAGMENT_WRITEVALUE_CALLED);
         try {
             mJsonApi.writeMetaDataValue(metaDataKey, values);
         } catch (JSONException e) {
@@ -315,7 +318,9 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
                 @Override
                 public void run() {
                     int y = view.getBottom() - view.getHeight();
-                    if (y < 0) y = 0;
+                    if (y < 0) {
+                        y = 0;
+                    }
                     mScrollView.scrollTo(0, y);
                 }
             });

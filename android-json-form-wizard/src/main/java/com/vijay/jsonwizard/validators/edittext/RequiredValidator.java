@@ -15,7 +15,7 @@ public class RequiredValidator extends METValidator {
 
     @Override
     public boolean isValid(CharSequence charSequence, boolean isEmpty) {
-        if("Enter the date that the child was first seen at a health facility for immunization services".equals(errorMessage)) {
+        if ("Enter the date that the child was first seen at a health facility for immunization services".equals(errorMessage)) {
             Log.d("RequiredValidation", "Charsequence is " + charSequence.toString());
             Log.d("RequiredValidation", "isEmpty is " + isEmpty);
         }

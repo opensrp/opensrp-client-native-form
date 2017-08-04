@@ -46,6 +46,14 @@ public class DatePickerFactory implements FormWidgetFactory {
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
     public static final String DATE_FORMAT_REGEX = "(^(((0[1-9]|1[0-9]|2[0-8])[-](0[1-9]|1[012]))|((29|30|31)[-](0[13578]|1[02]))|((29|30)[-](0[4,6,9]|11)))[-](19|[2-9][0-9])\\d\\d$)|(^29[-]02[-](19|[2-9][0-9])(00|04|08|12|16|20|24|28|32|36|40|44|48|52|56|60|64|68|72|76|80|84|88|92|96)$)|\\s*";
 
+    public static class KEY {
+        public static final String DURATION = "duration";
+        public static final String HINT = "duration";
+        public static final String KEY = "key";
+        public static final String VALUE = "value";
+        public static final String DEFAULT = "default";
+    }
+
     @Override
     public List<View> getViewsFromJson(String stepName, final Context context, JsonFormFragment formFragment, JSONObject jsonObject,
                                        CommonListener listener) throws Exception {
@@ -85,35 +93,35 @@ public class DatePickerFactory implements FormWidgetFactory {
             String relevance = jsonObject.optString("relevance");
             String constraints = jsonObject.optString("constraints");
 
-            duration.setTag(R.id.key, jsonObject.getString("key"));
+            duration.setTag(R.id.key, jsonObject.getString(KEY.KEY));
             duration.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
             duration.setTag(R.id.openmrs_entity, openMrsEntity);
             duration.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-            if (jsonObject.has("duration")) {
-                duration.setTag(R.id.label, jsonObject.getJSONObject("duration").getString("label"));
+            if (jsonObject.has(KEY.DURATION)) {
+                duration.setTag(R.id.label, jsonObject.getJSONObject(KEY.DURATION).getString("label"));
             }
 
-            editText.setHint(jsonObject.getString("hint"));
-            editText.setFloatingLabelText(jsonObject.getString("hint"));
+            editText.setHint(jsonObject.getString(KEY.HINT));
+            editText.setFloatingLabelText(jsonObject.getString(KEY.HINT));
             editText.setId(ViewUtil.generateViewId());
-            editText.setTag(R.id.key, jsonObject.getString("key"));
+            editText.setTag(R.id.key, jsonObject.getString(KEY.KEY));
             editText.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
             editText.setTag(R.id.openmrs_entity, openMrsEntity);
             editText.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-            editText.setTag(R.id.address, stepName + ":" + jsonObject.getString("key"));
+            editText.setTag(R.id.address, stepName + ":" + jsonObject.getString(KEY.KEY));
             if (jsonObject.has("v_required")) {
                 JSONObject requiredObject = jsonObject.optJSONObject("v_required");
-                String requiredValue = requiredObject.getString("value");
+                String requiredValue = requiredObject.getString(KEY.VALUE);
                 if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
                     editText.addValidator(new RequiredValidator(requiredObject.getString("err")));
                 }
             }
 
-            if (!TextUtils.isEmpty(jsonObject.optString("value"))) {
-                updateDateText(editText, duration, jsonObject.optString("value"));
-            } else if (jsonObject.has("default")) {
+            if (!TextUtils.isEmpty(jsonObject.optString(KEY.VALUE))) {
+                updateDateText(editText, duration, jsonObject.optString(KEY.VALUE));
+            } else if (jsonObject.has(KEY.DEFAULT)) {
                 updateDateText(editText, duration,
-                        DATE_FORMAT.format(getDate(jsonObject.getString("default")).getTime()));
+                        DATE_FORMAT.format(getDate(jsonObject.getString(KEY.DEFAULT)).getTime()));
             }
 
             if (jsonObject.has("read_only")) {
@@ -270,8 +278,8 @@ public class DatePickerFactory implements FormWidgetFactory {
             } else if (timeDiff > TimeUnit.MILLISECONDS.convert(97, TimeUnit.DAYS)
                     && timeDiff <= TimeUnit.MILLISECONDS.convert(363, TimeUnit.DAYS)) {
                 // Represent in months and weeks
-                int months = (int) Math.floor((float) timeDiff /
-                        TimeUnit.MILLISECONDS.convert(30, TimeUnit.DAYS));
+                int months = (int) Math.floor((float) timeDiff
+                        / TimeUnit.MILLISECONDS.convert(30, TimeUnit.DAYS));
                 int weeks = (int) Math.floor((float) (timeDiff - TimeUnit.MILLISECONDS.convert(
                         months * 30, TimeUnit.DAYS)) /
                         TimeUnit.MILLISECONDS.convert(7, TimeUnit.DAYS));

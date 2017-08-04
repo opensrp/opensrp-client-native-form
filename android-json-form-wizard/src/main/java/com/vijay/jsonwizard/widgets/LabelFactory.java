@@ -9,12 +9,16 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 
-import static com.vijay.jsonwizard.utils.FormUtils.*;
 
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.vijay.jsonwizard.utils.FormUtils.FONT_BOLD_PATH;
+import static com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT;
+import static com.vijay.jsonwizard.utils.FormUtils.getLayoutParams;
+import static com.vijay.jsonwizard.utils.FormUtils.getTextViewWith;
 
 /**
  * Created by vijay on 24-05-2015.

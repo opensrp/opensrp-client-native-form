@@ -1,6 +1,7 @@
 package com.vijay.jsonwizard.utils;
 
 import android.view.View;
+
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
 /**
@@ -37,7 +38,7 @@ public class ValidationStatus {
     }
 
     public void requestAttention() {
-        if(this.view != null && formFragmentView != null) {
+        if (this.view != null && formFragmentView != null) {
             formFragmentView.scrollToView(view);
         }
     }

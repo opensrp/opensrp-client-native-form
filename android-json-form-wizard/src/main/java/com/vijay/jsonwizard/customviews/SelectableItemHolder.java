@@ -18,7 +18,7 @@ import com.vijay.jsonwizard.R;
  * Created by Bogdan Melnychuk on 2/15/15.
  */
 public class SelectableItemHolder extends TreeNode.BaseNodeViewHolder<String> {
-   private CheckBox nodeSelector;
+    private CheckBox nodeSelector;
     private String levelLabel;
     private PrintView arrowView;
     private Context context;
@@ -36,7 +36,7 @@ public class SelectableItemHolder extends TreeNode.BaseNodeViewHolder<String> {
         final View view = inflater.inflate(R.layout.layout_selectable_item, null, false);
 
         TextView tvValue = (TextView) view.findViewById(R.id.node_value);
-        if(TextUtils.isEmpty(levelLabel)) {
+        if (TextUtils.isEmpty(levelLabel)) {
             tvValue.setText(value);
         } else {
             tvValue.setText(levelLabel + ": " + value);

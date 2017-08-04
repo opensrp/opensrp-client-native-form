@@ -52,7 +52,7 @@ public class SpinnerFactory implements FormWidgetFactory {
         spinner.setTag(R.id.openmrs_entity, openMrsEntity);
         spinner.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         spinner.setTag(R.id.type, jsonObject.getString("type"));
-        spinner.setTag(R.id.address,  stepName + ":" + jsonObject.getString("key"));
+        spinner.setTag(R.id.address, stepName + ":" + jsonObject.getString("key"));
 
         JSONObject requiredObject = jsonObject.optJSONObject("v_required");
         if (requiredObject != null) {
@@ -114,7 +114,7 @@ public class SpinnerFactory implements FormWidgetFactory {
             return new ValidationStatus(true, null, formFragmentView, spinner);
         }
         int selectedItemPosition = spinner.getSelectedItemPosition();
-        if(selectedItemPosition > 0) {
+        if (selectedItemPosition > 0) {
             return new ValidationStatus(true, null, formFragmentView, spinner);
         }
         return new ValidationStatus(false, (String) spinner.getTag(R.id.error), formFragmentView, spinner);
