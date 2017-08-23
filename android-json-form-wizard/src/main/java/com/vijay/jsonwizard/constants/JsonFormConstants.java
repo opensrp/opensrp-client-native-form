@@ -34,4 +34,8 @@ public class JsonFormConstants {
     public static final String OPENMRS_ENTITY = "openmrs_entity";
     public static final String OPENMRS_ENTITY_ID = "openmrs_entity_id";
     public static final String RELEVANCE = "relevance";
+    public static final String ERR = "err";
+    public static final String DEFAULT = "default";
+    public static final String V_REQUIRED = "v_required";
+    public static final String TEXT = "text";
 }

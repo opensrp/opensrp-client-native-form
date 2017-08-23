@@ -10,6 +10,7 @@ import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
 
 import org.json.JSONObject;
 
@@ -24,7 +25,7 @@ public class SectionFactory implements FormWidgetFactory {
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
         List<View> views = new ArrayList<>(1);
 
-        String text = jsonObject.getString("name");
+        String text = jsonObject.getString(JsonFormConstants.NAME);
 
         RelativeLayout rootLayout = (RelativeLayout) LayoutInflater.from(context).inflate(
                 R.layout.item_section_label, null);

@@ -35,7 +35,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
         String openMrsEntity = jsonObject.getString("openmrs_entity");
         String openMrsEntityId = jsonObject.getString("openmrs_entity_id");
         String relevance = jsonObject.optString("relevance");
-        TextView textView = com.vijay.jsonwizard.utils.FormUtils.getTextViewWith(context, 27, jsonObject.getString("label"), jsonObject.getString("key"),
+        TextView textView = com.vijay.jsonwizard.utils.FormUtils.getTextViewWith(context, 27, jsonObject.getString("label"), jsonObject.getString(JsonFormConstants.KEY),
                 jsonObject.getString("type"), openMrsEntityParent, openMrsEntity, openMrsEntityId,
                 relevance,
                 com.vijay.jsonwizard.utils.FormUtils.getLayoutParams(com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT, com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT, 0, 0, 0, 0), com.vijay.jsonwizard.utils.FormUtils.FONT_BOLD_PATH);
@@ -43,8 +43,8 @@ public class CheckBoxFactory implements FormWidgetFactory {
         views.add(textView);
 
         boolean readOnly = false;
-        if (jsonObject.has("read_only")) {
-            readOnly = jsonObject.getBoolean("read_only");
+        if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
+            readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
         }
 
         JSONArray options = jsonObject.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
@@ -53,17 +53,17 @@ public class CheckBoxFactory implements FormWidgetFactory {
             JSONObject item = options.getJSONObject(i);
             LinearLayout checkboxLayout = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.item_checkbox, null);
             TextView text1 = (TextView) checkboxLayout.findViewById(R.id.text1);
-            text1.setText(item.getString("text"));
+            text1.setText(item.getString(JsonFormConstants.TEXT));
             final CheckBox checkBox = (CheckBox) checkboxLayout.findViewById(R.id.checkbox);
             checkBoxes.add(checkBox);
-            checkBox.setTag(R.id.raw_value, item.getString("text"));
-            checkBox.setTag(R.id.key, jsonObject.getString("key"));
+            checkBox.setTag(R.id.raw_value, item.getString(JsonFormConstants.TEXT));
+            checkBox.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
             checkBox.setTag(R.id.type, jsonObject.getString("type"));
             checkBox.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
             checkBox.setTag(R.id.openmrs_entity, openMrsEntity);
             checkBox.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-            checkBox.setTag(R.id.childKey, item.getString("key"));
-            checkBox.setTag(R.id.address, stepName + ":" + jsonObject.getString("key"));
+            checkBox.setTag(R.id.childKey, item.getString(JsonFormConstants.KEY));
+            checkBox.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
             //checkBox.setTextSize(context.getResources().getDimension(R.dimen.default_text_size));
             checkBox.setOnCheckedChangeListener(listener);
             checkboxLayout.setClickable(true);
@@ -75,8 +75,8 @@ public class CheckBoxFactory implements FormWidgetFactory {
                     checkBox.toggle();
                 }
             });
-            if (!TextUtils.isEmpty(item.optString("value"))) {
-                checkBox.setChecked(Boolean.valueOf(item.optString("value")));
+            if (!TextUtils.isEmpty(item.optString(JsonFormConstants.VALUE))) {
+                checkBox.setChecked(Boolean.valueOf(item.optString(JsonFormConstants.VALUE)));
             }
             checkBox.setEnabled(!readOnly);
             checkBox.setFocusable(!readOnly);

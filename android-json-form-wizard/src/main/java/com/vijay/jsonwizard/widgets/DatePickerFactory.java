@@ -17,6 +17,7 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rengwuxian.materialedittext.validation.RegexpValidator;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.DatePickerDialog;
 import com.vijay.jsonwizard.customviews.GenericTextWatcher;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
@@ -101,11 +102,11 @@ public class DatePickerFactory implements FormWidgetFactory {
             editText.setTag(R.id.openmrs_entity, openMrsEntity);
             editText.setTag(R.id.openmrs_entity_id, openMrsEntityId);
             editText.setTag(R.id.address, stepName + ":" + jsonObject.getString(KEY.KEY));
-            if (jsonObject.has("v_required")) {
-                JSONObject requiredObject = jsonObject.optJSONObject("v_required");
+            if (jsonObject.has(JsonFormConstants.V_REQUIRED)) {
+                JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
                 String requiredValue = requiredObject.getString(KEY.VALUE);
                 if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
-                    editText.addValidator(new RequiredValidator(requiredObject.getString("err")));
+                    editText.addValidator(new RequiredValidator(requiredObject.getString(JsonFormConstants.ERR)));
                 }
             }
 
@@ -116,8 +117,8 @@ public class DatePickerFactory implements FormWidgetFactory {
                         DATE_FORMAT.format(getDate(jsonObject.getString(KEY.DEFAULT)).getTime()));
             }
 
-            if (jsonObject.has("read_only")) {
-                boolean readOnly = jsonObject.getBoolean("read_only");
+            if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
+                boolean readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
                 editText.setEnabled(!readOnly);
                 editText.setFocusable(!readOnly);
             }
@@ -386,7 +387,7 @@ public class DatePickerFactory implements FormWidgetFactory {
 
         public static final String KEY = "key";
 
-        public static final String VALUE = "value";
+        public static final String VALUE = (JsonFormConstants.VALUE);
 
         public static final String DEFAULT = "default";
     }

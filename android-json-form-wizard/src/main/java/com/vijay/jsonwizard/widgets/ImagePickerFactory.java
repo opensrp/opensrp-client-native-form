@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
@@ -44,38 +45,38 @@ public class ImagePickerFactory implements FormWidgetFactory {
         imageView.setId(ViewUtil.generateViewId());
         canvasIds.put(imageView.getId());
         imageView.setImageDrawable(context.getResources().getDrawable(R.mipmap.grey_bg));
-        imageView.setTag(R.id.key, jsonObject.getString("key"));
+        imageView.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
         imageView.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
         imageView.setTag(R.id.openmrs_entity, openMrsEntity);
         imageView.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         imageView.setTag(R.id.type, jsonObject.getString("type"));
-        imageView.setTag(R.id.address, stepName + ":" + jsonObject.getString("key"));
+        imageView.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
         if (relevance != null && context instanceof JsonApi) {
             imageView.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(imageView);
         }
 
-        JSONObject requiredObject = jsonObject.optJSONObject("v_required");
+        JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
         if (requiredObject != null) {
-            String requiredValue = requiredObject.getString("value");
+            String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
             if (!TextUtils.isEmpty(requiredValue)) {
                 imageView.setTag(R.id.v_required, requiredValue);
-                imageView.setTag(R.id.error, requiredObject.optString("err"));
+                imageView.setTag(R.id.error, requiredObject.optString(JsonFormConstants.ERR));
             }
         }
 
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         imageView.setLayoutParams(com.vijay.jsonwizard.utils.FormUtils.getLayoutParams(com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT, com.vijay.jsonwizard.utils.FormUtils.dpToPixels(context, 200), 0, 0, 0, (int) context
                 .getResources().getDimension(R.dimen.default_bottom_margin)));
-        String imagePath = jsonObject.optString("value");
+        String imagePath = jsonObject.optString(JsonFormConstants.VALUE);
         Button uploadButton = new Button(context);
         if (!TextUtils.isEmpty(imagePath)) {
             imageView.setTag(R.id.imagePath, imagePath);
             imageView.setImageBitmap(ImageUtils.loadBitmapFromFile(context, imagePath, ImageUtils.getDeviceWidth(context), com.vijay.jsonwizard.utils.FormUtils.dpToPixels(context, 200)));
         }
 
-        if (jsonObject.has("read_only")) {
-            boolean readOnly = jsonObject.getBoolean("read_only");
+        if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
+            boolean readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
             uploadButton.setEnabled(!readOnly);
             uploadButton.setFocusable(!readOnly);
         }
@@ -95,7 +96,7 @@ public class ImagePickerFactory implements FormWidgetFactory {
         uploadButton.setLayoutParams(com.vijay.jsonwizard.utils.FormUtils.getLayoutParams(com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT, com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT, 0, 0, 0, (int) context
                 .getResources().getDimension(R.dimen.default_bottom_margin)));
         uploadButton.setOnClickListener(listener);
-        uploadButton.setTag(R.id.key, jsonObject.getString("key"));
+        uploadButton.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
         uploadButton.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
         uploadButton.setTag(R.id.openmrs_entity, openMrsEntity);
         uploadButton.setTag(R.id.openmrs_entity_id, openMrsEntityId);
