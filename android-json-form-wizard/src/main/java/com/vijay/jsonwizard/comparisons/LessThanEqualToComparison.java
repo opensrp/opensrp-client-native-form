@@ -10,15 +10,25 @@ public class LessThanEqualToComparison extends Comparison {
         try {
             switch (type) {
                 case TYPE_STRING:
-                    if (a == null) a = DEFAULT_STRING;
+                    if (a == null) {
+                        a = DEFAULT_STRING;
+                    }
                     return a.compareTo(b) <= 0;
                 case TYPE_NUMERIC:
-                    if (a == null) a = DEFAULT_NUMERIC;
-                    if (b == null) b = DEFAULT_NUMERIC;
+                    if (a == null) {
+                        a = DEFAULT_NUMERIC;
+                    }
+                    if (b == null) {
+                        b = DEFAULT_NUMERIC;
+                    }
                     return Double.valueOf(a) <= Double.valueOf(b);
                 case TYPE_DATE:
-                    if (a == null) a = DEFAULT_DATE;
-                    if (b == null) b = DEFAULT_DATE;
+                    if (a == null) {
+                        a = DEFAULT_DATE;
+                    }
+                    if (b == null) {
+                        b = DEFAULT_DATE;
+                    }
                     Date dateA = DatePickerFactory.DATE_FORMAT.parse(a);
                     Date dateB = DatePickerFactory.DATE_FORMAT.parse(b);
                     return dateA.getTime() <= dateB.getTime();

@@ -18,21 +18,35 @@ public class NotEqualToComparison extends Comparison {
         try {
             switch (type) {
                 case TYPE_STRING:
-                    if (a == null) a = DEFAULT_STRING;
+                    if (a == null) {
+                        a = DEFAULT_STRING;
+                    }
                     return a.compareTo(b) != 0;
                 case TYPE_NUMERIC:
-                    if (a == null) a = DEFAULT_NUMERIC;
-                    if (b == null) b = DEFAULT_NUMERIC;
+                    if (a == null) {
+                        a = DEFAULT_NUMERIC;
+                    }
+                    if (b == null) {
+                        b = DEFAULT_NUMERIC;
+                    }
                     return Double.valueOf(a) != Double.valueOf(b);
                 case TYPE_DATE:
-                    if (a == null) a = DEFAULT_DATE;
-                    if (b == null) b = DEFAULT_DATE;
+                    if (a == null) {
+                        a = DEFAULT_DATE;
+                    }
+                    if (b == null) {
+                        b = DEFAULT_DATE;
+                    }
                     Date dateA = DatePickerFactory.DATE_FORMAT.parse(a);
                     Date dateB = DatePickerFactory.DATE_FORMAT.parse(b);
                     return dateA.getTime() != dateB.getTime();
                 case TYPE_ARRAY:
-                    if (a == null) a = DEFAULT_ARRAY;
-                    if (b == null) b = DEFAULT_ARRAY;
+                    if (a == null) {
+                        a = DEFAULT_ARRAY;
+                    }
+                    if (b == null) {
+                        b = DEFAULT_ARRAY;
+                    }
 
                     // An array is only equal to another if they have the same number of items
                     // and all these items are in both arrays
