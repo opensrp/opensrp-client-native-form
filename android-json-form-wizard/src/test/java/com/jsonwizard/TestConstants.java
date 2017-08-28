@@ -6,4 +6,6 @@ package com.jsonwizard;
 
 public class TestConstants {
     public static final String TYPE_STRING = "string";
+    public static final String TYPE_NUMERIC = "numeric";
+    public static final String TYPE_DATE = "date";
 }
