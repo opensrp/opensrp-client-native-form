@@ -25,8 +25,8 @@ public class ImageUtils {
     public static Bitmap loadBitmapFromFile(Context context, String path, int requiredWidth, int requiredHeight) {
         String key = path + ":" + requiredWidth + ":" + requiredHeight;
         Bitmap bitmap = mBitmapLruCache.get(key);
-        Log.d("ImagePickerFactory", "Image path is "+path);
-        if(bitmap != null) {
+        Log.d("ImagePickerFactory", "Image path is " + path);
+        if (bitmap != null) {
             Log.d("ImagePickerFactory", "Found in cache.");
             return bitmap;
         }
@@ -69,6 +69,7 @@ public class ImageUtils {
 
     /**
      * Rotate an image if required.
+     *
      * @param img
      * @param selectedImage
      * @return
@@ -83,8 +84,7 @@ public class ImageUtils {
             Bitmap rotatedImg = Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
             img.recycle();
             return rotatedImg;
-        }
-        else{
+        } else {
             return img;
         }
     }

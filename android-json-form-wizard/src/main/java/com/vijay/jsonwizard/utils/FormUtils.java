@@ -6,6 +6,7 @@ import android.widget.TextView;
 
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 
 import org.json.JSONObject;
@@ -70,7 +71,7 @@ public class FormUtils {
                 JSONObject start = form.getJSONObject(METADATA_PROPERTY).getJSONObject(START_JAVAROSA_PROPERTY);
                 String value = DATE_TIME_FORMAT.format(calendar.getTime());
                 if (value == null) value = "";
-                start.put("value", value);
+                start.put(JsonFormConstants.VALUE, value);
             }
 
             if (form.getJSONObject(METADATA_PROPERTY).has(PropertyManager.DEVICE_ID_PROPERTY)) {
@@ -78,7 +79,7 @@ public class FormUtils {
                 String value = propertyManager.getSingularProperty(
                         PropertyManager.DEVICE_ID_PROPERTY);
                 if (value == null) value = "";
-                deviceId.put("value", value);
+                deviceId.put(JsonFormConstants.VALUE, value);
             }
 
             if (form.getJSONObject(METADATA_PROPERTY).has(PropertyManager.SUBSCRIBER_ID_PROPERTY)) {
@@ -86,7 +87,7 @@ public class FormUtils {
                 String value = propertyManager.getSingularProperty(
                         PropertyManager.SUBSCRIBER_ID_PROPERTY);
                 if (value == null) value = "";
-                subscriberId.put("value", value);
+                subscriberId.put(JsonFormConstants.VALUE, value);
             }
 
             if (form.getJSONObject(METADATA_PROPERTY).has(PropertyManager.SIM_SERIAL_PROPERTY)) {
@@ -94,7 +95,7 @@ public class FormUtils {
                 String value = propertyManager.getSingularProperty(
                         PropertyManager.SIM_SERIAL_PROPERTY);
                 if (value == null) value = "";
-                simSerial.put("value", value);
+                simSerial.put(JsonFormConstants.VALUE, value);
             }
 
             if (form.getJSONObject(METADATA_PROPERTY).has(PropertyManager.PHONE_NUMBER_PROPERTY)) {
@@ -102,7 +103,7 @@ public class FormUtils {
                 String value = propertyManager.getSingularProperty(
                         PropertyManager.PHONE_NUMBER_PROPERTY);
                 if (value == null) value = "";
-                simSerial.put("value", value);
+                simSerial.put(JsonFormConstants.VALUE, value);
             }
         }
     }
@@ -115,7 +116,7 @@ public class FormUtils {
                 JSONObject end = form.getJSONObject(METADATA_PROPERTY).getJSONObject(END_JAVAROSA_PROPERTY);
                 String value = DATE_TIME_FORMAT.format(calendar.getTime());
                 if (value == null) value = "";
-                end.put("value", value);
+                end.put(JsonFormConstants.VALUE, value);
             }
 
             if (form.getJSONObject(METADATA_PROPERTY).has(TODAY_JAVAROSA_PROPERTY)) {
@@ -123,7 +124,7 @@ public class FormUtils {
                 JSONObject today = form.getJSONObject(METADATA_PROPERTY).getJSONObject(TODAY_JAVAROSA_PROPERTY);
                 String value = DATE_FORMAT.format(calendar.getTime());
                 if (value == null) value = "";
-                today.put("value", value);
+                today.put(JsonFormConstants.VALUE, value);
             }
 
             if (form.getJSONObject(METADATA_PROPERTY).has(PropertyManager.DEVICE_ID_PROPERTY)) {
@@ -131,7 +132,7 @@ public class FormUtils {
                 String value = propertyManager.getSingularProperty(
                         PropertyManager.DEVICE_ID_PROPERTY);
                 if (value == null) value = "";
-                deviceId.put("value", value);
+                deviceId.put(JsonFormConstants.VALUE, value);
             }
 
             if (form.getJSONObject(METADATA_PROPERTY).has(PropertyManager.SUBSCRIBER_ID_PROPERTY)) {
@@ -139,7 +140,7 @@ public class FormUtils {
                 String value = propertyManager.getSingularProperty(
                         PropertyManager.SUBSCRIBER_ID_PROPERTY);
                 if (value == null) value = "";
-                subscriberId.put("value", value);
+                subscriberId.put(JsonFormConstants.VALUE, value);
             }
 
             if (form.getJSONObject(METADATA_PROPERTY).has(PropertyManager.SIM_SERIAL_PROPERTY)) {
@@ -147,7 +148,7 @@ public class FormUtils {
                 String value = propertyManager.getSingularProperty(
                         PropertyManager.SIM_SERIAL_PROPERTY);
                 if (value == null) value = "";
-                simSerial.put("value", value);
+                simSerial.put(JsonFormConstants.VALUE, value);
             }
 
             if (form.getJSONObject(METADATA_PROPERTY).has(PropertyManager.PHONE_NUMBER_PROPERTY)) {
@@ -155,7 +156,7 @@ public class FormUtils {
                 String value = propertyManager.getSingularProperty(
                         PropertyManager.PHONE_NUMBER_PROPERTY);
                 if (value == null) value = "";
-                simSerial.put("value", value);
+                simSerial.put(JsonFormConstants.VALUE, value);
             }
         }
     }

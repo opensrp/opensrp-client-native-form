@@ -20,6 +20,7 @@ import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.interfaces.OnActivityResultListener;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.utils.zxing.IntentIntegrator;
 import com.vijay.jsonwizard.utils.zxing.IntentResult;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
@@ -59,29 +60,29 @@ public class BarcodeFactory implements FormWidgetFactory {
             rootLayout.setId(canvasId);
             final MaterialEditText editText = (MaterialEditText) rootLayout
                     .findViewById(R.id.edit_text);
-            editText.setHint(jsonObject.getString("hint"));
+            editText.setHint(jsonObject.getString(JsonFormConstants.HINT));
             JSONArray canvasIdsArray = new JSONArray();
             canvasIdsArray.put(canvasId);
             editText.setTag(R.id.canvas_ids, canvasIdsArray.toString());
-            editText.setTag(R.id.address, stepName + ":" + jsonObject.getString("key"));
-            editText.setFloatingLabelText(jsonObject.getString("hint"));
+            editText.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+            editText.setFloatingLabelText(jsonObject.getString(JsonFormConstants.HINT));
             editText.setId(ViewUtil.generateViewId());
-            editText.setTag(R.id.key, jsonObject.getString("key"));
+            editText.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
             editText.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
             editText.setTag(R.id.openmrs_entity, openMrsEntity);
             editText.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-            if (jsonObject.has("v_required")) {
-                JSONObject requiredObject = jsonObject.optJSONObject("v_required");
-                String requiredValue = requiredObject.getString("value");
+            if (jsonObject.has(JsonFormConstants.V_REQUIRED)) {
+                JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
+                String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
                 if (!TextUtils.isEmpty(requiredValue) && (Boolean.TRUE.toString().equalsIgnoreCase(requiredValue))) {
                     editText.addValidator(
-                            new RequiredValidator(requiredObject.getString("err")));
+                            new RequiredValidator(requiredObject.getString(JsonFormConstants.ERR)));
                 }
             }
 
 
-            if (!TextUtils.isEmpty(jsonObject.optString("value"))) {
-                editText.setText(jsonObject.optString("value"));
+            if (!TextUtils.isEmpty(jsonObject.optString(JsonFormConstants.VALUE))) {
+                editText.setText(jsonObject.optString(JsonFormConstants.VALUE));
             }
 
             editText.setOnClickListener(new View.OnClickListener() {
@@ -142,8 +143,8 @@ public class BarcodeFactory implements FormWidgetFactory {
                 }
             });
 
-            if (jsonObject.has("read_only")) {
-                boolean readOnly = jsonObject.getBoolean("read_only");
+            if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
+                boolean readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
                 editText.setEnabled(!readOnly);
                 editText.setFocusable(!readOnly);
                 if (readOnly) {

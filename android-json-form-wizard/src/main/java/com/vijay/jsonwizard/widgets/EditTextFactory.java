@@ -12,6 +12,7 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rengwuxian.materialedittext.validation.RegexpValidator;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.GenericTextWatcher;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
@@ -70,51 +71,51 @@ public class EditTextFactory implements FormWidgetFactory {
         int maxLength = MAX_LENGTH;
 
 
-        editText.setHint(jsonObject.getString("hint"));
-        editText.setFloatingLabelText(jsonObject.getString("hint"));
+        editText.setHint(jsonObject.getString(JsonFormConstants.HINT));
+        editText.setFloatingLabelText(jsonObject.getString(JsonFormConstants.HINT));
         editText.setId(ViewUtil.generateViewId());
-        editText.setTag(R.id.key, jsonObject.getString("key"));
+        editText.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
         editText.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
         editText.setTag(R.id.openmrs_entity, openMrsEntity);
         editText.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         editText.setTag(R.id.type, jsonObject.getString("type"));
-        editText.setTag(R.id.address, stepName + ":" + jsonObject.getString("key"));
+        editText.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
 
-        if (!TextUtils.isEmpty(jsonObject.optString("value"))) {
-            editText.setText(jsonObject.optString("value"));
+        if (!TextUtils.isEmpty(jsonObject.optString(JsonFormConstants.VALUE))) {
+            editText.setText(jsonObject.optString(JsonFormConstants.VALUE));
         }
 
-        if (jsonObject.has("read_only")) {
-            boolean readyOnly = jsonObject.getBoolean("read_only");
+        if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
+            boolean readyOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
             editText.setEnabled(!readyOnly);
             editText.setFocusable(!readyOnly);
         }
 
         //add validators
-        JSONObject requiredObject = jsonObject.optJSONObject("v_required");
+        JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
         if (requiredObject != null) {
-            String requiredValue = requiredObject.getString("value");
+            String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
             if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
-                editText.addValidator(new RequiredValidator(requiredObject.getString("err")));
+                editText.addValidator(new RequiredValidator(requiredObject.getString(JsonFormConstants.ERR)));
             }
 
         }
 
         JSONObject minLengthObject = jsonObject.optJSONObject("v_min_length");
         if (minLengthObject != null) {
-            String minLengthValue = minLengthObject.optString("value");
+            String minLengthValue = minLengthObject.optString(JsonFormConstants.VALUE);
             if (!TextUtils.isEmpty(minLengthValue)) {
                 minLength = Integer.parseInt(minLengthValue);
-                editText.addValidator(new MinLengthValidator(minLengthObject.getString("err"), Integer.parseInt(minLengthValue)));
+                editText.addValidator(new MinLengthValidator(minLengthObject.getString(JsonFormConstants.ERR), Integer.parseInt(minLengthValue)));
             }
         }
 
         JSONObject maxLengthObject = jsonObject.optJSONObject("v_max_length");
         if (maxLengthObject != null) {
-            String maxLengthValue = maxLengthObject.optString("value");
+            String maxLengthValue = maxLengthObject.optString(JsonFormConstants.VALUE);
             if (!TextUtils.isEmpty(maxLengthValue)) {
                 maxLength = Integer.parseInt(maxLengthValue);
-                editText.addValidator(new MaxLengthValidator(maxLengthObject.getString("err"), Integer.parseInt(maxLengthValue)));
+                editText.addValidator(new MaxLengthValidator(maxLengthObject.getString(JsonFormConstants.ERR), Integer.parseInt(maxLengthValue)));
             }
         }
 
@@ -123,48 +124,48 @@ public class EditTextFactory implements FormWidgetFactory {
 
         JSONObject regexObject = jsonObject.optJSONObject("v_regex");
         if (regexObject != null) {
-            String regexValue = regexObject.optString("value");
+            String regexValue = regexObject.optString(JsonFormConstants.VALUE);
             if (!TextUtils.isEmpty(regexValue)) {
-                editText.addValidator(new RegexpValidator(regexObject.getString("err"), regexValue));
+                editText.addValidator(new RegexpValidator(regexObject.getString(JsonFormConstants.ERR), regexValue));
             }
         }
 
         JSONObject emailObject = jsonObject.optJSONObject("v_email");
         if (emailObject != null) {
-            String emailValue = emailObject.optString("value");
+            String emailValue = emailObject.optString(JsonFormConstants.VALUE);
             if (!TextUtils.isEmpty(emailValue) && Boolean.TRUE.toString().equalsIgnoreCase(emailValue)) {
-                editText.addValidator(new RegexpValidator(emailObject.getString("err"), android.util.Patterns.EMAIL_ADDRESS.toString()));
+                editText.addValidator(new RegexpValidator(emailObject.getString(JsonFormConstants.ERR), android.util.Patterns.EMAIL_ADDRESS.toString()));
             }
 
         }
 
         JSONObject urlObject = jsonObject.optJSONObject("v_url");
         if (urlObject != null) {
-            String urlValue = urlObject.optString("value");
+            String urlValue = urlObject.optString(JsonFormConstants.VALUE);
             if (!TextUtils.isEmpty(urlValue) && Boolean.TRUE.toString().equalsIgnoreCase(urlValue)) {
-                editText.addValidator(new RegexpValidator(urlObject.getString("err"), Patterns.WEB_URL.toString()));
+                editText.addValidator(new RegexpValidator(urlObject.getString(JsonFormConstants.ERR), Patterns.WEB_URL.toString()));
             }
 
         }
 
         JSONObject numericObject = jsonObject.optJSONObject("v_numeric");
         if (numericObject != null) {
-            String numericValue = numericObject.optString("value");
+            String numericValue = numericObject.optString(JsonFormConstants.VALUE);
             if (!TextUtils.isEmpty(numericValue) && Boolean.TRUE.toString().equalsIgnoreCase(numericValue)) {
                 editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                editText.addValidator(new RegexpValidator(numericObject.getString("err"),
+                editText.addValidator(new RegexpValidator(numericObject.getString(JsonFormConstants.ERR),
                         "[0-9]*\\.?[0-9]*"));
 
                 if (jsonObject.has("v_min")) {
                     JSONObject minValidation = jsonObject.getJSONObject("v_min");
-                    editText.addValidator(new MinNumericValidator(minValidation.getString("err"),
-                            Double.parseDouble(minValidation.getString("value"))));
+                    editText.addValidator(new MinNumericValidator(minValidation.getString(JsonFormConstants.ERR),
+                            Double.parseDouble(minValidation.getString(JsonFormConstants.VALUE))));
                 }
 
                 if (jsonObject.has("v_max")) {
                     JSONObject minValidation = jsonObject.getJSONObject("v_min");
-                    editText.addValidator(new MaxNumericValidator(minValidation.getString("err"),
-                            Double.parseDouble(minValidation.getString("value"))));
+                    editText.addValidator(new MaxNumericValidator(minValidation.getString(JsonFormConstants.ERR),
+                            Double.parseDouble(minValidation.getString(JsonFormConstants.VALUE))));
                 }
             }
         }

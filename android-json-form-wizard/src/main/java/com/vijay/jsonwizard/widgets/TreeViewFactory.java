@@ -20,6 +20,7 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
 
 import org.json.JSONArray;
@@ -55,27 +56,27 @@ public class TreeViewFactory implements FormWidgetFactory {
             rootLayout.setId(ViewUtil.generateViewId());
             canvasIds.put(rootLayout.getId());
             final MaterialEditText editText = (MaterialEditText) rootLayout.findViewById(R.id.edit_text);
-            editText.setHint(jsonObject.getString("hint"));
-            editText.setFloatingLabelText(jsonObject.getString("hint"));
+            editText.setHint(jsonObject.getString(JsonFormConstants.HINT));
+            editText.setFloatingLabelText(jsonObject.getString(JsonFormConstants.HINT));
             editText.setId(ViewUtil.generateViewId());
-            editText.setTag(R.id.key, jsonObject.getString("key"));
+            editText.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
             editText.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
             editText.setTag(R.id.openmrs_entity, openMrsEntity);
             editText.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-            editText.setTag(R.id.address, stepName + ":" + jsonObject.getString("key"));
-            if (jsonObject.has("v_required")) {
-                JSONObject requiredObject = jsonObject.optJSONObject("v_required");
-                String requiredValue = requiredObject.getString("value");
+            editText.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+            if (jsonObject.has(JsonFormConstants.V_REQUIRED)) {
+                JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
+                String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
                 if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
-                    editText.addValidator(new RequiredValidator(requiredObject.getString("err")));
+                    editText.addValidator(new RequiredValidator(requiredObject.getString(JsonFormConstants.ERR)));
                 }
 
             }
-            final String defaultValueString = jsonObject.optString("default");
-            final String valueString = jsonObject.optString("value");
+            final String defaultValueString = jsonObject.optString(JsonFormConstants.DEFAULT);
+            final String valueString = jsonObject.optString(JsonFormConstants.VALUE);
 
-            if (jsonObject.has("read_only")) {
-                boolean readOnly = jsonObject.getBoolean("read_only");
+            if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
+                boolean readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
                 editText.setEnabled(!readOnly);
                 editText.setFocusable(!readOnly);
             }
@@ -102,9 +103,9 @@ public class TreeViewFactory implements FormWidgetFactory {
             final TreeViewDialog treeViewDialog = new TreeViewDialog(context,
                     jsonObject.getJSONArray("tree"), defaultValue, value);
 
-            if (!TextUtils.isEmpty(jsonObject.optString("value"))) {
+            if (!TextUtils.isEmpty(jsonObject.optString(JsonFormConstants.VALUE))) {
                 JSONArray name = new JSONArray(treeViewDialog.getName());
-                changeEditTextValue(editText, jsonObject.optString("value"), name.toString());
+                changeEditTextValue(editText, jsonObject.optString(JsonFormConstants.VALUE), name.toString());
             }
 
             treeViewDialog.setOnShowListener(new DialogInterface.OnShowListener() {

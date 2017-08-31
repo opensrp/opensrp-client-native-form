@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.MaterialSpinner;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
@@ -38,40 +39,40 @@ public class SpinnerFactory implements FormWidgetFactory {
         JSONArray canvasIds = new JSONArray();
         MaterialSpinner spinner = (MaterialSpinner) LayoutInflater.from(context).inflate(R.layout.item_spinner, null);
 
-        String hint = jsonObject.optString("hint");
+        String hint = jsonObject.optString(JsonFormConstants.HINT);
         if (!TextUtils.isEmpty(hint)) {
-            spinner.setHint(jsonObject.getString("hint"));
-            spinner.setFloatingLabelText(jsonObject.getString("hint"));
+            spinner.setHint(jsonObject.getString(JsonFormConstants.HINT));
+            spinner.setFloatingLabelText(jsonObject.getString(JsonFormConstants.HINT));
         }
 
         spinner.setId(ViewUtil.generateViewId());
         canvasIds.put(spinner.getId());
 
-        spinner.setTag(R.id.key, jsonObject.getString("key"));
+        spinner.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
         spinner.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
         spinner.setTag(R.id.openmrs_entity, openMrsEntity);
         spinner.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         spinner.setTag(R.id.type, jsonObject.getString("type"));
-        spinner.setTag(R.id.address, stepName + ":" + jsonObject.getString("key"));
+        spinner.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
 
-        JSONObject requiredObject = jsonObject.optJSONObject("v_required");
+        JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
         if (requiredObject != null) {
-            String requiredValue = requiredObject.getString("value");
+            String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
             if (!TextUtils.isEmpty(requiredValue)) {
                 spinner.setTag(R.id.v_required, requiredValue);
-                spinner.setTag(R.id.error, requiredObject.optString("err"));
+                spinner.setTag(R.id.error, requiredObject.optString(JsonFormConstants.ERR));
             }
         }
 
         String valueToSelect = "";
         int indexToSelect = -1;
-        if (!TextUtils.isEmpty(jsonObject.optString("value"))) {
-            valueToSelect = jsonObject.optString("value");
+        if (!TextUtils.isEmpty(jsonObject.optString(JsonFormConstants.VALUE))) {
+            valueToSelect = jsonObject.optString(JsonFormConstants.VALUE);
         }
 
-        if (jsonObject.has("read_only")) {
-            spinner.setEnabled(!jsonObject.getBoolean("read_only"));
-            spinner.setFocusable(!jsonObject.getBoolean("read_only"));
+        if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
+            spinner.setEnabled(!jsonObject.getBoolean(JsonFormConstants.READ_ONLY));
+            spinner.setFocusable(!jsonObject.getBoolean(JsonFormConstants.READ_ONLY));
         }
 
         JSONArray valuesJson = jsonObject.optJSONArray("values");

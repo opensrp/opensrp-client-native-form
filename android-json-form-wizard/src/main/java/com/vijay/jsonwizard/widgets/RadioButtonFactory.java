@@ -43,7 +43,7 @@ public class RadioButtonFactory implements FormWidgetFactory {
         List<View> views = new ArrayList<>(1);
 
         JSONArray canvasIds = new JSONArray();
-        TextView textView = getTextViewWith(context, 27, jsonObject.getString("label"), jsonObject.getString("key"),
+        TextView textView = getTextViewWith(context, 27, jsonObject.getString("label"), jsonObject.getString(JsonFormConstants.KEY),
                 jsonObject.getString("type"), openMrsEntityParent, openMrsEntity, openMrsEntityId,
                 relevance,
                 getLayoutParams(MATCH_PARENT, WRAP_CONTENT, 0, 0, 0, 0), FONT_BOLD_PATH);
@@ -51,8 +51,8 @@ public class RadioButtonFactory implements FormWidgetFactory {
 
         views.add(textView);
         boolean readOnly = false;
-        if (jsonObject.has("read_only")) {
-            readOnly = jsonObject.getBoolean("read_only");
+        if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
+            readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
         }
         JSONArray options = jsonObject.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
         ArrayList<RadioButton> radioButtons = new ArrayList<>();
@@ -61,19 +61,19 @@ public class RadioButtonFactory implements FormWidgetFactory {
             RadioButton radioButton = (RadioButton) LayoutInflater.from(context).inflate(R.layout.item_radiobutton,
                     null);
             radioButton.setId(ViewUtil.generateViewId());
-            radioButton.setText(item.getString("text"));
-            radioButton.setTag(R.id.key, jsonObject.getString("key"));
+            radioButton.setText(item.getString(JsonFormConstants.TEXT));
+            radioButton.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
             radioButton.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
             radioButton.setTag(R.id.openmrs_entity, openMrsEntity);
             radioButton.setTag(R.id.openmrs_entity_id, openMrsEntityId);
             radioButton.setTag(R.id.type, jsonObject.getString("type"));
-            radioButton.setTag(R.id.childKey, item.getString("key"));
+            radioButton.setTag(R.id.childKey, item.getString(JsonFormConstants.KEY));
             radioButton.setGravity(Gravity.CENTER_VERTICAL);
-            radioButton.setTag(R.id.address, stepName + ":" + jsonObject.getString("key"));
+            radioButton.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
 //            radioButton.setTextSize(context.getResources().getDimension(R.dimen.default_text_size));
             radioButton.setOnCheckedChangeListener(listener);
-            if (!TextUtils.isEmpty(jsonObject.optString("value"))
-                    && jsonObject.optString("value").equals(item.getString("key"))) {
+            if (!TextUtils.isEmpty(jsonObject.optString(JsonFormConstants.VALUE))
+                    && jsonObject.optString(JsonFormConstants.VALUE).equals(item.getString(JsonFormConstants.KEY))) {
                 radioButton.setChecked(true);
             }
             radioButton.setEnabled(!readOnly);

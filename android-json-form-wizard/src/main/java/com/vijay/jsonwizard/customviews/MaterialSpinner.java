@@ -445,9 +445,9 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
             String textToDraw = floatingLabelText != null ? floatingLabelText.toString() : hint.toString();
             if (isRtl) {
                 canvas.drawText(textToDraw, getWidth() - rightLeftSpinnerPadding - textPaint.measureText(textToDraw), startYFloatingLabel, textPaint);
-			} else {
-				canvas.drawText(textToDraw, startX + rightLeftSpinnerPadding, startYFloatingLabel, textPaint);
-			}
+            } else {
+                canvas.drawText(textToDraw, startX + rightLeftSpinnerPadding, startYFloatingLabel, textPaint);
+            }
         }
 
         drawSelector(canvas, getWidth() - rightLeftSpinnerPadding, getPaddingTop() + dpToPx(8));
@@ -593,13 +593,13 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
 
     public int getDisabledColor() {
         return disabledColor;
-     }
- 
-     public void setDisabledColor(int disabledColor) {
-         this.disabledColor = disabledColor;
-	 invalidate();
-     }
-	
+    }
+
+    public void setDisabledColor(int disabledColor) {
+        this.disabledColor = disabledColor;
+        invalidate();
+    }
+
     public void setHint(CharSequence hint) {
         this.hint = hint;
         invalidate();
@@ -614,11 +614,11 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
         return hint;
     }
 
-    public void setHintView(Integer resId){
+    public void setHintView(Integer resId) {
         this.mHintView = resId;
     }
 
-    public void setDripDownHintView(Integer resId){
+    public void setDripDownHintView(Integer resId) {
         this.mDropDownHintView = resId;
     }
 
@@ -635,13 +635,14 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
     public CharSequence getFloatingLabelText() {
         return this.floatingLabelText;
     }
-	public int getFloatingLabelColor() {
+
+    public int getFloatingLabelColor() {
         return floatingLabelColor;
     }
 
     public void setFloatingLabelColor(int floatingLabelColor) {
         this.floatingLabelColor = floatingLabelColor;
-	       invalidate();
+        invalidate();
     }
 
     public boolean isMultiline() {
@@ -650,7 +651,7 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
 
     public void setMultiline(boolean multiline) {
         this.multiline = multiline;
-	       invalidate();
+        invalidate();
     }
 
     public Typeface getTypeface() {
@@ -658,22 +659,22 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
     }
 
     public void setTypeface(Typeface typeface) {
-         this.typeface = typeface;
-         if (typeface != null) {
-             textPaint.setTypeface(typeface);
-         }
-         invalidate();
-     }
+        this.typeface = typeface;
+        if (typeface != null) {
+            textPaint.setTypeface(typeface);
+        }
+        invalidate();
+    }
 
     public boolean isAlignLabels() {
         return alignLabels;
     }
 
     public void setAlignLabels(boolean alignLabels) {
-         this.alignLabels = alignLabels;
-         rightLeftSpinnerPadding = alignLabels ? getResources().getDimensionPixelSize(R.dimen.right_left_spinner_padding) : 0;
-         invalidate();
-     }
+        this.alignLabels = alignLabels;
+        rightLeftSpinnerPadding = alignLabels ? getResources().getDimensionPixelSize(R.dimen.right_left_spinner_padding) : 0;
+        invalidate();
+    }
 
     public float getThickness() {
         return thickness;
@@ -681,7 +682,7 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
 
     public void setThickness(float thickness) {
         this.thickness = thickness;
-	invalidate();
+        invalidate();
     }
 
     public float getThicknessError() {
@@ -690,7 +691,7 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
 
     public void setThicknessError(float thicknessError) {
         this.thicknessError = thicknessError;
-	 invalidate();
+        invalidate();
     }
 
     public int getArrowColor() {
@@ -699,7 +700,7 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
 
     public void setArrowColor(int arrowColor) {
         this.arrowColor = arrowColor;
-	  invalidate();
+        invalidate();
     }
 
     public float getArrowSize() {
@@ -708,7 +709,7 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
 
     public void setArrowSize(float arrowSize) {
         this.arrowSize = arrowSize;
-	 invalidate();
+        invalidate();
     }
 
     public boolean isEnableErrorLabel() {
@@ -717,15 +718,15 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
 
     public void setEnableErrorLabel(boolean enableErrorLabel) {
         this.enableErrorLabel = enableErrorLabel;
-	 updateBottomPadding();
-	 invalidate();
+        updateBottomPadding();
+        invalidate();
     }
 
     public boolean isEnableFloatingLabel() {
         return enableFloatingLabel;
     }
 
-     public void setEnableFloatingLabel(boolean enableFloatingLabel) {
+    public void setEnableFloatingLabel(boolean enableFloatingLabel) {
         this.enableFloatingLabel = enableFloatingLabel;
         extraPaddingTop = enableFloatingLabel ? floatingLabelTopSpacing + floatingLabelInsideSpacing + floatingLabelBottomSpacing : floatingLabelBottomSpacing;
         updateBottomPadding();
@@ -765,13 +766,13 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
     }
 
     public void setRtl() {
-		isRtl = true;
-		invalidate();
-	}
+        isRtl = true;
+        invalidate();
+    }
 
-	public boolean isRtl() {
-		return isRtl;
-	}
+    public boolean isRtl() {
+        return isRtl;
+    }
 
     /**
      * @deprecated {use @link #setPaddingSafe(int, int, int, int)} to keep internal computation OK
@@ -806,6 +807,36 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
     @Override
     public SpinnerAdapter getAdapter() {
         return hintAdapter != null ? hintAdapter.getWrappedAdapter() : null;
+    }
+
+    private float pxToDp(float px) {
+        final DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
+        return px * displayMetrics.density;
+    }
+
+    private float getFloatingLabelPercent() {
+        return floatingLabelPercent;
+    }
+
+    private void setFloatingLabelPercent(float floatingLabelPercent) {
+        this.floatingLabelPercent = floatingLabelPercent;
+    }
+
+    private int getErrorLabelPosX() {
+        return errorLabelPosX;
+    }
+
+    private void setErrorLabelPosX(int errorLabelPosX) {
+        this.errorLabelPosX = errorLabelPosX;
+    }
+
+    private float getCurrentNbErrorLines() {
+        return currentNbErrorLines;
+    }
+
+    private void setCurrentNbErrorLines(float currentNbErrorLines) {
+        this.currentNbErrorLines = currentNbErrorLines;
+        updateBottomPadding();
     }
 
     @Override

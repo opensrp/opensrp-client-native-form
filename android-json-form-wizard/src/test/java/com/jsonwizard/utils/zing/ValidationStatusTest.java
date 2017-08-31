@@ -24,7 +24,7 @@ public class ValidationStatusTest extends BaseTest {
     private JsonFormFragmentView formFragmentView;
 
     @Mock
-    View view;
+    protected View view;
 
     @Test
     public void isValidShouldReturnTrueWhenSetValidIsSetTrue() {

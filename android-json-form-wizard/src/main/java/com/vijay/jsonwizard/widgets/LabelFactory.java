@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.vijay.jsonwizard.R;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
@@ -28,7 +29,7 @@ public class LabelFactory implements FormWidgetFactory {
         List<View> views = new ArrayList<>(1);
         LinearLayout.LayoutParams layoutParams = com.vijay.jsonwizard.utils.FormUtils.getLayoutParams(com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT, com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT, 0, 0, 0, (int) context
                 .getResources().getDimension(R.dimen.default_bottom_margin));
-        views.add(com.vijay.jsonwizard.utils.FormUtils.getTextViewWith(context, 27, jsonObject.getString("text"), jsonObject.getString("key"),
+        views.add(com.vijay.jsonwizard.utils.FormUtils.getTextViewWith(context, 27, jsonObject.getString(JsonFormConstants.TEXT), jsonObject.getString(JsonFormConstants.KEY),
                 jsonObject.getString("type"), openMrsEntityParent, openMrsEntity, openMrsEntityId,
                 relevance, layoutParams, com.vijay.jsonwizard.utils.FormUtils.FONT_BOLD_PATH));
         return views;

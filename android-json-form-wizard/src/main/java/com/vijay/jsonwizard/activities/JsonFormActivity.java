@@ -131,7 +131,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     if (item.has(KEY.TEXT)) {
                         item.put(KEY.TEXT, value);
                     } else {
-                        item.put("value", value);
+                        item.put(JsonFormConstants.VALUE, value);
 
                     }
 
@@ -163,7 +163,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                         JSONObject innerItem = jsonArray.getJSONObject(j);
                         String anotherKeyAtIndex = innerItem.getString(KEY.KEY);
                         if (childKey.equals(anotherKeyAtIndex)) {
-                            innerItem.put("value", value);
+                            innerItem.put(JsonFormConstants.VALUE, value);
                             refreshSkipLogic(parentKey, childKey);
                             refreshConstraints(parentKey, childKey);
                             return;
@@ -447,7 +447,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                         for (int i = 0; i < questionObject.getJSONArray("options").length(); i++) {
                             JSONObject curOption = questionObject.getJSONArray("options").getJSONObject(i);
                             if (curOption.getString(KEY.KEY).equals(checkBoxKey)) {
-                                curOption.put("value", "false");
+                                curOption.put(JsonFormConstants.VALUE, "false");
                                 break;
                             }
                         }
@@ -467,7 +467,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 JSONArray resultArray = new JSONArray();
                 JSONArray options = object.getJSONArray("options");
                 for (int j = 0; j < options.length(); j++) {
-                    if (options.getJSONObject(j).getString("value").equalsIgnoreCase("true")) {
+                    if (options.getJSONObject(j).getString(JsonFormConstants.VALUE).equalsIgnoreCase("true")) {
                         resultArray.put(options.getJSONObject(j).getString(KEY.KEY));
                     }
                 }
@@ -476,7 +476,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     result = resultArray.toString();
                 }
             } else {
-                result = object.optString("value");
+                result = object.optString(JsonFormConstants.VALUE);
             }
         }
 
@@ -588,7 +588,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     private String enforceConstraint(String value, View view, JSONObject constraint) throws Exception {
         String type = constraint.getString("type").toLowerCase();
         String ex = constraint.getString("ex");
-        String errorMessage = constraint.getString("err");
+        String errorMessage = constraint.getString(JsonFormConstants.ERR);
         Pattern pattern = Pattern.compile("(" + functionRegex + ")\\((.*)\\)");
         Matcher matcher = pattern.matcher(ex);
         if (matcher.find()) {
