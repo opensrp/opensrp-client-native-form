@@ -20,25 +20,28 @@
 
 # Introduction
 
-OpenSRP Client Native Form Module/app provides the ability to easily create Android forms using JSON forms. This module has been customised from [Android Native JSON Form](https://github.com/vijayrawatsan/android-json-form-wizard) to fit OpenSRP Requirements
+OpenSRP Client Native Form Module/app provides the ability to easily create Android forms using JSON forms. 
+
+Thanks to this [Android Native JSON Form Library](https://github.com/vijayrawatsan/android-json-form-wizard) from which OpenSRP Client Native Form has been customised to fit OpenSRP Requirements
 
 > **NOTE**
 >
-> **JSON Form** is written using **JSON (syntax)** which can be found [here](https://www.w3schools.com/js/js_json_syntax.asp).
+> **JSON Form** is written using **JSON (syntax)** which can be found [here](http://json.org/).
 
 
 # Features
 
 1. It enables definition of Android forms in JSON
-2. It enables one to define default meta-data for OpenMRS forms
+2. It enables one to define metadata for OpenMRS forms
 3. It enables one to define validations for form inputs in JSON
    * [Regular Expression](https://en.wikipedia.org/wiki/Regular_expression) validation rules
    * Number validation rules
    * Alphabetic & alphanumeric validation rules in JSON
-4. It eanbles one to define form input constraints using JSON
+4. It enables one to define form input constraints using JSON
    * Min value
    * Max value
-5. It enables one to define OpenMRS mappings in JSON eg. 
+5. It enables one to define OpenMRS mappings in JSON
+6. It enables one to define skip logic for fields based on values entered in other fields
 
 # App Walkthrough
 
@@ -47,13 +50,16 @@ OpenSRP Client Native Form Module/app provides the ability to easily create Andr
 ![Main Page Screenshot](https://user-images.githubusercontent.com/31766075/30383189-ca377ca6-98a9-11e7-8c23-9538214a975f.png)
 ![Main Page Screenshot -> Menu Open](https://user-images.githubusercontent.com/31766075/30383181-c49c8732-98a9-11e7-9f95-f56fc0cb7931.png)
 
-This page has a menu at the top which opens a sample Patient Registeration form written in JSON Form.
+This page has a menu at the top-right which opens a sample Patient Registration form written in JSON Form.
 
 #### 2. Sample Form
 
 Below is a sample Android Form created using the `OpenSRP Native JSON Form`:
 
 ![Sample Form Screenshot](https://user-images.githubusercontent.com/31766075/30383177-c4285aa6-98a9-11e7-84de-5550c0d1d159.png)
+![Part 2](https://user-images.githubusercontent.com/31766075/30435414-6321428a-9972-11e7-84c5-d22e841faf1c.png)
+![Part 3](https://user-images.githubusercontent.com/31766075/30435413-631caed2-9972-11e7-8d86-adc81936f27d.png)
+![Part 4](https://user-images.githubusercontent.com/31766075/30435415-632578be-9972-11e7-9e67-c14cf250a2ab.png)
 
 This form has been generated from the `JSON Form` below: [Click here to Skip](#usage)
 
@@ -599,68 +605,20 @@ Here are a few instructions on how to write the JSON Form:
 ```
 
 
-Android Implementation Code:
+The android implementation code can be found [here](#android-implementation-code)
 
-```
-//Other imports here ...
-import com.vijay.jsonwizard.activities.JsonFormActivity;
-
-public class MainActivity extends AppCompatActivity {
-    private static final int REQUEST_CODE_GET_JSON = 1234;
-
-    //.. Initialisation methods here
-
-    public void startForm(int jsonFormActivityRequestCode,
-                              String formName, String entityId) throws Exception {
-
-        //Inject OpenMRS MetaData into the form here...
-
-        Intent intent = new Intent(this, JsonFormActivity.class);
-        intent.putExtra("json", form.toString());
-        Log.d(getClass().getName(), "form is " + form.toString());
-        startActivityForResult(intent, jsonFormActivityRequestCode);
-
-    }
-
-    public JSONObject getFormJson(String formIdentity) {
-
-        try {
-            InputStream inputStream = getApplicationContext().getAssets()
-                    .open("json.form/" + formIdentity + ".json");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream,
-                    "UTF-8"));
-            String jsonString;
-            StringBuilder stringBuilder = new StringBuilder();
-            while ((jsonString = reader.readLine()) != null) {
-                stringBuilder.append(jsonString);
-            }
-            inputStream.close();
-
-            return new JSONObject(stringBuilder.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    //Handle the result returned...
-
-```
 
 #### JSON FORM ATTRIBUTES
 
 Attribute | Type | Meaning
 --------- | ---- | ---
-count | Integer | Number of steps or encounters
+count | Integer | Number of steps or forms
 encounter_type | String | Type of Encounter in OpenMRS
-mother | JSON Object | Object detailing the mother's details eg. **first_name, second_name**
-*entity_id | String | Unique identifier of the OpenSRP Entity
-*relational_id | String | Unique identifer for the relationship in OpenSRP
-metadata | JSON Object | Object detailing the metadata such as **start, end, simserial, deviceid** objects
-step1 | JSON Object | Object detailing a single form to be displayed in fragment, activity. Upcoming steps i.e. `step2, step3` will only be displayed after step1 is completed
+mother | JSON Object | Object detailing another encounter `created` during the first step `step1`
+*entity_id | String | Unique identifier of the OpenMRS Entity
+*relational_id | String | Unique identifer for the relationship in OpenMRS
+metadata | JSON Object | Object detailing the metadata such as **start, end, simserial, deviceid** objects found [here](#customisations-from-android-native-json-form)
+step1 | JSON Object | Object detailing a single form to be displayed as a `fragment`, `activity`. Upcoming steps i.e. `step2`, `step3` will only be displayed after `step1` is completed
 
 
 **STEP/SINGLE FORM ATTRIBUTES**
@@ -668,26 +626,30 @@ step1 | JSON Object | Object detailing a single form to be displayed in fragment
 Attribute | Type | Meaning
 --------- | ---- | -------
 title | String | The title of the form
-fields | Array(of fields) | This is a list of input fields in the form
+fields | Array(of form fields) | This is a list of input fields in the form
 
 
 **INPUT FIELD ATTRIBUTES**
 
 Attribute | Type | Meaning
 --------- | ---- | -------
-type | String | The type of input field: Available - `edit_text, choose_image, check_box, spinner, radio, label`
+type | String | The type of input field: Available - `edit_text, choose_image, check_box, spinner, radio, label, barcode, date_picker, tree`
 *openmrs_entity_id | String | The unique identifier of the OpenMRS Entity
-hint | String | This is the String displayed incase the input field is blank
+hint | String | This is the string displayed incase the input field is blank
 *key | String | This is the field name in the data models
-v_regex | JSON Validation Object | This is an object declaring the validation rule in regex under `name` & validation error message to be show `err`
+value | String | Value of this form field. **Optional** during creation but generated after the form is filled. Default Value is `""`
+look_up | String | **(Optional)**Either `"true"` or `"false"` indicating whether it is a lookup field. Default value is `"false"`
+read_only | Boolean | Indicates whether the value of the field cannot be edited. Default value of `read_only` is `false`
+hidden | Boolean | **(Optional)**The field is not visible. Default value is `false`
 
 
-> * Attributes with an **asterisk**. Contact developer team or [OpenMRS documentation](https://smartregister.atlassian.net/wiki/spaces/Documentation/overview) for more information
+> * For attributes with an **asterisk** above, go to [OpenMRS documentation](https://smartregister.atlassian.net/wiki/spaces/Documentation/overview) for more information
 
 
 # Developer Documentation
 
 This section will provide a brief description how to build and install the application from the repository source code.
+
 
 ## Pre-requisites
 
@@ -715,35 +677,169 @@ This section will provide a brief description how to build and install the appli
 1. Open Genymotion and Run the Virtual Device created previously.
 1. Run the app on Android Studio and chose the Genymotion Emulator as the ` Deployment Target`
 
+
+## Android Implementation Code
+
+
+```
+//Other imports here ...
+import com.vijay.jsonwizard.activities.JsonFormActivity;
+
+public class MainActivity extends AppCompatActivity {
+    private static final int REQUEST_CODE_GET_JSON = 1234;
+
+    //.. Initialisation methods here
+
+    public void startForm(int jsonFormActivityRequestCode,
+                              String formName, String entityId) throws Exception {
+
+        //Inject OpenMRS MetaData into the form here...
+
+        Intent intent = new Intent(this, JsonFormActivity.class);
+        intent.putExtra("json", form.toString());
+        startActivityForResult(intent, jsonFormActivityRequestCode);
+    }
+
+    public JSONObject getFormJson(String formIdentity) {
+        try {
+            InputStream inputStream = getApplicationContext().getAssets()
+                    .open("json.form/" + formIdentity + ".json");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream,
+                    "UTF-8"));
+            String jsonString;
+            StringBuilder stringBuilder = new StringBuilder();
+            while ((jsonString = reader.readLine()) != null) {
+                stringBuilder.append(jsonString);
+            }
+            inputStream.close();
+
+            return new JSONObject(stringBuilder.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    //Handle the result returned...
+
+```
+
+
 ## Customisations From Android Native JSON Form
 
-Some customisations were done on the parent library to fit OpenMRS requirements. Below are the customisations:
+Some customisations were done on the parent library to fit OpenSRP requirements. Below are the customisations:
 
-1. Input field mappings to OpenMRS entity fields i.e. 
-   * `openmrs_entity_id` 
-   * `openmrs_entity`
-   * `openmrs_entity_parent`
-   * `openmrs_data_type` ...
+1. Input field mappings to OpenMRS entity fields i.e. [OpenMRS Keys](#openmrs-keys)
 
 2. Default metadata (`metadata` field) for each JSON FORM i.e.
    * Objects
-      * `start`
-      * `end`
-      * `today`
-      * `deviceid`
-      * `subscriberid`
-      * `simserial`
-      * `phonenumber`
-      * `encounter_location`
-      * `look_up` 
+      * `start` - Object with the time the form is openned for editing
+         * `value` - Date time value in the format `yyyy-MM-dd HH:mm:ss`
+      * `end` - Time the form is completed
+         * `value` - Date time value in the format `yyyy-MM-dd HH:mm:ss`
+      * `today` - Day the form was completed
+         * `value` - Date value in the format `dd-MM-yyyy`
+      * `deviceid` - Unique identifier of the provider device
+      * `subscriberid` - Unique Subscriber ID based on Service Provider eg. `IMSI` will be returned for a `GSM Phone`
+      * `simserial` - SIM card Serial Number, if one is available
+      * `phonenumber` - Phone number for SIM 1 eg. the `MSISDN` for a `GSM Phone`
+      * `encounter_location` - Health Facility Zone where the encounter happened
+      * `look_up` - JSON Object describing any lookup data selected in a form lookup field. It basically has:
+         * `entity_id` - The unique entity name eg. `mother`
+         * `value` - The unique entity identifier eg. `9898-sd23D-f523a`
 
-3. Default fields for each JSON Form i.e.
-   * `encounter_type`
-   * `mother`
-   * `entity_id`
-   * `relational_id`
+> ### OpenMRS Keys
+> 
+> Each metadata field objects above have the following properties:
+>    * `key` 
+>    * `openmrs_entity_parent`
+>    * `openmrs_entity`
+>    * `openmrs_data_type` 
+>    * `openmrs_entity_id`
+
+3. Mandatory fields for each JSON Form i.e.
+   * `encounter_type` - This can be either of the [encounter types below](#encounter-types) or `blank` if the encounter type is not supported by OpenMRS
+   * `entity_id` - Unique identifier
+
+### Encounter Types
+
+Below are the most common encounter types:
+
+Encounter Type | Description
+-------------- | -----------
+Birth Registration | Child enrollment
+AEFI | Adverse Effect of vaccines, supplements or other services given by providers
+HIA2 Monthly Report | Monthly health reports written by providers
+Out of Catchment Service | Health service provision to a patient outside the patient's registered location eg. During `relative visits`, `temporary relocation`
+Death | A deceased child/patient is reported
+
 
 4. Validations & Constraints for input fields i.e.
-   * `v_regex` - For validating input using [Regular Expression](https://en.wikipedia.org/wiki/Regular_expression) 
-   * `v_min` - Ensure input entered is not below minimum value provided
-   * `v_max` - Ensure that the input entered is not above the maximum value provided
+   * `v_regex` - This is used for validating input using [Regular Expression](https://en.wikipedia.org/wiki/Regular_expression) 
+   * `v_min` - This validation ensures input entered is not below minimum value stated
+   * `v_max` - Ensure that the input entered is not above the maximum value stated
+
+5. Different types of comparisons were added for the **Skip Logic**
+
+This enables a field to be shown only if the condition set in `'ex'` is `True`
+
+Skip Logic is defined using the `"relevance"` value
+
+#### Sample Skip Logic
+
+```
+"relevance": {
+          "step1:Place_Birth": {
+            "type": "string",
+            "ex": "equalTo(., \"Health facility\")"
+          }
+        }
+```
+
+The field above will only be shown if the value for field whose key is `Place_Birth`, which is the **Patient's Place of Birth (Location)**, is equals to `"Health Facility"`
+
+The following are the available comparators:
+   * Equal To - `equalTo`
+   * Greater Than - `greaterThan`
+   * Greater Than or Equal To - `greaterThanEqualTo`
+   * Less Than - `lessThan`
+   * Less Than or Equal To - `lessThanEqualTo`
+   * Not Equal To - `notEqualTo`
+   * Regex Comparison - `regex`
+
+The comparators work on the following variable types:
+   * String - `string`
+   * Numeric `numeric` - Integer, double, float ...
+   * Date `date` - In the format `dd-MM-yyyy`
+   * Array `array` - Arrays are said to be similar if:
+      * Have the same number of items
+      * Have same items in equal number, irrespective of index
+
+The syntax for the comparison expression `ex`:
+
+`equalTo(., "Health facility")`
+
+ is as follows:
+
+`comparator($value1, $value2)`
+
+`$value1` is supposed to be a dot `.` so that the value `$value1` is that of the referenced field --> `Place_Birth` in `step1`.
+
+The field reference/identifier uses the field's `key` attribute
+
+
+6. More input field types:
+ 
+ ### Extra input field types
+
+ Field Type | Name | Description
+ ---------- | ---- | -----------
+ TreeView | `tree` | A stepped Selection View/Widget for nested selections eg. `Happy Kids Clinic` can be found in **Zambia Ministry of Health > Northern Highlands > Fort Jameson**. They all have to be expanded to get to it
+ Barcode | `barcode` | A text input field with a **SCAN QR CODE** button. It enables one to scan QR code and prints the scan result in the text input field
+ Date Picker | `date_picker` | This is a date picker view
+
+
+
