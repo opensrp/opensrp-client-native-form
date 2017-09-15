@@ -841,5 +841,3 @@ The field reference/identifier uses the field's `key` attribute
  Barcode | `barcode` | A text input field with a **SCAN QR CODE** button. It enables one to scan QR code and prints the scan result in the text input field
  Date Picker | `date_picker` | This is a date picker view
 
-
-
