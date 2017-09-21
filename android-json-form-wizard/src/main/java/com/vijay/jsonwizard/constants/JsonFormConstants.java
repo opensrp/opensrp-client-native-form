@@ -38,4 +38,7 @@ public class JsonFormConstants {
     public static final String DEFAULT = "default";
     public static final String V_REQUIRED = "v_required";
     public static final String TEXT = "text";
+    public static final String SKIP_VALIDATION = "skip_validation";
+    public static final String V_NUMERIC = "v_numeric";
+    public static final String REPORT_MONTH =  "report_month";
 }

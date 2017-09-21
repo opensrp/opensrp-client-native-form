@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.RadioButton;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.JsonApi;
@@ -113,13 +114,20 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         } else if (item.getItemId() == R.id.action_next) {
             return next();
         } else if (item.getItemId() == R.id.action_save) {
-            return save();
+            try {
+                Boolean skipValidation = ((JsonFormActivity) mMainView.getContext()).getIntent().getBooleanExtra(JsonFormConstants.SKIP_VALIDATION, false);
+                return save(skipValidation);
+            } catch (Exception e) {
+                Log.e(TAG, e.getMessage());
+                return save(false);
+            }
         }
         return super.onOptionsItemSelected(item);
     }
 
-    public boolean save() {
+    public boolean save(boolean skipValidation) {
         try {
+            mMainView.setTag(R.id.skip_validation, skipValidation);
             presenter.onSaveClick(mMainView);
             return true;
         } catch (Exception e) {

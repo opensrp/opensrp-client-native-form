@@ -17,4 +17,5 @@
     <item type='id' name="openmrs_entity_id"/>
     <item type="id" name="relevance" />
     <item type="id" name="constraints" />
+    <item type="id" name="skip_validation" />
 </resources>
