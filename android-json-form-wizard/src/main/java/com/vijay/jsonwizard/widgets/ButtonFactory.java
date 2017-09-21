@@ -73,6 +73,7 @@ public class ButtonFactory implements FormWidgetFactory {
         }
 
         JSONObject action = jsonObject.optJSONObject(JsonFormConstants.ACTION);
+        final Boolean confirmationBtnSkipValidation = !jsonObject.isNull(JsonFormConstants.SKIP_VALIDATION) ? jsonObject.getBoolean(JsonFormConstants.SKIP_VALIDATION) : false;
         if (action != null) {
             jsonObject.put(JsonFormConstants.VALUE, Boolean.FALSE.toString());
             jsonObject.getJSONObject(JsonFormConstants.ACTION).put(JsonFormConstants.RESULT, false);
@@ -90,7 +91,7 @@ public class ButtonFactory implements FormWidgetFactory {
 
                             switch (behaviour) {
                                 case JsonFormConstants.BEHAVIOUR_FINISH_FORM:
-                                    formFragment.save();
+                                    formFragment.save(confirmationBtnSkipValidation);
                                     break;
                                 case JsonFormConstants.BEHAVIOUR_NEXT_STEP:
                                     formFragment.next();
