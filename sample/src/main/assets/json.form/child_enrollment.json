@@ -213,7 +213,7 @@
           "value": "0.1",
           "err": "Weight must be greater than 0"
         },
-        "v_numeric": {
+        "v_numeric_integer": {
           "value": "true",
           "err": "Enter a valid weight"
         },
