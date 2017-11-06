@@ -170,6 +170,28 @@ public class EditTextFactory implements FormWidgetFactory {
             }
         }
 
+        JSONObject numericIntegerObject = jsonObject.optJSONObject("v_numeric_integer");
+        if (numericIntegerObject != null) {
+            String numericValue = numericIntegerObject.optString(JsonFormConstants.VALUE);
+            if (!TextUtils.isEmpty(numericValue) && Boolean.TRUE.toString().equalsIgnoreCase(numericValue)) {
+                editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                editText.addValidator(new RegexpValidator(numericIntegerObject.getString(JsonFormConstants.ERR),
+                        "\\d*"));
+
+                if (jsonObject.has("v_min")) {
+                    JSONObject minValidation = jsonObject.getJSONObject("v_min");
+                    editText.addValidator(new MinNumericValidator(minValidation.getString(JsonFormConstants.ERR),
+                            Double.parseDouble(minValidation.getString(JsonFormConstants.VALUE))));
+                }
+
+                if (jsonObject.has("v_max")) {
+                    JSONObject minValidation = jsonObject.getJSONObject("v_min");
+                    editText.addValidator(new MaxNumericValidator(minValidation.getString(JsonFormConstants.ERR),
+                            Double.parseDouble(minValidation.getString(JsonFormConstants.VALUE))));
+                }
+            }
+        }
+
         // edit type check
         String editType = jsonObject.optString("edit_type");
         if (!TextUtils.isEmpty(editType)) {
