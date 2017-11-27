@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="60dp"
+    android:orientation="vertical">
+
+    <com.rey.material.widget.Button
+        android:id="@+id/record_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/button_padding"
+        android:textSize="@dimen/button_text_size"
+        android:textColor="@android:color/white"
+        android:text="@string/record_location" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="@dimen/extra_bottom_margin">
+        <com.rey.material.widget.TextView
+            android:id="@+id/latitude"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textSize="@dimen/default_text_size"
+            android:layout_marginLeft="@dimen/inner_components_spacing"
+            android:layout_marginRight="@dimen/inner_components_spacing"
+            android:text="@string/latitude" />
+
+        <com.rey.material.widget.TextView
+            android:id="@+id/longitude"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textSize="@dimen/default_text_size"
+            android:layout_marginLeft="@dimen/inner_components_spacing"
+            android:layout_marginRight="@dimen/inner_components_spacing"
+            android:text="@string/longitude" />
+
+        <com.rey.material.widget.TextView
+            android:id="@+id/altitude"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textSize="@dimen/default_text_size"
+            android:layout_marginLeft="@dimen/inner_components_spacing"
+            android:layout_marginRight="@dimen/inner_components_spacing"
+            android:text="@string/altitude" />
+
+        <com.rey.material.widget.TextView
+            android:id="@+id/accuracy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textSize="@dimen/default_text_size"
+            android:layout_marginLeft="@dimen/inner_components_spacing"
+            android:layout_marginRight="@dimen/inner_components_spacing"
+            android:text="@string/accuracy" />
+    </LinearLayout>
+
+
+</LinearLayout>

@@ -17,6 +17,7 @@ public class JsonFormConstants {
     public static final String TREE = "tree";
     public static final String BARCODE = "barcode";
     public static final String BUTTON = "button";
+    public static final String GPS = "gps";
     public static final String SECTIONS = "sections";
     public static final String FIELDS = "fields";
     public static final String NAME = "name";

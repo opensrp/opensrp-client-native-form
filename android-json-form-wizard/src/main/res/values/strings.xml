@@ -15,4 +15,12 @@
     <string name="no">No</string>
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
+    <string name="record_location">Record location</string>
+    <string name="latitude">Latitude: %s</string>
+    <string name="longitude">Longitude: %s</string>
+    <string name="altitude">Altitude: %s</string>
+    <string name="accuracy">Accuracy: %s</string>
+    <string name="loading_location">Loading Location</string>
+    <string name="could_not_get_your_location">Could not get your GPS location</string>
+    <string name="using_provider">Using %s provider</string>
 </resources>
