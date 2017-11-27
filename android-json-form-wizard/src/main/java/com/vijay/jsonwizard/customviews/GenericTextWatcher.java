@@ -53,11 +53,8 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
 
         Log.d("RealtimeValidation", "afterTextChanged called");
         JsonApi api = null;
-        if(mView.getContext() instanceof JsonApi) {
-            api = (JsonApi) mView.getContext();
-        } else if(mView.getContext() instanceof TintContextWrapper) {
-            TintContextWrapper tintContextWrapper = (TintContextWrapper) mView.getContext();
-            api = (JsonApi) tintContextWrapper.getBaseContext();
+        if(formFragment.getContext() instanceof JsonApi) {
+            api = (JsonApi) formFragment.getContext();
         } else {
             throw new RuntimeException("Could not fetch context");
         }
