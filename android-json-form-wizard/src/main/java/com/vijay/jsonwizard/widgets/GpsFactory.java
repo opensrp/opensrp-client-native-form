@@ -136,8 +136,10 @@ public class GpsFactory implements FormWidgetFactory {
             String coordinateData = jsonObject.optString(JsonFormConstants.VALUE);
 
             String[] coordinateElements = coordinateData.split(" ");
-            latitude = coordinateElements[0];
-            longitude = coordinateElements[1];
+            if (coordinateElements.length > 1) {
+                latitude = coordinateElements[0];
+                longitude = coordinateElements[1];
+            }
         }
 
         setCoordinates(context, dataView, latitudeTv, longitudeTv, altitudeTv, accuracyTv, latitude, longitude, altitude, accuracy);

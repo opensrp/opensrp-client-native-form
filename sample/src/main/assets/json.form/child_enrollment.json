@@ -71,8 +71,7 @@
         "openmrs_entity": "person_address",
         "openmrs_entity_id": "geopoint",
         "openmrs_data_type": "text",
-        "type": "gps",
-        "value": "-1.2822857 36.8217428"
+        "type": "gps"
       },
       {
         "key": "Home_Facility",
