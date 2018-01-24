@@ -37,7 +37,7 @@ public class SpinnerFactory implements FormWidgetFactory {
 
         List<View> views = new ArrayList<>(1);
         JSONArray canvasIds = new JSONArray();
-        MaterialSpinner spinner = (MaterialSpinner) LayoutInflater.from(context).inflate(R.layout.item_spinner, null);
+        MaterialSpinner spinner = (MaterialSpinner) LayoutInflater.from(context).inflate(R.layout.native_form_item_spinner, null);
 
         String hint = jsonObject.optString(JsonFormConstants.HINT);
         if (!TextUtils.isEmpty(hint)) {
@@ -88,7 +88,7 @@ public class SpinnerFactory implements FormWidgetFactory {
         }
 
         if (values != null) {
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.simple_list_item_1, values);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.native_form_simple_list_item_1, values);
 
             spinner.setAdapter(adapter);
 

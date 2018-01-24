@@ -51,7 +51,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
         ArrayList<CheckBox> checkBoxes = new ArrayList<>();
         for (int i = 0; i < options.length(); i++) {
             JSONObject item = options.getJSONObject(i);
-            LinearLayout checkboxLayout = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.item_checkbox, null);
+            LinearLayout checkboxLayout = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.native_form_item_checkbox, null);
             TextView text1 = (TextView) checkboxLayout.findViewById(R.id.text1);
             text1.setText(item.getString(JsonFormConstants.TEXT));
             final CheckBox checkBox = (CheckBox) checkboxLayout.findViewById(R.id.checkbox);

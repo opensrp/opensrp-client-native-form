@@ -74,7 +74,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_json_form);
+        setContentView(R.layout.native_form_activity_json_form);
         mToolbar = (Toolbar) findViewById(R.id.tb_top);
         setSupportActionBar(mToolbar);
         skipLogicViews = new HashMap<>();

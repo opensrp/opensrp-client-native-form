@@ -52,7 +52,7 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
     private void init(JSONArray nodes, ArrayList<String> defaultValue,
                       final ArrayList<String> value) throws JSONException {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        this.setContentView(R.layout.dialog_tree_view);
+        this.setContentView(R.layout.native_form_dialog_tree_view);
         LinearLayout canvas = (LinearLayout) this.findViewById(R.id.canvas);
 
 

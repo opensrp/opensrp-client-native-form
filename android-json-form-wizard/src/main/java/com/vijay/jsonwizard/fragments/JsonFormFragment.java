@@ -72,7 +72,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_json_wizard, null);
+        View rootView = inflater.inflate(R.layout.native_form_fragment_json_wizard, null);
         mMainView = (LinearLayout) rootView.findViewById(R.id.main_layout);
         mScrollView = (ScrollView) rootView.findViewById(R.id.scroll_view);
         return rootView;

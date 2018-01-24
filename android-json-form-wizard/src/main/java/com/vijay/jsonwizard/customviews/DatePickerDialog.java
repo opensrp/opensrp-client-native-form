@@ -62,7 +62,7 @@ public class DatePickerDialog extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        ViewGroup dialogView = (ViewGroup) inflater.inflate(R.layout.dialog_date_picker, container, false);
+        ViewGroup dialogView = (ViewGroup) inflater.inflate(R.layout.native_form_dialog_date_picker, container, false);
 
         Button cancelButton;
         Button okButton;
