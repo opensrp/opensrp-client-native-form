@@ -52,7 +52,7 @@ public class TreeViewFactory implements FormWidgetFactory {
 
             JSONArray canvasIds = new JSONArray();
             RelativeLayout rootLayout = (RelativeLayout) LayoutInflater.from(context).inflate(
-                    R.layout.item_edit_text, null);
+                    R.layout.native_form_item_edit_text, null);
             rootLayout.setId(ViewUtil.generateViewId());
             canvasIds.put(rootLayout.getId());
             final MaterialEditText editText = (MaterialEditText) rootLayout.findViewById(R.id.edit_text);

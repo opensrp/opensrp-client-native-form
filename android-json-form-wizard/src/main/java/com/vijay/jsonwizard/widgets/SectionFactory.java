@@ -28,7 +28,7 @@ public class SectionFactory implements FormWidgetFactory {
         String text = jsonObject.getString(JsonFormConstants.NAME);
 
         RelativeLayout rootLayout = (RelativeLayout) LayoutInflater.from(context).inflate(
-                R.layout.item_section_label, null);
+                R.layout.native_form_item_section_label, null);
         TextView textView = (TextView) rootLayout.findViewById(R.id.section_label);
         textView.setText(text);
 

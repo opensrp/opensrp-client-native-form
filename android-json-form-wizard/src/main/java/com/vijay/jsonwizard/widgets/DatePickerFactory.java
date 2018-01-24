@@ -54,7 +54,7 @@ public class DatePickerFactory implements FormWidgetFactory {
         try {
 
             RelativeLayout dateViewRelativeLayout = (RelativeLayout) LayoutInflater
-                    .from(context).inflate(R.layout.item_date_picker, null);
+                    .from(context).inflate(R.layout.native_form_item_date_picker, null);
 
             MaterialEditText editText = (MaterialEditText) dateViewRelativeLayout.findViewById(R.id.edit_text);
 
