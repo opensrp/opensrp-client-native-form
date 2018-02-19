@@ -27,15 +27,11 @@ public class GpsDialog extends Dialog implements LocationListener, GoogleApiClie
     private final double MIN_ACCURACY = 4d;
     private final View dataView;
     private final TextView latitudeTV, longitudeTV, altitudeTV, accuracyTV;
-    private TextView providerTV, dialogAccuracyTV;
+    private TextView dialogAccuracyTV;
     private final Context context;
     private GoogleApiClient googleApiClient;
     private Button okButton, cancelButton;
     private Location lastLocation;
-    public static final String KEY_LATITUDE = "latitude";
-    public static final String KEY_LONGITUDE = "longitude";
-    public static final String KEY_ALTITUDE = "altitude";
-    public static final String KEY_ACCURACY = "accuracy";
 
     public GpsDialog(Context context, View dataView, TextView latitudeTV, TextView longitudeTV, TextView altitudeTV, TextView accuracyTV) {
         super(context);
@@ -74,7 +70,6 @@ public class GpsDialog extends Dialog implements LocationListener, GoogleApiClie
             }
         });
 
-        this.providerTV = (TextView) this.findViewById(R.id.provider);
         this.dialogAccuracyTV = (TextView) this.findViewById(R.id.accuracy);
 
         this.setOnShowListener(new OnShowListener() {
@@ -147,7 +142,6 @@ public class GpsDialog extends Dialog implements LocationListener, GoogleApiClie
     public void onLocationChanged(Location location) {
         if (location != null) {
             dialogAccuracyTV.setText(String.format(context.getString(R.string.accuracy), String.valueOf(location.getAccuracy()) + " m"));
-            providerTV.setText(String.format(context.getString(R.string.using_provider), location.getProvider()));
         }
 
         lastLocation = location;

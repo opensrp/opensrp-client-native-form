@@ -23,4 +23,5 @@
     <string name="loading_location">Loading Location</string>
     <string name="could_not_get_your_location">Could not get your GPS location</string>
     <string name="using_provider">Using %s provider</string>
+    <string name="unknown_gps_accuracy">Accuracy is unknown</string>
 </resources>

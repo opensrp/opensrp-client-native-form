@@ -22,19 +22,14 @@
             android:layout_gravity="center_horizontal"
             android:gravity="center_horizontal"
             android:layout_marginLeft="@dimen/inner_components_spacing"
+            android:layout_marginRight="@dimen/inner_components_spacing"
             android:orientation="vertical">
-            <com.rey.material.widget.TextView
-                android:id="@+id/provider"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/default_text_size"
-                android:text="Waiting for all location providers" />
             <com.rey.material.widget.TextView
                 android:id="@+id/accuracy"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/default_text_size"
-                android:text="Accuracy is unknown" />
+                android:text="@string/unknown_gps_accuracy" />
         </LinearLayout>
     </LinearLayout>
     <LinearLayout
