@@ -55,7 +55,7 @@ public class BarcodeFactory implements FormWidgetFactory {
             final String constraints = jsonObject.optString("constraints");
 
             LinearLayout rootLayout = (LinearLayout) LayoutInflater.from(context)
-                    .inflate(R.layout.item_barcode, null);
+                    .inflate(R.layout.native_form_item_barcode, null);
             final int canvasId = ViewUtil.generateViewId();
             rootLayout.setId(canvasId);
             final MaterialEditText editText = (MaterialEditText) rootLayout

@@ -66,6 +66,14 @@
         "uploadButtonText": "Take a photo of the child"
       },
       {
+        "key": "gps",
+        "openmrs_entity_parent": "usual_residence",
+        "openmrs_entity": "person_address",
+        "openmrs_entity_id": "geopoint",
+        "openmrs_data_type": "text",
+        "type": "gps"
+      },
+      {
         "key": "Home_Facility",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",

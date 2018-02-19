@@ -58,7 +58,7 @@ public class RadioButtonFactory implements FormWidgetFactory {
         ArrayList<RadioButton> radioButtons = new ArrayList<>();
         for (int i = 0; i < options.length(); i++) {
             JSONObject item = options.getJSONObject(i);
-            RadioButton radioButton = (RadioButton) LayoutInflater.from(context).inflate(R.layout.item_radiobutton,
+            RadioButton radioButton = (RadioButton) LayoutInflater.from(context).inflate(R.layout.native_form_item_radiobutton,
                     null);
             radioButton.setId(ViewUtil.generateViewId());
             radioButton.setText(item.getString(JsonFormConstants.TEXT));

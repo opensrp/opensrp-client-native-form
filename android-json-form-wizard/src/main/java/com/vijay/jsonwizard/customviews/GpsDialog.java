@@ -18,6 +18,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.rey.material.widget.TextView;
 import com.vijay.jsonwizard.R;
+import com.vijay.jsonwizard.widgets.GpsFactory;
 
 /**
  * Created by Jason Rogena - jrogena@ona.io on 11/24/17.
@@ -127,16 +128,8 @@ public class GpsDialog extends Dialog implements LocationListener, GoogleApiClie
             longitudeTV.setText(String.format(context.getString(R.string.longitude), String.valueOf(location.getLongitude())));
             altitudeTV.setText(String.format(context.getString(R.string.altitude), String.valueOf(location.getAltitude()) + " m"));
             accuracyTV.setText(String.format(context.getString(R.string.accuracy), String.valueOf(location.getAccuracy()) + " m"));
-            dataView.setTag(R.id.raw_value, constructString(location));
+            dataView.setTag(R.id.raw_value, GpsFactory.constructString(location));
         }
-    }
-
-    private String constructString(Location location) {
-        if (location != null) {
-            return String.valueOf(location.getLatitude()) + " " + String.valueOf(location.getLongitude());
-        }
-
-        return null;
     }
 
     @Override

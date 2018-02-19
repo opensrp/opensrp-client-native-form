@@ -1,6 +1,8 @@
 package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
+import android.location.Location;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +23,7 @@ import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,10 +89,9 @@ public class GpsFactory implements FormWidgetFactory {
         TextView longitudeTV = (TextView) rootLayout.findViewById(R.id.longitude);
         TextView altitudeTV = (TextView) rootLayout.findViewById(R.id.altitude);
         TextView accuracyTV = (TextView) rootLayout.findViewById(R.id.accuracy);
-        latitudeTV.setText(String.format(context.getString(R.string.latitude), ""));
-        longitudeTV.setText(String.format(context.getString(R.string.longitude), ""));
-        altitudeTV.setText(String.format(context.getString(R.string.altitude), ""));
-        accuracyTV.setText(String.format(context.getString(R.string.accuracy), ""));
+        //setCoordinates(context, latitudeTV, longitudeTV, altitudeTV, accuracyTV, "", "", "", "");
+        attachJSON(context, jsonObject, recordButton, latitudeTV, longitudeTV, altitudeTV, accuracyTV);
+
         final GpsDialog gpsDialog = new GpsDialog(context, recordButton, latitudeTV, longitudeTV, altitudeTV, accuracyTV);
 
         recordButton.setOnClickListener(new View.OnClickListener() {
@@ -123,5 +125,46 @@ public class GpsFactory implements FormWidgetFactory {
         }
 
         return new ValidationStatus(false, (String) recordButton.getTag(R.id.error), formFragmentView, recordButton);
+    }
+
+    public void attachJSON(Context context, @NonNull JSONObject jsonObject, @NonNull View dataView, @NonNull TextView latitudeTv, @NonNull TextView longitudeTv, @NonNull TextView altitudeTv, @NonNull TextView accuracyTv) {
+        String latitude = "";
+        String longitude = "";
+        String accuracy = "";
+        String altitude = "";
+        if (jsonObject.has(JsonFormConstants.VALUE)) {
+            String coordinateData = jsonObject.optString(JsonFormConstants.VALUE);
+
+            String[] coordinateElements = coordinateData.split(" ");
+            if (coordinateElements.length > 1) {
+                latitude = coordinateElements[0];
+                longitude = coordinateElements[1];
+            }
+        }
+
+        setCoordinates(context, dataView, latitudeTv, longitudeTv, altitudeTv, accuracyTv, latitude, longitude, altitude, accuracy);
+    }
+
+    private void setCoordinates(Context context, View dataView, TextView latitudeTv, TextView longitudeTv, TextView altitudeTv, TextView accuracyTv, String latitude, String longitude, String altitude, String accuracy) {
+        latitudeTv.setText(String.format(context.getString(R.string.latitude), latitude));
+        longitudeTv.setText(String.format(context.getString(R.string.longitude), longitude));
+        altitudeTv.setText(String.format(context.getString(R.string.altitude), altitude));
+        accuracyTv.setText(String.format(context.getString(R.string.accuracy), accuracy));
+
+        dataView.setTag(R.id.raw_value, constructString(latitude, longitude));
+    }
+
+
+
+    public static String constructString(Location location) {
+        if (location != null) {
+            return constructString(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()));
+        }
+
+        return null;
+    }
+
+    public static String constructString(String latitude, String longitude) {
+        return latitude + " " + longitude;
     }
 }
