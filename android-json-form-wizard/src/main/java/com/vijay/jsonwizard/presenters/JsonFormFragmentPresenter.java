@@ -234,7 +234,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
 
                 if (imageFile != null) {
                     Uri photoURI = FileProvider.getUriForFile(getView().getContext(),
-                            getView().getContext().getPackageName() + ".fileprovider",
+                            "com.vijay.jsonwizard.fileprovider",
                             imageFile);
 
                     // Grant permission to the default camera app
