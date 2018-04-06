@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
@@ -17,6 +18,7 @@ import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.utils.FormUtils;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -79,6 +81,7 @@ public class LabelFactory implements FormWidgetFactory {
         TextView textView = com.vijay.jsonwizard.utils.FormUtils.getTextViewWith(context, 27, text, jsonObject.getString(JsonFormConstants.KEY),
                 jsonObject.getString("type"), openMrsEntityParent, openMrsEntity, openMrsEntityId,
                 relevance, layoutParams, com.vijay.jsonwizard.utils.FormUtils.FONT_BOLD_PATH, bgColorInt);
+        textView.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
 
         if (hasBg) {
 
@@ -116,6 +119,12 @@ public class LabelFactory implements FormWidgetFactory {
 
             textView.setText(styledString);
         }
+
+        // Set the id for the view
+        JSONArray canvasIds = new JSONArray();
+        textView.setId(ViewUtil.generateViewId());
+        canvasIds.put(textView.getId());
+        textView.setTag(R.id.canvas_ids, canvasIds.toString());
 
         views.add(textView);
         return views;

@@ -501,7 +501,13 @@
         "hint_on_text": true,
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
-        "openmrs_entity_id": ""
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:Date_Birth": {
+            "type": "string",
+            "ex": "notEqualTo(.,\"\")"
+          }
+        }
       },
       {
         "key": "label_1",
