@@ -2,7 +2,9 @@ package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -30,6 +32,9 @@ public class LabelFactory implements FormWidgetFactory {
         String openMrsEntity = jsonObject.getString("openmrs_entity");
         String openMrsEntityId = jsonObject.getString("openmrs_entity_id");
         String relevance = jsonObject.optString("relevance");
+        String text = jsonObject.getString(JsonFormConstants.TEXT);
+
+        boolean hintOnText = jsonObject.optBoolean("hint_on_text", false);
 
         boolean hasBg = jsonObject.optBoolean("has_bg", false);
         String textSize = jsonObject.optString("text_size", null);
@@ -71,7 +76,7 @@ public class LabelFactory implements FormWidgetFactory {
                 0,
                 bottomMarginInt);
 
-        TextView textView = com.vijay.jsonwizard.utils.FormUtils.getTextViewWith(context, 27, jsonObject.getString(JsonFormConstants.TEXT), jsonObject.getString(JsonFormConstants.KEY),
+        TextView textView = com.vijay.jsonwizard.utils.FormUtils.getTextViewWith(context, 27, text, jsonObject.getString(JsonFormConstants.KEY),
                 jsonObject.getString("type"), openMrsEntityParent, openMrsEntity, openMrsEntityId,
                 relevance, layoutParams, com.vijay.jsonwizard.utils.FormUtils.FONT_BOLD_PATH, bgColorInt);
 
@@ -93,12 +98,31 @@ public class LabelFactory implements FormWidgetFactory {
             textView.setTextColor(Color.parseColor(textColor));
         }
 
+        if (hintOnText) {
+            int currentStartScanIndex = 0;
+
+            SpannableString styledString = new SpannableString(text);
+            while(currentStartScanIndex > -1) {
+                currentStartScanIndex = text.indexOf("<", currentStartScanIndex);
+                if (currentStartScanIndex > -1) {
+                    int endTagIndex = text.indexOf(">", currentStartScanIndex + 1);
+
+                    if (endTagIndex > currentStartScanIndex) {
+                        styledString.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.text_hint_color)), currentStartScanIndex, endTagIndex + 1, 0);
+                    }
+                    currentStartScanIndex = endTagIndex;
+                }
+            }
+
+            textView.setText(styledString);
+        }
+
         views.add(textView);
         return views;
     }
 
-    public static int dpToPx(Context context, float dp) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
+    public static int spToPx(Context context, float sp) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, context.getResources().getDisplayMetrics());
     }
 
     private int getValueFromSpOrDp(String spOrDp, Context context) {
@@ -106,7 +130,7 @@ public class LabelFactory implements FormWidgetFactory {
         if (!TextUtils.isEmpty(spOrDp)) {
             if (spOrDp.contains("sp")) {
                 int unitValues = Integer.parseInt(spOrDp.replace("sp", ""));
-                px = dpToPx(context, unitValues);
+                px = spToPx(context, unitValues);
             } else if (spOrDp.contains("dp")) {
                 int unitValues = Integer.parseInt(spOrDp.replace("dp", ""));
                 px = FormUtils.dpToPixels(context, unitValues);
