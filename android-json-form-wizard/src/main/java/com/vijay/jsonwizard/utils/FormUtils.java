@@ -40,7 +40,7 @@ public class FormUtils {
                                            String key, String type, String openMrsEntityParent,
                                            String openMrsEntity, String openMrsEntityId,
                                            String relevance,
-                                           LinearLayout.LayoutParams layoutParams, String fontPath) {
+                                           LinearLayout.LayoutParams layoutParams, String fontPath, int bgColor) {
         TextView textView = new TextView(context);
         textView.setText(text);
         textView.setTag(R.id.key, key);
@@ -51,11 +51,24 @@ public class FormUtils {
         textView.setId(ViewUtil.generateViewId());
         textView.setTextSize(textSizeInSp);
         textView.setLayoutParams(layoutParams);
+
+        if (bgColor != 0) {
+            textView.setBackgroundColor(bgColor);
+        }
+
         if (relevance != null && context instanceof JsonApi) {
             textView.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(textView);
         }
         return textView;
+    }
+
+    public static TextView getTextViewWith(Context context, int textSizeInSp, String text,
+                                           String key, String type, String openMrsEntityParent,
+                                           String openMrsEntity, String openMrsEntityId,
+                                           String relevance,
+                                           LinearLayout.LayoutParams layoutParams, String fontPath) {
+        return getTextViewWith(context, textSizeInSp, text, key, type, openMrsEntityParent, openMrsEntity, openMrsEntityId, relevance, layoutParams, fontPath, 0);
     }
 
     public static int dpToPixels(Context context, float dps) {
