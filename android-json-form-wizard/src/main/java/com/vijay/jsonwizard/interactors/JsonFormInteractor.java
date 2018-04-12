@@ -12,6 +12,7 @@ import com.vijay.jsonwizard.widgets.ButtonFactory;
 import com.vijay.jsonwizard.widgets.CheckBoxFactory;
 import com.vijay.jsonwizard.widgets.DatePickerFactory;
 import com.vijay.jsonwizard.widgets.EditTextFactory;
+import com.vijay.jsonwizard.widgets.HorizontalLineFactory;
 import com.vijay.jsonwizard.widgets.ImagePickerFactory;
 import com.vijay.jsonwizard.widgets.LabelFactory;
 import com.vijay.jsonwizard.widgets.RadioButtonFactory;
@@ -53,6 +54,7 @@ public class JsonFormInteractor {
         map.put(JsonFormConstants.TREE, new TreeViewFactory());
         map.put(JsonFormConstants.BARCODE, new BarcodeFactory());
         map.put(JsonFormConstants.BUTTON, new ButtonFactory());
+        map.put(JsonFormConstants.HORIZONTAL_LINE, new HorizontalLineFactory());
     }
 
     public List<View> fetchFormElements(String stepName, JsonFormFragment formFragment,

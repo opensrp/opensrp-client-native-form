@@ -54,7 +54,7 @@ public class DatePickerFactory implements FormWidgetFactory {
         try {
 
             RelativeLayout dateViewRelativeLayout = (RelativeLayout) LayoutInflater
-                    .from(context).inflate(R.layout.native_form_item_date_picker, null);
+                    .from(context).inflate(getLayout(), null);
 
             MaterialEditText editText = (MaterialEditText) dateViewRelativeLayout.findViewById(R.id.edit_text);
 
@@ -378,6 +378,10 @@ public class DatePickerFactory implements FormWidgetFactory {
         calendarDate.set(Calendar.MILLISECOND, 0);
 
         return calendarDate;
+    }
+
+    protected int getLayout() {
+        return R.layout.native_form_item_date_picker;
     }
 
     public static class KEY {

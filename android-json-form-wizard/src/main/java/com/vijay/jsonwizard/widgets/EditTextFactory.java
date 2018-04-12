@@ -44,7 +44,7 @@ public class EditTextFactory implements FormWidgetFactory {
         List<View> views = new ArrayList<>(1);
 
         RelativeLayout rootLayout = (RelativeLayout) LayoutInflater.from(context).inflate(
-                R.layout.native_form_item_edit_text, null);
+                getLayout(), null);
         MaterialEditText editText = (MaterialEditText) rootLayout.findViewById(R.id.edit_text);
 
         attachJson(stepName, context, formFragment, jsonObject, editText);
@@ -226,4 +226,7 @@ public class EditTextFactory implements FormWidgetFactory {
         return new ValidationStatus(true, null, formFragmentView, editText);
     }
 
+    protected int getLayout() {
+        return R.layout.native_form_item_edit_text;
+    }
 }
