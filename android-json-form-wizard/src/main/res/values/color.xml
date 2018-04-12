@@ -17,4 +17,5 @@
     <color name="opensrp_text_color_primary">#737373</color>
 
     <color name="text_hint_color">#808080</color>
+    <color name="horizontal_line_default_bg">#B6B6B6</color>
 </resources>

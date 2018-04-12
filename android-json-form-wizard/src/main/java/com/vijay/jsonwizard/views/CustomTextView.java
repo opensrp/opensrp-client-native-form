@@ -13,10 +13,10 @@ import com.vijay.jsonwizard.R;
  * Basically this custom TextView also provides the following capabilities:
  *
  * <ul>
- *     <li>Grey when disabled</li>
+ *     <li>Grey when disabled - Rather the hint color set in the theme</li>
  *     <li>Returns to previous color when re-enabled</li>
  *     <li>Hinted text is color {@link com.vijay.jsonwizard.R.color#text_hint_color} - Hinted text
- *     is text between <> tags inclusive. The tags are not removed</></li>
+ *     is text between <> tags (tags inclusive). Furthermore, the tags are not removed</></li>
  * </ul>
  *
  * Created by Ephraim Kigamba - ekigamba@ona.io on 11/04/2018.
@@ -91,13 +91,7 @@ public class CustomTextView extends AppCompatTextView {
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-
-        // Do not remove this, it makes labels not relevant stay hidden, when removed. The labels
-        // are displayed but with a disabled color on the non-hinted text
-        if (enabled) {
-            setText((String) getText());
-        } else {
-            setText(getText());
-        }
+        String text = getText().toString();
+        setText(text);
     }
 }

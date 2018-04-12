@@ -2,13 +2,8 @@ package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.text.SpannableString;
-import android.text.TextUtils;
-import android.text.style.ForegroundColorSpan;
-import android.util.TypedValue;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
@@ -67,19 +62,19 @@ public class LabelFactory implements FormWidgetFactory {
         int topMarginInt = 0;
         int bottomMarginInt = (int) context.getResources().getDimension(R.dimen.default_bottom_margin);
         if (hasBg) {
-            topMarginInt = getValueFromSpOrDp(topMargin, context);
-            bottomMarginInt = getValueFromSpOrDp(bottomMargin, context);
+            topMarginInt = FormUtils.getValueFromSpOrDpOrPx(topMargin, context);
+            bottomMarginInt = FormUtils.getValueFromSpOrDpOrPx(bottomMargin, context);
             bgColorInt = Color.parseColor(bgColor);
         }
 
-        LinearLayout.LayoutParams layoutParams = com.vijay.jsonwizard.utils.FormUtils.getLayoutParams(com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT,
-                com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT,
+        LinearLayout.LayoutParams layoutParams = FormUtils.getLayoutParams(FormUtils.MATCH_PARENT,
+                FormUtils.WRAP_CONTENT,
                 0,
                 topMarginInt,
                 0,
                 bottomMarginInt);
 
-        CustomTextView textView = com.vijay.jsonwizard.utils.FormUtils.getTextViewWith(context, 27, text, jsonObject.getString(JsonFormConstants.KEY),
+        CustomTextView textView = FormUtils.getTextViewWith(context, 27, text, jsonObject.getString(JsonFormConstants.KEY),
                 jsonObject.getString("type"), openMrsEntityParent, openMrsEntity, openMrsEntityId,
                 relevance, layoutParams, com.vijay.jsonwizard.utils.FormUtils.FONT_BOLD_PATH, bgColorInt);
         textView.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
@@ -87,15 +82,15 @@ public class LabelFactory implements FormWidgetFactory {
         if (hasBg) {
 
             textView.setPadding(
-                    getValueFromSpOrDp(leftPadding, context),
-                    getValueFromSpOrDp(topPadding, context),
-                    getValueFromSpOrDp(rightPadding, context),
-                    getValueFromSpOrDp(bottomPadding, context)
+                    FormUtils.getValueFromSpOrDpOrPx(leftPadding, context),
+                    FormUtils.getValueFromSpOrDpOrPx(topPadding, context),
+                    FormUtils.getValueFromSpOrDpOrPx(rightPadding, context),
+                    FormUtils.getValueFromSpOrDpOrPx(bottomPadding, context)
             );
         }
 
         if (textSize != null) {
-            textView.setTextSize(getValueFromSpOrDp(textSize, context));
+            textView.setTextSize(FormUtils.getValueFromSpOrDpOrPx(textSize, context));
         }
 
         if (textColor != null) {
@@ -113,25 +108,6 @@ public class LabelFactory implements FormWidgetFactory {
 
         views.add(textView);
         return views;
-    }
-
-    public static int spToPx(Context context, float sp) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, context.getResources().getDisplayMetrics());
-    }
-
-    private int getValueFromSpOrDp(String spOrDp, Context context) {
-        int px = 0;
-        if (!TextUtils.isEmpty(spOrDp)) {
-            if (spOrDp.contains("sp")) {
-                int unitValues = Integer.parseInt(spOrDp.replace("sp", ""));
-                px = spToPx(context, unitValues);
-            } else if (spOrDp.contains("dp")) {
-                int unitValues = Integer.parseInt(spOrDp.replace("dp", ""));
-                px = FormUtils.dpToPixels(context, unitValues);
-            }
-        }
-
-        return px;
     }
 
 }

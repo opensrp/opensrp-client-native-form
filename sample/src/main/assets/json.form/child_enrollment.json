@@ -520,6 +520,13 @@
         "openmrs_entity_id": ""
       },
       {
+        "key": "divider1",
+        "type": "h_line",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": ""
+      },
+      {
         "key": "disabled_label",
         "type": "label",
         "text": "This is disabled: <Hinted txt here>",

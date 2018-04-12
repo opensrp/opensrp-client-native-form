@@ -1,8 +1,9 @@
 package com.vijay.jsonwizard.utils;
 
 import android.content.Context;
+import android.text.TextUtils;
+import android.util.TypedValue;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
@@ -173,5 +174,26 @@ public class FormUtils {
                 simSerial.put(JsonFormConstants.VALUE, value);
             }
         }
+    }
+
+    public static int spToPx(Context context, float sp) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, context.getResources().getDisplayMetrics());
+    }
+
+    public static int getValueFromSpOrDpOrPx(String spOrDpOrPx, Context context) {
+        int px = 0;
+        if (!TextUtils.isEmpty(spOrDpOrPx)) {
+            if (spOrDpOrPx.contains("sp")) {
+                int unitValues = Integer.parseInt(spOrDpOrPx.replace("sp", ""));
+                px = spToPx(context, unitValues);
+            } else if (spOrDpOrPx.contains("dp")) {
+                int unitValues = Integer.parseInt(spOrDpOrPx.replace("dp", ""));
+                px = FormUtils.dpToPixels(context, unitValues);
+            } else if (spOrDpOrPx.contains("px")) {
+                px = Integer.parseInt(spOrDpOrPx.replace("px", ""));
+            }
+        }
+
+        return px;
     }
 }
