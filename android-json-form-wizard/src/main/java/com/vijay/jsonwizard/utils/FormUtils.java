@@ -8,6 +8,7 @@ import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.views.CustomTextView;
 
 import org.json.JSONObject;
 
@@ -36,12 +37,12 @@ public class FormUtils {
         return layoutParams;
     }
 
-    public static TextView getTextViewWith(Context context, int textSizeInSp, String text,
+    public static CustomTextView getTextViewWith(Context context, int textSizeInSp, String text,
                                            String key, String type, String openMrsEntityParent,
                                            String openMrsEntity, String openMrsEntityId,
                                            String relevance,
                                            LinearLayout.LayoutParams layoutParams, String fontPath, int bgColor) {
-        TextView textView = new TextView(context);
+        CustomTextView textView = new CustomTextView(context);
         textView.setText(text);
         textView.setTag(R.id.key, key);
         textView.setTag(R.id.type, type);
@@ -63,7 +64,7 @@ public class FormUtils {
         return textView;
     }
 
-    public static TextView getTextViewWith(Context context, int textSizeInSp, String text,
+    public static CustomTextView getTextViewWith(Context context, int textSizeInSp, String text,
                                            String key, String type, String openMrsEntityParent,
                                            String openMrsEntity, String openMrsEntityId,
                                            String relevance,

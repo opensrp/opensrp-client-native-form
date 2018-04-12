@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
@@ -350,7 +351,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         }
     }
 
-    private void toggleViewVisibility(View view, boolean visible) {
+    protected void toggleViewVisibility(View view, boolean visible) {
         try {
             JSONArray canvasViewIds = new JSONArray((String) view.getTag(R.id.canvas_ids));
             String addressString = (String) view.getTag(R.id.address);
@@ -360,13 +361,24 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             if (object.has(KEY.READ_ONLY) && object.getBoolean(KEY.READ_ONLY) && visible) {
                 enabled = false;
             }
+
             view.setEnabled(enabled);
+            if (view instanceof MaterialEditText || view instanceof RelativeLayout) {
+                view.setFocusable(enabled);
+                if (view instanceof MaterialEditText) {
+                    view.setFocusableInTouchMode(enabled);
+                }
+            }
+
             for (int i = 0; i < canvasViewIds.length(); i++) {
                 int curId = canvasViewIds.getInt(i);
                 View curCanvasView = findViewById(curId);
                 if (visible) {
                     curCanvasView.setEnabled(true);
                     curCanvasView.setVisibility(View.VISIBLE);
+                    if (curCanvasView instanceof MaterialEditText || curCanvasView instanceof RelativeLayout) {
+                        curCanvasView.setFocusable(true);
+                    }
                 } else {
                     curCanvasView.setEnabled(false);
                     curCanvasView.setVisibility(View.GONE);
@@ -645,6 +657,14 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             }
         }
         return result;
+    }
+
+    public JSONObject getmJSONObject() {
+        return mJSONObject;
+    }
+
+    public void setmJSONObject(JSONObject mJSONObject) {
+        this.mJSONObject = mJSONObject;
     }
 
     private static class KEY {

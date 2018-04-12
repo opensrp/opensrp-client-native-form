@@ -510,6 +510,27 @@
         }
       },
       {
+        "key": "enabled_label",
+        "type": "label",
+        "text": "This is enabled: <Hinted txt here>",
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": ""
+      },
+      {
+        "key": "disabled_label",
+        "type": "label",
+        "text": "This is disabled: <Hinted txt here>",
+        "read_only": true,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": ""
+      },
+      {
         "key": "label_1",
         "type": "label",
         "text": "The ZEIR ID given is unique",

@@ -17,6 +17,7 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.utils.FormUtils;
+import com.vijay.jsonwizard.views.CustomTextView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -30,10 +31,10 @@ import java.util.List;
 public class LabelFactory implements FormWidgetFactory {
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
-        String openMrsEntityParent = jsonObject.getString("openmrs_entity_parent");
-        String openMrsEntity = jsonObject.getString("openmrs_entity");
-        String openMrsEntityId = jsonObject.getString("openmrs_entity_id");
-        String relevance = jsonObject.optString("relevance");
+        String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
+        String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
+        String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
+        String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
         String text = jsonObject.getString(JsonFormConstants.TEXT);
 
         boolean hintOnText = jsonObject.optBoolean("hint_on_text", false);
@@ -78,7 +79,7 @@ public class LabelFactory implements FormWidgetFactory {
                 0,
                 bottomMarginInt);
 
-        TextView textView = com.vijay.jsonwizard.utils.FormUtils.getTextViewWith(context, 27, text, jsonObject.getString(JsonFormConstants.KEY),
+        CustomTextView textView = com.vijay.jsonwizard.utils.FormUtils.getTextViewWith(context, 27, text, jsonObject.getString(JsonFormConstants.KEY),
                 jsonObject.getString("type"), openMrsEntityParent, openMrsEntity, openMrsEntityId,
                 relevance, layoutParams, com.vijay.jsonwizard.utils.FormUtils.FONT_BOLD_PATH, bgColorInt);
         textView.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
@@ -101,24 +102,8 @@ public class LabelFactory implements FormWidgetFactory {
             textView.setTextColor(Color.parseColor(textColor));
         }
 
-        if (hintOnText) {
-            int currentStartScanIndex = 0;
-
-            SpannableString styledString = new SpannableString(text);
-            while(currentStartScanIndex > -1) {
-                currentStartScanIndex = text.indexOf("<", currentStartScanIndex);
-                if (currentStartScanIndex > -1) {
-                    int endTagIndex = text.indexOf(">", currentStartScanIndex + 1);
-
-                    if (endTagIndex > currentStartScanIndex) {
-                        styledString.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.text_hint_color)), currentStartScanIndex, endTagIndex + 1, 0);
-                    }
-                    currentStartScanIndex = endTagIndex;
-                }
-            }
-
-            textView.setText(styledString);
-        }
+        textView.setEnabled(!jsonObject.optBoolean(JsonFormConstants.READ_ONLY, false));
+        textView.setHintOnText(hintOnText);
 
         // Set the id for the view
         JSONArray canvasIds = new JSONArray();
