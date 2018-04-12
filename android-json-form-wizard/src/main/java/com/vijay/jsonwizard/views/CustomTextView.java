@@ -24,7 +24,6 @@ import com.vijay.jsonwizard.R;
 public class CustomTextView extends AppCompatTextView {
 
     private boolean hintOnText = false;
-    private int previousColor = getCurrentTextColor();
 
 
     public CustomTextView(Context context) {
@@ -43,7 +42,6 @@ public class CustomTextView extends AppCompatTextView {
 
     @Override
     public void setTextColor(@ColorInt int color) {
-        previousColor = color;
         ColorStateList colorStateList = getTextColors();
 
         int[][] states = new int[][] {
