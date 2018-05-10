@@ -13,8 +13,7 @@
         app:met_floatingLabelText=""
         app:met_floatingLabelTextSize="@dimen/default_text_size"
         app:met_primaryColor="?colorAccent"
-        app:met_singleLineEllipsis="true"
-        android:text="19-02-1986"/>
+        app:met_singleLineEllipsis="true" />
 
     <TextView
         android:id="@+id/duration"
@@ -22,7 +21,6 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/date_duration_left_margin"
         android:textSize="@dimen/default_text_size"
-        android:text="(Age: 23y)"
         android:layout_centerInParent="true"
         android:paddingBottom="15dp"
         />
