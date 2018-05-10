@@ -8,7 +8,7 @@
 
     <com.rengwuxian.materialedittext.MaterialEditText
         android:id="@+id/edit_text"
-        android:layout_width="200dp"
+        android:layout_width="@dimen/default_qr_text_size"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:textSize="@dimen/default_text_size"
