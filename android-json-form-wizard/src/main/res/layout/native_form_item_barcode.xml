@@ -8,9 +8,10 @@
 
     <com.rengwuxian.materialedittext.MaterialEditText
         android:id="@+id/edit_text"
-        android:layout_width="@dimen/default_qr_text_size"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
+        android:minWidth="@dimen/default_qr_text_size"
         android:textSize="@dimen/default_text_size"
         app:met_floatingLabel="highlight"
         app:met_floatingLabelText=""
@@ -24,8 +25,8 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:padding="@dimen/button_padding"
-        android:textSize="@dimen/button_text_size"
-        android:textColor="@android:color/white" />
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/button_text_size" />
 
 
 </LinearLayout>
