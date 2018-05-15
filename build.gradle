@@ -30,9 +30,9 @@ subprojects {
     group = 'org.smartregister'
 
     ext.androidToolsBuildGradle = '21.1.2'
-    ext.androidBuildToolsVersion = '26.0.0'
+    ext.androidBuildToolsVersion = '27.0.3'
     ext.androidMinSdkVersion = 16
-    ext.androidCompileSdkVersion = 21
+    ext.androidCompileSdkVersion = 27
     ext.androidTargetSdkVersion = 21
 
     ext.androidAnnotationsVersion = '3.0.1';
@@ -73,7 +73,7 @@ apply plugin: 'build-dashboard'
 apply plugin: 'io.codearte.nexus-staging'
 
 buildDashboard {
-    reports.html.destination = "build/"
+    reports.html.setDestination(file("build/"))
 }
 
 test.reports.html.enabled = false
