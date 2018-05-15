@@ -66,7 +66,8 @@ public class ImagePickerFactory implements FormWidgetFactory {
         }
 
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        imageView.setLayoutParams(com.vijay.jsonwizard.utils.FormUtils.getLayoutParams(com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT, com.vijay.jsonwizard.utils.FormUtils.dpToPixels(context, 200), 0, 0, 0, (int) context
+        int imageHeight = com.vijay.jsonwizard.utils.FormUtils.dpToPixels(context, context.getResources().getBoolean(R.bool.isTablet) ? 200 : 100);
+        imageView.setLayoutParams(com.vijay.jsonwizard.utils.FormUtils.getLayoutParams(com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT, imageHeight, 0, 0, 0, (int) context
                 .getResources().getDimension(R.dimen.default_bottom_margin)));
         String imagePath = jsonObject.optString(JsonFormConstants.VALUE);
         Button uploadButton = new Button(context);

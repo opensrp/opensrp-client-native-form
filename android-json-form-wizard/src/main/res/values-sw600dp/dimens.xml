@@ -17,6 +17,9 @@
     <dimen name="right_left_spinner_padding">25dp</dimen>
     <dimen name="spinner_error_left_margin">25dp</dimen>
     <dimen name="button_height">60dp</dimen>
-
     <dimen name="section_header_text_size">32sp</dimen>
+    <dimen name="default_qr_text_size">200dp</dimen>
+    <dimen name="date_duration_left_margin">180dp</dimen>
+    <dimen name="date_duration_bottom_padding">35dp</dimen>
+    <dimen name="default_spinner_arrow_size">16dp</dimen>
 </resources>
