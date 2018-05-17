@@ -59,6 +59,7 @@ tasks.withType(Test) {
 
 repositories {
     maven { url "https://clojars.org/repo/" }
+    google()
 }
 
 dependencies {
