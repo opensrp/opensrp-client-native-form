@@ -1,9 +1,10 @@
 buildscript {
     repositories {
         jcenter()
+        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.3'
+        classpath 'com.android.tools.build:gradle:3.1.2'
     }
 }
 
@@ -15,8 +16,8 @@ repositories {
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion "26.0.1"
+    compileSdkVersion 27
+    buildToolsVersion "27.0.3"
 
     defaultConfig {
         applicationId "org.smartregister.nativeform"
@@ -38,12 +39,12 @@ android {
 
 dependencies {
 
-    compile project(':android-json-form-wizard')
+    implementation project(':android-json-form-wizard')
 
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    testCompile 'junit:junit:4.12'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    testImplementation 'junit:junit:4.12'
 
-    compile ('com.android.support:design:22.2.1'){
+    implementation ('com.android.support:design:22.2.1'){
         exclude group: 'com.android.support', module: 'recyclerview-v7'
 
     }
