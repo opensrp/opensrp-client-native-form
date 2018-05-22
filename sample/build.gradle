@@ -5,12 +5,15 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.2'
+        classpath 'org.apache.commons:commons-lang3:3.3.2'
+        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1'
     }
 }
 
 repositories {
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     mavenLocal()
+    google()
 }
 
 apply plugin: 'com.android.application'
@@ -22,7 +25,7 @@ android {
     defaultConfig {
         applicationId "org.smartregister.nativeform"
         minSdkVersion 14
-        targetSdkVersion 21
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
     }
@@ -44,7 +47,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation 'junit:junit:4.12'
 
-    implementation ('com.android.support:design:22.2.1'){
+    implementation ('com.android.support:design:27.1.1'){
         exclude group: 'com.android.support', module: 'recyclerview-v7'
 
     }
