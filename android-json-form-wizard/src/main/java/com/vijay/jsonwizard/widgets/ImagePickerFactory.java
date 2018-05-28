@@ -44,7 +44,7 @@ public class ImagePickerFactory implements FormWidgetFactory {
         ImageView imageView = new ImageView(context);
         imageView.setId(ViewUtil.generateViewId());
         canvasIds.put(imageView.getId());
-        imageView.setImageDrawable(context.getResources().getDrawable(R.mipmap.grey_bg));
+        imageView.setImageDrawable(context.getResources().getDrawable(R.mipmap.add_photo_background));
         imageView.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
         imageView.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
         imageView.setTag(R.id.openmrs_entity, openMrsEntity);
@@ -83,6 +83,7 @@ public class ImagePickerFactory implements FormWidgetFactory {
         }
 
         ((JsonApi) context).addFormDataView(imageView);
+        imageView.setOnClickListener(listener);
         views.add(imageView);
 
         uploadButton.setText(jsonObject.getString("uploadButtonText"));
