@@ -103,6 +103,11 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
     public Toolbar getToolbar() {
         return mToolbar;
     }
