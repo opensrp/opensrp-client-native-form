@@ -1,5 +1,6 @@
 package com.vijay.jsonwizard.presenters;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -29,6 +30,7 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 import com.vijay.jsonwizard.mvp.MvpBasePresenter;
 import com.vijay.jsonwizard.utils.ImageUtils;
+import com.vijay.jsonwizard.utils.PermissionUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 import com.vijay.jsonwizard.viewstates.JsonFormFragmentViewState;
@@ -60,6 +62,8 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
     private String mCurrentPhotoPath;
     private JsonFormInteractor mJsonFormInteractor;
     private final JsonFormFragment formFragment;
+    String key;
+    String type;
 
     public JsonFormFragmentPresenter(JsonFormFragment formFragment) {
         this.formFragment = formFragment;
@@ -233,44 +237,77 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         }
     }
 
-    public void onClick(View v) {
-        String key = (String) v.getTag(R.id.key);
-        String type = (String) v.getTag(R.id.type);
-        if (JsonFormConstants.CHOOSE_IMAGE.equals(type)) {
-            getView().hideKeyBoard();
-            mCurrentKey = key;
-            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            if (takePictureIntent.resolveActivity(getView().getContext().getPackageManager()) != null) {
-                File imageFile = null;
-                try {
-                    imageFile = createImageFile();
-                } catch (IOException e) {
-                    Log.e(TAG, Log.getStackTraceString(e));
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        Log.d(TAG, "Permission callback called-------");
+
+        if (grantResults.length == 0) {
+            return;
+        }
+
+        switch (requestCode) {
+            case PermissionUtils.CAMERA_PERMISSION_REQUEST_CODE:
+                if (PermissionUtils.verifyPermissionGranted(permissions, grantResults, Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    dispatchTakePictureIntent(key, type);
                 }
+                break;
 
-                if (imageFile != null) {
-                    Uri photoURI = FileProvider.getUriForFile(getView().getContext(),
-                            "com.vijay.jsonwizard.fileprovider",
-                            imageFile);
+            case PermissionUtils.PHONE_STATE_PERMISSION_REQUEST_CODE:
+                if (PermissionUtils.verifyPermissionGranted(permissions, grantResults, Manifest.permission.READ_PHONE_STATE)) {
+                    //TODO Find out functionality which uses Read Phone State permission
+                }
+                break;
+            default:
+                break;
 
-                    // Grant permission to the default camera app
-                    PackageManager packageManager = getView().getContext().getPackageManager();
-                    Context applicationContext = getView().getContext().getApplicationContext();
+        }
+    }
 
-                    applicationContext.grantUriPermission(
-                            takePictureIntent.resolveActivity(packageManager).getPackageName(),
-                            photoURI,
-                            Intent.FLAG_GRANT_READ_URI_PERMISSION
-                                    | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+    public void onClick(View v) {
+        key = (String) v.getTag(R.id.key);
+        type = (String) v.getTag(R.id.type);
+        dispatchTakePictureIntent(key, type);
+    }
 
-                    applicationContext.grantUriPermission(
-                            "com.vijay.jsonwizard",
-                            photoURI,
-                            Intent.FLAG_GRANT_READ_URI_PERMISSION
-                                    | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+    private void dispatchTakePictureIntent(String key, String type) {
+        if (PermissionUtils.isPermissionGranted(formFragment, new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PermissionUtils.CAMERA_PERMISSION_REQUEST_CODE)) {
 
-                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                    getView().startActivityForResult(takePictureIntent, RESULT_LOAD_IMG);
+            if (JsonFormConstants.CHOOSE_IMAGE.equals(type)) {
+                getView().hideKeyBoard();
+                mCurrentKey = key;
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (takePictureIntent.resolveActivity(getView().getContext().getPackageManager()) != null) {
+                    File imageFile = null;
+                    try {
+                        imageFile = createImageFile();
+                    } catch (IOException e) {
+                        Log.e(TAG, Log.getStackTraceString(e));
+                    }
+
+                    if (imageFile != null) {
+                        Uri photoURI = FileProvider.getUriForFile(getView().getContext(),
+                                getView().getContext().getPackageName() + ".fileprovider",
+                                imageFile);
+
+                        // Grant permission to the default camera app
+                        PackageManager packageManager = getView().getContext().getPackageManager();
+                        Context applicationContext = getView().getContext().getApplicationContext();
+
+                        applicationContext.grantUriPermission(
+                                takePictureIntent.resolveActivity(packageManager).getPackageName(),
+                                photoURI,
+                                Intent.FLAG_GRANT_READ_URI_PERMISSION
+                                        | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+                        applicationContext.grantUriPermission(
+                                "com.vijay.jsonwizard",
+                                photoURI,
+                                Intent.FLAG_GRANT_READ_URI_PERMISSION
+                                        | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                        getView().startActivityForResult(takePictureIntent, RESULT_LOAD_IMG);
+                    }
                 }
             }
         }

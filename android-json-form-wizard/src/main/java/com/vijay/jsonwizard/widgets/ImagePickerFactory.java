@@ -44,7 +44,7 @@ public class ImagePickerFactory implements FormWidgetFactory {
         ImageView imageView = new ImageView(context);
         imageView.setId(ViewUtil.generateViewId());
         canvasIds.put(imageView.getId());
-        imageView.setImageDrawable(context.getResources().getDrawable(R.mipmap.grey_bg));
+        imageView.setImageDrawable(context.getResources().getDrawable(R.mipmap.add_photo_background));
         imageView.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
         imageView.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
         imageView.setTag(R.id.openmrs_entity, openMrsEntity);
@@ -66,7 +66,8 @@ public class ImagePickerFactory implements FormWidgetFactory {
         }
 
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        imageView.setLayoutParams(com.vijay.jsonwizard.utils.FormUtils.getLayoutParams(com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT, com.vijay.jsonwizard.utils.FormUtils.dpToPixels(context, 200), 0, 0, 0, (int) context
+        int imageHeight = com.vijay.jsonwizard.utils.FormUtils.dpToPixels(context, context.getResources().getBoolean(R.bool.isTablet) ? 200 : 100);
+        imageView.setLayoutParams(com.vijay.jsonwizard.utils.FormUtils.getLayoutParams(com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT, imageHeight, 0, 0, 0, (int) context
                 .getResources().getDimension(R.dimen.default_bottom_margin)));
         String imagePath = jsonObject.optString(JsonFormConstants.VALUE);
         Button uploadButton = new Button(context);
@@ -82,6 +83,7 @@ public class ImagePickerFactory implements FormWidgetFactory {
         }
 
         ((JsonApi) context).addFormDataView(imageView);
+        imageView.setOnClickListener(listener);
         views.add(imageView);
 
         uploadButton.setText(jsonObject.getString("uploadButtonText"));

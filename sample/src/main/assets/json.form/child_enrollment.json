@@ -500,6 +500,105 @@
           "MSU": "1067AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
           "CNE": "664AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
         }
+      },
+      {
+        "key": "label_3",
+        "type": "label",
+        "text": "This is hinted text: <Enter name to show this>",
+        "text_color": "#000000",
+        "hint_on_text": true,
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:Date_Birth": {
+            "type": "string",
+            "ex": "notEqualTo(.,\"\")"
+          }
+        }
+      },
+      {
+        "key": "enabled_label",
+        "type": "label",
+        "text": "This is enabled: <Hinted txt here>",
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": ""
+      },
+      {
+        "key": "divider1",
+        "type": "h_line",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": ""
+      },
+      {
+        "key": "disabled_label",
+        "type": "label",
+        "text": "This is disabled: <Hinted txt here>",
+        "read_only": true,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": ""
+      },
+      {
+        "key": "label_1",
+        "type": "label",
+        "text": "The ZEIR ID given is unique",
+        "has_bg": true,
+        "top_padding": "10dp",
+        "left_padding": "20dp",
+        "right_padding": "20dp",
+        "text_size": "14sp",
+        "text_color": "#000000",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": ""
+      },
+      {
+        "key": "label_2",
+        "type": "label",
+        "text": "*Terms and conditions apply",
+        "has_bg": true,
+        "text_size": "12sp",
+        "text_color": "#737373",
+        "left_padding": "20dp",
+        "right_padding": "20dp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": ""
+      },
+      {
+        "key": "label_1",
+        "type": "label",
+        "text": "The child's register card number should also be unique",
+        "has_bg": true,
+        "left_padding": "20dp",
+        "right_padding": "20dp",
+        "text_size": "14sp",
+        "text_color": "#000000",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": ""
+      },
+      {
+        "key": "label_2",
+        "type": "label",
+        "text": "The format for this might differ based on country",
+        "has_bg": true,
+        "text_size": "12sp",
+        "text_color": "#737373",
+        "bottom_padding": "20dp",
+        "bottom_margin": "20dp",
+        "left_padding": "20dp",
+        "right_padding": "20dp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": ""
       }
     ]
   }

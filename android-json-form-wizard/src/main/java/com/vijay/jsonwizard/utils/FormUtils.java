@@ -1,13 +1,15 @@
 package com.vijay.jsonwizard.utils;
 
 import android.content.Context;
+import android.text.TextUtils;
+import android.util.TypedValue;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.views.CustomTextView;
 
 import org.json.JSONObject;
 
@@ -36,12 +38,12 @@ public class FormUtils {
         return layoutParams;
     }
 
-    public static TextView getTextViewWith(Context context, int textSizeInSp, String text,
+    public static CustomTextView getTextViewWith(Context context, int textSizeInSp, String text,
                                            String key, String type, String openMrsEntityParent,
                                            String openMrsEntity, String openMrsEntityId,
                                            String relevance,
-                                           LinearLayout.LayoutParams layoutParams, String fontPath) {
-        TextView textView = new TextView(context);
+                                           LinearLayout.LayoutParams layoutParams, String fontPath, int bgColor) {
+        CustomTextView textView = new CustomTextView(context);
         textView.setText(text);
         textView.setTag(R.id.key, key);
         textView.setTag(R.id.type, type);
@@ -51,11 +53,24 @@ public class FormUtils {
         textView.setId(ViewUtil.generateViewId());
         textView.setTextSize(textSizeInSp);
         textView.setLayoutParams(layoutParams);
+
+        if (bgColor != 0) {
+            textView.setBackgroundColor(bgColor);
+        }
+
         if (relevance != null && context instanceof JsonApi) {
             textView.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(textView);
         }
         return textView;
+    }
+
+    public static CustomTextView getTextViewWith(Context context, int textSizeInSp, String text,
+                                           String key, String type, String openMrsEntityParent,
+                                           String openMrsEntity, String openMrsEntityId,
+                                           String relevance,
+                                           LinearLayout.LayoutParams layoutParams, String fontPath) {
+        return getTextViewWith(context, textSizeInSp, text, key, type, openMrsEntityParent, openMrsEntity, openMrsEntityId, relevance, layoutParams, fontPath, 0);
     }
 
     public static int dpToPixels(Context context, float dps) {
@@ -159,5 +174,26 @@ public class FormUtils {
                 simSerial.put(JsonFormConstants.VALUE, value);
             }
         }
+    }
+
+    public static int spToPx(Context context, float sp) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, context.getResources().getDisplayMetrics());
+    }
+
+    public static int getValueFromSpOrDpOrPx(String spOrDpOrPx, Context context) {
+        int px = 0;
+        if (!TextUtils.isEmpty(spOrDpOrPx)) {
+            if (spOrDpOrPx.contains("sp")) {
+                int unitValues = Integer.parseInt(spOrDpOrPx.replace("sp", ""));
+                px = spToPx(context, unitValues);
+            } else if (spOrDpOrPx.contains("dp")) {
+                int unitValues = Integer.parseInt(spOrDpOrPx.replace("dp", ""));
+                px = FormUtils.dpToPixels(context, unitValues);
+            } else if (spOrDpOrPx.contains("px")) {
+                px = Integer.parseInt(spOrDpOrPx.replace("px", ""));
+            }
+        }
+
+        return px;
     }
 }
