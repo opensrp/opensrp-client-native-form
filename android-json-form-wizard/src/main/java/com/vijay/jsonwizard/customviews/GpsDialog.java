@@ -30,7 +30,6 @@ public class GpsDialog extends Dialog implements LocationListener, GoogleApiClie
     private TextView dialogAccuracyTV;
     private final Context context;
     private GoogleApiClient googleApiClient;
-    private Button okButton;
     private Location lastLocation;
 
     public GpsDialog(Context context, View dataView, TextView latitudeTV, TextView longitudeTV, TextView altitudeTV, TextView accuracyTV) {
@@ -55,7 +54,7 @@ public class GpsDialog extends Dialog implements LocationListener, GoogleApiClie
                 disconnectGoogleApiClient();
             }
         });
-        okButton = (Button) this.findViewById(R.id.ok_button);
+        Button okButton = (Button) this.findViewById(R.id.ok_button);
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
