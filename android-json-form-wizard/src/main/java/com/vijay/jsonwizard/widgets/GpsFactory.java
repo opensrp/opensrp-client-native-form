@@ -23,7 +23,6 @@ import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +44,6 @@ public class GpsFactory implements FormWidgetFactory {
         String openMrsEntity = jsonObject.getString("openmrs_entity");
         String openMrsEntityId = jsonObject.getString("openmrs_entity_id");
         String relevance = jsonObject.optString("relevance");
-        final String constraints = jsonObject.optString("constraints");
 
         LinearLayout rootLayout = (LinearLayout) LayoutInflater.from(context)
                 .inflate(R.layout.item_gps, null);

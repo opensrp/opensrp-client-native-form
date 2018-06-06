@@ -30,7 +30,7 @@ public class GpsDialog extends Dialog implements LocationListener, GoogleApiClie
     private TextView dialogAccuracyTV;
     private final Context context;
     private GoogleApiClient googleApiClient;
-    private Button okButton, cancelButton;
+    private Button okButton;
     private Location lastLocation;
 
     public GpsDialog(Context context, View dataView, TextView latitudeTV, TextView longitudeTV, TextView altitudeTV, TextView accuracyTV) {
@@ -62,7 +62,7 @@ public class GpsDialog extends Dialog implements LocationListener, GoogleApiClie
                 saveAndDismiss();
             }
         });
-        cancelButton = (Button) this.findViewById(R.id.cancel_button);
+        Button cancelButton = (Button) this.findViewById(R.id.cancel_button);
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -129,7 +129,7 @@ public class GpsDialog extends Dialog implements LocationListener, GoogleApiClie
 
     @Override
     public void onConnectionSuspended(int i) {
-
+        // Do nothing when the connection is suspended - This is bad and probably needs a review
     }
 
     @Override
