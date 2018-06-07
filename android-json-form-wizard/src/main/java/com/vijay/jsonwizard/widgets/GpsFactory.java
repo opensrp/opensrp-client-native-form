@@ -150,10 +150,6 @@ public class GpsFactory implements FormWidgetFactory {
             }
         }
 
-        setCoordinates(context, dataView, latitudeTv, longitudeTv, altitudeTv, accuracyTv, latitude, longitude, altitude, accuracy);
-    }
-
-    private void setCoordinates(Context context, View dataView, TextView latitudeTv, TextView longitudeTv, TextView altitudeTv, TextView accuracyTv, String latitude, String longitude, String altitude, String accuracy) {
         latitudeTv.setText(String.format(context.getString(R.string.latitude), latitude));
         longitudeTv.setText(String.format(context.getString(R.string.longitude), longitude));
         altitudeTv.setText(String.format(context.getString(R.string.altitude), altitude));
@@ -161,8 +157,6 @@ public class GpsFactory implements FormWidgetFactory {
 
         dataView.setTag(R.id.raw_value, constructString(latitude, longitude));
     }
-
-
 
     public static String constructString(Location location) {
         if (location != null) {
