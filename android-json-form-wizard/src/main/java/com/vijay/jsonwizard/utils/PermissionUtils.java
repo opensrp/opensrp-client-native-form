@@ -1,6 +1,8 @@
 package com.vijay.jsonwizard.utils;
 
+import android.app.Activity;
 import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 
@@ -13,12 +15,22 @@ public class PermissionUtils {
 
     public static final int CAMERA_PERMISSION_REQUEST_CODE = 15141;
     public static final int PHONE_STATE_PERMISSION_REQUEST_CODE = 14151;
+    public static final int FINE_LOCATION_PERMISSION_REQUEST_CODE = 15142;
 
 
     public static boolean isPermissionGranted(Fragment fragment, String permission, int requestCode) {
         if (ContextCompat.checkSelfPermission(fragment.getActivity(), permission) != PackageManager.PERMISSION_GRANTED) {
             // No explanation needed; request the permission
             fragment.requestPermissions(new String[]{permission}, requestCode);
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public static boolean isPermissionGranted(Activity activity, String permission, int requestCode) {
+        if (ContextCompat.checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity, new String[]{permission}, requestCode);
             return false;
         } else {
             return true;

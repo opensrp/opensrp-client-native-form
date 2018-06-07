@@ -12,6 +12,7 @@ import com.vijay.jsonwizard.widgets.ButtonFactory;
 import com.vijay.jsonwizard.widgets.CheckBoxFactory;
 import com.vijay.jsonwizard.widgets.DatePickerFactory;
 import com.vijay.jsonwizard.widgets.EditTextFactory;
+import com.vijay.jsonwizard.widgets.GpsFactory;
 import com.vijay.jsonwizard.widgets.HorizontalLineFactory;
 import com.vijay.jsonwizard.widgets.ImagePickerFactory;
 import com.vijay.jsonwizard.widgets.LabelFactory;
@@ -54,6 +55,7 @@ public class JsonFormInteractor {
         map.put(JsonFormConstants.TREE, new TreeViewFactory());
         map.put(JsonFormConstants.BARCODE, new BarcodeFactory());
         map.put(JsonFormConstants.BUTTON, new ButtonFactory());
+        map.put(JsonFormConstants.GPS, new GpsFactory());
         map.put(JsonFormConstants.HORIZONTAL_LINE, new HorizontalLineFactory());
     }
 
@@ -129,7 +131,7 @@ public class JsonFormInteractor {
                             String type, JSONObject jsonObject, CommonListener listener) {
 
         try {
-            List<View> views = map.get(type).getViewsFromJson(stepName, formFragment.getContext(), formFragment, jsonObject, listener);
+            List<View> views = map.get(type).getViewsFromJson(stepName, formFragment.getActivity(), formFragment, jsonObject, listener);
             if (views.size() > 0) {
                 viewsFromJson.addAll(views);
             }

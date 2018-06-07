@@ -28,6 +28,7 @@ import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.CheckBox;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.interfaces.OnActivityRequestPermissionResultListener;
 import com.vijay.jsonwizard.interfaces.OnActivityResultListener;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.PropertyManager;
@@ -59,6 +60,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     private String functionRegex;
     private HashMap<String, Comparison> comparisons;
     private HashMap<Integer, OnActivityResultListener> onActivityResultListeners;
+    private HashMap<Integer, OnActivityRequestPermissionResultListener> onActivityRequestPermissionResultListeners;
 
     public void init(String json) {
         try {
@@ -80,6 +82,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         setSupportActionBar(mToolbar);
         skipLogicViews = new HashMap<>();
         onActivityResultListeners = new HashMap<>();
+        onActivityRequestPermissionResultListeners = new HashMap<>();
         if (savedInstanceState == null) {
             init(getIntent().getStringExtra("json"));
             initializeFormFragment();
@@ -105,7 +108,11 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (onActivityRequestPermissionResultListeners.containsKey(requestCode)) {
+            onActivityRequestPermissionResultListeners.get(requestCode).onRequestPermissionResult(requestCode, permissions, grantResults);
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     public Toolbar getToolbar() {
@@ -424,6 +431,16 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     public void addOnActivityResultListener(final Integer requestCode,
                                             OnActivityResultListener onActivityResultListener) {
         onActivityResultListeners.put(requestCode, onActivityResultListener);
+    }
+
+    @Override
+    public void addOnActivityRequestPermissionResultListener(Integer requestCode, OnActivityRequestPermissionResultListener onActivityRequestPermissionResultListener) {
+        onActivityRequestPermissionResultListeners.put(requestCode, onActivityRequestPermissionResultListener);
+    }
+
+    @Override
+    public void removeOnActivityRequestPermissionResultListener(Integer requestCode) {
+        onActivityRequestPermissionResultListeners.remove(requestCode);
     }
 
     @Override

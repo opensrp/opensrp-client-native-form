@@ -55,5 +55,9 @@ public interface JsonApi {
 
     void addOnActivityResultListener(Integer requestCode, OnActivityResultListener onActivityResultListener);
 
+    void addOnActivityRequestPermissionResultListener(Integer requestCode, OnActivityRequestPermissionResultListener onActivityRequestPermissionResultListener);
+
+    void removeOnActivityRequestPermissionResultListener(Integer requestCode);
+
     void resetFocus();
 }

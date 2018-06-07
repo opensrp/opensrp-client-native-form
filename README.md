@@ -136,6 +136,14 @@ This form has been generated from the `JSON Form` below: [Click here to Skip](#u
         "uploadButtonText": "Take a photo of the child"
       },
       {
+        "key": "gps",
+        "openmrs_entity_parent": "usual_residence",
+        "openmrs_entity": "person_address",
+        "openmrs_entity_id": "geopoint",
+        "openmrs_data_type": "text",
+        "type": "gps"
+      },
+      {
         "key": "Home_Facility",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -840,4 +848,5 @@ The field reference/identifier uses the field's `key` attribute
  TreeView | `tree` | A stepped Selection View/Widget for nested selections eg. `Happy Kids Clinic` can be found in **Zambia Ministry of Health > Northern Highlands > Fort Jameson**. They all have to be expanded to get to it
  Barcode | `barcode` | A text input field with a **SCAN QR CODE** button. It enables one to scan QR code and prints the scan result in the text input field
  Date Picker | `date_picker` | This is a date picker view
+ GPS Location Picker | `gps` | This retrieves the current user location from the GPS. The value is retrievable as a `latitude longitude`(LatLng Combination separated by a space) 
 

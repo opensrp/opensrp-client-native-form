@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -19,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
+import com.rey.material.widget.Button;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.CheckBox;
@@ -33,6 +35,7 @@ import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 import com.vijay.jsonwizard.viewstates.JsonFormFragmentViewState;
 import com.vijay.jsonwizard.widgets.EditTextFactory;
+import com.vijay.jsonwizard.widgets.GpsFactory;
 import com.vijay.jsonwizard.widgets.ImagePickerFactory;
 import com.vijay.jsonwizard.widgets.SpinnerFactory;
 
@@ -159,6 +162,10 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                     getView().writeValue(mStepName, parentKey, childKey, openMrsEntityParent,
                             openMrsEntity, openMrsEntityId);
                 }
+            } else if (childAt instanceof Button) {
+                Button button = (Button) childAt;
+                String rawValue = (String) button.getTag(R.id.raw_value);
+                getView().writeValue(mStepName, key, rawValue, openMrsEntityParent, openMrsEntity, openMrsEntityId);
             }
         }
 
@@ -183,6 +190,15 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             if (!validationStatus.isValid()) {
                 if (requestFocus) validationStatus.requestAttention();
                 return validationStatus;
+            }
+        } else if (childAt instanceof Button) {
+            String type = (String) childAt.getTag(R.id.type);
+            if (!TextUtils.isEmpty(type) && type.equals(JsonFormConstants.GPS)) {
+                ValidationStatus validationStatus = GpsFactory.validate(formFragmentView, (Button) childAt);
+                if (!validationStatus.isValid()) {
+                    if (requestFocus) validationStatus.requestAttention();
+                    return validationStatus;
+                }
             }
         } else if (childAt instanceof MaterialSpinner) {
             MaterialSpinner spinner = (MaterialSpinner) childAt;
