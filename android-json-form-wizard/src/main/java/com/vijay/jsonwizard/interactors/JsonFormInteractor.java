@@ -131,7 +131,7 @@ public class JsonFormInteractor {
                             String type, JSONObject jsonObject, CommonListener listener) {
 
         try {
-            List<View> views = map.get(type).getViewsFromJson(stepName, formFragment.getContext(), formFragment, jsonObject, listener);
+            List<View> views = map.get(type).getViewsFromJson(stepName, formFragment.getActivity(), formFragment, jsonObject, listener);
             if (views.size() > 0) {
                 viewsFromJson.addAll(views);
             }

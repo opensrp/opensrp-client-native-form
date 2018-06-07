@@ -1,8 +1,13 @@
 package com.vijay.jsonwizard.widgets;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +23,8 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.interfaces.OnActivityRequestPermissionResultListener;
+import com.vijay.jsonwizard.utils.PermissionUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
@@ -34,8 +41,11 @@ import java.util.List;
  */
 
 public class GpsFactory implements FormWidgetFactory {
+
+    private GpsDialog gpsDialog;
+
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context,
+    public List<View> getViewsFromJson(String stepName, final Context context,
                                        JsonFormFragment formFragment, JSONObject jsonObject,
                                        CommonListener listener) throws Exception {
         List<View> views = new ArrayList<>();
@@ -90,12 +100,12 @@ public class GpsFactory implements FormWidgetFactory {
         //setCoordinates(context, latitudeTV, longitudeTV, altitudeTV, accuracyTV, "", "", "", "");
         attachJSON(context, jsonObject, recordButton, latitudeTV, longitudeTV, altitudeTV, accuracyTV);
 
-        final GpsDialog gpsDialog = new GpsDialog(context, recordButton, latitudeTV, longitudeTV, altitudeTV, accuracyTV);
+        gpsDialog = new GpsDialog(context, recordButton, latitudeTV, longitudeTV, altitudeTV, accuracyTV);
 
         recordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                gpsDialog.show();
+                requestPermissionsForLocation(context);
             }
         });
 
@@ -164,5 +174,36 @@ public class GpsFactory implements FormWidgetFactory {
 
     public static String constructString(String latitude, String longitude) {
         return latitude + " " + longitude;
+    }
+
+    private void requestPermissionsForLocation(Context context) {
+        if (context instanceof Activity) {
+            Activity activity = (Activity) context;
+
+            if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // Register the RequestPermissionResult listener
+                if (activity instanceof JsonApi) {
+                    final JsonApi jsonApi = (JsonApi) activity;
+                    jsonApi.addOnActivityRequestPermissionResultListener(PermissionUtils.FINE_LOCATION_PERMISSION_REQUEST_CODE, new OnActivityRequestPermissionResultListener() {
+                        @Override
+                        public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) {
+                            if (PermissionUtils.verifyPermissionGranted(permissions, grantResults, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                                showGpsDialog();
+                            } else {
+                                jsonApi.removeOnActivityRequestPermissionResultListener(PermissionUtils.FINE_LOCATION_PERMISSION_REQUEST_CODE);
+                            }
+                        }
+                    });
+                }
+
+                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PermissionUtils.FINE_LOCATION_PERMISSION_REQUEST_CODE);
+            } else {
+                showGpsDialog();
+            }
+        }
+    }
+
+    private void showGpsDialog() {
+        gpsDialog.show();
     }
 }
