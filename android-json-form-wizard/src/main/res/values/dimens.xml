@@ -4,7 +4,7 @@
     <dimen name="default_right_margin">24dp</dimen>
     <integer name="navigationAnimTime">300</integer>
 
-    <dimen name="default_text_size">20dp</dimen>
+    <dimen name="default_text_size">20sp</dimen>
     <dimen name="button_text_size">16sp</dimen>
     <dimen name="button_padding">7dp</dimen>
     <dimen name="label_text_size">18dp</dimen>
@@ -22,5 +22,8 @@
     <dimen name="date_duration_left_margin">130dp</dimen>
     <dimen name="date_duration_bottom_padding">15dp</dimen>
     <dimen name="default_spinner_arrow_size">12dp</dimen>
+    <dimen name="default_checkbox_size">18dp</dimen>
+    <dimen name="default_checkbox_height">26dp</dimen>
+    <dimen name="default_checkbox_width">26dp</dimen>
 
 </resources>
