@@ -502,13 +502,12 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 JSONArray options = object.getJSONArray("options");
                 for (int j = 0; j < options.length(); j++) {
                     if (options.getJSONObject(j).getString(JsonFormConstants.VALUE).equalsIgnoreCase("true")) {
-                        resultArray.put(options.getJSONObject(j).getString(KEY.KEY));
+                        resultArray.put(options.getJSONObject(j).getString(JsonFormConstants.VALUE));
                     }
                 }
 
-                if (resultArray.length() > 0) {
-                    result = resultArray.toString();
-                }
+                result = resultArray.length() > 0 ? resultArray.get(0).toString() : "false";
+
             } else {
                 result = object.optString(JsonFormConstants.VALUE);
             }
