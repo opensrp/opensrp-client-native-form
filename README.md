@@ -806,8 +806,34 @@ Skip Logic is defined using the `"relevance"` value
           }
         }
 ```
-
 The field above will only be shown if the value for field whose key is `Place_Birth`, which is the **Patient's Place of Birth (Location)**, is equals to `"Health Facility"`
+
+```
+      {
+        "key": "isDateOfBirthUnknown",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "check_box",
+        "label": "",
+        "options": [
+          {
+            "key": "isDateOfBirthUnknown",
+            "text": "DOB unknown?",
+            "value": "false"
+          }
+        ]
+      }
+```
+```
+        "relevance": {
+          "step1:isDateOfBirthUnknown": {
+            "type": "string",
+            "ex": "equalTo(., \"true\")"
+          }
+        }
+```
+The above is an example showing an example with a checkbox field
 
 The following are the available comparators:
    * Equal To - `equalTo`
