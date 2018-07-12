@@ -19,9 +19,9 @@
     </style>
 
     <style name="CheckBoxStyle" parent="Material.Drawable.CheckBox">
-        <item name="cbd_width">36dp</item>
-        <item name="cbd_height">36dp</item>
-        <item name="cbd_boxSize">28dp</item>
+        <item name="cbd_width">@dimen/default_checkbox_width</item>
+        <item name="cbd_height">@dimen/default_checkbox_height</item>
+        <item name="cbd_boxSize">@dimen/default_checkbox_size</item>
     </style>
 
     <style name="AppThemeAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
