@@ -25,5 +25,6 @@
     <dimen name="default_checkbox_size">18dp</dimen>
     <dimen name="default_checkbox_height">26dp</dimen>
     <dimen name="default_checkbox_width">26dp</dimen>
+    <dimen name="radio_button_icon_text_padding">30dp</dimen>
 
 </resources>

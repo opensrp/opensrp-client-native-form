@@ -340,13 +340,16 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             getView().writeValue(mStepName, parentKey, JsonFormConstants.OPTIONS_FIELD_NAME, childKey,
                     String.valueOf(((CheckBox) compoundButton).isChecked()), openMrsEntityParent,
                     openMrsEntity, openMrsEntityId);
-        } else if (compoundButton instanceof RadioButton && isChecked) {
+        } else if ((compoundButton instanceof android.widget.RadioButton ||
+                compoundButton instanceof RadioButton) && isChecked) {
             String parentKey = (String) compoundButton.getTag(R.id.key);
             String openMrsEntityParent = (String) compoundButton.getTag(R.id.openmrs_entity_parent);
             String openMrsEntity = (String) compoundButton.getTag(R.id.openmrs_entity);
             String openMrsEntityId = (String) compoundButton.getTag(R.id.openmrs_entity_id);
             String childKey = (String) compoundButton.getTag(R.id.childKey);
-            getView().unCheckAllExcept(parentKey, childKey);
+            if (compoundButton instanceof RadioButton) {
+                getView().unCheckAllExcept(parentKey, childKey);
+            }
             getView().writeValue(mStepName, parentKey, childKey, openMrsEntityParent,
                     openMrsEntity, openMrsEntityId);
         }
