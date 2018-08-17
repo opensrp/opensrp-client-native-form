@@ -26,9 +26,9 @@ import java.util.List;
 public class LabelFactory implements FormWidgetFactory {
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
-        String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
-        String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
-        String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
+        String openMrsEntityParent = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
+        String openMrsEntity = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY);
+        String openMrsEntityId = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_ID);
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
         String text = jsonObject.getString(JsonFormConstants.TEXT);
 
@@ -39,7 +39,7 @@ public class LabelFactory implements FormWidgetFactory {
         String textColor = jsonObject.optString("text_color", null);
 
         String bgColor = null;
-        String topMargin = null;
+        String topMargin = jsonObject.optString("top_margin", "0dp");
         String bottomMargin = null;
         String topPadding = null;
         String bottomPadding = null;
@@ -47,7 +47,6 @@ public class LabelFactory implements FormWidgetFactory {
         String rightPadding = null;
         if (hasBg) {
             bgColor = jsonObject.optString("bg_color", "#F3F3F3");
-            topMargin = jsonObject.optString("top_margin", "0dp");
             bottomMargin = jsonObject.optString("bottom_margin", "0dp");
 
             topPadding = jsonObject.optString("top_padding", "5dp");
@@ -59,10 +58,9 @@ public class LabelFactory implements FormWidgetFactory {
         List<View> views = new ArrayList<>(1);
 
         int bgColorInt = 0;
-        int topMarginInt = 0;
+        int topMarginInt = FormUtils.getValueFromSpOrDpOrPx(topMargin, context);
         int bottomMarginInt = (int) context.getResources().getDimension(R.dimen.default_bottom_margin);
         if (hasBg) {
-            topMarginInt = FormUtils.getValueFromSpOrDpOrPx(topMargin, context);
             bottomMarginInt = FormUtils.getValueFromSpOrDpOrPx(bottomMargin, context);
             bgColorInt = Color.parseColor(bgColor);
         }
