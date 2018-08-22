@@ -57,7 +57,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
     private static final String TAG = "FormFragmentPresenter";
     private static final int RESULT_LOAD_IMG = 1;
     private String mStepName;
-    private JSONObject mStepDetails;
+    protected JSONObject mStepDetails;
     private String mCurrentKey;
     private String mCurrentPhotoPath;
     private JsonFormInteractor mJsonFormInteractor;
