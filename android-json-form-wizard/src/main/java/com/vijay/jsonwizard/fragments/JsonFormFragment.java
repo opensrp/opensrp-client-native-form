@@ -47,8 +47,8 @@ import java.util.Map;
 public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, JsonFormFragmentViewState> implements
         CommonListener, JsonFormFragmentView<JsonFormFragmentViewState> {
     private static final String TAG = "JsonFormFragment";
-    private LinearLayout mMainView;
-    private ScrollView mScrollView;
+    protected LinearLayout mMainView;
+    protected ScrollView mScrollView;
     private Menu mMenu;
     private JsonApi mJsonApi;
     private Map<String, List<View>> lookUpMap = new HashMap<>();
@@ -406,4 +406,5 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     public Map<String, List<View>> getLookUpMap() {
         return lookUpMap;
     }
+
 }

@@ -57,7 +57,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
     private static final String TAG = "FormFragmentPresenter";
     private static final int RESULT_LOAD_IMG = 1;
     private String mStepName;
-    private JSONObject mStepDetails;
+    protected JSONObject mStepDetails;
     private String mCurrentKey;
     private String mCurrentPhotoPath;
     private JsonFormInteractor mJsonFormInteractor;
@@ -91,16 +91,21 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
 
     @SuppressLint("ResourceAsColor")
     public void setUpToolBar() {
+        getView().setActionBarTitle(mStepDetails.optString("title"));
+        getView().setToolbarTitleColor(R.color.white);
+        if (mStepDetails.has("bottom_navigation")) {
+            getView().updateVisibilityOfNextAndSave(false, false);
+            return;
+        }
         if (!mStepName.equals(JsonFormConstants.FIRST_STEP_NAME)) {
             getView().setUpBackButton();
         }
-        getView().setActionBarTitle(mStepDetails.optString("title"));
+
         if (mStepDetails.has("next")) {
             getView().updateVisibilityOfNextAndSave(true, false);
         } else {
             getView().updateVisibilityOfNextAndSave(false, true);
         }
-        getView().setToolbarTitleColor(R.color.white);
     }
 
     public void onBackClick() {
@@ -340,13 +345,16 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             getView().writeValue(mStepName, parentKey, JsonFormConstants.OPTIONS_FIELD_NAME, childKey,
                     String.valueOf(((CheckBox) compoundButton).isChecked()), openMrsEntityParent,
                     openMrsEntity, openMrsEntityId);
-        } else if (compoundButton instanceof RadioButton && isChecked) {
+        } else if ((compoundButton instanceof android.widget.RadioButton ||
+                compoundButton instanceof RadioButton) && isChecked) {
             String parentKey = (String) compoundButton.getTag(R.id.key);
             String openMrsEntityParent = (String) compoundButton.getTag(R.id.openmrs_entity_parent);
             String openMrsEntity = (String) compoundButton.getTag(R.id.openmrs_entity);
             String openMrsEntityId = (String) compoundButton.getTag(R.id.openmrs_entity_id);
             String childKey = (String) compoundButton.getTag(R.id.childKey);
-            getView().unCheckAllExcept(parentKey, childKey);
+            if (compoundButton instanceof RadioButton) {
+                getView().unCheckAllExcept(parentKey, childKey);
+            }
             getView().writeValue(mStepName, parentKey, childKey, openMrsEntityParent,
                     openMrsEntity, openMrsEntityId);
         }
