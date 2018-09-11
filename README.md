@@ -570,7 +570,30 @@ This form has been generated from the `JSON Form` below: [Click here to Skip](#u
           "MSU": "1067AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
           "CNE": "664AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
         }
-      }
+      },
+      {
+              "key": "native_radio",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "",
+              "openmrs_entity_id": "",
+              "type": "native_radio",
+              "label": "Highest Level of School",
+              "options": [
+                {
+                  "key": "primary_school",
+                  "text": "Primary school"
+                },
+                {
+                  "key": "high_school",
+                  "text": "High School"
+                },
+                {
+                  "key": "higher_education",
+                  "text": "College/University"
+                }
+              ],
+              "value": "primary_school"
+            }
     ]
   }
 }
