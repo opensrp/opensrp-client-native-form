@@ -1,0 +1,6 @@
+<RadioButton xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Material.Drawable.RadioButton"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="@dimen/radio_button_icon_text_padding"
+    android:textSize="@dimen/default_text_size" />

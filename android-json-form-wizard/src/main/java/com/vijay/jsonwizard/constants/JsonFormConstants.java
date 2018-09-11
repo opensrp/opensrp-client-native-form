@@ -43,4 +43,5 @@ public class JsonFormConstants {
     public static final String V_NUMERIC = "v_numeric";
     public static final String REPORT_MONTH =  "report_month";
     public static final String HORIZONTAL_LINE = "h_line";
+    public static final String NATIVE_RADIO_BUTTON = "native_radio";
 }

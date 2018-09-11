@@ -16,6 +16,7 @@ import com.vijay.jsonwizard.widgets.GpsFactory;
 import com.vijay.jsonwizard.widgets.HorizontalLineFactory;
 import com.vijay.jsonwizard.widgets.ImagePickerFactory;
 import com.vijay.jsonwizard.widgets.LabelFactory;
+import com.vijay.jsonwizard.widgets.NativeRadioButtonFactory;
 import com.vijay.jsonwizard.widgets.RadioButtonFactory;
 import com.vijay.jsonwizard.widgets.SectionFactory;
 import com.vijay.jsonwizard.widgets.SpinnerFactory;
@@ -57,6 +58,7 @@ public class JsonFormInteractor {
         map.put(JsonFormConstants.BUTTON, new ButtonFactory());
         map.put(JsonFormConstants.GPS, new GpsFactory());
         map.put(JsonFormConstants.HORIZONTAL_LINE, new HorizontalLineFactory());
+        map.put(JsonFormConstants.NATIVE_RADIO_BUTTON, new NativeRadioButtonFactory());
     }
 
     public List<View> fetchFormElements(String stepName, JsonFormFragment formFragment,
