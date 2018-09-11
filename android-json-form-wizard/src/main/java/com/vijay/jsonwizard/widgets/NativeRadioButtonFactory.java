@@ -38,8 +38,7 @@ import static com.vijay.jsonwizard.utils.FormUtils.getTextViewWith;
 public class NativeRadioButtonFactory implements FormWidgetFactory {
 
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener
-                                        ) throws Exception {
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
 
         String openMrsEntityParent = jsonObject.getString("openmrs_entity_parent");
         String openMrsEntity = jsonObject.getString("openmrs_entity");
@@ -54,7 +53,15 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         List<View> views = new ArrayList<>(1);
 
         JSONArray canvasIds = new JSONArray();
+        createRadioButtonElement(views,jsonObject,context,openMrsEntityParent,openMrsEntity,openMrsEntityId,relevance,canvasIds,readOnly);
+        addRadioButtonOptionsElements(jsonObject,context,openMrsEntityParent,openMrsEntity,openMrsEntityId,readOnly,canvasIds,relevance,stepName,
+                views,listener);
 
+        return views;
+    }
+
+    private void createRadioButtonElement(List<View> view, JSONObject jsonObject, Context context, String openMrsEntityParent,String openMrsEntity,
+                                          String openMrsEntityId, String relevance, JSONArray canvasIds, Boolean readOnly){
         String label = jsonObject.optString("label");
         int labelTextSize = FormUtils.getValueFromSpOrDpOrPx(jsonObject.optString("label_text_size", JsonFormConstants
                 .NATIVE_RADIO_BUTTON_DEFAULT_LABEL_TEXT_SIZE),context);
@@ -62,15 +69,23 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
 
         if (!label.isEmpty()) {
-            CustomTextView textView = getTextViewWith(context, labelTextSize, label, jsonObject.getString(JsonFormConstants.KEY),
-                    jsonObject.getString("type"), openMrsEntityParent, openMrsEntity, openMrsEntityId,
-                    relevance,
-                    getLayoutParams(MATCH_PARENT, WRAP_CONTENT, 0, 0, 0, 0), FONT_BOLD_PATH,0, labelTextColor);
+            CustomTextView textView = null;
+            try {
+                textView = getTextViewWith(context, labelTextSize, label, jsonObject.getString(JsonFormConstants.KEY),
+                        jsonObject.getString("type"), openMrsEntityParent, openMrsEntity, openMrsEntityId, relevance,
+                        getLayoutParams(MATCH_PARENT, WRAP_CONTENT, 0, 0, 0, 0), FONT_BOLD_PATH,0, labelTextColor);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            assert textView != null;
             canvasIds.put(textView.getId());
             textView.setEnabled(!readOnly);
-            views.add(textView);
+            view.add(textView);
         }
+    }
 
+    private void addRadioButtonOptionsElements(JSONObject jsonObject, Context context,String openMrsEntityParent, String openMrsEntity, String
+            openMrsEntityId, Boolean readOnly, JSONArray canvasIds, String relevance, String stepName, List<View> views, CommonListener listener) throws JSONException {
         JSONArray options = jsonObject.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
         ArrayList<RadioButton> radioButtons = new ArrayList<>();
         RadioGroup radioGroup = new RadioGroup(context);
@@ -82,12 +97,12 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             String optionTextColor = "#212121";
             String optionTextSize = "15sp";
 
-           try {
+            try {
                 if (item.getString(JsonFormConstants.TEXT_COLOR) != null) {
                     optionTextColor = item.getString(JsonFormConstants.TEXT_COLOR);
                 }
             } catch (JSONException exception) {
-               Log.d("nativeRadioButtonColor", exception.getLocalizedMessage());
+                Log.d("nativeRadioButtonColor", exception.getLocalizedMessage());
             }
 
             try {
@@ -137,7 +152,5 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         for (RadioButton radioButton : radioButtons) {
             radioButton.setTag(R.id.canvas_ids, canvasIds.toString());
         }
-
-        return views;
     }
 }
