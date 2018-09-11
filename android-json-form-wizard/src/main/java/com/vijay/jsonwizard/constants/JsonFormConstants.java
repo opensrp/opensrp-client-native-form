@@ -1,5 +1,7 @@
 package com.vijay.jsonwizard.constants;
 
+import com.vijay.jsonwizard.R;
+
 /**
  * Created by vijay on 5/7/15.
  */
@@ -39,9 +41,12 @@ public class JsonFormConstants {
     public static final String DEFAULT = "default";
     public static final String V_REQUIRED = "v_required";
     public static final String TEXT = "text";
+    public static final String TEXT_SIZE = "text_size";
+    public static final String TEXT_COLOR = "text_color";
     public static final String SKIP_VALIDATION = "skip_validation";
     public static final String V_NUMERIC = "v_numeric";
     public static final String REPORT_MONTH =  "report_month";
     public static final String HORIZONTAL_LINE = "h_line";
     public static final String NATIVE_RADIO_BUTTON = "native_radio";
+    public static final String NATIVE_RADIO_BUTTON_DEFAULT_LABEL_TEXT_SIZE = "27sp";
 }

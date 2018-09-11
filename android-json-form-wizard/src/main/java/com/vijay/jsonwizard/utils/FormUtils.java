@@ -1,6 +1,7 @@
 package com.vijay.jsonwizard.utils;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.widget.LinearLayout;
@@ -42,7 +43,7 @@ public class FormUtils {
                                            String key, String type, String openMrsEntityParent,
                                            String openMrsEntity, String openMrsEntityId,
                                            String relevance,
-                                           LinearLayout.LayoutParams layoutParams, String fontPath, int bgColor) {
+                                           LinearLayout.LayoutParams layoutParams, String fontPath, int bgColor, String textColor) {
         CustomTextView textView = new CustomTextView(context);
         textView.setText(text);
         textView.setTag(R.id.key, key);
@@ -58,6 +59,10 @@ public class FormUtils {
             textView.setBackgroundColor(bgColor);
         }
 
+        if (textColor != null) {
+            textView.setTextColor(Color.parseColor(textColor));
+        }
+
         if (relevance != null && context instanceof JsonApi) {
             textView.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(textView);
@@ -70,7 +75,8 @@ public class FormUtils {
                                            String openMrsEntity, String openMrsEntityId,
                                            String relevance,
                                            LinearLayout.LayoutParams layoutParams, String fontPath) {
-        return getTextViewWith(context, textSizeInSp, text, key, type, openMrsEntityParent, openMrsEntity, openMrsEntityId, relevance, layoutParams, fontPath, 0);
+        return getTextViewWith(context, textSizeInSp, text, key, type, openMrsEntityParent, openMrsEntity, openMrsEntityId, relevance,
+                layoutParams, fontPath, 0,null);
     }
 
     public static int dpToPixels(Context context, float dps) {
