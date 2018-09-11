@@ -3,6 +3,7 @@ package com.vijay.jsonwizard.widgets;
 import android.content.Context;
 import android.graphics.Color;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RadioButton;
@@ -21,6 +22,7 @@ import com.vijay.jsonwizard.views.CustomTextView;
 import com.vijay.jsonwizard.viewstates.JsonFormFragmentViewState;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -80,12 +82,23 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
             String optionTextColor = "#212121";
             String optionTextSize = "15sp";
-            if (item.getString(JsonFormConstants.TEXT_COLOR) != null) {
-                optionTextColor = item.getString(JsonFormConstants.TEXT_COLOR);
+
+           try {
+                if (item.getString(JsonFormConstants.TEXT_COLOR) != null) {
+                    optionTextColor = item.getString(JsonFormConstants.TEXT_COLOR);
+                }
+            } catch (JSONException exception) {
+               Log.d("nativeRadioButtonColor", exception.getLocalizedMessage());
             }
-            if (item.getString(JsonFormConstants.TEXT_SIZE) != null) {
-                optionTextSize = item.getString(JsonFormConstants.TEXT_SIZE);
+
+            try {
+                if (item.getString(JsonFormConstants.TEXT_SIZE) != null) {
+                    optionTextSize = item.getString(JsonFormConstants.TEXT_SIZE);
+                }
+            } catch (JSONException exception) {
+                Log.d("nativeRadioButtonSize", exception.getLocalizedMessage());
             }
+
 
             radioButton.setId(ViewUtil.generateViewId());
             radioButton.setText(item.getString(JsonFormConstants.TEXT));
