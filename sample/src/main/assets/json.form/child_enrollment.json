@@ -670,6 +670,8 @@
         "openmrs_entity_id": "",
         "type": "native_radio",
         "label": "Highest Level of School",
+        "label_text_size": "20sp",
+        "label_text_color":"#FF9800",
         "options": [
           {
             "key": "primary_school",

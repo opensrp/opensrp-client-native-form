@@ -74,7 +74,7 @@ public class LabelFactory implements FormWidgetFactory {
 
         CustomTextView textView = FormUtils.getTextViewWith(context, 27, text, jsonObject.getString(JsonFormConstants.KEY),
                 jsonObject.getString("type"), openMrsEntityParent, openMrsEntity, openMrsEntityId,
-                relevance, layoutParams, FormUtils.FONT_BOLD_PATH, bgColorInt);
+                relevance, layoutParams, FormUtils.FONT_BOLD_PATH, bgColorInt,null);
         textView.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
 
         if (hasBg) {
