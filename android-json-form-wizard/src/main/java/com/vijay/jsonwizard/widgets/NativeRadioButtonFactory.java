@@ -11,7 +11,6 @@ import android.widget.RadioGroup;
 
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
-import com.vijay.jsonwizard.activities.JsonFormActivity;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
@@ -19,7 +18,6 @@ import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.views.CustomTextView;
-import com.vijay.jsonwizard.viewstates.JsonFormFragmentViewState;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,7 +38,8 @@ import static com.vijay.jsonwizard.utils.FormUtils.getTextViewWith;
 public class NativeRadioButtonFactory implements FormWidgetFactory {
 
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener
+                                        ) throws Exception {
 
         String openMrsEntityParent = jsonObject.getString("openmrs_entity_parent");
         String openMrsEntity = jsonObject.getString("openmrs_entity");

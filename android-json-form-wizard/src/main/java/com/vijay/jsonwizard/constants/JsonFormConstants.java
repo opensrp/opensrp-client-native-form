@@ -1,7 +1,5 @@
 package com.vijay.jsonwizard.constants;
 
-import com.vijay.jsonwizard.R;
-
 /**
  * Created by vijay on 5/7/15.
  */
