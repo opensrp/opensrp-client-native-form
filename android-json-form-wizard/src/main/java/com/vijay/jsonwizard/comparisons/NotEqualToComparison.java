@@ -29,7 +29,7 @@ public class NotEqualToComparison extends Comparison {
                     if (b == null) {
                         b = DEFAULT_NUMERIC;
                     }
-                    return Double.valueOf(a) != Double.valueOf(b);
+                    return !Double.valueOf(a).equals(Double.valueOf(b));
                 case TYPE_DATE:
                     if (a == null) {
                         a = DEFAULT_DATE;

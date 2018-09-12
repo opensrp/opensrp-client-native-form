@@ -10,6 +10,8 @@ public class JsonFormConstants {
     public static final String CHECK_BOX = "check_box";
     public static final String RADIO_BUTTON = "radio";
     public static final String LABEL = "label";
+    public static final String LABEL_TEXT_SIZE = "label_text_size";
+    public static final String LABEL_TEXT_COLOR = "label_text_color";
     public static final String CHOOSE_IMAGE = "choose_image";
     public static final String OPTIONS_FIELD_NAME = "options";
     public static final String SPINNER = "spinner";
@@ -47,4 +49,6 @@ public class JsonFormConstants {
     public static final String HORIZONTAL_LINE = "h_line";
     public static final String NATIVE_RADIO_BUTTON = "native_radio";
     public static final String NATIVE_RADIO_BUTTON_DEFAULT_LABEL_TEXT_SIZE = "27sp";
+    public static final String NATIVE_RADIO_BUTTON_DEFAULT_OPTION_TEXT_SIZE = "15sp";
+    public static final String NATIVE_RADIO_BUTTON_DEFAULT_LABEL_TEXT_COLOR = "#212121";
 }
