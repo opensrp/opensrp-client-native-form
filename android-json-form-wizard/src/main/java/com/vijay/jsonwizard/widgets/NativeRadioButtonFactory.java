@@ -39,19 +39,12 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
-
-        String openMrsEntityParent = jsonObject.getString("openmrs_entity_parent");
-        String openMrsEntity = jsonObject.getString("openmrs_entity");
-        String openMrsEntityId = jsonObject.getString("openmrs_entity_id");
-        String relevance = jsonObject.optString("relevance");
-
         boolean readOnly = false;
         if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
             readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
         }
 
         List<View> views = new ArrayList<>(1);
-
         JSONArray canvasIds = new JSONArray();
 
         createRadioButtonElement(views,jsonObject,context,canvasIds,readOnly);
@@ -68,7 +61,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
      * @param canvasIds
      * @param readOnly
      */
-    private void createRadioButtonElement(List<View> view, JSONObject jsonObject, Context context, JSONArray canvasIds, Boolean
+    public void createRadioButtonElement(List<View> view, JSONObject jsonObject, Context context, JSONArray canvasIds, Boolean
             readOnly) throws JSONException {
 
         String openMrsEntityParent = jsonObject.getString("openmrs_entity_parent");
@@ -109,7 +102,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
      * @param listener
      * @throws JSONException
      */
-    private void addRadioButtonOptionsElements(JSONObject jsonObject, Context context, Boolean readOnly, JSONArray canvasIds,
+    protected void addRadioButtonOptionsElements(JSONObject jsonObject, Context context, Boolean readOnly, JSONArray canvasIds,
                                                String stepName, List<View> views, CommonListener listener) throws JSONException {
         String openMrsEntityParent = jsonObject.getString("openmrs_entity_parent");
         String openMrsEntity = jsonObject.getString("openmrs_entity");
