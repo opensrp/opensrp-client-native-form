@@ -42,10 +42,10 @@ public class EqualToComparison extends Comparison {
                     return dateA.getTime() == dateB.getTime();
                 case TYPE_ARRAY:
                     if (a == null) {
-                        return false;
+                        a = DEFAULT_ARRAY;
                     }
                     if (b == null) {
-                        return false;
+                        b = DEFAULT_ARRAY;
                     }
 
                     // An array is only equal to another if they have the same number of items
@@ -53,20 +53,24 @@ public class EqualToComparison extends Comparison {
                     try {
                         JSONArray aArray = new JSONArray(a);
                         JSONArray bArray = new JSONArray(b);
+                        
+                        if (aArray.length() == bArray.length()) {
+                            ArrayList<String> aList = new ArrayList<>();
+                            for (int i = 0; i < aArray.length(); i++) {
+                                aList.add(aArray.getString(i));
+                            }
 
-                        ArrayList<String> aList = new ArrayList<>();
-                        for (int i = 0; i < aArray.length(); i++) {
-                            aList.add(aArray.getString(i));
+                            ArrayList<String> bList = new ArrayList<>();
+                            for (int i = 0; i < bArray.length(); i++) {
+                                bList.add(bArray.getString(i));
+                            }
+
+                            aList.removeAll(bList);
+
+                            return aList.size() == 0;
+                        } else {
+                            return false;
                         }
-
-                        ArrayList<String> bList = new ArrayList<>();
-                        for (int i = 0; i < bArray.length(); i++) {
-                            bList.add(bArray.getString(i));
-                        }
-
-                        aList.removeAll(bList);
-
-                        return aList.size() == 0;
                     } catch (JSONException e) {
                         Log.e(TAG, Log.getStackTraceString(e));
                     }
