@@ -29,7 +29,7 @@ public class EqualToComparison extends Comparison {
                     if (b == null) {
                         b = DEFAULT_NUMERIC;
                     }
-                    return Double.valueOf(a) == Double.valueOf(b);
+                    return Double.valueOf(a).equals(Double.valueOf(b));
                 case TYPE_DATE:
                     if (a == null) {
                         a = DEFAULT_DATE;
@@ -42,10 +42,10 @@ public class EqualToComparison extends Comparison {
                     return dateA.getTime() == dateB.getTime();
                 case TYPE_ARRAY:
                     if (a == null) {
-                        a = DEFAULT_ARRAY;
+                        return false;
                     }
                     if (b == null) {
-                        b = DEFAULT_ARRAY;
+                        return false;
                     }
 
                     // An array is only equal to another if they have the same number of items
