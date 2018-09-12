@@ -8,13 +8,11 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.widgets.NativeRadioButtonFactory;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -59,16 +57,11 @@ public class NativeRadioButtonFactoryTest extends BaseTest {
     @Mock
     private JsonFormFragment jsonFormFragment;
 
-    @Mock
-    private JSONArray jsonArray;
-    private Boolean readonly;
-
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         context = RuntimeEnvironment.application;
-        readonly = false;
     }
 
     @Test
