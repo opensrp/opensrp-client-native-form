@@ -53,15 +53,29 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         List<View> views = new ArrayList<>(1);
 
         JSONArray canvasIds = new JSONArray();
-        createRadioButtonElement(views,jsonObject,context,openMrsEntityParent,openMrsEntity,openMrsEntityId,relevance,canvasIds,readOnly);
-        addRadioButtonOptionsElements(jsonObject,context,openMrsEntityParent,openMrsEntity,openMrsEntityId,readOnly,canvasIds,relevance,stepName,
-                views,listener);
+
+        createRadioButtonElement(views,jsonObject,context,canvasIds,readOnly);
+        addRadioButtonOptionsElements(jsonObject,context,readOnly,canvasIds,stepName, views,listener);
 
         return views;
     }
 
-    private void createRadioButtonElement(List<View> view, JSONObject jsonObject, Context context, String openMrsEntityParent,String openMrsEntity,
-                                          String openMrsEntityId, String relevance, JSONArray canvasIds, Boolean readOnly){
+    /**
+     * Create the Radio Button from the JSON definition
+     * @param view
+     * @param jsonObject
+     * @param context
+     * @param canvasIds
+     * @param readOnly
+     */
+    private void createRadioButtonElement(List<View> view, JSONObject jsonObject, Context context, JSONArray canvasIds, Boolean
+            readOnly) throws JSONException {
+
+        String openMrsEntityParent = jsonObject.getString("openmrs_entity_parent");
+        String openMrsEntity = jsonObject.getString("openmrs_entity");
+        String openMrsEntityId = jsonObject.getString("openmrs_entity_id");
+        String relevance = jsonObject.optString("relevance");
+
         String label = jsonObject.optString("label");
         int labelTextSize = FormUtils.getValueFromSpOrDpOrPx(jsonObject.optString("label_text_size", JsonFormConstants
                 .NATIVE_RADIO_BUTTON_DEFAULT_LABEL_TEXT_SIZE),context);
@@ -84,8 +98,24 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         }
     }
 
-    private void addRadioButtonOptionsElements(JSONObject jsonObject, Context context,String openMrsEntityParent, String openMrsEntity, String
-            openMrsEntityId, Boolean readOnly, JSONArray canvasIds, String relevance, String stepName, List<View> views, CommonListener listener) throws JSONException {
+    /**
+     * Creates the Radio Button options from the JSON definitions
+     * @param jsonObject
+     * @param context
+     * @param readOnly
+     * @param canvasIds
+     * @param stepName
+     * @param views
+     * @param listener
+     * @throws JSONException
+     */
+    private void addRadioButtonOptionsElements(JSONObject jsonObject, Context context, Boolean readOnly, JSONArray canvasIds,
+                                               String stepName, List<View> views, CommonListener listener) throws JSONException {
+        String openMrsEntityParent = jsonObject.getString("openmrs_entity_parent");
+        String openMrsEntity = jsonObject.getString("openmrs_entity");
+        String openMrsEntityId = jsonObject.getString("openmrs_entity_id");
+        String relevance = jsonObject.optString("relevance");
+
         JSONArray options = jsonObject.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
         ArrayList<RadioButton> radioButtons = new ArrayList<>();
         RadioGroup radioGroup = new RadioGroup(context);
