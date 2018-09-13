@@ -70,9 +70,9 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
         String label = jsonObject.optString(JsonFormConstants.LABEL);
         int labelTextSize = FormUtils.getValueFromSpOrDpOrPx(jsonObject.optString(JsonFormConstants.LABEL_TEXT_SIZE, JsonFormConstants
-                .NATIVE_RADIO_BUTTON_DEFAULT_LABEL_TEXT_SIZE), context);
+                .DEFAULT_LABEL_TEXT_SIZE), context);
         String labelTextColor = jsonObject.optString(JsonFormConstants.LABEL_TEXT_COLOR, JsonFormConstants
-                .NATIVE_RADIO_BUTTON_DEFAULT_LABEL_TEXT_COLOR);
+                .OPTIONS_DEFAULT_LABEL_TEXT_COLOR);
 
 
         if (!label.isEmpty()) {
@@ -111,8 +111,8 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             RadioButton radioButton = (RadioButton) LayoutInflater.from(context).inflate(R.layout.item_radio_button,
                     null);
 
-            String optionTextColor = JsonFormConstants.NATIVE_RADIO_BUTTON_DEFAULT_LABEL_TEXT_COLOR;
-            String optionTextSize = JsonFormConstants.NATIVE_RADIO_BUTTON_DEFAULT_OPTION_TEXT_SIZE;
+            String optionTextColor = JsonFormConstants.OPTIONS_DEFAULT_LABEL_TEXT_COLOR;
+            String optionTextSize = JsonFormConstants.OPTIONS_DEFAULT_OPTION_TEXT_SIZE;
             if (item.has(JsonFormConstants.TEXT_COLOR)) {
                 optionTextColor = item.getString(JsonFormConstants.TEXT_COLOR);
             }

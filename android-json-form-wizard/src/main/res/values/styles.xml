@@ -18,10 +18,14 @@
         <item name="android:textSize">@dimen/default_text_size</item>
     </style>
 
-    <style name="CheckBoxStyle" parent="Material.Drawable.CheckBox">
+    <style name="CheckBoxStyle">
         <item name="cbd_width">@dimen/default_checkbox_width</item>
         <item name="cbd_height">@dimen/default_checkbox_height</item>
         <item name="cbd_boxSize">@dimen/default_checkbox_size</item>
+    </style>
+
+    <style name="CheckBoxStyle.color">
+        <item name="colorControlNormal">@color/primary_text</item>
     </style>
 
     <style name="AppThemeAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">

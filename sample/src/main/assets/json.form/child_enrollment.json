@@ -491,6 +491,8 @@
         "openmrs_data_type": "select one",
         "type": "check_box",
         "label": "Any delivery complications?",
+        "label_text_size":"18sp",
+        "label_text_color":"#FF9800",
         "hint": "Any delivery complications?",
         "options": [
           {
@@ -503,19 +505,22 @@
             "key": "Severe bleeding/Hemorrhage",
             "text": "Severe bleeding/Hemorrhage",
             "value": false,
-            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "text_color":"#000000"
           },
           {
             "key": "Placenta previa",
             "text": "Placenta previa",
             "value": false,
-            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "text_size":"30sp"
           },
           {
             "key": "Cord prolapse",
             "text": "Cord prolapse",
             "value": false,
-            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "text_size":"10sp"
           },
           {
             "key": "Prolonged/obstructed labour",
@@ -527,7 +532,8 @@
             "key": "Abnormal presentation",
             "text": "Abnormal presentation",
             "value": false,
-            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "text_color":"#FF9800"
           },
           {
             "key": "Perineal tear (2, 3 or 4th degree)",

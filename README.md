@@ -598,7 +598,76 @@ This form has been generated from the `JSON Form` below: [Click here to Skip](#u
                 }
               ],
               "value": "primary_school"
-            }
+       },
+       {
+               "key": "delivery_complications",
+               "openmrs_entity_parent": "",
+               "openmrs_entity": "concept",
+               "openmrs_entity_id": "161641AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+               "openmrs_data_type": "select one",
+               "type": "check_box",
+               "label": "Any delivery complications?",
+               "label_text_size":"18sp",
+               "label_text_color":"#FF9800",
+               "hint": "Any delivery complications?",
+               "options": [
+                 {
+                   "key": "None",
+                   "text": "None",
+                   "value": false,
+                   "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                 },
+                 {
+                   "key": "Severe bleeding/Hemorrhage",
+                   "text": "Severe bleeding/Hemorrhage",
+                   "value": false,
+                   "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                   "text_color":"#000000"
+                 },
+                 {
+                   "key": "Placenta previa",
+                   "text": "Placenta previa",
+                   "value": false,
+                   "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                   "text_size":"30sp"
+                 },
+                 {
+                   "key": "Cord prolapse",
+                   "text": "Cord prolapse",
+                   "value": false,
+                   "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                   "text_size":"10sp"
+                 },
+                 {
+                   "key": "Prolonged/obstructed labour",
+                   "text": "Prolonged/obstructed labour",
+                   "value": false,
+                   "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                 },
+                 {
+                   "key": "Abnormal presentation",
+                   "text": "Abnormal presentation",
+                   "value": false,
+                   "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                   "text_color":"#FF9800"
+                 },
+                 {
+                   "key": "Perineal tear (2, 3 or 4th degree)",
+                   "text": "Perineal tear (2, 3 or 4th degree)",
+                   "value": false,
+                   "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                 },
+                 {
+                   "key": "Other",
+                   "text": "Other",
+                   "value": false,
+                   "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                 }
+               ],
+               "v_required": {
+                 "value": "false"
+               }
+             }
     ]
   }
 }
