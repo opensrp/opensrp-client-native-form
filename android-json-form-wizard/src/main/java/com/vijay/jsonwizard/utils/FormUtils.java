@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.text.TextUtils;
 import android.util.TypedValue;
+import android.view.View;
 import android.widget.LinearLayout;
 
 import com.rey.material.util.ViewUtil;
@@ -12,26 +13,29 @@ import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.views.CustomTextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * Created by vijay on 24-05-2015.
  */
 public class FormUtils {
     public static final String FONT_BOLD_PATH = "fonts/Roboto-Bold.ttf";
-    public static final String FONT_REGULAR_PATH = "fonts/Roboto-Regular.ttf";
+    //public static final String FONT_REGULAR_PATH = "fonts/Roboto-Regular.ttf";
     public static final int MATCH_PARENT = -1;
     public static final int WRAP_CONTENT = -2;
-    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
-    public static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
+    private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public static final String METADATA_PROPERTY = "metadata";
     private static final String START_JAVAROSA_PROPERTY = "start";
     private static final String END_JAVAROSA_PROPERTY = "end";
     private static final String TODAY_JAVAROSA_PROPERTY = "today";
-    public static final String LOOK_UP_JAVAROSA_PROPERTY = "look_up";
+    //public static final String LOOK_UP_JAVAROSA_PROPERTY = "look_up";
 
     public static LinearLayout.LayoutParams getLayoutParams(int width, int height, int left, int top, int right, int bottom) {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(width, height);
@@ -182,7 +186,7 @@ public class FormUtils {
         }
     }
 
-    public static int spToPx(Context context, float sp) {
+    private static int spToPx(Context context, float sp) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, context.getResources().getDisplayMetrics());
     }
 
@@ -201,5 +205,27 @@ public class FormUtils {
         }
 
         return px;
+    }
+
+    public static void createRadioBUttonAndCheckBoxLabel(List<View> views, JSONObject jsonObject, Context context, JSONArray canvasIds, Boolean
+            readOnly) throws JSONException {
+        String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
+        String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
+        String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
+        String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
+
+        String label = jsonObject.optString(JsonFormConstants.LABEL);
+        int labelTextSize = FormUtils.getValueFromSpOrDpOrPx(jsonObject.optString(JsonFormConstants.LABEL_TEXT_SIZE, JsonFormConstants
+                .DEFAULT_LABEL_TEXT_SIZE), context);
+        String labelTextColor = jsonObject.optString(JsonFormConstants.LABEL_TEXT_COLOR, JsonFormConstants.OPTIONS_DEFAULT_LABEL_TEXT_COLOR);
+
+        if (!label.isEmpty()) {
+            CustomTextView textView = FormUtils.getTextViewWith(context, labelTextSize, label, jsonObject.getString(JsonFormConstants.KEY),
+                    jsonObject.getString(JsonFormConstants.TYPE), openMrsEntityParent, openMrsEntity, openMrsEntityId, relevance,
+                    FormUtils.getLayoutParams(FormUtils.MATCH_PARENT, FormUtils.WRAP_CONTENT, 0, 0, 0, 0), FormUtils.FONT_BOLD_PATH, 0, labelTextColor);
+            canvasIds.put(textView.getId());
+            textView.setEnabled(!readOnly);
+            views.add(textView);
+        }
     }
 }

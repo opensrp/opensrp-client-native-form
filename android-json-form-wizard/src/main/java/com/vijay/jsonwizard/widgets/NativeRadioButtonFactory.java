@@ -46,43 +46,10 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         List<View> views = new ArrayList<>(1);
         JSONArray canvasIds = new JSONArray();
 
-        createRadioButtonElement(views,jsonObject,context,canvasIds,readOnly);
+        FormUtils.createRadioBUttonAndCheckBoxLabel(views,jsonObject,context,canvasIds,readOnly);
         addRadioButtonOptionsElements(jsonObject,context,readOnly,canvasIds,stepName, views,listener);
 
         return views;
-    }
-
-    /**
-     * Create the Radio Button from the JSON definition
-     * @param views
-     * @param jsonObject
-     * @param context
-     * @param canvasIds
-     * @param readOnly
-     */
-    public void createRadioButtonElement(List<View> views, JSONObject jsonObject, Context context, JSONArray canvasIds, Boolean
-            readOnly) throws JSONException {
-
-        String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
-        String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
-        String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
-        String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
-
-        String label = jsonObject.optString(JsonFormConstants.LABEL);
-        int labelTextSize = FormUtils.getValueFromSpOrDpOrPx(jsonObject.optString(JsonFormConstants.LABEL_TEXT_SIZE, JsonFormConstants
-                .DEFAULT_LABEL_TEXT_SIZE), context);
-        String labelTextColor = jsonObject.optString(JsonFormConstants.LABEL_TEXT_COLOR, JsonFormConstants
-                .OPTIONS_DEFAULT_LABEL_TEXT_COLOR);
-
-
-        if (!label.isEmpty()) {
-            CustomTextView textView = getTextViewWith(context, labelTextSize, label, jsonObject.getString(JsonFormConstants.KEY),
-                    jsonObject.getString(JsonFormConstants.TYPE), openMrsEntityParent, openMrsEntity, openMrsEntityId, relevance,
-                        getLayoutParams(MATCH_PARENT, WRAP_CONTENT, 0, 0, 0, 0), FONT_BOLD_PATH,0, labelTextColor);
-            canvasIds.put(textView.getId());
-            textView.setEnabled(!readOnly);
-            views.add(textView);
-        }
     }
 
     /**
