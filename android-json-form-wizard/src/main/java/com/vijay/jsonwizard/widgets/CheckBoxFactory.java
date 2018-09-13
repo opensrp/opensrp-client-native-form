@@ -17,7 +17,6 @@ import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
-import com.vijay.jsonwizard.views.CustomTextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,7 +30,8 @@ import java.util.List;
  */
 public class CheckBoxFactory implements FormWidgetFactory {
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener
+            listener) throws Exception {
         boolean readOnly = false;
         if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
             readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
@@ -58,7 +58,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
         for (int i = 0; i < options.length(); i++) {
             JSONObject item = options.getJSONObject(i);
             LinearLayout checkboxLayout = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.native_form_item_checkbox, null);
-            createCheckBoxText(checkboxLayout,item,context);
+            createCheckBoxText(checkboxLayout, item, context);
 
             final CheckBox checkBox = checkboxLayout.findViewById(R.id.checkbox);
             checkBoxes.add(checkBox);
@@ -112,6 +112,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
 
     /**
      * Inflates and set the checkbox text attributes.
+     *
      * @param checkboxLayout
      * @param item
      * @param context
