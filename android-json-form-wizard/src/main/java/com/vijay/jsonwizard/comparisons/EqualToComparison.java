@@ -29,7 +29,7 @@ public class EqualToComparison extends Comparison {
                     if (b == null) {
                         b = DEFAULT_NUMERIC;
                     }
-                    return Double.valueOf(a) == Double.valueOf(b);
+                    return Double.valueOf(a).equals(Double.valueOf(b));
                 case TYPE_DATE:
                     if (a == null) {
                         a = DEFAULT_DATE;
@@ -53,20 +53,24 @@ public class EqualToComparison extends Comparison {
                     try {
                         JSONArray aArray = new JSONArray(a);
                         JSONArray bArray = new JSONArray(b);
+                        
+                        if (aArray.length() == bArray.length()) {
+                            ArrayList<String> aList = new ArrayList<>();
+                            for (int i = 0; i < aArray.length(); i++) {
+                                aList.add(aArray.getString(i));
+                            }
 
-                        ArrayList<String> aList = new ArrayList<>();
-                        for (int i = 0; i < aArray.length(); i++) {
-                            aList.add(aArray.getString(i));
+                            ArrayList<String> bList = new ArrayList<>();
+                            for (int i = 0; i < bArray.length(); i++) {
+                                bList.add(bArray.getString(i));
+                            }
+
+                            aList.removeAll(bList);
+
+                            return aList.size() == 0;
+                        } else {
+                            return false;
                         }
-
-                        ArrayList<String> bList = new ArrayList<>();
-                        for (int i = 0; i < bArray.length(); i++) {
-                            bList.add(bArray.getString(i));
-                        }
-
-                        aList.removeAll(bList);
-
-                        return aList.size() == 0;
                     } catch (JSONException e) {
                         Log.e(TAG, Log.getStackTraceString(e));
                     }
