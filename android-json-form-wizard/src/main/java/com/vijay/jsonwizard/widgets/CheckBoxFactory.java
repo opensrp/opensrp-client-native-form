@@ -26,12 +26,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.vijay.jsonwizard.utils.FormUtils.FONT_BOLD_PATH;
-import static com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT;
-import static com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT;
-import static com.vijay.jsonwizard.utils.FormUtils.getLayoutParams;
-import static com.vijay.jsonwizard.utils.FormUtils.getTextViewWith;
-
 /**
  * Created by vijay on 24-05-2015.
  */
@@ -46,13 +40,13 @@ public class CheckBoxFactory implements FormWidgetFactory {
         List<View> views = new ArrayList<>(1);
         JSONArray canvasIds = new JSONArray();
 
-        createCheckboxElement(views, jsonObject, context, canvasIds, readOnly);
-        addCheckboxOptionsElements(jsonObject, context, readOnly, canvasIds, stepName, views, listener);
+        createCheckBoxElement(views, jsonObject, context, canvasIds, readOnly);
+        addCheckBoxOptionsElements(jsonObject, context, readOnly, canvasIds, stepName, views, listener);
 
         return views;
     }
 
-    private void createCheckboxElement(List<View> views, JSONObject jsonObject, Context context, JSONArray canvasIds, Boolean
+    private void createCheckBoxElement(List<View> views, JSONObject jsonObject, Context context, JSONArray canvasIds, Boolean
             readOnly) throws JSONException {
 
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
@@ -66,16 +60,16 @@ public class CheckBoxFactory implements FormWidgetFactory {
         String labelTextColor = jsonObject.optString(JsonFormConstants.LABEL_TEXT_COLOR, JsonFormConstants.OPTIONS_DEFAULT_LABEL_TEXT_COLOR);
 
         if (!label.isEmpty()) {
-            CustomTextView textView = getTextViewWith(context, labelTextSize, label, jsonObject.getString(JsonFormConstants.KEY),
+            CustomTextView textView = FormUtils.getTextViewWith(context, labelTextSize, label, jsonObject.getString(JsonFormConstants.KEY),
                     jsonObject.getString(JsonFormConstants.TYPE), openMrsEntityParent, openMrsEntity, openMrsEntityId, relevance,
-                    getLayoutParams(MATCH_PARENT, WRAP_CONTENT, 0, 0, 0, 0), FONT_BOLD_PATH, 0, labelTextColor);
+                    FormUtils.getLayoutParams(FormUtils.MATCH_PARENT, FormUtils.WRAP_CONTENT, 0, 0, 0, 0), FormUtils.FONT_BOLD_PATH, 0, labelTextColor);
             canvasIds.put(textView.getId());
             textView.setEnabled(!readOnly);
             views.add(textView);
         }
     }
 
-    private void addCheckboxOptionsElements(JSONObject jsonObject, Context context, Boolean readOnly, JSONArray canvasIds,
+    private void addCheckBoxOptionsElements(JSONObject jsonObject, Context context, Boolean readOnly, JSONArray canvasIds,
                                             String stepName, List<View> views, CommonListener listener) throws JSONException {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
@@ -87,20 +81,8 @@ public class CheckBoxFactory implements FormWidgetFactory {
         for (int i = 0; i < options.length(); i++) {
             JSONObject item = options.getJSONObject(i);
             LinearLayout checkboxLayout = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.native_form_item_checkbox, null);
+            createCheckBoxText(checkboxLayout,item,context);
 
-            String optionTextColor = JsonFormConstants.OPTIONS_DEFAULT_LABEL_TEXT_COLOR;
-            String optionTextSize = JsonFormConstants.OPTIONS_DEFAULT_OPTION_TEXT_SIZE;
-            if (item.has(JsonFormConstants.TEXT_COLOR)) {
-                optionTextColor = item.getString(JsonFormConstants.TEXT_COLOR);
-            }
-            if (item.has(JsonFormConstants.TEXT_SIZE)) {
-                optionTextSize = item.getString(JsonFormConstants.TEXT_SIZE);
-            }
-
-            TextView checkboxText = checkboxLayout.findViewById(R.id.text1);
-            checkboxText.setText(item.getString(JsonFormConstants.TEXT));
-            checkboxText.setTextColor(Color.parseColor(optionTextColor));
-            checkboxText.setTextSize(FormUtils.getValueFromSpOrDpOrPx(optionTextSize, context));
             final CheckBox checkBox = checkboxLayout.findViewById(R.id.checkbox);
             checkBoxes.add(checkBox);
             checkBox.setTag(R.id.raw_value, item.getString(JsonFormConstants.TEXT));
@@ -149,5 +131,28 @@ public class CheckBoxFactory implements FormWidgetFactory {
         for (CheckBox checkBox : checkBoxes) {
             checkBox.setTag(R.id.canvas_ids, canvasIds.toString());
         }
+    }
+
+    /**
+     * Inflates and set the checkbox text attributes.
+     * @param checkboxLayout
+     * @param item
+     * @param context
+     * @throws JSONException
+     */
+    private void createCheckBoxText(LinearLayout checkboxLayout, JSONObject item, Context context) throws JSONException {
+        String optionTextColor = JsonFormConstants.OPTIONS_DEFAULT_LABEL_TEXT_COLOR;
+        String optionTextSize = JsonFormConstants.OPTIONS_DEFAULT_OPTION_TEXT_SIZE;
+        if (item.has(JsonFormConstants.TEXT_COLOR)) {
+            optionTextColor = item.getString(JsonFormConstants.TEXT_COLOR);
+        }
+        if (item.has(JsonFormConstants.TEXT_SIZE)) {
+            optionTextSize = item.getString(JsonFormConstants.TEXT_SIZE);
+        }
+
+        TextView checkboxText = checkboxLayout.findViewById(R.id.text1);
+        checkboxText.setText(item.getString(JsonFormConstants.TEXT));
+        checkboxText.setTextColor(Color.parseColor(optionTextColor));
+        checkboxText.setTextSize(FormUtils.getValueFromSpOrDpOrPx(optionTextSize, context));
     }
 }
