@@ -40,7 +40,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
         List<View> views = new ArrayList<>(1);
         JSONArray canvasIds = new JSONArray();
 
-        FormUtils.createRadioBUttonAndCheckBoxLabel(views, jsonObject, context, canvasIds, readOnly);
+        FormUtils.createRadioButtonAndCheckBoxLabel(views, jsonObject, context, canvasIds, readOnly);
         addCheckBoxOptionsElements(jsonObject, context, readOnly, canvasIds, stepName, views, listener);
 
         return views;

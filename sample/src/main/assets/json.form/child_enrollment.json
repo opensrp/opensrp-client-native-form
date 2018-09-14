@@ -491,8 +491,8 @@
         "openmrs_data_type": "select one",
         "type": "check_box",
         "label": "Any delivery complications?",
-        "label_text_size":"18sp",
-        "label_text_color":"#FF9800",
+        "label_text_size": "18sp",
+        "label_text_color": "#FF9800",
         "hint": "Any delivery complications?",
         "options": [
           {
@@ -506,21 +506,21 @@
             "text": "Severe bleeding/Hemorrhage",
             "value": false,
             "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "text_color":"#000000"
+            "text_color": "#000000"
           },
           {
             "key": "Placenta previa",
             "text": "Placenta previa",
             "value": false,
             "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "text_size":"30sp"
+            "text_size": "30sp"
           },
           {
             "key": "Cord prolapse",
             "text": "Cord prolapse",
             "value": false,
             "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "text_size":"10sp"
+            "text_size": "10sp"
           },
           {
             "key": "Prolonged/obstructed labour",
@@ -533,7 +533,7 @@
             "text": "Abnormal presentation",
             "value": false,
             "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "text_color":"#FF9800"
+            "text_color": "#FF9800"
           },
           {
             "key": "Perineal tear (2, 3 or 4th degree)",
@@ -677,25 +677,61 @@
         "type": "native_radio",
         "label": "Highest Level of School",
         "label_text_size": "20sp",
-        "label_text_color":"#FF9800",
+        "label_text_color": "#FF9800",
         "options": [
           {
             "key": "primary_school",
             "text": "Primary school",
-            "text_color":"#000000"
+            "text_color": "#000000"
           },
           {
             "key": "high_school",
             "text": "High School",
-            "text_size":"30sp"
+            "text_size": "30sp"
           },
           {
             "key": "higher_education",
             "text": "College/University",
-            "text_color":"#358CB7"
+            "text_color": "#358CB7"
           }
         ],
         "value": "primary_school"
+      },
+      {
+        "key": "toaster_notes",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person_attribute",
+        "openmrs_entity_id": "toaster_notes",
+        "type": "toaster_notes",
+        "text": "This is an information note",
+        "toaster_type": "info"
+      },
+      {
+        "key": "toaster_notes",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person_attribute",
+        "openmrs_entity_id": "toaster_notes",
+        "type": "toaster_notes",
+        "text": "This is an positive note",
+        "toaster_type": "positive"
+      },
+      {
+        "key": "toaster_notes",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person_attribute",
+        "openmrs_entity_id": "toaster_notes",
+        "type": "toaster_notes",
+        "text": "This is an warning note",
+        "toaster_type": "warning"
+      },
+      {
+        "key": "toaster_notes",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person_attribute",
+        "openmrs_entity_id": "toaster_notes",
+        "type": "toaster_notes",
+        "text": "This is an danger note",
+        "toaster_type": "problem"
       }
     ]
   }

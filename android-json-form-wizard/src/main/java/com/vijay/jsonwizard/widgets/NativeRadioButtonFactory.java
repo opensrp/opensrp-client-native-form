@@ -44,7 +44,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         List<View> views = new ArrayList<>(1);
         JSONArray canvasIds = new JSONArray();
 
-        FormUtils.createRadioBUttonAndCheckBoxLabel(views, jsonObject, context, canvasIds, readOnly);
+        FormUtils.createRadioButtonAndCheckBoxLabel(views, jsonObject, context, canvasIds, readOnly);
         addRadioButtonOptionsElements(jsonObject, context, readOnly, canvasIds, stepName, views, listener);
 
         return views;

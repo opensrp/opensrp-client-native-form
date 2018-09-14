@@ -29,9 +29,9 @@ public class FormUtils {
     //public static final String FONT_REGULAR_PATH = "fonts/Roboto-Regular.ttf";
     public static final int MATCH_PARENT = -1;
     public static final int WRAP_CONTENT = -2;
+    public static final String METADATA_PROPERTY = "metadata";
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
     private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    public static final String METADATA_PROPERTY = "metadata";
     private static final String START_JAVAROSA_PROPERTY = "start";
     private static final String END_JAVAROSA_PROPERTY = "end";
     private static final String TODAY_JAVAROSA_PROPERTY = "today";
@@ -44,10 +44,10 @@ public class FormUtils {
     }
 
     public static CustomTextView getTextViewWith(Context context, int textSizeInSp, String text,
-                                           String key, String type, String openMrsEntityParent,
-                                           String openMrsEntity, String openMrsEntityId,
-                                           String relevance,
-                                           LinearLayout.LayoutParams layoutParams, String fontPath, int bgColor, String textColor) {
+                                                 String key, String type, String openMrsEntityParent,
+                                                 String openMrsEntity, String openMrsEntityId,
+                                                 String relevance,
+                                                 LinearLayout.LayoutParams layoutParams, String fontPath, int bgColor, String textColor) {
         CustomTextView textView = new CustomTextView(context);
         textView.setText(text);
         textView.setTag(R.id.key, key);
@@ -75,12 +75,12 @@ public class FormUtils {
     }
 
     public static CustomTextView getTextViewWith(Context context, int textSizeInSp, String text,
-                                           String key, String type, String openMrsEntityParent,
-                                           String openMrsEntity, String openMrsEntityId,
-                                           String relevance,
-                                           LinearLayout.LayoutParams layoutParams, String fontPath) {
+                                                 String key, String type, String openMrsEntityParent,
+                                                 String openMrsEntity, String openMrsEntityId,
+                                                 String relevance,
+                                                 LinearLayout.LayoutParams layoutParams, String fontPath) {
         return getTextViewWith(context, textSizeInSp, text, key, type, openMrsEntityParent, openMrsEntity, openMrsEntityId, relevance,
-                layoutParams, fontPath, 0,null);
+                layoutParams, fontPath, 0, null);
     }
 
     public static int dpToPixels(Context context, float dps) {
@@ -207,7 +207,7 @@ public class FormUtils {
         return px;
     }
 
-    public static void createRadioBUttonAndCheckBoxLabel(List<View> views, JSONObject jsonObject, Context context, JSONArray canvasIds, Boolean
+    public static void createRadioButtonAndCheckBoxLabel(List<View> views, JSONObject jsonObject, Context context, JSONArray canvasIds, Boolean
             readOnly) throws JSONException {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
@@ -222,7 +222,8 @@ public class FormUtils {
         if (!label.isEmpty()) {
             CustomTextView textView = FormUtils.getTextViewWith(context, labelTextSize, label, jsonObject.getString(JsonFormConstants.KEY),
                     jsonObject.getString(JsonFormConstants.TYPE), openMrsEntityParent, openMrsEntity, openMrsEntityId, relevance,
-                    FormUtils.getLayoutParams(FormUtils.MATCH_PARENT, FormUtils.WRAP_CONTENT, 0, 0, 0, 0), FormUtils.FONT_BOLD_PATH, 0, labelTextColor);
+                    FormUtils.getLayoutParams(FormUtils.MATCH_PARENT, FormUtils.WRAP_CONTENT, 0, 0, 0, 0), FormUtils.FONT_BOLD_PATH, 0,
+                    labelTextColor);
             canvasIds.put(textView.getId());
             textView.setEnabled(!readOnly);
             views.add(textView);
