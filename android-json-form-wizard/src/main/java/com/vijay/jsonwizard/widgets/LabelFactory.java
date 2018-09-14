@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import android.text.Html;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -80,11 +81,14 @@ public class LabelFactory implements FormWidgetFactory {
         return views;
     }
 
-
+    /**
+     * Instantiates the label Custom TextView and adds in its attributes
+     * @param jsonObject
+     * @param context
+     * @param relativeLayout
+     * @throws JSONException
+     */
     private void createLabelTextView(JSONObject jsonObject, Context context, RelativeLayout relativeLayout) throws JSONException {
-        String text = jsonObject.getString(JsonFormConstants.TEXT);
-        JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
-
         boolean hintOnText = jsonObject.optBoolean("hint_on_text", false);
         boolean hasBg = jsonObject.optBoolean("has_bg", false);
 
@@ -106,32 +110,11 @@ public class LabelFactory implements FormWidgetFactory {
         if (hasBg) {
             bgColorInt = Color.parseColor(bgColor);
         }
-
-        String asterisks = "";
-        if (requiredObject != null) {
-            String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
-            if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
-                asterisks = "<font color=#CF0800> *</font>";
-            }
-        }
-
         int labelTextSize = FormUtils.getValueFromSpOrDpOrPx(jsonObject.optString("text_size", JsonFormConstants.DEFAULT_LABEL_TEXT_SIZE), context);
-        String labelTextColor = jsonObject.optString("text_color", JsonFormConstants.DEFAULT_TEXT_COLOR);
 
-
-        String combinedLabelText;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
-            combinedLabelText = "<font color=" + labelTextColor + ">" + Html.escapeHtml(text) + "</font>" + asterisks;
-        } else {
-            combinedLabelText = "<font color=" + labelTextColor + ">" + TextUtils.htmlEncode(text) + "</font>" + asterisks;
-        }
         CustomTextView labelText = relativeLayout.findViewById(R.id.label_text);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            labelText.setText(Html.fromHtml(combinedLabelText, Html.FROM_HTML_MODE_LEGACY));
-        } else {
-            labelText.setText(Html.fromHtml(combinedLabelText));
-        }
         labelText.setTextSize(labelTextSize);
+        labelText.setText(createLabelText(jsonObject));
 
         if (bgColorInt != 0) {
             labelText.setBackgroundColor(bgColorInt);
@@ -148,6 +131,42 @@ public class LabelFactory implements FormWidgetFactory {
 
         labelText.setEnabled(!jsonObject.optBoolean(JsonFormConstants.READ_ONLY, false));
         labelText.setHintOnText(hintOnText);
+    }
+
+    /**
+     * Generates the spanned texted to be passed to the label Custom TextView
+     * @param jsonObject
+     * @return
+     * @throws JSONException
+     */
+    private Spanned createLabelText(JSONObject jsonObject) throws JSONException {
+        String text = jsonObject.getString(JsonFormConstants.TEXT);
+        JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
+        Spanned generatedLabelText;
+        String asterisks = "";
+        if (requiredObject != null) {
+            String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
+            if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
+                asterisks = "<font color=#CF0800> *</font>";
+            }
+        }
+
+        String labelTextColor = jsonObject.optString("text_color", JsonFormConstants.DEFAULT_TEXT_COLOR);
+
+        String combinedLabelText;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            combinedLabelText = "<font color=" + labelTextColor + ">" + Html.escapeHtml(text) + "</font>" + asterisks;
+        } else {
+            combinedLabelText = "<font color=" + labelTextColor + ">" + TextUtils.htmlEncode(text) + "</font>" + asterisks;
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            generatedLabelText = Html.fromHtml(combinedLabelText, Html.FROM_HTML_MODE_LEGACY);
+        } else {
+            generatedLabelText = Html.fromHtml(combinedLabelText);
+        }
+
+        return generatedLabelText;
     }
 
 }
