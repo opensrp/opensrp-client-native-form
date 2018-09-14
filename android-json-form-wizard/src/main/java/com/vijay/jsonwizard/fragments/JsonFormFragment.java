@@ -47,16 +47,21 @@ import java.util.Map;
 public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, JsonFormFragmentViewState> implements
         CommonListener, JsonFormFragmentView<JsonFormFragmentViewState> {
     private static final String TAG = "JsonFormFragment";
+    private static String CONST_REAL_TIME_VALIDATION = "RealtimeValidation";
+    private static String CONST_FRAGMENT_WRITEVALUE_CALLED = "Fragment write value called";
     protected LinearLayout mMainView;
     protected ScrollView mScrollView;
     private Menu mMenu;
     private JsonApi mJsonApi;
     private Map<String, List<View>> lookUpMap = new HashMap<>();
 
-    private static String CONST_REAL_TIME_VALIDATION = "RealtimeValidation";
-
-    private static String CONST_FRAGMENT_WRITEVALUE_CALLED = "Fragment write value called";
-
+    public static JsonFormFragment getFormFragment(String stepName) {
+        JsonFormFragment jsonFormFragment = new JsonFormFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("stepName", stepName);
+        jsonFormFragment.setArguments(bundle);
+        return jsonFormFragment;
+    }
 
     @Override
     public void onAttach(Activity activity) {
@@ -115,7 +120,8 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
             return next();
         } else if (item.getItemId() == R.id.action_save) {
             try {
-                Boolean skipValidation = ((JsonFormActivity) mMainView.getContext()).getIntent().getBooleanExtra(JsonFormConstants.SKIP_VALIDATION, false);
+                Boolean skipValidation = ((JsonFormActivity) mMainView.getContext()).getIntent().getBooleanExtra(JsonFormConstants.SKIP_VALIDATION,
+                        false);
                 return save(skipValidation);
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
@@ -240,7 +246,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     @Override
     protected JsonFormFragmentPresenter createPresenter() {
-        return new JsonFormFragmentPresenter(this);
+        return new JsonFormFragmentPresenter(this, getContext());
     }
 
     @Override
@@ -252,7 +258,6 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     public void showToast(String message) {
         Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
     }
-
 
     @Override
     public CommonListener getCommonListener() {
@@ -366,14 +371,6 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
                 .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left,
                         R.anim.exit_to_right).replace(R.id.container, next)
                 .addToBackStack(next.getClass().getSimpleName()).commit();
-    }
-
-    public static JsonFormFragment getFormFragment(String stepName) {
-        JsonFormFragment jsonFormFragment = new JsonFormFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString("stepName", stepName);
-        jsonFormFragment.setArguments(bundle);
-        return jsonFormFragment;
     }
 
     public Menu getMenu() {

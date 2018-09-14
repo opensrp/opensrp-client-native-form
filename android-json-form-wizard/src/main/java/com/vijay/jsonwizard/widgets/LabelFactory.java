@@ -2,8 +2,12 @@ package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Build;
+import android.text.Html;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
@@ -11,6 +15,7 @@ import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
+import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.views.CustomTextView;
 
@@ -25,18 +30,56 @@ import java.util.List;
  */
 public class LabelFactory implements FormWidgetFactory {
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener
+            listener) throws Exception {
         String openMrsEntityParent = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_ID);
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
         String text = jsonObject.getString(JsonFormConstants.TEXT);
+        JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
+        String asterisks = "";
+        if (requiredObject != null) {
+            String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
+            if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
+                asterisks = "<font color=#CF0800> *</font>";
+            }
+        }
+
+        int labelTextSize = FormUtils.getValueFromSpOrDpOrPx(jsonObject.optString("text_size", JsonFormConstants.DEFAULT_LABEL_TEXT_SIZE), context);
+        String labelTextColor = jsonObject.optString("text_color", JsonFormConstants.DEFAULT_TEXT_COLOR);
+
+        List<View> views = new ArrayList<>(1);
+        RelativeLayout relativeLayout = FormUtils.createLabelRelativeLayout(jsonObject, context, listener);
+
+        relativeLayout.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+        relativeLayout.setTag(R.id.type, jsonObject.getString("type"));
+        relativeLayout.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
+        relativeLayout.setTag(R.id.openmrs_entity, openMrsEntity);
+        relativeLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
+        if (relevance != null && context instanceof JsonApi) {
+            relativeLayout.setTag(R.id.relevance, relevance);
+            ((JsonApi) context).addSkipLogicView(relativeLayout);
+        }
+        relativeLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+
+        String combinedLabelText;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            combinedLabelText = "<font color=" + labelTextColor + ">" + Html.escapeHtml(text) + "</font>" + asterisks;
+        } else {
+            combinedLabelText = "<font color=" + labelTextColor + ">" + TextUtils.htmlEncode(text) + "</font>" + asterisks;
+        }
+        CustomTextView labelText = relativeLayout.findViewById(R.id.label_text);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            labelText.setText(Html.fromHtml(combinedLabelText, Html.FROM_HTML_MODE_LEGACY));
+        } else {
+            labelText.setText(Html.fromHtml(combinedLabelText));
+        }
+        labelText.setTextSize(labelTextSize);
+
 
         boolean hintOnText = jsonObject.optBoolean("hint_on_text", false);
-
         boolean hasBg = jsonObject.optBoolean("has_bg", false);
-        String textSize = jsonObject.optString("text_size", null);
-        String textColor = jsonObject.optString("text_color", null);
 
         String bgColor = null;
         String topMargin = jsonObject.optString("top_margin", "0dp");
@@ -55,8 +98,6 @@ public class LabelFactory implements FormWidgetFactory {
             rightPadding = jsonObject.optString("right_padding", "5dp");
         }
 
-        List<View> views = new ArrayList<>(1);
-
         int bgColorInt = 0;
         int topMarginInt = FormUtils.getValueFromSpOrDpOrPx(topMargin, context);
         int bottomMarginInt = (int) context.getResources().getDimension(R.dimen.default_bottom_margin);
@@ -65,21 +106,16 @@ public class LabelFactory implements FormWidgetFactory {
             bgColorInt = Color.parseColor(bgColor);
         }
 
-        LinearLayout.LayoutParams layoutParams = FormUtils.getLayoutParams(FormUtils.MATCH_PARENT,
-                FormUtils.WRAP_CONTENT,
-                0,
-                topMarginInt,
-                0,
-                bottomMarginInt);
+        LinearLayout.LayoutParams layoutParams = FormUtils.getLayoutParams(FormUtils.MATCH_PARENT, FormUtils.WRAP_CONTENT, 0,
+                topMarginInt, 0, bottomMarginInt);
+        relativeLayout.setLayoutParams(layoutParams);
 
-        CustomTextView textView = FormUtils.getTextViewWith(context, 27, text, jsonObject.getString(JsonFormConstants.KEY),
-                jsonObject.getString("type"), openMrsEntityParent, openMrsEntity, openMrsEntityId,
-                relevance, layoutParams, FormUtils.FONT_BOLD_PATH, bgColorInt,null);
-        textView.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+        if (bgColorInt != 0) {
+            labelText.setBackgroundColor(bgColorInt);
+        }
 
         if (hasBg) {
-
-            textView.setPadding(
+            labelText.setPadding(
                     FormUtils.getValueFromSpOrDpOrPx(leftPadding, context),
                     FormUtils.getValueFromSpOrDpOrPx(topPadding, context),
                     FormUtils.getValueFromSpOrDpOrPx(rightPadding, context),
@@ -87,24 +123,15 @@ public class LabelFactory implements FormWidgetFactory {
             );
         }
 
-        if (textSize != null) {
-            textView.setTextSize(FormUtils.getValueFromSpOrDpOrPx(textSize, context));
-        }
-
-        if (textColor != null) {
-            textView.setTextColor(Color.parseColor(textColor));
-        }
-
-        textView.setEnabled(!jsonObject.optBoolean(JsonFormConstants.READ_ONLY, false));
-        textView.setHintOnText(hintOnText);
+        labelText.setEnabled(!jsonObject.optBoolean(JsonFormConstants.READ_ONLY, false));
+        labelText.setHintOnText(hintOnText);
 
         // Set the id for the view
         JSONArray canvasIds = new JSONArray();
-        textView.setId(ViewUtil.generateViewId());
-        canvasIds.put(textView.getId());
-        textView.setTag(R.id.canvas_ids, canvasIds.toString());
-
-        views.add(textView);
+        relativeLayout.setId(ViewUtil.generateViewId());
+        canvasIds.put(relativeLayout.getId());
+        relativeLayout.setTag(R.id.canvas_ids, canvasIds.toString());
+        views.add(relativeLayout);
         return views;
     }
 

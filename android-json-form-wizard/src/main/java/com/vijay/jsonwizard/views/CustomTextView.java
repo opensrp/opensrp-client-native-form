@@ -6,19 +6,20 @@ import android.support.annotation.ColorInt;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.util.AttributeSet;
 
 import com.vijay.jsonwizard.R;
 
 /**
  * Basically this custom TextView also provides the following capabilities:
- *
+ * <p>
  * <ul>
- *     <li>Grey when disabled - Rather the hint color set in the theme</li>
- *     <li>Returns to previous color when re-enabled</li>
- *     <li>Hinted text is color {@link com.vijay.jsonwizard.R.color#text_hint_color} - Hinted text
- *     is text between <> tags (tags inclusive). Furthermore, the tags are not removed</></li>
+ * <li>Grey when disabled - Rather the hint color set in the theme</li>
+ * <li>Returns to previous color when re-enabled</li>
+ * <li>Hinted text is color {@link com.vijay.jsonwizard.R.color#text_hint_color} - Hinted text
+ * is text between <> tags (tags inclusive). Furthermore, the tags are not removed</></li>
  * </ul>
- *
+ * <p>
  * Created by Ephraim Kigamba - ekigamba@ona.io on 11/04/2018.
  */
 public class CustomTextView extends AppCompatTextView {
@@ -28,6 +29,14 @@ public class CustomTextView extends AppCompatTextView {
 
     public CustomTextView(Context context) {
         super(context);
+    }
+
+    public CustomTextView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    public CustomTextView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
     }
 
     public boolean isHintOnText() {
@@ -44,11 +53,11 @@ public class CustomTextView extends AppCompatTextView {
     public void setTextColor(@ColorInt int color) {
         ColorStateList colorStateList = getTextColors();
 
-        int[][] states = new int[][] {
-                new int[] { android.R.attr.state_enabled}, // enabled
-                new int[] {-android.R.attr.state_enabled}, // disabled
-                new int[] {-android.R.attr.state_checked}, // unchecked
-                new int[] { android.R.attr.state_pressed}  // pressed
+        int[][] states = new int[][]{
+                new int[]{android.R.attr.state_enabled}, // enabled
+                new int[]{-android.R.attr.state_enabled}, // disabled
+                new int[]{-android.R.attr.state_checked}, // unchecked
+                new int[]{android.R.attr.state_pressed}  // pressed
         };
 
         int[] colors = new int[]{
@@ -68,13 +77,14 @@ public class CustomTextView extends AppCompatTextView {
             int currentStartScanIndex = 0;
 
             SpannableString styledString = new SpannableString(text);
-            while(currentStartScanIndex > -1) {
+            while (currentStartScanIndex > -1) {
                 currentStartScanIndex = text.indexOf("<", currentStartScanIndex);
                 if (currentStartScanIndex > -1) {
                     int endTagIndex = text.indexOf(">", currentStartScanIndex + 1);
 
                     if (endTagIndex > currentStartScanIndex) {
-                        styledString.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.text_hint_color)), currentStartScanIndex, endTagIndex + 1, 0);
+                        styledString.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.text_hint_color)), currentStartScanIndex,
+                                endTagIndex + 1, 0);
                     }
                     currentStartScanIndex = endTagIndex;
                 }

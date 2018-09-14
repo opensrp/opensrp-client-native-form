@@ -2,14 +2,19 @@ package com.vijay.jsonwizard.utils;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.views.CustomTextView;
 
@@ -208,25 +213,63 @@ public class FormUtils {
     }
 
     public static void createRadioButtonAndCheckBoxLabel(List<View> views, JSONObject jsonObject, Context context, JSONArray canvasIds, Boolean
-            readOnly) throws JSONException {
+            readOnly, CommonListener listener) throws JSONException {
+        String label = jsonObject.optString(JsonFormConstants.LABEL, "");
+        String asterisks = "";
+        int labelTextSize = FormUtils.getValueFromSpOrDpOrPx(jsonObject.optString(JsonFormConstants.LABEL_TEXT_SIZE, JsonFormConstants
+                .DEFAULT_LABEL_TEXT_SIZE), context);
+        String labelTextColor = jsonObject.optString(JsonFormConstants.LABEL_TEXT_COLOR, JsonFormConstants.DEFAULT_TEXT_COLOR);
+        JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
+        RelativeLayout relativeLayout = createLabelRelativeLayout(jsonObject, context, listener);
+
+        CustomTextView labelText = relativeLayout.findViewById(R.id.label_text);
+        if (requiredObject != null) {
+            String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
+            if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
+                asterisks = "<font color=#CF0800> *</font>";
+            }
+        }
+
+        String combinedLabelText = "<font color=" + labelTextColor + ">" + label + "</font>" + asterisks;
+
+        labelText.setText(Html.fromHtml(combinedLabelText));
+        labelText.setTextSize(labelTextSize);
+        canvasIds.put(relativeLayout.getId());
+        relativeLayout.setEnabled(!readOnly);
+        views.add(relativeLayout);
+    }
+
+    public static RelativeLayout createLabelRelativeLayout(JSONObject jsonObject, Context context, CommonListener listener) throws JSONException {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
+        String labelInfoText = jsonObject.optString(JsonFormConstants.LABEL_INFO_TEXT, "");
+        String labelInfoTitle = jsonObject.optString(JsonFormConstants.LABEL_INFO_TITLE, "");
 
-        String label = jsonObject.optString(JsonFormConstants.LABEL);
-        int labelTextSize = FormUtils.getValueFromSpOrDpOrPx(jsonObject.optString(JsonFormConstants.LABEL_TEXT_SIZE, JsonFormConstants
-                .DEFAULT_LABEL_TEXT_SIZE), context);
-        String labelTextColor = jsonObject.optString(JsonFormConstants.LABEL_TEXT_COLOR, JsonFormConstants.OPTIONS_DEFAULT_LABEL_TEXT_COLOR);
-
-        if (!label.isEmpty()) {
-            CustomTextView textView = FormUtils.getTextViewWith(context, labelTextSize, label, jsonObject.getString(JsonFormConstants.KEY),
-                    jsonObject.getString(JsonFormConstants.TYPE), openMrsEntityParent, openMrsEntity, openMrsEntityId, relevance,
-                    FormUtils.getLayoutParams(FormUtils.MATCH_PARENT, FormUtils.WRAP_CONTENT, 0, 0, 0, 0), FormUtils.FONT_BOLD_PATH, 0,
-                    labelTextColor);
-            canvasIds.put(textView.getId());
-            textView.setEnabled(!readOnly);
-            views.add(textView);
+        RelativeLayout relativeLayout = (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.native_form_compound_button_labels, null);
+        relativeLayout.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+        relativeLayout.setTag(R.id.type, jsonObject.getString("type"));
+        relativeLayout.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
+        relativeLayout.setTag(R.id.openmrs_entity, openMrsEntity);
+        relativeLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
+        relativeLayout.setId(ViewUtil.generateViewId());
+        if (relevance != null && context instanceof JsonApi) {
+            relativeLayout.setTag(R.id.relevance, relevance);
+            ((JsonApi) context).addSkipLogicView(relativeLayout);
         }
+
+        ImageView imageView = relativeLayout.findViewById(R.id.label_info);
+
+        if (!TextUtils.isEmpty(labelInfoText)) {
+            imageView.setVisibility(View.VISIBLE);
+            imageView.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+            imageView.setTag(R.id.type, jsonObject.getString("type"));
+            imageView.setTag(R.id.label_dialog_info, labelInfoText);
+            imageView.setTag(R.id.label_dialog_title, labelInfoTitle);
+            imageView.setOnClickListener(listener);
+        }
+
+        return relativeLayout;
     }
 }

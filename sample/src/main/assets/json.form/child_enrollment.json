@@ -81,7 +81,8 @@
         "openmrs_data_type": "text",
         "type": "tree",
         "hint": "Child's home health facility *",
-        "tree": [],
+        "tree": [
+        ],
         "v_required": {
           "value": true,
           "err": "Please enter the child's home facility"
@@ -368,7 +369,8 @@
         "openmrs_data_type": "text",
         "type": "tree",
         "hint": "Which health facility was the child born in? *",
-        "tree": [],
+        "tree": [
+        ],
         "v_required": {
           "value": true,
           "err": "Please enter the birth facility name"
@@ -407,7 +409,8 @@
         "openmrs_data_type": "text",
         "type": "tree",
         "hint": "Child's residential area *",
-        "tree": [],
+        "tree": [
+        ],
         "v_required": {
           "value": true,
           "err": "Please enter the child's residential area"
@@ -589,12 +592,33 @@
       {
         "key": "enabled_label",
         "type": "label",
-        "text": "This is enabled: <Hinted txt here>",
+        "text": "This is enabled: <Hinted here>",
         "hint_on_text": true,
-        "text_color": "#000000",
+        "text_color": "#FFC100",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
-        "openmrs_entity_id": ""
+        "openmrs_entity_id": "",
+        "v_required": {
+          "value": true
+        },
+        "label_info_text": "Checking out the display oof the info icon needed to display this infomation",
+        "label_info_title": "Highest Level of School"
+      },
+      {
+        "key": "enabled_label",
+        "type": "label",
+        "text": "This is enabled",
+        "hint_on_text": false,
+        "text_color": "#FFC100",
+        "text_size": "17sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "v_required": {
+          "value": true
+        },
+        "label_info_text": "Checking out the display oof the info icon needed to display this infomation",
+        "label_info_title": "Highest Level of School"
       },
       {
         "key": "divider1",
@@ -678,6 +702,8 @@
         "label": "Highest Level of School",
         "label_text_size": "20sp",
         "label_text_color": "#FF9800",
+        "label_info_text": "Checking out the display oof the info icon needed to display this infomation",
+        "label_info_title": "Highest Level of School",
         "options": [
           {
             "key": "primary_school",
@@ -695,7 +721,10 @@
             "text_color": "#358CB7"
           }
         ],
-        "value": "primary_school"
+        "value": "primary_school",
+        "v_required": {
+          "value": true
+        }
       },
       {
         "key": "toaster_notes",
@@ -704,6 +733,16 @@
         "openmrs_entity_id": "toaster_notes",
         "type": "toaster_notes",
         "text": "This is an information note",
+        "text_color": "#1199F9",
+        "toaster_type": "info"
+      },
+      {
+        "key": "toaster_notes",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person_attribute",
+        "openmrs_entity_id": "toaster_notes",
+        "type": "toaster_notes",
+        "text": "This is an information note, This is an information note, This is an information note, This is an information note,This is an information note, This is an information note, This is an information note,This is an information note",
         "toaster_type": "info"
       },
       {
@@ -713,6 +752,7 @@
         "openmrs_entity_id": "toaster_notes",
         "type": "toaster_notes",
         "text": "This is an positive note",
+        "text_color": "#3E7E2E",
         "toaster_type": "positive"
       },
       {
@@ -722,6 +762,7 @@
         "openmrs_entity_id": "toaster_notes",
         "type": "toaster_notes",
         "text": "This is an warning note",
+        "text_color": "#FFC100",
         "toaster_type": "warning"
       },
       {
@@ -731,6 +772,7 @@
         "openmrs_entity_id": "toaster_notes",
         "type": "toaster_notes",
         "text": "This is an danger note",
+        "text_color": "#CF0800",
         "toaster_type": "problem"
       }
     ]

@@ -44,7 +44,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         List<View> views = new ArrayList<>(1);
         JSONArray canvasIds = new JSONArray();
 
-        FormUtils.createRadioButtonAndCheckBoxLabel(views, jsonObject, context, canvasIds, readOnly);
+        FormUtils.createRadioButtonAndCheckBoxLabel(views, jsonObject, context, canvasIds, readOnly, listener);
         addRadioButtonOptionsElements(jsonObject, context, readOnly, canvasIds, stepName, views, listener);
 
         return views;
@@ -77,7 +77,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             RadioButton radioButton = (RadioButton) LayoutInflater.from(context).inflate(R.layout.item_radio_button,
                     null);
 
-            String optionTextColor = JsonFormConstants.OPTIONS_DEFAULT_LABEL_TEXT_COLOR;
+            String optionTextColor = JsonFormConstants.DEFAULT_TEXT_COLOR;
             String optionTextSize = JsonFormConstants.OPTIONS_DEFAULT_OPTION_TEXT_SIZE;
             if (item.has(JsonFormConstants.TEXT_COLOR)) {
                 optionTextColor = item.getString(JsonFormConstants.TEXT_COLOR);

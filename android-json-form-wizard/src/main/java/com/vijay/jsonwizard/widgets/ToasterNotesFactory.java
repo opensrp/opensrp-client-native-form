@@ -1,6 +1,7 @@
 package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -13,6 +14,7 @@ import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
+import com.vijay.jsonwizard.interfaces.JsonApi;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,7 +46,11 @@ public class ToasterNotesFactory implements FormWidgetFactory {
         linearLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         linearLayout.setTag(R.id.type, jsonObject.getString("type"));
         linearLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
-        linearLayout.setTag(R.id.relevance, relevance);
+
+        if (relevance != null && context instanceof JsonApi) {
+            linearLayout.setTag(R.id.relevance, relevance);
+            ((JsonApi) context).addSkipLogicView(linearLayout);
+        }
 
         attachJson(views, context, jsonObject, linearLayout);
         return views;
@@ -54,6 +60,7 @@ public class ToasterNotesFactory implements FormWidgetFactory {
             linearLayout) {
         String type = jsonObject.optString(JsonFormConstants.TOASTER_TYPE, JsonFormConstants.TOASTER_INFO);
         String text = jsonObject.optString(JsonFormConstants.TEXT, "");
+        String textColor = jsonObject.optString(JsonFormConstants.TEXT_COLOR, JsonFormConstants.DEFAULT_TEXT_COLOR);
 
         LinearLayout toasterNotesLayout = linearLayout.findViewById(R.id.toaster_notes_layout);
         ImageView toasterNoteImageView = linearLayout.findViewById(R.id.toaster_notes_image);
@@ -81,6 +88,7 @@ public class ToasterNotesFactory implements FormWidgetFactory {
         }
 
         toasterNotesTextView.setText(text);
+        toasterNotesTextView.setTextColor(Color.parseColor(textColor));
         views.add(linearLayout);
     }
 }

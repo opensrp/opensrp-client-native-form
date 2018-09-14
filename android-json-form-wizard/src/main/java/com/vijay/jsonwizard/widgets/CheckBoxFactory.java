@@ -40,7 +40,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
         List<View> views = new ArrayList<>(1);
         JSONArray canvasIds = new JSONArray();
 
-        FormUtils.createRadioButtonAndCheckBoxLabel(views, jsonObject, context, canvasIds, readOnly);
+        FormUtils.createRadioButtonAndCheckBoxLabel(views, jsonObject, context, canvasIds, readOnly, listener);
         addCheckBoxOptionsElements(jsonObject, context, readOnly, canvasIds, stepName, views, listener);
 
         return views;
@@ -119,7 +119,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
      * @throws JSONException
      */
     private void createCheckBoxText(LinearLayout checkboxLayout, JSONObject item, Context context) throws JSONException {
-        String optionTextColor = JsonFormConstants.OPTIONS_DEFAULT_LABEL_TEXT_COLOR;
+        String optionTextColor = JsonFormConstants.DEFAULT_TEXT_COLOR;
         String optionTextSize = JsonFormConstants.OPTIONS_DEFAULT_OPTION_TEXT_SIZE;
         if (item.has(JsonFormConstants.TEXT_COLOR)) {
             optionTextColor = item.getString(JsonFormConstants.TEXT_COLOR);
