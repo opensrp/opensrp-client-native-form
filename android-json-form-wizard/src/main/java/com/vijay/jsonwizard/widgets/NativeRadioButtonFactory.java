@@ -26,7 +26,7 @@ import java.util.List;
 
 import static com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT;
 import static com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT;
-import static com.vijay.jsonwizard.utils.FormUtils.getLayoutParams;
+import static com.vijay.jsonwizard.utils.FormUtils.getLinearLayoutParams;
 
 /**
  * Created by samuelgithengi on 8/16/18.
@@ -117,7 +117,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
                 ((JsonApi) context).addSkipLogicView(radioButton);
             }
         }
-        radioGroup.setLayoutParams(getLayoutParams(MATCH_PARENT, WRAP_CONTENT, 0, 0, 0, (int) context
+        radioGroup.setLayoutParams(getLinearLayoutParams(MATCH_PARENT, WRAP_CONTENT, 0, 0, 0, (int) context
                 .getResources().getDimension(R.dimen.extra_bottom_margin)));
         views.add(radioGroup);
 

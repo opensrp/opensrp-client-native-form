@@ -86,7 +86,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
             checkBox.setEnabled(!readOnly);
             checkBox.setFocusable(!readOnly);
             if (i == options.length() - 1) {
-                checkboxLayout.setLayoutParams(FormUtils.getLayoutParams(FormUtils.MATCH_PARENT, FormUtils.WRAP_CONTENT, 0, 0, 0, (int) context
+                checkboxLayout.setLayoutParams(FormUtils.getLinearLayoutParams(FormUtils.MATCH_PARENT, FormUtils.WRAP_CONTENT, 0, 0, 0, (int) context
                         .getResources().getDimension(R.dimen.extra_bottom_margin)));
             }
 

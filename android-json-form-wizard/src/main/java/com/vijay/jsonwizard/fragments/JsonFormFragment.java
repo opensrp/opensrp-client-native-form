@@ -246,7 +246,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     @Override
     protected JsonFormFragmentPresenter createPresenter() {
-        return new JsonFormFragmentPresenter(this, getContext());
+        return new JsonFormFragmentPresenter(this);
     }
 
     @Override

@@ -55,6 +55,8 @@ public class JsonFormConstants {
     public static final String DEFAULT_TEXT_COLOR = "#212121";
     public static final String TOASTER_NOTES = "toaster_notes";
     public static final String TOASTER_TYPE = "toaster_type";
+    public static final String TOASTER_INFO_TEXT = "toaster_info_text";
+    public static final String TOASTER_INFO_TITLE = "toaster_info_title";
     public static final String TOASTER_INFO = "info";
     public static final String TOASTER_POSITIVE = "positive";
     public static final String TOASTER_WARNING = "warning";

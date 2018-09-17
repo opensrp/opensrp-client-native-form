@@ -5,7 +5,7 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rey.material.util.ViewUtil;
@@ -36,51 +36,51 @@ public class ToasterNotesFactory implements FormWidgetFactory {
         List<View> views = new ArrayList<>(1);
         JSONArray canvasIds = new JSONArray();
 
-        LinearLayout linearLayout = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.native_form_toaster_notes, null);
-        linearLayout.setId(ViewUtil.generateViewId());
-        canvasIds.put(linearLayout.getId());
-        linearLayout.setTag(R.id.canvas_ids, canvasIds.toString());
-        linearLayout.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
-        linearLayout.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
-        linearLayout.setTag(R.id.openmrs_entity, openMrsEntity);
-        linearLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-        linearLayout.setTag(R.id.type, jsonObject.getString("type"));
-        linearLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+        RelativeLayout relativeLayout = (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.native_form_toaster_notes, null);
+        relativeLayout.setId(ViewUtil.generateViewId());
+        canvasIds.put(relativeLayout.getId());
+        relativeLayout.setTag(R.id.canvas_ids, canvasIds.toString());
+        relativeLayout.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+        relativeLayout.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
+        relativeLayout.setTag(R.id.openmrs_entity, openMrsEntity);
+        relativeLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
+        relativeLayout.setTag(R.id.type, jsonObject.getString("type"));
+        relativeLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
 
         if (relevance != null && context instanceof JsonApi) {
-            linearLayout.setTag(R.id.relevance, relevance);
-            ((JsonApi) context).addSkipLogicView(linearLayout);
+            relativeLayout.setTag(R.id.relevance, relevance);
+            ((JsonApi) context).addSkipLogicView(relativeLayout);
         }
 
-        attachJson(views, context, jsonObject, linearLayout);
+        attachJson(views, context, jsonObject, relativeLayout, listener);
         return views;
     }
 
-    private void attachJson(List<View> views, Context context, JSONObject jsonObject, LinearLayout
-            linearLayout) {
+    private void attachJson(List<View> views, Context context, JSONObject jsonObject, RelativeLayout relativeLayout, CommonListener listener)
+            throws JSONException {
         String type = jsonObject.optString(JsonFormConstants.TOASTER_TYPE, JsonFormConstants.TOASTER_INFO);
         String text = jsonObject.optString(JsonFormConstants.TEXT, "");
         String textColor = jsonObject.optString(JsonFormConstants.TEXT_COLOR, JsonFormConstants.DEFAULT_TEXT_COLOR);
+        String infoText = jsonObject.optString(JsonFormConstants.TOASTER_INFO_TEXT, null);
 
-        LinearLayout toasterNotesLayout = linearLayout.findViewById(R.id.toaster_notes_layout);
-        ImageView toasterNoteImageView = linearLayout.findViewById(R.id.toaster_notes_image);
-        TextView toasterNotesTextView = linearLayout.findViewById(R.id.toaster_notes_text);
+        ImageView toasterNoteImageView = relativeLayout.findViewById(R.id.toaster_notes_image);
+        TextView toasterNotesTextView = relativeLayout.findViewById(R.id.toaster_notes_text);
 
         switch (type) {
             case JsonFormConstants.TOASTER_INFO:
-                toasterNotesLayout.setBackgroundResource(R.drawable.toaster_notes_info);
+                relativeLayout.setBackgroundResource(R.drawable.toaster_notes_info);
                 toasterNoteImageView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_icon_info));
                 break;
             case JsonFormConstants.TOASTER_POSITIVE:
-                toasterNotesLayout.setBackgroundResource(R.drawable.toaster_notes_positive);
+                relativeLayout.setBackgroundResource(R.drawable.toaster_notes_positive);
                 toasterNoteImageView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_icon_positivity));
                 break;
             case JsonFormConstants.TOASTER_PROBLEM:
-                toasterNotesLayout.setBackgroundResource(R.drawable.toaster_notes_danger);
+                relativeLayout.setBackgroundResource(R.drawable.toaster_notes_danger);
                 toasterNoteImageView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_icon_danger));
                 break;
             case JsonFormConstants.TOASTER_WARNING:
-                toasterNotesLayout.setBackgroundResource(R.drawable.toaster_notes_warning);
+                relativeLayout.setBackgroundResource(R.drawable.toaster_notes_warning);
                 toasterNoteImageView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_icon_warning));
                 break;
             default:
@@ -89,6 +89,26 @@ public class ToasterNotesFactory implements FormWidgetFactory {
 
         toasterNotesTextView.setText(text);
         toasterNotesTextView.setTextColor(Color.parseColor(textColor));
-        views.add(linearLayout);
+
+        if (infoText != null) {
+            addToasterInfo(views, jsonObject, relativeLayout, listener);
+        } else {
+            views.add(relativeLayout);
+        }
+    }
+
+    private void addToasterInfo(List<View> views, JSONObject jsonObject, RelativeLayout relativeLayout, CommonListener listener) throws
+            JSONException {
+        String infoTitle = jsonObject.optString(JsonFormConstants.TOASTER_INFO_TITLE, "");
+        String infoText = jsonObject.optString(JsonFormConstants.TOASTER_INFO_TEXT, "");
+
+        ImageView toasterNoteInfo = relativeLayout.findViewById(R.id.toaster_notes_info);
+        toasterNoteInfo.setVisibility(View.VISIBLE);
+        toasterNoteInfo.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+        toasterNoteInfo.setTag(R.id.type, jsonObject.getString("type"));
+        toasterNoteInfo.setTag(R.id.label_dialog_info, infoText);
+        toasterNoteInfo.setTag(R.id.label_dialog_title, infoTitle);
+        toasterNoteInfo.setOnClickListener(listener);
+        views.add(relativeLayout);
     }
 }

@@ -42,8 +42,14 @@ public class FormUtils {
     private static final String TODAY_JAVAROSA_PROPERTY = "today";
     //public static final String LOOK_UP_JAVAROSA_PROPERTY = "look_up";
 
-    public static LinearLayout.LayoutParams getLayoutParams(int width, int height, int left, int top, int right, int bottom) {
+    public static LinearLayout.LayoutParams getLinearLayoutParams(int width, int height, int left, int top, int right, int bottom) {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(width, height);
+        layoutParams.setMargins(left, top, right, bottom);
+        return layoutParams;
+    }
+
+    public static RelativeLayout.LayoutParams getRelativeLayoutParams(int width, int height, int left, int top, int right, int bottom) {
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, height);
         layoutParams.setMargins(left, top, right, bottom);
         return layoutParams;
     }
@@ -247,7 +253,7 @@ public class FormUtils {
         String labelInfoText = jsonObject.optString(JsonFormConstants.LABEL_INFO_TEXT, "");
         String labelInfoTitle = jsonObject.optString(JsonFormConstants.LABEL_INFO_TITLE, "");
 
-        RelativeLayout relativeLayout = (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.native_form_compound_button_labels, null);
+        RelativeLayout relativeLayout = (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.native_form_labels, null);
         relativeLayout.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
         relativeLayout.setTag(R.id.type, jsonObject.getString("type"));
         relativeLayout.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);

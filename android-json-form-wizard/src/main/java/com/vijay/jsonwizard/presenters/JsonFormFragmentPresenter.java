@@ -60,13 +60,12 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
     private static final int RESULT_LOAD_IMG = 1;
     private final JsonFormFragment formFragment;
     protected JSONObject mStepDetails;
-    String key;
-    String type;
+    protected String key;
+    protected String type;
     private String mStepName;
     private String mCurrentKey;
     private String mCurrentPhotoPath;
     private JsonFormInteractor mJsonFormInteractor;
-    private Context context;
 
     public JsonFormFragmentPresenter(JsonFormFragment formFragment) {
         this.formFragment = formFragment;
@@ -76,12 +75,6 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
     public JsonFormFragmentPresenter(JsonFormFragment formFragment, JsonFormInteractor jsonFormInteractor) {
         this(formFragment);
         mJsonFormInteractor = jsonFormInteractor;
-    }
-
-    public JsonFormFragmentPresenter(JsonFormFragment formFragment, Context context) {
-        mJsonFormInteractor = JsonFormInteractor.getInstance();
-        this.formFragment = formFragment;
-        this.context = context;
     }
 
     public static ValidationStatus validate(JsonFormFragmentView formFragmentView, View childAt, boolean requestFocus) {
@@ -295,18 +288,24 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             case JsonFormConstants.LABEL:
                 showInformationDialog(v);
                 break;
+            case JsonFormConstants.TOASTER_NOTES:
+                String info = (String) v.getTag(R.id.label_dialog_info);
+                if (!TextUtils.isEmpty(info)) {
+                    showInformationDialog(v);
+                }
+                break;
             default:
                 break;
         }
     }
 
     private void showInformationDialog(View view) {
-        AlertDialog.Builder builderSingle = new AlertDialog.Builder(context, R.style.AppThemeAlertDialog);
+        AlertDialog.Builder builderSingle = new AlertDialog.Builder(getView().getContext(), R.style.AppThemeAlertDialog);
         builderSingle.setTitle((String) view.getTag(R.id.label_dialog_title));
         builderSingle.setMessage((String) view.getTag(R.id.label_dialog_info));
         builderSingle.setIcon(R.drawable.ic_icon_info_filled);
 
-        builderSingle.setNegativeButton(context.getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
+        builderSingle.setNegativeButton(getView().getContext().getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -386,7 +385,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             String openMrsEntityId = (String) compoundButton.getTag(R.id.openmrs_entity_id);
             String childKey = (String) compoundButton.getTag(R.id.childKey);
             getView().writeValue(mStepName, parentKey, JsonFormConstants.OPTIONS_FIELD_NAME, childKey,
-                    String.valueOf(((CheckBox) compoundButton).isChecked()), openMrsEntityParent,
+                    String.valueOf(compoundButton.isChecked()), openMrsEntityParent,
                     openMrsEntity, openMrsEntityId);
         } else if ((compoundButton instanceof android.widget.RadioButton ||
                 compoundButton instanceof RadioButton) && isChecked) {

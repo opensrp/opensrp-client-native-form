@@ -25,7 +25,7 @@ import java.util.List;
 import static com.vijay.jsonwizard.utils.FormUtils.FONT_BOLD_PATH;
 import static com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT;
 import static com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT;
-import static com.vijay.jsonwizard.utils.FormUtils.getLayoutParams;
+import static com.vijay.jsonwizard.utils.FormUtils.getLinearLayoutParams;
 import static com.vijay.jsonwizard.utils.FormUtils.getTextViewWith;
 
 /**
@@ -45,7 +45,7 @@ public class RadioButtonFactory implements FormWidgetFactory {
         CustomTextView textView = getTextViewWith(context, 27, jsonObject.getString("label"), jsonObject.getString(JsonFormConstants.KEY),
                 jsonObject.getString("type"), openMrsEntityParent, openMrsEntity, openMrsEntityId,
                 relevance,
-                getLayoutParams(MATCH_PARENT, WRAP_CONTENT, 0, 0, 0, 0), FONT_BOLD_PATH);
+                getLinearLayoutParams(MATCH_PARENT, WRAP_CONTENT, 0, 0, 0, 0), FONT_BOLD_PATH);
         canvasIds.put(textView.getId());
 
         views.add(textView);
@@ -80,7 +80,7 @@ public class RadioButtonFactory implements FormWidgetFactory {
             textView.setEnabled(!readOnly);
 
             if (i == options.length() - 1) {
-                radioButton.setLayoutParams(getLayoutParams(MATCH_PARENT, WRAP_CONTENT, 0, 0, 0, (int) context
+                radioButton.setLayoutParams(getLinearLayoutParams(MATCH_PARENT, WRAP_CONTENT, 0, 0, 0, (int) context
                         .getResources().getDimension(R.dimen.extra_bottom_margin)));
             }
             ((JsonApi) context).addFormDataView(radioButton);

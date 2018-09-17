@@ -66,7 +66,7 @@ public class LabelFactory implements FormWidgetFactory {
             bottomMarginInt = FormUtils.getValueFromSpOrDpOrPx(bottomMargin, context);
         }
 
-        LinearLayout.LayoutParams layoutParams = FormUtils.getLayoutParams(FormUtils.MATCH_PARENT, FormUtils.WRAP_CONTENT, 0,
+        RelativeLayout.LayoutParams layoutParams = FormUtils.getRelativeLayoutParams(FormUtils.MATCH_PARENT, FormUtils.WRAP_CONTENT, 0,
                 topMarginInt, 0, bottomMarginInt);
         relativeLayout.setLayoutParams(layoutParams);
 
@@ -83,6 +83,7 @@ public class LabelFactory implements FormWidgetFactory {
 
     /**
      * Instantiates the label Custom TextView and adds in its attributes
+     *
      * @param jsonObject
      * @param context
      * @param relativeLayout
@@ -113,6 +114,7 @@ public class LabelFactory implements FormWidgetFactory {
         int labelTextSize = FormUtils.getValueFromSpOrDpOrPx(jsonObject.optString("text_size", JsonFormConstants.DEFAULT_LABEL_TEXT_SIZE), context);
 
         CustomTextView labelText = relativeLayout.findViewById(R.id.label_text);
+        labelText.setHintOnText(hintOnText);
         labelText.setTextSize(labelTextSize);
         labelText.setText(createLabelText(jsonObject));
 
@@ -130,11 +132,11 @@ public class LabelFactory implements FormWidgetFactory {
         }
 
         labelText.setEnabled(!jsonObject.optBoolean(JsonFormConstants.READ_ONLY, false));
-        labelText.setHintOnText(hintOnText);
     }
 
     /**
      * Generates the spanned texted to be passed to the label Custom TextView
+     *
      * @param jsonObject
      * @return
      * @throws JSONException
@@ -147,7 +149,7 @@ public class LabelFactory implements FormWidgetFactory {
         if (requiredObject != null) {
             String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
             if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
-                asterisks = "<font color=#CF0800> *</font>";
+                asterisks = "<font color=" + "#CF0800" + "> *</font>";
             }
         }
 
