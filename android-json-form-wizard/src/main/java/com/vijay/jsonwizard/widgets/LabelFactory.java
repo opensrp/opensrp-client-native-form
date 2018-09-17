@@ -116,6 +116,10 @@ public class LabelFactory implements FormWidgetFactory {
         CustomTextView labelText = relativeLayout.findViewById(R.id.label_text);
         labelText.setHintOnText(hintOnText);
         labelText.setTextSize(labelTextSize);
+
+        labelText.setEnabled(!jsonObject.optBoolean(JsonFormConstants.READ_ONLY, false));//Gotcha: Should be set before createLabelText is used
+        labelText.setHintOnText(hintOnText);//Gotcha: Should be set before createLabelText is used
+
         labelText.setText(createLabelText(jsonObject));
 
         if (bgColorInt != 0) {
@@ -130,8 +134,6 @@ public class LabelFactory implements FormWidgetFactory {
                     FormUtils.getValueFromSpOrDpOrPx(bottomPadding, context)
             );
         }
-
-        labelText.setEnabled(!jsonObject.optBoolean(JsonFormConstants.READ_ONLY, false));
     }
 
     /**
