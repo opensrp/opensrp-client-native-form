@@ -83,6 +83,7 @@ public class LabelFactory implements FormWidgetFactory {
 
     /**
      * Instantiates the label Custom TextView and adds in its attributes
+     *
      * @param jsonObject
      * @param context
      * @param relativeLayout
@@ -114,6 +115,10 @@ public class LabelFactory implements FormWidgetFactory {
 
         CustomTextView labelText = relativeLayout.findViewById(R.id.label_text);
         labelText.setTextSize(labelTextSize);
+
+        labelText.setEnabled(!jsonObject.optBoolean(JsonFormConstants.READ_ONLY, false));//Gotcha: Should be set before createLabelText is used
+        labelText.setHintOnText(hintOnText);//Gotcha: Should be set before createLabelText is used
+
         labelText.setText(createLabelText(jsonObject));
 
         if (bgColorInt != 0) {
@@ -128,13 +133,11 @@ public class LabelFactory implements FormWidgetFactory {
                     FormUtils.getValueFromSpOrDpOrPx(bottomPadding, context)
             );
         }
-
-        labelText.setEnabled(!jsonObject.optBoolean(JsonFormConstants.READ_ONLY, false));
-        labelText.setHintOnText(hintOnText);
     }
 
     /**
      * Generates the spanned texted to be passed to the label Custom TextView
+     *
      * @param jsonObject
      * @return
      * @throws JSONException
