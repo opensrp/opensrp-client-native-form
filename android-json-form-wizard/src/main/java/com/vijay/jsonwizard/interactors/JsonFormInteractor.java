@@ -10,6 +10,7 @@ import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.widgets.BarcodeFactory;
 import com.vijay.jsonwizard.widgets.ButtonFactory;
 import com.vijay.jsonwizard.widgets.CheckBoxFactory;
+import com.vijay.jsonwizard.widgets.ComponentSpacerFactory;
 import com.vijay.jsonwizard.widgets.DatePickerFactory;
 import com.vijay.jsonwizard.widgets.EditTextFactory;
 import com.vijay.jsonwizard.widgets.GpsFactory;
@@ -65,6 +66,7 @@ public class JsonFormInteractor {
         map.put(JsonFormConstants.HORIZONTAL_LINE, new HorizontalLineFactory());
         map.put(JsonFormConstants.NATIVE_RADIO_BUTTON, new NativeRadioButtonFactory());
         map.put(JsonFormConstants.TOASTER_NOTES, new ToasterNotesFactory());
+        map.put(JsonFormConstants.SPACER, new ComponentSpacerFactory());
     }
 
     public List<View> fetchFormElements(String stepName, JsonFormFragment formFragment,

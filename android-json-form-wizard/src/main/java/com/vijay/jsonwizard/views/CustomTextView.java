@@ -71,7 +71,6 @@ public class CustomTextView extends AppCompatTextView {
     }
 
     public void setText(String text) {
-
         if (hintOnText && isEnabled()) {
             int currentStartScanIndex = 0;
 

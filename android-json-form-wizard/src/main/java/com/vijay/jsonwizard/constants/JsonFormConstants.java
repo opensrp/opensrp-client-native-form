@@ -61,4 +61,6 @@ public class JsonFormConstants {
     public static final String TOASTER_POSITIVE = "positive";
     public static final String TOASTER_WARNING = "warning";
     public static final String TOASTER_PROBLEM = "problem";
+    public static final String SPACER = "spacer";
+    public static final String SPACER_HEIGHT = "spacer_height";
 }

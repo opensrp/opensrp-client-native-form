@@ -28,6 +28,7 @@
     <string name="info_label">Info Label</string>
     <string name="label_text_string">%1$s %2$s</string>
     <string name="the_toaster_icon">The toaster icon</string>
+    <string name="asterisks">*</string>
 
     <string-array name="spinnerItems">
         <item>item1</item>

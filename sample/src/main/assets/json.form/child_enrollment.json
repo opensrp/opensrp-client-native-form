@@ -768,6 +768,14 @@
         "toaster_type": "warning"
       },
       {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "40sp"
+      },
+      {
         "key": "toaster_notes",
         "openmrs_entity_parent": "",
         "openmrs_entity": "person_attribute",
