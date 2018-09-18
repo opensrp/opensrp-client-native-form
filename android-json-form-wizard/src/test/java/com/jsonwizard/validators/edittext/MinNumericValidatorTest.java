@@ -1,6 +1,7 @@
 package com.jsonwizard.validators.edittext;
 
 import com.jsonwizard.BaseTest;
+import com.vijay.jsonwizard.validators.edittext.MaxNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.MinNumericValidator;
 
 import junit.framework.Assert;
@@ -38,5 +39,11 @@ public class MinNumericValidatorTest extends BaseTest {
         MinNumericValidator validator = new MinNumericValidator(DEFAULT_ERROR_MSG, 1);
         Assert.assertEquals(false, validator.isValid(null, false));
 
+    }
+
+    @Test
+    public void isValidShouldReturnFalseWhenValueSetIsEmpty() {
+        MaxNumericValidator validator = new MaxNumericValidator(DEFAULT_ERROR_MSG, CONSTANT_INT_1);
+        Assert.assertEquals(false, validator.isValid("", false));
     }
 }

@@ -32,4 +32,10 @@ public class MinLengthValidatorTest extends BaseTest {
 
     }
 
+    @Test
+    public void isValidShouldReturnTrueWhenTheStringIsNull() {
+        MinLengthValidator validator = new MinLengthValidator(DEFAULT_ERROR_MSG, CONSTANT_INT_1);
+        Assert.assertEquals(false, (validator.isValid(null, false)));
+    }
+
 }

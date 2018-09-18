@@ -18,6 +18,8 @@ public class LengthValidator extends METValidator {
 
     @Override
     public boolean isValid(CharSequence charSequence, boolean isEmpty) {
-        return !isEmpty && (charSequence.length() >= minLength && charSequence.length() <= maxLength);
+        return charSequence != null ? !isEmpty && charSequence.length() >= minLength && charSequence.length() <= maxLength && charSequence != null
+                : false;
+
     }
 }
