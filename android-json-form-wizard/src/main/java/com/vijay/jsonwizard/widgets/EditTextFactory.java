@@ -39,8 +39,20 @@ public class EditTextFactory implements FormWidgetFactory {
     public static final int MIN_LENGTH = 0;
     public static final int MAX_LENGTH = 100;
 
+    public static ValidationStatus validate(JsonFormFragmentView formFragmentView,
+                                            MaterialEditText editText) {
+        if (editText.isEnabled()) {
+            boolean validate = editText.validate();
+            if (!validate) {
+                return new ValidationStatus(false, editText.getError().toString(), formFragmentView, editText);
+            }
+        }
+        return new ValidationStatus(true, null, formFragmentView, editText);
+    }
+
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener
+            listener) throws Exception {
         List<View> views = new ArrayList<>(1);
 
         RelativeLayout rootLayout = (RelativeLayout) LayoutInflater.from(context).inflate(
@@ -59,13 +71,14 @@ public class EditTextFactory implements FormWidgetFactory {
         return views;
     }
 
-    protected void attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, MaterialEditText editText) throws Exception {
+    protected void attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, MaterialEditText editText)
+            throws Exception {
 
-        String openMrsEntityParent = jsonObject.getString("openmrs_entity_parent");
-        String openMrsEntity = jsonObject.getString("openmrs_entity");
-        String openMrsEntityId = jsonObject.getString("openmrs_entity_id");
-        String relevance = jsonObject.optString("relevance");
-        String constraints = jsonObject.optString("constraints");
+        String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
+        String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
+        String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
+        String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
+        String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
 
         int minLength = MIN_LENGTH;
         int maxLength = MAX_LENGTH;
@@ -78,7 +91,7 @@ public class EditTextFactory implements FormWidgetFactory {
         editText.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
         editText.setTag(R.id.openmrs_entity, openMrsEntity);
         editText.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-        editText.setTag(R.id.type, jsonObject.getString("type"));
+        editText.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
         editText.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
 
         if (!TextUtils.isEmpty(jsonObject.optString(JsonFormConstants.VALUE))) {
@@ -101,7 +114,7 @@ public class EditTextFactory implements FormWidgetFactory {
 
         }
 
-        JSONObject minLengthObject = jsonObject.optJSONObject("v_min_length");
+        JSONObject minLengthObject = jsonObject.optJSONObject(JsonFormConstants.V_MIN_LENGTH);
         if (minLengthObject != null) {
             String minLengthValue = minLengthObject.optString(JsonFormConstants.VALUE);
             if (!TextUtils.isEmpty(minLengthValue)) {
@@ -110,7 +123,7 @@ public class EditTextFactory implements FormWidgetFactory {
             }
         }
 
-        JSONObject maxLengthObject = jsonObject.optJSONObject("v_max_length");
+        JSONObject maxLengthObject = jsonObject.optJSONObject(JsonFormConstants.V_MAX_LENGTH);
         if (maxLengthObject != null) {
             String maxLengthValue = maxLengthObject.optString(JsonFormConstants.VALUE);
             if (!TextUtils.isEmpty(maxLengthValue)) {
@@ -122,7 +135,7 @@ public class EditTextFactory implements FormWidgetFactory {
         editText.setMaxCharacters(maxLength);
         editText.setMinCharacters(minLength);
 
-        JSONObject regexObject = jsonObject.optJSONObject("v_regex");
+        JSONObject regexObject = jsonObject.optJSONObject(JsonFormConstants.V_REGEX);
         if (regexObject != null) {
             String regexValue = regexObject.optString(JsonFormConstants.VALUE);
             if (!TextUtils.isEmpty(regexValue)) {
@@ -130,16 +143,17 @@ public class EditTextFactory implements FormWidgetFactory {
             }
         }
 
-        JSONObject emailObject = jsonObject.optJSONObject("v_email");
+        JSONObject emailObject = jsonObject.optJSONObject(JsonFormConstants.V_EMAIL);
         if (emailObject != null) {
             String emailValue = emailObject.optString(JsonFormConstants.VALUE);
             if (!TextUtils.isEmpty(emailValue) && Boolean.TRUE.toString().equalsIgnoreCase(emailValue)) {
-                editText.addValidator(new RegexpValidator(emailObject.getString(JsonFormConstants.ERR), android.util.Patterns.EMAIL_ADDRESS.toString()));
+                editText.addValidator(new RegexpValidator(emailObject.getString(JsonFormConstants.ERR), android.util.Patterns.EMAIL_ADDRESS
+                        .toString()));
             }
 
         }
 
-        JSONObject urlObject = jsonObject.optJSONObject("v_url");
+        JSONObject urlObject = jsonObject.optJSONObject(JsonFormConstants.V_URL);
         if (urlObject != null) {
             String urlValue = urlObject.optString(JsonFormConstants.VALUE);
             if (!TextUtils.isEmpty(urlValue) && Boolean.TRUE.toString().equalsIgnoreCase(urlValue)) {
@@ -148,7 +162,7 @@ public class EditTextFactory implements FormWidgetFactory {
 
         }
 
-        JSONObject numericObject = jsonObject.optJSONObject("v_numeric");
+        JSONObject numericObject = jsonObject.optJSONObject(JsonFormConstants.V_NUMERIC);
         if (numericObject != null) {
             String numericValue = numericObject.optString(JsonFormConstants.VALUE);
             if (!TextUtils.isEmpty(numericValue) && Boolean.TRUE.toString().equalsIgnoreCase(numericValue)) {
@@ -156,21 +170,21 @@ public class EditTextFactory implements FormWidgetFactory {
                 editText.addValidator(new RegexpValidator(numericObject.getString(JsonFormConstants.ERR),
                         "[0-9]*\\.?[0-9]*"));
 
-                if (jsonObject.has("v_min")) {
-                    JSONObject minValidation = jsonObject.getJSONObject("v_min");
+                if (jsonObject.has(JsonFormConstants.V_MIN)) {
+                    JSONObject minValidation = jsonObject.getJSONObject(JsonFormConstants.V_MIN);
                     editText.addValidator(new MinNumericValidator(minValidation.getString(JsonFormConstants.ERR),
                             Double.parseDouble(minValidation.getString(JsonFormConstants.VALUE))));
                 }
 
-                if (jsonObject.has("v_max")) {
-                    JSONObject minValidation = jsonObject.getJSONObject("v_min");
+                if (jsonObject.has(JsonFormConstants.V_MAX)) {
+                    JSONObject minValidation = jsonObject.getJSONObject(JsonFormConstants.V_MAX);
                     editText.addValidator(new MaxNumericValidator(minValidation.getString(JsonFormConstants.ERR),
                             Double.parseDouble(minValidation.getString(JsonFormConstants.VALUE))));
                 }
             }
         }
 
-        JSONObject numericIntegerObject = jsonObject.optJSONObject("v_numeric_integer");
+        JSONObject numericIntegerObject = jsonObject.optJSONObject(JsonFormConstants.V_NUMERIC_INTEGER);
         if (numericIntegerObject != null) {
             String numericValue = numericIntegerObject.optString(JsonFormConstants.VALUE);
             if (!TextUtils.isEmpty(numericValue) && Boolean.TRUE.toString().equalsIgnoreCase(numericValue)) {
@@ -178,14 +192,14 @@ public class EditTextFactory implements FormWidgetFactory {
                 editText.addValidator(new RegexpValidator(numericIntegerObject.getString(JsonFormConstants.ERR),
                         "\\d*"));
 
-                if (jsonObject.has("v_min")) {
-                    JSONObject minValidation = jsonObject.getJSONObject("v_min");
+                if (jsonObject.has(JsonFormConstants.V_MIN)) {
+                    JSONObject minValidation = jsonObject.getJSONObject(JsonFormConstants.V_MIN);
                     editText.addValidator(new MinNumericValidator(minValidation.getString(JsonFormConstants.ERR),
                             Double.parseDouble(minValidation.getString(JsonFormConstants.VALUE))));
                 }
 
-                if (jsonObject.has("v_max")) {
-                    JSONObject minValidation = jsonObject.getJSONObject("v_min");
+                if (jsonObject.has(JsonFormConstants.V_MAX)) {
+                    JSONObject minValidation = jsonObject.getJSONObject(JsonFormConstants.V_MAX);
                     editText.addValidator(new MaxNumericValidator(minValidation.getString(JsonFormConstants.ERR),
                             Double.parseDouble(minValidation.getString(JsonFormConstants.VALUE))));
                 }
@@ -193,7 +207,7 @@ public class EditTextFactory implements FormWidgetFactory {
         }
 
         // edit type check
-        String editType = jsonObject.optString("edit_type");
+        String editType = jsonObject.optString(JsonFormConstants.EDIT_TYPE);
         if (!TextUtils.isEmpty(editType)) {
             if ("number".equals(editType)) {
                 editText.setRawInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
@@ -213,17 +227,6 @@ public class EditTextFactory implements FormWidgetFactory {
             ((JsonApi) context).addConstrainedView(editText);
         }
 
-    }
-
-    public static ValidationStatus validate(JsonFormFragmentView formFragmentView,
-                                            MaterialEditText editText) {
-        if (editText.isEnabled()) {
-            boolean validate = editText.validate();
-            if (!validate) {
-                return new ValidationStatus(false, editText.getError().toString(), formFragmentView, editText);
-            }
-        }
-        return new ValidationStatus(true, null, formFragmentView, editText);
     }
 
     protected int getLayout() {
