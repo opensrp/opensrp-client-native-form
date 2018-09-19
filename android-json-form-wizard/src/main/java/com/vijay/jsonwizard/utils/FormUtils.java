@@ -202,7 +202,7 @@ public class FormUtils {
     }
 
     public static int getValueFromSpOrDpOrPx(String spOrDpOrPx, Context context) {
-        int px = 0;
+        int px = (int) context.getResources().getDimension(R.dimen.default_label_text_size);
         if (!TextUtils.isEmpty(spOrDpOrPx)) {
             if (spOrDpOrPx.contains("sp")) {
                 int unitValues = Integer.parseInt(spOrDpOrPx.replace("sp", ""));
@@ -222,8 +222,8 @@ public class FormUtils {
             readOnly, CommonListener listener) throws JSONException {
         String label = jsonObject.optString(JsonFormConstants.LABEL, "");
         String asterisks = "";
-        int labelTextSize = FormUtils.getValueFromSpOrDpOrPx(jsonObject.optString(JsonFormConstants.LABEL_TEXT_SIZE, JsonFormConstants
-                .DEFAULT_LABEL_TEXT_SIZE), context);
+        int labelTextSize = FormUtils.getValueFromSpOrDpOrPx(jsonObject.optString(JsonFormConstants.LABEL_TEXT_SIZE, String.valueOf(context
+                .getResources().getDimension(R.dimen.default_label_text_size))), context);
         String labelTextColor = jsonObject.optString(JsonFormConstants.LABEL_TEXT_COLOR, JsonFormConstants.DEFAULT_TEXT_COLOR);
         JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
         RelativeLayout relativeLayout = createLabelRelativeLayout(jsonObject, context, listener);

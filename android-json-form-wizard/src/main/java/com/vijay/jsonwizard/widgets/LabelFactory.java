@@ -95,7 +95,8 @@ public class LabelFactory implements FormWidgetFactory {
         if (hasBg) {
             bgColorInt = Color.parseColor(bgColor);
         }
-        int labelTextSize = FormUtils.getValueFromSpOrDpOrPx(jsonObject.optString("text_size", JsonFormConstants.DEFAULT_LABEL_TEXT_SIZE), context);
+        int labelTextSize = FormUtils.getValueFromSpOrDpOrPx(jsonObject.optString("text_size", String.valueOf(context.getResources().getDimension(R
+                .dimen.default_label_text_size))), context);
 
         CustomTextView labelText = relativeLayout.findViewById(R.id.label_text);
 
@@ -128,8 +129,17 @@ public class LabelFactory implements FormWidgetFactory {
      */
     private Spanned createLabelText(JSONObject jsonObject) throws JSONException {
         String text = jsonObject.getString(JsonFormConstants.TEXT);
+        Boolean readOnly = jsonObject.optBoolean(JsonFormConstants.READ_ONLY);
+        String asterisks = getAsterisk(jsonObject);
+        String labelTextColor = readOnly ? "#737373" : jsonObject.optString(JsonFormConstants.TEXT_COLOR, null);
+        String combinedLabelText = getCombinedLabel(jsonObject, text, asterisks, labelTextColor);
+
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(combinedLabelText, Html.FROM_HTML_MODE_LEGACY) : Html
+                .fromHtml(combinedLabelText);
+    }
+
+    private String getAsterisk(JSONObject jsonObject) throws JSONException {
         JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
-        Boolean required = jsonObject.optBoolean(JsonFormConstants.READ_ONLY);
         String asterisks = "";
         if (requiredObject != null) {
             String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
@@ -137,16 +147,13 @@ public class LabelFactory implements FormWidgetFactory {
                 asterisks = "<font color=" + "#CF0800" + "> *</font>";
             }
         }
+        return asterisks;
+    }
 
-        String labelTextColor = required ? "#737373" : jsonObject.optString(JsonFormConstants.TEXT_COLOR, null);
-
-        String combinedLabelText = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN ? "<font color=" + labelTextColor + ">" + Html
+    private String getCombinedLabel(JSONObject jsonObject, String text, String asterisks, String labelTextColor) {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN ? "<font color=" + labelTextColor + ">" + Html
                 .escapeHtml(text) + "</font>" + asterisks : "<font color=" + labelTextColor + ">" + TextUtils.htmlEncode(text) + "</font>" +
                 asterisks;
-
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(combinedLabelText, Html.FROM_HTML_MODE_LEGACY) : Html
-                .fromHtml(combinedLabelText);
-
     }
 
 }

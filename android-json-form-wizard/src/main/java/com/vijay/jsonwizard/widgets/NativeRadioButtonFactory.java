@@ -78,7 +78,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
                     null);
 
             String optionTextColor = JsonFormConstants.DEFAULT_TEXT_COLOR;
-            String optionTextSize = JsonFormConstants.OPTIONS_DEFAULT_OPTION_TEXT_SIZE;
+            String optionTextSize = String.valueOf(context.getResources().getDimension(R.dimen.options_default_text_size));
             if (item.has(JsonFormConstants.TEXT_COLOR)) {
                 optionTextColor = item.getString(JsonFormConstants.TEXT_COLOR);
             }
