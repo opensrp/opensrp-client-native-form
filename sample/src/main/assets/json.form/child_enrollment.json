@@ -710,7 +710,7 @@
         "openmrs_entity_id": "",
         "type": "native_radio",
         "label": "Highest Level of School",
-        "label_text_size": "20sp",
+        "label_text_size": "18px",
         "label_text_color": "#FF9800",
         "label_info_text": "Checking out the display oof the info icon needed to display this infomation",
         "label_info_title": "Highest Level of School",
@@ -723,7 +723,7 @@
           {
             "key": "high_school",
             "text": "High School",
-            "text_size": "30sp"
+            "text_size": "18sp"
           },
           {
             "key": "higher_education",
