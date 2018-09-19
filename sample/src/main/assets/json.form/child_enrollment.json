@@ -590,6 +590,16 @@
         }
       },
       {
+        "key": "label_site_ipv_assess",
+        "type": "label",
+        "text": "1. Are all of the following in place at your facility:",
+        "text_size": "22px",
+        "text_color": "#000000",
+        "v_required": {
+          "value": true
+        }
+      },
+      {
         "key": "enabled_label",
         "type": "label",
         "text": "This is enabled: <Hinted here>",

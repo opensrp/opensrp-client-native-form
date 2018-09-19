@@ -15,7 +15,6 @@ import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
-import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.views.CustomTextView;
 
@@ -33,23 +32,9 @@ public class LabelFactory implements FormWidgetFactory {
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener
             listener) throws Exception {
-        String openMrsEntityParent = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
-        String openMrsEntity = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY);
-        String openMrsEntityId = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_ID);
-        String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
-
         List<View> views = new ArrayList<>(1);
         RelativeLayout relativeLayout = FormUtils.createLabelRelativeLayout(jsonObject, context, listener);
 
-        relativeLayout.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
-        relativeLayout.setTag(R.id.type, jsonObject.getString("type"));
-        relativeLayout.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
-        relativeLayout.setTag(R.id.openmrs_entity, openMrsEntity);
-        relativeLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-        if (relevance != null && context instanceof JsonApi) {
-            relativeLayout.setTag(R.id.relevance, relevance);
-            ((JsonApi) context).addSkipLogicView(relativeLayout);
-        }
         relativeLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
 
         boolean hasBg = jsonObject.optBoolean("has_bg", false);
@@ -145,7 +130,6 @@ public class LabelFactory implements FormWidgetFactory {
         String text = jsonObject.getString(JsonFormConstants.TEXT);
         JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
         Boolean required = jsonObject.optBoolean(JsonFormConstants.READ_ONLY);
-        Spanned generatedLabelText;
         String asterisks = "";
         if (requiredObject != null) {
             String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
