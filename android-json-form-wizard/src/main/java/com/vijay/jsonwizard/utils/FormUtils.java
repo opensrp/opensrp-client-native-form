@@ -28,10 +28,10 @@ public class FormUtils {
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
     public static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public static final String METADATA_PROPERTY = "metadata";
+    public static final String LOOK_UP_JAVAROSA_PROPERTY = "look_up";
     private static final String START_JAVAROSA_PROPERTY = "start";
     private static final String END_JAVAROSA_PROPERTY = "end";
     private static final String TODAY_JAVAROSA_PROPERTY = "today";
-    public static final String LOOK_UP_JAVAROSA_PROPERTY = "look_up";
 
     public static LinearLayout.LayoutParams getLayoutParams(int width, int height, int left, int top, int right, int bottom) {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(width, height);
@@ -40,10 +40,10 @@ public class FormUtils {
     }
 
     public static CustomTextView getTextViewWith(Context context, int textSizeInSp, String text,
-                                           String key, String type, String openMrsEntityParent,
-                                           String openMrsEntity, String openMrsEntityId,
-                                           String relevance,
-                                           LinearLayout.LayoutParams layoutParams, String fontPath, int bgColor, String textColor) {
+                                                 String key, String type, String openMrsEntityParent,
+                                                 String openMrsEntity, String openMrsEntityId,
+                                                 String relevance,
+                                                 LinearLayout.LayoutParams layoutParams, String fontPath, int bgColor, String textColor) {
         CustomTextView textView = new CustomTextView(context);
         textView.setText(text);
         textView.setTag(R.id.key, key);
@@ -71,12 +71,12 @@ public class FormUtils {
     }
 
     public static CustomTextView getTextViewWith(Context context, int textSizeInSp, String text,
-                                           String key, String type, String openMrsEntityParent,
-                                           String openMrsEntity, String openMrsEntityId,
-                                           String relevance,
-                                           LinearLayout.LayoutParams layoutParams, String fontPath) {
+                                                 String key, String type, String openMrsEntityParent,
+                                                 String openMrsEntity, String openMrsEntityId,
+                                                 String relevance,
+                                                 LinearLayout.LayoutParams layoutParams, String fontPath) {
         return getTextViewWith(context, textSizeInSp, text, key, type, openMrsEntityParent, openMrsEntity, openMrsEntityId, relevance,
-                layoutParams, fontPath, 0,null);
+                layoutParams, fontPath, 0, null);
     }
 
     public static int dpToPixels(Context context, float dps) {
