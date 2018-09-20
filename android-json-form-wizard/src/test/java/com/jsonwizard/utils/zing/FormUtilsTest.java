@@ -6,6 +6,7 @@ import android.test.mock.MockContext;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.widget.RelativeLayout;
 
 import com.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.R;
@@ -15,6 +16,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatcher;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -34,6 +37,9 @@ public class FormUtilsTest extends BaseTest {
 
     @Mock
     private DisplayMetrics displayMetrics;
+
+    @Mock
+    private RelativeLayout.LayoutParams layoutParams;
 
     @Before
     public void setUp() {
@@ -161,5 +167,20 @@ public class FormUtilsTest extends BaseTest {
 
         int px = FormUtils.getValueFromSpOrDpOrPx(string, context);
         Assert.assertEquals(expected, px);
+    }
+
+    @PrepareForTest({TextUtils.class})
+    @Test
+    public void testGetValueFromSpOrDPOrPxwithNull() {
+        MockContext mockContext = Mockito.spy(MockContext.class);
+        Mockito.doReturn(context).when(mockContext).getApplicationContext();
+
+        int expected = 0;
+        PowerMockito.mockStatic(TextUtils.class);
+        PowerMockito.when(!TextUtils.isEmpty(null)).thenReturn(true);
+
+        int px = FormUtils.getValueFromSpOrDpOrPx(null, context);
+        Assert.assertEquals(expected, px);
+
     }
 }
