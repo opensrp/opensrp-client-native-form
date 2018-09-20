@@ -58,7 +58,7 @@ public class JsonFormConstants {
     public static final String REPORT_MONTH = "report_month";
     public static final String HORIZONTAL_LINE = "h_line";
     public static final String NATIVE_RADIO_BUTTON = "native_radio";
-    public static final String NATIVE_RADIO_BUTTON_DEFAULT_LABEL_TEXT_SIZE = "27sp";
-    public static final String NATIVE_RADIO_BUTTON_DEFAULT_OPTION_TEXT_SIZE = "15sp";
+    public static final String NATIVE_RADIO_BUTTON_DEFAULT_LABEL_TEXT_SIZE = "27px";
+    public static final String NATIVE_RADIO_BUTTON_DEFAULT_OPTION_TEXT_SIZE = "15px";
     public static final String NATIVE_RADIO_BUTTON_DEFAULT_LABEL_TEXT_COLOR = "#212121";
 }
