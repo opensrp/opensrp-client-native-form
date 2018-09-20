@@ -132,7 +132,7 @@ public class LabelFactory implements FormWidgetFactory {
         Boolean readOnly = jsonObject.optBoolean(JsonFormConstants.READ_ONLY);
         String asterisks = getAsterisk(jsonObject);
         String labelTextColor = readOnly ? "#737373" : jsonObject.optString(JsonFormConstants.TEXT_COLOR, null);
-        String combinedLabelText = getCombinedLabel(jsonObject, text, asterisks, labelTextColor);
+        String combinedLabelText = getCombinedLabel(text, asterisks, labelTextColor);
 
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(combinedLabelText, Html.FROM_HTML_MODE_LEGACY) : Html
                 .fromHtml(combinedLabelText);
@@ -150,7 +150,7 @@ public class LabelFactory implements FormWidgetFactory {
         return asterisks;
     }
 
-    private String getCombinedLabel(JSONObject jsonObject, String text, String asterisks, String labelTextColor) {
+    private String getCombinedLabel(String text, String asterisks, String labelTextColor) {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN ? "<font color=" + labelTextColor + ">" + Html
                 .escapeHtml(text) + "</font>" + asterisks : "<font color=" + labelTextColor + ">" + TextUtils.htmlEncode(text) + "</font>" +
                 asterisks;
