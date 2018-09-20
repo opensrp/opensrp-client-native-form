@@ -39,4 +39,10 @@ public class MaxNumericValidatorTest extends BaseTest {
         Assert.assertEquals(false, validator.isValid(null, false));
 
     }
+
+    @Test
+    public void isValidShouldReturnFalseWhenValueSetIsEmpty() {
+        MaxNumericValidator validator = new MaxNumericValidator(DEFAULT_ERROR_MSG, CONSTANT_INT_1);
+        Assert.assertEquals(false, validator.isValid("", false));
+    }
 }

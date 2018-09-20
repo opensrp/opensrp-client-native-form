@@ -222,6 +222,10 @@
           "value": "0.1",
           "err": "Weight must be greater than 0"
         },
+        "v_max": {
+          "value": "200",
+          "err": "Weight must be less than 200"
+        },
         "v_numeric_integer": {
           "value": "true",
           "err": "Enter a valid weight"
