@@ -49,6 +49,9 @@ public class JsonFormConstants {
     public static final String V_NUMERIC_INTEGER = "v_numeric_integer";
     public static final String V_MIN = "v_min";
     public static final String V_MAX = "v_max";
+    public static final String NUMBER_SELECTORS = "numbers_selector";
+    public static final String START_SELECTION_NUMBER = "start_number";
+    public static final String NUMBER_OF_SELECTORS = "number_of_selectors";
     public static final String EDIT_TYPE = "edit_type";
     public static final String TEXT = "text";
     public static final String TEXT_SIZE = "text_size";
@@ -58,7 +61,6 @@ public class JsonFormConstants {
     public static final String REPORT_MONTH = "report_month";
     public static final String HORIZONTAL_LINE = "h_line";
     public static final String NATIVE_RADIO_BUTTON = "native_radio";
-    public static final String NATIVE_NUMBERS_SELECTOR ="numbers_selector";
     public static final String NATIVE_RADIO_BUTTON_DEFAULT_LABEL_TEXT_SIZE = "27px";
     public static final String NATIVE_RADIO_BUTTON_DEFAULT_OPTION_TEXT_SIZE = "15px";
     public static final String NATIVE_RADIO_BUTTON_DEFAULT_LABEL_TEXT_COLOR = "#212121";

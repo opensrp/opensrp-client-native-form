@@ -694,6 +694,16 @@
           }
         ],
         "value": "primary_school"
+      },
+      {
+        "key": "numbers_selector",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "numbers_selector",
+        "number_of_selectors": "5",
+        "start_number": "1",
+        "text_size": "14sp"
       }
     ]
   }

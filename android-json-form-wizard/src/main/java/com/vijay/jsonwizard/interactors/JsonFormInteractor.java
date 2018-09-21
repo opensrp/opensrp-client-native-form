@@ -38,11 +38,15 @@ import java.util.Map;
 public class JsonFormInteractor {
 
     private static final String TAG = "JsonFormInteractor";
-    protected Map<String, FormWidgetFactory> map = new HashMap<>();
     private static final JsonFormInteractor INSTANCE = new JsonFormInteractor();
+    protected Map<String, FormWidgetFactory> map = new HashMap<>();
 
     protected JsonFormInteractor() {
         registerWidgets();
+    }
+
+    public static JsonFormInteractor getInstance() {
+        return INSTANCE;
     }
 
     protected void registerWidgets() {
@@ -60,7 +64,7 @@ public class JsonFormInteractor {
         map.put(JsonFormConstants.GPS, new GpsFactory());
         map.put(JsonFormConstants.HORIZONTAL_LINE, new HorizontalLineFactory());
         map.put(JsonFormConstants.NATIVE_RADIO_BUTTON, new NativeRadioButtonFactory());
-        map.put(JsonFormConstants.NATIVE_NUMBERS_SELECTOR, new NumberSelectorFactory());
+        map.put(JsonFormConstants.NUMBER_SELECTORS, new NumberSelectorFactory());
 
     }
 
@@ -147,9 +151,5 @@ public class JsonFormInteractor {
             e.printStackTrace();
         }
 
-    }
-
-    public static JsonFormInteractor getInstance() {
-        return INSTANCE;
     }
 }
