@@ -10,6 +10,7 @@ import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.widgets.BarcodeFactory;
 import com.vijay.jsonwizard.widgets.ButtonFactory;
 import com.vijay.jsonwizard.widgets.CheckBoxFactory;
+import com.vijay.jsonwizard.widgets.ComponentSpacerFactory;
 import com.vijay.jsonwizard.widgets.DatePickerFactory;
 import com.vijay.jsonwizard.widgets.EditTextFactory;
 import com.vijay.jsonwizard.widgets.GpsFactory;
@@ -21,6 +22,7 @@ import com.vijay.jsonwizard.widgets.NumberSelectorFactory;
 import com.vijay.jsonwizard.widgets.RadioButtonFactory;
 import com.vijay.jsonwizard.widgets.SectionFactory;
 import com.vijay.jsonwizard.widgets.SpinnerFactory;
+import com.vijay.jsonwizard.widgets.ToasterNotesFactory;
 import com.vijay.jsonwizard.widgets.TreeViewFactory;
 
 import org.json.JSONArray;
@@ -38,11 +40,15 @@ import java.util.Map;
 public class JsonFormInteractor {
 
     private static final String TAG = "JsonFormInteractor";
-    protected Map<String, FormWidgetFactory> map = new HashMap<>();
     private static final JsonFormInteractor INSTANCE = new JsonFormInteractor();
+    protected Map<String, FormWidgetFactory> map = new HashMap<>();
 
     protected JsonFormInteractor() {
         registerWidgets();
+    }
+
+    public static JsonFormInteractor getInstance() {
+        return INSTANCE;
     }
 
     protected void registerWidgets() {
@@ -61,7 +67,8 @@ public class JsonFormInteractor {
         map.put(JsonFormConstants.HORIZONTAL_LINE, new HorizontalLineFactory());
         map.put(JsonFormConstants.NATIVE_RADIO_BUTTON, new NativeRadioButtonFactory());
         map.put(JsonFormConstants.NATIVE_NUMBERS_SELECTOR, new NumberSelectorFactory());
-
+        map.put(JsonFormConstants.TOASTER_NOTES, new ToasterNotesFactory());
+        map.put(JsonFormConstants.SPACER, new ComponentSpacerFactory());
     }
 
     public List<View> fetchFormElements(String stepName, JsonFormFragment formFragment,
@@ -147,9 +154,5 @@ public class JsonFormInteractor {
             e.printStackTrace();
         }
 
-    }
-
-    public static JsonFormInteractor getInstance() {
-        return INSTANCE;
     }
 }

@@ -2,39 +2,54 @@ package com.vijay.jsonwizard.utils;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.views.CustomTextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * Created by vijay on 24-05-2015.
  */
 public class FormUtils {
     public static final String FONT_BOLD_PATH = "fonts/Roboto-Bold.ttf";
-    public static final String FONT_REGULAR_PATH = "fonts/Roboto-Regular.ttf";
+    //public static final String FONT_REGULAR_PATH = "fonts/Roboto-Regular.ttf";
     public static final int MATCH_PARENT = -1;
     public static final int WRAP_CONTENT = -2;
-    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
-    public static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public static final String METADATA_PROPERTY = "metadata";
     public static final String LOOK_UP_JAVAROSA_PROPERTY = "look_up";
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
+    private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final String START_JAVAROSA_PROPERTY = "start";
     private static final String END_JAVAROSA_PROPERTY = "end";
     private static final String TODAY_JAVAROSA_PROPERTY = "today";
 
-    public static LinearLayout.LayoutParams getLayoutParams(int width, int height, int left, int top, int right, int bottom) {
+    public static LinearLayout.LayoutParams getLinearLayoutParams(int width, int height, int left, int top, int right, int bottom) {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(width, height);
+        layoutParams.setMargins(left, top, right, bottom);
+        return layoutParams;
+    }
+
+    public static RelativeLayout.LayoutParams getRelativeLayoutParams(int width, int height, int left, int top, int right, int bottom) {
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, height);
         layoutParams.setMargins(left, top, right, bottom);
         return layoutParams;
     }
@@ -197,9 +212,72 @@ public class FormUtils {
                 px = FormUtils.dpToPixels(context, unitValues);
             } else if (spOrDpOrPx.contains("px")) {
                 px = Integer.parseInt(spOrDpOrPx.replace("px", ""));
+            } else {
+                px = (int) context.getResources().getDimension(R.dimen.default_label_text_size);
             }
         }
 
         return px;
+    }
+
+    public static void createRadioButtonAndCheckBoxLabel(List<View> views, JSONObject jsonObject, Context context, JSONArray canvasIds, Boolean
+            readOnly, CommonListener listener) throws JSONException {
+        String label = jsonObject.optString(JsonFormConstants.LABEL, "");
+        String asterisks = "";
+        int labelTextSize = FormUtils.getValueFromSpOrDpOrPx(jsonObject.optString(JsonFormConstants.LABEL_TEXT_SIZE, String.valueOf(context
+                .getResources().getDimension(R.dimen.default_label_text_size))), context);
+        String labelTextColor = jsonObject.optString(JsonFormConstants.LABEL_TEXT_COLOR, JsonFormConstants.DEFAULT_TEXT_COLOR);
+        JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
+        RelativeLayout relativeLayout = createLabelRelativeLayout(jsonObject, context, listener);
+
+        CustomTextView labelText = relativeLayout.findViewById(R.id.label_text);
+        if (requiredObject != null) {
+            String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
+            if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
+                asterisks = "<font color=#CF0800> *</font>";
+            }
+        }
+
+        String combinedLabelText = "<font color=" + labelTextColor + ">" + label + "</font>" + asterisks;
+
+        labelText.setText(Html.fromHtml(combinedLabelText));
+        labelText.setTextSize(labelTextSize);
+        canvasIds.put(relativeLayout.getId());
+        relativeLayout.setEnabled(!readOnly);
+        views.add(relativeLayout);
+    }
+
+    public static RelativeLayout createLabelRelativeLayout(JSONObject jsonObject, Context context, CommonListener listener) throws JSONException {
+        String openMrsEntityParent = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT, null);
+        String openMrsEntity = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY, null);
+        String openMrsEntityId = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_ID, null);
+        String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
+        String labelInfoText = jsonObject.optString(JsonFormConstants.LABEL_INFO_TEXT, "");
+        String labelInfoTitle = jsonObject.optString(JsonFormConstants.LABEL_INFO_TITLE, "");
+
+        RelativeLayout relativeLayout = (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.native_form_labels, null);
+        relativeLayout.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+        relativeLayout.setTag(R.id.type, jsonObject.getString("type"));
+        relativeLayout.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
+        relativeLayout.setTag(R.id.openmrs_entity, openMrsEntity);
+        relativeLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
+        relativeLayout.setId(ViewUtil.generateViewId());
+        if (relevance != null && context instanceof JsonApi) {
+            relativeLayout.setTag(R.id.relevance, relevance);
+            ((JsonApi) context).addSkipLogicView(relativeLayout);
+        }
+
+        ImageView imageView = relativeLayout.findViewById(R.id.label_info);
+
+        if (!TextUtils.isEmpty(labelInfoText)) {
+            imageView.setVisibility(View.VISIBLE);
+            imageView.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+            imageView.setTag(R.id.type, jsonObject.getString("type"));
+            imageView.setTag(R.id.label_dialog_info, labelInfoText);
+            imageView.setTag(R.id.label_dialog_title, labelInfoTitle);
+            imageView.setOnClickListener(listener);
+        }
+
+        return relativeLayout;
     }
 }
