@@ -3,7 +3,9 @@ package com.vijay.jsonwizard.presenters;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -56,14 +58,14 @@ import static com.vijay.jsonwizard.utils.FormUtils.dpToPixels;
 public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragmentView<JsonFormFragmentViewState>> {
     private static final String TAG = "FormFragmentPresenter";
     private static final int RESULT_LOAD_IMG = 1;
-    private String mStepName;
+    private final JsonFormFragment formFragment;
     protected JSONObject mStepDetails;
+    protected String key;
+    protected String type;
+    private String mStepName;
     private String mCurrentKey;
     private String mCurrentPhotoPath;
     private JsonFormInteractor mJsonFormInteractor;
-    private final JsonFormFragment formFragment;
-    String key;
-    String type;
 
     public JsonFormFragmentPresenter(JsonFormFragment formFragment) {
         this.formFragment = formFragment;
@@ -73,6 +75,45 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
     public JsonFormFragmentPresenter(JsonFormFragment formFragment, JsonFormInteractor jsonFormInteractor) {
         this(formFragment);
         mJsonFormInteractor = jsonFormInteractor;
+    }
+
+    public static ValidationStatus validate(JsonFormFragmentView formFragmentView, View childAt, boolean requestFocus) {
+        if (childAt instanceof MaterialEditText) {
+            MaterialEditText editText = (MaterialEditText) childAt;
+            ValidationStatus validationStatus = EditTextFactory.validate(formFragmentView, editText);
+            if (!validationStatus.isValid()) {
+                if (requestFocus) validationStatus.requestAttention();
+                return validationStatus;
+            }
+        } else if (childAt instanceof ImageView) {
+            ValidationStatus validationStatus = ImagePickerFactory.validate(formFragmentView,
+                    (ImageView) childAt);
+            if (!validationStatus.isValid()) {
+                if (requestFocus) validationStatus.requestAttention();
+                return validationStatus;
+            }
+        } else if (childAt instanceof Button) {
+            String type = (String) childAt.getTag(R.id.type);
+            if (!TextUtils.isEmpty(type) && type.equals(JsonFormConstants.GPS)) {
+                ValidationStatus validationStatus = GpsFactory.validate(formFragmentView, (Button) childAt);
+                if (!validationStatus.isValid()) {
+                    if (requestFocus) validationStatus.requestAttention();
+                    return validationStatus;
+                }
+            }
+        } else if (childAt instanceof MaterialSpinner) {
+            MaterialSpinner spinner = (MaterialSpinner) childAt;
+            ValidationStatus validationStatus = SpinnerFactory.validate(formFragmentView, spinner);
+            if (!validationStatus.isValid()) {
+                if (requestFocus) validationStatus.requestAttention();
+                spinner.setError(validationStatus.getErrorMessage());
+                return validationStatus;
+            } else {
+                spinner.setError(null);
+            }
+        }
+
+        return new ValidationStatus(true, null, null, null);
     }
 
     public void addFormElements() {
@@ -181,45 +222,6 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         }
     }
 
-    public static ValidationStatus validate(JsonFormFragmentView formFragmentView, View childAt, boolean requestFocus) {
-        if (childAt instanceof MaterialEditText) {
-            MaterialEditText editText = (MaterialEditText) childAt;
-            ValidationStatus validationStatus = EditTextFactory.validate(formFragmentView, editText);
-            if (!validationStatus.isValid()) {
-                if (requestFocus) validationStatus.requestAttention();
-                return validationStatus;
-            }
-        } else if (childAt instanceof ImageView) {
-            ValidationStatus validationStatus = ImagePickerFactory.validate(formFragmentView,
-                    (ImageView) childAt);
-            if (!validationStatus.isValid()) {
-                if (requestFocus) validationStatus.requestAttention();
-                return validationStatus;
-            }
-        } else if (childAt instanceof Button) {
-            String type = (String) childAt.getTag(R.id.type);
-            if (!TextUtils.isEmpty(type) && type.equals(JsonFormConstants.GPS)) {
-                ValidationStatus validationStatus = GpsFactory.validate(formFragmentView, (Button) childAt);
-                if (!validationStatus.isValid()) {
-                    if (requestFocus) validationStatus.requestAttention();
-                    return validationStatus;
-                }
-            }
-        } else if (childAt instanceof MaterialSpinner) {
-            MaterialSpinner spinner = (MaterialSpinner) childAt;
-            ValidationStatus validationStatus = SpinnerFactory.validate(formFragmentView, spinner);
-            if (!validationStatus.isValid()) {
-                if (requestFocus) validationStatus.requestAttention();
-                spinner.setError(validationStatus.getErrorMessage());
-                return validationStatus;
-            } else {
-                spinner.setError(null);
-            }
-        }
-
-        return new ValidationStatus(true, null, null, null);
-    }
-
     public void onSaveClick(LinearLayout mainView) {
         ValidationStatus validationStatus = writeValuesAndValidate(mainView);
         if (validationStatus.isValid() || Boolean.valueOf(mainView.getTag(R.id.skip_validation).toString())) {
@@ -237,7 +239,8 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == RESULT_LOAD_IMG && resultCode == Activity.RESULT_OK) {
             String imagePath = mCurrentPhotoPath;
-            getView().updateRelevantImageView(ImageUtils.loadBitmapFromFile(getView().getContext(), imagePath, ImageUtils.getDeviceWidth(getView().getContext()), dpToPixels(getView().getContext(), 200)), imagePath, mCurrentKey);
+            getView().updateRelevantImageView(ImageUtils.loadBitmapFromFile(getView().getContext(), imagePath, ImageUtils.getDeviceWidth(getView()
+                    .getContext()), dpToPixels(getView().getContext(), 200)), imagePath, mCurrentKey);
             //cursor.close();
         }
     }
@@ -252,7 +255,8 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
 
         switch (requestCode) {
             case PermissionUtils.CAMERA_PERMISSION_REQUEST_CODE:
-                if (PermissionUtils.verifyPermissionGranted(permissions, grantResults, Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                if (PermissionUtils.verifyPermissionGranted(permissions, grantResults, Manifest.permission.CAMERA, Manifest.permission
+                        .READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                     dispatchTakePictureIntent(key, type);
                 }
                 break;
@@ -271,11 +275,49 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
     public void onClick(View v) {
         key = (String) v.getTag(R.id.key);
         type = (String) v.getTag(R.id.type);
-        dispatchTakePictureIntent(key, type);
+        switch (type) {
+            case JsonFormConstants.CHOOSE_IMAGE:
+                dispatchTakePictureIntent(key, type);
+                break;
+            case JsonFormConstants.NATIVE_RADIO_BUTTON:
+                showInformationDialog(v);
+                break;
+            case JsonFormConstants.CHECK_BOX:
+                showInformationDialog(v);
+                break;
+            case JsonFormConstants.LABEL:
+                showInformationDialog(v);
+                break;
+            case JsonFormConstants.TOASTER_NOTES:
+                String info = (String) v.getTag(R.id.label_dialog_info);
+                if (!TextUtils.isEmpty(info)) {
+                    showInformationDialog(v);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void showInformationDialog(View view) {
+        AlertDialog.Builder builderSingle = new AlertDialog.Builder(getView().getContext(), R.style.AppThemeAlertDialog);
+        builderSingle.setTitle((String) view.getTag(R.id.label_dialog_title));
+        builderSingle.setMessage((String) view.getTag(R.id.label_dialog_info));
+        builderSingle.setIcon(R.drawable.ic_icon_info_filled);
+
+        builderSingle.setNegativeButton(getView().getContext().getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        builderSingle.show();
     }
 
     private void dispatchTakePictureIntent(String key, String type) {
-        if (PermissionUtils.isPermissionGranted(formFragment, new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PermissionUtils.CAMERA_PERMISSION_REQUEST_CODE)) {
+        if (PermissionUtils.isPermissionGranted(formFragment, new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE}, PermissionUtils.CAMERA_PERMISSION_REQUEST_CODE)) {
 
             if (JsonFormConstants.CHOOSE_IMAGE.equals(type)) {
                 getView().hideKeyBoard();
@@ -343,7 +385,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             String openMrsEntityId = (String) compoundButton.getTag(R.id.openmrs_entity_id);
             String childKey = (String) compoundButton.getTag(R.id.childKey);
             getView().writeValue(mStepName, parentKey, JsonFormConstants.OPTIONS_FIELD_NAME, childKey,
-                    String.valueOf(((CheckBox) compoundButton).isChecked()), openMrsEntityParent,
+                    String.valueOf(compoundButton.isChecked()), openMrsEntityParent,
                     openMrsEntity, openMrsEntityId);
         } else if ((compoundButton instanceof android.widget.RadioButton ||
                 compoundButton instanceof RadioButton) && isChecked) {

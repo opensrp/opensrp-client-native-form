@@ -32,6 +32,28 @@ import java.util.List;
  */
 public class ImagePickerFactory implements FormWidgetFactory {
 
+    public static int dp2px(Context context, float dp) {
+        Resources r = context.getResources();
+        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
+        return Math.round(px);
+    }
+
+    public static ValidationStatus validate(JsonFormFragmentView formFragmentView,
+                                            ImageView imageView) {
+        if (!(imageView.getTag(R.id.v_required) instanceof String) || !(imageView.getTag(R.id.error) instanceof String)) {
+            return new ValidationStatus(true, null, formFragmentView, imageView);
+        }
+        Boolean isRequired = Boolean.valueOf((String) imageView.getTag(R.id.v_required));
+        if (!isRequired || !imageView.isEnabled()) {
+            return new ValidationStatus(true, null, formFragmentView, imageView);
+        }
+        Object path = imageView.getTag(R.id.imagePath);
+        if (path instanceof String && !TextUtils.isEmpty((String) path)) {
+            return new ValidationStatus(true, null, formFragmentView, imageView);
+        }
+        return new ValidationStatus(false, (String) imageView.getTag(R.id.error), formFragmentView, imageView);
+    }
+
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
         String openMrsEntityParent = jsonObject.getString("openmrs_entity_parent");
@@ -67,7 +89,7 @@ public class ImagePickerFactory implements FormWidgetFactory {
 
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         int imageHeight = com.vijay.jsonwizard.utils.FormUtils.dpToPixels(context, context.getResources().getBoolean(R.bool.isTablet) ? 200 : 100);
-        imageView.setLayoutParams(com.vijay.jsonwizard.utils.FormUtils.getLayoutParams(com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT, imageHeight, 0, 0, 0, (int) context
+        imageView.setLayoutParams(com.vijay.jsonwizard.utils.FormUtils.getLinearLayoutParams(com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT, imageHeight, 0, 0, 0, (int) context
                 .getResources().getDimension(R.dimen.default_bottom_margin)));
         String imagePath = jsonObject.optString(JsonFormConstants.VALUE);
         Button uploadButton = new Button(context);
@@ -95,7 +117,7 @@ public class ImagePickerFactory implements FormWidgetFactory {
                 context.getResources().getDimensionPixelSize(R.dimen.button_padding),
                 context.getResources().getDimensionPixelSize(R.dimen.button_padding),
                 context.getResources().getDimensionPixelSize(R.dimen.button_padding));
-        uploadButton.setLayoutParams(com.vijay.jsonwizard.utils.FormUtils.getLayoutParams(com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT, com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT, 0, 0, 0, (int) context
+        uploadButton.setLayoutParams(com.vijay.jsonwizard.utils.FormUtils.getLinearLayoutParams(com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT, com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT, 0, 0, 0, (int) context
                 .getResources().getDimension(R.dimen.default_bottom_margin)));
         uploadButton.setOnClickListener(listener);
         uploadButton.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
@@ -119,27 +141,5 @@ public class ImagePickerFactory implements FormWidgetFactory {
             ((JsonApi) context).addSkipLogicView(uploadButton);
         }
         return views;
-    }
-
-    public static int dp2px(Context context, float dp) {
-        Resources r = context.getResources();
-        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
-        return Math.round(px);
-    }
-
-    public static ValidationStatus validate(JsonFormFragmentView formFragmentView,
-                                            ImageView imageView) {
-        if (!(imageView.getTag(R.id.v_required) instanceof String) || !(imageView.getTag(R.id.error) instanceof String)) {
-            return new ValidationStatus(true, null, formFragmentView, imageView);
-        }
-        Boolean isRequired = Boolean.valueOf((String) imageView.getTag(R.id.v_required));
-        if (!isRequired || !imageView.isEnabled()) {
-            return new ValidationStatus(true, null, formFragmentView, imageView);
-        }
-        Object path = imageView.getTag(R.id.imagePath);
-        if (path instanceof String && !TextUtils.isEmpty((String) path)) {
-            return new ValidationStatus(true, null, formFragmentView, imageView);
-        }
-        return new ValidationStatus(false, (String) imageView.getTag(R.id.error), formFragmentView, imageView);
     }
 }
