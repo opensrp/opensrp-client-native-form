@@ -15,7 +15,11 @@ import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.*;
+import android.widget.CompoundButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Toast;
+import android.widget.AdapterView;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rey.material.widget.Button;
 import com.vijay.jsonwizard.R;
@@ -423,7 +427,13 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
     }
 
     private void createNumberSelector(View view) {
-        CustomTextView textView = (CustomTextView) view;
-        NumberSelectorFactory.createNumberSelector(textView);
+        NumberSelectorFactory.createNumberSelector((CustomTextView) view);
+        CustomTextView customTextView = NumberSelectorFactory.getSelectedTextView();
+        String parentKey = (String) customTextView.getTag(R.id.key);
+        String openMrsEntityParent = (String) customTextView.getTag(R.id.openmrs_entity_parent);
+        String openMrsEntity = (String) customTextView.getTag(R.id.openmrs_entity);
+        String openMrsEntityId = (String) customTextView.getTag(R.id.openmrs_entity_id);
+        String value = String.valueOf(customTextView.getText());
+        getView().writeValue(mStepName, parentKey, value, openMrsEntityParent, openMrsEntity, openMrsEntityId);
     }
 }
