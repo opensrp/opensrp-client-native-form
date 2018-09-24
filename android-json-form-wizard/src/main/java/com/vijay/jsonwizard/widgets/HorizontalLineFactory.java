@@ -51,7 +51,7 @@ public class HorizontalLineFactory implements FormWidgetFactory {
         View horizontalLine = new View(context);
 
         // Add linear layout params & custom properties - height, bottom_margin, top_margin, left_margin, right_margin (enable sp, dp, px)
-        LinearLayout.LayoutParams layoutParams = FormUtils.getLayoutParams(absWidth
+        LinearLayout.LayoutParams layoutParams = FormUtils.getLinearLayoutParams(absWidth
                 , FormUtils.getValueFromSpOrDpOrPx(height, context)
                 , FormUtils.getValueFromSpOrDpOrPx(leftMargin, context)
                 , FormUtils.getValueFromSpOrDpOrPx(topMargin, context)

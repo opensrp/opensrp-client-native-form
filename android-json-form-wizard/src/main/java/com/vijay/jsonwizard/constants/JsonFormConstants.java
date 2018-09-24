@@ -12,6 +12,8 @@ public class JsonFormConstants {
     public static final String LABEL = "label";
     public static final String LABEL_TEXT_SIZE = "label_text_size";
     public static final String LABEL_TEXT_COLOR = "label_text_color";
+    public static final String LABEL_INFO_TEXT = "label_info_text";
+    public static final String LABEL_INFO_TITLE = "label_info_title";
     public static final String CHOOSE_IMAGE = "choose_image";
     public static final String OPTIONS_FIELD_NAME = "options";
     public static final String SPINNER = "spinner";
@@ -62,7 +64,15 @@ public class JsonFormConstants {
     public static final String REPORT_MONTH = "report_month";
     public static final String HORIZONTAL_LINE = "h_line";
     public static final String NATIVE_RADIO_BUTTON = "native_radio";
-    public static final String NATIVE_RADIO_BUTTON_DEFAULT_LABEL_TEXT_SIZE = "27px";
-    public static final String NATIVE_RADIO_BUTTON_DEFAULT_OPTION_TEXT_SIZE = "15px";
-    public static final String NATIVE_RADIO_BUTTON_DEFAULT_LABEL_TEXT_COLOR = "#212121";
+    public static final String DEFAULT_TEXT_COLOR = "#212121";
+    public static final String TOASTER_NOTES = "toaster_notes";
+    public static final String TOASTER_TYPE = "toaster_type";
+    public static final String TOASTER_INFO_TEXT = "toaster_info_text";
+    public static final String TOASTER_INFO_TITLE = "toaster_info_title";
+    public static final String TOASTER_INFO = "info";
+    public static final String TOASTER_POSITIVE = "positive";
+    public static final String TOASTER_WARNING = "warning";
+    public static final String TOASTER_PROBLEM = "problem";
+    public static final String SPACER = "spacer";
+    public static final String SPACER_HEIGHT = "spacer_height";
 }

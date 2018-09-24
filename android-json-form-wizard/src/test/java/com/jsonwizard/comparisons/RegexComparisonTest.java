@@ -28,4 +28,10 @@ public class RegexComparisonTest extends BaseTest {
         Assert.assertEquals(true, comparison.compare("stringC", "", "stringC"));
 
     }
+
+    @Test
+    public void compareShowReturnFalseWhenOneStringIsNUll() {
+        RegexComparison comparison = new RegexComparison();
+        Assert.assertEquals(false, comparison.compare(null, "", "stringd"));
+    }
 }

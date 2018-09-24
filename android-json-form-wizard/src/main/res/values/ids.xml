@@ -25,4 +25,7 @@
     <item name="number_selector_textview_max_number" type="id"/>
     <item name="number_selector_textview_layout" type="id"/>
     <item name="number_selector_textview_jsonObject" type="id"/>
+
+    <item name="label_dialog_info" type="id"/>
+    <item name="label_dialog_title" type="id"/>
 </resources>

@@ -8,6 +8,7 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 
 import com.jsonwizard.BaseTest;
+import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.utils.FormUtils;
 
 import org.junit.Assert;
@@ -17,10 +18,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.internal.verification.VerificationModeFactory;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 
 @RunWith(PowerMockRunner.class)
 public class FormUtilsTest extends BaseTest {
@@ -39,7 +40,7 @@ public class FormUtilsTest extends BaseTest {
         MockitoAnnotations.initMocks(this);
     }
 
-    @PrepareForTest({FormUtils.class, TypedValue.class})
+    @PrepareForTest({TypedValue.class})
     @Test
     public void testSpToPx() {
         MockContext mockContext = Mockito.spy(MockContext.class);
@@ -47,94 +48,107 @@ public class FormUtilsTest extends BaseTest {
         Mockito.doReturn(resources).when(context).getResources();
         Mockito.doReturn(displayMetrics).when(resources).getDisplayMetrics();
 
-        float sp = 30.0f;
-        PowerMockito.mockStatic(FormUtils.class);
+        float spString = 30.0f;
+        int expected = 30;
         PowerMockito.mockStatic(TypedValue.class);
-        PowerMockito.when(FormUtils.spToPx(context, sp)).thenReturn(30);
+        PowerMockito.when(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, expected, displayMetrics)).thenReturn(Float
+                .valueOf(expected));
 
-        int px = FormUtils.spToPx(context, sp);
-        Assert.assertEquals(30, px);
-        PowerMockito.verifyStatic(FormUtils.class, VerificationModeFactory.times(1));
-        TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, displayMetrics);
+        int px = FormUtils.spToPx(context, spString);
+        Assert.assertEquals(expected, px);
     }
 
-    @PrepareForTest({FormUtils.class, TypedValue.class})
+    @PrepareForTest({TypedValue.class})
     @Test
-    public void testDpToPixels() {
+    public void testDpToPx() {
         MockContext mockContext = Mockito.spy(MockContext.class);
         Mockito.doReturn(context).when(mockContext).getApplicationContext();
+        Mockito.doReturn(resources).when(context).getResources();
+        Mockito.doReturn(displayMetrics).when(resources).getDisplayMetrics();
 
-        float dp = 30.0f;
-        PowerMockito.mockStatic(FormUtils.class);
-        PowerMockito.when(FormUtils.spToPx(context, dp)).thenReturn(30);
+        Whitebox.setInternalState(displayMetrics, "density", 5);
 
-        int px = FormUtils.spToPx(context, dp);
-        Assert.assertEquals(30, px);
+        float dpString = 30.0f;
+        int expected = 150;
+
+        int px = FormUtils.dpToPixels(context, dpString);
+        Assert.assertEquals(expected, px);
     }
 
-    @PrepareForTest({FormUtils.class})
+    @PrepareForTest({TextUtils.class, TypedValue.class})
     @Test
     public void testGetValueFromSpOrDpOrPxWithAnSpInput() {
         MockContext mockContext = Mockito.spy(MockContext.class);
         Mockito.doReturn(context).when(mockContext).getApplicationContext();
+        Mockito.doReturn(resources).when(context).getResources();
+        Mockito.doReturn(displayMetrics).when(resources).getDisplayMetrics();
 
         String spString = "30sp";
         int expected = 30;
-        PowerMockito.mockStatic(FormUtils.class);
-        PowerMockito.when(FormUtils.getValueFromSpOrDpOrPx(spString, context)).thenReturn(expected);
+        PowerMockito.mockStatic(TextUtils.class);
+        PowerMockito.mockStatic(TypedValue.class);
+        PowerMockito.when(!TextUtils.isEmpty(spString)).thenReturn(false);
+        PowerMockito.when(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, expected, displayMetrics)).thenReturn(Float
+                .valueOf(expected));
 
         int px = FormUtils.getValueFromSpOrDpOrPx(spString, context);
         Assert.assertEquals(expected, px);
     }
 
-    @PrepareForTest({FormUtils.class})
+    @PrepareForTest({TextUtils.class, TypedValue.class, FormUtils.class})
     @Test
     public void testGetValueFromSpOrDpOrPxWithADpInput() {
         MockContext mockContext = Mockito.spy(MockContext.class);
         Mockito.doReturn(context).when(mockContext).getApplicationContext();
+        Mockito.doReturn(resources).when(context).getResources();
+        Mockito.doReturn(displayMetrics).when(resources).getDisplayMetrics();
 
         String dpString = "30dp";
-        int expected = 30;
-        PowerMockito.mockStatic(FormUtils.class);
-        PowerMockito.when(FormUtils.getValueFromSpOrDpOrPx(dpString, context)).thenReturn(expected);
+        int expected = 150;
+        PowerMockito.mockStatic(TextUtils.class);
+        PowerMockito.mockStatic(TypedValue.class);
+        PowerMockito.when(!TextUtils.isEmpty(dpString)).thenReturn(false);
+        Whitebox.setInternalState(displayMetrics, "density", 5);
 
         int px = FormUtils.getValueFromSpOrDpOrPx(dpString, context);
         Assert.assertEquals(expected, px);
     }
 
-    @PrepareForTest({FormUtils.class})
+    @PrepareForTest({TextUtils.class})
     @Test
     public void testGetValueFromSpOrDpOrPxWithAPxInput() {
         MockContext mockContext = Mockito.spy(MockContext.class);
         Mockito.doReturn(context).when(mockContext).getApplicationContext();
+        Mockito.doReturn(resources).when(context).getResources();
+        Mockito.doReturn(20.0f).when(resources).getDimension(R.dimen.default_label_text_size);
 
         String pxString = "30px";
         int expected = 30;
-        PowerMockito.mockStatic(FormUtils.class);
-        PowerMockito.when(FormUtils.getValueFromSpOrDpOrPx(pxString, context)).thenReturn(expected);
+        PowerMockito.mockStatic(TextUtils.class);
+        PowerMockito.when(!TextUtils.isEmpty(pxString)).thenReturn(false);
 
         int px = FormUtils.getValueFromSpOrDpOrPx(pxString, context);
         Assert.assertEquals(expected, px);
     }
 
-    @PrepareForTest({FormUtils.class, TextUtils.class})
+    @PrepareForTest({TextUtils.class})
     @Test
     public void testGetValueFromSpOrDpOrPxWithAnyString() {
         MockContext mockContext = Mockito.spy(MockContext.class);
         Mockito.doReturn(context).when(mockContext).getApplicationContext();
+        Mockito.doReturn(resources).when(context).getResources();
+        Mockito.doReturn(20.0f).when(resources).getDimension(R.dimen.default_label_text_size);
 
         String string = "String";
-        int expected = 0;
-        PowerMockito.mockStatic(FormUtils.class);
+        int expected = 20;
         PowerMockito.mockStatic(TextUtils.class);
-        PowerMockito.when(FormUtils.getValueFromSpOrDpOrPx(string, context)).thenReturn(expected);
         PowerMockito.when(!TextUtils.isEmpty(string)).thenReturn(false);
 
         int px = FormUtils.getValueFromSpOrDpOrPx(string, context);
         Assert.assertEquals(expected, px);
     }
 
-    @PrepareForTest({TextUtils.class, FormUtils.class})
+    @PrepareForTest({TextUtils.class})
     @Test
     public void testGetValueFromSpOrDpOrPxWithEmptyString() {
         MockContext mockContext = Mockito.spy(MockContext.class);
@@ -142,12 +156,25 @@ public class FormUtilsTest extends BaseTest {
 
         String string = "";
         int expected = 0;
-        PowerMockito.mockStatic(FormUtils.class);
         PowerMockito.mockStatic(TextUtils.class);
-        PowerMockito.when(FormUtils.getValueFromSpOrDpOrPx(string, context)).thenReturn(expected);
-        PowerMockito.when(!TextUtils.isEmpty(string)).thenReturn(false);
+        PowerMockito.when(!TextUtils.isEmpty(string)).thenReturn(true);
 
         int px = FormUtils.getValueFromSpOrDpOrPx(string, context);
         Assert.assertEquals(expected, px);
+    }
+
+    @PrepareForTest({TextUtils.class})
+    @Test
+    public void testGetValueFromSpOrDPOrPxwithNull() {
+        MockContext mockContext = Mockito.spy(MockContext.class);
+        Mockito.doReturn(context).when(mockContext).getApplicationContext();
+
+        int expected = 0;
+        PowerMockito.mockStatic(TextUtils.class);
+        PowerMockito.when(!TextUtils.isEmpty(null)).thenReturn(true);
+
+        int px = FormUtils.getValueFromSpOrDpOrPx(null, context);
+        Assert.assertEquals(expected, px);
+
     }
 }

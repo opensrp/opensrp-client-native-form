@@ -70,9 +70,9 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         int numberOfSelectors = jsonObject.optInt(JsonFormConstants.NUMBER_OF_SELECTORS, 5);
         int startSelectionNumber = jsonObject.optInt(JsonFormConstants.START_SELECTION_NUMBER, 1);
         int maxValue = jsonObject.optInt(JsonFormConstants.MAX_SELECTION_VALUE, 20);
-        String textColor = jsonObject.optString(JsonFormConstants.TEXT_COLOR, JsonFormConstants.NATIVE_RADIO_BUTTON_DEFAULT_LABEL_TEXT_COLOR);
+        String textColor = jsonObject.optString(JsonFormConstants.TEXT_COLOR, JsonFormConstants.DEFAULT_TEXT_COLOR);
         int textSize = jsonObject.optInt(JsonFormConstants.TEXT_SIZE, (int) context.getResources().getDimension(R.dimen.default_text_size));
-        LinearLayout.LayoutParams layoutParams = FormUtils.getLayoutParams(width / numberOfSelectors, FormUtils.WRAP_CONTENT, 1, 1, 1, 1);
+        LinearLayout.LayoutParams layoutParams = FormUtils.getLinearLayoutParams(width / numberOfSelectors, FormUtils.WRAP_CONTENT, 1, 1, 1, 1);
 
         for (int i = 0; i < numberOfSelectors; i++) {
             CustomTextView customTextView = FormUtils.getTextViewWith(context, textSize, getText(i, startSelectionNumber, numberOfSelectors, maxValue), jsonObject.getString(JsonFormConstants.KEY), jsonObject.getString("type"), "", "", "", "", layoutParams, FormUtils.FONT_BOLD_PATH, 0, textColor);

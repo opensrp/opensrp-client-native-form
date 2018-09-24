@@ -81,7 +81,8 @@
         "openmrs_data_type": "text",
         "type": "tree",
         "hint": "Child's home health facility *",
-        "tree": [],
+        "tree": [
+        ],
         "v_required": {
           "value": true,
           "err": "Please enter the child's home facility"
@@ -372,7 +373,8 @@
         "openmrs_data_type": "text",
         "type": "tree",
         "hint": "Which health facility was the child born in? *",
-        "tree": [],
+        "tree": [
+        ],
         "v_required": {
           "value": true,
           "err": "Please enter the birth facility name"
@@ -411,7 +413,8 @@
         "openmrs_data_type": "text",
         "type": "tree",
         "hint": "Child's residential area *",
-        "tree": [],
+        "tree": [
+        ],
         "v_required": {
           "value": true,
           "err": "Please enter the child's residential area"
@@ -495,6 +498,8 @@
         "openmrs_data_type": "select one",
         "type": "check_box",
         "label": "Any delivery complications?",
+        "label_text_size": "18sp",
+        "label_text_color": "#FF9800",
         "hint": "Any delivery complications?",
         "options": [
           {
@@ -507,19 +512,22 @@
             "key": "Severe bleeding/Hemorrhage",
             "text": "Severe bleeding/Hemorrhage",
             "value": false,
-            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "text_color": "#000000"
           },
           {
             "key": "Placenta previa",
             "text": "Placenta previa",
             "value": false,
-            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "text_size": "30sp"
           },
           {
             "key": "Cord prolapse",
             "text": "Cord prolapse",
             "value": false,
-            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "text_size": "10sp"
           },
           {
             "key": "Prolonged/obstructed labour",
@@ -531,7 +539,8 @@
             "key": "Abnormal presentation",
             "text": "Abnormal presentation",
             "value": false,
-            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "text_color": "#FF9800"
           },
           {
             "key": "Perineal tear (2, 3 or 4th degree)",
@@ -585,14 +594,45 @@
         }
       },
       {
+        "key": "label_site_ipv_assess",
+        "type": "label",
+        "text": "1. Are all of the following in place at your facility:",
+        "text_size": "22px",
+        "text_color": "#000000",
+        "v_required": {
+          "value": true
+        }
+      },
+      {
         "key": "enabled_label",
         "type": "label",
-        "text": "This is enabled: <Hinted txt here>",
+        "text": "This is enabled: <Hinted here>",
         "hint_on_text": true,
-        "text_color": "#000000",
+        "text_color": "#FFC100",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
-        "openmrs_entity_id": ""
+        "openmrs_entity_id": "",
+        "v_required": {
+          "value": true
+        },
+        "label_info_text": "Checking out the display oof the info icon needed to display this infomation",
+        "label_info_title": "Highest Level of School"
+      },
+      {
+        "key": "enabled_label",
+        "type": "label",
+        "text": "This is enabled",
+        "hint_on_text": false,
+        "text_color": "#FFC100",
+        "text_size": "17sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "v_required": {
+          "value": true
+        },
+        "label_info_text": "Checking out the display oof the info icon needed to display this infomation",
+        "label_info_title": "Highest Level of School"
       },
       {
         "key": "divider1",
@@ -668,14 +708,41 @@
         "openmrs_entity_id": ""
       },
       {
+        "key": "site_ipv_assess",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "openmrs_data_type": "select one",
+        "label": "1. A protocol or standard operating procedure for Intimate Partner Violence (IPV); \n\n2. A health worker trained on how to ask about IPV and how to provide the minimum response or beyond;\n\n3. A private setting;\n\n4. A way to ensure confidentiality;\n\n5. Time to allow for appropriate disclosure; and\n\n6. A system for referral in place.",
+        "label_text_size": "18px",
+        "type": "native_radio",
+        "options": [
+          {
+            "key": "1",
+            "text": "Yes"
+          },
+          {
+            "key": "0",
+            "text": "No"
+          }
+        ],
+        "value": "",
+        "v_required": {
+          "value": true,
+          "err": "Please select where stock was issued"
+        }
+      },
+      {
         "key": "native_radio",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
         "label": "Highest Level of School",
-        "label_text_size": "20sp",
+        "label_text_size": "18px",
         "label_text_color": "#FF9800",
+        "label_info_text": "Checking out the display oof the info icon needed to display this infomation",
+        "label_info_title": "Highest Level of School",
         "options": [
           {
             "key": "primary_school",
@@ -685,7 +752,7 @@
           {
             "key": "high_school",
             "text": "High School",
-            "text_size": "30sp"
+            "text_size": "18sp"
           },
           {
             "key": "higher_education",
@@ -700,6 +767,65 @@
         "type": "label",
         "text": "Please select the number of family members",
         "text_color": "#000000"
+      },
+      {
+        "key": "toaster_notes",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person_attribute",
+        "openmrs_entity_id": "toaster_notes",
+        "type": "toaster_notes",
+        "text": "This is an information note",
+        "text_color": "#1199F9",
+        "toaster_type": "info",
+        "toaster_info_text": "This is an information note, This is an information note, This is an information note, This is an information note,This is an information note, This is an information note",
+        "toaster_info_title": "Information Toaster Info Title"
+      },
+      {
+        "key": "toaster_notes",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person_attribute",
+        "openmrs_entity_id": "toaster_notes",
+        "type": "toaster_notes",
+        "text": "This is an information note, This is an information note, This is an information note, This is an information note,This is an information note, This is an information note, This is an information note,This is an information note",
+        "toaster_type": "info"
+      },
+      {
+        "key": "toaster_notes",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person_attribute",
+        "openmrs_entity_id": "toaster_notes",
+        "type": "toaster_notes",
+        "text": "This is an positive note",
+        "text_color": "#3E7E2E",
+        "toaster_type": "positive"
+      },
+      {
+        "key": "toaster_notes",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person_attribute",
+        "openmrs_entity_id": "toaster_notes",
+        "type": "toaster_notes",
+        "text": "This is an warning note",
+        "text_color": "#FFC100",
+        "toaster_type": "warning"
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "40sp"
+      },
+      {
+        "key": "toaster_notes",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person_attribute",
+        "openmrs_entity_id": "toaster_notes",
+        "type": "toaster_notes",
+        "text": "This is an danger note",
+        "text_color": "#CF0800",
+        "toaster_type": "problem"
       },
       {
         "key": "numbers_selector",
