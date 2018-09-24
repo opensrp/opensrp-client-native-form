@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="label" type="id" />
-    <item name="key" type="id" />
-    <item name="address" type="id" />
-    <item name="type" type="id" />
-    <item name="childKey" type="id" />
-    <item name="imagePath" type="id" />
-    <item name="raw_value" type="id" />
-    <item name="canvas_ids" type="id" />
-    <item name="after_look_up" type="id" />
+    <item name="label" type="id"/>
+    <item name="key" type="id"/>
+    <item name="address" type="id"/>
+    <item name="type" type="id"/>
+    <item name="childKey" type="id"/>
+    <item name="imagePath" type="id"/>
+    <item name="raw_value" type="id"/>
+    <item name="canvas_ids" type="id"/>
+    <item name="after_look_up" type="id"/>
 
-    <item name="v_required" type="id" />
-    <item name="error" type="id" />
-    <item name="openmrs_entity_parent" type='id' />
-    <item name="openmrs_entity" type='id' />
-    <item name="openmrs_entity_id" type='id' />
-    <item name="relevance" type="id" />
-    <item name="constraints" type="id" />
-    <item name="skip_validation" type="id" />
-    <item name="number_selector_textview" type="id" />
+    <item name="v_required" type="id"/>
+    <item name="error" type="id"/>
+    <item name="openmrs_entity_parent" type='id'/>
+    <item name="openmrs_entity" type='id'/>
+    <item name="openmrs_entity_id" type='id'/>
+    <item name="relevance" type="id"/>
+    <item name="constraints" type="id"/>
+    <item name="skip_validation" type="id"/>
+
+    <item name="number_selector_textview" type="id"/>
+    <item name="number_selector_textview_item" type="id"/>
+    <item name="number_selector_textview_number_of_selectors" type="id"/>
+    <item name="number_selector_textview_max_number" type="id"/>
+    <item name="number_selector_textview_layout" type="id"/>
+    <item name="number_selector_textview_jsonObject" type="id"/>
 </resources>

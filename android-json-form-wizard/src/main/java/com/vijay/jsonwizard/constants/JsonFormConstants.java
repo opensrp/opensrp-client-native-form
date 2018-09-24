@@ -52,6 +52,7 @@ public class JsonFormConstants {
     public static final String NUMBER_SELECTORS = "numbers_selector";
     public static final String START_SELECTION_NUMBER = "start_number";
     public static final String NUMBER_OF_SELECTORS = "number_of_selectors";
+    public static final String MAX_SELECTION_VALUE = "max_value";
     public static final String EDIT_TYPE = "edit_type";
     public static final String TEXT = "text";
     public static final String TEXT_SIZE = "text_size";

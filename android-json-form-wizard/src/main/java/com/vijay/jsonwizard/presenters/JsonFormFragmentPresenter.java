@@ -38,7 +38,6 @@ import com.vijay.jsonwizard.widgets.EditTextFactory;
 import com.vijay.jsonwizard.widgets.GpsFactory;
 import com.vijay.jsonwizard.widgets.ImagePickerFactory;
 import com.vijay.jsonwizard.widgets.SpinnerFactory;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -56,14 +55,14 @@ import static com.vijay.jsonwizard.utils.FormUtils.dpToPixels;
 public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragmentView<JsonFormFragmentViewState>> {
     private static final String TAG = "FormFragmentPresenter";
     private static final int RESULT_LOAD_IMG = 1;
-    private String mStepName;
+    private final JsonFormFragment formFragment;
     protected JSONObject mStepDetails;
+    String key;
+    String type;
+    private String mStepName;
     private String mCurrentKey;
     private String mCurrentPhotoPath;
     private JsonFormInteractor mJsonFormInteractor;
-    private final JsonFormFragment formFragment;
-    String key;
-    String type;
 
     public JsonFormFragmentPresenter(JsonFormFragment formFragment) {
         this.formFragment = formFragment;
@@ -73,6 +72,45 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
     public JsonFormFragmentPresenter(JsonFormFragment formFragment, JsonFormInteractor jsonFormInteractor) {
         this(formFragment);
         mJsonFormInteractor = jsonFormInteractor;
+    }
+
+    public static ValidationStatus validate(JsonFormFragmentView formFragmentView, View childAt, boolean requestFocus) {
+        if (childAt instanceof MaterialEditText) {
+            MaterialEditText editText = (MaterialEditText) childAt;
+            ValidationStatus validationStatus = EditTextFactory.validate(formFragmentView, editText);
+            if (!validationStatus.isValid()) {
+                if (requestFocus) validationStatus.requestAttention();
+                return validationStatus;
+            }
+        } else if (childAt instanceof ImageView) {
+            ValidationStatus validationStatus = ImagePickerFactory.validate(formFragmentView,
+                    (ImageView) childAt);
+            if (!validationStatus.isValid()) {
+                if (requestFocus) validationStatus.requestAttention();
+                return validationStatus;
+            }
+        } else if (childAt instanceof Button) {
+            String type = (String) childAt.getTag(R.id.type);
+            if (!TextUtils.isEmpty(type) && type.equals(JsonFormConstants.GPS)) {
+                ValidationStatus validationStatus = GpsFactory.validate(formFragmentView, (Button) childAt);
+                if (!validationStatus.isValid()) {
+                    if (requestFocus) validationStatus.requestAttention();
+                    return validationStatus;
+                }
+            }
+        } else if (childAt instanceof MaterialSpinner) {
+            MaterialSpinner spinner = (MaterialSpinner) childAt;
+            ValidationStatus validationStatus = SpinnerFactory.validate(formFragmentView, spinner);
+            if (!validationStatus.isValid()) {
+                if (requestFocus) validationStatus.requestAttention();
+                spinner.setError(validationStatus.getErrorMessage());
+                return validationStatus;
+            } else {
+                spinner.setError(null);
+            }
+        }
+
+        return new ValidationStatus(true, null, null, null);
     }
 
     public void addFormElements() {
@@ -179,45 +217,6 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         } else {
             return firstError;
         }
-    }
-
-    public static ValidationStatus validate(JsonFormFragmentView formFragmentView, View childAt, boolean requestFocus) {
-        if (childAt instanceof MaterialEditText) {
-            MaterialEditText editText = (MaterialEditText) childAt;
-            ValidationStatus validationStatus = EditTextFactory.validate(formFragmentView, editText);
-            if (!validationStatus.isValid()) {
-                if (requestFocus) validationStatus.requestAttention();
-                return validationStatus;
-            }
-        } else if (childAt instanceof ImageView) {
-            ValidationStatus validationStatus = ImagePickerFactory.validate(formFragmentView,
-                    (ImageView) childAt);
-            if (!validationStatus.isValid()) {
-                if (requestFocus) validationStatus.requestAttention();
-                return validationStatus;
-            }
-        } else if (childAt instanceof Button) {
-            String type = (String) childAt.getTag(R.id.type);
-            if (!TextUtils.isEmpty(type) && type.equals(JsonFormConstants.GPS)) {
-                ValidationStatus validationStatus = GpsFactory.validate(formFragmentView, (Button) childAt);
-                if (!validationStatus.isValid()) {
-                    if (requestFocus) validationStatus.requestAttention();
-                    return validationStatus;
-                }
-            }
-        } else if (childAt instanceof MaterialSpinner) {
-            MaterialSpinner spinner = (MaterialSpinner) childAt;
-            ValidationStatus validationStatus = SpinnerFactory.validate(formFragmentView, spinner);
-            if (!validationStatus.isValid()) {
-                if (requestFocus) validationStatus.requestAttention();
-                spinner.setError(validationStatus.getErrorMessage());
-                return validationStatus;
-            } else {
-                spinner.setError(null);
-            }
-        }
-
-        return new ValidationStatus(true, null, null, null);
     }
 
     public void onSaveClick(LinearLayout mainView) {
