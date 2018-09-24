@@ -28,4 +28,7 @@
     <dimen name="radio_button_icon_text_padding">30dp</dimen>
     <dimen name="default_label_text_size">20px</dimen>
     <dimen name="options_default_text_size">18px</dimen>
+    <dimen name="native_selector_total_screen_size_padding">70dp</dimen>
+    <dimen name="native_selector_button_max_padding">5sp</dimen>
+    <dimen name="native_selector_button_min_padding">1px</dimen>
 </resources>

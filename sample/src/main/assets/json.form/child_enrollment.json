@@ -763,12 +763,6 @@
         "value": "primary_school"
       },
       {
-        "key": "enabled_label",
-        "type": "label",
-        "text": "Please select the number of family members",
-        "text_color": "#000000"
-      },
-      {
         "key": "toaster_notes",
         "openmrs_entity_parent": "",
         "openmrs_entity": "person_attribute",
@@ -828,6 +822,23 @@
         "toaster_type": "problem"
       },
       {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "10sp"
+      },
+      {
+        "key": "enabled_label",
+        "type": "label",
+        "text": "Please select the number of family members",
+        "text_color": "#000000",
+        "v_required": {
+          "value": true
+        }
+      },
+      {
         "key": "numbers_selector",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -838,6 +849,7 @@
         "max_value": "20",
         "text_size": "14sp",
         "text_color": "#000000",
+        "selected_text_color": "#ffffff",
         "v_required": {
           "value": true
         }

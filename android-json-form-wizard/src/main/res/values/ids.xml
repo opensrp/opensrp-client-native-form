@@ -25,6 +25,9 @@
     <item name="number_selector_textview_max_number" type="id"/>
     <item name="number_selector_textview_layout" type="id"/>
     <item name="number_selector_textview_jsonObject" type="id"/>
+    <item name="number_selector_default_text_color" type="id"/>
+    <item name="number_selector_selected_text_color" type="id"/>
+    <item name="number_selector_listener" type="id"/>
 
     <item name="label_dialog_info" type="id"/>
     <item name="label_dialog_title" type="id"/>
