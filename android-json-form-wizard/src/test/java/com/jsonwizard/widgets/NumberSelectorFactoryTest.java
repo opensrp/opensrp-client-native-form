@@ -56,4 +56,18 @@ public class NumberSelectorFactoryTest extends BaseTest {
         Assert.assertEquals(test, number);
         Mockito.verify(numberSelectorFactory).checkStartNumber(startSelectionNumber);
     }
+
+    @Test
+    public void testGetTextWhenStartNumberIsEqualTONumberOfSlector() {
+        NumberSelectorFactory numberSelectorFactory = Mockito.spy(new NumberSelectorFactory());
+        String test = "5+";
+        int item = 4;
+        int startSelectionNumber = 1;
+        int numberOfSelectors = 5;
+        int maxValue = 20;
+
+        String number = numberSelectorFactory.getText(item, startSelectionNumber, numberOfSelectors, maxValue);
+        Assert.assertEquals(test, number);
+        Mockito.verify(numberSelectorFactory).checkStartNumber(startSelectionNumber);
+    }
 }
