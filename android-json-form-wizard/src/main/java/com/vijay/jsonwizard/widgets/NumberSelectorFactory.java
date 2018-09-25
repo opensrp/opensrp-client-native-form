@@ -76,7 +76,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
             NumberSelectorFactory.createDialogSpinner(linearLayout, textView.getContext(), jsonObject, numberOfSelectors);
         }
 
-        if (selectedTextView.equals(textView)) {
+        if (selectedTextView != textView) {
             setSelectedColor(textView.getContext(), textView, item, numberOfSelectors, selectedColor);
             setDefaultColor(textView.getContext(), selectedTextView, selectedItem, numberOfSelectors, defaultColor);
             selectedTextView = textView;
@@ -171,8 +171,8 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         }
     }
 
-    private String getText(int item, int startSelectionNumber, int numberOfSelectors, int maxValue) {
-        String text = String.valueOf(startSelectionNumber == 0 ? item : item + 1);
+    public String getText(int item, int startSelectionNumber, int numberOfSelectors, int maxValue) {
+        String text = String.valueOf(checkStartNumber(startSelectionNumber) == 0 ? item : item + 1);
         if (item == numberOfSelectors - 1 && maxValue > Integer.parseInt(text)) {
             text = text + "+";
         }
@@ -195,7 +195,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         int textSize = jsonObject.optInt(JsonFormConstants.TEXT_SIZE, (int) context.getResources().getDimension(R.dimen.default_text_size));
         LinearLayout.LayoutParams layoutParams = FormUtils.getLinearLayoutParams(width / numberOfSelectors, FormUtils.WRAP_CONTENT, 1, 2, 1, 2);
 
-        CustomTextView customTextView = FormUtils.getTextViewWith(context, textSize, getText(item, startSelectionNumber,
+        CustomTextView customTextView = FormUtils.getTextViewWith(context, textSize, getText(item, checkStartNumber(startSelectionNumber),
                 numberOfSelectors, maxValue), jsonObject.getString(JsonFormConstants.KEY),
                 jsonObject.getString("type"), "", "", "",
                 "", layoutParams, FormUtils.FONT_BOLD_PATH, 0, textColor);
@@ -222,6 +222,13 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         }
 
         return customTextView;
+    }
+
+    public int checkStartNumber(int startNumber) {
+        if (startNumber > 1) {
+            startNumber = 1;
+        }
+        return startNumber;
     }
 
     private static class SpinnerOnItemSelected implements AdapterView.OnItemSelectedListener {

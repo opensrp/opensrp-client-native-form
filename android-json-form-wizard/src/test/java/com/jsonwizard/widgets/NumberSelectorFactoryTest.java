@@ -1,0 +1,59 @@
+package com.jsonwizard.widgets;
+
+import com.jsonwizard.BaseTest;
+import com.vijay.jsonwizard.widgets.NumberSelectorFactory;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+
+public class NumberSelectorFactoryTest extends BaseTest {
+    @Before
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+    }
+
+    @Test
+    public void testGetTextWhenStartNumberIsOne() {
+        NumberSelectorFactory numberSelectorFactory = Mockito.spy(new NumberSelectorFactory());
+        String test = "3";
+        int item = 2;
+        int startSelectionNumber = 1;
+        int numberOfSelectors = 5;
+        int maxValue = 20;
+
+        String number = numberSelectorFactory.getText(item, startSelectionNumber, numberOfSelectors, maxValue);
+        Assert.assertEquals(test, number);
+        Mockito.verify(numberSelectorFactory).checkStartNumber(startSelectionNumber);
+
+    }
+
+    @Test
+    public void testGetTextWhenStartNumberIsZero() {
+        NumberSelectorFactory numberSelectorFactory = Mockito.spy(new NumberSelectorFactory());
+        String test = "2";
+        int item = 2;
+        int startSelectionNumber = 0;
+        int numberOfSelectors = 5;
+        int maxValue = 20;
+
+        String number = numberSelectorFactory.getText(item, startSelectionNumber, numberOfSelectors, maxValue);
+        Assert.assertEquals(test, number);
+        Mockito.verify(numberSelectorFactory).checkStartNumber(startSelectionNumber);
+    }
+
+    @Test
+    public void testGetTextWhenStartNumberIsMoreThanOne() {
+        NumberSelectorFactory numberSelectorFactory = Mockito.spy(new NumberSelectorFactory());
+        String test = "3";
+        int item = 2;
+        int startSelectionNumber = 10;
+        int numberOfSelectors = 5;
+        int maxValue = 20;
+
+        String number = numberSelectorFactory.getText(item, startSelectionNumber, numberOfSelectors, maxValue);
+        Assert.assertEquals(test, number);
+        Mockito.verify(numberSelectorFactory).checkStartNumber(startSelectionNumber);
+    }
+}
