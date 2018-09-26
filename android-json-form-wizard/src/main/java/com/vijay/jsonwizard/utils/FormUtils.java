@@ -22,10 +22,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by vijay on 24-05-2015.
@@ -325,5 +328,55 @@ public class FormUtils {
             }
         }
         return radioButtonList;
+    }
+
+    /**
+     * This method returns a {@link Calendar} object at mid-day corresponding to a date matching
+     * the format specified in {@code DATE_FORMAT} or a day in reference to today e.g today,
+     * today-1, today+10
+     *
+     * @param dayString_ The string to be converted to a date
+     * @return The calendar object corresponding to the day, or object corresponding to today's
+     * date if an error occurred
+     */
+    public static Calendar getDate(String dayString_) {
+        Calendar calendarDate = Calendar.getInstance();
+
+        if (dayString_ != null && dayString_.trim().length() > 0) {
+            String dayString = dayString_.trim().toLowerCase();
+            if (!"today".equals(dayString)) {
+                Pattern pattern = Pattern.compile("today\\s*([-\\+])\\s*(\\d+)([dmyDMY]{1})");
+                Matcher matcher = pattern.matcher(dayString);
+                if (matcher.find()) {
+                    int timeValue = Integer.parseInt(matcher.group(2));
+                    if ("-".equals(matcher.group(1))) {
+                        timeValue = timeValue * -1;
+                    }
+
+                    int field = Calendar.DATE;
+                    if (matcher.group(3).equalsIgnoreCase("y")) {
+                        field = Calendar.YEAR;
+                    } else if (matcher.group(3).equalsIgnoreCase("m")) {
+                        field = Calendar.MONTH;
+                    }
+
+                    calendarDate.add(field, timeValue);
+                } else {
+                    try {
+                        calendarDate.setTime(DATE_FORMAT.parse(dayString));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+        //set time to mid-day
+        calendarDate.set(Calendar.HOUR_OF_DAY, 12);
+        calendarDate.set(Calendar.MINUTE, 0);
+        calendarDate.set(Calendar.SECOND, 0);
+        calendarDate.set(Calendar.MILLISECOND, 0);
+
+        return calendarDate;
     }
 }

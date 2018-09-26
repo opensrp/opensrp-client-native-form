@@ -15,12 +15,7 @@ import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.CompoundButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.Toast;
-
+import android.widget.*;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rey.material.widget.Button;
 import com.vijay.jsonwizard.R;
@@ -36,11 +31,7 @@ import com.vijay.jsonwizard.utils.PermissionUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 import com.vijay.jsonwizard.viewstates.JsonFormFragmentViewState;
-import com.vijay.jsonwizard.widgets.EditTextFactory;
-import com.vijay.jsonwizard.widgets.GpsFactory;
-import com.vijay.jsonwizard.widgets.ImagePickerFactory;
-import com.vijay.jsonwizard.widgets.SpinnerFactory;
-
+import com.vijay.jsonwizard.widgets.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -280,7 +271,12 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                 dispatchTakePictureIntent(key, type);
                 break;
             case JsonFormConstants.NATIVE_RADIO_BUTTON:
-                showInformationDialog(v);
+                String type = (String) v.getTag(R.id.radio_button_specify_type);
+                if (type.equals(JsonFormConstants.NATIVE_RADIO_SPECIFY_INFO)) {
+                    NativeRadioButtonFactory.showDateDialog(v);
+                } else {
+                    showInformationDialog(v);
+                }
                 break;
             case JsonFormConstants.CHECK_BOX:
                 showInformationDialog(v);

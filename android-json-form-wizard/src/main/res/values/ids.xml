@@ -22,6 +22,8 @@
     <item name="label_dialog_info" type="id"/>
     <item name="label_dialog_title" type="id"/>
 
-    <item name="radio_button_specify_textview" type="id"/>
+    <item name="native_radio_button_specify_textview" type="id"/>
+    <item name="native_radio_button_main_textview" type="id"/>
     <item name="radio_button_specify_type" type="id"/>
+    <item name="native_radio_button_context" type="id"/>
 </resources>

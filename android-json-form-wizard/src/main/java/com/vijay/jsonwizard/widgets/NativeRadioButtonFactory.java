@@ -1,16 +1,22 @@
 package com.vijay.jsonwizard.widgets;
 
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Build;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.customviews.DatePickerDialog;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
@@ -22,14 +28,81 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
-import static com.vijay.jsonwizard.utils.FormUtils.*;
+import static com.vijay.jsonwizard.widgets.DatePickerFactory.DATE_FORMAT;
+
 
 /**
  * Created by samuelgithengi on 8/16/18.
  */
 public class NativeRadioButtonFactory implements FormWidgetFactory {
+    private static final String TAG = "NativeRadioButtonFactory";
+    private CustomTextView customTextView;
+    private CustomTextView extraInfoTextView;
+
+    public static void showDateDialog(View view) {
+        Context context = (Context) view.getTag(R.id.native_radio_button_context);
+        CustomTextView customTextView = (CustomTextView) view.getTag(R.id.native_radio_button_specify_textview);
+        CustomTextView mainTextView = (CustomTextView) view.getTag(R.id.native_radio_button_main_textview);
+        DatePickerDialog datePickerDialog = new DatePickerDialog();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            datePickerDialog.setCalendarViewShown(false);
+        }
+        datePickerDialog.setContext(context);
+        setDate(datePickerDialog, mainTextView);
+        customTextView.setText(createSpecifyText("Tap to Change"));
+        showDatePickerDialog((Activity) context, datePickerDialog, mainTextView);
+    }
+
+    private static void showDatePickerDialog(Activity context,
+                                             DatePickerDialog datePickerDialog,
+                                             CustomTextView customTextView) {
+        FragmentTransaction ft = context.getFragmentManager().beginTransaction();
+        Fragment prev = context.getFragmentManager().findFragmentByTag(TAG);
+        if (prev != null) {
+            ft.remove(prev);
+        }
+
+        ft.addToBackStack(null);
+
+        datePickerDialog.show(ft, TAG);
+        Calendar calendar = getDate(customTextView);
+        datePickerDialog.setDate(calendar.getTime());
+    }
+
+    private static Calendar getDate(CustomTextView customTextView) {
+        String[] arrayString = customTextView.getText().toString().split(":");
+        String dateString = "";
+        if (arrayString.length > 1) {
+            dateString = arrayString[1];
+        }
+        return FormUtils.getDate(dateString);
+    }
+
+
+    private static void setDate(DatePickerDialog datePickerDialog, final CustomTextView customTextView) {
+        datePickerDialog.setOnDateSetListener(new android.app.DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                Calendar calendarDate = Calendar.getInstance();
+                calendarDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                calendarDate.set(Calendar.MONTH, monthOfYear);
+                calendarDate.set(Calendar.YEAR, year);
+                if (calendarDate.getTimeInMillis() >= view.getMinDate() && calendarDate.getTimeInMillis() <= view.getMaxDate()) {
+                    String[] arrayString = customTextView.getText().toString().split(":");
+                    customTextView.setText(arrayString[0] + ": " + DATE_FORMAT.format(calendarDate.getTime()));
+                } else {
+
+                }
+            }
+        });
+    }
+
+    private static String createSpecifyText(String text) {
+        return "(" + text + ")";
+    }
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener
@@ -108,7 +181,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         }
 
         FormUtils.setRadioExclusiveClick(radioGroup);
-        radioGroup.setLayoutParams(getLinearLayoutParams(MATCH_PARENT, WRAP_CONTENT, 0, 0, 0, (int) context
+        radioGroup.setLayoutParams(FormUtils.getLinearLayoutParams(FormUtils.MATCH_PARENT, FormUtils.WRAP_CONTENT, 0, 0, 0, (int) context
                 .getResources().getDimension(R.dimen.extra_bottom_margin)));
 
         for (RelativeLayout relativeLayout : radioButtonsLayout) {
@@ -151,6 +224,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         }
         addTextViewAttributes(context, jsonObject, item, mainTextView, stepName, optionTextColor);
         mainTextView.setText(item.getString(JsonFormConstants.TEXT));
+        setMainTextView(mainTextView);
     }
 
     private void createSpecifyTextView(Context context, RelativeLayout rootLayout, JSONObject jsonObject, CommonListener listener,
@@ -161,7 +235,9 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         specifyTextView.setVisibility(View.VISIBLE);
         addTextViewAttributes(context, jsonObject, item, specifyTextView, stepName, text_color);
         specifyTextView.setTag(R.id.radio_button_specify_type, JsonFormConstants.NATIVE_RADIO_SPECIFY_INFO);
-        specifyTextView.setTag(R.id.radio_button_specify_textview, specifyTextView);
+        specifyTextView.setTag(R.id.native_radio_button_specify_textview, specifyTextView);
+        specifyTextView.setTag(R.id.native_radio_button_main_textview, getMainTextView());
+        specifyTextView.setTag(R.id.native_radio_button_context, context);
         specifyTextView.setText(createSpecifyText(text));
         specifyTextView.setOnClickListener(listener);
     }
@@ -175,7 +251,6 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         addTextViewAttributes(context, jsonObject, item, extraInfoTextView, stepName, text_color);
         extraInfoTextView.setText(text);
     }
-
 
     private void addTextViewAttributes(Context context, JSONObject jsonObject, JSONObject item, CustomTextView customTextView,
                                        String stepName, String text_color) throws JSONException {
@@ -197,9 +272,22 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         customTextView.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
         customTextView.setTag(R.id.childKey, item.getString(JsonFormConstants.KEY));
         customTextView.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+        setExtraInfoTextView(customTextView);
     }
 
-    private String createSpecifyText(String text) {
-        return "(" + text + ")";
+    private CustomTextView getMainTextView() {
+        return customTextView;
+    }
+
+    private void setMainTextView(CustomTextView customTextView) {
+        this.customTextView = customTextView;
+    }
+
+    private CustomTextView getExtraInfoTextView() {
+        return extraInfoTextView;
+    }
+
+    private void setExtraInfoTextView(CustomTextView customTextView) {
+        extraInfoTextView = customTextView;
     }
 }
