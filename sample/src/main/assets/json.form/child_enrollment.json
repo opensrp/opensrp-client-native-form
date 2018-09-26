@@ -733,6 +733,14 @@
         }
       },
       {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "20sp"
+      },
+      {
         "key": "native_radio",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -747,12 +755,18 @@
           {
             "key": "primary_school",
             "text": "Primary school",
-            "text_color": "#000000"
+            "text_color": "#000000",
+            "specify_info": "Specify",
+            "specify_info_color": "#000000",
+            "extra_info": "Here we go",
+            "extra_info_color": "#445567"
           },
           {
             "key": "high_school",
             "text": "High School",
-            "text_size": "18sp"
+            "text_size": "18sp",
+            "specify_info": "Specify",
+            "extra_info": "Here we go"
           },
           {
             "key": "higher_education",
@@ -760,10 +774,18 @@
             "text_color": "#358CB7"
           }
         ],
-        "value": "primary_school",
+        "value": "high_school",
         "v_required": {
           "value": true
         }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "20sp"
       },
       {
         "key": "toaster_notes",

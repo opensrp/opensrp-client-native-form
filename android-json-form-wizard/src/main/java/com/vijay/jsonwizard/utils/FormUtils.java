@@ -7,22 +7,23 @@ import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RelativeLayout;
-
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.views.CustomTextView;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -95,7 +96,7 @@ public class FormUtils {
     }
 
     public static int dpToPixels(Context context, float dps) {
-        final float scale = context.getResources().getDisplayMetrics().density;
+        float scale = context.getResources().getDisplayMetrics().density;
         return (int) (dps * scale + 0.5f);
     }
 
@@ -279,5 +280,50 @@ public class FormUtils {
         }
 
         return relativeLayout;
+    }
+
+    /**
+     * Checks and uncheck the radio buttons in a linear layout view
+     * follows this fix https://stackoverflow.com/a/26961458/5784584
+     *
+     * @param parent
+     */
+    public static void setRadioExclusiveClick(ViewGroup parent) {
+        final List<RadioButton> radioButtonList = getRadioButtons(parent);
+        for (RadioButton radioButton : radioButtonList) {
+            radioButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    RadioButton radioButtonView = (RadioButton) view;
+                    radioButtonView.setChecked(true);
+                    for (RadioButton button : radioButtonList) {
+                        if (button.getId() != radioButtonView.getId()) {
+                            button.setChecked(false);
+                        }
+                    }
+
+                }
+            });
+        }
+    }
+
+    /**
+     * Get the actual radio buttons on the parent view given
+     *
+     * @param parent
+     * @return radioButtonList
+     */
+    private static List<RadioButton> getRadioButtons(ViewGroup parent) {
+        List<RadioButton> radioButtonList = new ArrayList<>();
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            View view = parent.getChildAt(i);
+            if (view instanceof RadioButton) {
+                radioButtonList.add((RadioButton) view);
+            } else if (view instanceof ViewGroup) {
+                List<RadioButton> nestedRadios = getRadioButtons((ViewGroup) view);
+                radioButtonList.addAll(nestedRadios);
+            }
+        }
+        return radioButtonList;
     }
 }

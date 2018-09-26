@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-
+import android.widget.RelativeLayout;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
@@ -16,7 +16,7 @@ import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
-
+import com.vijay.jsonwizard.views.CustomTextView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,9 +24,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT;
-import static com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT;
-import static com.vijay.jsonwizard.utils.FormUtils.getLinearLayoutParams;
+import static com.vijay.jsonwizard.utils.FormUtils.*;
 
 /**
  * Created by samuelgithengi on 8/16/18.
@@ -68,61 +66,140 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
-
         JSONArray options = jsonObject.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
-        ArrayList<RadioButton> radioButtons = new ArrayList<>();
+
+        ArrayList<RelativeLayout> radioButtonsLayout = new ArrayList<>();
         RadioGroup radioGroup = new RadioGroup(context);
+
         for (int i = 0; i < options.length(); i++) {
             JSONObject item = options.getJSONObject(i);
-            RadioButton radioButton = (RadioButton) LayoutInflater.from(context).inflate(R.layout.item_radio_button,
-                    null);
+            String specifyInfo = item.optString(JsonFormConstants.NATIVE_RADIO_SPECIFY_INFO, null);
+            String extraInfo = item.optString(JsonFormConstants.NATIVE_RADIO_EXTRA_INFO, null);
 
-            String optionTextColor = JsonFormConstants.DEFAULT_TEXT_COLOR;
-            String optionTextSize = String.valueOf(context.getResources().getDimension(R.dimen.options_default_text_size));
-            if (item.has(JsonFormConstants.TEXT_COLOR)) {
-                optionTextColor = item.getString(JsonFormConstants.TEXT_COLOR);
+            RelativeLayout radioGroupLayout = (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.native_item_radio_button, null);
+            radioGroupLayout.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+            radioGroupLayout.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
+            radioGroupLayout.setTag(R.id.openmrs_entity, openMrsEntity);
+            radioGroupLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
+            radioGroupLayout.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
+            radioGroupLayout.setTag(R.id.childKey, item.getString(JsonFormConstants.KEY));
+            radioGroupLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+
+            createRadioButton(radioGroupLayout, jsonObject, readOnly, item, listener, stepName);
+            createMainTextView(context, radioGroupLayout, jsonObject, item, stepName);
+            if (specifyInfo != null) {
+                createSpecifyTextView(context, radioGroupLayout, jsonObject, listener, item, stepName);
             }
-            if (item.has(JsonFormConstants.TEXT_SIZE)) {
-                optionTextSize = item.getString(JsonFormConstants.TEXT_SIZE);
+
+            if (extraInfo != null) {
+                createExtraInfo(context, radioGroupLayout, item, jsonObject, stepName);
             }
 
-            radioButton.setId(ViewUtil.generateViewId());
-            radioButton.setText(item.getString(JsonFormConstants.TEXT));
-            radioButton.setTextColor(Color.parseColor(optionTextColor));
-            radioButton.setTextSize(FormUtils.getValueFromSpOrDpOrPx(optionTextSize, context));
-            radioButton.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
-            radioButton.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
-            radioButton.setTag(R.id.openmrs_entity, openMrsEntity);
-            radioButton.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-            radioButton.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
-            radioButton.setTag(R.id.childKey, item.getString(JsonFormConstants.KEY));
-            radioButton.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
-            radioButton.setOnCheckedChangeListener(listener);
-            if (!TextUtils.isEmpty(jsonObject.optString(JsonFormConstants.VALUE))
-                    && jsonObject.optString(JsonFormConstants.VALUE).equals(item.getString(JsonFormConstants.KEY))) {
-                radioButton.setChecked(true);
-            }
-            radioButton.setEnabled(!readOnly);
-            radioButton.setFocusable(!readOnly);
+            ((JsonApi) context).addFormDataView(radioGroupLayout);
 
-            ((JsonApi) context).addFormDataView(radioButton);
-
-            canvasIds.put(radioButton.getId());
-            radioButtons.add(radioButton);
-            radioGroup.addView(radioButton);
-
+            canvasIds.put(radioGroupLayout.getId());
+            radioGroup.addView(radioGroupLayout);
+            radioButtonsLayout.add(radioGroupLayout);
 
             if (relevance != null && context instanceof JsonApi) {
-                radioButton.setTag(R.id.relevance, relevance);
-                ((JsonApi) context).addSkipLogicView(radioButton);
+                radioGroupLayout.setTag(R.id.relevance, relevance);
+                ((JsonApi) context).addSkipLogicView(radioGroupLayout);
             }
         }
+
+        FormUtils.setRadioExclusiveClick(radioGroup);
         radioGroup.setLayoutParams(getLinearLayoutParams(MATCH_PARENT, WRAP_CONTENT, 0, 0, 0, (int) context
                 .getResources().getDimension(R.dimen.extra_bottom_margin)));
-        views.add(radioGroup);
 
-        for (RadioButton radioButton : radioButtons) {
-            radioButton.setTag(R.id.canvas_ids, canvasIds.toString());
+        for (RelativeLayout relativeLayout : radioButtonsLayout) {
+            relativeLayout.setTag(R.id.canvas_ids, canvasIds.toString());
         }
+
+        views.add(radioGroup);
+    }
+
+    private void createRadioButton(RelativeLayout rootLayout, JSONObject jsonObject, Boolean readOnly, JSONObject item,
+                                   CommonListener listener, String stepName) throws JSONException {
+        String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
+        String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
+        String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
+
+        RadioButton radioButton = rootLayout.findViewById(R.id.mainRadioButton);
+        radioButton.setId(ViewUtil.generateViewId());
+        radioButton.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+        radioButton.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
+        radioButton.setTag(R.id.openmrs_entity, openMrsEntity);
+        radioButton.setTag(R.id.openmrs_entity_id, openMrsEntityId);
+        radioButton.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
+        radioButton.setTag(R.id.childKey, item.getString(JsonFormConstants.KEY));
+        radioButton.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+        radioButton.setOnCheckedChangeListener(listener);
+        if (!TextUtils.isEmpty(jsonObject.optString(JsonFormConstants.VALUE))
+                && jsonObject.optString(JsonFormConstants.VALUE).equals(item.getString(JsonFormConstants.KEY))) {
+            radioButton.setChecked(true);
+        }
+        radioButton.setEnabled(!readOnly);
+        radioButton.setFocusable(!readOnly);
+    }
+
+    private void createMainTextView(Context context, RelativeLayout rootLayout, JSONObject jsonObject, JSONObject item,
+                                    String stepName) throws JSONException {
+        CustomTextView mainTextView = rootLayout.findViewById(R.id.mainRadioButtonTextView);
+        String optionTextColor = JsonFormConstants.DEFAULT_TEXT_COLOR;
+        if (item.has(JsonFormConstants.TEXT_COLOR)) {
+            optionTextColor = item.getString(JsonFormConstants.TEXT_COLOR);
+        }
+        addTextViewAttributes(context, jsonObject, item, mainTextView, stepName, optionTextColor);
+        mainTextView.setText(item.getString(JsonFormConstants.TEXT));
+    }
+
+    private void createSpecifyTextView(Context context, RelativeLayout rootLayout, JSONObject jsonObject, CommonListener listener,
+                                       JSONObject item, String stepName) throws JSONException {
+        String text = item.getString(JsonFormConstants.NATIVE_RADIO_SPECIFY_INFO);
+        String text_color = item.optString(JsonFormConstants.NATIVE_RADIO_SPECIFY_INFO_COLOR, JsonFormConstants.DEFAULT_HINT_TEXT_COLOR);
+        CustomTextView specifyTextView = rootLayout.findViewById(R.id.specifyTextView);
+        specifyTextView.setVisibility(View.VISIBLE);
+        addTextViewAttributes(context, jsonObject, item, specifyTextView, stepName, text_color);
+        specifyTextView.setTag(R.id.radio_button_specify_type, JsonFormConstants.NATIVE_RADIO_SPECIFY_INFO);
+        specifyTextView.setTag(R.id.radio_button_specify_textview, specifyTextView);
+        specifyTextView.setText(createSpecifyText(text));
+        specifyTextView.setOnClickListener(listener);
+    }
+
+    private void createExtraInfo(Context context, RelativeLayout rootLayout, JSONObject item, JSONObject jsonObject,
+                                 String stepName) throws JSONException {
+        String text = item.getString(JsonFormConstants.NATIVE_RADIO_EXTRA_INFO);
+        String text_color = item.optString(JsonFormConstants.NATIVE_RADIO_EXTRA_INFO_COLOR, JsonFormConstants.DEFAULT_HINT_TEXT_COLOR);
+        CustomTextView extraInfoTextView = rootLayout.findViewById(R.id.extraInfoTextView);
+        extraInfoTextView.setVisibility(View.VISIBLE);
+        addTextViewAttributes(context, jsonObject, item, extraInfoTextView, stepName, text_color);
+        extraInfoTextView.setText(text);
+    }
+
+
+    private void addTextViewAttributes(Context context, JSONObject jsonObject, JSONObject item, CustomTextView customTextView,
+                                       String stepName, String text_color) throws JSONException {
+        String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
+        String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
+        String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
+        String optionTextSize = String.valueOf(context.getResources().getDimension(R.dimen.options_default_text_size));
+        if (item.has(JsonFormConstants.TEXT_SIZE)) {
+            optionTextSize = item.getString(JsonFormConstants.TEXT_SIZE);
+        }
+
+        customTextView.setTextColor(Color.parseColor(text_color));
+        customTextView.setTextSize(FormUtils.getValueFromSpOrDpOrPx(optionTextSize, context));
+
+        customTextView.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+        customTextView.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
+        customTextView.setTag(R.id.openmrs_entity, openMrsEntity);
+        customTextView.setTag(R.id.openmrs_entity_id, openMrsEntityId);
+        customTextView.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
+        customTextView.setTag(R.id.childKey, item.getString(JsonFormConstants.KEY));
+        customTextView.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+    }
+
+    private String createSpecifyText(String text) {
+        return "(" + text + ")";
     }
 }
