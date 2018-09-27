@@ -1,19 +1,14 @@
 package com.jsonwizard.utils.zing;
 
 import android.view.View;
-
 import com.jsonwizard.BaseTest;
-import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
-
 import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.verification.VerificationMode;
 
 /**
  * Created by onaio on 04/08/2017.
@@ -21,9 +16,8 @@ import org.mockito.verification.VerificationMode;
 
 public class ValidationStatusTest extends BaseTest {
     @Mock
-    protected View view;
-    @InjectMocks
-    private ValidationStatus activity;
+    private View view;
+
     @Mock
     private JsonFormFragmentView formFragmentView;
 

@@ -1,22 +1,17 @@
 package com.jsonwizard.widgets;
 
-import android.content.Context;
 import com.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.widgets.NativeRadioButtonFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 @RunWith(PowerMockRunner.class)
 public class NativeRadioButtonFactoryTest extends BaseTest {
-    @Mock
-    private Context context;
-
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);

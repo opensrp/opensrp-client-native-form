@@ -383,7 +383,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             getView().writeValue(mStepName, parentKey, JsonFormConstants.OPTIONS_FIELD_NAME, childKey,
                     String.valueOf(compoundButton.isChecked()), openMrsEntityParent,
                     openMrsEntity, openMrsEntityId);
-        } else if ((compoundButton instanceof android.widget.RadioButton ||
+        } else if ((compoundButton instanceof RadioButton ||
                 compoundButton instanceof RadioButton) && isChecked) {
             String parentKey = (String) compoundButton.getTag(R.id.key);
             String openMrsEntityParent = (String) compoundButton.getTag(R.id.openmrs_entity_parent);

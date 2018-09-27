@@ -101,7 +101,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
     }
 
     private static String createSpecifyText(String text) {
-        return text == null || text.equals("") ? "" : "(" + text + ")";
+        return text == null || text.isEmpty() ? "" : "(" + text + ")";
     }
 
     @Override
