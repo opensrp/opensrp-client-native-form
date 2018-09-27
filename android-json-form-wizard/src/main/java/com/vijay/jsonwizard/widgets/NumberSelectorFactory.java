@@ -194,10 +194,11 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         int maxValue = jsonObject.optInt(JsonFormConstants.MAX_SELECTION_VALUE, 20);
         String textColor = jsonObject.optString(JsonFormConstants.TEXT_COLOR, JsonFormConstants.DEFAULT_TEXT_COLOR);
         String selectedTextColor = jsonObject.optString(JsonFormConstants.NUMBER_SELECTOR_SELCTED_TEXT_COLOR, JsonFormConstants.DEFAULT_NUMBER_SELECTOR_TEXT_COLOR);
-        int textSize = jsonObject.optInt(JsonFormConstants.TEXT_SIZE, (int) context.getResources().getDimension(R.dimen.default_text_size));
+        String textSize = jsonObject.getString(JsonFormConstants.TEXT_SIZE);
+        textSize = textSize == null ? String.valueOf(context.getResources().getDimension(R.dimen.default_text_size)) : String.valueOf(FormUtils.getValueFromSpOrDpOrPx(textSize, context));
         LinearLayout.LayoutParams layoutParams = FormUtils.getLinearLayoutParams(width / numberOfSelectors, FormUtils.WRAP_CONTENT, 1, 2, 1, 2);
 
-        CustomTextView customTextView = FormUtils.getTextViewWith(context, textSize, getText(item, startSelectionNumber,
+        CustomTextView customTextView = FormUtils.getTextViewWith(context, Integer.parseInt(textSize), getText(item, startSelectionNumber,
                 numberOfSelectors, maxValue), jsonObject.getString(JsonFormConstants.KEY),
                 jsonObject.getString("type"), "", "", "",
                 "", layoutParams, FormUtils.FONT_BOLD_PATH, 0, textColor);
