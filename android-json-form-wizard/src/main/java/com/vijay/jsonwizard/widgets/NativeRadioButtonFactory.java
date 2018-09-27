@@ -52,8 +52,8 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         }
         datePickerDialog.setContext(context);
         setDate(datePickerDialog, mainTextView);
-        customTextView.setText(createSpecifyText("Tap to Change"));
         showDatePickerDialog((Activity) context, datePickerDialog, mainTextView);
+        customTextView.setText(createSpecifyText(context.getResources().getString(R.string.radio_button_date_change)));
     }
 
     private static void showDatePickerDialog(Activity context,
@@ -83,6 +83,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
 
     private static void setDate(DatePickerDialog datePickerDialog, final CustomTextView customTextView) {
+        final String[] arrayString = customTextView.getText().toString().split(":");
         datePickerDialog.setOnDateSetListener(new android.app.DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
@@ -91,17 +92,16 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
                 calendarDate.set(Calendar.MONTH, monthOfYear);
                 calendarDate.set(Calendar.YEAR, year);
                 if (calendarDate.getTimeInMillis() >= view.getMinDate() && calendarDate.getTimeInMillis() <= view.getMaxDate()) {
-                    String[] arrayString = customTextView.getText().toString().split(":");
                     customTextView.setText(arrayString[0] + ": " + DATE_FORMAT.format(calendarDate.getTime()));
                 } else {
-
+                    customTextView.setText(arrayString[0]);
                 }
             }
         });
     }
 
     private static String createSpecifyText(String text) {
-        return "(" + text + ")";
+        return text == null || text.equals("") ? "" : "(" + text + ")";
     }
 
     @Override
@@ -283,7 +283,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         this.customTextView = customTextView;
     }
 
-    private CustomTextView getExtraInfoTextView() {
+    public CustomTextView getExtraInfoTextView() {
         return extraInfoTextView;
     }
 
