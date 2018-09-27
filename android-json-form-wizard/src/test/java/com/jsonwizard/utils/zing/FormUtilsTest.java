@@ -1,16 +1,14 @@
 package com.jsonwizard.utils.zing;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.res.Resources;
-import android.test.mock.MockContext;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
-
 import com.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.utils.FormUtils;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,8 +41,8 @@ public class FormUtilsTest extends BaseTest {
     @PrepareForTest({TypedValue.class})
     @Test
     public void testSpToPx() {
-        MockContext mockContext = Mockito.spy(MockContext.class);
-        Mockito.doReturn(context).when(mockContext).getApplicationContext();
+        Application application = Mockito.spy(Application.class);
+        Mockito.doReturn(context).when(application).getApplicationContext();
         Mockito.doReturn(resources).when(context).getResources();
         Mockito.doReturn(displayMetrics).when(resources).getDisplayMetrics();
 
@@ -61,8 +59,8 @@ public class FormUtilsTest extends BaseTest {
     @PrepareForTest({TypedValue.class})
     @Test
     public void testDpToPx() {
-        MockContext mockContext = Mockito.spy(MockContext.class);
-        Mockito.doReturn(context).when(mockContext).getApplicationContext();
+        Application application = Mockito.spy(Application.class);
+        Mockito.doReturn(context).when(application).getApplicationContext();
         Mockito.doReturn(resources).when(context).getResources();
         Mockito.doReturn(displayMetrics).when(resources).getDisplayMetrics();
 
@@ -78,8 +76,8 @@ public class FormUtilsTest extends BaseTest {
     @PrepareForTest({TextUtils.class, TypedValue.class})
     @Test
     public void testGetValueFromSpOrDpOrPxWithAnSpInput() {
-        MockContext mockContext = Mockito.spy(MockContext.class);
-        Mockito.doReturn(context).when(mockContext).getApplicationContext();
+        Application application = Mockito.spy(Application.class);
+        Mockito.doReturn(context).when(application).getApplicationContext();
         Mockito.doReturn(resources).when(context).getResources();
         Mockito.doReturn(displayMetrics).when(resources).getDisplayMetrics();
 
@@ -98,8 +96,8 @@ public class FormUtilsTest extends BaseTest {
     @PrepareForTest({TextUtils.class, TypedValue.class, FormUtils.class})
     @Test
     public void testGetValueFromSpOrDpOrPxWithADpInput() {
-        MockContext mockContext = Mockito.spy(MockContext.class);
-        Mockito.doReturn(context).when(mockContext).getApplicationContext();
+        Application application = Mockito.spy(Application.class);
+        Mockito.doReturn(context).when(application).getApplicationContext();
         Mockito.doReturn(resources).when(context).getResources();
         Mockito.doReturn(displayMetrics).when(resources).getDisplayMetrics();
 
@@ -117,8 +115,8 @@ public class FormUtilsTest extends BaseTest {
     @PrepareForTest({TextUtils.class})
     @Test
     public void testGetValueFromSpOrDpOrPxWithAPxInput() {
-        MockContext mockContext = Mockito.spy(MockContext.class);
-        Mockito.doReturn(context).when(mockContext).getApplicationContext();
+        Application application = Mockito.spy(Application.class);
+        Mockito.doReturn(context).when(application).getApplicationContext();
         Mockito.doReturn(resources).when(context).getResources();
         Mockito.doReturn(20.0f).when(resources).getDimension(R.dimen.default_label_text_size);
 
@@ -134,8 +132,8 @@ public class FormUtilsTest extends BaseTest {
     @PrepareForTest({TextUtils.class})
     @Test
     public void testGetValueFromSpOrDpOrPxWithAnyString() {
-        MockContext mockContext = Mockito.spy(MockContext.class);
-        Mockito.doReturn(context).when(mockContext).getApplicationContext();
+        Application application = Mockito.spy(Application.class);
+        Mockito.doReturn(context).when(application).getApplicationContext();
         Mockito.doReturn(resources).when(context).getResources();
         Mockito.doReturn(20.0f).when(resources).getDimension(R.dimen.default_label_text_size);
 
@@ -151,8 +149,8 @@ public class FormUtilsTest extends BaseTest {
     @PrepareForTest({TextUtils.class})
     @Test
     public void testGetValueFromSpOrDpOrPxWithEmptyString() {
-        MockContext mockContext = Mockito.spy(MockContext.class);
-        Mockito.doReturn(context).when(mockContext).getApplicationContext();
+        Application application = Mockito.spy(Application.class);
+        Mockito.doReturn(context).when(application).getApplicationContext();
 
         String string = "";
         int expected = 0;
@@ -166,8 +164,8 @@ public class FormUtilsTest extends BaseTest {
     @PrepareForTest({TextUtils.class})
     @Test
     public void testGetValueFromSpOrDPOrPxwithNull() {
-        MockContext mockContext = Mockito.spy(MockContext.class);
-        Mockito.doReturn(context).when(mockContext).getApplicationContext();
+        Application application = Mockito.spy(Application.class);
+        Mockito.doReturn(context).when(application).getApplicationContext();
 
         int expected = 0;
         PowerMockito.mockStatic(TextUtils.class);
