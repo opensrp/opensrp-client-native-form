@@ -110,9 +110,9 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         } else if (childAt instanceof CustomTextView) {
             CustomTextView customTextView = (CustomTextView) childAt;
             String type = (String) childAt.getTag(R.id.type);
-            if (type.equals(JsonFormConstants.NUMBER_SELECTORS)) {
+            if (!TextUtils.isEmpty(type) && type.equals(JsonFormConstants.NUMBER_SELECTORS)) {
                 ValidationStatus validationStatus = NumberSelectorFactory.validate(formFragmentView, customTextView);
-                if (validationStatus.isValid()) {
+                if (!validationStatus.isValid()) {
                     if (requestFocus) validationStatus.requestAttention();
                     customTextView.setError(validationStatus.getErrorMessage());
                     return validationStatus;

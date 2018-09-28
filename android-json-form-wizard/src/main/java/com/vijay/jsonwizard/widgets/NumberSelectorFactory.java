@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -89,13 +90,14 @@ public class NumberSelectorFactory implements FormWidgetFactory {
     private static void createDialogSpinner(LinearLayout linearLayout, Context context, JSONObject jsonObject, int startNumber) {
         int maxValue = jsonObject.optInt(JsonFormConstants.MAX_SELECTION_VALUE, 20);
         LinearLayout.LayoutParams layoutParams = FormUtils.getLinearLayoutParams(10, FormUtils.WRAP_CONTENT, 1, 1, 1, 1);
-        Spinner spinner = new Spinner(context, Spinner.MODE_DIALOG);
-        List<Integer> numbers = new ArrayList<>();
+        final Spinner spinner = new Spinner(context, Spinner.MODE_DIALOG);
+        List<String> numbers = new ArrayList<>();
         for (int i = startNumber; i <= maxValue; i++) {
-            numbers.add(i);
+            numbers.add(String.valueOf(i));
         }
+        numbers.add(0, context.getResources().getString(R.string.select_one)); //This is to enable the first item in the spinner selection.
 
-        ArrayAdapter<Integer> dataAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, numbers);
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, numbers);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(dataAdapter);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -103,7 +105,12 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         }
         spinner.setLayoutParams(layoutParams);
         spinner.performClick();
-        spinner.setOnItemSelectedListener(spinnerOnItemSelected);
+        spinner.post(new Runnable() {
+            @Override
+            public void run() {
+                spinner.setOnItemSelectedListener(spinnerOnItemSelected);
+            }
+        });
         linearLayout.addView(spinner);
 
     }
@@ -117,7 +124,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         if (!isRequired || !customTextView.isEnabled()) {
             return new ValidationStatus(true, null, formFragmentView, customTextView);
         }
-        String selectedNumber = String.valueOf(selectedTextView.getText());
+        String selectedNumber = String.valueOf(customTextView.getText());
         if (!selectedNumber.isEmpty()) {
             return new ValidationStatus(true, null, formFragmentView, customTextView);
         } else {
@@ -214,6 +221,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         customTextView.setTag(R.id.number_selector_selected_text_color, selectedTextColor);
         customTextView.setTag(R.id.number_selector_start_selection_number, startSelectionNumber);
         customTextView.setTag(R.id.number_selector_listener, listener);
+        customTextView.setTag(R.id.v_required, addRequiredTag(jsonObject));
         customTextView.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
         customTextView.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
         customTextView.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
@@ -226,6 +234,19 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         customTextView.setOnClickListener(listener);
 
         return customTextView;
+    }
+
+    private String addRequiredTag(JSONObject jsonObject) throws JSONException {
+        String required = "false";
+        JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
+        if (requiredObject != null) {
+            String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
+            if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
+                required = "true";
+            }
+        }
+
+        return required;
     }
 
     private static class SpinnerOnItemSelected implements AdapterView.OnItemSelectedListener {
