@@ -18,7 +18,8 @@
 
     <color name="text_hint_color">#808080</color>
     <color name="horizontal_line_default_bg">#B6B6B6</color>
-
+    <color name="native_number_selector">#F0F3F7</color>
+    <color name="native_number_selector_selected">#278BC4</color>
     <color name="toaster_note_blue">#DDF0F9</color>
     <color name="toaster_note_blue_icon">#1199F9</color>
     <color name="toaster_note_green">#D4EECD</color>

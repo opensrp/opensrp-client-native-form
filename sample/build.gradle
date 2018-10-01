@@ -47,7 +47,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation 'junit:junit:4.12'
 
-    implementation ('com.android.support:design:27.1.1'){
+    implementation('com.android.support:design:27.1.1') {
         exclude group: 'com.android.support', module: 'recyclerview-v7'
 
     }

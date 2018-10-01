@@ -15,12 +15,11 @@ import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
+import android.widget.AdapterView;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rey.material.widget.Button;
 import com.vijay.jsonwizard.R;
@@ -34,13 +33,10 @@ import com.vijay.jsonwizard.mvp.MvpBasePresenter;
 import com.vijay.jsonwizard.utils.ImageUtils;
 import com.vijay.jsonwizard.utils.PermissionUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
+import com.vijay.jsonwizard.views.CustomTextView;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 import com.vijay.jsonwizard.viewstates.JsonFormFragmentViewState;
-import com.vijay.jsonwizard.widgets.EditTextFactory;
-import com.vijay.jsonwizard.widgets.GpsFactory;
-import com.vijay.jsonwizard.widgets.ImagePickerFactory;
-import com.vijay.jsonwizard.widgets.SpinnerFactory;
-
+import com.vijay.jsonwizard.widgets.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -110,6 +106,19 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                 return validationStatus;
             } else {
                 spinner.setError(null);
+            }
+        } else if (childAt instanceof CustomTextView) {
+            CustomTextView customTextView = (CustomTextView) childAt;
+            String type = (String) childAt.getTag(R.id.type);
+            if (!TextUtils.isEmpty(type) && type.equals(JsonFormConstants.NUMBER_SELECTORS)) {
+                ValidationStatus validationStatus = NumberSelectorFactory.validate(formFragmentView, customTextView);
+                if (!validationStatus.isValid()) {
+                    if (requestFocus) validationStatus.requestAttention();
+                    customTextView.setError(validationStatus.getErrorMessage());
+                    return validationStatus;
+                } else {
+                    customTextView.setError(null);
+                }
             }
         }
 
@@ -294,6 +303,9 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                     showInformationDialog(v);
                 }
                 break;
+            case JsonFormConstants.NUMBER_SELECTORS:
+                createNumberSelector(v);
+                break;
             default:
                 break;
         }
@@ -412,5 +424,16 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             getView().writeValue(mStepName, parentKey, value, openMrsEntityParent, openMrsEntity,
                     openMrsEntityId);
         }
+    }
+
+    private void createNumberSelector(View view) {
+        NumberSelectorFactory.createNumberSelector((CustomTextView) view);
+        CustomTextView customTextView = NumberSelectorFactory.getSelectedTextView();
+        String parentKey = (String) customTextView.getTag(R.id.key);
+        String openMrsEntityParent = (String) customTextView.getTag(R.id.openmrs_entity_parent);
+        String openMrsEntity = (String) customTextView.getTag(R.id.openmrs_entity);
+        String openMrsEntityId = (String) customTextView.getTag(R.id.openmrs_entity_id);
+        String value = String.valueOf(customTextView.getText());
+        getView().writeValue(mStepName, parentKey, value, openMrsEntityParent, openMrsEntity, openMrsEntityId);
     }
 }

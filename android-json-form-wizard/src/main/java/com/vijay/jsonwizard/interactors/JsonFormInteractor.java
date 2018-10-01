@@ -18,6 +18,7 @@ import com.vijay.jsonwizard.widgets.HorizontalLineFactory;
 import com.vijay.jsonwizard.widgets.ImagePickerFactory;
 import com.vijay.jsonwizard.widgets.LabelFactory;
 import com.vijay.jsonwizard.widgets.NativeRadioButtonFactory;
+import com.vijay.jsonwizard.widgets.NumberSelectorFactory;
 import com.vijay.jsonwizard.widgets.RadioButtonFactory;
 import com.vijay.jsonwizard.widgets.SectionFactory;
 import com.vijay.jsonwizard.widgets.SpinnerFactory;
@@ -65,6 +66,7 @@ public class JsonFormInteractor {
         map.put(JsonFormConstants.GPS, new GpsFactory());
         map.put(JsonFormConstants.HORIZONTAL_LINE, new HorizontalLineFactory());
         map.put(JsonFormConstants.NATIVE_RADIO_BUTTON, new NativeRadioButtonFactory());
+        map.put(JsonFormConstants.NUMBER_SELECTORS, new NumberSelectorFactory());
         map.put(JsonFormConstants.TOASTER_NOTES, new ToasterNotesFactory());
         map.put(JsonFormConstants.SPACER, new ComponentSpacerFactory());
     }
