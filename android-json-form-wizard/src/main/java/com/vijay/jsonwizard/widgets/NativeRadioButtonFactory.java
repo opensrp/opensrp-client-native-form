@@ -51,9 +51,8 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             datePickerDialog.setCalendarViewShown(false);
         }
         datePickerDialog.setContext(context);
-        setDate(datePickerDialog, mainTextView);
+        setDate(datePickerDialog, mainTextView,customTextView,context);
         showDatePickerDialog((Activity) context, datePickerDialog, mainTextView);
-        customTextView.setText(createSpecifyText(context.getResources().getString(R.string.radio_button_date_change)));
     }
 
     private static void showDatePickerDialog(Activity context,
@@ -82,8 +81,9 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
     }
 
 
-    private static void setDate(DatePickerDialog datePickerDialog, final CustomTextView customTextView) {
-        final String[] arrayString = customTextView.getText().toString().split(":");
+    private static void setDate(DatePickerDialog datePickerDialog, final CustomTextView maintextView, final CustomTextView
+            customTextView, final Context context) {
+        final String[] arrayString = maintextView.getText().toString().split(":");
         datePickerDialog.setOnDateSetListener(new android.app.DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
@@ -92,9 +92,10 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
                 calendarDate.set(Calendar.MONTH, monthOfYear);
                 calendarDate.set(Calendar.YEAR, year);
                 if (calendarDate.getTimeInMillis() >= view.getMinDate() && calendarDate.getTimeInMillis() <= view.getMaxDate()) {
-                    customTextView.setText(arrayString[0] + ": " + DATE_FORMAT.format(calendarDate.getTime()));
+                    maintextView.setText(arrayString[0] + ": " + DATE_FORMAT.format(calendarDate.getTime()));
+                    customTextView.setText(createSpecifyText(context.getResources().getString(R.string.radio_button_date_change)));
                 } else {
-                    customTextView.setText(arrayString[0]);
+                    maintextView.setText(arrayString[0]);
                 }
             }
         });
