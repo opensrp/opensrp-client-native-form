@@ -65,7 +65,12 @@ public class JsonFormConstants {
     public static final String REPORT_MONTH = "report_month";
     public static final String HORIZONTAL_LINE = "h_line";
     public static final String NATIVE_RADIO_BUTTON = "native_radio";
+    public static final String NATIVE_RADIO_SPECIFY_INFO = "specify_info";
+    public static final String NATIVE_RADIO_SPECIFY_INFO_COLOR = "specify_info_color";
+    public static final String NATIVE_RADIO_EXTRA_INFO = "extra_info";
+    public static final String NATIVE_RADIO_EXTRA_INFO_COLOR = "extra_info_color";
     public static final String DEFAULT_TEXT_COLOR = "#212121";
+    public static final String DEFAULT_HINT_TEXT_COLOR = "#808080";
     public static final String DEFAULT_NUMBER_SELECTOR_TEXT_COLOR = "#ffffff";
     public static final String TOASTER_NOTES = "toaster_notes";
     public static final String TOASTER_TYPE = "toaster_type";

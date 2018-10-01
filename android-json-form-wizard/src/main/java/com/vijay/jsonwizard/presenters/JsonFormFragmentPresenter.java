@@ -289,7 +289,12 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                 dispatchTakePictureIntent(key, type);
                 break;
             case JsonFormConstants.NATIVE_RADIO_BUTTON:
-                showInformationDialog(v);
+                String type = (String) v.getTag(R.id.radio_button_specify_type);
+                if (type.equals(JsonFormConstants.NATIVE_RADIO_SPECIFY_INFO)) {
+                    NativeRadioButtonFactory.showDateDialog(v);
+                } else {
+                    showInformationDialog(v);
+                }
                 break;
             case JsonFormConstants.CHECK_BOX:
                 showInformationDialog(v);
@@ -399,7 +404,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             getView().writeValue(mStepName, parentKey, JsonFormConstants.OPTIONS_FIELD_NAME, childKey,
                     String.valueOf(compoundButton.isChecked()), openMrsEntityParent,
                     openMrsEntity, openMrsEntityId);
-        } else if ((compoundButton instanceof android.widget.RadioButton ||
+        } else if ((compoundButton instanceof RadioButton ||
                 compoundButton instanceof RadioButton) && isChecked) {
             String parentKey = (String) compoundButton.getTag(R.id.key);
             String openMrsEntityParent = (String) compoundButton.getTag(R.id.openmrs_entity_parent);
