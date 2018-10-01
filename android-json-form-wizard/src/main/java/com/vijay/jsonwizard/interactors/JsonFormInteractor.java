@@ -66,7 +66,7 @@ public class JsonFormInteractor {
         map.put(JsonFormConstants.GPS, new GpsFactory());
         map.put(JsonFormConstants.HORIZONTAL_LINE, new HorizontalLineFactory());
         map.put(JsonFormConstants.NATIVE_RADIO_BUTTON, new NativeRadioButtonFactory());
-        map.put(JsonFormConstants.NATIVE_NUMBERS_SELECTOR, new NumberSelectorFactory());
+        map.put(JsonFormConstants.NUMBER_SELECTORS, new NumberSelectorFactory());
         map.put(JsonFormConstants.TOASTER_NOTES, new ToasterNotesFactory());
         map.put(JsonFormConstants.SPACER, new ComponentSpacerFactory());
     }

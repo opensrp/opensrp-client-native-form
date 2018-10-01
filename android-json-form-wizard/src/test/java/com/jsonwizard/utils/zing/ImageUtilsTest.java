@@ -17,10 +17,10 @@ import org.powermock.reflect.Whitebox;
 
 public class ImageUtilsTest extends BaseTest {
     @Mock
-    private Context context;
+    private WindowManager windowManager;
 
     @Mock
-    private WindowManager windowManager;
+    private Context context;
 
     @Mock
     private Display display;
@@ -38,11 +38,13 @@ public class ImageUtilsTest extends BaseTest {
         Application application = Mockito.spy(Application.class);
         Mockito.doReturn(context).when(application).getApplicationContext();
         Mockito.doReturn(windowManager).when(context).getSystemService(Context.WINDOW_SERVICE);
+        Assert.assertNotNull(windowManager);
         Mockito.doReturn(display).when(windowManager).getDefaultDisplay();
-        Assert.assertNotNull(context);
+        Assert.assertNotNull(display);
 
         int width = ImageUtils.getDeviceWidth(context);
         Assert.assertEquals(0, width);
+        Mockito.verify(display).getWidth();
     }
 
     @Test
