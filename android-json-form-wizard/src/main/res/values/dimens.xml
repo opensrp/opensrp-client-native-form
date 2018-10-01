@@ -32,4 +32,7 @@
     <dimen name="native_radio_button_padding">20dp</dimen>
     <dimen name="native_radio_button_text_view_initial_left_margin">55dp</dimen>
     <dimen name="native_radio_button_text_view_height">32dp</dimen>
+    <dimen name="native_selector_total_screen_size_padding">70dp</dimen>
+    <dimen name="native_selector_button_max_padding">5sp</dimen>
+    <dimen name="native_selector_button_min_padding">1px</dimen>
 </resources>

@@ -18,7 +18,6 @@
     <item name="relevance" type="id"/>
     <item name="constraints" type="id"/>
     <item name="skip_validation" type="id"/>
-
     <item name="label_dialog_info" type="id"/>
     <item name="label_dialog_title" type="id"/>
 
@@ -26,4 +25,14 @@
     <item name="native_radio_button_main_textview" type="id"/>
     <item name="radio_button_specify_type" type="id"/>
     <item name="native_radio_button_context" type="id"/>
+    <item name="number_selector_textview" type="id"/>
+    <item name="number_selector_textview_item" type="id"/>
+    <item name="number_selector_textview_number_of_selectors" type="id"/>
+    <item name="number_selector_textview_max_number" type="id"/>
+    <item name="number_selector_textview_layout" type="id"/>
+    <item name="number_selector_textview_jsonObject" type="id"/>
+    <item name="number_selector_default_text_color" type="id"/>
+    <item name="number_selector_selected_text_color" type="id"/>
+    <item name="number_selector_listener" type="id"/>
+    <item name="number_selector_start_selection_number" type="id"/>
 </resources>

@@ -51,10 +51,15 @@ public class JsonFormConstants {
     public static final String V_NUMERIC_INTEGER = "v_numeric_integer";
     public static final String V_MIN = "v_min";
     public static final String V_MAX = "v_max";
+    public static final String NUMBER_SELECTORS = "numbers_selector";
+    public static final String START_SELECTION_NUMBER = "start_number";
+    public static final String NUMBER_OF_SELECTORS = "number_of_selectors";
+    public static final String MAX_SELECTION_VALUE = "max_value";
     public static final String EDIT_TYPE = "edit_type";
     public static final String TEXT = "text";
     public static final String TEXT_SIZE = "text_size";
     public static final String TEXT_COLOR = "text_color";
+    public static final String NUMBER_SELECTOR_SELCTED_TEXT_COLOR = "selected_text_color";
     public static final String SKIP_VALIDATION = "skip_validation";
     public static final String V_NUMERIC = "v_numeric";
     public static final String REPORT_MONTH = "report_month";
@@ -64,9 +69,9 @@ public class JsonFormConstants {
     public static final String NATIVE_RADIO_SPECIFY_INFO_COLOR = "specify_info_color";
     public static final String NATIVE_RADIO_EXTRA_INFO = "extra_info";
     public static final String NATIVE_RADIO_EXTRA_INFO_COLOR = "extra_info_color";
-    public static final String NATIVE_NUMBERS_SELECTOR = "numbers_selector";
     public static final String DEFAULT_TEXT_COLOR = "#212121";
     public static final String DEFAULT_HINT_TEXT_COLOR = "#808080";
+    public static final String DEFAULT_NUMBER_SELECTOR_TEXT_COLOR = "#ffffff";
     public static final String TOASTER_NOTES = "toaster_notes";
     public static final String TOASTER_TYPE = "toaster_type";
     public static final String TOASTER_INFO_TEXT = "toaster_info_text";

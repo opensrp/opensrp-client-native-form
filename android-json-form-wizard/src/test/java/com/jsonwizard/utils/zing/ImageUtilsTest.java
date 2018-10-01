@@ -5,10 +5,8 @@ import android.graphics.BitmapFactory;
 import android.test.mock.MockContext;
 import android.view.Display;
 import android.view.WindowManager;
-
 import com.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.utils.ImageUtils;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,10 +20,10 @@ import org.powermock.reflect.Whitebox;
 @RunWith(PowerMockRunner.class)
 public class ImageUtilsTest extends BaseTest {
     @Mock
-    private Context context;
+    private WindowManager windowManager;
 
     @Mock
-    private WindowManager windowManager;
+    private Context context;
 
     @Mock
     private Display display;
@@ -34,7 +32,7 @@ public class ImageUtilsTest extends BaseTest {
     private BitmapFactory.Options options;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
     }
 
@@ -42,47 +40,50 @@ public class ImageUtilsTest extends BaseTest {
     public void testGetDeviceWidth() {
         MockContext mockContext = Mockito.spy(MockContext.class);
         Mockito.doReturn(context).when(mockContext).getApplicationContext();
-        Mockito.doReturn(windowManager).when(context).getSystemService(Context.WINDOW_SERVICE);
-        Mockito.doReturn(display).when(windowManager).getDefaultDisplay();
         Assert.assertNotNull(context);
+        Mockito.doReturn(windowManager).when(context).getSystemService(Context.WINDOW_SERVICE);
+        Assert.assertNotNull(windowManager);
+        Mockito.doReturn(display).when(windowManager).getDefaultDisplay();
+        Assert.assertNotNull(display);
 
         int width = ImageUtils.getDeviceWidth(context);
-        Assert.assertEquals(0,width);
+        Assert.assertEquals(0, width);
+        Mockito.verify(display).getWidth();
     }
 
     @Test
-    public void testCalculateInSampleSize(){
+    public void testCalculateInSampleSize() {
         options = new BitmapFactory.Options();
         Assert.assertNotNull(options);
 
         Whitebox.setInternalState(options, "outHeight", 50);
         Whitebox.setInternalState(options, "outWidth", 24);
 
-        int inSampleSize = ImageUtils.calculateInSampleSize(options,3,5);
-        Assert.assertEquals(4,inSampleSize);
+        int inSampleSize = ImageUtils.calculateInSampleSize(options, 3, 5);
+        Assert.assertEquals(4, inSampleSize);
     }
 
     @Test
-    public void testCalculateInSampleSizeWithSmallerHeight(){
+    public void testCalculateInSampleSizeWithSmallerHeight() {
         options = new BitmapFactory.Options();
         Assert.assertNotNull(options);
 
         Whitebox.setInternalState(options, "outHeight", 1);
         Whitebox.setInternalState(options, "outWidth", 1);
 
-        int inSampleSize = ImageUtils.calculateInSampleSize(options,3,5);
-        Assert.assertEquals(1,inSampleSize);
+        int inSampleSize = ImageUtils.calculateInSampleSize(options, 3, 5);
+        Assert.assertEquals(1, inSampleSize);
     }
 
     @Test
-    public void testCalculateInSampleSizeWithSmallHalfDimension(){
+    public void testCalculateInSampleSizeWithSmallHalfDimension() {
         options = new BitmapFactory.Options();
         Assert.assertNotNull(options);
 
         Whitebox.setInternalState(options, "outHeight", 4);
         Whitebox.setInternalState(options, "outWidth", 4);
 
-        int inSampleSize = ImageUtils.calculateInSampleSize(options,3,5);
-        Assert.assertEquals(1,inSampleSize);
+        int inSampleSize = ImageUtils.calculateInSampleSize(options, 3, 5);
+        Assert.assertEquals(1, inSampleSize);
     }
 }

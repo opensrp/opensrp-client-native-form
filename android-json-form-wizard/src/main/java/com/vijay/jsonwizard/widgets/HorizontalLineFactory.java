@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * This widget just creates a horizontal line by default. However, this can be converted to a vertical
  * line by explicitly setting a height & width
- *
+ * <p>
  * Created by Ephraim Kigamba - ekigamba@ona.io on 12/04/2018.
  */
 public class HorizontalLineFactory implements FormWidgetFactory {
