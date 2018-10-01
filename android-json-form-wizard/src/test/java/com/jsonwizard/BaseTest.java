@@ -1,5 +1,6 @@
 package com.jsonwizard;
 
+import android.os.Build;
 import com.vijay.jsonwizard.BuildConfig;
 
 import org.junit.runner.RunWith;
@@ -7,7 +8,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class)
+@Config(constants = BuildConfig.class, sdk = Build.VERSION_CODES.O_MR1)
 public abstract class BaseTest {
     protected static final int CONSTANT_INT_50 = 50;
 
