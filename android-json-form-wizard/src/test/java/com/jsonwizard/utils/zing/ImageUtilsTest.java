@@ -1,8 +1,8 @@
 package com.jsonwizard.utils.zing;
 
+import android.app.Application;
 import android.content.Context;
 import android.graphics.BitmapFactory;
-import android.test.mock.MockContext;
 import android.view.Display;
 import android.view.WindowManager;
 import com.jsonwizard.BaseTest;
@@ -10,14 +10,11 @@ import com.vijay.jsonwizard.utils.ImageUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
-@RunWith(PowerMockRunner.class)
 public class ImageUtilsTest extends BaseTest {
     @Mock
     private WindowManager windowManager;
@@ -38,9 +35,8 @@ public class ImageUtilsTest extends BaseTest {
 
     @Test
     public void testGetDeviceWidth() {
-        MockContext mockContext = Mockito.spy(MockContext.class);
-        Mockito.doReturn(context).when(mockContext).getApplicationContext();
-        Assert.assertNotNull(context);
+        Application application = Mockito.spy(Application.class);
+        Mockito.doReturn(context).when(application).getApplicationContext();
         Mockito.doReturn(windowManager).when(context).getSystemService(Context.WINDOW_SERVICE);
         Assert.assertNotNull(windowManager);
         Mockito.doReturn(display).when(windowManager).getDefaultDisplay();
