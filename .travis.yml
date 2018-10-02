@@ -5,9 +5,6 @@ sudo: required
 jdk: oraclejdk8
 dist: precise
 
-before_install:
-  - yes | sdkmanager "platforms;android-27"
-
 before_cache:
   -rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
   -rm -fr $HOME/.gradle/caches/*/plugin-resolution/
@@ -31,6 +28,8 @@ android:
     - build-tools-27.0.3
     # The SDK version used to compile your projects
     - android-27
+before_install:
+  - yes | sdkmanager "platforms;android-27"
 
 script: 
   - echo "Travis branch is $TRAVIS_BRANCH"
