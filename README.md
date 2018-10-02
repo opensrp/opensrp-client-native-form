@@ -1071,3 +1071,66 @@ The field reference/identifier uses the field's `key` attribute
  ### Form supports showing/displaying notes, images and videos based on answers to questions.
 
  #### Sample Logic For Media
+ ```
+ "has_media_content": true,
+        "media": [
+          {
+            "media_type": "text",
+            "media_trigger_value": "I plan to breastfeed",
+            "media_link": "",
+            "media_text": "This is an excellent choice. You are making a good choice to give your child the best start to life.\nBreastmilk is clean and wholesome and provides all the essential nutrients and vitamins your baby needs for a healthy start to life. Give only breastmilk in the first 5 months of life including no water, tea, or milk or any other liquid and immediately breastfeed within an hour of delivery."
+          },
+          {
+            "media_type": "video",
+            "media_trigger_value": "I do not want to breastfeed",
+            "media_link": "android.resource://org.smartregister.nativeform/raw/understandingbreastfeeding",
+            "media_text": ""
+          }
+        ],
+        
+```
+The field above would only be required in questions where there is a need to show any note,image or video based on answer to the question. 
+In that case "has_media_content" needs to be set to true.
+The entire question field in that case would look like
+ ```
+{
+  "key": "plan_breastfeed",
+  "openmrs_entity_parent": "",
+  "openmrs_entity": "",
+  "openmrs_entity_id": "",
+  "type": "spinner",
+  "hint": "What are your thoughts on breastfeeding",
+  "values": [
+    "I plan to breastfeed",
+    "I do not want to breastfeed"
+  ],
+  "has_media_content": true,
+  "media": [
+    {
+      "media_type":"text",
+      "media_trigger_value":"I plan to breastfeed",
+      "media_link":"",
+      "media_text":"This is an excellent choice. You are making a good choice to give your child the best start to life.\nBreastmilk is clean and wholesome and provides all the essential nutrients and vitamins your baby needs for a healthy start to life. Give only breastmilk in the first 5 months of life including no water, tea, or milk or any other liquid and immediately breastfeed within an hour of delivery."
+    },
+    {
+      "media_type":"video",
+      "media_trigger_value":"I do not want to breastfeed",
+      "media_link":"android.resource://org.smartregister.nativeform/raw/understandingbreastfeeding",
+      "media_text":""
+    }
+  ],
+  "v_required": {
+    "value": "true",
+    "err": "Please answer the question"
+  }
+}
+ ```
+In the above case if the answer "I plan to breastfeed" is selected in the spinner then the respective media which has corresponding "media_trigger_value" will be shown.
+Three types of media are supported right now : "text","video" and "image".
+Links to the "video" and "image" needs to be provided in the "media_link" field.
+In case of showing both image and text in dialog , the "media_type" should be "image" and the text to be shown should be included in "media_text".
+In case of showing both video and text in dialog , the "media_type" should be "image" and the text to be shown should be included in "media_text".
+In case of showing only text in dialog , the "media_type" should be "text" and the text to be shown should be included in "media_text".
+
+
+      
