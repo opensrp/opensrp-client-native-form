@@ -2,6 +2,7 @@ package com.vijay.jsonwizard.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +16,10 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
+import com.shashank.sony.fancydialoglib.Animation;
+import com.shashank.sony.fancydialoglib.FancyAlertDialog;
+import com.shashank.sony.fancydialoglib.FancyAlertDialogListener;
+import com.shashank.sony.fancydialoglib.Icon;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.comparisons.Comparison;
 import com.vijay.jsonwizard.comparisons.EqualToComparison;
@@ -153,6 +158,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     item.put("openmrs_entity_id", openMrsEntityId);
                     refreshSkipLogic(key, null);
                     refreshConstraints(key, null);
+                    refreshMediaLogic(stepName,key,value);
                     return;
                 }
             }
@@ -612,6 +618,71 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
         return args;
     }
+
+    private void refreshMediaLogic(String stepName,String key, String value) {
+        try {
+            JSONObject object = getStep("step1");
+            JSONArray fields = object.getJSONArray("fields");
+            for (int i = 0; i < fields.length(); i++) {
+                JSONObject questionGroup = fields.getJSONObject(i);
+                if (questionGroup.has("key") && questionGroup.has("has_media_content")) {
+                    if(questionGroup.getString("key").equalsIgnoreCase(key)) {
+                        if (questionGroup.getBoolean("has_media_content")) {
+                            JSONArray medias = questionGroup.getJSONArray("media");
+                            for(int j = 0;j<medias.length();j++) {
+                                JSONObject media = medias.getJSONObject(j);
+                                mediadialog(media,value);
+                            }
+                        }
+                    }
+
+                }
+
+            }
+        }catch(Exception e){
+
+        }
+
+
+    }
+
+    public void mediadialog(JSONObject media, String value){
+        try {
+            if (media.getString("media_trigger_value").equalsIgnoreCase(value)) {
+                String mediatype = media.getString("media_type");
+                String medialink = media.getString("media_link");
+                String mediatext = media.getString("media_text");
+
+                infodialog(value,mediatype,medialink,mediatext);
+            }
+        }catch (Exception e){
+
+        }
+    }
+
+    private void infodialog(String value, String mediatype, String medialink, String mediatext) {
+        FancyAlertDialog.Builder builder = new FancyAlertDialog.Builder(this);
+        builder.setTitle("Info");
+        builder.setBackgroundColor(Color.parseColor("#208CC5")).setPositiveBtnBackground(Color.parseColor("#208CC5"))  //Don't pass R.color.colorvalue
+                .setPositiveBtnText("OK").setAnimation(Animation.SLIDE)
+                .isCancellable(true)
+                .setIcon(com.shashank.sony.fancydialoglib.R.drawable.ic_person_black_24dp, Icon.Visible)
+                .OnPositiveClicked(new FancyAlertDialogListener() {
+                    @Override
+                    public void OnClick() {
+                    }
+                });
+        builder.setMessage(mediatext);
+        if(mediatype.equalsIgnoreCase("image")){
+            builder.setImagetoshow(medialink);
+        }else if (mediatype.equalsIgnoreCase("video")){
+            builder.setVideopath(medialink);
+        } else if(mediatype.equalsIgnoreCase("text")){
+
+        }
+        builder.build();
+    }
+
 
     /**
      * This method checks whether a constraint has been enforced and returns an error message if not

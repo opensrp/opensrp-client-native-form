@@ -1,7 +1,7 @@
 buildscript {
     repositories {
-        mavenCentral()
         google()
+        mavenCentral()
     }
 
     dependencies {
@@ -16,6 +16,7 @@ configure(allprojects) { project ->
         group = GROUP
 
         repositories {
+            google()
             jcenter()
             mavenCentral()
             maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
@@ -40,6 +41,9 @@ subprojects {
     ext.androidAnnotationsAPIVersion = '3.0.1';
 
     repositories {
+        maven {
+            url "https://maven.google.com"
+        }
         jcenter()
         mavenCentral()
         maven { url 'https://jitpack.io' }
@@ -76,4 +80,8 @@ test.reports.junitXml.enabled = false
 
 def isReleaseBuild() {
     return version.contains("SNAPSHOT") == false
+}
+
+repositories {
+    google()
 }
