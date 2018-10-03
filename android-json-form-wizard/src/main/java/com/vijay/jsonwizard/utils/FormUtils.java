@@ -18,7 +18,6 @@ import android.widget.RelativeLayout;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
-import com.vijay.jsonwizard.constants.TextStyleConstants;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.views.CustomTextView;
@@ -250,7 +249,7 @@ public class FormUtils {
         String combinedLabelText = "<font color=" + labelTextColor + ">" + label + "</font>" + asterisks;
 
         //Applying textStyle to the text;
-        String textStyle = jsonObject.optString(JsonFormConstants.TEXT_STYLE, TextStyleConstants.NORMAL);
+        String textStyle = jsonObject.optString(JsonFormConstants.TEXT_STYLE, JsonFormConstants.NORMAL);
         setTextStyle(textStyle,labelText);
         labelText.setText(Html.fromHtml(combinedLabelText));
         labelText.setTextSize(labelTextSize);
@@ -389,16 +388,16 @@ public class FormUtils {
     }
     public static void setTextStyle(String textStyle, AppCompatTextView view){
         switch (textStyle) {
-            case TextStyleConstants.BOLD:
+            case JsonFormConstants.BOLD:
                 view.setTypeface(null, Typeface.BOLD);
                 break;
-            case TextStyleConstants.ITALIC:
+            case JsonFormConstants.ITALIC:
                 view.setTypeface(null, Typeface.ITALIC);
                 break;
-            case TextStyleConstants.NORMAL:
+            case JsonFormConstants.NORMAL:
                 view.setTypeface(null, Typeface.NORMAL);
                 break;
-            case TextStyleConstants.BOLD_ITALIC:
+            case JsonFormConstants.BOLD_ITALIC:
                 view.setTypeface(null, Typeface.BOLD_ITALIC);
                 break;
             default:

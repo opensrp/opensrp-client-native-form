@@ -12,7 +12,6 @@ import android.widget.RelativeLayout;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
-import com.vijay.jsonwizard.constants.TextStyleConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
@@ -113,7 +112,7 @@ public class LabelFactory implements FormWidgetFactory {
                     FormUtils.getValueFromSpOrDpOrPx(bottomPadding, context)
             );
         }
-        String textStyle = jsonObject.optString(JsonFormConstants.TEXT_STYLE,TextStyleConstants.NORMAL);
+        String textStyle = jsonObject.optString(JsonFormConstants.TEXT_STYLE,JsonFormConstants.NORMAL);
         FormUtils.setTextStyle(textStyle,labelText);
         labelText.setTextSize(labelTextSize);
         labelText.setEnabled(!jsonObject.optBoolean(JsonFormConstants.READ_ONLY, false));//Gotcha: Should be set before createLabelText is used

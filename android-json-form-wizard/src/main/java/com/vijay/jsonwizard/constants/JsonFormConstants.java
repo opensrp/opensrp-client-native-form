@@ -83,4 +83,8 @@ public class JsonFormConstants {
     public static final String SPACER = "spacer";
     public static final String SPACER_HEIGHT = "spacer_height";
     public static final String TEXT_STYLE = "label_text_style";
+    public static final String BOLD = "bold";
+    public static  final String NORMAL = "normal";
+    public static final String ITALIC = "italic";
+    public static final String BOLD_ITALIC = "bold_italic";
 }
