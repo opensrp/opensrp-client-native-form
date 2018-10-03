@@ -93,10 +93,4 @@ public class JsonFormConstants {
     public static final String NORMAL = "normal";
     public static final String ITALIC = "italic";
     public static final String BOLD_ITALIC = "bold_italic";
-
-    public static class INTENT_KEY {
-
-        public static final String JSON = "json";
-    }
-
 }
