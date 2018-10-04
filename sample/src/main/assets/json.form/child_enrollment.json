@@ -831,7 +831,9 @@
           {
             "key": "yes",
             "text": "Yes",
-            "text_size": "18px"
+            "text_size": "18px",
+            "label_info_text":"some label information text here for testing purposes",
+            "label_info_title":"Good Title"
           },
           {
             "key": "no",
