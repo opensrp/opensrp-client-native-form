@@ -5,7 +5,8 @@ import android.graphics.Color;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rey.material.util.ViewUtil;
@@ -53,11 +54,16 @@ public class CheckBoxFactory implements FormWidgetFactory {
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
 
+
         JSONArray options = jsonObject.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
         ArrayList<CheckBox> checkBoxes = new ArrayList<>();
         for (int i = 0; i < options.length(); i++) {
             JSONObject item = options.getJSONObject(i);
-            LinearLayout checkboxLayout = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.native_form_item_checkbox, null);
+            //Get options for alert dialog
+            String labelInfoText = item.optString(JsonFormConstants.LABEL_INFO_TEXT,"");
+            String labelInfoTitle = item.optString(JsonFormConstants.LABEL_INFO_TITLE,"");
+
+            RelativeLayout checkboxLayout = (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.native_form_item_checkbox, null);
             createCheckBoxText(checkboxLayout, item, context);
 
             final CheckBox checkBox = checkboxLayout.findViewById(R.id.checkbox);
@@ -71,15 +77,9 @@ public class CheckBoxFactory implements FormWidgetFactory {
             checkBox.setTag(R.id.childKey, item.getString(JsonFormConstants.KEY));
             checkBox.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
             checkBox.setOnCheckedChangeListener(listener);
-            checkboxLayout.setClickable(true);
             checkboxLayout.setId(ViewUtil.generateViewId());
             canvasIds.put(checkboxLayout.getId());
-            checkboxLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    checkBox.toggle();
-                }
-            });
+
             if (!TextUtils.isEmpty(item.optString(JsonFormConstants.VALUE))) {
                 checkBox.setChecked(Boolean.valueOf(item.optString(JsonFormConstants.VALUE)));
             }
@@ -89,6 +89,9 @@ public class CheckBoxFactory implements FormWidgetFactory {
                 checkboxLayout.setLayoutParams(FormUtils.getLinearLayoutParams(FormUtils.MATCH_PARENT, FormUtils.WRAP_CONTENT, 0, 0, 0, (int) context
                         .getResources().getDimension(R.dimen.extra_bottom_margin)));
             }
+            //Displaying optional info alert dialog
+            ImageView imageView = checkboxLayout.findViewById(R.id.checkbox_info_icon);
+            FormUtils.showInfoIcon(jsonObject,listener,labelInfoText,labelInfoTitle,imageView);
 
             views.add(checkboxLayout);
             ((JsonApi) context).addFormDataView(checkBox);
@@ -118,7 +121,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
      * @param context
      * @throws JSONException
      */
-    private void createCheckBoxText(LinearLayout checkboxLayout, JSONObject item, Context context) throws JSONException {
+    private void createCheckBoxText(RelativeLayout checkboxLayout, JSONObject item, Context context) throws JSONException {
         String optionTextColor = JsonFormConstants.DEFAULT_TEXT_COLOR;
         String optionTextSize = String.valueOf(context.getResources().getDimension(R.dimen.options_default_text_size));
         if (item.has(JsonFormConstants.TEXT_COLOR)) {
@@ -129,8 +132,15 @@ public class CheckBoxFactory implements FormWidgetFactory {
         }
 
         TextView checkboxText = checkboxLayout.findViewById(R.id.text1);
+        final CheckBox checkBox = checkboxLayout.findViewById(R.id.checkbox);
         checkboxText.setText(item.getString(JsonFormConstants.TEXT));
         checkboxText.setTextColor(Color.parseColor(optionTextColor));
         checkboxText.setTextSize(FormUtils.getValueFromSpOrDpOrPx(optionTextSize, context));
+        checkboxText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkBox.toggle();
+            }
+        });
     }
 }

@@ -599,6 +599,57 @@
         }
       },
       {
+        "key": "delivery_complications",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "concept",
+        "openmrs_entity_id": "161641AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "openmrs_data_type": "select one",
+        "type": "check_box",
+        "label": "The patient has a history of the following disease(s)?",
+        "label_text_style": "bold",
+        "options": [
+          {
+            "key": "Thrombosis",
+            "text": "Thrombosis",
+            "value": false,
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "label_info_text":"Is the formation of a blood clot inside a blood vessel, obstructing the flow of blood through the circulatory system.",
+            "label_info_title":"Thrombosis"
+          },
+          {
+            "key": "diabetes",
+            "text": "Diabetes",
+            "value": false,
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          },
+          {
+            "key": "conjunctivitis",
+            "text": "Conjunctivitis",
+            "value": false,
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "label_info_text":"A common disease affecting a persons eye.",
+            "label_info_title":"Conjunctivitis"
+          },
+          {
+            "key": "pneumonoultramicroscopicsilicovolcanoconiosis",
+            "text": "Pneumonoultramicroscopicsilicovolcanoconiosis",
+            "value": false,
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "label_info_text":"A lung disease contracted from the inhalation of very fine silica particles, specifically from a volcano.",
+            "label_info_title":"pneumonoultramicroscopicsilicovolcanoconiosis"
+          },
+          {
+            "key": "other",
+            "text": "Other",
+            "value": false,
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          }
+        ],
+        "v_required": {
+          "value": "false"
+        }
+      },
+      {
         "key": "PMTCT_Status",
         "openmrs_entity_parent": "",
         "openmrs_entity": "concept",
@@ -832,13 +883,15 @@
             "key": "yes",
             "text": "Yes",
             "text_size": "18px",
-            "label_info_text":"some label information text here for testing purposes",
-            "label_info_title":"Good Title"
+            "label_info_text":"Please be honest and mark this as yes only if you have been to college or university",
+            "label_info_title":"Polite Note"
           },
           {
             "key": "no",
             "text": "No",
-            "text_size": "18px"
+            "text_size": "18px",
+            "label_info_text":"It is still ok if you have not been to college or university",
+            "label_info_title":"No worries"
           }
         ],
         "value": "high_school",
@@ -852,9 +905,11 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Is the user registered for notification updates?",
+        "label": "Is the user registered for notification updates? Please note that if the user is not registered they won't get relevant updates on health matters",
         "label_text_size": "18px",
         "label_text_style": "bold_italic",
+        "label_info_text":"Registration is required",
+        "label_info_title":"Polite note",
         "options": [
           {
             "key": "yes",
