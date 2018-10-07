@@ -591,6 +591,45 @@
         }
       },
       {
+        "key": "delivery_complications",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "concept",
+        "openmrs_entity_id": "161641AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "openmrs_data_type": "select one",
+        "type": "check_box",
+        "label": "Any physiological symptoms?",
+        "label_text_style": "bold",
+        "options": [
+          {
+            "key": "None",
+            "text": "None",
+            "value": false,
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          },
+          {
+            "key": "fatigue",
+            "text": "Fatigue",
+            "value": false,
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          },
+          {
+            "key": "visual_disturbance",
+            "text": "Visual disturbance",
+            "value": false,
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          },
+          {
+            "key": "other",
+            "text": "Other",
+            "value": false,
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          }
+        ],
+        "v_required": {
+          "value": "false"
+        }
+      },
+      {
         "key": "PMTCT_Status",
         "openmrs_entity_parent": "",
         "openmrs_entity": "concept",
@@ -795,7 +834,7 @@
           {
             "key": "high_school",
             "text": "High School",
-            "text_size": "18sp",
+            "text_size": "18px",
             "specify_info": "Specify",
             "extra_info": "Here we go"
           },
@@ -803,6 +842,56 @@
             "key": "higher_education",
             "text": "College/University",
             "text_color": "#358CB7"
+          }
+        ],
+        "value": "high_school",
+        "v_required": {
+          "value": true
+        }
+      },
+      {
+        "key": "native_radio",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Completed Tertiary education?",
+        "label_text_size": "18px",
+        "label_text_style": "bold",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes",
+            "text_size": "18px"
+          },
+          {
+            "key": "no",
+            "text": "No",
+            "text_size": "18px"
+          }
+        ],
+        "value": "high_school",
+        "v_required": {
+          "value": true
+        }
+      },
+      {
+        "key": "native_radio",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Is the user registered for notification updates?",
+        "label_text_size": "18px",
+        "label_text_style": "bold_italic",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
           }
         ],
         "value": "high_school",
@@ -889,6 +978,16 @@
         "key": "enabled_label",
         "type": "label",
         "text": "Please select the number of family members",
+        "text_color": "#000000",
+        "v_required": {
+          "value": true
+        }
+      },
+      {
+        "key": "enabled_label",
+        "type": "label",
+        "label_text_style": "bold",
+        "text": "This is a bold text label that is also required.",
         "text_color": "#000000",
         "v_required": {
           "value": true

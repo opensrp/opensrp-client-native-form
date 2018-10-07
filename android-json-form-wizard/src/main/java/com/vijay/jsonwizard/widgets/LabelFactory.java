@@ -112,7 +112,8 @@ public class LabelFactory implements FormWidgetFactory {
                     FormUtils.getValueFromSpOrDpOrPx(bottomPadding, context)
             );
         }
-
+        String textStyle = jsonObject.optString(JsonFormConstants.TEXT_STYLE,JsonFormConstants.NORMAL);
+        FormUtils.setTextStyle(textStyle,labelText);
         labelText.setTextSize(labelTextSize);
         labelText.setEnabled(!jsonObject.optBoolean(JsonFormConstants.READ_ONLY, false));//Gotcha: Should be set before createLabelText is used
         labelText.setHintOnText(hintOnText);//Gotcha: Should be set before createLabelText is used
