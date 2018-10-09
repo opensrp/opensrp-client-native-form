@@ -82,20 +82,17 @@ public class JsonFormConstants {
     public static final String TOASTER_PROBLEM = "problem";
     public static final String SPACER = "spacer";
     public static final String SPACER_HEIGHT = "spacer_height";
-
-    public static class INTENT_KEY {
-
-        public static final String JSON = "json";
-    }
-
-    public static class JSON_FORM_KEY {
-
-        public static final String EX_CHECKBOX = "ex-checkbox";
-    }
-
     public static final String TEXT_STYLE = "label_text_style";
     public static final String BOLD = "bold";
     public static final String NORMAL = "normal";
     public static final String ITALIC = "italic";
     public static final String BOLD_ITALIC = "bold_italic";
+
+    public static class JSON_FORM_KEY {
+
+        public static final String EX_CHECKBOX = "ex-checkbox";
+        public static final String OR = "or";
+        public static final String AND = "and";
+        public static final String EXCLUSIVE = "exclusive";
+    }
 }

@@ -751,9 +751,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
     private boolean isExObjectRelevant(Map<String, String> curValueMap, JSONObject object) throws Exception {
 
-        if (object.has("or")) {
+        if (object.has(JsonFormConstants.JSON_FORM_KEY.OR)) {
 
-            JSONArray orArray = object.getJSONArray("or");
+            JSONArray orArray = object.getJSONArray(JsonFormConstants.JSON_FORM_KEY.OR);
 
             for (int i = 0; i < orArray.length(); i++) {
 
@@ -765,9 +765,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
         }
 
-        if (object.has("and")) {
+        if (object.has(JsonFormConstants.JSON_FORM_KEY.AND)) {
 
-            JSONArray andArray = object.getJSONArray("and");
+            JSONArray andArray = object.getJSONArray(JsonFormConstants.JSON_FORM_KEY.AND);
 
             for (int i = 0; i < andArray.length(); i++) {
 
