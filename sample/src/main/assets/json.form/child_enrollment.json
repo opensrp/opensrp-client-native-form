@@ -1064,6 +1064,20 @@
         }
       },
       {
+        "key": "TEST",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person_attribute",
+        "openmrs_entity_id": "CHW_Name",
+        "type": "edit_text",
+        "hint": "Some testing test",
+        "edit_text_style":"bordered",
+        "edit_type": "name",
+        "v_regex": {
+          "value": "[A-Za-z\\s\.\-]*",
+          "err": "Please enter a valid name"
+        }
+      },
+      {
         "key": "numbers_selector",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",

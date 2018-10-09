@@ -1,6 +1,6 @@
 package com.vijay.jsonwizard.validators.edittext;
 
-import com.vijay.jsonwizard.widgets.MaterialEditTextFactory;
+import com.vijay.jsonwizard.widgets.EditTextFactory;
 
 /**
  * Created by vijay.rawat01 on 7/21/15.
@@ -8,6 +8,6 @@ import com.vijay.jsonwizard.widgets.MaterialEditTextFactory;
 public class MaxLengthValidator extends LengthValidator {
 
     public MaxLengthValidator(String errorMessage, int maxLength) {
-        super(errorMessage, MaterialEditTextFactory.MIN_LENGTH, maxLength);
+        super(errorMessage, EditTextFactory.MIN_LENGTH, maxLength);
     }
 }
