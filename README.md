@@ -1023,6 +1023,119 @@ The syntax for the comparison expression `ex`:
 The field reference/identifier uses the field's `key` attribute
 
 
+###Skip logic for Checkbox group widget
+
+Check boxes can also be selected multiple times . The corresponding skip logic can also thus become complex. In the example below, *(present in the sample app)*,
+the CHW Phone Number Widget will only show based on these various conditions:
+1. Severe Bleeding is checked
+2. Both Perineal Tear and Placenta Previa are checked
+3. Both Cord Prolapse and Abnormal Presentation checked or just Prolonged Obstructed Labour is checked
+
+The implementation introduces a new field `ex-checkbox` which contains the complex checkbox expression, the example for the above 3 conditions is as below. 
+The relevant keys of the multi select checkbox are specified as arrays wrapped with an object key of either `and` or `or` or `both` to be used for simple boolean logic processing. 
+
+``` 
+,
+        "relevance": {
+          "step1:delivery_complications": {
+            "exclusive" :["none"],
+            "ex-checkbox": [
+              {
+                "or": ["severe_bleeding"]
+              },
+              {
+                "and": ["perineal_tear","placenta_previa"]
+              },
+              {
+                "and": [
+                  "cord_prolapse",
+                  "abnormal_presentation"
+                ],
+                "or": [
+                  "prolonged_obstructed_labour"
+                ]
+              }
+            ]
+          }
+
+```
+
+```
+   {
+        "key": "delivery_complications",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "concept",
+        "openmrs_entity_id": "161641AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "openmrs_data_type": "select one",
+        "type": "check_box",
+        "label": "Any delivery complications?",
+        "label_text_size": "18sp",
+        "label_text_color": "#FF9800",
+        "hint": "Any delivery complications?",
+        "options": [
+          {
+            "key": "none",
+            "text": "None",
+            "value": false,
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          },
+          {
+            "key": "severe_bleeding",
+            "text": "Severe bleeding/Hemorrhage",
+            "value": false,
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "text_color": "#000000"
+          },
+          {
+            "key": "placenta_previa",
+            "text": "Placenta previa",
+            "value": false,
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "text_size": "30sp"
+          },
+          {
+            "key": "cord_prolapse",
+            "text": "Cord prolapse",
+            "value": false,
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "text_size": "10sp"
+          },
+          {
+            "key": "prolonged_obstructed_labour",
+            "text": "Prolonged/obstructed labour",
+            "value": false,
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          },
+          {
+            "key": "abnormal_presentation",
+            "text": "Abnormal presentation",
+            "value": false,
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "text_color": "#FF9800"
+          },
+          {
+            "key": "perineal_tear",
+            "text": "Perineal tear (2, 3 or 4th degree)",
+            "value": false,
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          },
+          {
+            "key": "Other",
+            "text": "Other",
+            "value": false,
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          }
+        ],
+        "v_required": {
+          "value": "false"
+        }
+      }
+``` 
+The above relevance example shows a multiple select checkbox example and its used in the sample demo app for the CHW_Phone_Number widget. 
+
+The checkbox implementation also introduces a new field `exclusive` in which you specify and array of any checkbox key(s) which if selected excludes/clears all other entries.
+e.g. in the above example the excluive key is passed an array with `"none"` as the only value, thus selecting None on the multi checkbox clears or excludes all others.
+
 6. More input field types:
  
  ### Extra input field types
