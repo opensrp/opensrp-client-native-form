@@ -21,9 +21,7 @@ import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.ValidationStatus;
-import com.vijay.jsonwizard.validators.edittext.MaxLengthValidator;
 import com.vijay.jsonwizard.validators.edittext.MaxNumericValidator;
-import com.vijay.jsonwizard.validators.edittext.MinLengthValidator;
 import com.vijay.jsonwizard.validators.edittext.MinNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
@@ -40,8 +38,6 @@ import java.util.List;
  */
 public class EditTextFactory implements FormWidgetFactory {
 
-    public static final int MIN_LENGTH = 0;
-    public static final int MAX_LENGTH = 100;
     private static List<METValidator> validators;
 
     public static ValidationStatus validate(JsonFormFragmentView formFragmentView,
@@ -94,7 +90,7 @@ public class EditTextFactory implements FormWidgetFactory {
 
         RelativeLayout rootLayout = (RelativeLayout) LayoutInflater.from(context).inflate(
                 getLayout(), null);
-        android.widget.EditText editText = rootLayout.findViewById(R.id.normal_edit_text);
+       EditText editText = rootLayout.findViewById(R.id.normal_edit_text);
 
         attachJson(stepName, context, formFragment, jsonObject, editText);
 
@@ -108,7 +104,7 @@ public class EditTextFactory implements FormWidgetFactory {
         return views;
     }
 
-    protected void attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, android.widget.EditText editText)
+    protected void attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, EditText editText)
             throws Exception {
 
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
@@ -132,10 +128,9 @@ public class EditTextFactory implements FormWidgetFactory {
         }
         //Add edittext style
         if (!TextUtils.isEmpty(editTextStyle)) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                if (editTextStyle.equals("bordered")) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN &&
+                    JsonFormConstants.BORDERED_EDIT_TEXT.equals(editTextStyle)) {
                     editText.setBackground(context.getResources().getDrawable(R.drawable.edit_text_bg));
-                }
             }
         } else {
             editText.setHint(jsonObject.getString(JsonFormConstants.HINT));
@@ -146,10 +141,10 @@ public class EditTextFactory implements FormWidgetFactory {
             editText.setFocusable(!readyOnly);
         }
 
-        addRequiredValidator(jsonObject, editText);
-        addRegexValidator(jsonObject, editText);
-        addEmailValidator(jsonObject, editText);
-        addUrlValidator(jsonObject, editText);
+        addRequiredValidator(jsonObject);
+        addRegexValidator(jsonObject);
+        addEmailValidator(jsonObject);
+        addUrlValidator(jsonObject);
         addNumericValidator(jsonObject, editText);
         addNumericIntegerValidator(jsonObject, editText);
 
@@ -180,7 +175,7 @@ public class EditTextFactory implements FormWidgetFactory {
         return R.layout.native_form_normal_edit_text;
     }
 
-    private void addRequiredValidator(JSONObject jsonObject, android.widget.EditText editText) throws JSONException {
+    private void addRequiredValidator(JSONObject jsonObject) throws JSONException {
         JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
         if (requiredObject != null) {
             String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
@@ -189,29 +184,8 @@ public class EditTextFactory implements FormWidgetFactory {
             }
         }
     }
-    private void addLengthValidator(JSONObject jsonObject, EditText editText) throws JSONException {
-        int minLength = MIN_LENGTH;
-        int maxLength = MAX_LENGTH;
-        JSONObject minLengthObject = jsonObject.optJSONObject(JsonFormConstants.V_MIN_LENGTH);
-        if (minLengthObject != null) {
-            String minLengthValue = minLengthObject.optString(JsonFormConstants.VALUE);
-            if (!TextUtils.isEmpty(minLengthValue)) {
-                minLength = Integer.parseInt(minLengthValue);
-               addValidator(new MinLengthValidator(minLengthObject.getString(JsonFormConstants.ERR), Integer.parseInt(minLengthValue)));
-            }
-        }
 
-        JSONObject maxLengthObject = jsonObject.optJSONObject(JsonFormConstants.V_MAX_LENGTH);
-        if (maxLengthObject != null) {
-            String maxLengthValue = maxLengthObject.optString(JsonFormConstants.VALUE);
-            if (!TextUtils.isEmpty(maxLengthValue)) {
-                maxLength = Integer.parseInt(maxLengthValue);
-               addValidator(new MaxLengthValidator(maxLengthObject.getString(JsonFormConstants.ERR), Integer.parseInt(maxLengthValue)));
-            }
-        }
-    }
-
-    private void addRegexValidator(JSONObject jsonObject, android.widget.EditText editText) throws JSONException {
+    private void addRegexValidator(JSONObject jsonObject) throws JSONException {
         JSONObject regexObject = jsonObject.optJSONObject(JsonFormConstants.V_REGEX);
         if (regexObject != null) {
             String regexValue = regexObject.optString(JsonFormConstants.VALUE);
@@ -221,7 +195,7 @@ public class EditTextFactory implements FormWidgetFactory {
         }
     }
 
-    private void addEmailValidator(JSONObject jsonObject, android.widget.EditText editText) throws JSONException {
+    private void addEmailValidator(JSONObject jsonObject) throws JSONException {
         JSONObject emailObject = jsonObject.optJSONObject(JsonFormConstants.V_EMAIL);
         if (emailObject != null) {
             String emailValue = emailObject.optString(JsonFormConstants.VALUE);
@@ -234,7 +208,7 @@ public class EditTextFactory implements FormWidgetFactory {
 
     }
 
-    private void addUrlValidator(JSONObject jsonObject, android.widget.EditText editText) throws JSONException {
+    private void addUrlValidator(JSONObject jsonObject) throws JSONException {
         JSONObject urlObject = jsonObject.optJSONObject(JsonFormConstants.V_URL);
         if (urlObject != null) {
             String urlValue = urlObject.optString(JsonFormConstants.VALUE);
@@ -245,7 +219,7 @@ public class EditTextFactory implements FormWidgetFactory {
         }
     }
 
-    private void addNumericValidator(JSONObject jsonObject, android.widget.EditText editText) throws JSONException {
+    private void addNumericValidator(JSONObject jsonObject, EditText editText) throws JSONException {
         JSONObject numericObject = jsonObject.optJSONObject(JsonFormConstants.V_NUMERIC);
         if (numericObject != null) {
             String numericValue = numericObject.optString(JsonFormConstants.VALUE);
@@ -269,7 +243,7 @@ public class EditTextFactory implements FormWidgetFactory {
         }
     }
 
-    private void addNumericIntegerValidator(JSONObject jsonObject, android.widget.EditText editText) throws JSONException {
+    private void addNumericIntegerValidator(JSONObject jsonObject, EditText editText) throws JSONException {
         JSONObject numericIntegerObject = jsonObject.optJSONObject(JsonFormConstants.V_NUMERIC_INTEGER);
         if (numericIntegerObject != null) {
             String numericValue = numericIntegerObject.optString(JsonFormConstants.VALUE);

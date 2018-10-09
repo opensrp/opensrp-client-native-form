@@ -89,4 +89,5 @@ public class JsonFormConstants {
     public static final String ITALIC = "italic";
     public static final String BOLD_ITALIC = "bold_italic";
     public static final String EDIT_TEXT_STYLE = "edit_text_style";
+    public static final String BORDERED_EDIT_TEXT = "bordered";
 }

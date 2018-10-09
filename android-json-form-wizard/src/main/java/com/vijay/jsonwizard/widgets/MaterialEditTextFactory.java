@@ -78,8 +78,6 @@ public class MaterialEditTextFactory implements FormWidgetFactory {
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
         String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
-        String editTextStyle = jsonObject.optString(JsonFormConstants.EDIT_TEXT_STYLE, "");
-
 
         editText.setId(ViewUtil.generateViewId());
         editText.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
@@ -92,17 +90,9 @@ public class MaterialEditTextFactory implements FormWidgetFactory {
         if (!TextUtils.isEmpty(jsonObject.optString(JsonFormConstants.VALUE))) {
             editText.setText(jsonObject.optString(JsonFormConstants.VALUE));
         }
-        //Add edittext style
-        if (!TextUtils.isEmpty(editTextStyle)) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                if (editTextStyle.equals("bordered")) {
-                    editText.setBackground(context.getResources().getDrawable(R.drawable.edit_text_bg));
-                }
-            }
-        }else{
-            editText.setHint(jsonObject.getString(JsonFormConstants.HINT));
-            editText.setFloatingLabelText(jsonObject.getString(JsonFormConstants.HINT));
-        }
+        editText.setHint(jsonObject.getString(JsonFormConstants.HINT));
+        editText.setFloatingLabelText(jsonObject.getString(JsonFormConstants.HINT));
+
         if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
             boolean readyOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
             editText.setEnabled(!readyOnly);
