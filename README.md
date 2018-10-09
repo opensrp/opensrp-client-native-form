@@ -1037,8 +1037,7 @@ The relevant keys of the multi select checkbox are specified as arrays wrapped w
 ``` 
 ,
         "relevance": {
-          "step1:delivery_complications": {
-            "exclusive" :["none"],
+          "step1:delivery_complications": { 
             "ex-checkbox": [
               {
                 "or": ["severe_bleeding"]
@@ -1077,7 +1076,8 @@ The relevant keys of the multi select checkbox are specified as arrays wrapped w
             "key": "none",
             "text": "None",
             "value": false,
-            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "exclusive" :true
           },
           {
             "key": "severe_bleeding",
@@ -1133,8 +1133,9 @@ The relevant keys of the multi select checkbox are specified as arrays wrapped w
 ``` 
 The above relevance example shows a multiple select checkbox example and its used in the sample demo app for the CHW_Phone_Number widget. 
 
-The checkbox implementation also introduces a new field `exclusive` in which you specify and array of any checkbox key(s) which if selected excludes/clears all other entries.
-e.g. in the above example the excluive key is passed an array with `"none"` as the only value, thus selecting None on the multi checkbox clears or excludes all others.
+ ### Checkbox Exclusive field
+The checkbox implementation also introduces a new field `exclusive` in which you specify the option `exclusive: true` any checkbox option which if selected excludes/clears all other entries.
+e.g. in the above example the exclusive key is set for the option with key `"none"` , thus selecting None on the multi checkbox clears or excludes all others.
 
 6. More input field types:
  

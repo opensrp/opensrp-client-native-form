@@ -491,13 +491,17 @@
         },
         "relevance": {
           "step1:delivery_complications": {
-            "exclusive" :["none"],
             "ex-checkbox": [
               {
-                "or": ["severe_bleeding"]
+                "or": [
+                  "severe_bleeding"
+                ]
               },
               {
-                "and": ["perineal_tear","placenta_previa"]
+                "and": [
+                  "perineal_tear",
+                  "placenta_previa"
+                ]
               },
               {
                 "and": [
@@ -523,6 +527,9 @@
         "label_text_size": "18sp",
         "label_text_color": "#FF9800",
         "hint": "Any delivery complications?",
+        "exclusive": [
+          "none"
+        ],
         "options": [
           {
             "key": "none",
