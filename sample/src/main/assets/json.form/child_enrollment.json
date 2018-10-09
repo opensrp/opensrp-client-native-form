@@ -1020,6 +1020,14 @@
         }
       },
       {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "40sp"
+      },
+      {
         "key": "enabled_label",
         "type": "label",
         "label_text_style": "bold",
