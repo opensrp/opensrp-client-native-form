@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
+import android.support.v7.widget.AppCompatRadioButton;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -52,7 +53,9 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.vijay.jsonwizard.utils.FormUtils.dpToPixels;
 
@@ -419,15 +422,22 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
 
                     JSONArray exclusiveArray = formObjectForStep.getJSONArray(JsonFormConstants.JSON_FORM_KEY.EXCLUSIVE);
 
-                    JSONObject option = getJSONObjectFromOptions(formObjectForStep, childKey);
+                    Set<String> exclusiveSet = new HashSet<>();
+                    for (int i = 0; i < exclusiveArray.length(); i++) {
+                        exclusiveSet.add(exclusiveArray.getString(i));
+                    }
 
-                    if (option != null && exclusiveArray.get(0).equals(childKey)) {
+                    if (isChecked) {
 
-                        if (isChecked) {
+                        if (exclusiveSet.contains(childKey)) {
+
                             getView().unCheckAllExcept(parentKey, childKey);
+
+                        } else {
+                            for (String excludeKey : exclusiveSet) {
+                                getView().unCheck(parentKey, excludeKey);
+                            }
                         }
-
-
                     }
 
                 } catch (Exception e) {
@@ -439,8 +449,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             getView().writeValue(mStepName, parentKey, JsonFormConstants.OPTIONS_FIELD_NAME, childKey,
                     String.valueOf(compoundButton.isChecked()), openMrsEntityParent,
                     openMrsEntity, openMrsEntityId);
-        } else if ((compoundButton instanceof RadioButton ||
-                compoundButton instanceof RadioButton) && isChecked) {
+        } else if ((compoundButton instanceof AppCompatRadioButton || compoundButton instanceof RadioButton) && isChecked) {
             String parentKey = (String) compoundButton.getTag(R.id.key);
             String openMrsEntityParent = (String) compoundButton.getTag(R.id.openmrs_entity_parent);
             String openMrsEntity = (String) compoundButton.getTag(R.id.openmrs_entity);

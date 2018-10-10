@@ -1032,7 +1032,7 @@ the CHW Phone Number Widget will only show based on these various conditions:
 3. Both Cord Prolapse and Abnormal Presentation checked or just Prolonged Obstructed Labour is checked
 
 The implementation introduces a new field `ex-checkbox` which contains the complex checkbox expression, the example for the above 3 conditions is as below. 
-The relevant keys of the multi select checkbox are specified as arrays wrapped with an object key of either `and` or `or` or `both` to be used for simple boolean logic processing. 
+The relevant keys of the multi-select checkbox are specified as arrays wrapped with an object key of either `and` or `or` or `both` to be used for simple boolean logic processing. 
 
 ``` 
 ,
@@ -1071,13 +1071,13 @@ The relevant keys of the multi select checkbox are specified as arrays wrapped w
         "label_text_size": "18sp",
         "label_text_color": "#FF9800",
         "hint": "Any delivery complications?",
+        "exclusive": ["none"],
         "options": [
           {
             "key": "none",
             "text": "None",
             "value": false,
-            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "exclusive" :true
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
           },
           {
             "key": "severe_bleeding",
@@ -1133,9 +1133,9 @@ The relevant keys of the multi select checkbox are specified as arrays wrapped w
 ``` 
 The above relevance example shows a multiple select checkbox example and its used in the sample demo app for the CHW_Phone_Number widget. 
 
- ### Checkbox Exclusive field
-The checkbox implementation also introduces a new field `exclusive` in which you specify the option `exclusive: true` any checkbox option which if selected excludes/clears all other entries.
-e.g. in the above example the exclusive key is set for the option with key `"none"` , thus selecting None on the multi checkbox clears or excludes all others.
+ ### Checkbox Exclusive Select field
+ The checkbox implementation also introduces a new field `exclusive` in which you specify the array value of a key or set of keys e.g. `exclusive: ["none"]` which if selected excludes/clears all other entries.
+ e.g. in the above example the exclusive key array contains the key `"none"` , thus selecting the item with key none on the multi-select checkbox clears all others.
 
 6. More input field types:
  

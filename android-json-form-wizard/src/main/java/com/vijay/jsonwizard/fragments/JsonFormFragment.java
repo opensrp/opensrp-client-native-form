@@ -315,17 +315,41 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
                 RadioButton radio = (RadioButton) view;
                 String parentKeyAtIndex = (String) radio.getTag(R.id.key);
                 String childKeyAtIndex = (String) radio.getTag(R.id.childKey);
-                if (parentKeyAtIndex.equals(parentKey) && !childKeyAtIndex.equals(childKey)) {
+                if (radio.isChecked() && parentKeyAtIndex.equals(parentKey) && !childKeyAtIndex.equals(childKey)) {
                     radio.setChecked(false);
                 }
             } else if (view instanceof ViewGroup && ((ViewGroup) view).getChildCount() > 0 && ((ViewGroup) view).getChildAt(0) instanceof CheckBox) {
                 CheckBox checkBox = (CheckBox) ((ViewGroup) view).getChildAt(0);
                 String parentKeyAtIndex = (String) checkBox.getTag(R.id.key);
                 String childKeyAtIndex = (String) checkBox.getTag(R.id.childKey);
-                if (parentKeyAtIndex.equals(parentKey) && !childKeyAtIndex.equals(childKey)) {
-                    checkBox.setEnabled(false);
+                if (checkBox.isChecked() && parentKeyAtIndex.equals(parentKey) && !childKeyAtIndex.equals(childKey)) {
                     checkBox.setChecked(false);
-                    checkBox.setEnabled(true);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void unCheck(String parentKey, String exclusiveKey) {
+        int childCount = mMainView.getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            View view = mMainView.getChildAt(i);
+
+            if (view instanceof RadioButton) {
+                RadioButton radio = (RadioButton) view;
+                String parentKeyAtIndex = (String) radio.getTag(R.id.key);
+                String childKeyAtIndex = (String) radio.getTag(R.id.childKey);
+                if (radio.isChecked() && parentKeyAtIndex.equals(parentKey) && childKeyAtIndex.equals(exclusiveKey)) {
+                    radio.setChecked(false);
+                    break;
+                }
+            } else if (view instanceof ViewGroup && ((ViewGroup) view).getChildCount() > 0 && ((ViewGroup) view).getChildAt(0) instanceof CheckBox) {
+                CheckBox checkBox = (CheckBox) ((ViewGroup) view).getChildAt(0);
+                String parentKeyAtIndex = (String) checkBox.getTag(R.id.key);
+                String childKeyAtIndex = (String) checkBox.getTag(R.id.childKey);
+                if (checkBox.isChecked() && parentKeyAtIndex.equals(parentKey) && childKeyAtIndex.equals(exclusiveKey)) {
+                    checkBox.setChecked(false);
+                    break;
                 }
             }
         }
