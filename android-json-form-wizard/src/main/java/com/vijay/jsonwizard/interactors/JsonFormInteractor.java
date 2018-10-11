@@ -54,7 +54,7 @@ public class JsonFormInteractor {
 
     protected void registerWidgets() {
         map.put(JsonFormConstants.SECTION_LABEL, new SectionFactory());
-        map.put(JsonFormConstants.MATERIAL_EDIT_TEXT, new EditTextFactory());
+        map.put(JsonFormConstants.EDIT_TEXT, new EditTextFactory());
         map.put(JsonFormConstants.LABEL, new LabelFactory());
         map.put(JsonFormConstants.CHECK_BOX, new CheckBoxFactory());
         map.put(JsonFormConstants.RADIO_BUTTON, new RadioButtonFactory());

@@ -2,6 +2,7 @@ package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
 import android.os.Build;
+import android.support.annotation.VisibleForTesting;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Patterns;
@@ -39,6 +40,10 @@ import java.util.List;
 public class NativeEditTextFactory implements FormWidgetFactory {
 
     private static List<METValidator> validators;
+
+    public static List<METValidator> Validators() {
+        return validators;
+    }
 
     public static ValidationStatus validate(JsonFormFragmentView formFragmentView,
                                             EditText editText) {
@@ -90,9 +95,9 @@ public class NativeEditTextFactory implements FormWidgetFactory {
 
         RelativeLayout rootLayout = (RelativeLayout) LayoutInflater.from(context).inflate(
                 getLayout(), null);
-       EditText editText = rootLayout.findViewById(R.id.normal_edit_text);
+        EditText editText = rootLayout.findViewById(R.id.normal_edit_text);
 
-        attachJson(stepName, context, formFragment, jsonObject, editText);
+        makeFromJson(stepName, context, formFragment, jsonObject, editText);
 
         JSONArray canvasIds = new JSONArray();
         rootLayout.setId(ViewUtil.generateViewId());
@@ -104,7 +109,7 @@ public class NativeEditTextFactory implements FormWidgetFactory {
         return views;
     }
 
-    protected void attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, EditText editText)
+    protected void makeFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, EditText editText)
             throws Exception {
 
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
@@ -128,9 +133,14 @@ public class NativeEditTextFactory implements FormWidgetFactory {
         }
         //Add edittext style
         if (!TextUtils.isEmpty(editTextStyle)) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN &&
-                    JsonFormConstants.BORDERED_EDIT_TEXT.equals(editTextStyle)) {
-                    editText.setBackground(context.getResources().getDrawable(R.drawable.edit_text_bg));
+            if (JsonFormConstants.BORDERED_EDIT_TEXT.equals(editTextStyle)) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    editText.setBackground(context.getResources()
+                            .getDrawable(R.drawable.edit_text_bg));
+                } else {
+                    editText.setBackgroundDrawable(context.getResources()
+                            .getDrawable(R.drawable.edit_text_bg));
+                }
             }
         } else {
             editText.setHint(jsonObject.getString(JsonFormConstants.HINT));
@@ -190,7 +200,7 @@ public class NativeEditTextFactory implements FormWidgetFactory {
         if (regexObject != null) {
             String regexValue = regexObject.optString(JsonFormConstants.VALUE);
             if (!TextUtils.isEmpty(regexValue)) {
-               addValidator(new RegexpValidator(regexObject.getString(JsonFormConstants.ERR), regexValue));
+                addValidator(new RegexpValidator(regexObject.getString(JsonFormConstants.ERR), regexValue));
             }
         }
     }
