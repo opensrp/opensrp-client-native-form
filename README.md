@@ -1023,7 +1023,7 @@ The syntax for the comparison expression `ex`:
 The field reference/identifier uses the field's `key` attribute
 
 
-###Skip logic for Checkbox group widget
+### Skip logic for Checkbox group widget
 
 Check boxes can also be selected multiple times . The corresponding skip logic can also thus become complex. In the example below, *(present in the sample app)*,
 the CHW Phone Number Widget will only show based on these various conditions:
@@ -1120,7 +1120,7 @@ The relevant keys of the multi-select checkbox are specified as arrays wrapped w
             "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
           },
           {
-            "key": "Other",
+            "key": "other",
             "text": "Other",
             "value": false,
             "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
@@ -1132,6 +1132,18 @@ The relevant keys of the multi-select checkbox are specified as arrays wrapped w
       }
 ``` 
 The above relevance example shows a multiple select checkbox example and its used in the sample demo app for the CHW_Phone_Number widget. 
+
+If you want to specify relevance on the basis of whether a particular value HAS NOT been checked/selected use the `not` key field as shown below. Here, the widget will not show if the `severe bleeding` option has been selected
+
+```
+  "relevance": {
+          "step1:delivery_complications": { 
+            "ex-checkbox": [
+              {
+                "not": ["severe_bleeding"]
+              }]
+           } 
+```
 
  ### Checkbox Exclusive Select field
  The checkbox implementation also introduces a new field `exclusive` in which you specify the array value of a key or set of keys e.g. `exclusive: ["none"]` which if selected excludes/clears all other entries.
