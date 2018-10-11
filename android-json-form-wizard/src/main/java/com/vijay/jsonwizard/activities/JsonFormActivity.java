@@ -62,6 +62,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     private HashMap<Integer, OnActivityResultListener> onActivityResultListeners;
     private HashMap<Integer, OnActivityRequestPermissionResultListener> onActivityRequestPermissionResultListeners;
 
+    private String confirmCloseTitle;
+    private String confirmCloseMessage;
+
     public void init(String json) {
         try {
             mJSONObject = new JSONObject(json);
@@ -69,6 +72,10 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 mJSONObject = new JSONObject();
                 throw new JSONException("Form encounter_type not set");
             }
+
+            confirmCloseTitle = getString(R.string.confirm_form_close);
+            confirmCloseMessage = getString(R.string.confirm_form_close_explanation);
+
         } catch (JSONException e) {
             Log.d(TAG, "Initialization error. Json passed is invalid : " + e.getMessage());
         }
@@ -84,7 +91,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         onActivityResultListeners = new HashMap<>();
         onActivityRequestPermissionResultListeners = new HashMap<>();
         if (savedInstanceState == null) {
-            init(getIntent().getStringExtra("json"));
+            init(getIntent().getStringExtra(JsonFormConstants.INTENT_KEY.JSON));
             initializeFormFragment();
             onFormStart();
         } else {
@@ -293,7 +300,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     private String getViewKey(View view) {
         String key = (String) view.getTag(R.id.key);
         if (view.getTag(R.id.childKey) != null) {
-            key = key + ":" + (String) view.getTag(R.id.childKey);
+            key = key + ":" + view.getTag(R.id.childKey);
         }
 
         return key;
@@ -312,8 +319,8 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     @Override
     public void onBackPressed() {
         AlertDialog dialog = new AlertDialog.Builder(this, R.style.AppThemeAlertDialog)
-                .setTitle(R.string.confirm_form_close)
-                .setMessage(R.string.confirm_form_close_explanation)
+                .setTitle(confirmCloseTitle)
+                .setMessage(confirmCloseMessage)
                 .setNegativeButton(R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -452,7 +459,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         EditText defaultFocusView = (EditText) findViewById(R.id.default_focus_view);
         defaultFocusView.requestFocus();
         InputMethodManager inputManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-        inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), HIDE_NOT_ALWAYS);
+        if (inputManager != null && getCurrentFocus() != null) {
+            inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), HIDE_NOT_ALWAYS);
+        }
     }
 
     private void checkViewConstraints(View curView) {
@@ -700,4 +709,19 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         public static final String READ_ONLY = "read_only";
     }
 
+    public String getConfirmCloseTitle() {
+        return confirmCloseTitle;
+    }
+
+    public void setConfirmCloseTitle(String confirmCloseTitle) {
+        this.confirmCloseTitle = confirmCloseTitle;
+    }
+
+    public String getConfirmCloseMessage() {
+        return confirmCloseMessage;
+    }
+
+    public void setConfirmCloseMessage(String confirmCloseMessage) {
+        this.confirmCloseMessage = confirmCloseMessage;
+    }
 }
