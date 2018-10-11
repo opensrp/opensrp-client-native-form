@@ -91,7 +91,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         onActivityResultListeners = new HashMap<>();
         onActivityRequestPermissionResultListeners = new HashMap<>();
         if (savedInstanceState == null) {
-            init(getIntent().getStringExtra(JsonFormConstants.INTENT_KEY.JSON));
+            init(getIntent().getStringExtra(JsonFormConstants.JSON_FORM_KEY.JSON));
             initializeFormFragment();
             onFormStart();
         } else {
@@ -174,7 +174,6 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         synchronized (mJSONObject) {
             JSONObject jsonObject = mJSONObject.getJSONObject(stepName);
             JSONArray fields = fetchFields(jsonObject);
-            getObjectUsingAddress(new String[]{"step1", "delivery_complications"});
             for (int i = 0; i < fields.length(); i++) {
                 JSONObject item = fields.getJSONObject(i);
                 String keyAtIndex = item.getString(KEY.KEY);

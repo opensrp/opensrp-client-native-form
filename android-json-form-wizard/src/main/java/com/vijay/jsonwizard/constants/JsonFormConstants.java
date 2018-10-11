@@ -94,5 +94,6 @@ public class JsonFormConstants {
         public static final String OR = "or";
         public static final String AND = "and";
         public static final String EXCLUSIVE = "exclusive";
+        public static final String JSON = "json";
     }
 }

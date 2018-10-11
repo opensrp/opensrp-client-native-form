@@ -501,21 +501,4 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         }
         return null;
     }
-
-    private JSONObject getJSONObjectFromOptions(JSONObject formObjectForStep, String fieldKey) {
-
-        try {
-            JSONArray array = formObjectForStep.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
-
-            for (int i = 0; i < array.length(); i++) {
-                if (array.getJSONObject(i).get(JsonFormConstants.KEY).equals(fieldKey)) {
-                    return array.getJSONObject(i);
-                }
-            }
-
-        } catch (Exception e) {
-            Log.d(TAG, e.getMessage());
-        }
-        return null;
-    }
 }
