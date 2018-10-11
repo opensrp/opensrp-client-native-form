@@ -2,7 +2,6 @@ package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
 import android.os.Build;
-import android.support.annotation.VisibleForTesting;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Patterns;
