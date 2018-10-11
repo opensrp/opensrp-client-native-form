@@ -143,9 +143,15 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
         JSONArray options = jsonObject.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
-
-        ArrayList<RelativeLayout> radioButtonsLayout = new ArrayList<>();
         RadioGroup radioGroup = new RadioGroup(context);
+        radioGroup.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+        radioGroup.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
+        radioGroup.setTag(R.id.openmrs_entity, openMrsEntity);
+        radioGroup.setTag(R.id.openmrs_entity_id, openMrsEntityId);
+        radioGroup.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
+        radioGroup.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+        radioGroup.setId(ViewUtil.generateViewId());
+        canvasIds.put(radioGroup.getId());
 
         for (int i = 0; i < options.length(); i++) {
             JSONObject item = options.getJSONObject(i);
@@ -153,6 +159,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             String extraInfo = item.optString(JsonFormConstants.NATIVE_RADIO_EXTRA_INFO, null);
 
             RelativeLayout radioGroupLayout = (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.native_item_radio_button, null);
+            radioGroupLayout.setId(ViewUtil.generateViewId());
             radioGroupLayout.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
             radioGroupLayout.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
             radioGroupLayout.setTag(R.id.openmrs_entity, openMrsEntity);
@@ -173,9 +180,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             }
 
             ((JsonApi) context).addFormDataView(radioGroupLayout);
-            radioGroupLayout.setTag(R.id.canvas_ids, canvasIds.toString());
             radioGroup.addView(radioGroupLayout);
-            radioButtonsLayout.add(radioGroupLayout);
         }
 
         if (relevance != null && context instanceof JsonApi) {
@@ -186,6 +191,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         FormUtils.setRadioExclusiveClick(radioGroup);
         radioGroup.setLayoutParams(FormUtils.getLinearLayoutParams(FormUtils.MATCH_PARENT, FormUtils.WRAP_CONTENT, 0, 0, 0, (int) context
                 .getResources().getDimension(R.dimen.extra_bottom_margin)));
+        radioGroup.setTag(R.id.canvas_ids, canvasIds.toString());
 
         views.add(radioGroup);
     }

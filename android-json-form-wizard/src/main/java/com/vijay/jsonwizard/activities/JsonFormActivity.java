@@ -409,6 +409,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 }
             }
         } catch (Exception e) {
+            Log.e(TAG, view.toString());
             Log.e(TAG, Log.getStackTraceString(e));
         }
     }
@@ -702,14 +703,6 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         this.mJSONObject = mJSONObject;
     }
 
-    private static class KEY {
-        public static final String TEXT = "text";
-
-        public static final String KEY = "key";
-
-        public static final String READ_ONLY = "read_only";
-    }
-
     public String getConfirmCloseTitle() {
         return confirmCloseTitle;
     }
@@ -724,5 +717,13 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
     public void setConfirmCloseMessage(String confirmCloseMessage) {
         this.confirmCloseMessage = confirmCloseMessage;
+    }
+
+    private static class KEY {
+        public static final String TEXT = "text";
+
+        public static final String KEY = "key";
+
+        public static final String READ_ONLY = "read_only";
     }
 }
