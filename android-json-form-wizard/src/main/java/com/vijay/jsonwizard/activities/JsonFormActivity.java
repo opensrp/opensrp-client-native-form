@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -375,7 +376,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             }
 
             view.setEnabled(enabled);
-            if (view instanceof MaterialEditText || view instanceof RelativeLayout) {
+            if (view instanceof MaterialEditText || view instanceof RelativeLayout || view instanceof LinearLayout) {
                 view.setFocusable(enabled);
                 if (view instanceof MaterialEditText) {
                     view.setFocusableInTouchMode(enabled);
@@ -390,7 +391,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                         curCanvasView.setEnabled(true);
                         curCanvasView.setVisibility(View.VISIBLE);
                     }
-                    if (curCanvasView instanceof MaterialEditText || curCanvasView instanceof RelativeLayout) {
+                    if (curCanvasView instanceof MaterialEditText || curCanvasView instanceof RelativeLayout || view instanceof LinearLayout) {
                         curCanvasView.setFocusable(true);
                     }
                 } else {
