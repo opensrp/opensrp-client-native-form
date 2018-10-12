@@ -18,13 +18,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rey.material.widget.Button;
-import android.widget.EditText;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.CheckBox;
@@ -42,6 +42,7 @@ import com.vijay.jsonwizard.viewstates.JsonFormFragmentViewState;
 import com.vijay.jsonwizard.widgets.EditTextFactory;
 import com.vijay.jsonwizard.widgets.GpsFactory;
 import com.vijay.jsonwizard.widgets.ImagePickerFactory;
+import com.vijay.jsonwizard.widgets.NativeEditTextFactory;
 import com.vijay.jsonwizard.widgets.NativeRadioButtonFactory;
 import com.vijay.jsonwizard.widgets.NumberSelectorFactory;
 import com.vijay.jsonwizard.widgets.SpinnerFactory;
@@ -93,8 +94,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                 if (requestFocus) validationStatus.requestAttention();
                 return validationStatus;
             }
-        }
-        if (childAt instanceof MaterialEditText) {
+        }else if (childAt instanceof MaterialEditText) {
             MaterialEditText editText = (MaterialEditText) childAt;
             ValidationStatus validationStatus = EditTextFactory.validate(formFragmentView, editText);
             if (!validationStatus.isValid()) {

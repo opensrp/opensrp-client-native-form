@@ -40,7 +40,7 @@ public class NativeEditTextFactory implements FormWidgetFactory {
 
     private static List<METValidator> validators;
 
-    public static List<METValidator> Validators() {
+    public static List<METValidator> validators() {
         return validators;
     }
 

@@ -39,7 +39,7 @@ public class NativeEditTextFactoryTest {
     @Test
     public void testAddValidator() {
         editTextFactory.addValidator(validator);
-        Assert.assertNotNull(NativeEditTextFactory.Validators());
+        Assert.assertNotNull(NativeEditTextFactory.validators());
     }
     @Test
     public void testValidate() throws Exception {
