@@ -518,6 +518,8 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 for (int j = 0; j < options.length(); j++) {
                     if (options.getJSONObject(j).has(JsonFormConstants.VALUE)) {
                         result.put(options.getJSONObject(j).getString(JsonFormConstants.KEY), options.getJSONObject(j).getBoolean(JsonFormConstants.VALUE));
+                    } else {
+                        Log.e(TAG, "option for Key " + options.getJSONObject(j).getString(JsonFormConstants.KEY) + " has NO value");
                     }
                 }
 
