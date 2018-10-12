@@ -66,24 +66,29 @@ public class ToasterNotesFactory implements FormWidgetFactory {
 
         RelativeLayout toasterRelativeLayout = linearLayout.findViewById(R.id.toaster_notes_layout);
         ImageView toasterNoteImageView = linearLayout.findViewById(R.id.toaster_notes_image);
+        ImageView toasterNoteInfo = linearLayout.findViewById(R.id.toaster_notes_info);
         TextView toasterNotesTextView = linearLayout.findViewById(R.id.toaster_notes_text);
 
         switch (type) {
             case JsonFormConstants.TOASTER_INFO:
                 toasterRelativeLayout.setBackgroundResource(R.drawable.toaster_notes_info);
                 toasterNoteImageView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_icon_info));
+                toasterNoteInfo.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_info_blue));
                 break;
             case JsonFormConstants.TOASTER_POSITIVE:
                 toasterRelativeLayout.setBackgroundResource(R.drawable.toaster_notes_positive);
                 toasterNoteImageView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_icon_positivity));
+                toasterNoteInfo.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_info_positive));
                 break;
             case JsonFormConstants.TOASTER_PROBLEM:
                 toasterRelativeLayout.setBackgroundResource(R.drawable.toaster_notes_danger);
                 toasterNoteImageView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_icon_danger));
+                toasterNoteInfo.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_info_danger));
                 break;
             case JsonFormConstants.TOASTER_WARNING:
                 toasterRelativeLayout.setBackgroundResource(R.drawable.toaster_notes_warning);
                 toasterNoteImageView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_icon_warning));
+                toasterNoteInfo.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_info_warning));
                 break;
             default:
                 break;
