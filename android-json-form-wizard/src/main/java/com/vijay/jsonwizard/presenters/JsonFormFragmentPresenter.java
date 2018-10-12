@@ -465,6 +465,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
 
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         String parentKey = (String) parent.getTag(R.id.key);
+        String type = (String) parent.getTag(R.id.type);
         String openMrsEntityParent = (String) parent.getTag(R.id.openmrs_entity_parent);
         String openMrsEntity = (String) parent.getTag(R.id.openmrs_entity);
         String openMrsEntityId = (String) parent.getTag(R.id.openmrs_entity_id);
@@ -473,11 +474,15 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             getView().writeValue(mStepName, parentKey, value, openMrsEntityParent, openMrsEntity,
                     openMrsEntityId);
         }
+
+        if (JsonFormConstants.NUMBER_SELECTORS.equals(type)) {
+            NumberSelectorFactory.setSelectedTextViewText((String) parent.getItemAtPosition(position));
+        }
     }
 
     private void createNumberSelector(View view) {
-        NumberSelectorFactory.createNumberSelector((CustomTextView) view);
-        CustomTextView customTextView = NumberSelectorFactory.getSelectedTextView();
+        CustomTextView customTextView = (CustomTextView) view;
+        NumberSelectorFactory.setBackgrounds(customTextView);
         String parentKey = (String) customTextView.getTag(R.id.key);
         String openMrsEntityParent = (String) customTextView.getTag(R.id.openmrs_entity_parent);
         String openMrsEntity = (String) customTextView.getTag(R.id.openmrs_entity);

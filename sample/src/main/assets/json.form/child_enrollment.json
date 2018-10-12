@@ -57,7 +57,7 @@
   "step1": {
     "title": "Birth Registration",
     "fields": [
-      {
+      /*{
         "key": "Child_Photo",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -488,32 +488,6 @@
         "v_regex": {
           "value": "(09[5-7][0-9]{7})|\s*",
           "err": "Number must begin with 095, 096, or 097 and must be a total of 10 digits in length"
-        },
-        "relevance": {
-          "step1:delivery_complications": {
-            "ex-checkbox": [
-              {
-                "or": [
-                  "severe_bleeding"
-                ]
-              },
-              {
-                "and": [
-                  "perineal_tear",
-                  "placenta_previa"
-                ]
-              },
-              {
-                "and": [
-                  "cord_prolapse",
-                  "abnormal_presentation"
-                ],
-                "or": [
-                  "prolonged_obstructed_labour"
-                ]
-              }
-            ]
-          }
         }
       },
       {
@@ -527,58 +501,94 @@
         "label_text_size": "18sp",
         "label_text_color": "#FF9800",
         "hint": "Any delivery complications?",
-        "exclusive": [
-          "none"
-        ],
         "options": [
           {
-            "key": "none",
+            "key": "None",
             "text": "None",
             "value": false,
             "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
           },
           {
-            "key": "severe_bleeding",
+            "key": "Severe bleeding/Hemorrhage",
             "text": "Severe bleeding/Hemorrhage",
             "value": false,
             "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "text_color": "#000000"
           },
           {
-            "key": "placenta_previa",
+            "key": "Placenta previa",
             "text": "Placenta previa",
             "value": false,
             "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "text_size": "30sp"
           },
           {
-            "key": "cord_prolapse",
+            "key": "Cord prolapse",
             "text": "Cord prolapse",
             "value": false,
             "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "text_size": "10sp"
           },
           {
-            "key": "prolonged_obstructed_labour",
+            "key": "Prolonged/obstructed labour",
             "text": "Prolonged/obstructed labour",
             "value": false,
             "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
           },
           {
-            "key": "abnormal_presentation",
+            "key": "Abnormal presentation",
             "text": "Abnormal presentation",
             "value": false,
             "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "text_color": "#FF9800"
           },
           {
-            "key": "perineal_tear",
+            "key": "Perineal tear (2, 3 or 4th degree)",
             "text": "Perineal tear (2, 3 or 4th degree)",
             "value": false,
             "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
           },
           {
             "key": "Other",
+            "text": "Other",
+            "value": false,
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          }
+        ],
+        "v_required": {
+          "value": "false"
+        }
+      },
+      {
+        "key": "delivery_complications",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "concept",
+        "openmrs_entity_id": "161641AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "openmrs_data_type": "select one",
+        "type": "check_box",
+        "label": "Any physiological symptoms?",
+        "label_text_style": "bold",
+        "options": [
+          {
+            "key": "None",
+            "text": "None",
+            "value": false,
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          },
+          {
+            "key": "fatigue",
+            "text": "Fatigue",
+            "value": false,
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          },
+          {
+            "key": "visual_disturbance",
+            "text": "Visual disturbance",
+            "value": false,
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          },
+          {
+            "key": "other",
             "text": "Other",
             "value": false,
             "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
@@ -934,6 +944,67 @@
         "spacer_height": "10sp"
       },
       {
+        "key": "toaster_notes",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Lets test with this for relevance",
+        "toaster_type": "problem",
+        "relevance": {
+          "step1:hiv_risk": {
+            "type": "string",
+            "ex": "equalTo(., \"test\")"
+          }
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "10sp"
+      },
+      {
+        "key": "native_radio",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Is the user registered for notification updates?",
+        "label_text_size": "18px",
+        "label_text_style": "bold_italic",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "value": "high_school",
+        "v_required": {
+          "value": true
+        },
+        "relevance": {
+          "step1:hiv_risk": {
+            "type": "string",
+            "ex": "equalTo(., \"test\")"
+          }
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "10sp"
+      },
+      {
         "key": "enabled_label",
         "type": "label",
         "text": "Please select the number of family members",
@@ -951,7 +1022,7 @@
         "v_required": {
           "value": true
         }
-      },
+      },*/
       {
         "key": "numbers_selector",
         "openmrs_entity_parent": "",
@@ -960,6 +1031,30 @@
         "type": "numbers_selector",
         "number_of_selectors": "5",
         "start_number": "1",
+        "max_value": "20",
+        "text_size": "16px",
+        "text_color": "#000000",
+        "selected_text_color": "#ffffff",
+        "v_required": {
+          "value": true
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "10sp"
+      },
+      {
+        "key": "numbers_selector_two",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "numbers_selector",
+        "number_of_selectors": "5",
+        "start_number": "0",
         "max_value": "20",
         "text_size": "16px",
         "text_color": "#000000",
