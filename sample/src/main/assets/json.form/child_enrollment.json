@@ -488,6 +488,32 @@
         "v_regex": {
           "value": "(09[5-7][0-9]{7})|\s*",
           "err": "Number must begin with 095, 096, or 097 and must be a total of 10 digits in length"
+        },
+        "relevance": {
+          "step1:delivery_complications": {
+            "ex-checkbox": [
+              {
+                "or": [
+                  "severe_bleeding"
+                ]
+              },
+              {
+                "and": [
+                  "perineal_tear",
+                  "placenta_previa"
+                ]
+              },
+              {
+                "and": [
+                  "cord_prolapse",
+                  "abnormal_presentation"
+                ],
+                "or": [
+                  "prolonged_obstructed_labour"
+                ]
+              }
+            ]
+          }
         }
       },
       {
@@ -501,94 +527,58 @@
         "label_text_size": "18sp",
         "label_text_color": "#FF9800",
         "hint": "Any delivery complications?",
+        "exclusive": [
+          "none"
+        ],
         "options": [
           {
-            "key": "None",
+            "key": "none",
             "text": "None",
             "value": false,
             "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
           },
           {
-            "key": "Severe bleeding/Hemorrhage",
+            "key": "severe_bleeding",
             "text": "Severe bleeding/Hemorrhage",
             "value": false,
             "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "text_color": "#000000"
           },
           {
-            "key": "Placenta previa",
+            "key": "placenta_previa",
             "text": "Placenta previa",
             "value": false,
             "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "text_size": "30sp"
           },
           {
-            "key": "Cord prolapse",
+            "key": "cord_prolapse",
             "text": "Cord prolapse",
             "value": false,
             "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "text_size": "10sp"
           },
           {
-            "key": "Prolonged/obstructed labour",
+            "key": "prolonged_obstructed_labour",
             "text": "Prolonged/obstructed labour",
             "value": false,
             "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
           },
           {
-            "key": "Abnormal presentation",
+            "key": "abnormal_presentation",
             "text": "Abnormal presentation",
             "value": false,
             "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "text_color": "#FF9800"
           },
           {
-            "key": "Perineal tear (2, 3 or 4th degree)",
+            "key": "perineal_tear",
             "text": "Perineal tear (2, 3 or 4th degree)",
             "value": false,
             "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
           },
           {
             "key": "Other",
-            "text": "Other",
-            "value": false,
-            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-          }
-        ],
-        "v_required": {
-          "value": "false"
-        }
-      },
-      {
-        "key": "delivery_complications",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "concept",
-        "openmrs_entity_id": "161641AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-        "openmrs_data_type": "select one",
-        "type": "check_box",
-        "label": "Any physiological symptoms?",
-        "label_text_style": "bold",
-        "options": [
-          {
-            "key": "None",
-            "text": "None",
-            "value": false,
-            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-          },
-          {
-            "key": "fatigue",
-            "text": "Fatigue",
-            "value": false,
-            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-          },
-          {
-            "key": "visual_disturbance",
-            "text": "Visual disturbance",
-            "value": false,
-            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-          },
-          {
-            "key": "other",
             "text": "Other",
             "value": false,
             "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
