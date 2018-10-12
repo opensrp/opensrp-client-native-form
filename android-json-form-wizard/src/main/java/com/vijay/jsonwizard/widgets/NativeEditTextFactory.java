@@ -98,6 +98,13 @@ public class NativeEditTextFactory implements FormWidgetFactory {
 
         makeFromJson(stepName, context, formFragment, jsonObject, editText);
 
+        addRequiredValidator(jsonObject);
+        addRegexValidator(jsonObject);
+        addEmailValidator(jsonObject);
+        addUrlValidator(jsonObject);
+        addNumericValidator(jsonObject, editText);
+        addNumericIntegerValidator(jsonObject, editText);
+
         JSONArray canvasIds = new JSONArray();
         rootLayout.setId(ViewUtil.generateViewId());
         canvasIds.put(rootLayout.getId());
@@ -108,8 +115,8 @@ public class NativeEditTextFactory implements FormWidgetFactory {
         return views;
     }
 
-    protected void makeFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, EditText editText)
-            throws Exception {
+    protected void makeFromJson(String stepName, Context context, JsonFormFragment formFragment,
+                                JSONObject jsonObject, EditText editText) throws Exception {
 
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
@@ -117,7 +124,7 @@ public class NativeEditTextFactory implements FormWidgetFactory {
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
         String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
         String editTextStyle = jsonObject.optString(JsonFormConstants.EDIT_TEXT_STYLE, "");
-
+        String editType = jsonObject.optString(JsonFormConstants.EDIT_TYPE);
 
         editText.setId(ViewUtil.generateViewId());
         editText.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
@@ -149,16 +156,7 @@ public class NativeEditTextFactory implements FormWidgetFactory {
             editText.setEnabled(!readyOnly);
             editText.setFocusable(!readyOnly);
         }
-
-        addRequiredValidator(jsonObject);
-        addRegexValidator(jsonObject);
-        addEmailValidator(jsonObject);
-        addUrlValidator(jsonObject);
-        addNumericValidator(jsonObject, editText);
-        addNumericIntegerValidator(jsonObject, editText);
-
         // edit type check
-        String editType = jsonObject.optString(JsonFormConstants.EDIT_TYPE);
         if (!TextUtils.isEmpty(editType)) {
             if ("number".equals(editType)) {
                 editText.setRawInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
