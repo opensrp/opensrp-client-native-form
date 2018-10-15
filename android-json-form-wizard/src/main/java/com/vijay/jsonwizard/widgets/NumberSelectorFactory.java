@@ -7,6 +7,7 @@ import android.os.Build;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewParent;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -29,15 +30,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class NumberSelectorFactory implements FormWidgetFactory {
     private static CustomTextView selectedTextView;
     private static int selectedItem = -1;
+    private static HashMap<ViewParent, CustomTextView> selectedTextViews = new HashMap<>();
     private SelectedNumberClickListener selectedNumberClickListener = new SelectedNumberClickListener();
     private Spinner spinner;
 
     @SuppressLint("NewApi")
+
     private static void setSelectedColor(Context context, CustomTextView customTextView, int item, int numberOfSelectors, String textColor) {
         if (customTextView != null && item > -1) {
             if (item == 0) {
@@ -71,10 +75,22 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         String selectedColor = (String) textView.getTag(R.id.number_selector_selected_text_color);
         int item = (int) textView.getTag(R.id.number_selector_textview_item);
         int numberOfSelectors = (int) textView.getTag(R.id.number_selector_textview_number_of_selectors);
+        ViewParent textViewParent = textView.getParent();
+        ViewParent selectedTextViewParent = selectedTextView != null ? selectedTextView.getParent() : null;
 
         if (!textView.equals(selectedTextView)) {
-            setSelectedColor(textView.getContext(), textView, item, numberOfSelectors, selectedColor);
-            setDefaultColor(textView.getContext(), selectedTextView, selectedItem, numberOfSelectors, defaultColor);
+            if (selectedTextViewParent == null) {
+                setSelectedColor(textView.getContext(), textView, item, numberOfSelectors, selectedColor);
+                setDefaultColor(textView.getContext(), selectedTextView, selectedItem, numberOfSelectors, defaultColor);
+            } else {
+                for (HashMap.Entry<ViewParent, CustomTextView> entry : selectedTextViews.entrySet()) {
+                    if (entry.getKey() == textViewParent) {
+                        setSelectedColor(textView.getContext(), textView, item, numberOfSelectors, selectedColor);
+                        setDefaultColor(textView.getContext(), selectedTextView, selectedItem, numberOfSelectors, defaultColor);
+                    }
+                }
+            }
+            selectedTextViews.put(textViewParent, textView);
             selectedTextView = textView;
             selectedItem = item;
         }
@@ -191,7 +207,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         int maxValue = jsonObject.optInt(JsonFormConstants.MAX_SELECTION_VALUE, 20);
 
         for (int i = 0; i < numberOfSelectors; i++) {
-            CustomTextView customTextView = createCustomView(context, jsonObject, width, numberOfSelectors, listener, linearLayout, i, stepName);
+            CustomTextView customTextView = createCustomView(context, jsonObject, width, numberOfSelectors, listener, linearLayout, i);
             if (i == numberOfSelectors - 1 && numberOfSelectors - 1 < maxValue) {
                 customTextView.setOnClickListener(selectedNumberClickListener);
             } else {
@@ -217,7 +233,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
     }
 
     @SuppressLint("NewApi")
-    private CustomTextView createCustomView(Context context, JSONObject jsonObject, int width, int numberOfSelectors, CommonListener listener, LinearLayout linearLayout, int item, String stepName) throws JSONException {
+    private CustomTextView createCustomView(Context context, JSONObject jsonObject, int width, int numberOfSelectors, CommonListener listener, LinearLayout linearLayout, int item) throws JSONException {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
