@@ -70,24 +70,35 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         }
     }
 
+    /**
+     * Sets backgrounds according to the selected textviews
+     *
+     * @param textView
+     */
     public static void setBackgrounds(CustomTextView textView) {
         String defaultColor = (String) textView.getTag(R.id.number_selector_default_text_color);
         String selectedColor = (String) textView.getTag(R.id.number_selector_selected_text_color);
         int item = (int) textView.getTag(R.id.number_selector_textview_item);
         int numberOfSelectors = (int) textView.getTag(R.id.number_selector_textview_number_of_selectors);
         ViewParent textViewParent = textView.getParent();
-        ViewParent selectedTextViewParent = selectedTextView != null ? selectedTextView.getParent() : null;
 
         if (!textView.equals(selectedTextView)) {
-            if (selectedTextViewParent == null) {
+            if (selectedTextViews.size() == 0) {
                 setSelectedColor(textView.getContext(), textView, item, numberOfSelectors, selectedColor);
                 setDefaultColor(textView.getContext(), selectedTextView, selectedItem, numberOfSelectors, defaultColor);
             } else {
                 for (HashMap.Entry<ViewParent, CustomTextView> entry : selectedTextViews.entrySet()) {
-                    if (entry.getKey() == textViewParent) {
-                        setSelectedColor(textView.getContext(), textView, item, numberOfSelectors, selectedColor);
-                        setDefaultColor(textView.getContext(), selectedTextView, selectedItem, numberOfSelectors, defaultColor);
+                    if (textViewParent == entry.getKey()) {
+                        if (textView != entry.getValue()) {
+                            setSelectedColor(textView.getContext(), textView, item, numberOfSelectors, selectedColor);
+                            setDefaultColor(textView.getContext(), entry.getValue(), selectedItem, numberOfSelectors, defaultColor);
+                        }
+                    } else {
+                        if (textView != entry.getValue()) {
+                            setSelectedColor(textView.getContext(), textView, item, numberOfSelectors, selectedColor);
+                        }
                     }
+
                 }
             }
             selectedTextViews.put(textViewParent, textView);
