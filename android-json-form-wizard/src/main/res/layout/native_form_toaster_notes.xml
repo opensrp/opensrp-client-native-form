@@ -8,18 +8,18 @@
         android:id="@+id/toaster_notes_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
         android:orientation="horizontal"
-        android:paddingBottom="5dp"
-        android:paddingTop="5dp">
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp">
 
         <ImageView
             android:id="@+id/toaster_notes_image"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_margin="5dp"
             android:contentDescription="@string/the_toaster_icon"
@@ -31,27 +31,27 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_gravity="center_vertical"
-            android:layout_toEndOf="@+id/toaster_notes_image"
-            android:layout_toLeftOf="@+id/toaster_notes_info"
-            android:layout_toRightOf="@+id/toaster_notes_image"
             android:layout_toStartOf="@+id/toaster_notes_info"
+            android:layout_toLeftOf="@+id/toaster_notes_info"
+            android:layout_toEndOf="@+id/toaster_notes_image"
+            android:layout_toRightOf="@+id/toaster_notes_image"
             android:gravity="center_vertical"
             android:textSize="16sp" />
 
         <ImageView
             android:id="@+id/toaster_notes_info"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_alignTop="@+id/toaster_notes_image"
+            android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignTop="@+id/toaster_notes_image"
             android:layout_margin="5dp"
             android:clickable="true"
             android:contentDescription="@string/info_label"
             android:focusable="true"
             android:src="@drawable/ic_icon_info_filled"
-            android:visibility="gone" />
+            android:visibility="visible" />
 
     </RelativeLayout>
 

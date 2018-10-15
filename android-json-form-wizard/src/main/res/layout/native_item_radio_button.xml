@@ -1,50 +1,64 @@
-<RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_marginEnd="5dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="5dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginEnd="5dp">
+
     <RadioButton
-            android:id="@+id/mainRadioButton"
-            style="@style/Material.Drawable.RadioButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/native_radio_button_padding"
-            android:paddingStart="@dimen/native_radio_button_padding"/>
+        android:id="@+id/mainRadioButton"
+        style="@style/Material.Drawable.RadioButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/native_radio_button_padding"
+        android:paddingLeft="@dimen/native_radio_button_padding" />
+
     <com.vijay.jsonwizard.views.CustomTextView
-            android:id="@+id/mainRadioButtonTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
-            android:gravity="center_vertical|start"
-            android:layout_marginLeft="@dimen/native_radio_button_text_view_initial_left_margin"
-            android:layout_marginStart="@dimen/native_radio_button_text_view_initial_left_margin"/>
+        android:id="@+id/mainRadioButtonTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/native_radio_button_text_view_initial_left_margin"
+        android:layout_marginLeft="@dimen/native_radio_button_text_view_initial_left_margin"
+        android:layout_marginTop="3dp"
+        android:gravity="center_vertical|start" />
+
     <com.vijay.jsonwizard.views.CustomTextView
-            android:id="@+id/specifyTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginEnd="4dp"
-            android:textStyle="italic"
-            android:gravity="center_vertical|start"
-            android:layout_toRightOf="@+id/mainRadioButtonTextView"
-            android:layout_toEndOf="@+id/mainRadioButtonTextView"
-            android:ellipsize="end"
-            android:visibility="gone"
-            android:layout_marginTop="3dp"
-            android:layout_marginLeft="4dp"/>
+        android:id="@+id/specifyTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginEnd="4dp"
+        android:layout_toEndOf="@+id/mainRadioButtonTextView"
+        android:layout_toRightOf="@+id/mainRadioButtonTextView"
+        android:ellipsize="end"
+        android:gravity="center_vertical|start"
+        android:textStyle="italic"
+        android:visibility="gone" />
+
     <com.vijay.jsonwizard.views.CustomTextView
-            android:id="@+id/extraInfoTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical|start"
-            android:layout_below="@+id/mainRadioButtonTextView"
-            android:layout_marginTop="2dp"
-            android:paddingTop="2dp"
-            android:ellipsize="end"
-            android:visibility="gone"
-            android:layout_marginLeft="@dimen/native_radio_button_text_view_initial_left_margin"
-            android:layout_marginStart="@dimen/native_radio_button_text_view_initial_left_margin"/>
+        android:id="@+id/extraInfoTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/mainRadioButtonTextView"
+        android:layout_marginStart="@dimen/native_radio_button_text_view_initial_left_margin"
+        android:layout_marginLeft="@dimen/native_radio_button_text_view_initial_left_margin"
+        android:layout_marginTop="2dp"
+        android:ellipsize="end"
+        android:gravity="center_vertical|start"
+        android:paddingTop="2dp"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/info_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:src="@drawable/ic_icon_info_filled"
+        android:visibility="gone" />
 </RelativeLayout>
 
