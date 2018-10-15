@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -157,6 +158,8 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             JSONObject item = options.getJSONObject(i);
             String specifyInfo = item.optString(JsonFormConstants.NATIVE_RADIO_SPECIFY_INFO, null);
             String extraInfo = item.optString(JsonFormConstants.NATIVE_RADIO_EXTRA_INFO, null);
+            String labelInfoText = item.optString(JsonFormConstants.LABEL_INFO_TEXT,"");
+            String labelInfoTitle = item.optString(JsonFormConstants.LABEL_INFO_TITLE,"");
 
             RelativeLayout radioGroupLayout = (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.native_item_radio_button, null);
             radioGroupLayout.setId(ViewUtil.generateViewId());
@@ -168,6 +171,10 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             radioGroupLayout.setTag(R.id.childKey, item.getString(JsonFormConstants.KEY));
             radioGroupLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
             canvasIds.put(radioGroupLayout.getId());
+
+            //Showing optional info alert dialog on individual radio buttons
+            ImageView imageView = radioGroupLayout.findViewById(R.id.info_icon);
+            FormUtils.showInfoIcon(jsonObject,listener,labelInfoText,labelInfoTitle,imageView);
 
             createRadioButton(radioGroupLayout, jsonObject, readOnly, item, listener, stepName);
             createMainTextView(context, radioGroupLayout, jsonObject, item, stepName);
