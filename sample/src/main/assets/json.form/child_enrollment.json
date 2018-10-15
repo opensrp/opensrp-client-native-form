@@ -778,7 +778,7 @@
         "label": "Highest Level of School",
         "label_text_size": "18px",
         "label_text_color": "#FF9800",
-        "label_info_text": "Checking out the display oof the info icon needed to display this infomation",
+        "label_info_text": "Checking out the display oof the info icon needed to display this information",
         "label_info_title": "Highest Level of School",
         "options": [
           {
@@ -809,7 +809,7 @@
         }
       },
       {
-        "key": "native_radio",
+        "key": "native_radio_tertiary_education",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
@@ -829,13 +829,13 @@
             "text_size": "18px"
           }
         ],
-        "value": "high_school",
+        "value": "",
         "v_required": {
           "value": true
         }
       },
       {
-        "key": "native_radio",
+        "key": "native_radio_notification_updates2",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
@@ -853,9 +853,15 @@
             "text": "No"
           }
         ],
-        "value": "high_school",
+        "value": "",
         "v_required": {
           "value": true
+        },
+        "relevance": {
+          "step1:native_radio_tertiary_education": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
         }
       },
       {
@@ -942,9 +948,9 @@
         "text": "Lets test with this for relevance",
         "toaster_type": "problem",
         "relevance": {
-          "step1:hiv_risk": {
+          "step1:native_radio_notification_updates": {
             "type": "string",
-            "ex": "equalTo(., \"test\")"
+            "ex": "equalTo(., \"yes\")"
           }
         }
       },
@@ -957,7 +963,7 @@
         "spacer_height": "10sp"
       },
       {
-        "key": "native_radio",
+        "key": "native_radio_notification_updates",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
@@ -975,15 +981,9 @@
             "text": "No"
           }
         ],
-        "value": "high_school",
+        "value": "",
         "v_required": {
           "value": true
-        },
-        "relevance": {
-          "step1:hiv_risk": {
-            "type": "string",
-            "ex": "equalTo(., \"test\")"
-          }
         }
       },
       {
