@@ -778,7 +778,7 @@
         "label": "Highest Level of School",
         "label_text_size": "18px",
         "label_text_color": "#FF9800",
-        "label_info_text": "Checking out the display oof the info icon needed to display this infomation",
+        "label_info_text": "Checking out the display oof the info icon needed to display this information",
         "label_info_title": "Highest Level of School",
         "options": [
           {
@@ -809,7 +809,7 @@
         }
       },
       {
-        "key": "native_radio",
+        "key": "native_radio_tertiary_education",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
@@ -829,13 +829,13 @@
             "text_size": "18px"
           }
         ],
-        "value": "high_school",
+        "value": "",
         "v_required": {
           "value": true
         }
       },
       {
-        "key": "native_radio",
+        "key": "native_radio_notification_updates2",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
@@ -853,9 +853,15 @@
             "text": "No"
           }
         ],
-        "value": "high_school",
+        "value": "",
         "v_required": {
           "value": true
+        },
+        "relevance": {
+          "step1:native_radio_tertiary_education": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
         }
       },
       {
@@ -934,6 +940,61 @@
         "spacer_height": "10sp"
       },
       {
+        "key": "toaster_notes",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Lets test with this for relevance",
+        "toaster_type": "problem",
+        "relevance": {
+          "step1:native_radio_notification_updates": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "10sp"
+      },
+      {
+        "key": "native_radio_notification_updates",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Is the user registered for notification updates?",
+        "label_text_size": "18px",
+        "label_text_style": "bold_italic",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "value": "",
+        "v_required": {
+          "value": true
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "10sp"
+      },
+      {
         "key": "enabled_label",
         "type": "label",
         "text": "Please select the number of family members",
@@ -966,6 +1027,42 @@
         "selected_text_color": "#ffffff",
         "v_required": {
           "value": true
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "15sp"
+      },
+      {
+        "key": "enabled_label",
+        "type": "label",
+        "label_text_style": "bold",
+        "text": "This is the normal edit text design",
+        "text_color": "#000000",
+        "v_required": {
+          "value": true
+        }
+      },
+      {
+        "key": "Last_Name",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person",
+        "openmrs_entity_id": "last_name",
+        "type": "normal_edit_text",
+        "hint": "Last name *",
+        "edit_type": "name",
+        "edit_text_style": "bordered",
+        "v_required": {
+          "value": "true",
+          "err": "Please enter the last name"
+        },
+        "v_regex": {
+          "value": "[A-Za-z\\s\.\-]*",
+          "err": "Please enter a valid name"
         }
       }
     ]

@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -385,7 +386,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             }
 
             view.setEnabled(enabled);
-            if (view instanceof MaterialEditText || view instanceof RelativeLayout) {
+            if (view instanceof MaterialEditText || view instanceof RelativeLayout || view instanceof LinearLayout) {
                 view.setFocusable(enabled);
                 if (view instanceof MaterialEditText) {
                     view.setFocusableInTouchMode(enabled);
@@ -400,7 +401,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                         curCanvasView.setEnabled(true);
                         curCanvasView.setVisibility(View.VISIBLE);
                     }
-                    if (curCanvasView instanceof MaterialEditText || curCanvasView instanceof RelativeLayout) {
+                    if (curCanvasView instanceof MaterialEditText || curCanvasView instanceof RelativeLayout || view instanceof LinearLayout) {
                         curCanvasView.setFocusable(true);
                     }
                 } else {
@@ -411,6 +412,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 }
             }
         } catch (Exception e) {
+            Log.e(TAG, view.toString());
             Log.e(TAG, Log.getStackTraceString(e));
         }
     }
@@ -703,14 +705,6 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         this.mJSONObject = mJSONObject;
     }
 
-    private static class KEY {
-        public static final String TEXT = "text";
-
-        public static final String KEY = "key";
-
-        public static final String READ_ONLY = "read_only";
-    }
-
     public String getConfirmCloseTitle() {
         return confirmCloseTitle;
     }
@@ -752,7 +746,6 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             return doComparison(curValueMap.get(JsonFormConstants.VALUE), curRelevance);
         }
     }
-
 
     private ExObjectResult isExObjectRelevant(Map<String, String> curValueMap, JSONObject object) throws Exception {
 
@@ -806,6 +799,13 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
 
         return new ExObjectResult(false, false);
+    }
 
+    private static class KEY {
+        public static final String TEXT = "text";
+
+        public static final String KEY = "key";
+
+        public static final String READ_ONLY = "read_only";
     }
 }

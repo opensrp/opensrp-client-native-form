@@ -250,7 +250,7 @@ public class FormUtils {
 
         //Applying textStyle to the text;
         String textStyle = jsonObject.optString(JsonFormConstants.TEXT_STYLE, JsonFormConstants.NORMAL);
-        setTextStyle(textStyle,labelText);
+        setTextStyle(textStyle, labelText);
         labelText.setText(Html.fromHtml(combinedLabelText));
         labelText.setTextSize(labelTextSize);
         canvasIds.put(relativeLayout.getId());
@@ -390,7 +390,8 @@ public class FormUtils {
 
         return calendarDate;
     }
-    public static void setTextStyle(String textStyle, AppCompatTextView view){
+
+    public static void setTextStyle(String textStyle, AppCompatTextView view) {
         switch (textStyle) {
             case JsonFormConstants.BOLD:
                 view.setTypeface(null, Typeface.BOLD);
@@ -405,7 +406,7 @@ public class FormUtils {
                 view.setTypeface(null, Typeface.BOLD_ITALIC);
                 break;
             default:
-                view.setTypeface(null,Typeface.NORMAL);
+                view.setTypeface(null, Typeface.NORMAL);
                 break;
         }
     }

@@ -94,7 +94,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                 if (requestFocus) validationStatus.requestAttention();
                 return validationStatus;
             }
-        }else if (childAt instanceof MaterialEditText) {
+        } else if (childAt instanceof MaterialEditText) {
             MaterialEditText editText = (MaterialEditText) childAt;
             ValidationStatus validationStatus = EditTextFactory.validate(formFragmentView, editText);
             if (!validationStatus.isValid()) {
