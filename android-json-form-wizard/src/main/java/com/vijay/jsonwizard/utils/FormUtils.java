@@ -250,7 +250,7 @@ public class FormUtils {
 
         //Applying textStyle to the text;
         String textStyle = jsonObject.optString(JsonFormConstants.TEXT_STYLE, JsonFormConstants.NORMAL);
-        setTextStyle(textStyle,labelText);
+        setTextStyle(textStyle, labelText);
         labelText.setText(Html.fromHtml(combinedLabelText));
         labelText.setTextSize(labelTextSize);
         canvasIds.put(relativeLayout.getId());
@@ -280,6 +280,12 @@ public class FormUtils {
 
         ImageView imageView = relativeLayout.findViewById(R.id.label_info);
 
+        showInfoIcon(jsonObject, listener, labelInfoText, labelInfoTitle, imageView);
+
+        return relativeLayout;
+    }
+
+    public static void showInfoIcon(JSONObject jsonObject, CommonListener listener, String labelInfoText, String labelInfoTitle, ImageView imageView) throws JSONException {
         if (!TextUtils.isEmpty(labelInfoText)) {
             imageView.setVisibility(View.VISIBLE);
             imageView.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
@@ -288,8 +294,6 @@ public class FormUtils {
             imageView.setTag(R.id.label_dialog_title, labelInfoTitle);
             imageView.setOnClickListener(listener);
         }
-
-        return relativeLayout;
     }
 
     /**
@@ -386,7 +390,8 @@ public class FormUtils {
 
         return calendarDate;
     }
-    public static void setTextStyle(String textStyle, AppCompatTextView view){
+
+    public static void setTextStyle(String textStyle, AppCompatTextView view) {
         switch (textStyle) {
             case JsonFormConstants.BOLD:
                 view.setTypeface(null, Typeface.BOLD);
@@ -401,7 +406,7 @@ public class FormUtils {
                 view.setTypeface(null, Typeface.BOLD_ITALIC);
                 break;
             default:
-                view.setTypeface(null,Typeface.NORMAL);
+                view.setTypeface(null, Typeface.NORMAL);
                 break;
         }
     }

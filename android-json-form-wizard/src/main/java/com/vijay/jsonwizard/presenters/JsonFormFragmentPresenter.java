@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -41,6 +42,7 @@ import com.vijay.jsonwizard.viewstates.JsonFormFragmentViewState;
 import com.vijay.jsonwizard.widgets.EditTextFactory;
 import com.vijay.jsonwizard.widgets.GpsFactory;
 import com.vijay.jsonwizard.widgets.ImagePickerFactory;
+import com.vijay.jsonwizard.widgets.NativeEditTextFactory;
 import com.vijay.jsonwizard.widgets.NativeRadioButtonFactory;
 import com.vijay.jsonwizard.widgets.NumberSelectorFactory;
 import com.vijay.jsonwizard.widgets.SpinnerFactory;
@@ -85,7 +87,14 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
     }
 
     public static ValidationStatus validate(JsonFormFragmentView formFragmentView, View childAt, boolean requestFocus) {
-        if (childAt instanceof MaterialEditText) {
+        if (childAt instanceof EditText) {
+            EditText editText = (EditText) childAt;
+            ValidationStatus validationStatus = NativeEditTextFactory.validate(formFragmentView, editText);
+            if (!validationStatus.isValid()) {
+                if (requestFocus) validationStatus.requestAttention();
+                return validationStatus;
+            }
+        } else if (childAt instanceof MaterialEditText) {
             MaterialEditText editText = (MaterialEditText) childAt;
             ValidationStatus validationStatus = EditTextFactory.validate(formFragmentView, editText);
             if (!validationStatus.isValid()) {
@@ -465,19 +474,32 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
 
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         String parentKey = (String) parent.getTag(R.id.key);
+        String type = (String) parent.getTag(R.id.type);
         String openMrsEntityParent = (String) parent.getTag(R.id.openmrs_entity_parent);
         String openMrsEntity = (String) parent.getTag(R.id.openmrs_entity);
         String openMrsEntityId = (String) parent.getTag(R.id.openmrs_entity_id);
+        CustomTextView customTextView = (CustomTextView) parent.getTag(R.id.number_selector_textview);
         if (position >= 0) {
             String value = (String) parent.getItemAtPosition(position);
             getView().writeValue(mStepName, parentKey, value, openMrsEntityParent, openMrsEntity,
                     openMrsEntityId);
         }
+
+        if (JsonFormConstants.NUMBER_SELECTORS.equals(type)) {
+            NumberSelectorFactory.setBackgrounds(customTextView);
+            NumberSelectorFactory.setSelectedTextViews(customTextView);
+            NumberSelectorFactory.setSelectedTextViewText((String) parent.getItemAtPosition(position));
+        }
     }
 
     private void createNumberSelector(View view) {
-        NumberSelectorFactory.createNumberSelector((CustomTextView) view);
-        CustomTextView customTextView = NumberSelectorFactory.getSelectedTextView();
+        CustomTextView customTextView = (CustomTextView) view;
+        int item = (int) customTextView.getTag(R.id.number_selector_item);
+        int numberOfSelectors = (int) customTextView.getTag(R.id.number_selector_number_of_selectors);
+        if (item < numberOfSelectors - 1) {
+            NumberSelectorFactory.setBackgrounds(customTextView);
+        }
+        NumberSelectorFactory.setSelectedTextViews(customTextView);
         String parentKey = (String) customTextView.getTag(R.id.key);
         String openMrsEntityParent = (String) customTextView.getTag(R.id.openmrs_entity_parent);
         String openMrsEntity = (String) customTextView.getTag(R.id.openmrs_entity);
