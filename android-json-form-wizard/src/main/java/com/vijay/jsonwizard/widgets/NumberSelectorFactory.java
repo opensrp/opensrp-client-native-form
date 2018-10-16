@@ -78,8 +78,8 @@ public class NumberSelectorFactory implements FormWidgetFactory {
     public static void setBackgrounds(CustomTextView textView) {
         String defaultColor = (String) textView.getTag(R.id.number_selector_default_text_color);
         String selectedColor = (String) textView.getTag(R.id.number_selector_selected_text_color);
-        int item = (int) textView.getTag(R.id.number_selector_textview_item);
-        int numberOfSelectors = (int) textView.getTag(R.id.number_selector_textview_number_of_selectors);
+        int item = (int) textView.getTag(R.id.number_selector_item);
+        int numberOfSelectors = (int) textView.getTag(R.id.number_selector_number_of_selectors);
         ViewParent textViewParent = textView.getParent();
 
         if (!textView.equals(selectedTextView)) {
@@ -102,9 +102,13 @@ public class NumberSelectorFactory implements FormWidgetFactory {
                 }
             }
             selectedTextViews.put(textViewParent, textView);
-            selectedTextView = textView;
-            selectedItem = item;
         }
+    }
+
+    public static void setSelectedTextViews(CustomTextView customTextView) {
+        int item = (int) customTextView.getTag(R.id.number_selector_item);
+        selectedTextView = customTextView;
+        selectedItem = item;
     }
 
     /**
@@ -119,7 +123,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
 
         int maxValue = jsonObject.optInt(JsonFormConstants.MAX_SELECTION_VALUE, 20);
-        LinearLayout.LayoutParams layoutParams = FormUtils.getLinearLayoutParams(10, FormUtils.WRAP_CONTENT, 1, 1, 1, 1);
+        LinearLayout.LayoutParams layoutParams = FormUtils.getLinearLayoutParams(10, FormUtils.WRAP_CONTENT, 0, 0, 0, 0);
         final Spinner spinner = new Spinner(context, Spinner.MODE_DIALOG);
 
         List<String> numbers = new ArrayList<>();
@@ -174,8 +178,8 @@ public class NumberSelectorFactory implements FormWidgetFactory {
     }
 
     private void createNumberSelector(CustomTextView textView) {
+        Spinner spinner = (Spinner) textView.getTag(R.id.number_selector_spinner);
         spinner.performClick();
-        setBackgrounds(textView);
     }
 
     @Override
@@ -211,15 +215,17 @@ public class NumberSelectorFactory implements FormWidgetFactory {
 
     @SuppressLint("NewApi")
     private void createTextViews(Context context, JSONObject jsonObject, LinearLayout linearLayout, CommonListener listener, String stepName) throws JSONException {
-
+        int startSelectionNumber = jsonObject.optInt(JsonFormConstants.START_SELECTION_NUMBER, 1);
         int width = ImageUtils.getDeviceWidth(context);
         width = (int) (width - context.getResources().getDimension(R.dimen.native_selector_total_screen_size_padding));
         int numberOfSelectors = jsonObject.optInt(JsonFormConstants.NUMBER_OF_SELECTORS, 5);
         int maxValue = jsonObject.optInt(JsonFormConstants.MAX_SELECTION_VALUE, 20);
-
         for (int i = 0; i < numberOfSelectors; i++) {
             CustomTextView customTextView = createCustomView(context, jsonObject, width, numberOfSelectors, listener, linearLayout, i);
             if (i == numberOfSelectors - 1 && numberOfSelectors - 1 < maxValue) {
+                spinner = createDialogSpinner(context, jsonObject, (startSelectionNumber + (numberOfSelectors - 1)), listener, stepName);
+                spinner.setTag(R.id.number_selector_textview, customTextView);
+                customTextView.setTag(R.id.number_selector_spinner, spinner);
                 customTextView.setOnClickListener(selectedNumberClickListener);
             } else {
                 customTextView.setOnClickListener(listener);
@@ -227,8 +233,9 @@ public class NumberSelectorFactory implements FormWidgetFactory {
             linearLayout.addView(customTextView);
         }
 
-        spinner = createDialogSpinner(context, jsonObject, numberOfSelectors, listener, stepName);
-        linearLayout.addView(spinner);
+        if (spinner != null) {
+            linearLayout.addView(spinner);
+        }
     }
 
     public String getText(int item, int startSelectionNumber, int numberOfSelectors, int maxValue) {
@@ -266,9 +273,9 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         setDefaultColor(context, customTextView, item, numberOfSelectors, textColor);
         customTextView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         customTextView.setClickable(true);
-        customTextView.setTag(R.id.number_selector_textview_item, item);
-        customTextView.setTag(R.id.number_selector_textview_number_of_selectors, numberOfSelectors);
-        customTextView.setTag(R.id.number_selector_textview_max_number, maxValue);
+        customTextView.setTag(R.id.number_selector_item, item);
+        customTextView.setTag(R.id.number_selector_number_of_selectors, numberOfSelectors);
+        customTextView.setTag(R.id.number_selector_max_number, maxValue);
         customTextView.setTag(R.id.number_selector_default_text_color, textColor);
         customTextView.setTag(R.id.number_selector_selected_text_color, selectedTextColor);
         customTextView.setTag(R.id.number_selector_start_selection_number, startSelectionNumber);
@@ -280,10 +287,9 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         customTextView.setTag(R.id.openmrs_entity, openMrsEntity);
         customTextView.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         if (item == numberOfSelectors - 1) {
-            customTextView.setTag(R.id.number_selector_textview_layout, linearLayout);
-            customTextView.setTag(R.id.number_selector_textview_jsonObject, jsonObject);
+            customTextView.setTag(R.id.number_selector_layout, linearLayout);
+            customTextView.setTag(R.id.number_selector_jsonObject, jsonObject);
         }
-        customTextView.setOnClickListener(selectedNumberClickListener);
 
         return customTextView;
     }

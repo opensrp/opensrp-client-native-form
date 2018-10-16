@@ -478,6 +478,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         String openMrsEntityParent = (String) parent.getTag(R.id.openmrs_entity_parent);
         String openMrsEntity = (String) parent.getTag(R.id.openmrs_entity);
         String openMrsEntityId = (String) parent.getTag(R.id.openmrs_entity_id);
+        CustomTextView customTextView = (CustomTextView) parent.getTag(R.id.number_selector_textview);
         if (position >= 0) {
             String value = (String) parent.getItemAtPosition(position);
             getView().writeValue(mStepName, parentKey, value, openMrsEntityParent, openMrsEntity,
@@ -485,13 +486,20 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         }
 
         if (JsonFormConstants.NUMBER_SELECTORS.equals(type)) {
+            NumberSelectorFactory.setBackgrounds(customTextView);
+            NumberSelectorFactory.setSelectedTextViews(customTextView);
             NumberSelectorFactory.setSelectedTextViewText((String) parent.getItemAtPosition(position));
         }
     }
 
     private void createNumberSelector(View view) {
         CustomTextView customTextView = (CustomTextView) view;
-        NumberSelectorFactory.setBackgrounds(customTextView);
+        int item = (int) customTextView.getTag(R.id.number_selector_item);
+        int numberOfSelectors = (int) customTextView.getTag(R.id.number_selector_number_of_selectors);
+        if (item < numberOfSelectors - 1) {
+            NumberSelectorFactory.setBackgrounds(customTextView);
+        }
+        NumberSelectorFactory.setSelectedTextViews(customTextView);
         String parentKey = (String) customTextView.getTag(R.id.key);
         String openMrsEntityParent = (String) customTextView.getTag(R.id.openmrs_entity_parent);
         String openMrsEntity = (String) customTextView.getTag(R.id.openmrs_entity);
