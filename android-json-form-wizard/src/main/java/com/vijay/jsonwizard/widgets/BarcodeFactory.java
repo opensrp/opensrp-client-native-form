@@ -134,6 +134,7 @@ public class BarcodeFactory implements FormWidgetFactory {
             });
 
             Button scanButton = (Button) rootLayout.findViewById(R.id.scan_button);
+            scanButton.setBackgroundColor(context.getResources().getColor(R.color.primary));
             scanButton.setText(jsonObject.getString("scanButtonText"));
             scanButton.setOnClickListener(new View.OnClickListener() {
                 @Override
