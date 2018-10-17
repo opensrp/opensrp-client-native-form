@@ -57,7 +57,7 @@
   "step1": {
     "title": "Birth Registration",
     "fields": [
-      /* {
+       {
          "key": "Child_Photo",
          "openmrs_entity_parent": "",
          "openmrs_entity": "",
@@ -1151,7 +1151,7 @@
          "v_required": {
            "value": true
          }
-       },*/
+       },
       {
         "key": "tobacco_user",
         "openmrs_entity_parent": "",
