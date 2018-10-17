@@ -18,7 +18,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -29,6 +28,7 @@ import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.CheckBox;
 import com.vijay.jsonwizard.customviews.MaterialSpinner;
+import com.vijay.jsonwizard.customviews.NativeEditText;
 import com.vijay.jsonwizard.customviews.RadioButton;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
@@ -87,8 +87,8 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
     }
 
     public static ValidationStatus validate(JsonFormFragmentView formFragmentView, View childAt, boolean requestFocus) {
-        if (childAt instanceof EditText) {
-            EditText editText = (EditText) childAt;
+        if (childAt instanceof NativeEditText) {
+            NativeEditText editText = (NativeEditText) childAt;
             ValidationStatus validationStatus = NativeEditTextFactory.validate(formFragmentView, editText);
             if (!validationStatus.isValid()) {
                 if (requestFocus) validationStatus.requestAttention();
@@ -210,6 +210,16 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
 
             if (childAt instanceof MaterialEditText) {
                 MaterialEditText editText = (MaterialEditText) childAt;
+
+                String rawValue = (String) editText.getTag(R.id.raw_value);
+                if (rawValue == null) {
+                    rawValue = editText.getText().toString();
+                }
+
+                getView().writeValue(mStepName, key, rawValue,
+                        openMrsEntityParent, openMrsEntity, openMrsEntityId);
+            } else if (childAt instanceof NativeEditText) {
+                NativeEditText editText = (NativeEditText) childAt;
 
                 String rawValue = (String) editText.getTag(R.id.raw_value);
                 if (rawValue == null) {

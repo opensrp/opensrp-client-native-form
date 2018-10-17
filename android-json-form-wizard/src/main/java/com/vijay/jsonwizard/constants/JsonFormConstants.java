@@ -68,6 +68,7 @@ public class JsonFormConstants {
     public static final String REPORT_MONTH = "report_month";
     public static final String HORIZONTAL_LINE = "h_line";
     public static final String NATIVE_RADIO_BUTTON = "native_radio";
+    public static final String NATIVE_RADIO_BUTTON_MULTI_RELEVANCE = "multi_relevance";
     public static final String NATIVE_RADIO_SPECIFY_INFO = "specify_info";
     public static final String NATIVE_RADIO_SPECIFY_INFO_COLOR = "specify_info_color";
     public static final String NATIVE_RADIO_EXTRA_INFO = "extra_info";
@@ -90,6 +91,7 @@ public class JsonFormConstants {
     public static final String NORMAL = "normal";
     public static final String ITALIC = "italic";
     public static final String BOLD_ITALIC = "bold_italic";
+
     public static class JSON_FORM_KEY {
         public static final String EX_CHECKBOX = "ex-checkbox";
         public static final String OR = "or";
