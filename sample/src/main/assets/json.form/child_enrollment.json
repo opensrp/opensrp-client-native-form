@@ -352,6 +352,8 @@
         "openmrs_data_type": "select one",
         "type": "spinner",
         "hint": "Place of birth *",
+        "label_info_title":"Place of birth spinner",
+        "label_info_text":"here is some text on this dialog",
         "values": [
           "Health facility",
           "Home"

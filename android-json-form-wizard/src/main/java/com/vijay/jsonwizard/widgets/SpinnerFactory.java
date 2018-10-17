@@ -5,8 +5,9 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
-import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.MaterialSpinner;
@@ -14,6 +15,7 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
@@ -34,10 +36,14 @@ public class SpinnerFactory implements FormWidgetFactory {
         String openMrsEntity = jsonObject.getString("openmrs_entity");
         String openMrsEntityId = jsonObject.getString("openmrs_entity_id");
         String relevance = jsonObject.optString("relevance");
+        String labelInfoText = jsonObject.optString(JsonFormConstants.LABEL_INFO_TEXT,"");
+        String labelInfoTitle = jsonObject.optString(JsonFormConstants.LABEL_INFO_TITLE,"");
 
         List<View> views = new ArrayList<>(1);
         JSONArray canvasIds = new JSONArray();
-        MaterialSpinner spinner = (MaterialSpinner) LayoutInflater.from(context).inflate(R.layout.native_form_item_spinner, null);
+        RelativeLayout spinnerRelativeLayout = (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.native_form_item_spinner, null);
+        MaterialSpinner spinner = spinnerRelativeLayout.findViewById(R.id.material_spinner);
+        ImageView spinnerInfoIconImageView = spinnerRelativeLayout.findViewById(R.id.spinner_info_icon);
 
         String hint = jsonObject.optString(JsonFormConstants.HINT);
         if (!TextUtils.isEmpty(hint)) {
@@ -45,7 +51,7 @@ public class SpinnerFactory implements FormWidgetFactory {
             spinner.setFloatingLabelText(jsonObject.getString(JsonFormConstants.HINT));
         }
 
-        spinner.setId(ViewUtil.generateViewId());
+       // spinner.setId(ViewUtil.generateViewId());
         canvasIds.put(spinner.getId());
 
         spinner.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
@@ -96,12 +102,14 @@ public class SpinnerFactory implements FormWidgetFactory {
             spinner.setOnItemSelectedListener(listener);
         }
         ((JsonApi) context).addFormDataView(spinner);
-        views.add(spinner);
+       // views.add(spinner);
+        FormUtils.showInfoIcon(jsonObject,listener,labelInfoText,labelInfoTitle,spinnerInfoIconImageView);
         spinner.setTag(R.id.canvas_ids, canvasIds.toString());
         if (relevance != null && context instanceof JsonApi) {
             spinner.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(spinner);
         }
+        views.add(spinnerRelativeLayout);
         return views;
     }
 
