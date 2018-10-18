@@ -26,9 +26,9 @@
     <dimen name="default_checkbox_height">25dp</dimen>
     <dimen name="default_checkbox_width">25dp</dimen>
     <dimen name="radio_button_icon_text_padding">30dp</dimen>
-    <dimen name="default_label_text_size">16px</dimen>
-    <dimen name="options_default_text_size">15px</dimen>
-    <dimen name="options_extra_info_text_size">3px</dimen>
+    <dimen name="default_label_text_size">7dp</dimen>
+    <dimen name="options_default_text_size">6dp</dimen>
+    <dimen name="options_extra_info_text_size">6dp</dimen>
     <dimen name="native_radio_button_padding">20dp</dimen>
     <dimen name="native_radio_button_text_view_initial_left_margin">55dp</dimen>
     <dimen name="native_radio_button_text_view_height">32dp</dimen>
