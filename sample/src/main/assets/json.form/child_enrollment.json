@@ -57,7 +57,7 @@
   "step1": {
     "title": "Birth Registration",
     "fields": [
-      /*{
+      {
         "key": "Child_Photo",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -352,8 +352,8 @@
         "openmrs_data_type": "select one",
         "type": "spinner",
         "hint": "Place of birth *",
-        "label_info_title":"Place of birth spinner",
-        "label_info_text":"here is some text on this dialog",
+        "label_info_title": "Place of birth spinner",
+        "label_info_text": "here is some text on this dialog",
         "values": [
           "Health facility",
           "Home"
@@ -1212,29 +1212,6 @@
               }
             ]
           }
-        }
-      }*/
-      {
-        "key": "Place_Birth",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "concept",
-        "openmrs_entity_id": "1572AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-        "openmrs_data_type": "select one",
-        "type": "spinner",
-        "hint": "Place of birth *",
-        "label_info_title": "Place of birth spinner",
-        "label_info_text": "here is some text on this dialog",
-        "values": [
-          "Health facility",
-          "Home"
-        ],
-        "openmrs_choice_ids": {
-          "Health facility": "1588AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-          "Home": "1536AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-        },
-        "v_required": {
-          "value": true,
-          "err": "Please enter the place of birth"
         }
       }
     ]
