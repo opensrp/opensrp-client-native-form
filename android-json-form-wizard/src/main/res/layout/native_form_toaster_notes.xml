@@ -51,7 +51,7 @@
             android:contentDescription="@string/info_label"
             android:focusable="true"
             android:src="@drawable/ic_icon_info_filled"
-            android:visibility="visible" />
+            android:visibility="gone" />
 
     </RelativeLayout>
 
