@@ -352,6 +352,8 @@
         "openmrs_data_type": "select one",
         "type": "spinner",
         "hint": "Place of birth *",
+        "label_info_title": "Place of birth spinner",
+        "label_info_text": "here is some text on this dialog",
         "values": [
           "Health facility",
           "Home"
@@ -1097,7 +1099,7 @@
         "number_of_selectors": "5",
         "start_number": "1",
         "max_value": "20",
-        "text_size": "16px",
+        "text_size": "18px",
         "text_color": "#000000",
         "selected_text_color": "#ffffff",
         "v_required": {
@@ -1121,7 +1123,7 @@
         "number_of_selectors": "5",
         "start_number": "0",
         "max_value": "20",
-        "text_size": "16px",
+        "text_size": "18px",
         "text_color": "#000000",
         "selected_text_color": "#ffffff",
         "v_required": {
@@ -1145,7 +1147,7 @@
         "number_of_selectors": "5",
         "start_number": "10",
         "max_value": "20",
-        "text_size": "16px",
+        "text_size": "18px",
         "text_color": "#000000",
         "selected_text_color": "#ffffff",
         "v_required": {

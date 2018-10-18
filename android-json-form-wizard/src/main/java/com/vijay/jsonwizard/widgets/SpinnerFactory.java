@@ -5,6 +5,8 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
@@ -14,6 +16,7 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
@@ -28,16 +31,52 @@ import java.util.List;
  */
 public class SpinnerFactory implements FormWidgetFactory {
 
+    public static ValidationStatus validate(JsonFormFragmentView formFragmentView,
+                                            MaterialSpinner spinner) {
+        if (!(spinner.getTag(R.id.v_required) instanceof String) || !(spinner.getTag(R.id.error) instanceof String)) {
+            return new ValidationStatus(true, null, formFragmentView, spinner);
+        }
+        Boolean isRequired = Boolean.valueOf((String) spinner.getTag(R.id.v_required));
+        if (!isRequired || !spinner.isEnabled()) {
+            return new ValidationStatus(true, null, formFragmentView, spinner);
+        }
+        int selectedItemPosition = spinner.getSelectedItemPosition();
+        if (selectedItemPosition > 0) {
+            return new ValidationStatus(true, null, formFragmentView, spinner);
+        }
+        return new ValidationStatus(false, (String) spinner.getTag(R.id.error), formFragmentView, spinner);
+    }
+
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
         String openMrsEntityParent = jsonObject.getString("openmrs_entity_parent");
         String openMrsEntity = jsonObject.getString("openmrs_entity");
         String openMrsEntityId = jsonObject.getString("openmrs_entity_id");
         String relevance = jsonObject.optString("relevance");
+        String labelInfoText = jsonObject.optString(JsonFormConstants.LABEL_INFO_TEXT, "");
+        String labelInfoTitle = jsonObject.optString(JsonFormConstants.LABEL_INFO_TITLE, "");
 
         List<View> views = new ArrayList<>(1);
         JSONArray canvasIds = new JSONArray();
-        MaterialSpinner spinner = (MaterialSpinner) LayoutInflater.from(context).inflate(R.layout.native_form_item_spinner, null);
+        RelativeLayout spinnerRelativeLayout = (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.native_form_item_spinner, null);
+        spinnerRelativeLayout.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+        spinnerRelativeLayout.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
+        spinnerRelativeLayout.setTag(R.id.openmrs_entity, openMrsEntity);
+        spinnerRelativeLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
+        spinnerRelativeLayout.setTag(R.id.type, jsonObject.getString("type"));
+        spinnerRelativeLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+        spinnerRelativeLayout.setId(ViewUtil.generateViewId());
+        canvasIds.put(spinnerRelativeLayout.getId());
+        spinnerRelativeLayout.setTag(R.id.canvas_ids, canvasIds.toString());
+
+        if (relevance != null && context instanceof JsonApi) {
+            spinnerRelativeLayout.setTag(R.id.relevance, relevance);
+            ((JsonApi) context).addSkipLogicView(spinnerRelativeLayout);
+        }
+
+
+        MaterialSpinner spinner = spinnerRelativeLayout.findViewById(R.id.material_spinner);
+        ImageView spinnerInfoIconImageView = spinnerRelativeLayout.findViewById(R.id.spinner_info_icon);
 
         String hint = jsonObject.optString(JsonFormConstants.HINT);
         if (!TextUtils.isEmpty(hint)) {
@@ -45,7 +84,7 @@ public class SpinnerFactory implements FormWidgetFactory {
             spinner.setFloatingLabelText(jsonObject.getString(JsonFormConstants.HINT));
         }
 
-        spinner.setId(ViewUtil.generateViewId());
+        // spinner.setId(ViewUtil.generateViewId());
         canvasIds.put(spinner.getId());
 
         spinner.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
@@ -96,28 +135,10 @@ public class SpinnerFactory implements FormWidgetFactory {
             spinner.setOnItemSelectedListener(listener);
         }
         ((JsonApi) context).addFormDataView(spinner);
-        views.add(spinner);
+        // views.add(spinner);
+        FormUtils.showInfoIcon(jsonObject, listener, labelInfoText, labelInfoTitle, spinnerInfoIconImageView);
         spinner.setTag(R.id.canvas_ids, canvasIds.toString());
-        if (relevance != null && context instanceof JsonApi) {
-            spinner.setTag(R.id.relevance, relevance);
-            ((JsonApi) context).addSkipLogicView(spinner);
-        }
+        views.add(spinnerRelativeLayout);
         return views;
-    }
-
-    public static ValidationStatus validate(JsonFormFragmentView formFragmentView,
-                                            MaterialSpinner spinner) {
-        if (!(spinner.getTag(R.id.v_required) instanceof String) || !(spinner.getTag(R.id.error) instanceof String)) {
-            return new ValidationStatus(true, null, formFragmentView, spinner);
-        }
-        Boolean isRequired = Boolean.valueOf((String) spinner.getTag(R.id.v_required));
-        if (!isRequired || !spinner.isEnabled()) {
-            return new ValidationStatus(true, null, formFragmentView, spinner);
-        }
-        int selectedItemPosition = spinner.getSelectedItemPosition();
-        if (selectedItemPosition > 0) {
-            return new ValidationStatus(true, null, formFragmentView, spinner);
-        }
-        return new ValidationStatus(false, (String) spinner.getTag(R.id.error), formFragmentView, spinner);
     }
 }
