@@ -7,15 +7,14 @@ import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.RelativeLayout;
 
-import com.rengwuxian.materialedittext.validation.METValidator;
 import com.rengwuxian.materialedittext.validation.RegexpValidator;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.GenericTextWatcher;
+import com.vijay.jsonwizard.customviews.NativeEditText;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
@@ -37,54 +36,15 @@ import java.util.List;
  * Created by vijay on 24-05-2015.
  */
 public class NativeEditTextFactory implements FormWidgetFactory {
-
-    private static List<METValidator> validators;
-
-    public static List<METValidator> validators() {
-        return validators;
-    }
-
     public static ValidationStatus validate(JsonFormFragmentView formFragmentView,
-                                            EditText editText) {
+                                            NativeEditText editText) {
         if (editText.isEnabled()) {
-            boolean validate = validate(editText);
+            boolean validate = editText.validate();
             if (!validate) {
                 return new ValidationStatus(false, editText.getError().toString(), formFragmentView, editText);
             }
         }
         return new ValidationStatus(true, null, formFragmentView, editText);
-    }
-
-    private static boolean validate(EditText editText) {
-        if (validators == null || validators.isEmpty()) {
-            return true;
-        }
-
-        CharSequence text = editText.getText();
-        boolean isEmpty = text.length() == 0;
-
-        boolean isValid = true;
-        for (METValidator validator : validators) {
-            //noinspection ConstantConditions
-            isValid = isValid && validator.isValid(text, isEmpty);
-            if (!isValid) {
-                editText.setError(validator.getErrorMessage());
-                break;
-            }
-        }
-        if (isValid) {
-            editText.setError(null);
-        }
-
-        editText.postInvalidate();
-        return isValid;
-    }
-
-    public void addValidator(METValidator validator) {
-        if (validators == null) {
-            validators = new ArrayList<>();
-        }
-        validators.add(validator);
     }
 
     @Override
@@ -94,14 +54,14 @@ public class NativeEditTextFactory implements FormWidgetFactory {
 
         RelativeLayout rootLayout = (RelativeLayout) LayoutInflater.from(context).inflate(
                 getLayout(), null);
-        EditText editText = rootLayout.findViewById(R.id.normal_edit_text);
+        NativeEditText editText = rootLayout.findViewById(R.id.normal_edit_text);
 
         makeFromJson(stepName, context, formFragment, jsonObject, editText);
 
-        addRequiredValidator(jsonObject);
-        addRegexValidator(jsonObject);
-        addEmailValidator(jsonObject);
-        addUrlValidator(jsonObject);
+        addRequiredValidator(jsonObject, editText);
+        addRegexValidator(jsonObject, editText);
+        addEmailValidator(jsonObject, editText);
+        addUrlValidator(jsonObject, editText);
         addNumericValidator(jsonObject, editText);
         addNumericIntegerValidator(jsonObject, editText);
 
@@ -116,7 +76,7 @@ public class NativeEditTextFactory implements FormWidgetFactory {
     }
 
     protected void makeFromJson(String stepName, Context context, JsonFormFragment formFragment,
-                                JSONObject jsonObject, EditText editText) throws Exception {
+                                JSONObject jsonObject, NativeEditText editText) throws Exception {
 
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
@@ -182,32 +142,32 @@ public class NativeEditTextFactory implements FormWidgetFactory {
         return R.layout.native_form_normal_edit_text;
     }
 
-    private void addRequiredValidator(JSONObject jsonObject) throws JSONException {
+    private void addRequiredValidator(JSONObject jsonObject, NativeEditText editText) throws JSONException {
         JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
         if (requiredObject != null) {
             String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
             if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
-                addValidator(new RequiredValidator(requiredObject.getString(JsonFormConstants.ERR)));
+                editText.addValidator(new RequiredValidator(requiredObject.getString(JsonFormConstants.ERR)));
             }
         }
     }
 
-    private void addRegexValidator(JSONObject jsonObject) throws JSONException {
+    private void addRegexValidator(JSONObject jsonObject, NativeEditText editText) throws JSONException {
         JSONObject regexObject = jsonObject.optJSONObject(JsonFormConstants.V_REGEX);
         if (regexObject != null) {
             String regexValue = regexObject.optString(JsonFormConstants.VALUE);
             if (!TextUtils.isEmpty(regexValue)) {
-                addValidator(new RegexpValidator(regexObject.getString(JsonFormConstants.ERR), regexValue));
+                editText.addValidator(new RegexpValidator(regexObject.getString(JsonFormConstants.ERR), regexValue));
             }
         }
     }
 
-    private void addEmailValidator(JSONObject jsonObject) throws JSONException {
+    private void addEmailValidator(JSONObject jsonObject, NativeEditText editText) throws JSONException {
         JSONObject emailObject = jsonObject.optJSONObject(JsonFormConstants.V_EMAIL);
         if (emailObject != null) {
             String emailValue = emailObject.optString(JsonFormConstants.VALUE);
             if (!TextUtils.isEmpty(emailValue) && Boolean.TRUE.toString().equalsIgnoreCase(emailValue)) {
-                addValidator(new RegexpValidator(emailObject.getString(JsonFormConstants.ERR), android.util.Patterns.EMAIL_ADDRESS
+                editText.addValidator(new RegexpValidator(emailObject.getString(JsonFormConstants.ERR), android.util.Patterns.EMAIL_ADDRESS
                         .toString()));
             }
 
@@ -215,59 +175,59 @@ public class NativeEditTextFactory implements FormWidgetFactory {
 
     }
 
-    private void addUrlValidator(JSONObject jsonObject) throws JSONException {
+    private void addUrlValidator(JSONObject jsonObject, NativeEditText editText) throws JSONException {
         JSONObject urlObject = jsonObject.optJSONObject(JsonFormConstants.V_URL);
         if (urlObject != null) {
             String urlValue = urlObject.optString(JsonFormConstants.VALUE);
             if (!TextUtils.isEmpty(urlValue) && Boolean.TRUE.toString().equalsIgnoreCase(urlValue)) {
-                addValidator(new RegexpValidator(urlObject.getString(JsonFormConstants.ERR), Patterns.WEB_URL.toString()));
+                editText.addValidator(new RegexpValidator(urlObject.getString(JsonFormConstants.ERR), Patterns.WEB_URL.toString()));
             }
 
         }
     }
 
-    private void addNumericValidator(JSONObject jsonObject, EditText editText) throws JSONException {
+    private void addNumericValidator(JSONObject jsonObject, NativeEditText editText) throws JSONException {
         JSONObject numericObject = jsonObject.optJSONObject(JsonFormConstants.V_NUMERIC);
         if (numericObject != null) {
             String numericValue = numericObject.optString(JsonFormConstants.VALUE);
             if (!TextUtils.isEmpty(numericValue) && Boolean.TRUE.toString().equalsIgnoreCase(numericValue)) {
                 editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                addValidator(new RegexpValidator(numericObject.getString(JsonFormConstants.ERR),
+                editText.addValidator(new RegexpValidator(numericObject.getString(JsonFormConstants.ERR),
                         "[0-9]*\\.?[0-9]*"));
 
                 if (jsonObject.has(JsonFormConstants.V_MIN)) {
                     JSONObject minValidation = jsonObject.getJSONObject(JsonFormConstants.V_MIN);
-                    addValidator(new MinNumericValidator(minValidation.getString(JsonFormConstants.ERR),
+                    editText.addValidator(new MinNumericValidator(minValidation.getString(JsonFormConstants.ERR),
                             Double.parseDouble(minValidation.getString(JsonFormConstants.VALUE))));
                 }
 
                 if (jsonObject.has(JsonFormConstants.V_MAX)) {
                     JSONObject minValidation = jsonObject.getJSONObject(JsonFormConstants.V_MAX);
-                    addValidator(new MaxNumericValidator(minValidation.getString(JsonFormConstants.ERR),
+                    editText.addValidator(new MaxNumericValidator(minValidation.getString(JsonFormConstants.ERR),
                             Double.parseDouble(minValidation.getString(JsonFormConstants.VALUE))));
                 }
             }
         }
     }
 
-    private void addNumericIntegerValidator(JSONObject jsonObject, EditText editText) throws JSONException {
+    private void addNumericIntegerValidator(JSONObject jsonObject, NativeEditText editText) throws JSONException {
         JSONObject numericIntegerObject = jsonObject.optJSONObject(JsonFormConstants.V_NUMERIC_INTEGER);
         if (numericIntegerObject != null) {
             String numericValue = numericIntegerObject.optString(JsonFormConstants.VALUE);
             if (!TextUtils.isEmpty(numericValue) && Boolean.TRUE.toString().equalsIgnoreCase(numericValue)) {
                 editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
-                addValidator(new RegexpValidator(numericIntegerObject.getString(JsonFormConstants.ERR),
+                editText.addValidator(new RegexpValidator(numericIntegerObject.getString(JsonFormConstants.ERR),
                         "\\d*"));
 
                 if (jsonObject.has(JsonFormConstants.V_MIN)) {
                     JSONObject minValidation = jsonObject.getJSONObject(JsonFormConstants.V_MIN);
-                    addValidator(new MinNumericValidator(minValidation.getString(JsonFormConstants.ERR),
+                    editText.addValidator(new MinNumericValidator(minValidation.getString(JsonFormConstants.ERR),
                             Double.parseDouble(minValidation.getString(JsonFormConstants.VALUE))));
                 }
 
                 if (jsonObject.has(JsonFormConstants.V_MAX)) {
                     JSONObject minValidation = jsonObject.getJSONObject(JsonFormConstants.V_MAX);
-                    addValidator(new MaxNumericValidator(minValidation.getString(JsonFormConstants.ERR),
+                    editText.addValidator(new MaxNumericValidator(minValidation.getString(JsonFormConstants.ERR),
                             Double.parseDouble(minValidation.getString(JsonFormConstants.VALUE))));
                 }
             }

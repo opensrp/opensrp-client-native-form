@@ -525,6 +525,24 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     }
                 }
 
+            } else if (object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
+                Boolean multiRelevance = object.optBoolean(JsonFormConstants.NATIVE_RADIO_BUTTON_MULTI_RELEVANCE, false);
+                if (multiRelevance) {
+                    JSONArray jsonArray = object.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
+                    for (int j = 0; j < jsonArray.length(); j++) {
+                        if (object.has(JsonFormConstants.VALUE)) {
+                            if (object.getString(JsonFormConstants.VALUE).equals(jsonArray.getJSONObject(j).getString(JsonFormConstants.KEY))) {
+                                result.put(jsonArray.getJSONObject(j).getString(JsonFormConstants.KEY), String.valueOf(true));
+                            } else {
+                                result.put(jsonArray.getJSONObject(j).getString(JsonFormConstants.KEY), String.valueOf(false));
+                            }
+                        } else {
+                            Log.e(TAG, "option for Key " + jsonArray.getJSONObject(j).getString(JsonFormConstants.KEY) + " has NO value");
+                        }
+                    }
+                } else {
+                    result.put(JsonFormConstants.VALUE, object.optString(JsonFormConstants.VALUE));
+                }
             } else {
                 result.put(JsonFormConstants.VALUE, object.optString(JsonFormConstants.VALUE));
             }
