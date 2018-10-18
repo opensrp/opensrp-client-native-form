@@ -331,6 +331,8 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             case JsonFormConstants.NUMBER_SELECTORS:
                 createNumberSelector(v);
                 break;
+            case JsonFormConstants.SPINNER:
+                showInformationDialog(v);
             default:
                 break;
         }
