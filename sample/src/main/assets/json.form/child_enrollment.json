@@ -57,7 +57,7 @@
   "step1": {
     "title": "Birth Registration",
     "fields": [
-      {
+      /*{
         "key": "Child_Photo",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -1152,6 +1152,89 @@
         "selected_text_color": "#ffffff",
         "v_required": {
           "value": true
+        }
+      },
+      {
+        "key": "tobacco_user",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Uses tobacco products?",
+        "multi_relevance": true,
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "no",
+            "text": "No",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "recently_quit",
+            "text": "Recently quit",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Please select if you use any tobacco products"
+        }
+      },
+      {
+        "key": "tobacco_cessation_toaster",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Tobacco cessation counseling",
+        "text_color": "#000000",
+        "toaster_info_text": "Healthcare providers should routinely offer advice and psycho-social interventions for tobacco cessation to all pregnant women who are either current tobacco users or recent tobacco quitters.",
+        "toaster_info_title": "Tobacco cessation counseling",
+        "toaster_type": "problem",
+        "relevance": {
+          "step1:tobacco_user": {
+            "ex-checkbox": [
+              {
+                "or": [
+                  "yes",
+                  "recently_quit"
+                ]
+              }
+            ]
+          }
+        }
+      }*/
+      {
+        "key": "Place_Birth",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "concept",
+        "openmrs_entity_id": "1572AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "openmrs_data_type": "select one",
+        "type": "spinner",
+        "hint": "Place of birth *",
+        "label_info_title": "Place of birth spinner",
+        "label_info_text": "here is some text on this dialog",
+        "values": [
+          "Health facility",
+          "Home"
+        ],
+        "openmrs_choice_ids": {
+          "Health facility": "1588AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+          "Home": "1536AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        },
+        "v_required": {
+          "value": true,
+          "err": "Please enter the place of birth"
         }
       }
     ]
