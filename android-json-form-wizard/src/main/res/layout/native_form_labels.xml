@@ -7,7 +7,17 @@
     <com.vijay.jsonwizard.views.CustomTextView
         android:id="@+id/label_text"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_toStartOf="@+id/label_info"
+        android:layout_toLeftOf="@+id/label_info"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp" />
 
     <ImageView
         android:id="@+id/label_info"
@@ -16,8 +26,6 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_gravity="center_vertical"
-        android:layout_toLeftOf="@+id/label_text"
-        android:layout_toStartOf="@+id/label_text"
         android:contentDescription="@string/info_label"
         android:src="@drawable/ic_icon_info_filled"
         android:visibility="gone" />
