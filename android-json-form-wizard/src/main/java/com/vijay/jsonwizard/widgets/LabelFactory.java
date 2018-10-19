@@ -29,6 +29,8 @@ import java.util.List;
  * Created by vijay on 24-05-2015.
  */
 public class LabelFactory implements FormWidgetFactory {
+    private CustomTextView numberText;
+
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener
             listener) throws Exception {
@@ -76,6 +78,7 @@ public class LabelFactory implements FormWidgetFactory {
     private void createLabelTextView(JSONObject jsonObject, Context context, RelativeLayout relativeLayout) throws JSONException {
         boolean hintOnText = jsonObject.optBoolean("hint_on_text", false);
         boolean hasBg = jsonObject.optBoolean("has_bg", false);
+        String labelNumber = jsonObject.optString(JsonFormConstants.LABEL_NUMBER, null);
 
         String bgColor = null;
         String topPadding = null;
@@ -99,9 +102,16 @@ public class LabelFactory implements FormWidgetFactory {
                 .dimen.default_label_text_size))), context);
 
         CustomTextView labelText = relativeLayout.findViewById(R.id.label_text);
+        if (labelNumber != null) {
+            numberText = relativeLayout.findViewById(R.id.label_text_number);
+            numberText.setVisibility(View.VISIBLE);
+        }
 
         if (bgColorInt != 0) {
             labelText.setBackgroundColor(bgColorInt);
+            if (labelNumber != null) {
+                numberText.setBackgroundColor(bgColorInt);
+            }
         }
 
         if (hasBg) {
@@ -111,18 +121,32 @@ public class LabelFactory implements FormWidgetFactory {
                     FormUtils.getValueFromSpOrDpOrPx(rightPadding, context),
                     FormUtils.getValueFromSpOrDpOrPx(bottomPadding, context)
             );
+            if (labelNumber != null) {
+                numberText.setPadding(
+                        FormUtils.getValueFromSpOrDpOrPx(leftPadding, context),
+                        FormUtils.getValueFromSpOrDpOrPx(topPadding, context),
+                        FormUtils.getValueFromSpOrDpOrPx(rightPadding, context),
+                        FormUtils.getValueFromSpOrDpOrPx(bottomPadding, context));
+            }
         }
-        String textStyle = jsonObject.optString(JsonFormConstants.TEXT_STYLE,JsonFormConstants.NORMAL);
-        FormUtils.setTextStyle(textStyle,labelText);
+        String textStyle = jsonObject.optString(JsonFormConstants.TEXT_STYLE, JsonFormConstants.NORMAL);
+        FormUtils.setTextStyle(textStyle, labelText);
         labelText.setTextSize(labelTextSize);
         labelText.setEnabled(!jsonObject.optBoolean(JsonFormConstants.READ_ONLY, false));//Gotcha: Should be set before createLabelText is used
         labelText.setHintOnText(hintOnText);//Gotcha: Should be set before createLabelText is used
         labelText.setText(createLabelText(jsonObject));
 
+        if (labelNumber != null) {
+            FormUtils.setTextStyle(JsonFormConstants.BOLD, numberText);
+            numberText.setTextSize(labelTextSize);
+            numberText.setEnabled(!jsonObject.optBoolean(JsonFormConstants.READ_ONLY, false));//Gotcha: Should be set before createLabelText is used
+            numberText.setText(labelNumber + ".");
+        }
+
     }
 
     /**
-     * Generates the spanned texted to be passed to the label Custom TextView
+     * Generates the spanned text to be passed to the label Custom TextView
      *
      * @param jsonObject
      * @return
