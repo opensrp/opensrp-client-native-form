@@ -73,7 +73,7 @@ public class ToasterNotesFactory implements FormWidgetFactory {
             case JsonFormConstants.TOASTER_INFO:
                 toasterRelativeLayout.setBackgroundResource(R.drawable.toaster_notes_info);
                 toasterNoteImageView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_icon_info));
-                toasterNoteInfo.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_info_blue));
+                toasterNoteInfo.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_info_info));
                 break;
             case JsonFormConstants.TOASTER_POSITIVE:
                 toasterRelativeLayout.setBackgroundResource(R.drawable.toaster_notes_positive);
