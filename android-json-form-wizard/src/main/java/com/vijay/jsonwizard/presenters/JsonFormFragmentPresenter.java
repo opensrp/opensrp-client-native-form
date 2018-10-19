@@ -438,7 +438,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
 
             JSONObject formObjectForStep = getFormObjectForStep(mStepName, parentKey);
 
-            if (formObjectForStep != null) {
+            if (formObjectForStep != null && formObjectForStep.has(JsonFormConstants.JSON_FORM_KEY.EXCLUSIVE)) {
                 try {
 
                     JSONArray exclusiveArray = formObjectForStep.getJSONArray(JsonFormConstants.JSON_FORM_KEY.EXCLUSIVE);
