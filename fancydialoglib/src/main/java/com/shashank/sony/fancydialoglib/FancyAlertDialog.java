@@ -134,13 +134,13 @@ public class FancyAlertDialog {
         }
 
         //set Positive listener
-        public Builder OnPositiveClicked(FancyAlertDialogListener pListener){
+        public Builder onPositiveClicked(FancyAlertDialogListener pListener){
             this.pListener=pListener;
             return this;
         }
 
         //set Negative listener
-        public Builder OnNegativeClicked(FancyAlertDialogListener nListener){
+        public Builder onNegativeClicked(FancyAlertDialogListener nListener){
             this.nListener=nListener;
             return this;
         }
