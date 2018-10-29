@@ -5,17 +5,24 @@
     android:orientation="horizontal">
 
     <com.vijay.jsonwizard.views.CustomTextView
-        android:id="@+id/label_text"
-        android:layout_width="match_parent"
+        android:id="@+id/label_text_number"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginLeft="0dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginRight="0dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:textAlignment="center"
+        android:visibility="gone" />
+
+    <com.vijay.jsonwizard.views.CustomTextView
+        android:id="@+id/label_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_toStartOf="@+id/label_info"
         android:layout_toLeftOf="@+id/label_info"
+        android:layout_toEndOf="@+id/label_text_number"
+        android:layout_toRightOf="@+id/label_text_number"
         android:paddingTop="8dp"
         android:paddingBottom="8dp" />
 

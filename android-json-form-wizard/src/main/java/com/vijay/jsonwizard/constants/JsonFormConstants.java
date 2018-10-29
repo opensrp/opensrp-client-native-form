@@ -17,6 +17,7 @@ public class JsonFormConstants {
     public static final String LABEL_TEXT_COLOR = "label_text_color";
     public static final String LABEL_INFO_TEXT = "label_info_text";
     public static final String LABEL_INFO_TITLE = "label_info_title";
+    public static final String LABEL_NUMBER = "label_number";
     public static final String CHOOSE_IMAGE = "choose_image";
     public static final String OPTIONS_FIELD_NAME = "options";
     public static final String SPINNER = "spinner";
