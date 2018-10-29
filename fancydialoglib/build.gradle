@@ -15,7 +15,7 @@ group='com.github.Shashank02051997'
 
 android {
     compileSdkVersion 28
-    buildToolsVersion "28.0.2"
+    buildToolsVersion "28.0.3"
 
 
 
