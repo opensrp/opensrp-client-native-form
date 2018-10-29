@@ -137,10 +137,13 @@ public class LabelFactory implements FormWidgetFactory {
         labelText.setText(createLabelText(jsonObject));
 
         if (labelNumber != null) {
-            FormUtils.setTextStyle(JsonFormConstants.BOLD, numberText);
+            Boolean readOnly = jsonObject.optBoolean(JsonFormConstants.READ_ONLY);
+            String labelTextColor = readOnly ? "#737373" : jsonObject.optString(JsonFormConstants.TEXT_COLOR, null);
+            FormUtils.setTextStyle(textStyle, numberText);
             numberText.setTextSize(labelTextSize);
             numberText.setEnabled(!jsonObject.optBoolean(JsonFormConstants.READ_ONLY, false));//Gotcha: Should be set before createLabelText is used
-            numberText.setText(labelNumber + ".");
+            numberText.setText(labelNumber + ". ");
+            numberText.setTextColor(Color.parseColor(labelTextColor));
         }
 
     }
