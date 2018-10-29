@@ -7,6 +7,7 @@
     android:orientation="horizontal">
 
     <com.rengwuxian.materialedittext.MaterialEditText
+        app:met_textColorHint="@color/text_hint_color"
         android:id="@+id/edit_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

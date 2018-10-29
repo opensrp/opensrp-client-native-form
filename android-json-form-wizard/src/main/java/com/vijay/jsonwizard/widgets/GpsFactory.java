@@ -60,6 +60,9 @@ public class GpsFactory implements FormWidgetFactory {
         final int canvasId = ViewUtil.generateViewId();
         rootLayout.setId(canvasId);
         final Button recordButton = (Button) rootLayout.findViewById(R.id.record_button);
+        recordButton.setBackgroundColor(context.getResources().getColor(R.color.primary));
+        recordButton.setMinHeight(0);
+        recordButton.setMinimumHeight(0);
         recordButton.setId(ViewUtil.generateViewId());
         if (jsonObject.has(JsonFormConstants.HINT)) {
             recordButton.setText(jsonObject.getString(JsonFormConstants.HINT));

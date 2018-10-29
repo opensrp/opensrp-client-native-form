@@ -33,9 +33,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by vijay on 24-05-2015.
- */
 public class EditTextFactory implements FormWidgetFactory {
     public static final int MIN_LENGTH = 0;
     public static final int MAX_LENGTH = 100;
@@ -81,8 +78,6 @@ public class EditTextFactory implements FormWidgetFactory {
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
         String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
 
-        editText.setHint(jsonObject.getString(JsonFormConstants.HINT));
-        editText.setFloatingLabelText(jsonObject.getString(JsonFormConstants.HINT));
         editText.setId(ViewUtil.generateViewId());
         editText.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
         editText.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
@@ -94,6 +89,8 @@ public class EditTextFactory implements FormWidgetFactory {
         if (!TextUtils.isEmpty(jsonObject.optString(JsonFormConstants.VALUE))) {
             editText.setText(jsonObject.optString(JsonFormConstants.VALUE));
         }
+        editText.setHint(jsonObject.getString(JsonFormConstants.HINT));
+        editText.setFloatingLabelText(jsonObject.getString(JsonFormConstants.HINT));
 
         if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
             boolean readyOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);

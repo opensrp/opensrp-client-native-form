@@ -12,11 +12,12 @@ import com.vijay.jsonwizard.widgets.ButtonFactory;
 import com.vijay.jsonwizard.widgets.CheckBoxFactory;
 import com.vijay.jsonwizard.widgets.ComponentSpacerFactory;
 import com.vijay.jsonwizard.widgets.DatePickerFactory;
-import com.vijay.jsonwizard.widgets.EditTextFactory;
+import com.vijay.jsonwizard.widgets.NativeEditTextFactory;
 import com.vijay.jsonwizard.widgets.GpsFactory;
 import com.vijay.jsonwizard.widgets.HorizontalLineFactory;
 import com.vijay.jsonwizard.widgets.ImagePickerFactory;
 import com.vijay.jsonwizard.widgets.LabelFactory;
+import com.vijay.jsonwizard.widgets.EditTextFactory;
 import com.vijay.jsonwizard.widgets.NativeRadioButtonFactory;
 import com.vijay.jsonwizard.widgets.NumberSelectorFactory;
 import com.vijay.jsonwizard.widgets.RadioButtonFactory;
@@ -69,6 +70,7 @@ public class JsonFormInteractor {
         map.put(JsonFormConstants.NUMBER_SELECTORS, new NumberSelectorFactory());
         map.put(JsonFormConstants.TOASTER_NOTES, new ToasterNotesFactory());
         map.put(JsonFormConstants.SPACER, new ComponentSpacerFactory());
+        map.put(JsonFormConstants.NORMAL_EDIT_TEXT, new NativeEditTextFactory());
     }
 
     public List<View> fetchFormElements(String stepName, JsonFormFragment formFragment,

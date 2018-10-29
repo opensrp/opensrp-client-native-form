@@ -2,6 +2,8 @@ package com.vijay.jsonwizard.utils;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
+import android.support.v7.widget.AppCompatTextView;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.TypedValue;
@@ -12,12 +14,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
+
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.views.CustomTextView;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -244,6 +248,9 @@ public class FormUtils {
 
         String combinedLabelText = "<font color=" + labelTextColor + ">" + label + "</font>" + asterisks;
 
+        //Applying textStyle to the text;
+        String textStyle = jsonObject.optString(JsonFormConstants.TEXT_STYLE, JsonFormConstants.NORMAL);
+        setTextStyle(textStyle, labelText);
         labelText.setText(Html.fromHtml(combinedLabelText));
         labelText.setTextSize(labelTextSize);
         canvasIds.put(relativeLayout.getId());
@@ -273,6 +280,12 @@ public class FormUtils {
 
         ImageView imageView = relativeLayout.findViewById(R.id.label_info);
 
+        showInfoIcon(jsonObject, listener, labelInfoText, labelInfoTitle, imageView);
+
+        return relativeLayout;
+    }
+
+    public static void showInfoIcon(JSONObject jsonObject, CommonListener listener, String labelInfoText, String labelInfoTitle, ImageView imageView) throws JSONException {
         if (!TextUtils.isEmpty(labelInfoText)) {
             imageView.setVisibility(View.VISIBLE);
             imageView.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
@@ -281,8 +294,6 @@ public class FormUtils {
             imageView.setTag(R.id.label_dialog_title, labelInfoTitle);
             imageView.setOnClickListener(listener);
         }
-
-        return relativeLayout;
     }
 
     /**
@@ -378,5 +389,25 @@ public class FormUtils {
         calendarDate.set(Calendar.MILLISECOND, 0);
 
         return calendarDate;
+    }
+
+    public static void setTextStyle(String textStyle, AppCompatTextView view) {
+        switch (textStyle) {
+            case JsonFormConstants.BOLD:
+                view.setTypeface(null, Typeface.BOLD);
+                break;
+            case JsonFormConstants.ITALIC:
+                view.setTypeface(null, Typeface.ITALIC);
+                break;
+            case JsonFormConstants.NORMAL:
+                view.setTypeface(null, Typeface.NORMAL);
+                break;
+            case JsonFormConstants.BOLD_ITALIC:
+                view.setTypeface(null, Typeface.BOLD_ITALIC);
+                break;
+            default:
+                view.setTypeface(null, Typeface.NORMAL);
+                break;
+        }
     }
 }

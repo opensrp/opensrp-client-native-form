@@ -4,9 +4,12 @@ package com.vijay.jsonwizard.constants;
  * Created by vijay on 5/7/15.
  */
 public class JsonFormConstants {
+    public static final String EDIT_TEXT_STYLE = "edit_text_style";
+    public static final String BORDERED_EDIT_TEXT = "bordered";
     public static final String FIRST_STEP_NAME = "step1";
     public static final String SECTION_LABEL = "section_label";
     public static final String EDIT_TEXT = "edit_text";
+    public static final String NORMAL_EDIT_TEXT = "normal_edit_text";
     public static final String CHECK_BOX = "check_box";
     public static final String RADIO_BUTTON = "radio";
     public static final String LABEL = "label";
@@ -14,6 +17,7 @@ public class JsonFormConstants {
     public static final String LABEL_TEXT_COLOR = "label_text_color";
     public static final String LABEL_INFO_TEXT = "label_info_text";
     public static final String LABEL_INFO_TITLE = "label_info_title";
+    public static final String LABEL_NUMBER = "label_number";
     public static final String CHOOSE_IMAGE = "choose_image";
     public static final String OPTIONS_FIELD_NAME = "options";
     public static final String SPINNER = "spinner";
@@ -65,6 +69,7 @@ public class JsonFormConstants {
     public static final String REPORT_MONTH = "report_month";
     public static final String HORIZONTAL_LINE = "h_line";
     public static final String NATIVE_RADIO_BUTTON = "native_radio";
+    public static final String NATIVE_RADIO_BUTTON_MULTI_RELEVANCE = "multi_relevance";
     public static final String NATIVE_RADIO_SPECIFY_INFO = "specify_info";
     public static final String NATIVE_RADIO_SPECIFY_INFO_COLOR = "specify_info_color";
     public static final String NATIVE_RADIO_EXTRA_INFO = "extra_info";
@@ -82,4 +87,18 @@ public class JsonFormConstants {
     public static final String TOASTER_PROBLEM = "problem";
     public static final String SPACER = "spacer";
     public static final String SPACER_HEIGHT = "spacer_height";
+    public static final String TEXT_STYLE = "label_text_style";
+    public static final String BOLD = "bold";
+    public static final String NORMAL = "normal";
+    public static final String ITALIC = "italic";
+    public static final String BOLD_ITALIC = "bold_italic";
+
+    public static class JSON_FORM_KEY {
+        public static final String EX_CHECKBOX = "ex-checkbox";
+        public static final String OR = "or";
+        public static final String AND = "and";
+        public static final String EXCLUSIVE = "exclusive";
+        public static final String JSON = "json";
+        public static final String NOT = "not";
+    }
 }
