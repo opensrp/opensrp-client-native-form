@@ -5,6 +5,7 @@
     android:minHeight="60dp">
 
     <com.rengwuxian.materialedittext.MaterialEditText
+        app:met_textColorHint="@color/text_hint_color"
         android:id="@+id/edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

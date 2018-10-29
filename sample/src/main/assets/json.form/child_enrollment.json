@@ -1213,6 +1213,17 @@
             ]
           }
         }
+      },
+      {
+        "key": "enabled_label",
+        "type": "label",
+        "label_text_style": "bold",
+        "label_number": "1",
+        "text": "This is the normal edit text design",
+        "text_color": "#000000",
+        "v_required": {
+          "value": true
+        }
       }
     ]
   }
