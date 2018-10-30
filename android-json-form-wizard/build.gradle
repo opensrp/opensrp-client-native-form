@@ -80,7 +80,7 @@ dependencies {
     testImplementation "org.powermock:powermock-module-junit4-rule:$powerMockVersion"
     testImplementation "org.powermock:powermock-api-mockito2:$powerMockVersion"
     testImplementation "org.powermock:powermock-classloading-xstream:$powerMockVersion"
-    implementation (project(':fancydialoglib')) {
+    implementation ('com.github.raihan-mpower:FancyAlertDialog-Android:0.3') {
         transitive = true
         exclude group: 'com.android.support', module: 'appcompat-v7'
 

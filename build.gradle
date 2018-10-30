@@ -21,6 +21,7 @@ configure(allprojects) { project ->
             mavenCentral()
             maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
             mavenLocal()
+            maven { url 'https://jitpack.io' }
         }
     }
 }

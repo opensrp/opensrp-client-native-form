@@ -698,7 +698,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 .setPositiveBtnText("OK").setAnimation(Animation.SLIDE)
                 .isCancellable(true)
                 .setIcon(com.shashank.sony.fancydialoglib.R.drawable.ic_person_black_24dp, Icon.Visible)
-                .onPositiveClicked(new FancyAlertDialogListener() {
+                .OnPositiveClicked(new FancyAlertDialogListener() {
                     @Override
                     public void OnClick() {
                     }
