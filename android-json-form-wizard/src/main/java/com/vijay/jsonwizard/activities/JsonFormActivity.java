@@ -167,7 +167,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     item.put("openmrs_entity_id", openMrsEntityId);
                     refreshSkipLogic(key, null);
                     refreshConstraints(key, null);
-                    refreshMediaLogic(stepName,key,value);
+                    refreshMediaLogic(key,value);
                     return;
                 }
             }
@@ -650,7 +650,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         return args;
     }
 
-    private void refreshMediaLogic(String stepName,String key, String value) {
+    private void refreshMediaLogic(String key, String value) {
         try {
             JSONObject object = getStep("step1");
             JSONArray fields = object.getJSONArray("fields");
@@ -684,14 +684,14 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 String medialink = media.getString("media_link");
                 String mediatext = media.getString("media_text");
 
-                infoDialog(value,mediatype,medialink,mediatext);
+                infoDialog(mediatype,medialink,mediatext);
             }
         }catch (Exception e){
 
         }
     }
 
-    private void infoDialog(String value, String mediatype, String medialink, String mediatext) {
+    private void infoDialog( String mediatype, String medialink, String mediatext) {
         FancyAlertDialog.Builder builder = new FancyAlertDialog.Builder(this);
         builder.setTitle("Info");
         builder.setBackgroundColor(Color.parseColor("#208CC5")).setPositiveBtnBackground(Color.parseColor("#208CC5"))  //Don't pass R.color.colorvalue
