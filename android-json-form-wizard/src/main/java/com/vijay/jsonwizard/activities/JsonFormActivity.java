@@ -662,7 +662,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                             JSONArray medias = questionGroup.getJSONArray("media");
                             for(int j = 0;j<medias.length();j++) {
                                 JSONObject media = medias.getJSONObject(j);
-                                mediadialog(media,value);
+                                mediaDialog(media,value);
                             }
                         }
                     }
@@ -677,21 +677,21 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
     }
 
-    public void mediadialog(JSONObject media, String value){
+    public void mediaDialog(JSONObject media, String value){
         try {
             if (media.getString("media_trigger_value").equalsIgnoreCase(value)) {
                 String mediatype = media.getString("media_type");
                 String medialink = media.getString("media_link");
                 String mediatext = media.getString("media_text");
 
-                infodialog(value,mediatype,medialink,mediatext);
+                infoDialog(value,mediatype,medialink,mediatext);
             }
         }catch (Exception e){
 
         }
     }
 
-    private void infodialog(String value, String mediatype, String medialink, String mediatext) {
+    private void infoDialog(String value, String mediatype, String medialink, String mediatext) {
         FancyAlertDialog.Builder builder = new FancyAlertDialog.Builder(this);
         builder.setTitle("Info");
         builder.setBackgroundColor(Color.parseColor("#208CC5")).setPositiveBtnBackground(Color.parseColor("#208CC5"))  //Don't pass R.color.colorvalue
