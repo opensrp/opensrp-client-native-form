@@ -656,9 +656,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             JSONArray fields = object.getJSONArray("fields");
             for (int i = 0; i < fields.length(); i++) {
                 JSONObject questionGroup = fields.getJSONObject(i);
-                if (questionGroup.has("key") && questionGroup.has("has_media_content")) {
-                    if(questionGroup.getString("key").equalsIgnoreCase(key)) {
-                        if (questionGroup.getBoolean("has_media_content")) {
+                if ((questionGroup.has("key") && questionGroup.has("has_media_content"))
+                        &&(questionGroup.getString("key").equalsIgnoreCase(key))
+                                &&(questionGroup.getBoolean("has_media_content"))) {
                             JSONArray medias = questionGroup.getJSONArray("media");
                             for(int j = 0;j<medias.length();j++) {
                                 JSONObject media = medias.getJSONObject(j);
@@ -666,15 +666,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                             }
                         }
                     }
-
-                }
-
-            }
         }catch(Exception e){
 
         }
-
-
     }
 
     public void mediaDialog(JSONObject media, String value){
@@ -692,24 +686,17 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     }
 
     private void infoDialog( String mediatype, String medialink, String mediatext) {
-        FancyAlertDialog.Builder builder = new FancyAlertDialog.Builder(this);
+        final FancyAlertDialog.Builder builder = new FancyAlertDialog.Builder(this);
         builder.setTitle("Info");
         builder.setBackgroundColor(Color.parseColor("#208CC5")).setPositiveBtnBackground(Color.parseColor("#208CC5"))  //Don't pass R.color.colorvalue
                 .setPositiveBtnText("OK").setAnimation(Animation.SLIDE)
                 .isCancellable(true)
-                .setIcon(com.shashank.sony.fancydialoglib.R.drawable.ic_person_black_24dp, Icon.Visible)
-                .OnPositiveClicked(new FancyAlertDialogListener() {
-                    @Override
-                    public void OnClick() {
-                    }
-                });
+                .setIcon(com.shashank.sony.fancydialoglib.R.drawable.ic_person_black_24dp, Icon.Visible);
         builder.setMessage(mediatext);
         if(mediatype.equalsIgnoreCase("image")){
             builder.setImagetoshow(medialink);
         }else if (mediatype.equalsIgnoreCase("video")){
             builder.setVideopath(medialink);
-        } else if(mediatype.equalsIgnoreCase("text")){
-
         }
         builder.build();
     }
