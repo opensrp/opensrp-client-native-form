@@ -97,7 +97,6 @@
         "barcode_type": "qrcode",
         "hint": "Child's ZEIR ID *",
         "scanButtonText": "Scan QR Code",
-        "value": "0",
         "v_numeric": {
           "value": "true",
           "err": "Please enter a valid ID"
