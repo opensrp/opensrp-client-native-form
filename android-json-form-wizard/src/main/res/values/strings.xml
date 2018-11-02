@@ -35,6 +35,7 @@
     <string name="save">Save</string>
     <string name="radio_button_date_change">tap to change</string>
     <string name="select_one">Select a Number</string>
+    <string name="done">Done</string>
 
     <string-array name="spinnerItems">
         <item>item1</item>
