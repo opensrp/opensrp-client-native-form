@@ -269,7 +269,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
                 "", layoutParams, FormUtils.FONT_BOLD_PATH, 0, textColor);
 
         customTextView.setId(ViewUtil.generateViewId());
-        customTextView.setPadding(0, 5, 0, 5);
+        customTextView.setPadding(0, 15, 0, 15);
         setDefaultColor(context, customTextView, item, numberOfSelectors, textColor);
         customTextView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         customTextView.setClickable(true);
