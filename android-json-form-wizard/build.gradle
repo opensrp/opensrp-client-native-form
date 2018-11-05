@@ -1,7 +1,7 @@
 buildscript {
     repositories {
-        jcenter()
         google()
+        jcenter()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.2.1'
@@ -52,6 +52,7 @@ android {
 }
 
 
+
 tasks.withType(Test) {
     jacoco.includeNoLocationClasses = true
 }
@@ -74,7 +75,6 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
         exclude group: 'com.android.support', module: 'recyclerview-v7'
     }
-
     implementation 'com.google.android.gms:play-services-location:16.0.0'
     implementation 'com.google.android.gms:play-services-vision:17.0.2'
 
@@ -84,6 +84,11 @@ dependencies {
     testImplementation "org.powermock:powermock-module-junit4-rule:$powerMockVersion"
     testImplementation "org.powermock:powermock-api-mockito2:$powerMockVersion"
     testImplementation "org.powermock:powermock-classloading-xstream:$powerMockVersion"
+    implementation('com.github.raihan-mpower:FancyAlertDialog-Android:0.3') {
+        transitive = true
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+
+    }
 }
 
 dependencies {
