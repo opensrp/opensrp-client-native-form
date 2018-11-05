@@ -187,15 +187,14 @@ public class BarcodeFactory implements FormWidgetFactory {
         InputMethodManager inputManager = (InputMethodManager) activity.getSystemService(
                 Context.INPUT_METHOD_SERVICE);
         inputManager.hideSoftInputFromWindow(editText.getWindowToken(), HIDE_NOT_ALWAYS);
-        if (barcodeType != null && barcodeType.equals(TYPE_QR)) {
-            if (PermissionUtils.isPermissionGranted(activity, Manifest.permission.CAMERA, PermissionUtils.CAMERA_PERMISSION_REQUEST_CODE)) {
-                try {
-                    Intent intent = new Intent(activity, BarcodeScanActivity.class);
-                    activity.startActivityForResult(intent, JsonFormConstants.BARCODE_CONSTANTS.BARCODE_REQUEST_CODE);
-                } catch (SecurityException e) {
-                    Utils.showToast(activity, activity.getApplicationContext().getResources().getString(R.string.allow_camera_management));
-                }
+        if (barcodeType != null && barcodeType.equals(TYPE_QR) && PermissionUtils.isPermissionGranted(activity, Manifest.permission.CAMERA, PermissionUtils.CAMERA_PERMISSION_REQUEST_CODE)) {
+            try {
+                Intent intent = new Intent(activity, BarcodeScanActivity.class);
+                activity.startActivityForResult(intent, JsonFormConstants.BARCODE_CONSTANTS.BARCODE_REQUEST_CODE);
+            } catch (SecurityException e) {
+                Utils.showToast(activity, activity.getApplicationContext().getResources().getString(R.string.allow_camera_management));
             }
+
         }
     }
 

@@ -32,7 +32,6 @@ import java.io.IOException;
 public class CameraSourcePreview extends ViewGroup {
     private static final String TAG = CameraSourcePreview.class.getSimpleName();
 
-    private Context mContext;
     private SurfaceView surfaceView;
     private boolean startRequested;
     private boolean surfaceAvailable;
@@ -40,7 +39,6 @@ public class CameraSourcePreview extends ViewGroup {
 
     public CameraSourcePreview(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mContext = context;
         startRequested = false;
         surfaceAvailable = false;
 
