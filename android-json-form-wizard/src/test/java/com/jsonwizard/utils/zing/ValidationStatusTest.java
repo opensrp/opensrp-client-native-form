@@ -1,14 +1,17 @@
 package com.jsonwizard.utils.zing;
 
 import android.view.View;
+
 import com.jsonwizard.BaseTest;
-import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
+
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 /**
  * Created by onaio on 04/08/2017.
@@ -20,6 +23,11 @@ public class ValidationStatusTest extends BaseTest {
 
     @Mock
     private JsonFormFragmentView formFragmentView;
+
+    @Before
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+    }
 
     @Test
     public void isValidShouldReturnTrueWhenSetValidIsSetTrue() {
@@ -74,8 +82,8 @@ public class ValidationStatusTest extends BaseTest {
 
     @Test
     public void testRequestAttention() {
-        formFragmentView = Mockito.spy(JsonFormFragmentView.class);
-        view = Mockito.spy(View.class);
+        /*formFragmentView = Mockito.spy(JsonFormFragmentView.class);
+        view = Mockito.spy(View.class);*/
         ValidationStatus validationStatus = new ValidationStatus(true, DEFAULT_ERROR_MSG, formFragmentView, view);
         validationStatus.requestAttention();
         Mockito.verify(formFragmentView).scrollToView(view);
@@ -85,9 +93,9 @@ public class ValidationStatusTest extends BaseTest {
     public void testRequestAttentionWhenViewAndFromFragmentAreNull() {
         ValidationStatus validationStatus = new ValidationStatus(true, DEFAULT_ERROR_MSG, formFragmentView, view);
         validationStatus.requestAttention();
-        formFragmentView = Mockito.mock(JsonFormFragment.class);
-        view = null;
-        Mockito.verify(formFragmentView, Mockito.times(0)).scrollToView(view);
+        /*formFragmentView = Mockito.mock(JsonFormFragment.class);
+        view = null;*/
+        Mockito.verify(formFragmentView, Mockito.times(0)).scrollToView(null);
     }
 }
 
