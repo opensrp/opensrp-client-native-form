@@ -54,7 +54,7 @@ import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 
 public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
-    private static final String TAG = "JsonFormActivity";
+    private static final String TAG = JsonFormActivity.class.getSimpleName();
 
     private Toolbar mToolbar;
 
@@ -166,7 +166,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     item.put("openmrs_entity_id", openMrsEntityId);
                     refreshSkipLogic(key, null);
                     refreshConstraints(key, null);
-                    refreshMediaLogic(key,value);
+                    refreshMediaLogic(key, value);
                     return;
                 }
             }
@@ -656,35 +656,35 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             for (int i = 0; i < fields.length(); i++) {
                 JSONObject questionGroup = fields.getJSONObject(i);
                 if ((questionGroup.has("key") && questionGroup.has("has_media_content"))
-                        &&(questionGroup.getString("key").equalsIgnoreCase(key))
-                                &&(questionGroup.getBoolean("has_media_content"))) {
-                            JSONArray medias = questionGroup.getJSONArray("media");
-                            for(int j = 0;j<medias.length();j++) {
-                                JSONObject media = medias.getJSONObject(j);
-                                mediaDialog(media,value);
-                            }
-                        }
+                        && (questionGroup.getString("key").equalsIgnoreCase(key))
+                        && (questionGroup.getBoolean("has_media_content"))) {
+                    JSONArray medias = questionGroup.getJSONArray("media");
+                    for (int j = 0; j < medias.length(); j++) {
+                        JSONObject media = medias.getJSONObject(j);
+                        mediaDialog(media, value);
                     }
-        }catch(Exception e){
+                }
+            }
+        } catch (Exception e) {
 
         }
     }
 
-    public void mediaDialog(JSONObject media, String value){
+    public void mediaDialog(JSONObject media, String value) {
         try {
             if (media.getString("media_trigger_value").equalsIgnoreCase(value)) {
                 String mediatype = media.getString("media_type");
                 String medialink = media.getString("media_link");
                 String mediatext = media.getString("media_text");
 
-                infoDialog(mediatype,medialink,mediatext);
+                infoDialog(mediatype, medialink, mediatext);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
     }
 
-    private void infoDialog( String mediatype, String medialink, String mediatext) {
+    private void infoDialog(String mediatype, String medialink, String mediatext) {
         final FancyAlertDialog.Builder builder = new FancyAlertDialog.Builder(this);
         builder.setTitle("Info");
         builder.setBackgroundColor(Color.parseColor("#208CC5")).setPositiveBtnBackground(Color.parseColor("#208CC5"))  //Don't pass R.color.colorvalue
@@ -692,9 +692,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 .isCancellable(true)
                 .setIcon(com.shashank.sony.fancydialoglib.R.drawable.ic_person_black_24dp, Icon.Visible);
         builder.setMessage(mediatext);
-        if(mediatype.equalsIgnoreCase("image")){
+        if (mediatype.equalsIgnoreCase("image")) {
             builder.setImagetoshow(medialink);
-        }else if (mediatype.equalsIgnoreCase("video")){
+        } else if (mediatype.equalsIgnoreCase("video")) {
             builder.setVideopath(medialink);
         }
         builder.build();
