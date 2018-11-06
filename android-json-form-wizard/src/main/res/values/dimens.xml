@@ -35,4 +35,5 @@
     <dimen name="native_selector_total_screen_size_padding">70dp</dimen>
     <dimen name="native_selector_button_max_padding">5sp</dimen>
     <dimen name="native_selector_button_min_padding">1px</dimen>
+    <dimen name="toolbar_text_size">23sp</dimen>
 </resources>

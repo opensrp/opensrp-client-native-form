@@ -231,31 +231,33 @@ public class FormUtils {
     public static void createRadioButtonAndCheckBoxLabel(List<View> views, JSONObject jsonObject, Context context, JSONArray canvasIds, Boolean
             readOnly, CommonListener listener) throws JSONException {
         String label = jsonObject.optString(JsonFormConstants.LABEL, "");
-        String asterisks = "";
-        int labelTextSize = FormUtils.getValueFromSpOrDpOrPx(jsonObject.optString(JsonFormConstants.LABEL_TEXT_SIZE, String.valueOf(context
-                .getResources().getDimension(R.dimen.default_label_text_size))), context);
-        String labelTextColor = jsonObject.optString(JsonFormConstants.LABEL_TEXT_COLOR, JsonFormConstants.DEFAULT_TEXT_COLOR);
-        JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
-        RelativeLayout relativeLayout = createLabelRelativeLayout(jsonObject, context, listener);
+        if (!TextUtils.isEmpty(label)) {
+            String asterisks = "";
+            int labelTextSize = FormUtils.getValueFromSpOrDpOrPx(jsonObject.optString(JsonFormConstants.LABEL_TEXT_SIZE, String.valueOf(context
+                    .getResources().getDimension(R.dimen.default_label_text_size))), context);
+            String labelTextColor = jsonObject.optString(JsonFormConstants.LABEL_TEXT_COLOR, JsonFormConstants.DEFAULT_TEXT_COLOR);
+            JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
+            RelativeLayout relativeLayout = createLabelRelativeLayout(jsonObject, context, listener);
 
-        CustomTextView labelText = relativeLayout.findViewById(R.id.label_text);
-        if (requiredObject != null) {
-            String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
-            if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
-                asterisks = "<font color=#CF0800> *</font>";
+            CustomTextView labelText = relativeLayout.findViewById(R.id.label_text);
+            if (requiredObject != null) {
+                String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
+                if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
+                    asterisks = "<font color=#CF0800> *</font>";
+                }
             }
+
+            String combinedLabelText = "<font color=" + labelTextColor + ">" + label + "</font>" + asterisks;
+
+            //Applying textStyle to the text;
+            String textStyle = jsonObject.optString(JsonFormConstants.TEXT_STYLE, JsonFormConstants.NORMAL);
+            setTextStyle(textStyle, labelText);
+            labelText.setText(Html.fromHtml(combinedLabelText));
+            labelText.setTextSize(labelTextSize);
+            canvasIds.put(relativeLayout.getId());
+            relativeLayout.setEnabled(!readOnly);
+            views.add(relativeLayout);
         }
-
-        String combinedLabelText = "<font color=" + labelTextColor + ">" + label + "</font>" + asterisks;
-
-        //Applying textStyle to the text;
-        String textStyle = jsonObject.optString(JsonFormConstants.TEXT_STYLE, JsonFormConstants.NORMAL);
-        setTextStyle(textStyle, labelText);
-        labelText.setText(Html.fromHtml(combinedLabelText));
-        labelText.setTextSize(labelTextSize);
-        canvasIds.put(relativeLayout.getId());
-        relativeLayout.setEnabled(!readOnly);
-        views.add(relativeLayout);
     }
 
     public static RelativeLayout createLabelRelativeLayout(JSONObject jsonObject, Context context, CommonListener listener) throws JSONException {

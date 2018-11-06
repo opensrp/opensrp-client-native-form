@@ -2,6 +2,7 @@ package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.os.Build;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.View;
@@ -17,6 +18,7 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ImageUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
@@ -88,14 +90,14 @@ public class ImagePickerFactory implements FormWidgetFactory {
         }
 
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        int imageHeight = com.vijay.jsonwizard.utils.FormUtils.dpToPixels(context, context.getResources().getBoolean(R.bool.isTablet) ? 200 : 100);
-        imageView.setLayoutParams(com.vijay.jsonwizard.utils.FormUtils.getLinearLayoutParams(com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT, imageHeight, 0, 0, 0, (int) context
+        int imageHeight = FormUtils.dpToPixels(context, context.getResources().getBoolean(R.bool.isTablet) ? 200 : 100);
+        imageView.setLayoutParams(FormUtils.getLinearLayoutParams(FormUtils.MATCH_PARENT, imageHeight, 0, 0, 0, (int) context
                 .getResources().getDimension(R.dimen.default_bottom_margin)));
         String imagePath = jsonObject.optString(JsonFormConstants.VALUE);
         Button uploadButton = new Button(context);
         if (!TextUtils.isEmpty(imagePath)) {
             imageView.setTag(R.id.imagePath, imagePath);
-            imageView.setImageBitmap(ImageUtils.loadBitmapFromFile(context, imagePath, ImageUtils.getDeviceWidth(context), com.vijay.jsonwizard.utils.FormUtils.dpToPixels(context, 200)));
+            imageView.setImageBitmap(ImageUtils.loadBitmapFromFile(context, imagePath, ImageUtils.getDeviceWidth(context), FormUtils.dpToPixels(context, 200)));
         }
 
         if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
@@ -113,6 +115,9 @@ public class ImagePickerFactory implements FormWidgetFactory {
         uploadButton.setMinHeight(0);
         uploadButton.setMinimumHeight(0);
         uploadButton.setTextColor(context.getResources().getColor(android.R.color.white));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            uploadButton.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        }
         uploadButton.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 context.getResources().getDimension(R.dimen.button_text_size));
         uploadButton.setPadding(
@@ -120,7 +125,7 @@ public class ImagePickerFactory implements FormWidgetFactory {
                 context.getResources().getDimensionPixelSize(R.dimen.button_padding),
                 context.getResources().getDimensionPixelSize(R.dimen.button_padding),
                 context.getResources().getDimensionPixelSize(R.dimen.button_padding));
-        uploadButton.setLayoutParams(com.vijay.jsonwizard.utils.FormUtils.getLinearLayoutParams(com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT, com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT, 0, 0, 0, (int) context
+        uploadButton.setLayoutParams(FormUtils.getRelativeLayoutParams(FormUtils.MATCH_PARENT, FormUtils.WRAP_CONTENT, 0, 0, 0, (int) context
                 .getResources().getDimension(R.dimen.default_bottom_margin)));
         uploadButton.setOnClickListener(listener);
         uploadButton.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
@@ -129,7 +134,7 @@ public class ImagePickerFactory implements FormWidgetFactory {
         uploadButton.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         uploadButton.setTag(R.id.type, jsonObject.getString("type"));
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         params.setMargins(0, 0, 0, dp2px(context, 20));
         uploadButton.setLayoutParams(params);

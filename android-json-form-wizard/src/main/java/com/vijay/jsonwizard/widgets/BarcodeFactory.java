@@ -1,28 +1,32 @@
 package com.vijay.jsonwizard.widgets;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
+import com.google.android.gms.vision.barcode.Barcode;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rey.material.util.ViewUtil;
 import com.rey.material.widget.Button;
 import com.vijay.jsonwizard.R;
+import com.vijay.jsonwizard.activities.BarcodeScanActivity;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.GenericTextWatcher;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.interfaces.OnActivityResultListener;
-import com.vijay.jsonwizard.constants.JsonFormConstants;
-import com.vijay.jsonwizard.utils.zxing.IntentIntegrator;
-import com.vijay.jsonwizard.utils.zxing.IntentResult;
+import com.vijay.jsonwizard.utils.PermissionUtils;
+import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
 
 import org.json.JSONArray;
@@ -31,6 +35,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.app.Activity.RESULT_OK;
 import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 
 /**
@@ -38,14 +43,12 @@ import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
  */
 
 public class BarcodeFactory implements FormWidgetFactory {
-    private static final String SCAN_MODE = "SCAN_MODE";
-    private static final String QR_MODE = "QR_MODE";
     private static final String TYPE_QR = "qrcode";
 
     @Override
     public List<View> getViewsFromJson(String stepName, final Context context,
                                        JsonFormFragment formFragment, final JSONObject jsonObject,
-                                       CommonListener listener) throws Exception {
+                                       CommonListener listener) {
         List<View> views = new ArrayList<>(1);
         try {
             String openMrsEntityParent = jsonObject.getString("openmrs_entity_parent");
@@ -53,12 +56,13 @@ public class BarcodeFactory implements FormWidgetFactory {
             String openMrsEntityId = jsonObject.getString("openmrs_entity_id");
             String relevance = jsonObject.optString("relevance");
             final String constraints = jsonObject.optString("constraints");
+            String value = jsonObject.optString(JsonFormConstants.VALUE, null);
 
-            LinearLayout rootLayout = (LinearLayout) LayoutInflater.from(context)
+            RelativeLayout rootLayout = (RelativeLayout) LayoutInflater.from(context)
                     .inflate(R.layout.native_form_item_barcode, null);
             final int canvasId = ViewUtil.generateViewId();
             rootLayout.setId(canvasId);
-            final MaterialEditText editText = (MaterialEditText) rootLayout
+            final MaterialEditText editText = rootLayout
                     .findViewById(R.id.edit_text);
             editText.setHint(jsonObject.getString(JsonFormConstants.HINT));
             JSONArray canvasIdsArray = new JSONArray();
@@ -81,8 +85,8 @@ public class BarcodeFactory implements FormWidgetFactory {
             }
 
 
-            if (!TextUtils.isEmpty(jsonObject.optString(JsonFormConstants.VALUE))) {
-                editText.setText(jsonObject.optString(JsonFormConstants.VALUE));
+            if (value != null && !checkValue(value)) {
+                editText.setText(value);
             }
 
             editText.setOnClickListener(new View.OnClickListener() {
@@ -103,18 +107,18 @@ public class BarcodeFactory implements FormWidgetFactory {
 
             if (context instanceof JsonApi) {
                 JsonApi jsonApi = (JsonApi) context;
-                jsonApi.addOnActivityResultListener(IntentIntegrator.REQUEST_CODE,
+                jsonApi.addOnActivityResultListener(JsonFormConstants.BARCODE_CONSTANTS.BARCODE_REQUEST_CODE,
                         new OnActivityResultListener() {
                             @Override
                             public void onActivityResult(int requestCode,
                                                          int resultCode, Intent data) {
-                                if (resultCode == Activity.RESULT_OK) {
-                                    IntentResult res = IntentIntegrator.parseActivityResult(
-                                            requestCode,
-                                            resultCode,
-                                            data);
-
-                                    editText.setText(res.getContents());
+                                if (requestCode == JsonFormConstants.BARCODE_CONSTANTS.BARCODE_REQUEST_CODE && resultCode == RESULT_OK) {
+                                    if (data != null) {
+                                        Barcode barcode = data.getParcelableExtra(JsonFormConstants.BARCODE_CONSTANTS.BARCODE_KEY);
+                                        Log.d("Scanned QR Code", barcode.displayValue);
+                                        editText.setText(barcode.displayValue);
+                                    } else
+                                        Log.i("", "NO RESULT FOR QR CODE");
                                 }
                             }
                         });
@@ -133,7 +137,7 @@ public class BarcodeFactory implements FormWidgetFactory {
                 }
             });
 
-            Button scanButton = (Button) rootLayout.findViewById(R.id.scan_button);
+            Button scanButton = rootLayout.findViewById(R.id.scan_button);
             scanButton.setBackgroundColor(context.getResources().getColor(R.color.primary));
             scanButton.setMinHeight(0);
             scanButton.setMinimumHeight(0);
@@ -183,11 +187,19 @@ public class BarcodeFactory implements FormWidgetFactory {
         InputMethodManager inputManager = (InputMethodManager) activity.getSystemService(
                 Context.INPUT_METHOD_SERVICE);
         inputManager.hideSoftInputFromWindow(editText.getWindowToken(), HIDE_NOT_ALWAYS);
-        IntentIntegrator intentIntegrator = new IntentIntegrator(activity);
-        if (barcodeType != null && barcodeType.equals(TYPE_QR)) {
-            intentIntegrator.addExtra(SCAN_MODE, QR_MODE);
+        if (barcodeType != null && barcodeType.equals(TYPE_QR) && PermissionUtils.isPermissionGranted(activity, Manifest.permission.CAMERA, PermissionUtils.CAMERA_PERMISSION_REQUEST_CODE)) {
+            try {
+                Intent intent = new Intent(activity, BarcodeScanActivity.class);
+                activity.startActivityForResult(intent, JsonFormConstants.BARCODE_CONSTANTS.BARCODE_REQUEST_CODE);
+            } catch (SecurityException e) {
+                Utils.showToast(activity, activity.getApplicationContext().getResources().getString(R.string.allow_camera_management));
+            }
+
         }
-        intentIntegrator.initiateScan();
+    }
+
+    private boolean checkValue(String value) {
+        return value.contains("ABC0.");
     }
 
 }

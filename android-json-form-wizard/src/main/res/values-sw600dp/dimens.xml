@@ -25,4 +25,5 @@
     <dimen name="default_checkbox_size">28dp</dimen>
     <dimen name="default_checkbox_height">36dp</dimen>
     <dimen name="default_checkbox_width">36dp</dimen>
+    <dimen name="toolbar_text_size">23sp</dimen>
 </resources>

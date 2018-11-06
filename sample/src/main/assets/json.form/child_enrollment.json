@@ -97,7 +97,6 @@
         "barcode_type": "qrcode",
         "hint": "Child's ZEIR ID *",
         "scanButtonText": "Scan QR Code",
-        "value": "0",
         "v_numeric": {
           "value": "true",
           "err": "Please enter a valid ID"
@@ -316,6 +315,37 @@
         "v_regex": {
           "value": "(09[5-7][0-9]{7})|\s*",
           "err": "Number must begin with 095, 096, or 097 and must be a total of 10 digits in length"
+        }
+      },
+      {
+        "key": "plan_breastfeed",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "What are your thoughts on breastfeeding",
+        "values": [
+          "I plan to breastfeed",
+          "I do not want to breastfeed"
+        ],
+        "has_media_content": true,
+        "media": [
+          {
+            "media_type":"text",
+            "media_trigger_value":"I plan to breastfeed",
+            "media_link":"",
+            "media_text":"This is an excellent choice. You are making a good choice to give your child the best start to life.\nBreastmilk is clean and wholesome and provides all the essential nutrients and vitamins your baby needs for a healthy start to life. Give only breastmilk in the first 5 months of life including no water, tea, or milk or any other liquid and immediately breastfeed within an hour of delivery."
+          },
+          {
+            "media_type":"video",
+            "media_trigger_value":"I do not want to breastfeed",
+            "media_link":"android.resource://org.smartregister.nativeform/raw/understandingbreastfeeding",
+            "media_text":""
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Please answer the question"
         }
       },
       {
