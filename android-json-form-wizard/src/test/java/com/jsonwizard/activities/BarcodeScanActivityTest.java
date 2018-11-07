@@ -19,6 +19,7 @@ import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
 import org.robolectric.android.controller.ActivityController;
 
+
 public class BarcodeScanActivityTest extends BaseActivityTest {
 
     private BarcodeScanActivity barcodeScanActivity;

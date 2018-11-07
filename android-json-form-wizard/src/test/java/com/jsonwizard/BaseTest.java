@@ -1,6 +1,7 @@
 package com.jsonwizard;
 
 import android.os.Build;
+
 import com.vijay.jsonwizard.BuildConfig;
 
 import org.junit.runner.RunWith;
