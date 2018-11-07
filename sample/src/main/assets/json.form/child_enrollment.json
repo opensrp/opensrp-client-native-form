@@ -811,6 +811,119 @@
         "spacer_height": "20sp"
       },
       {
+        "key": "repiratory_exam",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Respiratory exam",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "options": [
+          {
+            "key": "1",
+            "text": "Not done"
+          },
+          {
+            "key": "2",
+            "text": "Normal"
+          },
+          {
+            "key": "3",
+            "text": "Abnormal",
+            "specify_info": "Specify",
+            "specify_info_color":  "#b5b5b5",
+            "specify_widget":"check_box",
+            "specify_content":[
+              {
+                "key": "repiratory_exam_abnormal",
+                "openmrs_entity_parent": "",
+                "openmrs_entity": "",
+                "openmrs_entity_id": "",
+                "type": "check_box",
+                "label": "Abnormal (specify)",
+                "label_text_style": "bold",
+                "text_color": "#000000",
+                "options": [
+                  {
+                    "key": "dyspnoea",
+                    "text": "Dyspnoea",
+                    "value": false,
+                    "openmrs_entity": "",
+                    "openmrs_entity_id": ""
+                  },
+                  {
+                    "key": "cough",
+                    "text": "Cough",
+                    "value": false,
+                    "openmrs_entity": " Cough",
+                    "openmrs_entity_id": "143264"
+                  },
+                  {
+                    "key": "rapid_breathing",
+                    "text": "Rapid breathing",
+                    "value": false,
+                    "openmrs_entity": "TACHYPNEA",
+                    "openmrs_entity_id": "125061"
+                  },
+                  {
+                    "key": "slow_breathing",
+                    "text": "Slow breathing",
+                    "value": false,
+                    "openmrs_entity": "",
+                    "openmrs_entity_id": ""
+                  },
+                  {
+                    "key": "wheezing",
+                    "text": "Wheezing",
+                    "value": false,
+                    "openmrs_entity": "WHEEZE",
+                    "openmrs_entity_id": "5209"
+                  },
+                  {
+                    "key": "rales",
+                    "text": "Rales",
+                    "value": false,
+                    "openmrs_entity": "Respiratory Crackles",
+                    "openmrs_entity_id": "127640"
+                  },
+                  {
+                    "key": "other",
+                    "text": "Other (specify)",
+                    "value": false,
+                    "openmrs_entity": "",
+                    "openmrs_entity_id": ""
+                  }
+                ]
+              },
+              {
+                "key": "repiratory_exam_abnormal_other",
+                "openmrs_entity_parent": "",
+                "openmrs_entity": "",
+                "openmrs_entity_id": "",
+                "type": "edit_text",
+                "hint": "Specify",
+                "v_regex": {
+                  "value": "[A-Za-z\\s\.\-]*",
+                  "err": "Please enter valid content"
+                },
+                "relevance": {
+                  "step1:repiratory_exam_abnormal": {
+                    "ex-checkbox": [
+                      {
+                        "or": [
+                          "other"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
         "key": "native_radio",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -828,15 +941,14 @@
             "text_color": "#000000",
             "specify_info": "Specify",
             "specify_info_color": "#000000",
+            "specify_widget":"date_picker",
             "extra_info": "Here we go",
             "extra_info_color": "#445567"
           },
           {
             "key": "high_school",
             "text": "High School",
-            "text_size": "18px",
-            "specify_info": "Specify",
-            "extra_info": "Here we go"
+            "text_size": "18px"
           },
           {
             "key": "higher_education",

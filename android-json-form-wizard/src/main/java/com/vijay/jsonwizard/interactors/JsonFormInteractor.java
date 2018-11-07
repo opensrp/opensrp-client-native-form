@@ -44,7 +44,7 @@ public class JsonFormInteractor {
     private static final JsonFormInteractor INSTANCE = new JsonFormInteractor();
     protected Map<String, FormWidgetFactory> map = new HashMap<>();
 
-    protected JsonFormInteractor() {
+    public JsonFormInteractor() {
         registerWidgets();
     }
 
@@ -123,7 +123,7 @@ public class JsonFormInteractor {
         }
     }
 
-    private void fetchFields(List<View> viewsFromJson, String stepName, JsonFormFragment formFragment,
+    public void fetchFields(List<View> viewsFromJson, String stepName, JsonFormFragment formFragment,
                              JSONArray fields, CommonListener listener) {
 
         try {

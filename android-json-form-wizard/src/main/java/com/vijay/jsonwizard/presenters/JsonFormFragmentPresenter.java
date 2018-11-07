@@ -320,8 +320,13 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                 break;
             case JsonFormConstants.NATIVE_RADIO_BUTTON:
                 String type = (String) v.getTag(R.id.radio_button_specify_type);
-                if (JsonFormConstants.NATIVE_RADIO_SPECIFY_INFO.equals(type)) {
-                   // NativeRadioButtonFactory.showDateDialog(v);
+                String specifyWidget = (String) v.getTag(R.id.radio_button_specify_widget);
+                Log.i(TAG, "The dialog content widget is this: " + specifyWidget);
+                if (JsonFormConstants.NATIVE_RADIO_SPECIFY_INFO.equals(type) &&
+                        specifyWidget.equals(JsonFormConstants.DATE_PICKER)) {
+                    NativeRadioButtonFactory.showDateDialog(v);
+                } else if (JsonFormConstants.NATIVE_RADIO_SPECIFY_INFO.equals(type) &&
+                        !specifyWidget.equals(JsonFormConstants.DATE_PICKER)) {
                     NativeRadioButtonFactory.showGenericDialog(v);
                 } else {
                     showInformationDialog(v);

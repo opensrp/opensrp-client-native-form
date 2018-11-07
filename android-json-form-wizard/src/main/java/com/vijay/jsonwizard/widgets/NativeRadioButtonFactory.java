@@ -7,11 +7,14 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -21,6 +24,7 @@ import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.DatePickerDialog;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
+import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
@@ -42,15 +46,47 @@ import static com.vijay.jsonwizard.widgets.DatePickerFactory.DATE_FORMAT;
  * Created by samuelgithengi on 8/16/18.
  */
 public class NativeRadioButtonFactory implements FormWidgetFactory {
-    private static final String TAG = "NativeRadioButtonFactory";
+    private static final String TAG = "NativeRadioFactory";
     private CustomTextView customTextView;
     private CustomTextView extraInfoTextView;
+    private static JsonFormInteractor interactor = new JsonFormInteractor();
 
     public static void showGenericDialog(View view) {
         Context context = (Context) view.getTag(R.id.native_radio_button_context);
+        String stepName = (String) view.getTag(R.id.radio_button_specify_step_name);
+        CommonListener listener = (CommonListener) view.getTag(R.id.radio_button_specify_listener);
+        JsonFormFragment formFragment = (JsonFormFragment) view.getTag(R.id.radio_button_specify_fragment);
+        JSONArray specifyContent = (JSONArray) view.getTag(R.id.radio_button_specify_content);
+        List<View> listOfViews = new ArrayList<>();
+        interactor.fetchFields(listOfViews, stepName, formFragment, specifyContent, listener);
         final Dialog dialog = new Dialog(context);
-        dialog.setContentView(R.layout.native_form_generic_dialog);
+
+        View dialogView = addDialogContent(context,listOfViews);
+        //set the dialog width to 90% of window and height to wrap content
+        int width = (int)(context.getResources().getDisplayMetrics().widthPixels*0.90);
+        Button cancelButton = dialogView.findViewById(R.id.generic_dialog_cancel_button);
+        cancelButton.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                }
+        );
+        dialog.setContentView(dialogView);
+        dialog.getWindow().setLayout(width, LinearLayout.LayoutParams.WRAP_CONTENT);
         dialog.show();
+    }
+
+    private static LinearLayout  addDialogContent(Context context, @NonNull List<View> views) {
+        LinearLayout genericDialogLayout = (LinearLayout) LayoutInflater.from(context)
+                .inflate(R.layout.native_form_generic_dialog, null);
+        LinearLayout genericDialogContent = genericDialogLayout.findViewById(
+                R.id.generic_dialog_content);
+        for (View view : views) {
+            genericDialogContent.addView(view);
+        }
+        return  genericDialogLayout;
     }
 
     public static void showDateDialog(View view) {
@@ -128,7 +164,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         JSONArray canvasIds = new JSONArray();
 
         FormUtils.createRadioButtonAndCheckBoxLabel(views, jsonObject, context, canvasIds, readOnly, listener);
-        addRadioButtonOptionsElements(jsonObject, context, readOnly, canvasIds, stepName, views, listener);
+        addRadioButtonOptionsElements(jsonObject, context, readOnly, canvasIds, stepName, views, listener, formFragment);
 
         return views;
     }
@@ -145,8 +181,10 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
      * @param listener
      * @throws JSONException
      */
-    protected void addRadioButtonOptionsElements(JSONObject jsonObject, final Context context, Boolean readOnly, JSONArray canvasIds,
-                                                 String stepName, List<View> views, CommonListener listener) throws JSONException {
+    protected void addRadioButtonOptionsElements(JSONObject jsonObject, final Context context,
+                                                 Boolean readOnly, JSONArray canvasIds,
+                                                 String stepName, List<View> views,
+                                                 CommonListener listener, JsonFormFragment formFragment) throws JSONException {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
@@ -186,17 +224,10 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
             createRadioButton(radioGroupLayout, jsonObject, readOnly, item, listener, stepName);
             createMainTextView(context, radioGroupLayout, jsonObject, item, stepName);
-            String specifyType = item.optString("specify_type", null);
-            if (specifyType != null) {
-                if ("multi_checkbox".equals(specifyType)) {
-                    DialogCheckboxFactory dialogCheckboxFactory = new DialogCheckboxFactory();
-                    View dialogLayout = LayoutInflater.from(context).inflate(R.layout.native_form_generic_dialog, null);
 
-
-                }
-            }
             if (specifyInfo != null) {
-                createSpecifyTextView(context, radioGroupLayout, jsonObject, listener, item, stepName);
+                createSpecifyTextView(context, radioGroupLayout, jsonObject, listener, item,
+                        stepName, formFragment);
             }
 
             if (extraInfo != null) {
@@ -257,13 +288,20 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
     }
 
     private void createSpecifyTextView(Context context, RelativeLayout rootLayout, JSONObject jsonObject, CommonListener listener,
-                                       JSONObject item, String stepName) throws JSONException {
+                                       JSONObject item, String stepName, JsonFormFragment formFragment) throws JSONException {
         String text = item.getString(JsonFormConstants.NATIVE_RADIO_SPECIFY_INFO);
         String text_color = item.optString(JsonFormConstants.NATIVE_RADIO_SPECIFY_INFO_COLOR, JsonFormConstants.DEFAULT_HINT_TEXT_COLOR);
+        String specifyWidget = item.optString(JsonFormConstants.NATIVE_RADIO_SPECIFY_WIDGET, "");
+        JSONArray specifyContent = item.optJSONArray(JsonFormConstants.NATIVE_RADIO_SPECIFY_CONTENT);
         CustomTextView specifyTextView = rootLayout.findViewById(R.id.specifyTextView);
         specifyTextView.setVisibility(View.VISIBLE);
         addTextViewAttributes(context, jsonObject, item, specifyTextView, stepName, text_color);
         specifyTextView.setTag(R.id.radio_button_specify_type, JsonFormConstants.NATIVE_RADIO_SPECIFY_INFO);
+        specifyTextView.setTag(R.id.radio_button_specify_widget, specifyWidget);
+        specifyTextView.setTag(R.id.radio_button_specify_content, specifyContent);
+        specifyTextView.setTag(R.id.radio_button_specify_listener, listener);
+        specifyTextView.setTag(R.id.radio_button_specify_step_name, stepName);
+        specifyTextView.setTag(R.id.radio_button_specify_fragment, formFragment);
         specifyTextView.setTag(R.id.native_radio_button_specify_textview, specifyTextView);
         specifyTextView.setTag(R.id.native_radio_button_main_textview, getMainTextView());
         specifyTextView.setTag(R.id.native_radio_button_context, context);
