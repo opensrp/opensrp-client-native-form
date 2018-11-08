@@ -1,26 +1,20 @@
 package com.jsonwizard.widgets;
 
+import com.jsonwizard.BaseTest;
 import com.rengwuxian.materialedittext.validation.METValidator;
 import com.vijay.jsonwizard.customviews.NativeEditText;
-import com.vijay.jsonwizard.widgets.NativeEditTextFactory;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
+import org.robolectric.RuntimeEnvironment;
 
 import java.util.List;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(NativeEditTextFactory.class)
-public class NativeEditTextFactoryTest {
+public class NativeEditTextFactoryTest extends BaseTest {
 
     @Mock
     private METValidator validator;
@@ -32,16 +26,15 @@ public class NativeEditTextFactoryTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        PowerMockito.mockStatic(NativeEditTextFactory.class);
-
     }
 
     @Test
-    @Ignore
-    public void testAddValidator() throws Exception {
-        //nativeEditText.addValidator(validator);
-        List<METValidator> result = Whitebox.invokeMethod(nativeEditText, "addValidator", validator);
-        Assert.assertEquals(result.size(), 0);
+    public void testAddValidator() {
+        NativeEditText editText = new NativeEditText(RuntimeEnvironment.application);
+        editText.addValidator(validator);
+        List<METValidator> result = editText.getValidators();
+        Assert.assertNotNull(result);
+        Assert.assertEquals(result.size(), 1);
     }
 
     @Test
