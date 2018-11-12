@@ -20,21 +20,21 @@ import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
-import com.vijay.jsonwizard.utils.barcode.CameraSourcePreview;
+import com.vijay.jsonwizard.utils.barcode.JsonFormCameraSourcePreview;
 
 import java.io.IOException;
 
-public class BarcodeScanActivity extends Activity implements Detector.Processor<Barcode> {
+public class JsonFormBarcodeScanActivity extends Activity implements Detector.Processor<Barcode> {
     private CameraSource cameraSource;
-    private CameraSourcePreview cameraSourcePreview;
+    private JsonFormCameraSourcePreview jsonFormCameraSourcePreview;
 
-    private String TAG = BarcodeScanActivity.class.getSimpleName();
+    private String TAG = JsonFormBarcodeScanActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_scan_barcode);
-        cameraSourcePreview = findViewById(R.id.preview);
+        setContentView(R.layout.json_form_activity_scan_barcode);
+        jsonFormCameraSourcePreview = findViewById(R.id.preview);
         createCameraSource();
     }
 
@@ -114,7 +114,7 @@ public class BarcodeScanActivity extends Activity implements Detector.Processor<
 
         if (cameraSource != null) {
             try {
-                cameraSourcePreview.start(cameraSource);
+                jsonFormCameraSourcePreview.start(cameraSource);
             } catch (IOException e) {
                 Log.e(TAG, "Unable to start camera source.", e);
                 cameraSource.release();
@@ -138,8 +138,8 @@ public class BarcodeScanActivity extends Activity implements Detector.Processor<
     @Override
     protected void onPause() {
         super.onPause();
-        if (cameraSourcePreview != null) {
-            cameraSourcePreview.stop();
+        if (jsonFormCameraSourcePreview != null) {
+            jsonFormCameraSourcePreview.stop();
         }
     }
 
@@ -150,8 +150,8 @@ public class BarcodeScanActivity extends Activity implements Detector.Processor<
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (cameraSourcePreview != null) {
-            cameraSourcePreview.release();
+        if (jsonFormCameraSourcePreview != null) {
+            jsonFormCameraSourcePreview.release();
         }
     }
 }
