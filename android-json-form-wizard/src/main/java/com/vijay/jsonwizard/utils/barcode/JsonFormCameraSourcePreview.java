@@ -29,15 +29,15 @@ import com.google.android.gms.vision.CameraSource;
 
 import java.io.IOException;
 
-public class CameraSourcePreview extends ViewGroup {
-    private static final String TAG = CameraSourcePreview.class.getSimpleName();
+public class JsonFormCameraSourcePreview extends ViewGroup {
+    private static final String TAG = JsonFormCameraSourcePreview.class.getSimpleName();
 
     private SurfaceView surfaceView;
     private boolean startRequested;
     private boolean surfaceAvailable;
     private CameraSource cameraSource;
 
-    public CameraSourcePreview(Context context, AttributeSet attrs) {
+    public JsonFormCameraSourcePreview(Context context, AttributeSet attrs) {
         super(context, attrs);
         startRequested = false;
         surfaceAvailable = false;

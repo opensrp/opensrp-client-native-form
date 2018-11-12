@@ -17,7 +17,7 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rey.material.util.ViewUtil;
 import com.rey.material.widget.Button;
 import com.vijay.jsonwizard.R;
-import com.vijay.jsonwizard.activities.BarcodeScanActivity;
+import com.vijay.jsonwizard.activities.JsonFormBarcodeScanActivity;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.GenericTextWatcher;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
@@ -189,7 +189,7 @@ public class BarcodeFactory implements FormWidgetFactory {
         inputManager.hideSoftInputFromWindow(editText.getWindowToken(), HIDE_NOT_ALWAYS);
         if (barcodeType != null && barcodeType.equals(TYPE_QR) && PermissionUtils.isPermissionGranted(activity, Manifest.permission.CAMERA, PermissionUtils.CAMERA_PERMISSION_REQUEST_CODE)) {
             try {
-                Intent intent = new Intent(activity, BarcodeScanActivity.class);
+                Intent intent = new Intent(activity, JsonFormBarcodeScanActivity.class);
                 activity.startActivityForResult(intent, JsonFormConstants.BARCODE_CONSTANTS.BARCODE_REQUEST_CODE);
             } catch (SecurityException e) {
                 Utils.showToast(activity, activity.getApplicationContext().getResources().getString(R.string.allow_camera_management));
@@ -199,7 +199,7 @@ public class BarcodeFactory implements FormWidgetFactory {
     }
 
     private boolean checkValue(String value) {
-        return value.contains("ABC0.");
+        return value.contains("ABC");
     }
 
 }
