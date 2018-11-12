@@ -5,7 +5,7 @@ import android.util.SparseArray;
 
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
-import com.vijay.jsonwizard.activities.BarcodeScanActivity;
+import com.vijay.jsonwizard.activities.JsonFormBarcodeScanActivity;
 
 import junit.framework.Assert;
 
@@ -20,10 +20,10 @@ import org.robolectric.Robolectric;
 import org.robolectric.android.controller.ActivityController;
 
 
-public class BarcodeScanActivityTest extends BaseActivityTest {
+public class JsonFormBarcodeScanActivityTest extends BaseActivityTest {
 
-    private BarcodeScanActivity barcodeScanActivity;
-    private ActivityController<BarcodeScanActivity> controller;
+    private JsonFormBarcodeScanActivity barcodeScanActivity;
+    private ActivityController<JsonFormBarcodeScanActivity> controller;
 
     @Mock
     private SparseArray<Barcode> barcodeSparseArray;
@@ -34,7 +34,7 @@ public class BarcodeScanActivityTest extends BaseActivityTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        controller = Robolectric.buildActivity(BarcodeScanActivity.class).create().start();
+        controller = Robolectric.buildActivity(JsonFormBarcodeScanActivity.class).create().start();
         barcodeScanActivity = controller.get();
     }
 

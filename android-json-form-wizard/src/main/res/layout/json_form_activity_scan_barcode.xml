@@ -8,11 +8,11 @@
 
     <include layout="@layout/toolbar_barcode_scan" />
 
-    <com.vijay.jsonwizard.utils.barcode.CameraSourcePreview
+    <com.vijay.jsonwizard.utils.barcode.JsonFormCameraSourcePreview
         android:id="@+id/preview"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </com.vijay.jsonwizard.utils.barcode.CameraSourcePreview>
+    </com.vijay.jsonwizard.utils.barcode.JsonFormCameraSourcePreview>
 
 </LinearLayout>

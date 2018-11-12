@@ -20,7 +20,7 @@
         android:largeHeap="true">
 
         <activity
-            android:name=".activities.BarcodeScanActivity"
+            android:name=".activities.JsonFormBarcodeScanActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
 
