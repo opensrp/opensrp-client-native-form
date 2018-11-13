@@ -57,7 +57,7 @@
   "step1": {
     "title": "Birth Registration",
     "fields": [
-      {
+      /*{
         "key": "Child_Photo",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -839,7 +839,7 @@
         "openmrs_entity_id": "spacer",
         "type": "spacer",
         "spacer_height": "20sp"
-      },
+      },*/
       {
         "key": "repiratory_exam",
         "openmrs_entity_parent": "",
@@ -849,6 +849,10 @@
         "label": "Respiratory exam",
         "label_text_style": "bold",
         "text_color": "#000000",
+        "has_extra_rel":{
+          "value":true,
+          "child_rel_key":"3"
+        },
         "options": [
           {
             "key": "1",
@@ -938,7 +942,7 @@
                   "err": "Please enter valid content"
                 },
                 "relevance": {
-                  "step1:repiratory_exam_abnormal": {
+                  "step1:repiratory_exam:repiratory_exam_abnormal": {
                     "ex-checkbox": [
                       {
                         "or": [
@@ -952,7 +956,7 @@
             ]
           }
         ]
-      },
+      }/*,
       {
         "key": "native_radio",
         "openmrs_entity_parent": "",
@@ -1366,7 +1370,7 @@
         "v_required": {
           "value": true
         }
-      }
+      }*/
     ]
   }
 }
