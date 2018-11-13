@@ -369,6 +369,8 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
+                        }else if(address.length == 3){
+                            Log.i("JSONACT",String.valueOf(address.length));
                         }
                     }
                     toggleViewVisibility(curView, ok);
