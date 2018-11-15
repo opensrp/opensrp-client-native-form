@@ -343,8 +343,13 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                 break;
             case JsonFormConstants.SPINNER:
                 showInformationDialog(v);
+                break;
             case JsonFormConstants.EDIT_TEXT:
                 setViewEditable(v);
+                break;
+            case JsonFormConstants.NORMAL_EDIT_TEXT:
+                setViewEditable(v);
+                break;
             default:
                 break;
         }

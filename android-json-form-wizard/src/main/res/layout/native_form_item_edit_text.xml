@@ -21,6 +21,7 @@
         app:met_singleLineEllipsis="true"
         android:layout_toLeftOf="@+id/material_edit_text_edit_button" />
     <ImageView
+        android:background="@null"
         android:id="@+id/material_edit_text_edit_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -28,6 +29,6 @@
         android:layout_alignParentRight="true"
         android:layout_gravity="center_vertical"
         android:contentDescription="@string/info_label"
-        android:src="@drawable/ic_edit"
+        app:srcCompat="@drawable/edit_button_bg"
         android:visibility="gone" />
 </RelativeLayout>
