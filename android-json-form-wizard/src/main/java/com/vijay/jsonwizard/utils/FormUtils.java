@@ -298,6 +298,13 @@ public class FormUtils {
         }
     }
 
+    public static void showEditButton(JSONObject jsonObject,View editableView, ImageView editButton, CommonListener listener) throws JSONException {
+        editButton.setTag(R.id.editable_view,editableView);
+        editButton.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+        editButton.setTag(R.id.type, jsonObject.getString("type"));
+        editButton.setOnClickListener(listener);
+    }
+
     /**
      * Checks and uncheck the radio buttons in a linear layout view
      * follows this fix https://stackoverflow.com/a/26961458/5784584

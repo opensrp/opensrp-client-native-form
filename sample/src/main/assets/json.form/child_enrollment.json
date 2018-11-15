@@ -111,6 +111,8 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "person_attribute",
         "openmrs_entity_id": "Child_Register_Card_Number",
+        "read_only":true,
+        "value": "1891389133",
         "type": "edit_text",
         "hint": "Child's register card number"
       },
@@ -119,6 +121,11 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "person_attribute",
         "openmrs_entity_id": "Child_Birth_Certificate",
+        "read_only":true,
+        "v_required": {
+          "value": "true",
+          "err": "Please enter child's birth certificate"
+        },
         "type": "edit_text",
         "hint": "Child's birth certificate number"
       },

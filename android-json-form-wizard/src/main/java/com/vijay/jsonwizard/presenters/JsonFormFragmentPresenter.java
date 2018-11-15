@@ -343,9 +343,19 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                 break;
             case JsonFormConstants.SPINNER:
                 showInformationDialog(v);
+            case JsonFormConstants.EDIT_TEXT:
+                setViewEditable(v);
             default:
                 break;
         }
+    }
+
+    private void setViewEditable(View editButton) {
+        View editableView = (View) editButton.getTag(R.id.editable_view);
+        editableView.setEnabled(true);
+        editableView.setFocusable(true);
+        editableView.requestFocus();
+        editableView.requestFocusFromTouch();
     }
 
     private void showInformationDialog(View view) {
