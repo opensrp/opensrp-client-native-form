@@ -16,10 +16,12 @@ import android.support.v7.widget.AppCompatRadioButton;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
@@ -320,7 +322,9 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                 break;
             case JsonFormConstants.NATIVE_RADIO_BUTTON:
                 String type = (String) v.getTag(R.id.radio_button_specify_type);
-                if (JsonFormConstants.NATIVE_RADIO_SPECIFY_INFO.equals(type)) {
+                if (v.getId() == R.id.label_edit_button) {
+                    setRadioViewsEditable(v);
+                } else if (JsonFormConstants.NATIVE_RADIO_SPECIFY_INFO.equals(type)) {
                     NativeRadioButtonFactory.showDateDialog(v);
                 } else {
                     showInformationDialog(v);
@@ -361,6 +365,23 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         editableView.setFocusable(true);
         editableView.requestFocus();
         editableView.requestFocusFromTouch();
+    }
+
+    private void setRadioViewsEditable(View editButton) {
+        RadioGroup radioGroup = (RadioGroup) editButton.getTag(R.id.editable_view);
+        radioGroup.setEnabled(true);
+        radioGroup.setFocusable(true);
+        for (int i = 0; i < radioGroup.getChildCount(); i++) {
+            View childElement = radioGroup.getChildAt(i);
+            if (childElement instanceof ViewGroup) {
+                ViewGroup group = (ViewGroup) childElement;
+                for (int id = 0; id < group.getChildCount(); id++) {
+                    group.getChildAt(id).setFocusable(true);
+                    group.getChildAt(id).setEnabled(true);
+                }
+            }
+        }
+
     }
 
     private void showInformationDialog(View view) {

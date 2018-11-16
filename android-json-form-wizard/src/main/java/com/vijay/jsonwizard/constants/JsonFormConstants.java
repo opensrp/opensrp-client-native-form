@@ -92,6 +92,8 @@ public class JsonFormConstants {
     public static final String NORMAL = "normal";
     public static final String ITALIC = "italic";
     public static final String BOLD_ITALIC = "bold_italic";
+    public static final String EDIT_BUTTON = "edit_button" ;
+    public static final String CUSTOM_TEXT = "custom_text" ;
 
     public static class JSON_FORM_KEY {
         public static final String EX_CHECKBOX = "ex-checkbox";
