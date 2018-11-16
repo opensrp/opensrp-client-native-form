@@ -853,7 +853,8 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Highest Level of School",
+        "read_only":true,
+        "label": "Highest Level of School.",
         "label_text_size": "18px",
         "label_text_color": "#FF9800",
         "label_info_text": "Checking out the display oof the info icon needed to display this information",
@@ -866,6 +867,8 @@
             "specify_info": "Specify",
             "specify_info_color": "#000000",
             "extra_info": "Here we go",
+            "label_info_text": "Checking out the display oof the info icon needed to display this information",
+            "label_info_title": "Highest Level of School",
             "extra_info_color": "#445567"
           },
           {

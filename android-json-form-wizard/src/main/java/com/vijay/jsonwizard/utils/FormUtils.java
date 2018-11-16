@@ -240,6 +240,10 @@ public class FormUtils {
             RelativeLayout relativeLayout = createLabelRelativeLayout(jsonObject, context, listener);
 
             CustomTextView labelText = relativeLayout.findViewById(R.id.label_text);
+            ImageView editButton = relativeLayout.findViewById(R.id.label_edit_button);
+            editButton.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+            editButton.setTag(R.id.type, jsonObject.getString("type"));
+            editButton.setOnClickListener(listener);
             if (requiredObject != null) {
                 String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
                 if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
@@ -255,6 +259,9 @@ public class FormUtils {
             labelText.setText(Html.fromHtml(combinedLabelText));
             labelText.setTextSize(labelTextSize);
             canvasIds.put(relativeLayout.getId());
+            if(readOnly){
+                editButton.setVisibility(View.VISIBLE);
+            }
             relativeLayout.setEnabled(!readOnly);
             views.add(relativeLayout);
         }
@@ -304,6 +311,7 @@ public class FormUtils {
         editButton.setTag(R.id.type, jsonObject.getString("type"));
         editButton.setOnClickListener(listener);
     }
+
 
     /**
      * Checks and uncheck the radio buttons in a linear layout view
