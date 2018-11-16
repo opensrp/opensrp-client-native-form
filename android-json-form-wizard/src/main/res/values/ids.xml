@@ -41,4 +41,9 @@
     <item name="number_selector_listener" type="id" />
     <item name="number_selector_start_selection_number" type="id" />
     <item name="number_selector_spinner" type="id" />
+
+    <item name="extraRelCheck" type="id" />
+    <item name="extraRelArray" type="id" />
+    <item name="extraRelRadioButton" type="id" />
+    <item name="extraPopup" type="id" />
 </resources>

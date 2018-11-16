@@ -149,7 +149,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                            String openMrsEntity, String openMrsEntityId) throws JSONException {
         synchronized (mJSONObject) {
             JSONObject jsonObject = mJSONObject.getJSONObject(stepName);
-            JSONArray fields = fetchFields(jsonObject);
+            JSONArray fields = fetchFields(jsonObject, false);
             for (int i = 0; i < fields.length(); i++) {
                 JSONObject item = fields.getJSONObject(i);
                 String keyAtIndex = item.getString(KEY.KEY);
@@ -176,11 +176,11 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     @Override
     public void writeValue(String stepName, String parentKey, String childObjectKey, String childKey,
                            String value, String openMrsEntityParent, String openMrsEntity,
-                           String openMrsEntityId)
+                           String openMrsEntityId, Boolean popup)
             throws JSONException {
         synchronized (mJSONObject) {
             JSONObject jsonObject = mJSONObject.getJSONObject(stepName);
-            JSONArray fields = fetchFields(jsonObject);
+            JSONArray fields = fetchFields(jsonObject, popup);
             for (int i = 0; i < fields.length(); i++) {
                 JSONObject item = fields.getJSONObject(i);
                 String keyAtIndex = item.getString(KEY.KEY);
@@ -190,7 +190,11 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                         JSONObject innerItem = jsonArray.getJSONObject(j);
                         String anotherKeyAtIndex = innerItem.getString(KEY.KEY);
                         if (childKey.equals(anotherKeyAtIndex)) {
-                            innerItem.put(JsonFormConstants.VALUE, value);
+                            if (popup) {
+                                innerItem.put(JsonFormConstants.SECOND_VALUE, value);
+                            } else {
+                                innerItem.put(JsonFormConstants.VALUE, value);
+                            }
                             refreshSkipLogic(parentKey, childKey);
                             refreshConstraints(parentKey, childKey);
                             return;
@@ -348,35 +352,40 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     public void refreshSkipLogic(String parentKey, String childKey) {
         initComparisons();
         for (View curView : skipLogicViews.values()) {
-            String relevanceTag = (String) curView.getTag(R.id.relevance);
-            if (relevanceTag != null && relevanceTag.length() > 0) {
-                try {
-                    JSONObject relevance = new JSONObject(relevanceTag);
-                    Iterator<String> keys = relevance.keys();
-                    boolean ok = true;
-                    while (keys.hasNext()) {
-                        String curKey = keys.next();
-                        String[] address = curKey.split(":");
-                        if (address.length == 2) {
-                            JSONObject curRelevance = relevance.getJSONObject(curKey);
-                            Map<String, String> curValueMap = getValueFromAddress(address);
+            addRelevance(curView);
+        }
+    }
 
-                            try {
-                                boolean comparison = isRelevant(curValueMap, curRelevance);
 
-                                ok = ok && comparison;
-                                if (!ok) break;
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }else if(address.length == 3){
-                            Log.i("JSONACT",String.valueOf(address.length));
+    private void addRelevance(View view) {
+        String relevanceTag = (String) view.getTag(R.id.relevance);
+        if (relevanceTag != null && relevanceTag.length() > 0) {
+            try {
+                JSONObject relevance = new JSONObject(relevanceTag);
+                Iterator<String> keys = relevance.keys();
+                boolean ok = true;
+                while (keys.hasNext()) {
+                    String curKey = keys.next();
+                    String[] address = curKey.split(":");
+                    if (address.length == 2) {
+                        JSONObject curRelevance = relevance.getJSONObject(curKey);
+                        Map<String, String> curValueMap = getValueFromAddress(address);
+
+                        try {
+                            boolean comparison = isRelevant(curValueMap, curRelevance);
+
+                            ok = ok && comparison;
+                            if (!ok) break;
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
+                    } else if (address.length == 3) {
+                        Log.i("JSONACT", String.valueOf(address.length));
                     }
-                    toggleViewVisibility(curView, ok);
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
+                toggleViewVisibility(view, ok);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -561,7 +570,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     @Override
     public JSONObject getObjectUsingAddress(String[] address) throws JSONException {
         if (address != null && address.length == 2) {
-            JSONArray fields = fetchFields(mJSONObject.getJSONObject(address[0]));
+            JSONArray fields = fetchFields(mJSONObject.getJSONObject(address[0]), false);
             for (int i = 0; i < fields.length(); i++) {
                 if (fields.getJSONObject(i).getString(KEY.KEY).equals(address[1])) {
                     return fields.getJSONObject(i);
@@ -741,25 +750,82 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         return errorMessage;
     }
 
-    private JSONArray fetchFields(JSONObject parentJson) {
+    private JSONArray fetchFields(JSONObject parentJson, Boolean popup) {
         JSONArray fields = new JSONArray();
-        try {
-            if (parentJson.has(JsonFormConstants.SECTIONS) && parentJson.get(JsonFormConstants.SECTIONS) instanceof JSONArray) {
-                JSONArray sections = parentJson.getJSONArray(JsonFormConstants.SECTIONS);
+        if (popup) {
+            try {
+                if (parentJson.has(JsonFormConstants.SECTIONS) && parentJson.get(JsonFormConstants.SECTIONS) instanceof JSONArray) {
+                    JSONArray sections = parentJson.getJSONArray(JsonFormConstants.SECTIONS);
 
-                for (int i = 0; i < sections.length(); i++) {
-                    JSONObject sectionJson = sections.getJSONObject(i);
-                    if (sectionJson.has(JsonFormConstants.FIELDS)) {
-                        fields = concatArray(fields, sectionJson.getJSONArray(JsonFormConstants.FIELDS));
+                    for (int i = 0; i < sections.length(); i++) {
+                        JSONObject sectionJson = sections.getJSONObject(i);
+                        if (sectionJson.has(JsonFormConstants.FIELDS)) {
+                            JSONArray jsonArray = sectionJson.getJSONArray(JsonFormConstants.FIELDS);
+                            for (int k = 0; k < jsonArray.length(); k++) {
+                                JSONObject item = jsonArray.getJSONObject(k);
+                                if (item.has("extra_rel") && item.has("has_extra_rel")) {
+                                    fields = concatArray(fields, specifyFields(item));
+                                }
+                            }
+                        }
+                    }
+                } else if (parentJson.has(JsonFormConstants.FIELDS) && parentJson.get(JsonFormConstants.FIELDS) instanceof JSONArray) {
+                    //fields = parentJson.getJSONArray(JsonFormConstants.FIELDS);
+                    JSONArray jsonArray = parentJson.getJSONArray(JsonFormConstants.FIELDS);
+                    for (int k = 0; k < jsonArray.length(); k++) {
+                        JSONObject item = jsonArray.getJSONObject(k);
+                        if (item.has("extra_rel") && item.has("has_extra_rel")) {
+                            fields = specifyFields(item);
+                        }
                     }
                 }
-            } else if (parentJson.has(JsonFormConstants.FIELDS) && parentJson.get(JsonFormConstants.FIELDS) instanceof JSONArray) {
-                fields = parentJson.getJSONArray(JsonFormConstants.FIELDS);
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        } catch (JSONException e) {
+        } else {
+            try {
+                if (parentJson.has(JsonFormConstants.SECTIONS) && parentJson.get(JsonFormConstants.SECTIONS) instanceof JSONArray) {
+                    JSONArray sections = parentJson.getJSONArray(JsonFormConstants.SECTIONS);
 
+                    for (int i = 0; i < sections.length(); i++) {
+                        JSONObject sectionJson = sections.getJSONObject(i);
+                        if (sectionJson.has(JsonFormConstants.FIELDS)) {
+                            fields = concatArray(fields, sectionJson.getJSONArray(JsonFormConstants.FIELDS));
+                        }
+                    }
+                } else if (parentJson.has(JsonFormConstants.FIELDS) && parentJson.get(JsonFormConstants.FIELDS) instanceof JSONArray) {
+                    fields = parentJson.getJSONArray(JsonFormConstants.FIELDS);
+                }
+            } catch (JSONException e) {
+
+            }
         }
 
+        return fields;
+    }
+
+    private JSONArray specifyFields(JSONObject parentJson) {
+        JSONArray fields = new JSONArray();
+        if (parentJson.has("has_extra_rel")) {
+            String optionKey = null;
+            try {
+                optionKey = (String) parentJson.get("has_extra_rel");
+                JSONArray options = parentJson.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
+                if (options.length() > 0) {
+                    for (int j = 0; j < options.length(); j++) {
+                        JSONObject jsonObject = options.getJSONObject(j);
+                        String objectKey = (String) jsonObject.get(JsonFormConstants.KEY);
+                        if (objectKey.equals(optionKey)) {
+                            if (jsonObject.has("specify_content")) {
+                                fields = concatArray(fields, jsonObject.getJSONArray("specify_content"));
+                            }
+                        }
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
         return fields;
     }
 

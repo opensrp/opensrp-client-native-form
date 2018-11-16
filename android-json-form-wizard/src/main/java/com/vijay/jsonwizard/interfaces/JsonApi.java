@@ -1,8 +1,10 @@
 package com.vijay.jsonwizard.interfaces;
 
 import android.view.View;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -17,7 +19,7 @@ public interface JsonApi {
 
     void writeValue(String stepName, String prentKey, String childObjectKey, String childKey,
                     String value, String openMrsEntityParent, String openMrsEntity,
-                    String openMrsEntityId)
+                    String openMrsEntityId, Boolean popup)
             throws JSONException;
 
     void writeMetaDataValue(String metaDataKey, Map<String, String> values)

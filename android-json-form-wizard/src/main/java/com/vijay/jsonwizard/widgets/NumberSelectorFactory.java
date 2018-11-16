@@ -184,7 +184,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener
-            listener) throws Exception {
+            listener, Boolean popup) throws Exception {
         List<View> views = new ArrayList<>(1);
         JSONArray canvasIds = new JSONArray();
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);

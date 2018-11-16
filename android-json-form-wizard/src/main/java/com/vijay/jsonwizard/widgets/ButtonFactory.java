@@ -32,7 +32,7 @@ public class ButtonFactory implements FormWidgetFactory {
     @Override
     public List<View> getViewsFromJson(String stepName, final Context context,
                                        final JsonFormFragment formFragment, JSONObject jsonObject,
-                                       CommonListener listener) throws Exception {
+                                       CommonListener listener, Boolean popup) throws Exception {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);

@@ -47,9 +47,9 @@ import static com.vijay.jsonwizard.widgets.DatePickerFactory.DATE_FORMAT;
  */
 public class NativeRadioButtonFactory implements FormWidgetFactory {
     private static final String TAG = "NativeRadioFactory";
+    private static JsonFormInteractor interactor = new JsonFormInteractor();
     private CustomTextView customTextView;
     private CustomTextView extraInfoTextView;
-    private static JsonFormInteractor interactor = new JsonFormInteractor();
 
     public static void showGenericDialog(View view) {
         Context context = (Context) view.getTag(R.id.native_radio_button_context);
@@ -58,12 +58,15 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         JsonFormFragment formFragment = (JsonFormFragment) view.getTag(R.id.radio_button_specify_fragment);
         JSONArray specifyContent = (JSONArray) view.getTag(R.id.radio_button_specify_content);
         List<View> listOfViews = new ArrayList<>();
-        interactor.fetchFields(listOfViews, stepName, formFragment, specifyContent, listener);
+        interactor.fetchFields(listOfViews, stepName, formFragment, specifyContent, listener, true);
+        Activity activity = (Activity) context;
+        JsonApi jsonApi = (JsonApi) activity;
+        jsonApi.refreshSkipLogic(null, null);
         final Dialog dialog = new Dialog(context);
 
-        View dialogView = addDialogContent(context,listOfViews);
+        View dialogView = addDialogContent(context, listOfViews);
         //set the dialog width to 90% of window and height to wrap content
-        int width = (int)(context.getResources().getDisplayMetrics().widthPixels*0.90);
+        int width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.90);
         Button cancelButton = dialogView.findViewById(R.id.generic_dialog_cancel_button);
         cancelButton.setOnClickListener(
                 new View.OnClickListener() {
@@ -78,7 +81,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         dialog.show();
     }
 
-    private static LinearLayout  addDialogContent(Context context, @NonNull List<View> views) {
+    private static LinearLayout addDialogContent(Context context, @NonNull List<View> views) {
         LinearLayout genericDialogLayout = (LinearLayout) LayoutInflater.from(context)
                 .inflate(R.layout.native_form_generic_dialog, null);
         LinearLayout genericDialogContent = genericDialogLayout.findViewById(
@@ -86,7 +89,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         for (View view : views) {
             genericDialogContent.addView(view);
         }
-        return  genericDialogLayout;
+        return genericDialogLayout;
     }
 
     public static void showDateDialog(View view) {
@@ -154,7 +157,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener
-            listener) throws Exception {
+            listener, Boolean popup) throws Exception {
         boolean readOnly = false;
         if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
             readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
@@ -189,8 +192,13 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
-        JSONObject extraRelCheck = jsonObject.optJSONObject("has_extra_rel");
         JSONArray options = jsonObject.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
+        Boolean extraRelCheck = jsonObject.optBoolean("extra_rel", false);
+        String extraRelArray = null;
+        if (extraRelCheck) {
+            extraRelArray = jsonObject.optString("has_extra_rel", null);
+        }
+
         RadioGroup radioGroup = new RadioGroup(context);
         radioGroup.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
         radioGroup.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
@@ -198,6 +206,8 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         radioGroup.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         radioGroup.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
         radioGroup.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+        radioGroup.setTag(R.id.extraRelCheck, extraRelCheck);
+        radioGroup.setTag(R.id.extraRelArray, extraRelArray);
         radioGroup.setId(ViewUtil.generateViewId());
         canvasIds.put(radioGroup.getId());
 
@@ -229,6 +239,8 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             if (specifyInfo != null) {
                 createSpecifyTextView(context, radioGroupLayout, jsonObject, listener, item,
                         stepName, formFragment);
+                JSONArray specifyContent = item.getJSONArray("specify_content");
+                radioGroup.setTag(R.id.extraRelRadioButton, specifyContent);
             }
 
             if (extraInfo != null) {
@@ -237,18 +249,6 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
             ((JsonApi) context).addFormDataView(radioGroupLayout);
             radioGroup.addView(radioGroupLayout);
-            Boolean extraRelValue = extraRelCheck.optBoolean("value", false);
-            String extraRelKey = extraRelCheck.optString("child_rel_key",null);
-
-
-            if (extraRelKey != null && extraRelValue && context instanceof JsonApi) {
-                if (extraRelKey.equals(item.getString(JsonFormConstants.KEY))) {
-                    JSONArray specifyContent = item.optJSONArray("specify_content");
-                    if (specifyContent.length() > 0) {
-                        setChildRel(specifyContent,context);
-                    }
-                }
-            }
         }
 
         if (relevance != null && context instanceof JsonApi) {
@@ -262,10 +262,6 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         radioGroup.setTag(R.id.canvas_ids, canvasIds.toString());
 
         views.add(radioGroup);
-    }
-
-    private void setChildRel(JSONArray jsonArray, Context context){
-
     }
 
     private void createRadioButton(RelativeLayout rootLayout, JSONObject jsonObject, Boolean readOnly, JSONObject item,

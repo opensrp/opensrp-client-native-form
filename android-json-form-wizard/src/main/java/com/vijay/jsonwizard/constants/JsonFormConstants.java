@@ -39,6 +39,7 @@ public class JsonFormConstants {
     public static final String BEHAVIOUR = "behaviour";
     public static final String RESULT = "result";
     public static final String VALUE = "value";
+    public static final String SECOND_VALUE = "second_value";
     public static final String OPENMRS_ENTITY_PARENT = "openmrs_entity_parent";
     public static final String OPENMRS_ENTITY = "openmrs_entity";
     public static final String OPENMRS_ENTITY_ID = "openmrs_entity_id";

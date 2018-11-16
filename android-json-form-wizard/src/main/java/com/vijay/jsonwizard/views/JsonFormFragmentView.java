@@ -1,10 +1,5 @@
 package com.vijay.jsonwizard.views;
 
-import java.util.List;
-import java.util.Map;
-
-import org.json.JSONObject;
-
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -17,6 +12,11 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.mvp.MvpView;
 import com.vijay.jsonwizard.mvp.ViewState;
+
+import org.json.JSONObject;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by vijay on 5/14/15.
@@ -55,7 +55,7 @@ public interface JsonFormFragmentView<V extends ViewState> extends MvpView {
 
     void writeValue(String stepName, String prentKey, String childObjectKey, String childKey,
                     String value, String openMrsEntityParent, String openMrsEntity,
-                    String openMrsEntityId);
+                    String openMrsEntityId, Boolean popup);
 
     void writeMetaDataValue(String metaDataKey, Map<String, String> values);
 

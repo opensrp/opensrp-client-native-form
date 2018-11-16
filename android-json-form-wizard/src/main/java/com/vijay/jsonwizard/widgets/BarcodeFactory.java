@@ -48,7 +48,7 @@ public class BarcodeFactory implements FormWidgetFactory {
     @Override
     public List<View> getViewsFromJson(String stepName, final Context context,
                                        JsonFormFragment formFragment, final JSONObject jsonObject,
-                                       CommonListener listener) {
+                                       CommonListener listener, Boolean popup) {
         List<View> views = new ArrayList<>(1);
         try {
             String openMrsEntityParent = jsonObject.getString("openmrs_entity_parent");

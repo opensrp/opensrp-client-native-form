@@ -213,11 +213,11 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     @Override
     public void writeValue(String stepName, String prentKey, String childObjectKey, String childKey,
                            String value, String openMrsEntityParent, String openMrsEntity,
-                           String openMrsEntityId) {
+                           String openMrsEntityId, Boolean popup) {
         Log.d(CONST_REAL_TIME_VALIDATION, CONST_FRAGMENT_WRITEVALUE_CALLED);
         try {
             mJsonApi.writeValue(stepName, prentKey, childObjectKey, childKey, value,
-                    openMrsEntityParent, openMrsEntity, openMrsEntityId);
+                    openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
         } catch (JSONException e) {
             // TODO - handle
             e.printStackTrace();

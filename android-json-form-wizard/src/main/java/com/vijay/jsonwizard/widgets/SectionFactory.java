@@ -7,10 +7,10 @@ import android.widget.RelativeLayout;
 
 import com.rey.material.widget.TextView;
 import com.vijay.jsonwizard.R;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
-import com.vijay.jsonwizard.constants.JsonFormConstants;
 
 import org.json.JSONObject;
 
@@ -22,7 +22,7 @@ import java.util.List;
  */
 public class SectionFactory implements FormWidgetFactory {
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, Boolean popup) throws Exception {
         List<View> views = new ArrayList<>(1);
 
         String text = jsonObject.getString(JsonFormConstants.NAME);

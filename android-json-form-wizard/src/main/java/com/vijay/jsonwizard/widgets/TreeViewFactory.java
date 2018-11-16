@@ -14,13 +14,13 @@ import android.widget.RelativeLayout;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.GenericTextWatcher;
 import com.vijay.jsonwizard.customviews.TreeViewDialog;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
-import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
 
 import org.json.JSONArray;
@@ -39,9 +39,35 @@ import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 public class TreeViewFactory implements FormWidgetFactory {
     private static final String TAG = "TreeViewFactory";
 
+    private static void showTreeDialog(TreeViewDialog treeViewDialog) {
+        treeViewDialog.show();
+    }
+
+    private static void changeEditTextValue(EditText editText, String value, String name) {
+        String readableValue = "";
+        editText.setTag(R.id.raw_value, value);
+        if (!TextUtils.isEmpty(name)) {
+            try {
+                JSONArray nameArray = new JSONArray(name);
+                if (nameArray.length() > 0) {
+                    readableValue = nameArray.getString(nameArray.length() - 1);
+
+                    if (nameArray.length() > 1) {
+                        readableValue = readableValue + ", "
+                                + nameArray.getString(nameArray.length() - 2);
+                    }
+                }
+            } catch (JSONException e) {
+                Log.e(TAG, Log.getStackTraceString(e));
+            }
+        }
+
+        editText.setText(readableValue);
+    }
+
     @Override
     public List<View> getViewsFromJson(String stepName, final Context context, JsonFormFragment formFragment, JSONObject
-            jsonObject, CommonListener listener) throws Exception {
+            jsonObject, CommonListener listener, Boolean popup) throws Exception {
         List<View> views = new ArrayList<>(1);
         try {
             String openMrsEntityParent = jsonObject.getString("openmrs_entity_parent");
@@ -173,31 +199,5 @@ public class TreeViewFactory implements FormWidgetFactory {
         }
 
         return views;
-    }
-
-    private static void showTreeDialog(TreeViewDialog treeViewDialog) {
-        treeViewDialog.show();
-    }
-
-    private static void changeEditTextValue(EditText editText, String value, String name) {
-        String readableValue = "";
-        editText.setTag(R.id.raw_value, value);
-        if (!TextUtils.isEmpty(name)) {
-            try {
-                JSONArray nameArray = new JSONArray(name);
-                if (nameArray.length() > 0) {
-                    readableValue = nameArray.getString(nameArray.length() - 1);
-
-                    if (nameArray.length() > 1) {
-                        readableValue = readableValue + ", "
-                                + nameArray.getString(nameArray.length() - 2);
-                    }
-                }
-            } catch (JSONException e) {
-                Log.e(TAG, Log.getStackTraceString(e));
-            }
-        }
-
-        editText.setText(readableValue);
     }
 }

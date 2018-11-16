@@ -154,7 +154,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             e.printStackTrace();
         }
         List<View> views = mJsonFormInteractor.fetchFormElements(mStepName, formFragment, mStepDetails,
-                getView().getCommonListener());
+                getView().getCommonListener(), false);
         getView().addFormElements(views);
 
     }
@@ -237,9 +237,10 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             } else if (childAt instanceof CheckBox) {
                 String parentKey = (String) childAt.getTag(R.id.key);
                 String childKey = (String) childAt.getTag(R.id.childKey);
+                Boolean popup = (Boolean) childAt.getTag(R.id.extraPopup);
                 getView().writeValue(mStepName, parentKey, JsonFormConstants.OPTIONS_FIELD_NAME, childKey,
                         String.valueOf(((CheckBox) childAt).isChecked()), openMrsEntityParent,
-                        openMrsEntity, openMrsEntityId);
+                        openMrsEntity, openMrsEntityId, popup);
             } else if (childAt instanceof RadioButton) {
                 String parentKey = (String) childAt.getTag(R.id.key);
                 String childKey = (String) childAt.getTag(R.id.childKey);
@@ -441,6 +442,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             String openMrsEntity = (String) compoundButton.getTag(R.id.openmrs_entity);
             String openMrsEntityId = (String) compoundButton.getTag(R.id.openmrs_entity_id);
             String childKey = (String) compoundButton.getTag(R.id.childKey);
+            Boolean popup = (Boolean) compoundButton.getTag(R.id.extraPopup);
 
             JSONObject formObjectForStep = getFormObjectForStep(mStepName, parentKey);
 
@@ -475,7 +477,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
 
             getView().writeValue(mStepName, parentKey, JsonFormConstants.OPTIONS_FIELD_NAME, childKey,
                     String.valueOf(compoundButton.isChecked()), openMrsEntityParent,
-                    openMrsEntity, openMrsEntityId);
+                    openMrsEntity, openMrsEntityId, popup);
         } else if ((compoundButton instanceof AppCompatRadioButton || compoundButton instanceof RadioButton) && isChecked) {
             String parentKey = (String) compoundButton.getTag(R.id.key);
             String openMrsEntityParent = (String) compoundButton.getTag(R.id.openmrs_entity_parent);

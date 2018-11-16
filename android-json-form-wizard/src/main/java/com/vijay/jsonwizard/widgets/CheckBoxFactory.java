@@ -32,7 +32,7 @@ import java.util.List;
 public class CheckBoxFactory implements FormWidgetFactory {
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener
-            listener) throws Exception {
+            listener, Boolean popup) throws Exception {
         boolean readOnly = false;
         if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
             readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
@@ -42,13 +42,13 @@ public class CheckBoxFactory implements FormWidgetFactory {
         JSONArray canvasIds = new JSONArray();
 
         FormUtils.createRadioButtonAndCheckBoxLabel(views, jsonObject, context, canvasIds, readOnly, listener);
-        addCheckBoxOptionsElements(jsonObject, context, readOnly, canvasIds, stepName, views, listener);
+        addCheckBoxOptionsElements(jsonObject, context, readOnly, canvasIds, stepName, views, listener, popup);
 
         return views;
     }
 
     private void addCheckBoxOptionsElements(JSONObject jsonObject, Context context, Boolean readOnly, JSONArray canvasIds,
-                                            String stepName, List<View> views, CommonListener listener) throws JSONException {
+                                            String stepName, List<View> views, CommonListener listener, Boolean popup) throws JSONException {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
@@ -60,8 +60,8 @@ public class CheckBoxFactory implements FormWidgetFactory {
         for (int i = 0; i < options.length(); i++) {
             JSONObject item = options.getJSONObject(i);
             //Get options for alert dialog
-            String labelInfoText = item.optString(JsonFormConstants.LABEL_INFO_TEXT,"");
-            String labelInfoTitle = item.optString(JsonFormConstants.LABEL_INFO_TITLE,"");
+            String labelInfoText = item.optString(JsonFormConstants.LABEL_INFO_TEXT, "");
+            String labelInfoTitle = item.optString(JsonFormConstants.LABEL_INFO_TITLE, "");
 
             RelativeLayout checkboxLayout = (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.native_form_item_checkbox, null);
             createCheckBoxText(checkboxLayout, item, context);
@@ -70,6 +70,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
             checkBoxes.add(checkBox);
             checkBox.setTag(R.id.raw_value, item.getString(JsonFormConstants.TEXT));
             checkBox.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+            checkBox.setTag(R.id.extraPopup, popup);
             checkBox.setTag(R.id.type, jsonObject.getString("type"));
             checkBox.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
             checkBox.setTag(R.id.openmrs_entity, openMrsEntity);
@@ -91,7 +92,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
             }
             //Displaying optional info alert dialog
             ImageView imageView = checkboxLayout.findViewById(R.id.checkbox_info_icon);
-            FormUtils.showInfoIcon(jsonObject,listener,labelInfoText,labelInfoTitle,imageView);
+            FormUtils.showInfoIcon(jsonObject, listener, labelInfoText, labelInfoTitle, imageView);
 
             views.add(checkboxLayout);
             ((JsonApi) context).addFormDataView(checkBox);

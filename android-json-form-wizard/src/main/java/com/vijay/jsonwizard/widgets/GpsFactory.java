@@ -44,10 +44,35 @@ public class GpsFactory implements FormWidgetFactory {
 
     private GpsDialog gpsDialog;
 
+    public static ValidationStatus validate(JsonFormFragmentView formFragmentView,
+                                            Button recordButton) {
+        if (!(recordButton.getTag(R.id.v_required) instanceof String) || !(recordButton.getTag(R.id.error) instanceof String)) {
+            return new ValidationStatus(true, null, formFragmentView, recordButton);
+        }
+        Boolean isRequired = Boolean.valueOf((String) recordButton.getTag(R.id.v_required));
+        if (!isRequired || !recordButton.isEnabled()) {
+            return new ValidationStatus(true, null, formFragmentView, recordButton);
+        }
+
+        return new ValidationStatus(false, (String) recordButton.getTag(R.id.error), formFragmentView, recordButton);
+    }
+
+    public static String constructString(Location location) {
+        if (location != null) {
+            return constructString(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()));
+        }
+
+        return null;
+    }
+
+    public static String constructString(String latitude, String longitude) {
+        return latitude + " " + longitude;
+    }
+
     @Override
     public List<View> getViewsFromJson(String stepName, final Context context,
                                        JsonFormFragment formFragment, JSONObject jsonObject,
-                                       CommonListener listener) throws Exception {
+                                       CommonListener listener, Boolean popup) throws Exception {
         List<View> views = new ArrayList<>();
 
         String openMrsEntityParent = jsonObject.getString("openmrs_entity_parent");
@@ -125,19 +150,6 @@ public class GpsFactory implements FormWidgetFactory {
         return views;
     }
 
-    public static ValidationStatus validate(JsonFormFragmentView formFragmentView,
-                                            Button recordButton) {
-        if (!(recordButton.getTag(R.id.v_required) instanceof String) || !(recordButton.getTag(R.id.error) instanceof String)) {
-            return new ValidationStatus(true, null, formFragmentView, recordButton);
-        }
-        Boolean isRequired = Boolean.valueOf((String) recordButton.getTag(R.id.v_required));
-        if (!isRequired || !recordButton.isEnabled()) {
-            return new ValidationStatus(true, null, formFragmentView, recordButton);
-        }
-
-        return new ValidationStatus(false, (String) recordButton.getTag(R.id.error), formFragmentView, recordButton);
-    }
-
     public void attachJSON(Context context, @NonNull JSONObject jsonObject, @NonNull View dataView, @NonNull TextView latitudeTv, @NonNull TextView longitudeTv, @NonNull TextView altitudeTv, @NonNull TextView accuracyTv) {
         String latitude = "";
         String longitude = "";
@@ -159,18 +171,6 @@ public class GpsFactory implements FormWidgetFactory {
         accuracyTv.setText(String.format(context.getString(R.string.accuracy), accuracy));
 
         dataView.setTag(R.id.raw_value, constructString(latitude, longitude));
-    }
-
-    public static String constructString(Location location) {
-        if (location != null) {
-            return constructString(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()));
-        }
-
-        return null;
-    }
-
-    public static String constructString(String latitude, String longitude) {
-        return latitude + " " + longitude;
     }
 
     private void requestPermissionsForLocation(Context context) {

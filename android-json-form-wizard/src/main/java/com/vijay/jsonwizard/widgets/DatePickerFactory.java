@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rengwuxian.materialedittext.validation.RegexpValidator;
 import com.rey.material.util.ViewUtil;
@@ -25,6 +26,7 @@ import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -160,7 +162,7 @@ public class DatePickerFactory implements FormWidgetFactory {
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject,
-                                       CommonListener listener) throws Exception {
+                                       CommonListener listener, Boolean popup) throws Exception {
         List<View> views = new ArrayList<>(1);
         try {
 
