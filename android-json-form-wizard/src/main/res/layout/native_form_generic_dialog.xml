@@ -1,42 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/generic_dialog_main_layout"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <LinearLayout
-        android:layout_marginTop="@dimen/generic_dialog_content_margin"
-        android:layout_marginLeft="@dimen/generic_dialog_content_margin"
-        android:layout_marginRight="@dimen/generic_dialog_content_margin"
-        android:id="@+id/generic_dialog_content"
+        android:id="@+id/generic_dialog_main_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" />
+        android:orientation="vertical">
 
-    <RelativeLayout
-        android:layout_marginBottom="@dimen/generic_dialog_content_margin"
-        android:layout_width="match_parent"
-        android:layout_height="50dp">
+        <LinearLayout
+            android:id="@+id/generic_dialog_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/generic_dialog_content_margin"
+            android:layout_marginTop="@dimen/generic_dialog_content_margin"
+            android:layout_marginRight="@dimen/generic_dialog_content_margin"
+            android:orientation="vertical" />
 
-        <Button
-            android:id="@+id/generic_dialog_cancel_button"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_toStartOf="@id/generic_dialog_done_button"
-            android:layout_toLeftOf="@id/generic_dialog_done_button"
-            android:background="@null"
-            android:text="@string/cancel"
-            android:textColor="@color/dialog_button_blue_color" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginBottom="@dimen/generic_dialog_content_margin">
 
-        <Button
-            android:id="@+id/generic_dialog_done_button"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:background="@null"
-            android:text="@string/done"
-            android:textColor="@color/dialog_button_blue_color" />
-    </RelativeLayout>
-</LinearLayout>
+            <Button
+                android:id="@+id/generic_dialog_cancel_button"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_toStartOf="@id/generic_dialog_done_button"
+                android:layout_toLeftOf="@id/generic_dialog_done_button"
+                android:background="@null"
+                android:text="@string/cancel"
+                android:textColor="@color/dialog_button_blue_color" />
+
+            <Button
+                android:id="@+id/generic_dialog_done_button"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:background="@null"
+                android:text="@string/done"
+                android:textColor="@color/dialog_button_blue_color" />
+        </RelativeLayout>
+    </LinearLayout>
+</ScrollView>

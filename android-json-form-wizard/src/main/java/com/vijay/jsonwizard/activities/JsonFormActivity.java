@@ -756,7 +756,6 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             try {
                 if (parentJson.has(JsonFormConstants.SECTIONS) && parentJson.get(JsonFormConstants.SECTIONS) instanceof JSONArray) {
                     JSONArray sections = parentJson.getJSONArray(JsonFormConstants.SECTIONS);
-
                     for (int i = 0; i < sections.length(); i++) {
                         JSONObject sectionJson = sections.getJSONObject(i);
                         if (sectionJson.has(JsonFormConstants.FIELDS)) {
@@ -770,7 +769,6 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                         }
                     }
                 } else if (parentJson.has(JsonFormConstants.FIELDS) && parentJson.get(JsonFormConstants.FIELDS) instanceof JSONArray) {
-                    //fields = parentJson.getJSONArray(JsonFormConstants.FIELDS);
                     JSONArray jsonArray = parentJson.getJSONArray(JsonFormConstants.FIELDS);
                     for (int k = 0; k < jsonArray.length(); k++) {
                         JSONObject item = jsonArray.getJSONObject(k);

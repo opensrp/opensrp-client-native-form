@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
@@ -81,14 +82,15 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         dialog.show();
     }
 
-    private static LinearLayout addDialogContent(Context context, @NonNull List<View> views) {
-        LinearLayout genericDialogLayout = (LinearLayout) LayoutInflater.from(context)
+    private static ScrollView addDialogContent(Context context, @NonNull List<View> views) {
+        ScrollView genericDialogLayout = (ScrollView) LayoutInflater.from(context)
                 .inflate(R.layout.native_form_generic_dialog, null);
         LinearLayout genericDialogContent = genericDialogLayout.findViewById(
                 R.id.generic_dialog_content);
         for (View view : views) {
             genericDialogContent.addView(view);
         }
+
         return genericDialogLayout;
     }
 
