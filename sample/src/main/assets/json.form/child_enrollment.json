@@ -667,6 +667,70 @@
         }
       },
       {
+        "key": "symp_sev_preeclampsia",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "check_box",
+        "label": "Any symptoms of severe pre-eclampsia?",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "read_only":true,
+        "exclusive": [
+          "none"
+        ],
+        "options": [
+          {
+            "key": "none",
+            "text": "None",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "severe_headache",
+            "text": "Severe headache",
+            "value": false,
+            "openmrs_entity": "Headache",
+            "openmrs_entity_id": "139084",
+            "label_info_title": "Severe Headache",
+            "label_info_text": "Check if the patient experience frequent long headaches"
+          },
+          {
+            "key": "blurred_vision",
+            "text": "Blurred vision",
+            "value": false,
+            "openmrs_entity": "Blurred vision",
+            "openmrs_entity_id": "147104"
+          },
+          {
+            "key": "epigastric_pain",
+            "text": "Epigastric pain",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": "141128"
+          },
+          {
+            "key": "dizziness",
+            "text": "Dizziness",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "vomiting",
+            "text": "Vomiting",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Please specify any other symptoms or select none"
+        }
+      },
+      {
         "key": "PMTCT_Status",
         "openmrs_entity_parent": "",
         "openmrs_entity": "concept",

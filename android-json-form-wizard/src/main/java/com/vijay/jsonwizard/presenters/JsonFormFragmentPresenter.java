@@ -56,6 +56,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -331,7 +332,11 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                 }
                 break;
             case JsonFormConstants.CHECK_BOX:
-                showInformationDialog(v);
+                if (v.getId() == R.id.label_edit_button) {
+                    setCheckboxesEditable(v);
+                } else {
+                    showInformationDialog(v);
+                }
                 break;
             case JsonFormConstants.LABEL:
                 showInformationDialog(v);
@@ -365,6 +370,20 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         editableView.setFocusable(true);
         editableView.requestFocus();
         editableView.requestFocusFromTouch();
+    }
+
+    @SuppressWarnings({"unchecked"})
+    private void setCheckboxesEditable(View editButton) {
+        List<View> checkboxLayouts = (ArrayList<View>) editButton.getTag(R.id.editable_view);
+        for (View checkboxLayout : checkboxLayouts) {
+            if (checkboxLayout instanceof ViewGroup) {
+                ViewGroup group = (ViewGroup) checkboxLayout;
+                for (int id = 0; id < group.getChildCount(); id++) {
+                    group.getChildAt(id).setFocusable(true);
+                    group.getChildAt(id).setEnabled(true);
+                }
+            }
+        }
     }
 
     private void setRadioViewsEditable(View editButton) {
