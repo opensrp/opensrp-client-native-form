@@ -351,7 +351,11 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                 createNumberSelector(v);
                 break;
             case JsonFormConstants.SPINNER:
-                showInformationDialog(v);
+                if (v.getId() == R.id.spinner_edit_button) {
+                    setViewEditable(v);
+                } else {
+                    showInformationDialog(v);
+                }
                 break;
             case JsonFormConstants.EDIT_TEXT:
                 setViewEditable(v);

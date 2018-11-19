@@ -165,6 +165,7 @@
         "openmrs_entity": "person",
         "openmrs_entity_id": "gender",
         "type": "spinner",
+        "read_only":true,
         "hint": "Sex *",
         "values": [
           "Male",
@@ -388,6 +389,7 @@
         "openmrs_entity_id": "1572AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
         "openmrs_data_type": "select one",
         "type": "spinner",
+        "read_only":true,
         "hint": "Place of birth *",
         "label_info_title": "Place of birth spinner",
         "label_info_text": "here is some text on this dialog",
