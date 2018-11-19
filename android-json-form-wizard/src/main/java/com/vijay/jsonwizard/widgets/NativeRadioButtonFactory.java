@@ -180,13 +180,13 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             FormUtils.showInfoIcon(jsonObject, listener, labelInfoText, labelInfoTitle, imageView);
 
             createRadioButton(radioGroupLayout, jsonObject, readOnly, item, listener, stepName);
-            createMainTextView(context, radioGroupLayout, jsonObject, item, stepName);
+            createMainTextView(context, radioGroupLayout, jsonObject, item, stepName,readOnly);
             if (specifyInfo != null) {
-                createSpecifyTextView(context, radioGroupLayout, jsonObject, listener, item, stepName);
+                createSpecifyTextView(context, radioGroupLayout, jsonObject, listener, item, stepName,readOnly);
             }
 
             if (extraInfo != null) {
-                createExtraInfo(context, radioGroupLayout, item, jsonObject, stepName);
+                createExtraInfo(context, radioGroupLayout, item, jsonObject, stepName,readOnly);
             }
 
             ((JsonApi) context).addFormDataView(radioGroupLayout);
@@ -228,11 +228,10 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             radioButton.setChecked(true);
         }
         radioButton.setEnabled(!readOnly);
-        radioButton.setFocusable(!readOnly);
     }
 
     private void createMainTextView(Context context, RelativeLayout rootLayout, JSONObject jsonObject, JSONObject item,
-                                    String stepName) throws JSONException {
+                                    String stepName, Boolean readOnly) throws JSONException {
         CustomTextView mainTextView = rootLayout.findViewById(R.id.mainRadioButtonTextView);
         String optionTextColor = JsonFormConstants.DEFAULT_TEXT_COLOR;
         if (item.has(JsonFormConstants.TEXT_COLOR)) {
@@ -240,11 +239,12 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         }
         addTextViewAttributes(context, jsonObject, item, mainTextView, stepName, optionTextColor);
         mainTextView.setText(item.getString(JsonFormConstants.TEXT));
+        mainTextView.setEnabled(!readOnly);
         setMainTextView(mainTextView);
     }
 
     private void createSpecifyTextView(Context context, RelativeLayout rootLayout, JSONObject jsonObject, CommonListener listener,
-                                       JSONObject item, String stepName) throws JSONException {
+                                       JSONObject item, String stepName, Boolean readOnly) throws JSONException {
         String text = item.getString(JsonFormConstants.NATIVE_RADIO_SPECIFY_INFO);
         String text_color = item.optString(JsonFormConstants.NATIVE_RADIO_SPECIFY_INFO_COLOR, JsonFormConstants.DEFAULT_HINT_TEXT_COLOR);
         CustomTextView specifyTextView = rootLayout.findViewById(R.id.specifyTextView);
@@ -256,16 +256,18 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         specifyTextView.setTag(R.id.native_radio_button_context, context);
         specifyTextView.setText(createSpecifyText(text));
         specifyTextView.setOnClickListener(listener);
+        specifyTextView.setEnabled(!readOnly);
     }
 
     private void createExtraInfo(Context context, RelativeLayout rootLayout, JSONObject item, JSONObject jsonObject,
-                                 String stepName) throws JSONException {
+                                 String stepName, Boolean readOnly) throws JSONException {
         String text = item.getString(JsonFormConstants.NATIVE_RADIO_EXTRA_INFO);
         String text_color = item.optString(JsonFormConstants.NATIVE_RADIO_EXTRA_INFO_COLOR, JsonFormConstants.DEFAULT_HINT_TEXT_COLOR);
         CustomTextView extraInfoTextView = rootLayout.findViewById(R.id.extraInfoTextView);
         extraInfoTextView.setVisibility(View.VISIBLE);
         addTextViewAttributes(context, jsonObject, item, extraInfoTextView, stepName, text_color);
         extraInfoTextView.setText(text);
+        extraInfoTextView.setEnabled(!readOnly);
     }
 
     private void addTextViewAttributes(Context context, JSONObject jsonObject, JSONObject item, CustomTextView customTextView,
