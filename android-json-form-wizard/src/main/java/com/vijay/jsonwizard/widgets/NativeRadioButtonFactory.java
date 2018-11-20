@@ -62,7 +62,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         interactor.fetchFields(listOfViews, stepName, formFragment, specifyContent, listener, true);
         Activity activity = (Activity) context;
         JsonApi jsonApi = (JsonApi) activity;
-        jsonApi.refreshSkipLogic(null, null);
+        jsonApi.refreshSkipLogic(null, null, true);
         final Dialog dialog = new Dialog(context);
 
         View dialogView = addDialogContent(context, listOfViews);

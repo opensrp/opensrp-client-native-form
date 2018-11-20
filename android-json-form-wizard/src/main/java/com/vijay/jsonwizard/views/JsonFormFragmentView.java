@@ -55,7 +55,7 @@ public interface JsonFormFragmentView<V extends ViewState> extends MvpView {
 
     void writeValue(String stepName, String prentKey, String childObjectKey, String childKey,
                     String value, String openMrsEntityParent, String openMrsEntity,
-                    String openMrsEntityId, Boolean popup);
+                    String openMrsEntityId, boolean popup);
 
     void writeMetaDataValue(String metaDataKey, Map<String, String> values);
 

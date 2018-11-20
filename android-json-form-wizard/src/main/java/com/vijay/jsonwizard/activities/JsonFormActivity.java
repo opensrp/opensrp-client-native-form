@@ -164,7 +164,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     item.put("openmrs_entity_parent", openMrsEntityParent);
                     item.put("openmrs_entity", openMrsEntity);
                     item.put("openmrs_entity_id", openMrsEntityId);
-                    refreshSkipLogic(key, null);
+                    refreshSkipLogic(key, null, false);
                     refreshConstraints(key, null);
                     refreshMediaLogic(key, value);
                     return;
@@ -176,7 +176,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     @Override
     public void writeValue(String stepName, String parentKey, String childObjectKey, String childKey,
                            String value, String openMrsEntityParent, String openMrsEntity,
-                           String openMrsEntityId, Boolean popup)
+                           String openMrsEntityId, boolean popup)
             throws JSONException {
         synchronized (mJSONObject) {
             JSONObject jsonObject = mJSONObject.getJSONObject(stepName);
@@ -195,7 +195,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                             } else {
                                 innerItem.put(JsonFormConstants.VALUE, value);
                             }
-                            refreshSkipLogic(parentKey, childKey);
+                            refreshSkipLogic(parentKey, childKey, popup);
                             refreshConstraints(parentKey, childKey);
                             return;
                         }
@@ -283,14 +283,14 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     }
 
     @Override
-    public void refreshHiddenViews() {
+    public void refreshHiddenViews(boolean popup) {
         for (View curView : formDataViews) {
             String addressString = (String) curView.getTag(R.id.address);
             String[] address = addressString.split(":");
             try {
-                JSONObject viewData = getObjectUsingAddress(address);
+                JSONObject viewData = getObjectUsingAddress(address, popup);
                 if (viewData.has("hidden") && viewData.getBoolean("hidden")) {
-                    toggleViewVisibility(curView, false);
+                    toggleViewVisibility(curView, false, popup);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -349,15 +349,15 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     }
 
     @Override
-    public void refreshSkipLogic(String parentKey, String childKey) {
+    public void refreshSkipLogic(String parentKey, String childKey, boolean popup) {
         initComparisons();
         for (View curView : skipLogicViews.values()) {
-            addRelevance(curView);
+            addRelevance(curView, popup);
         }
     }
 
 
-    private void addRelevance(View view) {
+    private void addRelevance(View view, Boolean popup) {
         String relevanceTag = (String) view.getTag(R.id.relevance);
         if (relevanceTag != null && relevanceTag.length() > 0) {
             try {
@@ -369,7 +369,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     String[] address = curKey.split(":");
                     if (address.length == 2) {
                         JSONObject curRelevance = relevance.getJSONObject(curKey);
-                        Map<String, String> curValueMap = getValueFromAddress(address);
+                        Map<String, String> curValueMap = getValueFromAddress(address, popup);
 
                         try {
                             boolean comparison = isRelevant(curValueMap, curRelevance);
@@ -383,19 +383,19 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                         Log.i("JSONACT", String.valueOf(address.length));
                     }
                 }
-                toggleViewVisibility(view, ok);
+                toggleViewVisibility(view, ok, popup);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    protected void toggleViewVisibility(View view, boolean visible) {
+    protected void toggleViewVisibility(View view, boolean visible, boolean popup) {
         try {
             JSONArray canvasViewIds = new JSONArray((String) view.getTag(R.id.canvas_ids));
             String addressString = (String) view.getTag(R.id.address);
             String[] address = addressString.split(":");
-            JSONObject object = getObjectUsingAddress(address);
+            JSONObject object = getObjectUsingAddress(address, popup);
             boolean enabled = visible;
             if (object.has(KEY.READ_ONLY) && object.getBoolean(KEY.READ_ONLY) && visible) {
                 enabled = false;
@@ -449,12 +449,12 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         }
 
         if (changedViewKey != null && constrainedViews.containsKey(changedViewKey)) {
-            checkViewConstraints(constrainedViews.get(changedViewKey));
+            checkViewConstraints(constrainedViews.get(changedViewKey), false);
         }
 
         for (View curView : constrainedViews.values()) {
             if (changedViewKey == null || !getViewKey(curView).equals(changedViewKey)) {
-                checkViewConstraints(curView);
+                checkViewConstraints(curView, false);
             }
         }
     }
@@ -485,7 +485,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         }
     }
 
-    private void checkViewConstraints(View curView) {
+    private void checkViewConstraints(View curView, boolean popup) {
         String constraintTag = (String) curView.getTag(R.id.constraints);
         if (constraintTag != null && constraintTag.length() > 0) {
             try {
@@ -497,7 +497,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 for (int i = 0; i < constraint.length(); i++) {
                     JSONObject curConstraint = constraint.getJSONObject(i);
                     if (address.length == 2) {
-                        String value = getValueFromAddress(address).get(JsonFormConstants.VALUE);
+                        String value = getValueFromAddress(address, popup).get(JsonFormConstants.VALUE);
                         errorMessage = enforceConstraint(value, curView, curConstraint);
                         if (errorMessage != null) break;
                     }
@@ -511,7 +511,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                         ((CheckBox) curView).setChecked(false);
                         Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
                         String checkBoxKey = (String) curView.getTag(R.id.childKey);
-                        JSONObject questionObject = getObjectUsingAddress(address);
+                        JSONObject questionObject = getObjectUsingAddress(address, popup);
                         for (int i = 0; i < questionObject.getJSONArray("options").length(); i++) {
                             JSONObject curOption = questionObject.getJSONArray("options").getJSONObject(i);
                             if (curOption.getString(KEY.KEY).equals(checkBoxKey)) {
@@ -527,9 +527,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         }
     }
 
-    private Map<String, String> getValueFromAddress(String[] address) throws Exception {
+    private Map<String, String> getValueFromAddress(String[] address, boolean popup) throws Exception {
         Map<String, String> result = new HashMap<>();
-        JSONObject object = getObjectUsingAddress(address);
+        JSONObject object = getObjectUsingAddress(address, popup);
         if (object != null) {
             if (object.getString("type").equals("check_box")) {
                 JSONArray options = object.getJSONArray("options");
@@ -568,9 +568,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     }
 
     @Override
-    public JSONObject getObjectUsingAddress(String[] address) throws JSONException {
+    public JSONObject getObjectUsingAddress(String[] address, boolean popup) throws JSONException {
         if (address != null && address.length == 2) {
-            JSONArray fields = fetchFields(mJSONObject.getJSONObject(address[0]), false);
+            JSONArray fields = fetchFields(mJSONObject.getJSONObject(address[0]), popup);
             for (int i = 0; i < fields.length(); i++) {
                 if (fields.getJSONObject(i).getString(KEY.KEY).equals(address[1])) {
                     return fields.getJSONObject(i);
@@ -648,7 +648,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                         args[i] = valueMatcher.group(1);
                     } else {
                         try {
-                            args[i] = getValueFromAddress(curArg.split(":")).get(JsonFormConstants.VALUE);
+                            args[i] = getValueFromAddress(curArg.split(":"), false).get(JsonFormConstants.VALUE);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

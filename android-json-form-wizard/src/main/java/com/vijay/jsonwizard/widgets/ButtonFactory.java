@@ -86,7 +86,7 @@ public class ButtonFactory implements FormWidgetFactory {
                         if (!TextUtils.isEmpty(addressString)) {
                             String[] address = addressString.split(":");
                             JSONObject jsonObject = ((JsonApi) context)
-                                    .getObjectUsingAddress(address);
+                                    .getObjectUsingAddress(address, false);
                             jsonObject.put(JsonFormConstants.VALUE, Boolean.TRUE.toString());
 
                             switch (behaviour) {

@@ -19,7 +19,7 @@ public interface JsonApi {
 
     void writeValue(String stepName, String prentKey, String childObjectKey, String childKey,
                     String value, String openMrsEntityParent, String openMrsEntity,
-                    String openMrsEntityId, Boolean popup)
+                    String openMrsEntityId, boolean popup)
             throws JSONException;
 
     void writeMetaDataValue(String metaDataKey, Map<String, String> values)
@@ -43,15 +43,15 @@ public interface JsonApi {
 
     void addConstrainedView(View view);
 
-    void refreshHiddenViews();
+    void refreshHiddenViews(boolean popup);
 
-    void refreshSkipLogic(String parentKey, String childKey);
+    void refreshSkipLogic(String parentKey, String childKey, boolean popup);
 
     void addFormDataView(View view);
 
     ArrayList<View> getFormDataViews();
 
-    JSONObject getObjectUsingAddress(String[] address) throws JSONException;
+    JSONObject getObjectUsingAddress(String[] address, boolean popup) throws JSONException;
 
     void refreshConstraints(String parentKey, String childKey);
 
