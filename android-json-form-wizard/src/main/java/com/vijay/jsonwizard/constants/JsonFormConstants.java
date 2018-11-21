@@ -8,6 +8,7 @@ public class JsonFormConstants {
     public static final String BORDERED_EDIT_TEXT = "bordered";
     public static final String FIRST_STEP_NAME = "step1";
     public static final String SECTION_LABEL = "section_label";
+    public static final String SECTION_BACKGROUND = "section_background";
     public static final String EDIT_TEXT = "edit_text";
     public static final String NORMAL_EDIT_TEXT = "normal_edit_text";
     public static final String CHECK_BOX = "check_box";
