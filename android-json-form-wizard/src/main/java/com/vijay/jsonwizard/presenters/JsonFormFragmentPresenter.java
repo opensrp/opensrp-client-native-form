@@ -16,10 +16,12 @@ import android.support.v7.widget.AppCompatRadioButton;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
@@ -54,6 +56,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -320,14 +323,20 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                 break;
             case JsonFormConstants.NATIVE_RADIO_BUTTON:
                 String type = (String) v.getTag(R.id.radio_button_specify_type);
-                if (JsonFormConstants.NATIVE_RADIO_SPECIFY_INFO.equals(type)) {
+                if (v.getId() == R.id.label_edit_button) {
+                    setRadioViewsEditable(v);
+                } else if (JsonFormConstants.NATIVE_RADIO_SPECIFY_INFO.equals(type)) {
                     NativeRadioButtonFactory.showDateDialog(v);
                 } else {
                     showInformationDialog(v);
                 }
                 break;
             case JsonFormConstants.CHECK_BOX:
-                showInformationDialog(v);
+                if (v.getId() == R.id.label_edit_button) {
+                    setCheckboxesEditable(v);
+                } else {
+                    showInformationDialog(v);
+                }
                 break;
             case JsonFormConstants.LABEL:
                 showInformationDialog(v);
@@ -342,10 +351,60 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                 createNumberSelector(v);
                 break;
             case JsonFormConstants.SPINNER:
-                showInformationDialog(v);
+                if (v.getId() == R.id.spinner_edit_button) {
+                    setViewEditable(v);
+                } else {
+                    showInformationDialog(v);
+                }
+                break;
+            case JsonFormConstants.EDIT_TEXT:
+                setViewEditable(v);
+                break;
+            case JsonFormConstants.NORMAL_EDIT_TEXT:
+                setViewEditable(v);
+                break;
             default:
                 break;
         }
+    }
+
+    private void setViewEditable(View editButton) {
+        View editableView = (View) editButton.getTag(R.id.editable_view);
+        editableView.setEnabled(true);
+        editableView.setFocusable(true);
+        editableView.requestFocus();
+        editableView.requestFocusFromTouch();
+    }
+
+    @SuppressWarnings({"unchecked"})
+    private void setCheckboxesEditable(View editButton) {
+        List<View> checkboxLayouts = (ArrayList<View>) editButton.getTag(R.id.editable_view);
+        for (View checkboxLayout : checkboxLayouts) {
+            if (checkboxLayout instanceof ViewGroup) {
+                ViewGroup group = (ViewGroup) checkboxLayout;
+                for (int id = 0; id < group.getChildCount(); id++) {
+                    group.getChildAt(id).setFocusable(true);
+                    group.getChildAt(id).setEnabled(true);
+                }
+            }
+        }
+    }
+
+    private void setRadioViewsEditable(View editButton) {
+        RadioGroup radioGroup = (RadioGroup) editButton.getTag(R.id.editable_view);
+        radioGroup.setEnabled(true);
+        radioGroup.setFocusable(true);
+        for (int i = 0; i < radioGroup.getChildCount(); i++) {
+            View childElement = radioGroup.getChildAt(i);
+            if (childElement instanceof ViewGroup) {
+                ViewGroup group = (ViewGroup) childElement;
+                for (int id = 0; id < group.getChildCount(); id++) {
+                    group.getChildAt(id).setFocusable(true);
+                    group.getChildAt(id).setEnabled(true);
+                }
+            }
+        }
+
     }
 
     private void showInformationDialog(View view) {

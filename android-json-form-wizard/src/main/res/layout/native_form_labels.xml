@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    >
 
     <com.vijay.jsonwizard.views.CustomTextView
         android:id="@+id/label_text_number"
@@ -19,13 +20,27 @@
         android:id="@+id/label_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toStartOf="@+id/label_info"
-        android:layout_toLeftOf="@+id/label_info"
+        android:layout_toStartOf="@+id/label_edit_button"
+        android:layout_toLeftOf="@+id/label_edit_button"
         android:layout_toEndOf="@+id/label_text_number"
         android:layout_toRightOf="@+id/label_text_number"
         android:paddingTop="8dp"
         android:paddingBottom="8dp" />
-
+    <ImageView
+        android:background="@null"
+        android:id="@+id/label_edit_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@+id/label_info"
+        android:layout_toLeftOf="@+id/label_info"
+        android:layout_marginLeft="4dp"
+        android:layout_marginStart="4dp"
+        android:paddingBottom="4dp"
+        android:paddingTop="4dp"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@string/info_label"
+        app:srcCompat="@drawable/edit_button_bg"
+        android:visibility="gone" />
     <ImageView
         android:id="@+id/label_info"
         android:layout_width="wrap_content"
@@ -35,5 +50,6 @@
         android:layout_gravity="center_vertical"
         android:contentDescription="@string/info_label"
         android:src="@drawable/ic_icon_info_filled"
-        android:visibility="gone" />
+        android:visibility="invisible" />
+
 </RelativeLayout>

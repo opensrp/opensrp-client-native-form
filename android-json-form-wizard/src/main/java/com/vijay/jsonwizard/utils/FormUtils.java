@@ -30,7 +30,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -228,8 +230,9 @@ public class FormUtils {
         return px;
     }
 
-    public static void createRadioButtonAndCheckBoxLabel(List<View> views, JSONObject jsonObject, Context context, JSONArray canvasIds, Boolean
+    public static Map<String, View> createRadioButtonAndCheckBoxLabel(List<View> views, JSONObject jsonObject, Context context, JSONArray canvasIds, Boolean
             readOnly, CommonListener listener) throws JSONException {
+        Map<String,View>  createdViewsMap = new HashMap<>();
         String label = jsonObject.optString(JsonFormConstants.LABEL, "");
         if (!TextUtils.isEmpty(label)) {
             String asterisks = "";
@@ -240,6 +243,7 @@ public class FormUtils {
             RelativeLayout relativeLayout = createLabelRelativeLayout(jsonObject, context, listener);
 
             CustomTextView labelText = relativeLayout.findViewById(R.id.label_text);
+            ImageView editButton = relativeLayout.findViewById(R.id.label_edit_button);
             if (requiredObject != null) {
                 String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
                 if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
@@ -255,9 +259,15 @@ public class FormUtils {
             labelText.setText(Html.fromHtml(combinedLabelText));
             labelText.setTextSize(labelTextSize);
             canvasIds.put(relativeLayout.getId());
+            if(readOnly){
+                editButton.setVisibility(View.VISIBLE);
+            }
             relativeLayout.setEnabled(!readOnly);
             views.add(relativeLayout);
+            createdViewsMap.put(JsonFormConstants.EDIT_BUTTON,editButton);
+            createdViewsMap.put(JsonFormConstants.CUSTOM_TEXT,labelText);
         }
+        return createdViewsMap;
     }
 
     public static RelativeLayout createLabelRelativeLayout(JSONObject jsonObject, Context context, CommonListener listener) throws JSONException {
@@ -297,6 +307,14 @@ public class FormUtils {
             imageView.setOnClickListener(listener);
         }
     }
+
+    public static void showEditButton(JSONObject jsonObject, View editableView, ImageView editButton, CommonListener listener) throws JSONException {
+        editButton.setTag(R.id.editable_view,editableView);
+        editButton.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+        editButton.setTag(R.id.type, jsonObject.getString("type"));
+        editButton.setOnClickListener(listener);
+    }
+
 
     /**
      * Checks and uncheck the radio buttons in a linear layout view

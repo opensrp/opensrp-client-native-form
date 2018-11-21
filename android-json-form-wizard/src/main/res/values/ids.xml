@@ -9,6 +9,7 @@
     <item name="raw_value" type="id" />
     <item name="canvas_ids" type="id" />
     <item name="after_look_up" type="id" />
+    <item name="editable_view" type="id"/>
 
     <item name="v_required" type="id" />
     <item name="error" type="id" />
