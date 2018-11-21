@@ -111,6 +111,8 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "person_attribute",
         "openmrs_entity_id": "Child_Register_Card_Number",
+        "read_only":true,
+        "value": "1891389133",
         "type": "edit_text",
         "hint": "Child's register card number"
       },
@@ -119,6 +121,11 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "person_attribute",
         "openmrs_entity_id": "Child_Birth_Certificate",
+        "read_only":true,
+        "v_required": {
+          "value": "true",
+          "err": "Please enter child's birth certificate"
+        },
         "type": "edit_text",
         "hint": "Child's birth certificate number"
       },
@@ -158,6 +165,7 @@
         "openmrs_entity": "person",
         "openmrs_entity_id": "gender",
         "type": "spinner",
+        "read_only":true,
         "hint": "Sex *",
         "values": [
           "Male",
@@ -381,6 +389,7 @@
         "openmrs_entity_id": "1572AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
         "openmrs_data_type": "select one",
         "type": "spinner",
+        "read_only":true,
         "hint": "Place of birth *",
         "label_info_title": "Place of birth spinner",
         "label_info_text": "here is some text on this dialog",
@@ -660,6 +669,70 @@
         }
       },
       {
+        "key": "symp_sev_preeclampsia",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "check_box",
+        "label": "Any symptoms of severe pre-eclampsia?",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "read_only":true,
+        "exclusive": [
+          "none"
+        ],
+        "options": [
+          {
+            "key": "none",
+            "text": "None",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "severe_headache",
+            "text": "Severe headache",
+            "value": false,
+            "openmrs_entity": "Headache",
+            "openmrs_entity_id": "139084",
+            "label_info_title": "Severe Headache",
+            "label_info_text": "Check if the patient experience frequent long headaches"
+          },
+          {
+            "key": "blurred_vision",
+            "text": "Blurred vision",
+            "value": false,
+            "openmrs_entity": "Blurred vision",
+            "openmrs_entity_id": "147104"
+          },
+          {
+            "key": "epigastric_pain",
+            "text": "Epigastric pain",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": "141128"
+          },
+          {
+            "key": "dizziness",
+            "text": "Dizziness",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "vomiting",
+            "text": "Vomiting",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Please specify any other symptoms or select none"
+        }
+      },
+      {
         "key": "PMTCT_Status",
         "openmrs_entity_parent": "",
         "openmrs_entity": "concept",
@@ -846,7 +919,8 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Highest Level of School",
+        "read_only":true,
+        "label": "Highest Level of School.",
         "label_text_size": "18px",
         "label_text_color": "#FF9800",
         "label_info_text": "Checking out the display oof the info icon needed to display this information",
@@ -859,6 +933,8 @@
             "specify_info": "Specify",
             "specify_info_color": "#000000",
             "extra_info": "Here we go",
+            "label_info_text": "Checking out the display oof the info icon needed to display this information",
+            "label_info_title": "Highest Level of School",
             "extra_info_color": "#445567"
           },
           {
@@ -1108,12 +1184,30 @@
         "openmrs_entity": "person",
         "openmrs_entity_id": "last_name",
         "type": "normal_edit_text",
-        "hint": "Last name *",
         "edit_type": "name",
         "edit_text_style": "bordered",
         "v_required": {
           "value": "true",
           "err": "Please enter the last name"
+        },
+        "v_regex": {
+          "value": "[A-Za-z\\s\.\-]*",
+          "err": "Please enter a valid name"
+        }
+      },
+      {
+        "key": "nerd",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person",
+        "openmrs_entity_id": "last_name",
+        "type": "normal_edit_text",
+        "hint": "Guardians name *",
+        "edit_type": "name",
+        "read_only": true,
+        "edit_text_style": "bordered",
+        "v_required": {
+          "value": "true",
+          "err": "Please enter the guardians name"
         },
         "v_regex": {
           "value": "[A-Za-z\\s\.\-]*",

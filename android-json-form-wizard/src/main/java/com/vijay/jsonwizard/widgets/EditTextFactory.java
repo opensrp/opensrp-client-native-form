@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
@@ -18,6 +19,7 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.validators.edittext.MaxLengthValidator;
 import com.vijay.jsonwizard.validators.edittext.MaxNumericValidator;
@@ -56,8 +58,9 @@ public class EditTextFactory implements FormWidgetFactory {
         RelativeLayout rootLayout = (RelativeLayout) LayoutInflater.from(context).inflate(
                 getLayout(), null);
         MaterialEditText editText = rootLayout.findViewById(R.id.edit_text);
-
-        attachJson(stepName, context, formFragment, jsonObject, editText);
+        ImageView editButton = rootLayout.findViewById(R.id.material_edit_text_edit_button);
+        FormUtils.showEditButton(jsonObject,editText,editButton,listener);
+        attachJson(stepName, context, formFragment, jsonObject, editText,editButton);
 
         JSONArray canvasIds = new JSONArray();
         rootLayout.setId(ViewUtil.generateViewId());
@@ -69,7 +72,8 @@ public class EditTextFactory implements FormWidgetFactory {
         return views;
     }
 
-    protected void attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, MaterialEditText editText)
+    protected void attachJson(String stepName, Context context, JsonFormFragment formFragment,
+                              JSONObject jsonObject, MaterialEditText editText, ImageView editButton)
             throws Exception {
 
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
@@ -95,7 +99,7 @@ public class EditTextFactory implements FormWidgetFactory {
         if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
             boolean readyOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
             editText.setEnabled(!readyOnly);
-            editText.setFocusable(!readyOnly);
+            editButton.setVisibility(View.VISIBLE);
         }
 
         addRequiredValidator(jsonObject, editText);
