@@ -1,8 +1,12 @@
 package com.vijay.jsonwizard.utils;
 
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Bundle;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.Html;
 import android.text.TextUtils;
@@ -18,6 +22,8 @@ import android.widget.RelativeLayout;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.customviews.GenericDialog;
+import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.views.CustomTextView;
@@ -49,6 +55,7 @@ public class FormUtils {
     private static final String START_JAVAROSA_PROPERTY = "start";
     private static final String END_JAVAROSA_PROPERTY = "end";
     private static final String TODAY_JAVAROSA_PROPERTY = "today";
+    private final String TAG = this.getClass().getName();
 
     public static LinearLayout.LayoutParams getLinearLayoutParams(int width, int height, int left, int top, int right, int bottom) {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(width, height);
@@ -411,5 +418,37 @@ public class FormUtils {
                 view.setTypeface(null, Typeface.NORMAL);
                 break;
         }
+    }
+
+    public void showGenericDialog(View view) {
+        Context context = (Context) view.getTag(R.id.native_radio_button_context);
+        String specifyContent = (String) view.getTag(R.id.specify_content);
+        String specifyContentForm = (String) view.getTag(R.id.specify_content_form);
+        String stepName = (String) view.getTag(R.id.radio_button_specify_step_name);
+        CommonListener listener = (CommonListener) view.getTag(R.id.radio_button_specify_listener);
+        JsonFormFragment formFragment = (JsonFormFragment) view.getTag(R.id.radio_button_specify_fragment);
+
+        GenericDialog genericDialog = new GenericDialog();
+        genericDialog.setContext(context);
+        genericDialog.setCommonListener(listener);
+        genericDialog.setFormFragment(formFragment);
+
+        Bundle arguments = new Bundle();
+        arguments.putString("formIdentity", specifyContent);
+        arguments.putString("formLocation", specifyContentForm);
+        arguments.putString("stepName", stepName);
+        genericDialog.setArguments(arguments);
+
+        Activity activity = (Activity) context;
+
+        FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
+        Fragment prev = activity.getFragmentManager().findFragmentByTag(TAG);
+        if (prev != null) {
+            ft.remove(prev);
+        }
+
+        ft.addToBackStack(null);
+
+        genericDialog.show(ft, TAG);
     }
 }

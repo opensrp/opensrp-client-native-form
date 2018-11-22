@@ -60,4 +60,5 @@
     <string name="barcode_error">"Error reading barcode: %1$s"</string>
 
     <string name="allow_camera_management">You need to allow the app to use the camera to scan QR codes&#8230;</string>
+    <string name="please_specify_content">Please specify content to be displayed by the pop up&#8230;</string>
 </resources>

@@ -1,24 +1,19 @@
 package com.vijay.jsonwizard.widgets;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
@@ -51,48 +46,6 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
     private static JsonFormInteractor interactor = new JsonFormInteractor();
     private CustomTextView customTextView;
     private CustomTextView extraInfoTextView;
-
-    public static void showGenericDialog(View view) {
-        Context context = (Context) view.getTag(R.id.native_radio_button_context);
-        String stepName = (String) view.getTag(R.id.radio_button_specify_step_name);
-        CommonListener listener = (CommonListener) view.getTag(R.id.radio_button_specify_listener);
-        JsonFormFragment formFragment = (JsonFormFragment) view.getTag(R.id.radio_button_specify_fragment);
-        JSONArray specifyContent = (JSONArray) view.getTag(R.id.radio_button_specify_content);
-        List<View> listOfViews = new ArrayList<>();
-        interactor.fetchFields(listOfViews, stepName, formFragment, specifyContent, listener, true);
-        Activity activity = (Activity) context;
-        JsonApi jsonApi = (JsonApi) activity;
-        jsonApi.refreshSkipLogic(null, null, true);
-        final Dialog dialog = new Dialog(context);
-
-        View dialogView = addDialogContent(context, listOfViews);
-        //set the dialog width to 90% of window and height to wrap content
-        int width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.90);
-        Button cancelButton = dialogView.findViewById(R.id.generic_dialog_cancel_button);
-        cancelButton.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                }
-        );
-        dialog.setContentView(dialogView);
-        dialog.getWindow().setLayout(width, LinearLayout.LayoutParams.WRAP_CONTENT);
-        dialog.show();
-    }
-
-    private static ScrollView addDialogContent(Context context, @NonNull List<View> views) {
-        ScrollView genericDialogLayout = (ScrollView) LayoutInflater.from(context)
-                .inflate(R.layout.native_form_generic_dialog, null);
-        LinearLayout genericDialogContent = genericDialogLayout.findViewById(
-                R.id.generic_dialog_content);
-        for (View view : views) {
-            genericDialogContent.addView(view);
-        }
-
-        return genericDialogLayout;
-    }
 
     public static void showDateDialog(View view) {
         Context context = (Context) view.getTag(R.id.native_radio_button_context);
@@ -241,8 +194,6 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             if (specifyInfo != null) {
                 createSpecifyTextView(context, radioGroupLayout, jsonObject, listener, item,
                         stepName, formFragment);
-                JSONArray specifyContent = item.getJSONArray("specify_content");
-                radioGroup.setTag(R.id.extraRelRadioButton, specifyContent);
             }
 
             if (extraInfo != null) {
@@ -307,13 +258,15 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         String text = item.getString(JsonFormConstants.NATIVE_RADIO_SPECIFY_INFO);
         String text_color = item.optString(JsonFormConstants.NATIVE_RADIO_SPECIFY_INFO_COLOR, JsonFormConstants.DEFAULT_HINT_TEXT_COLOR);
         String specifyWidget = item.optString(JsonFormConstants.NATIVE_RADIO_SPECIFY_WIDGET, "");
-        JSONArray specifyContent = item.optJSONArray(JsonFormConstants.NATIVE_RADIO_SPECIFY_CONTENT);
+        String specifyContent = item.optString(JsonFormConstants.SPECIFY_CONTENT, null);
+        String specifyContentForm = item.optString("specify_content_form", null);
         CustomTextView specifyTextView = rootLayout.findViewById(R.id.specifyTextView);
         specifyTextView.setVisibility(View.VISIBLE);
         addTextViewAttributes(context, jsonObject, item, specifyTextView, stepName, text_color);
         specifyTextView.setTag(R.id.radio_button_specify_type, JsonFormConstants.NATIVE_RADIO_SPECIFY_INFO);
         specifyTextView.setTag(R.id.radio_button_specify_widget, specifyWidget);
-        specifyTextView.setTag(R.id.radio_button_specify_content, specifyContent);
+        specifyTextView.setTag(R.id.specify_content, specifyContent);
+        specifyTextView.setTag(R.id.specify_content_form, specifyContentForm);
         specifyTextView.setTag(R.id.radio_button_specify_listener, listener);
         specifyTextView.setTag(R.id.radio_button_specify_step_name, stepName);
         specifyTextView.setTag(R.id.radio_button_specify_fragment, formFragment);

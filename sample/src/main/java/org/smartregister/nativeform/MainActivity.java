@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             InputStream inputStream = getApplicationContext().getAssets()
-                    .open("json.form/" + formIdentity + ".json");
+                    .open("json/form/" + formIdentity + ".json");
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream,
                     "UTF-8"));
             String jsonString;

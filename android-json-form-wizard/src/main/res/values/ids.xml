@@ -25,7 +25,8 @@
     <item name="native_radio_button_main_textview" type="id" />
     <item name="radio_button_specify_type" type="id" />
     <item name="radio_button_specify_widget" type="id" />
-    <item name="radio_button_specify_content" type="id" />
+    <item name="specify_content" type="id" />
+    <item name="specify_content_form" type="id" />
     <item name="radio_button_specify_listener" type="id" />
     <item name="radio_button_specify_step_name" type="id" />
     <item name="radio_button_specify_fragment" type="id" />
@@ -44,6 +45,7 @@
 
     <item name="extraRelCheck" type="id" />
     <item name="extraRelArray" type="id" />
-    <item name="extraRelRadioButton" type="id" />
+    <item name="extraRelContent" type="id" />
+    <item name="extraRelContentForm" type="id" />
     <item name="extraPopup" type="id" />
 </resources>

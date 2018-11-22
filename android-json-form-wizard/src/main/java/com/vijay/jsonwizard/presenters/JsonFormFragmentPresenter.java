@@ -33,6 +33,7 @@ import com.vijay.jsonwizard.customviews.RadioButton;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 import com.vijay.jsonwizard.mvp.MvpBasePresenter;
+import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ImageUtils;
 import com.vijay.jsonwizard.utils.PermissionUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
@@ -320,18 +321,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                 dispatchTakePictureIntent(key, type);
                 break;
             case JsonFormConstants.NATIVE_RADIO_BUTTON:
-                String type = (String) v.getTag(R.id.radio_button_specify_type);
-                String specifyWidget = (String) v.getTag(R.id.radio_button_specify_widget);
-                Log.i(TAG, "The dialog content widget is this: " + specifyWidget);
-                if (JsonFormConstants.NATIVE_RADIO_SPECIFY_INFO.equals(type) &&
-                        specifyWidget.equals(JsonFormConstants.DATE_PICKER)) {
-                    NativeRadioButtonFactory.showDateDialog(v);
-                } else if (JsonFormConstants.NATIVE_RADIO_SPECIFY_INFO.equals(type) &&
-                        !specifyWidget.equals(JsonFormConstants.DATE_PICKER)) {
-                    NativeRadioButtonFactory.showGenericDialog(v);
-                } else {
-                    showInformationDialog(v);
-                }
+                nativeRadioButtonClickActions(v);
                 break;
             case JsonFormConstants.CHECK_BOX:
                 showInformationDialog(v);
@@ -352,6 +342,22 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                 showInformationDialog(v);
             default:
                 break;
+        }
+    }
+
+    private void nativeRadioButtonClickActions(View view) {
+        String type = (String) view.getTag(R.id.radio_button_specify_type);
+        String specifyWidget = (String) view.getTag(R.id.radio_button_specify_widget);
+        Log.i(TAG, "The dialog content widget is this: " + specifyWidget);
+        if (JsonFormConstants.NATIVE_RADIO_SPECIFY_INFO.equals(type) &&
+                specifyWidget.equals(JsonFormConstants.DATE_PICKER)) {
+            NativeRadioButtonFactory.showDateDialog(view);
+        } else if (JsonFormConstants.NATIVE_RADIO_SPECIFY_INFO.equals(type) &&
+                !specifyWidget.equals(JsonFormConstants.DATE_PICKER)) {
+            FormUtils formUtils = new FormUtils();
+            formUtils.showGenericDialog(view);
+        } else {
+            showInformationDialog(view);
         }
     }
 
