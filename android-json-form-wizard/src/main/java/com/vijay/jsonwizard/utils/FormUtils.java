@@ -6,7 +6,6 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.os.Bundle;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.Html;
 import android.text.TextUtils;
@@ -432,15 +431,11 @@ public class FormUtils {
         genericDialog.setContext(context);
         genericDialog.setCommonListener(listener);
         genericDialog.setFormFragment(formFragment);
-
-        Bundle arguments = new Bundle();
-        arguments.putString("formIdentity", specifyContent);
-        arguments.putString("formLocation", specifyContentForm);
-        arguments.putString("stepName", stepName);
-        genericDialog.setArguments(arguments);
+        genericDialog.setFormIdentity(specifyContent);
+        genericDialog.setFormLocation(specifyContentForm);
+        genericDialog.setStepName(stepName);
 
         Activity activity = (Activity) context;
-
         FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
         Fragment prev = activity.getFragmentManager().findFragmentByTag(TAG);
         if (prev != null) {

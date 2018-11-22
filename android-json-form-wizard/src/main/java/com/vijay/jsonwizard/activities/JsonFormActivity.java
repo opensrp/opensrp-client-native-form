@@ -31,6 +31,7 @@ import com.vijay.jsonwizard.comparisons.NotEqualToComparison;
 import com.vijay.jsonwizard.comparisons.RegexComparison;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.CheckBox;
+import com.vijay.jsonwizard.customviews.GenericDialog;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.interfaces.OnActivityRequestPermissionResultListener;
@@ -91,7 +92,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.native_form_activity_json_form);
-        mToolbar = (Toolbar) findViewById(R.id.tb_top);
+        mToolbar = findViewById(R.id.tb_top);
         setSupportActionBar(mToolbar);
         skipLogicViews = new HashMap<>();
         onActivityResultListeners = new HashMap<>();
@@ -397,8 +398,10 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             String[] address = addressString.split(":");
             JSONObject object = getObjectUsingAddress(address, popup);
             boolean enabled = visible;
-            if (object.has(KEY.READ_ONLY) && object.getBoolean(KEY.READ_ONLY) && visible) {
-                enabled = false;
+            if (object != null) {
+                if (object.has(KEY.READ_ONLY) && object.getBoolean(KEY.READ_ONLY) && visible) {
+                    enabled = false;
+                }
             }
 
             view.setEnabled(enabled);
@@ -408,6 +411,8 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     view.setFocusableInTouchMode(enabled);
                 }
             }
+
+            view.getId();
 
             for (int i = 0; i < canvasViewIds.length(); i++) {
                 int curId = canvasViewIds.getInt(i);
@@ -477,7 +482,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
     @Override
     public void resetFocus() {
-        EditText defaultFocusView = (EditText) findViewById(R.id.default_focus_view);
+        EditText defaultFocusView = findViewById(R.id.default_focus_view);
         defaultFocusView.requestFocus();
         InputMethodManager inputManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         if (inputManager != null && getCurrentFocus() != null) {
@@ -752,13 +757,14 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
     private JSONArray fetchFields(JSONObject parentJson, Boolean popup) {
         JSONArray fields = new JSONArray();
-        if (popup) {
-            try {
-                if (parentJson.has(JsonFormConstants.SECTIONS) && parentJson.get(JsonFormConstants.SECTIONS) instanceof JSONArray) {
-                    JSONArray sections = parentJson.getJSONArray(JsonFormConstants.SECTIONS);
-                    for (int i = 0; i < sections.length(); i++) {
-                        JSONObject sectionJson = sections.getJSONObject(i);
-                        if (sectionJson.has(JsonFormConstants.FIELDS)) {
+        try {
+            if (parentJson.has(JsonFormConstants.SECTIONS) && parentJson.get(JsonFormConstants.SECTIONS) instanceof JSONArray) {
+                JSONArray sections = parentJson.getJSONArray(JsonFormConstants.SECTIONS);
+
+                for (int i = 0; i < sections.length(); i++) {
+                    JSONObject sectionJson = sections.getJSONObject(i);
+                    if (sectionJson.has(JsonFormConstants.FIELDS)) {
+                        if (popup) {
                             JSONArray jsonArray = sectionJson.getJSONArray(JsonFormConstants.FIELDS);
                             for (int k = 0; k < jsonArray.length(); k++) {
                                 JSONObject item = jsonArray.getJSONObject(k);
@@ -766,9 +772,14 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                                     fields = concatArray(fields, specifyFields(item));
                                 }
                             }
+                        } else {
+                            fields = concatArray(fields, sectionJson.getJSONArray(JsonFormConstants.FIELDS));
                         }
+
                     }
-                } else if (parentJson.has(JsonFormConstants.FIELDS) && parentJson.get(JsonFormConstants.FIELDS) instanceof JSONArray) {
+                }
+            } else if (parentJson.has(JsonFormConstants.FIELDS) && parentJson.get(JsonFormConstants.FIELDS) instanceof JSONArray) {
+                if (popup) {
                     JSONArray jsonArray = parentJson.getJSONArray(JsonFormConstants.FIELDS);
                     for (int k = 0; k < jsonArray.length(); k++) {
                         JSONObject item = jsonArray.getJSONObject(k);
@@ -776,27 +787,13 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                             fields = specifyFields(item);
                         }
                     }
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        } else {
-            try {
-                if (parentJson.has(JsonFormConstants.SECTIONS) && parentJson.get(JsonFormConstants.SECTIONS) instanceof JSONArray) {
-                    JSONArray sections = parentJson.getJSONArray(JsonFormConstants.SECTIONS);
-
-                    for (int i = 0; i < sections.length(); i++) {
-                        JSONObject sectionJson = sections.getJSONObject(i);
-                        if (sectionJson.has(JsonFormConstants.FIELDS)) {
-                            fields = concatArray(fields, sectionJson.getJSONArray(JsonFormConstants.FIELDS));
-                        }
-                    }
-                } else if (parentJson.has(JsonFormConstants.FIELDS) && parentJson.get(JsonFormConstants.FIELDS) instanceof JSONArray) {
+                } else {
                     fields = parentJson.getJSONArray(JsonFormConstants.FIELDS);
                 }
-            } catch (JSONException e) {
 
             }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
         return fields;
@@ -815,7 +812,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                         String objectKey = (String) jsonObject.get(JsonFormConstants.KEY);
                         if (objectKey.equals(optionKey)) {
                             if (jsonObject.has("specify_content")) {
-                                fields = concatArray(fields, jsonObject.getJSONArray("specify_content"));
+                                fields = getSubFormFields(jsonObject.get(JsonFormConstants.SPECIFY_CONTENT).toString(), jsonObject.get("specify_content_form").toString(), fields);
                             }
                         }
                     }
@@ -824,6 +821,25 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 e.printStackTrace();
             }
         }
+        return fields;
+    }
+
+    private JSONArray getSubFormFields(String subFormName, String subFormLocation, JSONArray fields) {
+        GenericDialog genericDialog = new GenericDialog();
+        genericDialog.setFormIdentity(subFormName);
+        genericDialog.setFormLocation(subFormLocation);
+        JSONObject jsonObject = genericDialog.getSubFormJson("", getApplicationContext());
+        if (jsonObject != null) {
+            try {
+                JSONArray jsonArray = jsonObject.getJSONArray(JsonFormConstants.SPECIFY_CONTENT);
+                if (jsonArray != null && jsonArray.length() > 0) {
+                    concatArray(fields, jsonArray);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
         return fields;
     }
 

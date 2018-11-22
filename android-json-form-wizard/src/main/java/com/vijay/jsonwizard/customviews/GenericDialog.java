@@ -18,6 +18,7 @@ import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 import com.vijay.jsonwizard.interfaces.CommonListener;
+import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.Utils;
 
 import org.json.JSONArray;
@@ -53,9 +54,6 @@ public class GenericDialog extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        formIdentity = getArguments().getString("formIdentity");
-        formLocation = getArguments().getString("formLocation");
-        stepName = getArguments().getString("stepName");
 
         if (context == null) {
             throw new IllegalStateException("The Context is not set. Did you forget to set context with Generic Dialog setContext method?");
@@ -111,6 +109,9 @@ public class GenericDialog extends DialogFragment {
             genericDialogContent.addView(view);
         }
 
+        JsonApi jsonApi = (JsonApi) activity;
+        jsonApi.refreshSkipLogic(null, null, true);
+
         cancelButton = dialogView.findViewById(R.id.generic_dialog_cancel_button);
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,5 +164,17 @@ public class GenericDialog extends DialogFragment {
 
     public void setFormFragment(JsonFormFragment formFragment) {
         this.formFragment = formFragment;
+    }
+
+    public void setFormIdentity(String formIdentity) {
+        this.formIdentity = formIdentity;
+    }
+
+    public void setFormLocation(String formLocation) {
+        this.formLocation = formLocation;
+    }
+
+    public void setStepName(String stepName) {
+        this.stepName = stepName;
     }
 }
