@@ -236,7 +236,8 @@ public class FormUtils {
         return px;
     }
 
-    public static Map<String, View> createRadioButtonAndCheckBoxLabel(List<View> views, JSONObject jsonObject, Context context, JSONArray canvasIds, Boolean
+    public static Map<String, View> createRadioButtonAndCheckBoxLabel(LinearLayout linearLayout, JSONObject jsonObject, Context context,
+            JSONArray canvasIds, Boolean
             readOnly, CommonListener listener) throws JSONException {
         Map<String,View>  createdViewsMap = new HashMap<>();
         String label = jsonObject.optString(JsonFormConstants.LABEL, "");
@@ -269,7 +270,7 @@ public class FormUtils {
                 editButton.setVisibility(View.VISIBLE);
             }
             relativeLayout.setEnabled(!readOnly);
-            views.add(relativeLayout);
+            linearLayout.addView(relativeLayout);
             createdViewsMap.put(JsonFormConstants.EDIT_BUTTON,editButton);
             createdViewsMap.put(JsonFormConstants.CUSTOM_TEXT,labelText);
         }

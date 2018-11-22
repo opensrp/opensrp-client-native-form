@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -119,17 +120,25 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
             readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
         }
-
         List<View> views = new ArrayList<>(1);
         JSONArray canvasIds = new JSONArray();
+    
+        LinearLayout rootLayout = (LinearLayout) LayoutInflater.from(context).inflate(getLayout(), null);
 
-        Map<String, View> labelViews = FormUtils.createRadioButtonAndCheckBoxLabel(views, jsonObject, context, canvasIds, readOnly, listener);
-        View radioGroup = addRadioButtonOptionsElements(jsonObject, context, readOnly, canvasIds, stepName, views, listener, formFragment);
+        Map<String, View> labelViews = FormUtils.createRadioButtonAndCheckBoxLabel(rootLayout, jsonObject, context, canvasIds,
+		        readOnly, listener);
+        View radioGroup = addRadioButtonOptionsElements(jsonObject, context, readOnly, canvasIds, stepName, rootLayout, listener,
+		        formFragment);
+	    views.add(rootLayout);
         ImageView editButton = (ImageView) labelViews.get(JsonFormConstants.EDIT_BUTTON);
         showEditButton(jsonObject, radioGroup, editButton, listener);
         return views;
     }
-
+	
+	protected int getLayout() {
+		return R.layout.native_form_compound_button_parent;
+	}
+    
     /**
      * Creates the Radio Button options from the JSON definitions
      *
@@ -138,13 +147,14 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
      * @param readOnly
      * @param canvasIds
      * @param stepName
-     * @param views
+     * @param linearLayout
      * @param listener
      * @throws JSONException
      */
 
     protected View addRadioButtonOptionsElements(JSONObject jsonObject, Context context, Boolean readOnly, JSONArray canvasIds,
-                                                 String stepName, List<View> views, CommonListener listener, JsonFormFragment formFragment) throws JSONException {
+                                                 String stepName, LinearLayout linearLayout, CommonListener listener, JsonFormFragment
+		    formFragment) throws JSONException {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
@@ -215,7 +225,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
                 .getResources().getDimension(R.dimen.extra_bottom_margin)));
         radioGroup.setTag(R.id.canvas_ids, canvasIds.toString());
 
-        views.add(radioGroup);
+        linearLayout.addView(radioGroup);
         return radioGroup;
     }
 
