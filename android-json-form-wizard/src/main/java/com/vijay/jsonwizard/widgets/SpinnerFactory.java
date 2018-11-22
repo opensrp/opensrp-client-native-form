@@ -77,7 +77,8 @@ public class SpinnerFactory implements FormWidgetFactory {
 
         MaterialSpinner spinner = spinnerRelativeLayout.findViewById(R.id.material_spinner);
         ImageView spinnerInfoIconImageView = spinnerRelativeLayout.findViewById(R.id.spinner_info_icon);
-
+        ImageView editButton = spinnerRelativeLayout.findViewById(R.id.spinner_edit_button);
+        FormUtils.showEditButton(jsonObject,spinner,editButton,listener);
         String hint = jsonObject.optString(JsonFormConstants.HINT);
         if (!TextUtils.isEmpty(hint)) {
             spinner.setHint(jsonObject.getString(JsonFormConstants.HINT));
@@ -111,7 +112,7 @@ public class SpinnerFactory implements FormWidgetFactory {
 
         if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
             spinner.setEnabled(!jsonObject.getBoolean(JsonFormConstants.READ_ONLY));
-            spinner.setFocusable(!jsonObject.getBoolean(JsonFormConstants.READ_ONLY));
+            editButton.setVisibility(View.VISIBLE);
         }
 
         JSONArray valuesJson = jsonObject.optJSONArray("values");

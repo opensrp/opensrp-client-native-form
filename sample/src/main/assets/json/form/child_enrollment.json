@@ -57,7 +57,8 @@
   "step1": {
     "title": "Birth Registration",
     "fields": [
-      /*{
+      /*
+      {
         "key": "Child_Photo",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -111,6 +112,8 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "person_attribute",
         "openmrs_entity_id": "Child_Register_Card_Number",
+        "read_only": true,
+        "value": "1891389133",
         "type": "edit_text",
         "hint": "Child's register card number"
       },
@@ -119,6 +122,11 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "person_attribute",
         "openmrs_entity_id": "Child_Birth_Certificate",
+        "read_only": true,
+        "v_required": {
+          "value": "true",
+          "err": "Please enter child's birth certificate"
+        },
         "type": "edit_text",
         "hint": "Child's birth certificate number"
       },
@@ -158,6 +166,7 @@
         "openmrs_entity": "person",
         "openmrs_entity_id": "gender",
         "type": "spinner",
+        "read_only": true,
         "hint": "Sex *",
         "values": [
           "Male",
@@ -331,16 +340,16 @@
         "has_media_content": true,
         "media": [
           {
-            "media_type":"text",
-            "media_trigger_value":"I plan to breastfeed",
-            "media_link":"",
-            "media_text":"This is an excellent choice. You are making a good choice to give your child the best start to life.\nBreastmilk is clean and wholesome and provides all the essential nutrients and vitamins your baby needs for a healthy start to life. Give only breastmilk in the first 5 months of life including no water, tea, or milk or any other liquid and immediately breastfeed within an hour of delivery."
+            "media_type": "text",
+            "media_trigger_value": "I plan to breastfeed",
+            "media_link": "",
+            "media_text": "This is an excellent choice. You are making a good choice to give your child the best start to life.\nBreastmilk is clean and wholesome and provides all the essential nutrients and vitamins your baby needs for a healthy start to life. Give only breastmilk in the first 5 months of life including no water, tea, or milk or any other liquid and immediately breastfeed within an hour of delivery."
           },
           {
-            "media_type":"video",
-            "media_trigger_value":"I do not want to breastfeed",
-            "media_link":"android.resource://org.smartregister.nativeform/raw/understandingbreastfeeding",
-            "media_text":""
+            "media_type": "video",
+            "media_trigger_value": "I do not want to breastfeed",
+            "media_link": "android.resource://org.smartregister.nativeform/raw/understandingbreastfeeding",
+            "media_text": ""
           }
         ],
         "v_required": {
@@ -381,6 +390,7 @@
         "openmrs_entity_id": "1572AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
         "openmrs_data_type": "select one",
         "type": "spinner",
+        "read_only": true,
         "hint": "Place of birth *",
         "label_info_title": "Place of birth spinner",
         "label_info_text": "here is some text on this dialog",
@@ -660,6 +670,70 @@
         }
       },
       {
+        "key": "symp_sev_preeclampsia",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "check_box",
+        "label": "Any symptoms of severe pre-eclampsia?",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "read_only": true,
+        "exclusive": [
+          "none"
+        ],
+        "options": [
+          {
+            "key": "none",
+            "text": "None",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "severe_headache",
+            "text": "Severe headache",
+            "value": false,
+            "openmrs_entity": "Headache",
+            "openmrs_entity_id": "139084",
+            "label_info_title": "Severe Headache",
+            "label_info_text": "Check if the patient experience frequent long headaches"
+          },
+          {
+            "key": "blurred_vision",
+            "text": "Blurred vision",
+            "value": false,
+            "openmrs_entity": "Blurred vision",
+            "openmrs_entity_id": "147104"
+          },
+          {
+            "key": "epigastric_pain",
+            "text": "Epigastric pain",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": "141128"
+          },
+          {
+            "key": "dizziness",
+            "text": "Dizziness",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "vomiting",
+            "text": "Vomiting",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Please specify any other symptoms or select none"
+        }
+      },
+      {
         "key": "PMTCT_Status",
         "openmrs_entity_parent": "",
         "openmrs_entity": "concept",
@@ -839,7 +913,456 @@
         "openmrs_entity_id": "spacer",
         "type": "spacer",
         "spacer_height": "20sp"
-      },*/
+      },
+      {
+        "key": "native_radio",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "read_only": true,
+        "label": "Highest Level of School.",
+        "label_text_size": "18px",
+        "label_text_color": "#FF9800",
+        "label_info_text": "Checking out the display oof the info icon needed to display this information",
+        "label_info_title": "Highest Level of School",
+        "options": [
+          {
+            "key": "primary_school",
+            "text": "Primary school",
+            "text_color": "#000000",
+            "specify_info": "Specify",
+            "specify_info_color": "#000000",
+            "extra_info": "Here we go",
+            "label_info_text": "Checking out the display oof the info icon needed to display this information",
+            "label_info_title": "Highest Level of School",
+            "extra_info_color": "#445567"
+          },
+          {
+            "key": "high_school",
+            "text": "High School",
+            "text_size": "18px",
+            "specify_info": "Specify",
+            "extra_info": "Here we go"
+          },
+          {
+            "key": "higher_education",
+            "text": "College/University",
+            "text_color": "#358CB7"
+          }
+        ],
+        "value": "high_school",
+        "v_required": {
+          "value": true
+        }
+      },
+      {
+        "key": "native_radio_tertiary_education",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Completed Tertiary education?",
+        "label_text_size": "18px",
+        "label_text_style": "bold",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes",
+            "text_size": "18px"
+          },
+          {
+            "key": "no",
+            "text": "No",
+            "text_size": "18px"
+          }
+        ],
+        "value": "",
+        "v_required": {
+          "value": true
+        }
+      },
+      {
+        "key": "native_radio_notification_updates2",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Is the user registered for notification updates?",
+        "label_text_size": "18px",
+        "label_text_style": "bold_italic",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "value": "",
+        "v_required": {
+          "value": true
+        },
+        "relevance": {
+          "step1:native_radio_tertiary_education": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "20sp"
+      },
+      {
+        "key": "toaster_notes",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person_attribute",
+        "openmrs_entity_id": "toaster_notes",
+        "type": "toaster_notes",
+        "text": "This is an information note",
+        "text_color": "#1199F9",
+        "toaster_type": "info",
+        "toaster_info_text": "This is an information note, This is an information note, This is an information note, This is an information note,This is an information note, This is an information note",
+        "toaster_info_title": "Information Toaster Info Title"
+      },
+      {
+        "key": "toaster_notes",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person_attribute",
+        "openmrs_entity_id": "toaster_notes",
+        "type": "toaster_notes",
+        "text": "This is an information note, This is an information note, This is an information note, This is an information note,This is an information note, This is an information note, This is an information note,This is an information note",
+        "toaster_type": "info"
+      },
+      {
+        "key": "toaster_notes",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person_attribute",
+        "openmrs_entity_id": "toaster_notes",
+        "type": "toaster_notes",
+        "text": "This is an positive note",
+        "text_color": "#3E7E2E",
+        "toaster_type": "positive"
+      },
+      {
+        "key": "toaster_notes",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person_attribute",
+        "openmrs_entity_id": "toaster_notes",
+        "type": "toaster_notes",
+        "text": "This is an warning note",
+        "text_color": "#FFC100",
+        "toaster_type": "warning"
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "40sp"
+      },
+      {
+        "key": "toaster_notes",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person_attribute",
+        "openmrs_entity_id": "toaster_notes",
+        "type": "toaster_notes",
+        "text": "This is an danger note",
+        "text_color": "#CF0800",
+        "toaster_type": "problem"
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "10sp"
+      },
+      {
+        "key": "toaster_notes",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Lets test with this for relevance",
+        "toaster_type": "problem",
+        "relevance": {
+          "step1:native_radio_notification_updates": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "10sp"
+      },
+      {
+        "key": "native_radio_notification_updates",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Is the user registered for notification updates?",
+        "label_text_size": "18px",
+        "label_text_style": "bold_italic",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "value": "",
+        "v_required": {
+          "value": true
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "10sp"
+      },
+      {
+        "key": "enabled_label",
+        "type": "label",
+        "text": "Please select the number of family members",
+        "text_color": "#000000",
+        "v_required": {
+          "value": true
+        }
+      },
+      {
+        "key": "enabled_label",
+        "type": "label",
+        "label_text_style": "bold",
+        "text": "This is a bold text label that is also required.",
+        "text_color": "#000000",
+        "v_required": {
+          "value": true
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "15sp"
+      },
+      {
+        "key": "enabled_label",
+        "type": "label",
+        "label_text_style": "bold",
+        "text": "This is the normal edit text design",
+        "text_color": "#000000",
+        "v_required": {
+          "value": true
+        }
+      },
+      {
+        "key": "Last_Name",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person",
+        "openmrs_entity_id": "last_name",
+        "type": "normal_edit_text",
+        "edit_type": "name",
+        "edit_text_style": "bordered",
+        "v_required": {
+          "value": "true",
+          "err": "Please enter the last name"
+        },
+        "v_regex": {
+          "value": "[A-Za-z\\s\.\-]*",
+          "err": "Please enter a valid name"
+        }
+      },
+      {
+        "key": "nerd",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person",
+        "openmrs_entity_id": "last_name",
+        "type": "normal_edit_text",
+        "hint": "Guardians name *",
+        "edit_type": "name",
+        "read_only": true,
+        "edit_text_style": "bordered",
+        "v_required": {
+          "value": "true",
+          "err": "Please enter the guardians name"
+        },
+        "v_regex": {
+          "value": "[A-Za-z\\s\.\-]*",
+          "err": "Please enter a valid name"
+        }
+      },
+      {
+        "key": "numbers_selector",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "numbers_selector",
+        "number_of_selectors": "5",
+        "start_number": "1",
+        "max_value": "20",
+        "text_size": "18px",
+        "text_color": "#000000",
+        "selected_text_color": "#ffffff",
+        "v_required": {
+          "value": true
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "15sp"
+      },
+      {
+        "key": "numbers_selector_two",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "numbers_selector",
+        "number_of_selectors": "5",
+        "start_number": "0",
+        "max_value": "20",
+        "text_size": "18px",
+        "text_color": "#000000",
+        "selected_text_color": "#ffffff",
+        "v_required": {
+          "value": true
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "15sp"
+      },
+      {
+        "key": "numbers_selector_four",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "numbers_selector",
+        "number_of_selectors": "5",
+        "start_number": "10",
+        "max_value": "20",
+        "text_size": "18px",
+        "text_color": "#000000",
+        "selected_text_color": "#ffffff",
+        "v_required": {
+          "value": true
+        }
+      },
+      {
+        "key": "tobacco_user",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Uses tobacco products?",
+        "multi_relevance": true,
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "no",
+            "text": "No",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "recently_quit",
+            "text": "Recently quit",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Please select if you use any tobacco products"
+        }
+      },
+      {
+        "key": "tobacco_cessation_toaster",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Tobacco cessation counseling",
+        "text_color": "#000000",
+        "toaster_info_text": "Healthcare providers should routinely offer advice and psycho-social interventions for tobacco cessation to all pregnant women who are either current tobacco users or recent tobacco quitters.",
+        "toaster_info_title": "Tobacco cessation counseling",
+        "toaster_type": "problem",
+        "relevance": {
+          "step1:tobacco_user": {
+            "ex-checkbox": [
+              {
+                "or": [
+                  "yes",
+                  "recently_quit"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "enabled_label",
+        "type": "label",
+        "label_text_style": "bold",
+        "label_number": "1",
+        "text": "This is the normal edit text design",
+        "text_color": "#000000",
+        "v_required": {
+          "value": true
+        }
+      },
+      {
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "key": "section",
+        "type": "section_label",
+        "section_background": "#F6C8C9",
+        "text_color": "#FFFFFF",
+        "text_size": "18px",
+        "label_text_style": "bold",
+        "name": "This is the normal edit text design"
+      }
+      */
       {
         "key": "repiratory_exam",
         "openmrs_entity_parent": "",
@@ -871,421 +1394,6 @@
           }
         ]
       }
-      /*,
-            {
-              "key": "native_radio",
-              "openmrs_entity_parent": "",
-              "openmrs_entity": "",
-              "openmrs_entity_id": "",
-              "type": "native_radio",
-              "label": "Highest Level of School",
-              "label_text_size": "18px",
-              "label_text_color": "#FF9800",
-              "label_info_text": "Checking out the display oof the info icon needed to display this information",
-              "label_info_title": "Highest Level of School",
-              "options": [
-                {
-                  "key": "primary_school",
-                  "text": "Primary school",
-                  "text_color": "#000000",
-                  "specify_info": "Specify",
-                  "specify_info_color": "#000000",
-                  "specify_widget":"date_picker",
-                  "extra_info": "Here we go",
-                  "extra_info_color": "#445567"
-                },
-                {
-                  "key": "high_school",
-                  "text": "High School",
-                  "text_size": "18px"
-                },
-                {
-                  "key": "higher_education",
-                  "text": "College/University",
-                  "text_color": "#358CB7"
-                }
-              ],
-              "value": "high_school",
-              "v_required": {
-                "value": true
-              }
-            },
-            {
-              "key": "native_radio_tertiary_education",
-              "openmrs_entity_parent": "",
-              "openmrs_entity": "",
-              "openmrs_entity_id": "",
-              "type": "native_radio",
-              "label": "Completed Tertiary education?",
-              "label_text_size": "18px",
-              "label_text_style": "bold",
-              "options": [
-                {
-                  "key": "yes",
-                  "text": "Yes",
-                  "text_size": "18px"
-                },
-                {
-                  "key": "no",
-                  "text": "No",
-                  "text_size": "18px"
-                }
-              ],
-              "value": "",
-              "v_required": {
-                "value": true
-              }
-            },
-            {
-              "key": "native_radio_notification_updates2",
-              "openmrs_entity_parent": "",
-              "openmrs_entity": "",
-              "openmrs_entity_id": "",
-              "type": "native_radio",
-              "label": "Is the user registered for notification updates?",
-              "label_text_size": "18px",
-              "label_text_style": "bold_italic",
-              "options": [
-                {
-                  "key": "yes",
-                  "text": "Yes"
-                },
-                {
-                  "key": "no",
-                  "text": "No"
-                }
-              ],
-              "value": "",
-              "v_required": {
-                "value": true
-              },
-              "relevance": {
-                "step1:native_radio_tertiary_education": {
-                  "type": "string",
-                  "ex": "equalTo(., \"yes\")"
-                }
-              }
-            },
-            {
-              "key": "spacer",
-              "openmrs_entity_parent": "",
-              "openmrs_entity": "",
-              "openmrs_entity_id": "spacer",
-              "type": "spacer",
-              "spacer_height": "20sp"
-            },
-            {
-              "key": "toaster_notes",
-              "openmrs_entity_parent": "",
-              "openmrs_entity": "person_attribute",
-              "openmrs_entity_id": "toaster_notes",
-              "type": "toaster_notes",
-              "text": "This is an information note",
-              "text_color": "#1199F9",
-              "toaster_type": "info",
-              "toaster_info_text": "This is an information note, This is an information note, This is an information note, This is an information note,This is an information note, This is an information note",
-              "toaster_info_title": "Information Toaster Info Title"
-            },
-            {
-              "key": "toaster_notes",
-              "openmrs_entity_parent": "",
-              "openmrs_entity": "person_attribute",
-              "openmrs_entity_id": "toaster_notes",
-              "type": "toaster_notes",
-              "text": "This is an information note, This is an information note, This is an information note, This is an information note,This is an information note, This is an information note, This is an information note,This is an information note",
-              "toaster_type": "info"
-            },
-            {
-              "key": "toaster_notes",
-              "openmrs_entity_parent": "",
-              "openmrs_entity": "person_attribute",
-              "openmrs_entity_id": "toaster_notes",
-              "type": "toaster_notes",
-              "text": "This is an positive note",
-              "text_color": "#3E7E2E",
-              "toaster_type": "positive"
-            },
-            {
-              "key": "toaster_notes",
-              "openmrs_entity_parent": "",
-              "openmrs_entity": "person_attribute",
-              "openmrs_entity_id": "toaster_notes",
-              "type": "toaster_notes",
-              "text": "This is an warning note",
-              "text_color": "#FFC100",
-              "toaster_type": "warning"
-            },
-            {
-              "key": "spacer",
-              "openmrs_entity_parent": "",
-              "openmrs_entity": "",
-              "openmrs_entity_id": "spacer",
-              "type": "spacer",
-              "spacer_height": "40sp"
-            },
-            {
-              "key": "toaster_notes",
-              "openmrs_entity_parent": "",
-              "openmrs_entity": "person_attribute",
-              "openmrs_entity_id": "toaster_notes",
-              "type": "toaster_notes",
-              "text": "This is an danger note",
-              "text_color": "#CF0800",
-              "toaster_type": "problem"
-            },
-            {
-              "key": "spacer",
-              "openmrs_entity_parent": "",
-              "openmrs_entity": "",
-              "openmrs_entity_id": "spacer",
-              "type": "spacer",
-              "spacer_height": "10sp"
-            },
-            {
-              "key": "toaster_notes",
-              "openmrs_entity_parent": "",
-              "openmrs_entity": "",
-              "openmrs_entity_id": "",
-              "type": "toaster_notes",
-              "text": "Lets test with this for relevance",
-              "toaster_type": "problem",
-              "relevance": {
-                "step1:native_radio_notification_updates": {
-                  "type": "string",
-                  "ex": "equalTo(., \"yes\")"
-                }
-              }
-            },
-            {
-              "key": "spacer",
-              "openmrs_entity_parent": "",
-              "openmrs_entity": "",
-              "openmrs_entity_id": "spacer",
-              "type": "spacer",
-              "spacer_height": "10sp"
-            },
-            {
-              "key": "native_radio_notification_updates",
-              "openmrs_entity_parent": "",
-              "openmrs_entity": "",
-              "openmrs_entity_id": "",
-              "type": "native_radio",
-              "label": "Is the user registered for notification updates?",
-              "label_text_size": "18px",
-              "label_text_style": "bold_italic",
-              "options": [
-                {
-                  "key": "yes",
-                  "text": "Yes"
-                },
-                {
-                  "key": "no",
-                  "text": "No"
-                }
-              ],
-              "value": "",
-              "v_required": {
-                "value": true
-              }
-            },
-            {
-              "key": "spacer",
-              "openmrs_entity_parent": "",
-              "openmrs_entity": "",
-              "openmrs_entity_id": "spacer",
-              "type": "spacer",
-              "spacer_height": "10sp"
-            },
-            {
-              "key": "enabled_label",
-              "type": "label",
-              "text": "Please select the number of family members",
-              "text_color": "#000000",
-              "v_required": {
-                "value": true
-              }
-            },
-            {
-              "key": "enabled_label",
-              "type": "label",
-              "label_text_style": "bold",
-              "text": "This is a bold text label that is also required.",
-              "text_color": "#000000",
-              "v_required": {
-                "value": true
-              }
-            },
-            {
-              "key": "spacer",
-              "openmrs_entity_parent": "",
-              "openmrs_entity": "",
-              "openmrs_entity_id": "spacer",
-              "type": "spacer",
-              "spacer_height": "15sp"
-            },
-            {
-              "key": "enabled_label",
-              "type": "label",
-              "label_text_style": "bold",
-              "text": "This is the normal edit text design",
-              "text_color": "#000000",
-              "v_required": {
-                "value": true
-              }
-            },
-            {
-              "key": "Last_Name",
-              "openmrs_entity_parent": "",
-              "openmrs_entity": "person",
-              "openmrs_entity_id": "last_name",
-              "type": "normal_edit_text",
-              "hint": "Last name *",
-              "edit_type": "name",
-              "edit_text_style": "bordered",
-              "v_required": {
-                "value": "true",
-                "err": "Please enter the last name"
-              },
-              "v_regex": {
-                "value": "[A-Za-z\\s\.\-]*",
-                "err": "Please enter a valid name"
-              }
-            },
-            {
-              "key": "numbers_selector",
-              "openmrs_entity_parent": "",
-              "openmrs_entity": "",
-              "openmrs_entity_id": "",
-              "type": "numbers_selector",
-              "number_of_selectors": "5",
-              "start_number": "1",
-              "max_value": "20",
-              "text_size": "18px",
-              "text_color": "#000000",
-              "selected_text_color": "#ffffff",
-              "v_required": {
-                "value": true
-              }
-            },
-            {
-              "key": "spacer",
-              "openmrs_entity_parent": "",
-              "openmrs_entity": "",
-              "openmrs_entity_id": "spacer",
-              "type": "spacer",
-              "spacer_height": "15sp"
-            },
-            {
-              "key": "numbers_selector_two",
-              "openmrs_entity_parent": "",
-              "openmrs_entity": "",
-              "openmrs_entity_id": "",
-              "type": "numbers_selector",
-              "number_of_selectors": "5",
-              "start_number": "0",
-              "max_value": "20",
-              "text_size": "18px",
-              "text_color": "#000000",
-              "selected_text_color": "#ffffff",
-              "v_required": {
-                "value": true
-              }
-            },
-            {
-              "key": "spacer",
-              "openmrs_entity_parent": "",
-              "openmrs_entity": "",
-              "openmrs_entity_id": "spacer",
-              "type": "spacer",
-              "spacer_height": "15sp"
-            },
-            {
-              "key": "numbers_selector_four",
-              "openmrs_entity_parent": "",
-              "openmrs_entity": "",
-              "openmrs_entity_id": "",
-              "type": "numbers_selector",
-              "number_of_selectors": "5",
-              "start_number": "10",
-              "max_value": "20",
-              "text_size": "18px",
-              "text_color": "#000000",
-              "selected_text_color": "#ffffff",
-              "v_required": {
-                "value": true
-              }
-            },
-            {
-              "key": "tobacco_user",
-              "openmrs_entity_parent": "",
-              "openmrs_entity": "",
-              "openmrs_entity_id": "",
-              "type": "native_radio",
-              "label": "Uses tobacco products?",
-              "multi_relevance": true,
-              "options": [
-                {
-                  "key": "yes",
-                  "text": "Yes",
-                  "openmrs_entity_parent": "",
-                  "openmrs_entity": "",
-                  "openmrs_entity_id": ""
-                },
-                {
-                  "key": "no",
-                  "text": "No",
-                  "openmrs_entity_parent": "",
-                  "openmrs_entity": "",
-                  "openmrs_entity_id": ""
-                },
-                {
-                  "key": "recently_quit",
-                  "text": "Recently quit",
-                  "openmrs_entity_parent": "",
-                  "openmrs_entity": "",
-                  "openmrs_entity_id": ""
-                }
-              ],
-              "v_required": {
-                "value": true,
-                "err": "Please select if you use any tobacco products"
-              }
-            },
-            {
-              "key": "tobacco_cessation_toaster",
-              "openmrs_entity_parent": "",
-              "openmrs_entity": "",
-              "openmrs_entity_id": "",
-              "type": "toaster_notes",
-              "text": "Tobacco cessation counseling",
-              "text_color": "#000000",
-              "toaster_info_text": "Healthcare providers should routinely offer advice and psycho-social interventions for tobacco cessation to all pregnant women who are either current tobacco users or recent tobacco quitters.",
-              "toaster_info_title": "Tobacco cessation counseling",
-              "toaster_type": "problem",
-              "relevance": {
-                "step1:tobacco_user": {
-                  "ex-checkbox": [
-                    {
-                      "or": [
-                        "yes",
-                        "recently_quit"
-                      ]
-                    }
-                  ]
-                }
-              }
-            },
-            {
-              "key": "enabled_label",
-              "type": "label",
-              "label_text_style": "bold",
-              "label_number": "1",
-              "text": "This is the normal edit text design",
-              "text_color": "#000000",
-              "v_required": {
-                "value": true
-              }
-            }*/
     ]
   }
 }
