@@ -16,6 +16,7 @@ public class PermissionUtils {
     public static final int CAMERA_PERMISSION_REQUEST_CODE = 15141;
     public static final int PHONE_STATE_PERMISSION_REQUEST_CODE = 14151;
     public static final int FINE_LOCATION_PERMISSION_REQUEST_CODE = 15142;
+    public static final int PHONE_STATE_PERMISSION = 15143;
 
 
     public static boolean isPermissionGranted(Fragment fragment, String permission, int requestCode) {
