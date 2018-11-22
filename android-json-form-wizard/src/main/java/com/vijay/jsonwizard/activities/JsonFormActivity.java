@@ -191,11 +191,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                         JSONObject innerItem = jsonArray.getJSONObject(j);
                         String anotherKeyAtIndex = innerItem.getString(KEY.KEY);
                         if (childKey.equals(anotherKeyAtIndex)) {
-                            if (popup) {
-                                innerItem.put(JsonFormConstants.SECOND_VALUE, value);
-                            } else {
-                                innerItem.put(JsonFormConstants.VALUE, value);
-                            }
+                            innerItem.put(JsonFormConstants.VALUE, value);
                             refreshSkipLogic(parentKey, childKey, popup);
                             refreshConstraints(parentKey, childKey);
                             return;
@@ -373,7 +369,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                         Map<String, String> curValueMap = getValueFromAddress(address, popup);
 
                         try {
-                            boolean comparison = isRelevant(curValueMap, curRelevance);
+                            boolean comparison = isRelevant(curValueMap, curRelevance, popup);
 
                             ok = ok && comparison;
                             if (!ok) break;
@@ -412,11 +408,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 }
             }
 
-            view.getId();
-
             for (int i = 0; i < canvasViewIds.length(); i++) {
                 int curId = canvasViewIds.getInt(i);
-                View curCanvasView = findViewById(curId);
+                View curCanvasView = view.getRootView().findViewById(curId);
                 if (visible) {
                     if (curCanvasView != null) {
                         curCanvasView.setEnabled(true);
@@ -432,6 +426,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     }
                 }
             }
+
         } catch (Exception e) {
             Log.e(TAG, view.toString());
             Log.e(TAG, Log.getStackTraceString(e));
@@ -536,8 +531,8 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         Map<String, String> result = new HashMap<>();
         JSONObject object = getObjectUsingAddress(address, popup);
         if (object != null) {
-            if (object.getString("type").equals("check_box")) {
-                JSONArray options = object.getJSONArray("options");
+            if (object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.CHECK_BOX)) {
+                JSONArray options = object.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
                 for (int j = 0; j < options.length(); j++) {
                     if (options.getJSONObject(j).has(JsonFormConstants.VALUE)) {
                         result.put(options.getJSONObject(j).getString(JsonFormConstants.KEY), options.getJSONObject(j).getString(JsonFormConstants.VALUE));
@@ -833,7 +828,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             try {
                 JSONArray jsonArray = jsonObject.getJSONArray(JsonFormConstants.SPECIFY_CONTENT);
                 if (jsonArray != null && jsonArray.length() > 0) {
-                    concatArray(fields, jsonArray);
+                    fields = concatArray(fields, jsonArray);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -878,7 +873,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         this.confirmCloseMessage = confirmCloseMessage;
     }
 
-    private boolean isRelevant(Map<String, String> curValueMap, JSONObject curRelevance) throws Exception {
+    private boolean isRelevant(Map<String, String> curValueMap, JSONObject curRelevance, boolean popup) throws Exception {
 
         if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_CHECKBOX)) {
 
@@ -899,7 +894,6 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             return false;
 
         } else {
-
             return doComparison(curValueMap.get(JsonFormConstants.VALUE), curRelevance);
         }
     }
