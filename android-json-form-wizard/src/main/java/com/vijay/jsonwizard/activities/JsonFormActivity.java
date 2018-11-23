@@ -56,9 +56,8 @@ import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
     private static final String TAG = JsonFormActivity.class.getSimpleName();
-
+    GenericDialog genericDialog = new GenericDialog();
     private Toolbar mToolbar;
-
     private JSONObject mJSONObject;
     private PropertyManager propertyManager;
     private HashMap<String, View> skipLogicViews;
@@ -68,7 +67,6 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     private HashMap<String, Comparison> comparisons;
     private HashMap<Integer, OnActivityResultListener> onActivityResultListeners;
     private HashMap<Integer, OnActivityRequestPermissionResultListener> onActivityRequestPermissionResultListeners;
-
     private String confirmCloseTitle;
     private String confirmCloseMessage;
 
@@ -192,6 +190,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                         String anotherKeyAtIndex = innerItem.getString(KEY.KEY);
                         if (childKey.equals(anotherKeyAtIndex)) {
                             innerItem.put(JsonFormConstants.VALUE, value);
+                            if (popup) {
+                                genericDialog.setPopAssignedValue(addAssignedValue(keyAtIndex, childKey, value));
+                            }
                             refreshSkipLogic(parentKey, childKey, popup);
                             refreshConstraints(parentKey, childKey);
                             return;
@@ -200,6 +201,12 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 }
             }
         }
+    }
+
+    private Map<String, String> addAssignedValue(String itemKey, String optionKey, String keyValue) {
+        Map<String, String> value = new HashMap<>();
+        value.put(itemKey, optionKey + ":" + keyValue);
+        return value;
     }
 
     @Override
@@ -817,7 +824,6 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
     private JSONArray getSubFormFields(String subFormName, String subFormLocation, JSONArray fields) {
         JSONArray fieldArray = new JSONArray();
-        GenericDialog genericDialog = new GenericDialog();
         genericDialog.setFormIdentity(subFormName);
         genericDialog.setFormLocation(subFormLocation);
         JSONObject jsonObject = genericDialog.getSubFormJson("", getApplicationContext());
@@ -825,7 +831,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             try {
                 JSONArray jsonArray = jsonObject.getJSONArray(JsonFormConstants.SPECIFY_CONTENT);
                 if (jsonArray != null && jsonArray.length() > 0) {
-                    fieldArray = concatArray(fields, jsonArray);
+                    fieldArray = subFormWithValues(concatArray(fields, jsonArray));
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -844,6 +850,35 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             }
         }
         return result;
+    }
+
+    private JSONArray subFormWithValues(JSONArray subFormFields) {
+        JSONArray jsonArray = new JSONArray();
+        Map<String, String> selectedValues;
+        selectedValues = genericDialog.getPopAssignedValue();
+        try {
+            if (selectedValues != null && selectedValues.size() > 0 && subFormFields != null && subFormFields.length() > 0) {
+                for (int i = 0; i < subFormFields.length(); i++) {
+                    JSONObject innerItem = subFormFields.getJSONObject(i);
+                    if (innerItem.get(JsonFormConstants.KEY).equals(getMapKey(selectedValues))) {
+
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return jsonArray;
+    }
+
+    private String getMapKey(Map<String, String> valuesMap) {
+        String mapKey = "";
+        for (String key : valuesMap.keySet()) {
+            mapKey = key;
+        }
+
+        return mapKey;
     }
 
     public JSONObject getmJSONObject() {

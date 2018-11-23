@@ -29,8 +29,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 
@@ -42,6 +45,8 @@ public class GenericDialog extends DialogFragment {
     private String formIdentity;
     private String formLocation;
     private String stepName;
+    private Map<String, String> popAssignedValue = new HashMap<>();
+    private Map<String, String> loadedSubForms = new HashMap<>();
 
     public void setContext(Context context) throws IllegalStateException {
         this.context = context;
@@ -133,24 +138,41 @@ public class GenericDialog extends DialogFragment {
         }
 
         try {
-            InputStream inputStream = context.getAssets().open(defaultSubFormLocation + "/" + formIdentity + ".json");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream,
-                    "UTF-8"));
-            String jsonString;
-            StringBuilder stringBuilder = new StringBuilder();
-            while ((jsonString = reader.readLine()) != null) {
-                stringBuilder.append(jsonString);
-            }
-            inputStream.close();
+            if (loadedSubForms != null && loadedSubForms.size() > 0) {
 
-            return new JSONObject(stringBuilder.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
+            } else {
+                if (loadedSubForms != null) {
+                    loadedSubForms.put(formIdentity, loadSubForm(defaultSubFormLocation, context));
+                }
+                return new JSONObject(loadSubForm(defaultSubFormLocation, context));
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         return null;
+    }
+
+    private String loadSubForm(String defaultSubFormLocation, Context context) {
+        StringBuilder stringBuilder = new StringBuilder();
+        try {
+            InputStream inputStream = context.getAssets().open(defaultSubFormLocation + "/" + formIdentity + ".json");
+            BufferedReader reader = null;
+            reader = new BufferedReader(new InputStreamReader(inputStream,
+                    "UTF-8"));
+
+            String jsonString;
+            while ((jsonString = reader.readLine()) != null) {
+                stringBuilder.append(jsonString);
+            }
+            inputStream.close();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return stringBuilder.toString();
     }
 
     public void setCommonListener(CommonListener commonListener) {
@@ -171,5 +193,13 @@ public class GenericDialog extends DialogFragment {
 
     public void setStepName(String stepName) {
         this.stepName = stepName;
+    }
+
+    public Map<String, String> getPopAssignedValue() {
+        return popAssignedValue;
+    }
+
+    public void setPopAssignedValue(Map<String, String> popAssignedValue) {
+        this.popAssignedValue = popAssignedValue;
     }
 }

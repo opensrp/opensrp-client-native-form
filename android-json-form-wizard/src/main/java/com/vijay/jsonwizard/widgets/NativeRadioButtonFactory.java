@@ -21,7 +21,6 @@ import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.DatePickerDialog;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
-import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
@@ -121,23 +120,23 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         }
         List<View> views = new ArrayList<>(1);
         JSONArray canvasIds = new JSONArray();
-    
+
         LinearLayout rootLayout = (LinearLayout) LayoutInflater.from(context).inflate(getLayout(), null);
 
         Map<String, View> labelViews = FormUtils.createRadioButtonAndCheckBoxLabel(rootLayout, jsonObject, context, canvasIds,
-		        readOnly, listener);
+                readOnly, listener);
         View radioGroup = addRadioButtonOptionsElements(jsonObject, context, readOnly, canvasIds, stepName, rootLayout, listener,
-		        formFragment);
-	    views.add(rootLayout);
+                formFragment);
+        views.add(rootLayout);
         ImageView editButton = (ImageView) labelViews.get(JsonFormConstants.EDIT_BUTTON);
         showEditButton(jsonObject, radioGroup, editButton, listener);
         return views;
     }
-	
-	protected int getLayout() {
-		return R.layout.native_form_compound_button_parent;
-	}
-    
+
+    protected int getLayout() {
+        return R.layout.native_form_compound_button_parent;
+    }
+
     /**
      * Creates the Radio Button options from the JSON definitions
      *
@@ -153,7 +152,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
     protected View addRadioButtonOptionsElements(JSONObject jsonObject, Context context, Boolean readOnly, JSONArray canvasIds,
                                                  String stepName, LinearLayout linearLayout, CommonListener listener, JsonFormFragment
-		    formFragment) throws JSONException {
+                                                         formFragment) throws JSONException {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
