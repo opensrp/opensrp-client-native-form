@@ -1,0 +1,7 @@
+---
+name: step1_hepb_immun_status
+description: due plus 7 days
+priority: 3
+condition: "pop_hepb == 1 || pop_hepb_screening == 1 || hiv_positive == 1 || alcohol_substance_use == \"Injectable drugs\" || occupation == \"Informal employment (sex worker)\""
+actions:
+  - "isRelevant = true"

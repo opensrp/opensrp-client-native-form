@@ -35,6 +35,8 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.interfaces.OnActivityRequestPermissionResultListener;
 import com.vijay.jsonwizard.interfaces.OnActivityResultListener;
+import com.vijay.jsonwizard.rules.RelevanceFact;
+import com.vijay.jsonwizard.rules.RulesEngineHelper;
 import com.vijay.jsonwizard.utils.ExObjectResult;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.PropertyManager;
@@ -42,7 +44,9 @@ import com.vijay.jsonwizard.utils.PropertyManager;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.yaml.snakeyaml.Yaml;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -103,6 +107,21 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         } else {
             init(savedInstanceState.getString("jsonState"));
         }
+
+        try {
+
+            Yaml yaml = new Yaml();
+            InputStream inputStream = this.getClass()
+                    .getClassLoader()
+                    .getResourceAsStream("assets/rule/sample-rules.yml");
+            Map<String, Object> obj = (Map<String, Object>) yaml.load(inputStream);
+            obj.toString();
+            inputStream.close();
+
+        } catch (Exception e) {
+            Log.e("dfdf", e.getMessage());
+        }
+
     }
 
     public void initializeFormFragment() {
@@ -798,7 +817,13 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
     private boolean isRelevant(Map<String, String> curValueMap, JSONObject curRelevance) throws Exception {
 
-        if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_CHECKBOX)) {
+        if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_RULES)) {
+            RulesEngineHelper rulesEngineHelper = new RulesEngineHelper(this);
+
+            RelevanceFact relevanceFact = new RelevanceFact();
+            return rulesEngineHelper.getRelevance(relevanceFact, "sample-rules.yml");
+
+        } else if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_CHECKBOX)) {
 
             JSONArray exArray = curRelevance.getJSONArray(JsonFormConstants.JSON_FORM_KEY.EX_CHECKBOX);
 
