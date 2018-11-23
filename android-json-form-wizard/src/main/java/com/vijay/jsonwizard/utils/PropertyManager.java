@@ -27,7 +27,6 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.interfaces.OnActivityRequestPermissionResultListener;
@@ -44,7 +43,6 @@ import java.util.Locale;
 
 public class PropertyManager {
 
-    private String t = "PropertyManager";
     private HashMap<String, String> mProperties;
     private TelephonyManager mTelephonyManager;
     private Context mContext;
@@ -168,7 +166,6 @@ public class PropertyManager {
         if (value != null) {
             mProperties.put(PHONE_NUMBER_PROPERTY, value);
         }
-        Log.i(t, "Properties => " + mProperties.toString());
     }
 
 }
