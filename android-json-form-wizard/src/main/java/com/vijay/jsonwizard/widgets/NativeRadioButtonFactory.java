@@ -46,7 +46,6 @@ import static com.vijay.jsonwizard.widgets.DatePickerFactory.DATE_FORMAT;
  */
 public class NativeRadioButtonFactory implements FormWidgetFactory {
     private static final String TAG = "NativeRadioFactory";
-    private static JsonFormInteractor interactor = new JsonFormInteractor();
     private CustomTextView customTextView;
     private CustomTextView extraInfoTextView;
 

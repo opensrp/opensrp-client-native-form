@@ -42,10 +42,6 @@ public class GenericDialog extends DialogFragment {
     private String formIdentity;
     private String formLocation;
     private String stepName;
-    private DialogInterface.OnShowListener onShowListener;
-
-    public GenericDialog() {
-    }
 
     public void setContext(Context context) throws IllegalStateException {
         this.context = context;
@@ -62,7 +58,6 @@ public class GenericDialog extends DialogFragment {
     }
 
     public void setOnShowListener(DialogInterface.OnShowListener onShowListener_) {
-        onShowListener = onShowListener_;
     }
 
 
