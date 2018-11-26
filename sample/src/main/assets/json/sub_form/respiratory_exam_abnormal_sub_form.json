@@ -61,7 +61,6 @@
       "openmrs_entity_id": "",
       "type": "edit_text",
       "hint": "Specify",
-      "read_only": true,
       "v_regex": {
         "value": "[A-Za-z\\s\.\-]*",
         "err": "Please enter valid content"

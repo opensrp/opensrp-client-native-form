@@ -21,7 +21,7 @@ import android.widget.RelativeLayout;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
-import com.vijay.jsonwizard.customviews.GenericDialog;
+import com.vijay.jsonwizard.customviews.GenericPopupDialog;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.JsonApi;
@@ -237,9 +237,9 @@ public class FormUtils {
     }
 
     public static Map<String, View> createRadioButtonAndCheckBoxLabel(LinearLayout linearLayout, JSONObject jsonObject, Context context,
-            JSONArray canvasIds, Boolean
-            readOnly, CommonListener listener) throws JSONException {
-        Map<String,View>  createdViewsMap = new HashMap<>();
+                                                                      JSONArray canvasIds, Boolean
+                                                                              readOnly, CommonListener listener) throws JSONException {
+        Map<String, View> createdViewsMap = new HashMap<>();
         String label = jsonObject.optString(JsonFormConstants.LABEL, "");
         if (!TextUtils.isEmpty(label)) {
             String asterisks = "";
@@ -266,13 +266,13 @@ public class FormUtils {
             labelText.setText(Html.fromHtml(combinedLabelText));
             labelText.setTextSize(labelTextSize);
             canvasIds.put(relativeLayout.getId());
-            if(readOnly){
+            if (readOnly) {
                 editButton.setVisibility(View.VISIBLE);
             }
             relativeLayout.setEnabled(!readOnly);
             linearLayout.addView(relativeLayout);
-            createdViewsMap.put(JsonFormConstants.EDIT_BUTTON,editButton);
-            createdViewsMap.put(JsonFormConstants.CUSTOM_TEXT,labelText);
+            createdViewsMap.put(JsonFormConstants.EDIT_BUTTON, editButton);
+            createdViewsMap.put(JsonFormConstants.CUSTOM_TEXT, labelText);
         }
         return createdViewsMap;
     }
@@ -316,7 +316,7 @@ public class FormUtils {
     }
 
     public static void showEditButton(JSONObject jsonObject, View editableView, ImageView editButton, CommonListener listener) throws JSONException {
-        editButton.setTag(R.id.editable_view,editableView);
+        editButton.setTag(R.id.editable_view, editableView);
         editButton.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
         editButton.setTag(R.id.type, jsonObject.getString("type"));
         editButton.setOnClickListener(listener);
@@ -445,14 +445,16 @@ public class FormUtils {
         String stepName = (String) view.getTag(R.id.radio_button_specify_step_name);
         CommonListener listener = (CommonListener) view.getTag(R.id.radio_button_specify_listener);
         JsonFormFragment formFragment = (JsonFormFragment) view.getTag(R.id.radio_button_specify_fragment);
+        JSONArray jsonArray = (JSONArray) view.getTag(R.id.secondaryValues);
 
-        GenericDialog genericDialog = new GenericDialog();
-        genericDialog.setContext(context);
-        genericDialog.setCommonListener(listener);
-        genericDialog.setFormFragment(formFragment);
-        genericDialog.setFormIdentity(specifyContent);
-        genericDialog.setFormLocation(specifyContentForm);
-        genericDialog.setStepName(stepName);
+        GenericPopupDialog genericPopupDialog = new GenericPopupDialog();
+        genericPopupDialog.setContext(context);
+        genericPopupDialog.setCommonListener(listener);
+        genericPopupDialog.setFormFragment(formFragment);
+        genericPopupDialog.setFormIdentity(specifyContent);
+        genericPopupDialog.setFormLocation(specifyContentForm);
+        genericPopupDialog.setStepName(stepName);
+        genericPopupDialog.setSecondValues(jsonArray);
 
         Activity activity = (Activity) context;
         FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
@@ -462,7 +464,24 @@ public class FormUtils {
         }
 
         ft.addToBackStack(null);
+        genericPopupDialog.show(ft, TAG);
+    }
 
-        genericDialog.show(ft, TAG);
+    public String spiltValue(String type, String itemString) {
+        String newString = "";
+        String[] strings = itemString.split(":");
+        if (type != null) {
+            if (type.equals(JsonFormConstants.CHECK_BOX) || type.equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
+                newString = strings[1] + ", ";
+            }
+        } else {
+            if (strings.length > 1) {
+                newString = strings[1] + ", ";
+            } else {
+                newString = strings[0] + ", ";
+            }
+        }
+
+        return newString;
     }
 }

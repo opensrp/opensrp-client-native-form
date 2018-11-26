@@ -1392,6 +1392,22 @@
             "specify_content": "respiratory_exam_abnormal_sub_form",
             "specify_content_form": ""
           }
+        ],
+        "secondary_value": [
+          {
+            "key": "repiratory_exam_abnormal",
+            "type": "check_box",
+            "values": [
+              "rapid_breathing:Rapid breathing:true",
+              "other:Other:true"
+            ]
+          },
+          {
+            "key": "repiratory_exam_abnormal_other",
+            "values": [
+              "other:Respiratory exam answer"
+            ]
+          }
         ]
       },
       {

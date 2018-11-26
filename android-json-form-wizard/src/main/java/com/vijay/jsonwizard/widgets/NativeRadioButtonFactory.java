@@ -45,6 +45,7 @@ import static com.vijay.jsonwizard.widgets.DatePickerFactory.DATE_FORMAT;
  */
 public class NativeRadioButtonFactory implements FormWidgetFactory {
     private static final String TAG = "NativeRadioFactory";
+
     private CustomTextView customTextView;
     private CustomTextView extraInfoTextView;
 
@@ -265,11 +266,18 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
     private void createSpecifyTextView(Context context, RelativeLayout rootLayout, JSONObject jsonObject, CommonListener listener,
                                        JSONObject item, String stepName, JsonFormFragment formFragment, Boolean readOnly) throws JSONException {
-        String text = item.getString(JsonFormConstants.NATIVE_RADIO_SPECIFY_INFO);
+        String text;
+        if (jsonObject.has(JsonFormConstants.SECONDARY_VALUE)) {
+            text = getSpecifyText(jsonObject.getJSONArray(JsonFormConstants.SECONDARY_VALUE));
+        } else {
+            text = item.getString(JsonFormConstants.NATIVE_RADIO_SPECIFY_INFO);
+        }
+
+
         String text_color = item.optString(JsonFormConstants.NATIVE_RADIO_SPECIFY_INFO_COLOR, JsonFormConstants.DEFAULT_HINT_TEXT_COLOR);
         String specifyWidget = item.optString(JsonFormConstants.NATIVE_RADIO_SPECIFY_WIDGET, "");
         String specifyContent = item.optString(JsonFormConstants.SPECIFY_CONTENT, null);
-        String specifyContentForm = item.optString("specify_content_form", null);
+        String specifyContentForm = item.optString(JsonFormConstants.SPECIFY_CONTENT_FORM, null);
         CustomTextView specifyTextView = rootLayout.findViewById(R.id.specifyTextView);
         specifyTextView.setVisibility(View.VISIBLE);
         addTextViewAttributes(context, jsonObject, item, specifyTextView, stepName, text_color);
@@ -283,9 +291,23 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         specifyTextView.setTag(R.id.native_radio_button_specify_textview, specifyTextView);
         specifyTextView.setTag(R.id.native_radio_button_main_textview, getMainTextView());
         specifyTextView.setTag(R.id.native_radio_button_context, context);
+        specifyTextView.setTag(R.id.secondaryValues, getSecondaryValues(jsonObject));
         specifyTextView.setText(createSpecifyText(text));
         specifyTextView.setOnClickListener(listener);
         specifyTextView.setEnabled(!readOnly);
+    }
+
+    private JSONArray getSecondaryValues(JSONObject jsonObject) {
+        JSONArray value = null;
+        if (jsonObject != null && jsonObject.has(JsonFormConstants.SECONDARY_VALUE)) {
+            try {
+                value = jsonObject.getJSONArray(JsonFormConstants.SECONDARY_VALUE);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return value;
     }
 
     private void createExtraInfo(Context context, RelativeLayout rootLayout, JSONObject item, JSONObject jsonObject,
@@ -336,5 +358,26 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
     private void setExtraInfoTextView(CustomTextView customTextView) {
         extraInfoTextView = customTextView;
+    }
+
+    private String getSpecifyText(JSONArray jsonArray) {
+        FormUtils formUtils = new FormUtils();
+        StringBuilder specifyText = new StringBuilder();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            try {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                if (jsonObject != null) {
+                    String type = jsonObject.optString(JsonFormConstants.TYPE, null);
+                    JSONArray itemArray = jsonObject.getJSONArray(JsonFormConstants.VALUES);
+                    for (int j = 0; j < itemArray.length(); j++) {
+                        specifyText.append(formUtils.spiltValue(type, itemArray.getString(j)));
+
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return specifyText.toString().replaceAll(", $", "");
     }
 }
