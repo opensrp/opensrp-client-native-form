@@ -9,12 +9,14 @@ import org.jeasy.rules.api.RulesEngine;
 import org.jeasy.rules.core.DefaultRulesEngine;
 import org.jeasy.rules.core.InferenceRulesEngine;
 import org.jeasy.rules.core.RulesEngineParameters;
+import org.jeasy.rules.mvel.MVELRule;
 import org.jeasy.rules.mvel.MVELRuleFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class RulesEngineHelper {
@@ -57,17 +59,23 @@ public class RulesEngineHelper {
         defaultRulesEngine.fire(rules, facts);
     }
 
-    public boolean getRelevance(RelevanceFact relevanceFact, String rulesFile) {
+    public boolean getRelevance(Map<String, String> relevanceFact, List<MVELRule> ruleList) {
 
         Facts facts = new Facts();
-        facts.put("pop_hepb", 1);
-        facts.put("pop_hepb_screening", "3");
-        facts.put("hiv_positive", false);
+
+        for (Map.Entry<String, String> entry : relevanceFact.entrySet()) {
+
+            facts.put(entry.getKey(), entry.getValue());
+        }
+
         facts.put("isRelevant", false);
 
-        Rules rules = getRulesFromAsset("rule/" + rulesFile);
-        if (rules == null) {
-            return false;
+
+        Rules rules = new Rules();
+
+        for (MVELRule rule : ruleList) {
+
+            rules.register(rule);
         }
 
         processDefaultRules(rules, facts);

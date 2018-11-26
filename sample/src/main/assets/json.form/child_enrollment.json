@@ -141,12 +141,10 @@
         "type": "edit_text",
         "hint": "Specify other*",
         "relevance": {
-          "step1:delivery_complications": {
+          "rules-file:sample-rules.yml": {
             "ex-rules": [
               {
-                "or": [
-                  "other"
-                ]
+                "rules-file": "sample-rules.yml"
               }
             ]
           }
@@ -192,45 +190,59 @@
         }
       },
       {
-        "key": "Date_Birth",
+        "key": "hepb_immun_status",
         "openmrs_entity_parent": "",
         "openmrs_entity": "person",
-        "openmrs_entity_id": "birthdate",
-        "type": "date_picker",
-        "hint": "Child's DOB *",
-        "expanded": false,
-        "duration": {
-          "label": "Age"
+        "openmrs_entity_id": "hepb_immun_status",
+        "type": "edit_text",
+        "hint": "Hepb Immun Status",
+        "edit_type": "name",
+        "v_regex": {
+          "value": "[A-Za-z\\s\.\-]*",
+          "err": "Please enter a valid name"
         },
-        "min_date": "today-5y",
-        "max_date": "today",
-        "v_required": {
-          "value": "true",
-          "err": "Please enter the date of birth"
+        "relevance": {
+          "rules-file:sample-rules.yml": {
+            "ex-rules": [
+              {
+                "or": [
+                  "severe_bleeding"
+                ]
+              }
+            ]
+          }
         }
       },
       {
-        "key": "First_Health_Facility_Contact",
+        "key": "spacer",
         "openmrs_entity_parent": "",
-        "openmrs_entity": "concept",
-        "openmrs_entity_id": "163260AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-        "openmrs_data_type": "text",
-        "type": "date_picker",
-        "hint": "Date first seen *",
-        "expanded": false,
-        "min_date": "today-5y",
-        "max_date": "today",
-        "v_required": {
-          "value": "true",
-          "err": "Enter the date that the child was first seen at a health facility for immunization services"
-        },
-        "constraints": [
-          {
-            "type": "date",
-            "ex": "greaterThanEqualTo(., step1:Date_Birth)",
-            "err": "Date first seen can't occur before date of birth"
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "15sp"
+      },
+      {
+        "key": "tobacco_cessation_toaster",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Tobacco cessation counseling",
+        "text_color": "#000000",
+        "toaster_info_text": "Healthcare providers should routinely offer advice and psycho-social interventions for tobacco cessation to all pregnant women who are either current tobacco users or recent tobacco quitters.",
+        "toaster_info_title": "Tobacco cessation counseling",
+        "toaster_type": "problem",
+        "relevance": {
+          "rules-file:sample-rules.yml": {
+            "ex-rules": [
+              {
+                "or": [
+                  "severe_bleeding"
+                ]
+              }
+            ]
           }
-        ]
+        }
       }
     ]
   }
