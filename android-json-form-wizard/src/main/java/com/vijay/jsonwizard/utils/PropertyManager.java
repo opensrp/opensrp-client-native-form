@@ -126,6 +126,7 @@ public class PropertyManager {
                                                 })
                                                 .setNegativeButton("YES", new DialogInterface.OnClickListener() {
                                                     public void onClick(DialogInterface dialog, int which) {
+                                                        dialog.dismiss();
                                                     }
                                                 })
                                                 .show();
