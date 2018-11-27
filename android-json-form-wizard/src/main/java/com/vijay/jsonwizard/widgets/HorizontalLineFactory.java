@@ -72,6 +72,7 @@ public class HorizontalLineFactory implements FormWidgetFactory {
         horizontalLine.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         horizontalLine.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
         horizontalLine.setTag(R.id.relevance, relevance);
+        horizontalLine.setTag(R.id.extraPopup, popup);
 
         // Add other custom properties such as bg_color
         String bgColorHex = jsonObject.optString("bg_color", null);

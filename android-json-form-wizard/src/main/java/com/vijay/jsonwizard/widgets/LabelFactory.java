@@ -63,6 +63,7 @@ public class LabelFactory implements FormWidgetFactory {
         relativeLayout.setId(ViewUtil.generateViewId());
         canvasIds.put(relativeLayout.getId());
         relativeLayout.setTag(R.id.canvas_ids, canvasIds.toString());
+        relativeLayout.setTag(R.id.extraPopup, popup);
         views.add(relativeLayout);
         return views;
     }

@@ -127,10 +127,11 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         Map<String, View> labelViews = FormUtils.createRadioButtonAndCheckBoxLabel(rootLayout, jsonObject, context, canvasIds,
                 readOnly, listener);
         View radioGroup = addRadioButtonOptionsElements(jsonObject, context, readOnly, canvasIds, stepName, rootLayout, listener,
-                formFragment);
+                formFragment, popup);
         views.add(rootLayout);
         ImageView editButton = (ImageView) labelViews.get(JsonFormConstants.EDIT_BUTTON);
         showEditButton(jsonObject, radioGroup, editButton, listener);
+        rootLayout.setTag(R.id.extraPopup, popup);
         return views;
     }
 
@@ -153,16 +154,16 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
     protected View addRadioButtonOptionsElements(JSONObject jsonObject, Context context, Boolean readOnly, JSONArray canvasIds,
                                                  String stepName, LinearLayout linearLayout, CommonListener listener, JsonFormFragment
-                                                         formFragment) throws JSONException {
+                                                         formFragment, boolean popup) throws JSONException {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
         JSONArray options = jsonObject.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
-        Boolean extraRelCheck = jsonObject.optBoolean("extra_rel", false);
+        Boolean extraRelCheck = jsonObject.optBoolean(JsonFormConstants.EXTRA_REL, false);
         String extraRelArray = null;
         if (extraRelCheck) {
-            extraRelArray = jsonObject.optString("has_extra_rel", null);
+            extraRelArray = jsonObject.optString(JsonFormConstants.HAS_EXTRA_REL, null);
         }
 
         RadioGroup radioGroup = new RadioGroup(context);
@@ -174,6 +175,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         radioGroup.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
         radioGroup.setTag(R.id.extraRelCheck, extraRelCheck);
         radioGroup.setTag(R.id.extraRelArray, extraRelArray);
+        radioGroup.setTag(R.id.extraPopup, popup);
         radioGroup.setId(ViewUtil.generateViewId());
         canvasIds.put(radioGroup.getId());
 
@@ -193,13 +195,14 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             radioGroupLayout.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
             radioGroupLayout.setTag(R.id.childKey, item.getString(JsonFormConstants.KEY));
             radioGroupLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+            radioGroup.setTag(R.id.extraPopup, popup);
             canvasIds.put(radioGroupLayout.getId());
 
             //Showing optional info alert dialog on individual radio buttons
             ImageView imageView = radioGroupLayout.findViewById(R.id.info_icon);
             FormUtils.showInfoIcon(jsonObject, listener, labelInfoText, labelInfoTitle, imageView);
 
-            createRadioButton(radioGroupLayout, jsonObject, readOnly, item, listener, stepName);
+            createRadioButton(radioGroupLayout, jsonObject, readOnly, item, listener, stepName, popup);
 
             createMainTextView(context, radioGroupLayout, jsonObject, item, stepName, readOnly);
             if (specifyInfo != null) {
@@ -229,7 +232,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
     }
 
     private void createRadioButton(RelativeLayout rootLayout, JSONObject jsonObject, Boolean readOnly, JSONObject item,
-                                   CommonListener listener, String stepName) throws JSONException {
+                                   CommonListener listener, String stepName, boolean popup) throws JSONException {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
@@ -243,6 +246,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         radioButton.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
         radioButton.setTag(R.id.childKey, item.getString(JsonFormConstants.KEY));
         radioButton.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+        radioButton.setTag(R.id.extraPopup, popup);
         radioButton.setOnCheckedChangeListener(listener);
         if (!TextUtils.isEmpty(jsonObject.optString(JsonFormConstants.VALUE))
                 && jsonObject.optString(JsonFormConstants.VALUE).equals(item.getString(JsonFormConstants.KEY))) {

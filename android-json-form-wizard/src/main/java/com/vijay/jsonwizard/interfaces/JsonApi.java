@@ -15,7 +15,7 @@ public interface JsonApi {
     JSONObject getStep(String stepName);
 
     void writeValue(String stepName, String key, String value, String openMrsEntityParent,
-                    String openMrsEntity, String openMrsEntityId) throws JSONException;
+                    String openMrsEntity, String openMrsEntityId, boolean popup) throws JSONException;
 
     void writeValue(String stepName, String prentKey, String childObjectKey, String childKey,
                     String value, String openMrsEntityParent, String openMrsEntity,

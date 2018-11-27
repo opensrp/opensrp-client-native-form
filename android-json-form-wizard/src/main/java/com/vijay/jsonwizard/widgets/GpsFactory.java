@@ -84,7 +84,7 @@ public class GpsFactory implements FormWidgetFactory {
                 .inflate(R.layout.item_gps, null);
         final int canvasId = ViewUtil.generateViewId();
         rootLayout.setId(canvasId);
-        final Button recordButton = (Button) rootLayout.findViewById(R.id.record_button);
+        final Button recordButton = rootLayout.findViewById(R.id.record_button);
         recordButton.setBackgroundColor(context.getResources().getColor(R.color.primary));
         recordButton.setMinHeight(0);
         recordButton.setMinimumHeight(0);
@@ -101,6 +101,7 @@ public class GpsFactory implements FormWidgetFactory {
         recordButton.setTag(R.id.openmrs_entity, openMrsEntity);
         recordButton.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         recordButton.setTag(R.id.type, jsonObject.getString("type"));
+        recordButton.setTag(R.id.extraPopup, popup);
         if (relevance != null && context instanceof JsonApi) {
             recordButton.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(recordButton);
@@ -121,10 +122,10 @@ public class GpsFactory implements FormWidgetFactory {
             recordButton.setFocusable(!readOnly);
         }
 
-        TextView latitudeTV = (TextView) rootLayout.findViewById(R.id.latitude);
-        TextView longitudeTV = (TextView) rootLayout.findViewById(R.id.longitude);
-        TextView altitudeTV = (TextView) rootLayout.findViewById(R.id.altitude);
-        TextView accuracyTV = (TextView) rootLayout.findViewById(R.id.accuracy);
+        TextView latitudeTV = rootLayout.findViewById(R.id.latitude);
+        TextView longitudeTV = rootLayout.findViewById(R.id.longitude);
+        TextView altitudeTV = rootLayout.findViewById(R.id.altitude);
+        TextView accuracyTV = rootLayout.findViewById(R.id.accuracy);
         //setCoordinates(context, latitudeTV, longitudeTV, altitudeTV, accuracyTV, "", "", "", "");
         attachJSON(context, jsonObject, recordButton, latitudeTV, longitudeTV, altitudeTV, accuracyTV);
 

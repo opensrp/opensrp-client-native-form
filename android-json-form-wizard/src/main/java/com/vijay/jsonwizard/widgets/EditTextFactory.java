@@ -59,13 +59,14 @@ public class EditTextFactory implements FormWidgetFactory {
                 getLayout(), null);
         MaterialEditText editText = rootLayout.findViewById(R.id.edit_text);
         ImageView editButton = rootLayout.findViewById(R.id.material_edit_text_edit_button);
-        FormUtils.showEditButton(jsonObject,editText,editButton,listener);
-        attachJson(stepName, context, formFragment, jsonObject, editText,editButton);
+        FormUtils.showEditButton(jsonObject, editText, editButton, listener);
+        attachJson(stepName, context, formFragment, jsonObject, editText, editButton);
 
         JSONArray canvasIds = new JSONArray();
         rootLayout.setId(ViewUtil.generateViewId());
         canvasIds.put(rootLayout.getId());
         editText.setTag(R.id.canvas_ids, canvasIds.toString());
+        editText.setTag(R.id.extraPopup, popup);
 
         ((JsonApi) context).addFormDataView(editText);
         views.add(rootLayout);

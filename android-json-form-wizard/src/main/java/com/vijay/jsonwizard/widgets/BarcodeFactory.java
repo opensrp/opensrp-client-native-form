@@ -73,6 +73,7 @@ public class BarcodeFactory implements FormWidgetFactory {
             editText.setId(ViewUtil.generateViewId());
             editText.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
             editText.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
+            editText.setTag(R.id.extraPopup, popup);
             editText.setTag(R.id.openmrs_entity, openMrsEntity);
             editText.setTag(R.id.openmrs_entity_id, openMrsEntityId);
             if (jsonObject.has(JsonFormConstants.V_REQUIRED)) {

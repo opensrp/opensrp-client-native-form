@@ -1502,6 +1502,37 @@
         ]
       },
       {
+        "key": "repiratory_exam_three",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Respiratory exam three",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "extra_rel": true,
+        "has_extra_rel": "3",
+        "options": [
+          {
+            "key": "1",
+            "text": "Not done"
+          },
+          {
+            "key": "2",
+            "text": "Normal"
+          },
+          {
+            "key": "3",
+            "text": "Abnormal",
+            "specify_info": "Specify",
+            "specify_info_color": "#b5b5b5",
+            "specify_widget": "check_box",
+            "specify_content": "respiratory_exam_abnormal_sub_form",
+            "specify_content_form": ""
+          }
+        ]
+      },
+      {
         "key": "occupation",
         "openmrs_entity_parent": "",
         "openmrs_entity": "concept",

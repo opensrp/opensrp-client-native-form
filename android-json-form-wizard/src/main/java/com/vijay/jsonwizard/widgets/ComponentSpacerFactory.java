@@ -43,6 +43,7 @@ public class ComponentSpacerFactory implements FormWidgetFactory {
         linearLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         linearLayout.setTag(R.id.type, jsonObject.getString("type"));
         linearLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+        linearLayout.setTag(R.id.extraPopup, popup);
 
         if (relevance != null && context instanceof JsonApi) {
             linearLayout.setTag(R.id.relevance, relevance);

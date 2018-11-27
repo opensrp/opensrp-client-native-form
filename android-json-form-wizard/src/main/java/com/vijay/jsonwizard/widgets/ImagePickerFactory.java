@@ -71,6 +71,7 @@ public class ImagePickerFactory implements FormWidgetFactory {
         imageView.setImageDrawable(context.getResources().getDrawable(R.mipmap.add_photo_background));
         imageView.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
         imageView.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
+        imageView.setTag(R.id.extraPopup, popup);
         imageView.setTag(R.id.openmrs_entity, openMrsEntity);
         imageView.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         imageView.setTag(R.id.type, jsonObject.getString("type"));

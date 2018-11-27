@@ -64,6 +64,7 @@ public class SpinnerFactory implements FormWidgetFactory {
         spinnerRelativeLayout.setTag(R.id.openmrs_entity, openMrsEntity);
         spinnerRelativeLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         spinnerRelativeLayout.setTag(R.id.type, jsonObject.getString("type"));
+        spinnerRelativeLayout.setTag(R.id.extraPopup, popup);
         spinnerRelativeLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
         spinnerRelativeLayout.setId(ViewUtil.generateViewId());
         canvasIds.put(spinnerRelativeLayout.getId());
@@ -78,7 +79,7 @@ public class SpinnerFactory implements FormWidgetFactory {
         MaterialSpinner spinner = spinnerRelativeLayout.findViewById(R.id.material_spinner);
         ImageView spinnerInfoIconImageView = spinnerRelativeLayout.findViewById(R.id.spinner_info_icon);
         ImageView editButton = spinnerRelativeLayout.findViewById(R.id.spinner_edit_button);
-        FormUtils.showEditButton(jsonObject,spinner,editButton,listener);
+        FormUtils.showEditButton(jsonObject, spinner, editButton, listener);
         String hint = jsonObject.optString(JsonFormConstants.HINT);
         if (!TextUtils.isEmpty(hint)) {
             spinner.setHint(jsonObject.getString(JsonFormConstants.HINT));
@@ -94,6 +95,7 @@ public class SpinnerFactory implements FormWidgetFactory {
         spinner.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         spinner.setTag(R.id.type, jsonObject.getString("type"));
         spinner.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+        spinner.setTag(R.id.extraPopup, popup);
 
         JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
         if (requiredObject != null) {

@@ -66,6 +66,7 @@ public class RadioButtonFactory implements FormWidgetFactory {
             radioButton.setTag(R.id.openmrs_entity, openMrsEntity);
             radioButton.setTag(R.id.openmrs_entity_id, openMrsEntityId);
             radioButton.setTag(R.id.type, jsonObject.getString("type"));
+            radioButton.setTag(R.id.extraPopup, popup);
             radioButton.setTag(R.id.childKey, item.getString(JsonFormConstants.KEY));
             radioButton.setGravity(Gravity.CENTER_VERTICAL);
             radioButton.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));

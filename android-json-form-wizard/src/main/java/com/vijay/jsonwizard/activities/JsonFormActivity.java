@@ -39,6 +39,7 @@ import com.vijay.jsonwizard.interfaces.OnActivityResultListener;
 import com.vijay.jsonwizard.utils.ExObjectResult;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.PropertyManager;
+import com.vijay.jsonwizard.views.GenericPopupDialogInterface;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -53,7 +54,7 @@ import java.util.regex.Pattern;
 
 import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 
-public class JsonFormActivity extends AppCompatActivity implements JsonApi {
+public class JsonFormActivity extends AppCompatActivity implements JsonApi, GenericPopupDialogInterface {
 
     private static final String TAG = JsonFormActivity.class.getSimpleName();
     private GenericPopupDialog genericPopupDialog = new GenericPopupDialog();
@@ -146,25 +147,32 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
     @Override
     public void writeValue(String stepName, String key, String value, String openMrsEntityParent,
-                           String openMrsEntity, String openMrsEntityId) throws JSONException {
+                           String openMrsEntity, String openMrsEntityId, boolean popup) throws JSONException {
         synchronized (mJSONObject) {
             JSONObject jsonObject = mJSONObject.getJSONObject(stepName);
-            JSONArray fields = fetchFields(jsonObject, false);
+            JSONArray fields = fetchFields(jsonObject, popup);
             for (int i = 0; i < fields.length(); i++) {
                 JSONObject item = fields.getJSONObject(i);
                 String keyAtIndex = item.getString(KEY.KEY);
+                String itemType = "";
+                if (popup) {
+                    itemType = item.getString(JsonFormConstants.TYPE);
+                }
                 if (key.equals(keyAtIndex)) {
                     if (item.has(KEY.TEXT)) {
                         item.put(KEY.TEXT, value);
                     } else {
+                        if (popup) {
+                            genericPopupDialog.addSelectedValues(addAssignedValue(keyAtIndex, "", value, itemType, ""));
+                            extraFieldsWithValues = fields;
+                        }
                         item.put(JsonFormConstants.VALUE, value);
-
                     }
 
-                    item.put("openmrs_entity_parent", openMrsEntityParent);
-                    item.put("openmrs_entity", openMrsEntity);
-                    item.put("openmrs_entity_id", openMrsEntityId);
-                    refreshSkipLogic(key, null, false);
+                    item.put(JsonFormConstants.OPENMRS_ENTITY_PARENT, openMrsEntityParent);
+                    item.put(JsonFormConstants.OPENMRS_ENTITY, openMrsEntity);
+                    item.put(JsonFormConstants.OPENMRS_ENTITY_ID, openMrsEntityId);
+                    refreshSkipLogic(key, null, popup);
                     refreshConstraints(key, null);
                     refreshMediaLogic(key, value);
                     return;
@@ -184,15 +192,23 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             for (int i = 0; i < fields.length(); i++) {
                 JSONObject item = fields.getJSONObject(i);
                 String keyAtIndex = item.getString(KEY.KEY);
+                String itemType = "";
+                if (popup) {
+                    itemType = item.getString(JsonFormConstants.TYPE);
+                }
                 if (parentKey.equals(keyAtIndex)) {
                     JSONArray jsonArray = item.getJSONArray(childObjectKey);
                     for (int j = 0; j < jsonArray.length(); j++) {
                         JSONObject innerItem = jsonArray.getJSONObject(j);
                         String anotherKeyAtIndex = innerItem.getString(KEY.KEY);
+                        String itemText = "";
+                        if (itemType.equals(JsonFormConstants.CHECK_BOX)) {
+                            itemText = innerItem.getString(JsonFormConstants.TEXT);
+                        }
                         if (childKey.equals(anotherKeyAtIndex)) {
                             innerItem.put(JsonFormConstants.VALUE, value);
                             if (popup) {
-                                genericPopupDialog.setPopAssignedValue(addAssignedValue(keyAtIndex, childKey, value));
+                                genericPopupDialog.addSelectedValues(addAssignedValue(keyAtIndex, childKey, value, itemType, itemText));
                                 extraFieldsWithValues = fields;
                             }
                             refreshSkipLogic(parentKey, childKey, popup);
@@ -205,9 +221,14 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         }
     }
 
-    private Map<String, String> addAssignedValue(String itemKey, String optionKey, String keyValue) {
+    private Map<String, String> addAssignedValue(String itemKey, String optionKey, String keyValue, String itemType, String itemText) {
         Map<String, String> value = new HashMap<>();
-        value.put(itemKey, optionKey + ":" + keyValue);
+        if (itemType.equals(JsonFormConstants.CHECK_BOX)) {
+            value.put(itemKey, optionKey + ":" + itemText + ":" + keyValue + ":" + itemType);
+        } else {
+            value.put(itemKey, keyValue + ":" + itemType);
+        }
+
         return value;
     }
 
@@ -379,7 +400,6 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
                         try {
                             boolean comparison = isRelevant(curValueMap, curRelevance);
-
                             ok = ok && comparison;
                             if (!ok) break;
                         } catch (Exception e) {
@@ -951,6 +971,11 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         }
 
         return new ExObjectResult(false, false);
+    }
+
+    @Override
+    public void onGenericDataPass(Map<String, String> selectedValues) {
+
     }
 
     private static class KEY {

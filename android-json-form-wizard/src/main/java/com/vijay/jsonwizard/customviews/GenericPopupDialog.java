@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.SecondaryValueModel;
 import com.vijay.jsonwizard.utils.Utils;
+import com.vijay.jsonwizard.views.GenericPopupDialogInterface;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -50,10 +52,18 @@ public class GenericPopupDialog extends DialogFragment {
     private JSONArray secondValues;
     private Map<String, String> popAssignedValue = new HashMap<>();
     private Map<String, SecondaryValueModel> secondaryValuesMap = new HashMap<>();
+    private GenericPopupDialogInterface genericPopupDialogInterface;
+    private String TAG = this.getClass().getSimpleName();
     // private Map<String, String> loadedSubForms = new HashMap<>();
 
     public void setContext(Context context) throws IllegalStateException {
         this.context = context;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        genericPopupDialogInterface = (GenericPopupDialogInterface) context;
     }
 
     @Override
@@ -128,6 +138,7 @@ public class GenericPopupDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 GenericPopupDialog.this.dismiss();
+                passData();
             }
         });
 
@@ -147,6 +158,10 @@ public class GenericPopupDialog extends DialogFragment {
         }
 
         return null;
+    }
+
+    private void passData() {
+        genericPopupDialogInterface.onGenericDataPass(popAssignedValue);
     }
 
     private String loadSubForm(String defaultSubFormLocation, Context context) {
@@ -297,5 +312,11 @@ public class GenericPopupDialog extends DialogFragment {
 
     public void setSecondValues(JSONArray secondValues) {
         this.secondValues = secondValues;
+    }
+
+    public void addSelectedValues(Map<String, String> newValue) {
+        Map<String, String> selectedValues = getPopAssignedValue();
+        String values = String.valueOf(newValue.values());
+        Log.i(TAG, values);
     }
 }

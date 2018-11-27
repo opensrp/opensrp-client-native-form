@@ -67,7 +67,7 @@ public class TreeViewFactory implements FormWidgetFactory {
 
     @Override
     public List<View> getViewsFromJson(String stepName, final Context context, JsonFormFragment formFragment, JSONObject
-            jsonObject, CommonListener listener, Boolean popup) throws Exception {
+            jsonObject, CommonListener listener, Boolean popup) {
         List<View> views = new ArrayList<>(1);
         try {
             String openMrsEntityParent = jsonObject.getString("openmrs_entity_parent");
@@ -81,7 +81,7 @@ public class TreeViewFactory implements FormWidgetFactory {
                     R.layout.native_form_item_edit_text, null);
             rootLayout.setId(ViewUtil.generateViewId());
             canvasIds.put(rootLayout.getId());
-            final MaterialEditText editText = (MaterialEditText) rootLayout.findViewById(R.id.edit_text);
+            final MaterialEditText editText = rootLayout.findViewById(R.id.edit_text);
             editText.setHint(jsonObject.getString(JsonFormConstants.HINT));
             editText.setFloatingLabelText(jsonObject.getString(JsonFormConstants.HINT));
             editText.setId(ViewUtil.generateViewId());
@@ -89,6 +89,7 @@ public class TreeViewFactory implements FormWidgetFactory {
             editText.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
             editText.setTag(R.id.openmrs_entity, openMrsEntity);
             editText.setTag(R.id.openmrs_entity_id, openMrsEntityId);
+            editText.setTag(R.id.extraPopup, popup);
             editText.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
             if (jsonObject.has(JsonFormConstants.V_REQUIRED)) {
                 JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);

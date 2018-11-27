@@ -45,6 +45,7 @@ public class ToasterNotesFactory implements FormWidgetFactory {
         linearLayout.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
         linearLayout.setTag(R.id.openmrs_entity, openMrsEntity);
         linearLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
+        linearLayout.setTag(R.id.extraPopup, popup);
         linearLayout.setTag(R.id.type, jsonObject.getString("type"));
         linearLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
 

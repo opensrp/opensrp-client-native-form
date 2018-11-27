@@ -206,6 +206,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             String openMrsEntityParent = (String) childAt.getTag(R.id.openmrs_entity_parent);
             String openMrsEntity = (String) childAt.getTag(R.id.openmrs_entity);
             String openMrsEntityId = (String) childAt.getTag(R.id.openmrs_entity_id);
+            Boolean popup = (Boolean) childAt.getTag(R.id.extraPopup);
 
             ValidationStatus validationStatus = validate(getView(), childAt, firstError == null);
             if (firstError == null && !validationStatus.isValid()) {
@@ -221,7 +222,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                 }
 
                 getView().writeValue(mStepName, key, rawValue,
-                        openMrsEntityParent, openMrsEntity, openMrsEntityId);
+                        openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
             } else if (childAt instanceof NativeEditText) {
                 NativeEditText editText = (NativeEditText) childAt;
 
@@ -231,17 +232,16 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                 }
 
                 getView().writeValue(mStepName, key, rawValue,
-                        openMrsEntityParent, openMrsEntity, openMrsEntityId);
+                        openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
             } else if (childAt instanceof ImageView) {
                 Object path = childAt.getTag(R.id.imagePath);
                 if (path instanceof String) {
                     getView().writeValue(mStepName, key, (String) path, openMrsEntityParent,
-                            openMrsEntity, openMrsEntityId);
+                            openMrsEntity, openMrsEntityId, popup);
                 }
             } else if (childAt instanceof CheckBox) {
                 String parentKey = (String) childAt.getTag(R.id.key);
                 String childKey = (String) childAt.getTag(R.id.childKey);
-                Boolean popup = (Boolean) childAt.getTag(R.id.extraPopup);
                 getView().writeValue(mStepName, parentKey, JsonFormConstants.OPTIONS_FIELD_NAME, childKey,
                         String.valueOf(((CheckBox) childAt).isChecked()), openMrsEntityParent,
                         openMrsEntity, openMrsEntityId, popup);
@@ -250,12 +250,12 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                 String childKey = (String) childAt.getTag(R.id.childKey);
                 if (((RadioButton) childAt).isChecked()) {
                     getView().writeValue(mStepName, parentKey, childKey, openMrsEntityParent,
-                            openMrsEntity, openMrsEntityId);
+                            openMrsEntity, openMrsEntityId, popup);
                 }
             } else if (childAt instanceof Button) {
                 Button button = (Button) childAt;
                 String rawValue = (String) button.getTag(R.id.raw_value);
-                getView().writeValue(mStepName, key, rawValue, openMrsEntityParent, openMrsEntity, openMrsEntityId);
+                getView().writeValue(mStepName, key, rawValue, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
             }
         }
 
@@ -508,25 +508,19 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             String openMrsEntityId = (String) compoundButton.getTag(R.id.openmrs_entity_id);
             String childKey = (String) compoundButton.getTag(R.id.childKey);
             Boolean popup = (Boolean) compoundButton.getTag(R.id.extraPopup);
-
             JSONObject formObjectForStep = getFormObjectForStep(mStepName, parentKey);
 
             if (formObjectForStep != null && formObjectForStep.has(JsonFormConstants.JSON_FORM_KEY.EXCLUSIVE)) {
                 try {
-
                     JSONArray exclusiveArray = formObjectForStep.getJSONArray(JsonFormConstants.JSON_FORM_KEY.EXCLUSIVE);
-
                     Set<String> exclusiveSet = new HashSet<>();
                     for (int i = 0; i < exclusiveArray.length(); i++) {
                         exclusiveSet.add(exclusiveArray.getString(i));
                     }
 
                     if (isChecked) {
-
                         if (exclusiveSet.contains(childKey)) {
-
                             getView().unCheckAllExcept(parentKey, childKey);
-
                         } else {
                             for (String excludeKey : exclusiveSet) {
                                 getView().unCheck(parentKey, excludeKey);
@@ -549,11 +543,12 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             String openMrsEntity = (String) compoundButton.getTag(R.id.openmrs_entity);
             String openMrsEntityId = (String) compoundButton.getTag(R.id.openmrs_entity_id);
             String childKey = (String) compoundButton.getTag(R.id.childKey);
+            Boolean popup = (Boolean) compoundButton.getTag(R.id.extraPopup);
 
             getView().unCheckAllExcept(parentKey, childKey);
 
             getView().writeValue(mStepName, parentKey, childKey, openMrsEntityParent,
-                    openMrsEntity, openMrsEntityId);
+                    openMrsEntity, openMrsEntityId, popup);
         }
     }
 
@@ -564,10 +559,11 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         String openMrsEntity = (String) parent.getTag(R.id.openmrs_entity);
         String openMrsEntityId = (String) parent.getTag(R.id.openmrs_entity_id);
         CustomTextView customTextView = (CustomTextView) parent.getTag(R.id.number_selector_textview);
+        Boolean popup = (Boolean) parent.getTag(R.id.extraPopup);
         if (position >= 0) {
             String value = (String) parent.getItemAtPosition(position);
             getView().writeValue(mStepName, parentKey, value, openMrsEntityParent, openMrsEntity,
-                    openMrsEntityId);
+                    openMrsEntityId, popup);
         }
 
         if (JsonFormConstants.NUMBER_SELECTORS.equals(type)) {
@@ -589,8 +585,9 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         String openMrsEntityParent = (String) customTextView.getTag(R.id.openmrs_entity_parent);
         String openMrsEntity = (String) customTextView.getTag(R.id.openmrs_entity);
         String openMrsEntityId = (String) customTextView.getTag(R.id.openmrs_entity_id);
+        Boolean popup = (Boolean) customTextView.getTag(R.id.extraPopup);
         String value = String.valueOf(customTextView.getText());
-        getView().writeValue(mStepName, parentKey, value, openMrsEntityParent, openMrsEntity, openMrsEntityId);
+        getView().writeValue(mStepName, parentKey, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
     }
 
     private JSONObject getFormObjectForStep(String mStepName, String fieldKey) {

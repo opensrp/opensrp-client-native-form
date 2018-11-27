@@ -58,8 +58,8 @@ public class NativeEditTextFactory implements FormWidgetFactory {
                 getLayout(), null);
         NativeEditText editText = rootLayout.findViewById(R.id.normal_edit_text);
         ImageView editButton = rootLayout.findViewById(R.id.normal_edit_text_edit_button);
-        FormUtils.showEditButton(jsonObject,editText,editButton,listener);
-        makeFromJson(stepName, context, formFragment, jsonObject, editText,editButton);
+        FormUtils.showEditButton(jsonObject, editText, editButton, listener);
+        makeFromJson(stepName, context, formFragment, jsonObject, editText, editButton);
 
         addRequiredValidator(jsonObject, editText);
         addRegexValidator(jsonObject, editText);
@@ -72,6 +72,7 @@ public class NativeEditTextFactory implements FormWidgetFactory {
         rootLayout.setId(ViewUtil.generateViewId());
         canvasIds.put(rootLayout.getId());
         editText.setTag(R.id.canvas_ids, canvasIds.toString());
+        editText.setTag(R.id.extraPopup, popup);
 
         ((JsonApi) context).addFormDataView(editText);
         views.add(rootLayout);

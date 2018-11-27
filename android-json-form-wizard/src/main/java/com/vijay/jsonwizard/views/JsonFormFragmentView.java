@@ -51,7 +51,7 @@ public interface JsonFormFragmentView<V extends ViewState> extends MvpView {
     void updateRelevantImageView(Bitmap bitmap, String imagePath, String currentKey);
 
     void writeValue(String stepName, String key, String value, String openMrsEntityParent,
-                    String openMrsEntity, String openMrsEntityId);
+                    String openMrsEntity, String openMrsEntityId, boolean popup);
 
     void writeValue(String stepName, String prentKey, String childObjectKey, String childKey,
                     String value, String openMrsEntityParent, String openMrsEntity,

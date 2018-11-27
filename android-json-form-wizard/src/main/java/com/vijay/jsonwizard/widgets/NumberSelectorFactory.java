@@ -200,6 +200,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         rootLayout.setTag(R.id.openmrs_entity, openMrsEntity);
         rootLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         rootLayout.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
+        rootLayout.setTag(R.id.extraPopup, popup);
         rootLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
         canvasIds.put(rootLayout.getId());
         rootLayout.setTag(R.id.canvas_ids, canvasIds.toString());

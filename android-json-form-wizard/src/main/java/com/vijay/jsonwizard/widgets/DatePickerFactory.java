@@ -162,16 +162,16 @@ public class DatePickerFactory implements FormWidgetFactory {
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject,
-                                       CommonListener listener, Boolean popup) throws Exception {
+                                       CommonListener listener, Boolean popup) {
         List<View> views = new ArrayList<>(1);
         try {
 
             RelativeLayout dateViewRelativeLayout = (RelativeLayout) LayoutInflater
                     .from(context).inflate(getLayout(), null);
 
-            MaterialEditText editText = (MaterialEditText) dateViewRelativeLayout.findViewById(R.id.edit_text);
+            MaterialEditText editText = dateViewRelativeLayout.findViewById(R.id.edit_text);
 
-            TextView duration = (TextView) dateViewRelativeLayout.findViewById(R.id.duration);
+            TextView duration = dateViewRelativeLayout.findViewById(R.id.duration);
 
             attachJson(stepName, context, formFragment, jsonObject, editText, duration);
 
@@ -179,6 +179,7 @@ public class DatePickerFactory implements FormWidgetFactory {
             dateViewRelativeLayout.setId(ViewUtil.generateViewId());
             canvasIds.put(dateViewRelativeLayout.getId());
             editText.setTag(R.id.canvas_ids, canvasIds.toString());
+            editText.setTag(R.id.extraPopup, popup);
 
             ((JsonApi) context).addFormDataView(editText);
             views.add(dateViewRelativeLayout);
