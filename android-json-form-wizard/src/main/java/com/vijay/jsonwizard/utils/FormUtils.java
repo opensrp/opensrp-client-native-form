@@ -467,13 +467,11 @@ public class FormUtils {
         genericPopupDialog.show(ft, TAG);
     }
 
-    public String spiltValue(String type, String itemString) {
+    public String getValueFromSecondaryValues(String type, String itemString) {
         String newString = "";
         String[] strings = itemString.split(":");
-        if (type != null) {
-            if (type.equals(JsonFormConstants.CHECK_BOX) || type.equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
-                newString = strings[1] + ", ";
-            }
+        if (type.equals(JsonFormConstants.CHECK_BOX) || type.equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
+            newString = strings[1] + ", ";
         } else {
             if (strings.length > 1) {
                 newString = strings[1] + ", ";

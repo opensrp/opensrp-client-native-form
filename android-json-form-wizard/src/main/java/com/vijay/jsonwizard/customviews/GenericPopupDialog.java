@@ -197,14 +197,22 @@ public class GenericPopupDialog extends DialogFragment {
                 if (secondaryValuesMap.containsKey(key)) {
                     SecondaryValueModel secondaryValueModel = secondaryValuesMap.get(key);
                     String type = secondaryValueModel.getType();
-                    if (type != null && (type.equals(JsonFormConstants.CHECK_BOX) || type.equals(JsonFormConstants.NATIVE_RADIO_BUTTON))) {
+                    if (type != null && (type.equals(JsonFormConstants.CHECK_BOX))) {
                         if (jsonObject.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
                             JSONArray options = jsonObject.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
-                            setCompoundButtonValues(options);
+                            JSONArray values = secondaryValueModel.getValues();
+                            setCompoundButtonValues(options, values);
                         }
                     } else {
                         JSONArray values = secondaryValueModel.getValues();
-                        jsonObject.put(JsonFormConstants.VALUE, setValues(values, type));
+                        if (type != null && type.equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
+                            for (int k = 0; k < values.length(); k++) {
+                                jsonObject.put(JsonFormConstants.VALUE, getValueKey(values.getString(k)));
+                            }
+                        } else {
+                            jsonObject.put(JsonFormConstants.VALUE, setValues(values, type));
+                        }
+
                     }
                 }
             } catch (JSONException e) {
@@ -213,11 +221,18 @@ public class GenericPopupDialog extends DialogFragment {
         }
     }
 
-    private void setCompoundButtonValues(JSONArray options) {
+    private void setCompoundButtonValues(JSONArray options, JSONArray secondValues) {
         for (int i = 0; i < options.length(); i++) {
             JSONObject jsonObject;
             try {
                 jsonObject = options.getJSONObject(i);
+                String mainKey = jsonObject.getString(JsonFormConstants.KEY);
+                for (int j = 0; j < secondValues.length(); j++) {
+                    String key = getValueKey(secondValues.getString(j));
+                    if (mainKey.equals(key)) {
+                        jsonObject.put(JsonFormConstants.VALUE, true);
+                    }
+                }
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -230,14 +245,22 @@ public class GenericPopupDialog extends DialogFragment {
         String value = "";
         for (int i = 0; i < jsonArray.length(); i++) {
             try {
-                value = formUtils.spiltValue(type, jsonArray.getString(i));
-
+                value = formUtils.getValueFromSecondaryValues(type, jsonArray.getString(i));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
 
         return value.replaceAll(", $", "");
+    }
+
+    private String getValueKey(String value) {
+        String key = "";
+        String[] strings = value.split(":");
+        if (strings.length > 0) {
+            key = strings[0];
+        }
+        return key;
     }
 
     public void setCommonListener(CommonListener commonListener) {

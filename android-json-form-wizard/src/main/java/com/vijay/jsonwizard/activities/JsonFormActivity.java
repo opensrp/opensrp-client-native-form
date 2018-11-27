@@ -870,15 +870,6 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         return result;
     }
 
-    private String getMapKey(Map<String, String> valuesMap) {
-        String mapKey = "";
-        for (String key : valuesMap.keySet()) {
-            mapKey = key;
-        }
-
-        return mapKey;
-    }
-
     public JSONObject getmJSONObject() {
         return mJSONObject;
     }
@@ -904,15 +895,11 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     }
 
     private boolean isRelevant(Map<String, String> curValueMap, JSONObject curRelevance) throws Exception {
-
         if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_CHECKBOX)) {
-
             JSONArray exArray = curRelevance.getJSONArray(JsonFormConstants.JSON_FORM_KEY.EX_CHECKBOX);
 
             for (int i = 0; i < exArray.length(); i++) {
-
                 ExObjectResult exObjectResult = isExObjectRelevant(curValueMap, exArray.getJSONObject(i));
-
                 if (exObjectResult.isRelevant()) {
                     return true;
                 } else if (!exObjectResult.isRelevant() && exObjectResult.isFinal()) {
@@ -920,40 +907,29 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 }
 
             }
-
             return false;
-
         } else {
             return doComparison(curValueMap.get(JsonFormConstants.VALUE), curRelevance);
         }
     }
 
     private ExObjectResult isExObjectRelevant(Map<String, String> curValueMap, JSONObject object) throws Exception {
-
         if (object.has(JsonFormConstants.JSON_FORM_KEY.NOT)) {
-
             JSONArray orArray = object.getJSONArray(JsonFormConstants.JSON_FORM_KEY.NOT);
 
             for (int i = 0; i < orArray.length(); i++) {
-
                 if (!Boolean.valueOf(curValueMap.get(orArray.getString(i)))) {
-
                     return new ExObjectResult(true, false);
                 } else {
-
                     return new ExObjectResult(false, true);
                 }
-
             }
-
         }
 
         if (object.has(JsonFormConstants.JSON_FORM_KEY.OR)) {
-
             JSONArray orArray = object.getJSONArray(JsonFormConstants.JSON_FORM_KEY.OR);
 
             for (int i = 0; i < orArray.length(); i++) {
-
                 if (Boolean.valueOf(curValueMap.get(orArray.getString(i)))) {
                     return new ExObjectResult(true, true);
                 }
@@ -963,30 +939,23 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         }
 
         if (object.has(JsonFormConstants.JSON_FORM_KEY.AND)) {
-
             JSONArray andArray = object.getJSONArray(JsonFormConstants.JSON_FORM_KEY.AND);
 
             for (int i = 0; i < andArray.length(); i++) {
-
                 if (!Boolean.valueOf(curValueMap.get(andArray.getString(i)))) {
-
                     return new ExObjectResult(false, false);
                 }
             }
-
             return new ExObjectResult(true, false);
 
         }
-
 
         return new ExObjectResult(false, false);
     }
 
     private static class KEY {
         public static final String TEXT = "text";
-
         public static final String KEY = "key";
-
         public static final String READ_ONLY = "read_only";
     }
 }

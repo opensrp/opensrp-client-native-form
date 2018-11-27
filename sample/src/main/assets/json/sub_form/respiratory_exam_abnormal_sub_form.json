@@ -55,6 +55,50 @@
       ]
     },
     {
+      "key": "repiratory_exam_radio_button",
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "",
+      "openmrs_entity_id": "",
+      "type": "native_radio",
+      "label": "Respiratory exam",
+      "label_text_style": "bold",
+      "text_color": "#000000",
+      "extra_rel": true,
+      "has_extra_rel": "3",
+      "options": [
+        {
+          "key": "1",
+          "text": "Not done"
+        },
+        {
+          "key": "2",
+          "text": "Normal"
+        },
+        {
+          "key": "3",
+          "text": "Abnormal"
+        }
+      ]
+    },
+    {
+      "key": "Last_Name",
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "person",
+      "openmrs_entity_id": "last_name",
+      "type": "normal_edit_text",
+      "edit_type": "name",
+      "read_only": true,
+      "edit_text_style": "bordered",
+      "v_required": {
+        "value": "true",
+        "err": "Please enter the last name"
+      },
+      "v_regex": {
+        "value": "[A-Za-z\\s\.\-]*",
+        "err": "Please enter a valid name"
+      }
+    },
+    {
       "key": "repiratory_exam_abnormal_other",
       "openmrs_entity_parent": "",
       "openmrs_entity": "",
@@ -75,6 +119,29 @@
             }
           ]
         }
+      }
+    },
+    {
+      "key": "Place_Birth",
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_entity_id": "1572AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "openmrs_data_type": "select one",
+      "type": "spinner",
+      "hint": "Place of birth *",
+      "label_info_title": "Place of birth spinner",
+      "label_info_text": "here is some text on this dialog",
+      "values": [
+        "Health facility",
+        "Home"
+      ],
+      "openmrs_choice_ids": {
+        "Health facility": "1588AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "Home": "1536AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      },
+      "v_required": {
+        "value": true,
+        "err": "Please enter the place of birth"
       }
     }
   ]

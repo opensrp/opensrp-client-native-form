@@ -1398,14 +1398,105 @@
             "key": "repiratory_exam_abnormal",
             "type": "check_box",
             "values": [
-              "rapid_breathing:Rapid breathing:true",
-              "other:Other:true"
+              "rapid_breathing:Rapid breathing",
+              "other:Other"
+            ]
+          },
+          {
+            "key": "repiratory_exam_radio_button",
+            "type": "native_radio",
+            "values": [
+              "1:Not done"
             ]
           },
           {
             "key": "repiratory_exam_abnormal_other",
+            "type": "edit_text",
             "values": [
               "other:Respiratory exam answer"
+            ]
+          },
+          {
+            "key": "Place_Birth",
+            "type": "spinner",
+            "values": [
+              "Home"
+            ]
+          },
+          {
+            "key": "Last_Name",
+            "type": "normal_edit_text",
+            "values": [
+              "Normal edit text"
+            ]
+          }
+        ]
+      },
+      {
+        "key": "repiratory_exam_two",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Respiratory exam Two",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "extra_rel": true,
+        "has_extra_rel": "3",
+        "options": [
+          {
+            "key": "1",
+            "text": "Not done"
+          },
+          {
+            "key": "2",
+            "text": "Normal"
+          },
+          {
+            "key": "3",
+            "text": "Abnormal",
+            "specify_info": "Specify",
+            "specify_info_color": "#b5b5b5",
+            "specify_widget": "check_box",
+            "specify_content": "respiratory_exam_abnormal_sub_form",
+            "specify_content_form": ""
+          }
+        ],
+        "secondary_value": [
+          {
+            "key": "repiratory_exam_abnormal",
+            "type": "check_box",
+            "values": [
+              "cough:Cough",
+              "other:Other"
+            ]
+          },
+          {
+            "key": "repiratory_exam_radio_button",
+            "type": "native_radio",
+            "values": [
+              "3:Abnormal"
+            ]
+          },
+          {
+            "key": "repiratory_exam_abnormal_other",
+            "type": "edit_text",
+            "values": [
+              "other:Respiratory exam answer two"
+            ]
+          },
+          {
+            "key": "Place_Birth",
+            "type": "spinner",
+            "values": [
+              "Health facility"
+            ]
+          },
+          {
+            "key": "Last_Name",
+            "type": "normal_edit_text",
+            "values": [
+              "Normal edit text two"
             ]
           }
         ]

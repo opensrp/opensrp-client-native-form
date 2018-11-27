@@ -370,7 +370,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
                     String type = jsonObject.optString(JsonFormConstants.TYPE, null);
                     JSONArray itemArray = jsonObject.getJSONArray(JsonFormConstants.VALUES);
                     for (int j = 0; j < itemArray.length(); j++) {
-                        specifyText.append(formUtils.spiltValue(type, itemArray.getString(j)));
+                        specifyText.append(formUtils.getValueFromSecondaryValues(type, itemArray.getString(j)));
 
                     }
                 }
