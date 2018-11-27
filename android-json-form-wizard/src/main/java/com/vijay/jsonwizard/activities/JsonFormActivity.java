@@ -33,13 +33,14 @@ import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.CheckBox;
 import com.vijay.jsonwizard.customviews.GenericPopupDialog;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
+import com.vijay.jsonwizard.interfaces.GenericPopupInterface;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.interfaces.OnActivityRequestPermissionResultListener;
 import com.vijay.jsonwizard.interfaces.OnActivityResultListener;
 import com.vijay.jsonwizard.utils.ExObjectResult;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.PropertyManager;
-import com.vijay.jsonwizard.views.GenericPopupDialogInterface;
+import com.vijay.jsonwizard.utils.SecondaryValueModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,7 +55,7 @@ import java.util.regex.Pattern;
 
 import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 
-public class JsonFormActivity extends AppCompatActivity implements JsonApi, GenericPopupDialogInterface {
+public class JsonFormActivity extends AppCompatActivity implements JsonApi, GenericPopupInterface {
 
     private static final String TAG = JsonFormActivity.class.getSimpleName();
     private GenericPopupDialog genericPopupDialog = new GenericPopupDialog();
@@ -163,7 +164,11 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi, Gene
                         item.put(KEY.TEXT, value);
                     } else {
                         if (popup) {
-                            genericPopupDialog.addSelectedValues(addAssignedValue(keyAtIndex, "", value, itemType, ""));
+                            String itemText = "";
+                            if (itemType.equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
+                                itemText = getRadioButtonText(item, value);
+                            }
+                            genericPopupDialog.addSelectedValues(addAssignedValue(keyAtIndex, "", value, itemType, itemText));
                             extraFieldsWithValues = fields;
                         }
                         item.put(JsonFormConstants.VALUE, value);
@@ -179,6 +184,28 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi, Gene
                 }
             }
         }
+    }
+
+    private String getRadioButtonText(JSONObject item, String value) {
+        String text = "";
+        if (item != null && item.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
+            try {
+                JSONArray options = item.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
+                for (int i = 0; i < options.length(); i++) {
+                    JSONObject option = options.getJSONObject(i);
+                    if (option != null && option.has(JsonFormConstants.KEY)) {
+                        String key = option.getString(JsonFormConstants.KEY);
+                        if (key.equals(value)) {
+                            text = option.getString(JsonFormConstants.TEXT);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+
+            }
+
+        }
+        return text;
     }
 
     @Override
@@ -224,9 +251,11 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi, Gene
     private Map<String, String> addAssignedValue(String itemKey, String optionKey, String keyValue, String itemType, String itemText) {
         Map<String, String> value = new HashMap<>();
         if (itemType.equals(JsonFormConstants.CHECK_BOX)) {
-            value.put(itemKey, optionKey + ":" + itemText + ":" + keyValue + ":" + itemType);
+            value.put(itemKey, optionKey + ":" + itemText + ":" + keyValue + ";" + itemType);
+        } else if (itemType.equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
+            value.put(itemKey, keyValue + ":" + itemText + ";" + itemType);
         } else {
-            value.put(itemKey, keyValue + ":" + itemType);
+            value.put(itemKey, keyValue + ";" + itemType);
         }
 
         return value;
@@ -974,7 +1003,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi, Gene
     }
 
     @Override
-    public void onGenericDataPass(Map<String, String> selectedValues) {
+    public void onGenericDataPass(Map<String, SecondaryValueModel> selectedValues) {
 
     }
 
