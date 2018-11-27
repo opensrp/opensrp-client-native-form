@@ -1,9 +1,6 @@
 {
-  "count": "1",
-  "encounter_type": "Birth Registration",
-  "mother": {
-    "encounter_type": "New Woman Registration"
-  },
+  "count": "2",
+  "encounter_type": "Physical Exam",
   "entity_id": "",
   "relational_id": "",
   "metadata": {
@@ -56,6 +53,7 @@
   },
   "step1": {
     "title": "Birth Registration",
+    "next": "step2",
     "fields": [
       {
         "key": "delivery_complications",
@@ -142,11 +140,9 @@
         "hint": "Specify other*",
         "relevance": {
           "rules-file:sample-rules.yml": {
-            "ex-rules": [
-              {
-                "rules-file": "sample-rules.yml"
-              }
-            ]
+            "ex-rules": {
+              "rules-file": "sample-rules.yml"
+            }
           }
         }
       },
@@ -203,13 +199,9 @@
         },
         "relevance": {
           "rules-file:sample-rules.yml": {
-            "ex-rules": [
-              {
-                "or": [
-                  "severe_bleeding"
-                ]
-              }
-            ]
+            "ex-rules": {
+              "rules-file": "sample-rules.yml"
+            }
           }
         }
       },
@@ -234,14 +226,109 @@
         "toaster_type": "problem",
         "relevance": {
           "rules-file:sample-rules.yml": {
-            "ex-rules": [
-              {
-                "or": [
-                  "severe_bleeding"
-                ]
-              }
-            ]
+            "ex-rules": {
+              "rules-file": "sample-rules.yml"
+            }
           }
+        }
+      }
+    ]
+  },
+  "step2": {
+    "title": "Physical Exam 2",
+    "fields": [
+      {
+        "key": "first_name_yo",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person",
+        "openmrs_entity_id": "first_name",
+        "type": "edit_text",
+        "hint": "First name *",
+        "edit_type": "name",
+        "v_required": {
+          "value": "true",
+          "err": "Please enter the first name"
+        },
+        "v_regex": {
+          "value": "[A-Za-z\\s\.\-]*",
+          "err": "Please enter a valid name"
+        },
+        "relevance": {
+          "rules-file:sample-rules.yml": {
+            "ex-rules": {
+              "rules-file": "sample-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "last_name_yo",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person",
+        "openmrs_entity_id": "last_name",
+        "type": "edit_text",
+        "hint": "Last name *",
+        "edit_type": "name",
+        "v_required": {
+          "value": "true",
+          "err": "Please enter the last name"
+        },
+        "v_regex": {
+          "value": "[A-Za-z\\s\.\-]*",
+          "err": "Please enter a valid name"
+        },
+        "relevance": {
+          "rules-file:sample-rules.yml": {
+            "ex-rules": {
+              "rules-file": "sample-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "super_heroes",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "concept",
+        "openmrs_entity_id": "161641AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "openmrs_data_type": "select one",
+        "type": "check_box",
+        "label": "Whose your favorite hero?",
+        "label_text_size": "7sp",
+        "label_text_color": "#FF9800",
+        "hint": "Your favorite hero*?",
+        "exclusive": [
+          "none",
+          "other"
+        ],
+        "options": [
+          {
+            "key": "none",
+            "text": "None",
+            "value": false,
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          },
+          {
+            "key": "superman",
+            "text": "Super Man",
+            "value": false,
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "text_color": "#000000"
+          },
+          {
+            "key": "batman",
+            "text": "Batman",
+            "value": false,
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          },
+          {
+            "key": "the_flash",
+            "text": "The Flash",
+            "value": false,
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          }
+        ],
+        "v_required": {
+          "value": "false"
         }
       }
     ]

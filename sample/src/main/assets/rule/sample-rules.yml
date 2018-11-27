@@ -2,13 +2,27 @@
 name: step1_hepb_immun_status
 description: due plus 7 days
 priority: 3
-condition: "step1_First_Name == 'John'"
+condition: "step1_First_Name == 'John' || step1_First_Name == 'Stacy'"
 actions:
   - "isRelevant = true"
 ---
 name: step1_tobacco_cessation_toaster
 description: due within 7 days
 priority: 3
-condition: "step1_hepb_immun_status = 'Seasonal flu dose missing' || 'Unknown'"
+condition: "step1_hepb_immun_status == 'Seasonal flu dose missing' || step1_hepb_immun_status != 'Joe'"
+actions:
+  - "isRelevant = true"
+---
+name: step2_first_name_yo
+description: due within 7 days
+priority: 3
+condition: "step1_hepb_immun_status == 'Stacy'"
+actions:
+  - "isRelevant = true"
+---
+name: step2_last_name_yo
+description: due within 7 days
+priority: 3
+condition: "step1_hepb_immun_status == 'Stacy' && step2_super_heroes == 'batman' "
 actions:
   - "isRelevant = true"

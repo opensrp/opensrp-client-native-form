@@ -4,33 +4,37 @@ import android.content.Context;
 import android.util.Log;
 
 import org.jeasy.rules.api.Facts;
+import org.jeasy.rules.api.Rule;
+import org.jeasy.rules.api.RuleListener;
 import org.jeasy.rules.api.Rules;
 import org.jeasy.rules.api.RulesEngine;
 import org.jeasy.rules.core.DefaultRulesEngine;
 import org.jeasy.rules.core.InferenceRulesEngine;
 import org.jeasy.rules.core.RulesEngineParameters;
-import org.jeasy.rules.mvel.MVELRule;
 import org.jeasy.rules.mvel.MVELRuleFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public class RulesEngineHelper {
+public class RulesEngineHelper implements RuleListener {
     public final String TAG = RulesEngineHelper.class.getCanonicalName();
     private Context context;
     private RulesEngine inferentialRulesEngine;
     private RulesEngine defaultRulesEngine;
     private Map<String, Rules> ruleMap;
+    private final String RULE_FOLDER_PATH = "rule/";
+    private Rules rules;
+    private String ruleName;
 
     public RulesEngineHelper(Context context) {
         this.context = context;
         this.inferentialRulesEngine = new InferenceRulesEngine();
         RulesEngineParameters parameters = new RulesEngineParameters().skipOnFirstAppliedRule(true);
         this.defaultRulesEngine = new DefaultRulesEngine(parameters);
+        ((DefaultRulesEngine) this.defaultRulesEngine).registerRuleListener(this);
         this.ruleMap = new HashMap<>();
 
     }
@@ -59,7 +63,8 @@ public class RulesEngineHelper {
         defaultRulesEngine.fire(rules, facts);
     }
 
-    public boolean getRelevance(Map<String, String> relevanceFact, List<MVELRule> ruleList) {
+    public boolean getRelevance(Map<String, String> relevanceFact, String ruleFilename, String ruleOfChoice) {
+        ruleName = ruleOfChoice;
 
         Facts facts = new Facts();
 
@@ -68,25 +73,39 @@ public class RulesEngineHelper {
             facts.put(entry.getKey(), entry.getValue());
         }
 
-        facts.put("isRelevant", false);
+        facts.put(RuleConstant.IS_RELEVANT, false);
 
 
-        Rules rules = new Rules();
-
-        for (MVELRule rule : ruleList) {
-
-            rules.register(rule);
-        }
+        rules = getRulesFromAsset(RULE_FOLDER_PATH + ruleFilename);
 
         processDefaultRules(rules, facts);
-      /*  for (Object fact: facts) {
-           RelevanceFact relFact= (RelevanceFact)fact;
-           relFact.isRelevant ;
 
-        }*/
-
-        return facts.get("isRelevant");
+        return facts.get(RuleConstant.IS_RELEVANT);
     }
 
+    @Override
+    public boolean beforeEvaluate(Rule rule, Facts facts) {
+        return ruleName.equals(rule.getName());
+    }
+
+    @Override
+    public void afterEvaluate(Rule rule, Facts facts, boolean evaluationResult) {
+
+    }
+
+    @Override
+    public void beforeExecute(Rule rule, Facts facts) {
+
+    }
+
+    @Override
+    public void onSuccess(Rule rule, Facts facts) {
+
+    }
+
+    @Override
+    public void onFailure(Rule rule, Facts facts, Exception exception) {
+
+    }
 
 }
