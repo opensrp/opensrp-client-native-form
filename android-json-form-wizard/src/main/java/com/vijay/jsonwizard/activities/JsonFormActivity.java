@@ -56,7 +56,7 @@ import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
     private static final String TAG = JsonFormActivity.class.getSimpleName();
-    GenericPopupDialog genericPopupDialog = new GenericPopupDialog();
+    private GenericPopupDialog genericPopupDialog = new GenericPopupDialog();
     private Toolbar mToolbar;
     private JSONObject mJSONObject;
     private PropertyManager propertyManager;
@@ -399,22 +399,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     protected void toggleViewVisibility(View view, boolean visible, boolean popup) {
         try {
             JSONArray canvasViewIds = new JSONArray((String) view.getTag(R.id.canvas_ids));
-            String addressString = (String) view.getTag(R.id.address);
-            String[] address = addressString.split(":");
-            JSONObject object = getObjectUsingAddress(address, popup);
-            boolean enabled = visible;
-            if (object != null && object.has(KEY.READ_ONLY) && object.getBoolean(KEY.READ_ONLY) && visible) {
-                enabled = false;
-            }
-
-            view.setEnabled(enabled);
-            if (view instanceof MaterialEditText || view instanceof RelativeLayout || view instanceof LinearLayout) {
-                view.setFocusable(enabled);
-                if (view instanceof MaterialEditText) {
-                    view.setFocusableInTouchMode(enabled);
-                }
-            }
-
+            setReadOnlyAndFocus(view, visible, popup);
             for (int i = 0; i < canvasViewIds.length(); i++) {
                 int curId = canvasViewIds.getInt(i);
                 View curCanvasView = view.getRootView().findViewById(curId);
@@ -437,6 +422,29 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         } catch (Exception e) {
             Log.e(TAG, view.toString());
             Log.e(TAG, Log.getStackTraceString(e));
+        }
+    }
+
+    private void setReadOnlyAndFocus(View view, boolean visible, boolean popup) {
+        try {
+            String addressString = (String) view.getTag(R.id.address);
+            String[] address = addressString.split(":");
+            JSONObject object = getObjectUsingAddress(address, popup);
+
+            boolean enabled = visible;
+            if (object != null && object.has(KEY.READ_ONLY) && object.getBoolean(KEY.READ_ONLY) && visible) {
+                enabled = false;
+            }
+
+            view.setEnabled(enabled);
+            if (view instanceof MaterialEditText || view instanceof RelativeLayout || view instanceof LinearLayout) {
+                view.setFocusable(enabled);
+                if (view instanceof MaterialEditText) {
+                    view.setFocusableInTouchMode(enabled);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
@@ -860,26 +868,6 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             }
         }
         return result;
-    }
-
-    private JSONArray subFormWithValues(JSONArray subFormFields) {
-        JSONArray jsonArray = new JSONArray();
-        Map<String, String> selectedValues;
-        selectedValues = genericPopupDialog.getPopAssignedValue();
-        try {
-            if (selectedValues != null && selectedValues.size() > 0 && subFormFields != null && subFormFields.length() > 0) {
-                for (int i = 0; i < subFormFields.length(); i++) {
-                    JSONObject innerItem = subFormFields.getJSONObject(i);
-                    if (innerItem.get(JsonFormConstants.KEY).equals(getMapKey(selectedValues))) {
-
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return jsonArray;
     }
 
     private String getMapKey(Map<String, String> valuesMap) {
