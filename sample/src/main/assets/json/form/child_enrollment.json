@@ -1395,36 +1395,36 @@
         ],
         "secondary_value": [
           {
-            "key": "repiratory_exam_abnormal",
+            "key": "respiratory_exam_abnormal",
             "type": "check_box",
             "values": [
-              "rapid_breathing:Rapid breathing",
-              "other:Other"
+              "rapid_breathing:Rapid breathing:true",
+              "other:Other:true"
             ]
           },
           {
-            "key": "repiratory_exam_radio_button",
+            "key": "respiratory_exam_radio_button",
             "type": "native_radio",
             "values": [
               "1:Not done"
             ]
           },
           {
-            "key": "repiratory_exam_abnormal_other",
+            "key": "respiratory_exam_abnormal_other",
             "type": "edit_text",
             "values": [
               "other:Respiratory exam answer"
             ]
           },
           {
-            "key": "Place_Birth",
+            "key": "place_birth",
             "type": "spinner",
             "values": [
               "Home"
             ]
           },
           {
-            "key": "Last_Name",
+            "key": "last_name",
             "type": "normal_edit_text",
             "values": [
               "Normal edit text"
@@ -1464,36 +1464,36 @@
         ],
         "secondary_value": [
           {
-            "key": "repiratory_exam_abnormal",
+            "key": "respiratory_exam_abnormal",
             "type": "check_box",
             "values": [
-              "cough:Cough",
-              "other:Other"
+              "cough:Cough:true",
+              "other:Other:true"
             ]
           },
           {
-            "key": "repiratory_exam_radio_button",
+            "key": "respiratory_exam_radio_button",
             "type": "native_radio",
             "values": [
               "3:Abnormal"
             ]
           },
           {
-            "key": "repiratory_exam_abnormal_other",
+            "key": "respiratory_exam_abnormal_other",
             "type": "edit_text",
             "values": [
               "other:Respiratory exam answer two"
             ]
           },
           {
-            "key": "Place_Birth",
+            "key": "place_birth",
             "type": "spinner",
             "values": [
               "Health facility"
             ]
           },
           {
-            "key": "Last_Name",
+            "key": "last_name",
             "type": "normal_edit_text",
             "values": [
               "Normal edit text two"

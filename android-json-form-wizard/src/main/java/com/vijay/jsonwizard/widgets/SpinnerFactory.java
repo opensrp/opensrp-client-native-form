@@ -96,6 +96,7 @@ public class SpinnerFactory implements FormWidgetFactory {
         spinner.setTag(R.id.type, jsonObject.getString("type"));
         spinner.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
         spinner.setTag(R.id.extraPopup, popup);
+        spinner.setId(ViewUtil.generateViewId());
 
         JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
         if (requiredObject != null) {

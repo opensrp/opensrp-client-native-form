@@ -1,7 +1,7 @@
 {
   "specify_content": [
     {
-      "key": "repiratory_exam_abnormal",
+      "key": "respiratory_exam_abnormal",
       "openmrs_entity_parent": "",
       "openmrs_entity": "",
       "openmrs_entity_id": "",
@@ -14,48 +14,55 @@
           "key": "dyspnoea",
           "text": "Dyspnoea",
           "openmrs_entity": "",
-          "openmrs_entity_id": ""
+          "openmrs_entity_id": "",
+          "value": false
         },
         {
           "key": "cough",
           "text": "Cough",
           "openmrs_entity": " Cough",
-          "openmrs_entity_id": "143264"
+          "openmrs_entity_id": "143264",
+          "value": false
         },
         {
           "key": "rapid_breathing",
           "text": "Rapid breathing",
           "openmrs_entity": "TACHYPNEA",
-          "openmrs_entity_id": "125061"
+          "openmrs_entity_id": "125061",
+          "value": false
         },
         {
           "key": "slow_breathing",
           "text": "Slow breathing",
           "openmrs_entity": "",
-          "openmrs_entity_id": ""
+          "openmrs_entity_id": "",
+          "value": false
         },
         {
           "key": "wheezing",
           "text": "Wheezing",
           "openmrs_entity": "WHEEZE",
-          "openmrs_entity_id": "5209"
+          "openmrs_entity_id": "5209",
+          "value": false
         },
         {
           "key": "rales",
           "text": "Rales",
           "openmrs_entity": "Respiratory Crackles",
-          "openmrs_entity_id": "127640"
+          "openmrs_entity_id": "127640",
+          "value": false
         },
         {
           "key": "other",
           "text": "Other (specify)",
           "openmrs_entity": "",
-          "openmrs_entity_id": ""
+          "openmrs_entity_id": "",
+          "value": false
         }
       ]
     },
     {
-      "key": "repiratory_exam_radio_button",
+      "key": "respiratory_exam_radio_button",
       "openmrs_entity_parent": "",
       "openmrs_entity": "",
       "openmrs_entity_id": "",
@@ -81,13 +88,12 @@
       ]
     },
     {
-      "key": "Last_Name",
+      "key": "last_name",
       "openmrs_entity_parent": "",
       "openmrs_entity": "person",
       "openmrs_entity_id": "last_name",
       "type": "normal_edit_text",
       "edit_type": "name",
-      "read_only": true,
       "edit_text_style": "bordered",
       "v_required": {
         "value": "true",
@@ -96,10 +102,16 @@
       "v_regex": {
         "value": "[A-Za-z\\s\.\-]*",
         "err": "Please enter a valid name"
+      },
+      "relevance": {
+        "step1:respiratory_exam_radio_button": {
+          "type": "string",
+          "ex": "equalTo(., \"3\")"
+        }
       }
     },
     {
-      "key": "repiratory_exam_abnormal_other",
+      "key": "respiratory_exam_abnormal_other",
       "openmrs_entity_parent": "",
       "openmrs_entity": "",
       "openmrs_entity_id": "",
@@ -110,7 +122,7 @@
         "err": "Please enter valid content"
       },
       "relevance": {
-        "step1:repiratory_exam_abnormal": {
+        "step1:respiratory_exam_abnormal": {
           "ex-checkbox": [
             {
               "or": [
@@ -122,7 +134,7 @@
       }
     },
     {
-      "key": "Place_Birth",
+      "key": "place_birth",
       "openmrs_entity_parent": "",
       "openmrs_entity": "concept",
       "openmrs_entity_id": "1572AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
@@ -142,6 +154,12 @@
       "v_required": {
         "value": true,
         "err": "Please enter the place of birth"
+      },
+      "relevance": {
+        "step1:respiratory_exam_radio_button": {
+          "type": "string",
+          "ex": "equalTo(., \"3\")"
+        }
       }
     }
   ]

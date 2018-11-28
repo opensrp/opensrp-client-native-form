@@ -447,14 +447,14 @@ public class FormUtils {
         JsonFormFragment formFragment = (JsonFormFragment) view.getTag(R.id.radio_button_specify_fragment);
         JSONArray jsonArray = (JSONArray) view.getTag(R.id.secondaryValues);
 
-        GenericPopupDialog genericPopupDialog = new GenericPopupDialog();
+        GenericPopupDialog genericPopupDialog = GenericPopupDialog.getInstance();
         genericPopupDialog.setContext(context);
         genericPopupDialog.setCommonListener(listener);
         genericPopupDialog.setFormFragment(formFragment);
         genericPopupDialog.setFormIdentity(specifyContent);
         genericPopupDialog.setFormLocation(specifyContentForm);
         genericPopupDialog.setStepName(stepName);
-        genericPopupDialog.setSecondValues(jsonArray);
+        genericPopupDialog.setSecondaryValues(jsonArray);
 
         Activity activity = (Activity) context;
         FragmentTransaction ft = activity.getFragmentManager().beginTransaction();

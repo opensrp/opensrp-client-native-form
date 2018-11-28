@@ -14,8 +14,8 @@ import com.rey.material.widget.RippleManager;
 
 public class CompoundButton extends android.widget.CompoundButton {
 
-    private RippleManager mRippleManager = new RippleManager();
     protected Drawable mButtonDrawable;
+    private RippleManager mRippleManager = new RippleManager();
 
     public CompoundButton(Context context) {
         super(context);

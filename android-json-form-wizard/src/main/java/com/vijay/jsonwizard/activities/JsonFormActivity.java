@@ -58,7 +58,7 @@ import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 public class JsonFormActivity extends AppCompatActivity implements JsonApi, GenericPopupInterface {
 
     private static final String TAG = JsonFormActivity.class.getSimpleName();
-    private GenericPopupDialog genericPopupDialog = new GenericPopupDialog();
+    private GenericPopupDialog genericPopupDialog = GenericPopupDialog.getInstance();
     private Toolbar mToolbar;
     private JSONObject mJSONObject;
     private PropertyManager propertyManager;
@@ -154,14 +154,14 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi, Gene
             JSONArray fields = fetchFields(jsonObject, popup);
             for (int i = 0; i < fields.length(); i++) {
                 JSONObject item = fields.getJSONObject(i);
-                String keyAtIndex = item.getString(KEY.KEY);
+                String keyAtIndex = item.getString(JsonFormConstants.KEY);
                 String itemType = "";
                 if (popup) {
                     itemType = item.getString(JsonFormConstants.TYPE);
                 }
                 if (key.equals(keyAtIndex)) {
-                    if (item.has(KEY.TEXT)) {
-                        item.put(KEY.TEXT, value);
+                    if (item.has(JsonFormConstants.TEXT)) {
+                        item.put(JsonFormConstants.TEXT, value);
                     } else {
                         if (popup) {
                             String itemText = "";
@@ -218,7 +218,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi, Gene
             JSONArray fields = fetchFields(jsonObject, popup);
             for (int i = 0; i < fields.length(); i++) {
                 JSONObject item = fields.getJSONObject(i);
-                String keyAtIndex = item.getString(KEY.KEY);
+                String keyAtIndex = item.getString(JsonFormConstants.KEY);
                 String itemType = "";
                 if (popup) {
                     itemType = item.getString(JsonFormConstants.TYPE);
@@ -227,7 +227,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi, Gene
                     JSONArray jsonArray = item.getJSONArray(childObjectKey);
                     for (int j = 0; j < jsonArray.length(); j++) {
                         JSONObject innerItem = jsonArray.getJSONObject(j);
-                        String anotherKeyAtIndex = innerItem.getString(KEY.KEY);
+                        String anotherKeyAtIndex = innerItem.getString(JsonFormConstants.KEY);
                         String itemText = "";
                         if (itemType.equals(JsonFormConstants.CHECK_BOX)) {
                             itemText = innerItem.getString(JsonFormConstants.TEXT);
@@ -250,12 +250,16 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi, Gene
 
     private Map<String, String> addAssignedValue(String itemKey, String optionKey, String keyValue, String itemType, String itemText) {
         Map<String, String> value = new HashMap<>();
-        if (itemType.equals(JsonFormConstants.CHECK_BOX)) {
-            value.put(itemKey, optionKey + ":" + itemText + ":" + keyValue + ";" + itemType);
-        } else if (itemType.equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
-            value.put(itemKey, keyValue + ":" + itemText + ";" + itemType);
-        } else {
-            value.put(itemKey, keyValue + ";" + itemType);
+        switch (itemType) {
+            case JsonFormConstants.CHECK_BOX:
+                value.put(itemKey, optionKey + ":" + itemText + ":" + keyValue + ";" + itemType);
+                break;
+            case JsonFormConstants.NATIVE_RADIO_BUTTON:
+                value.put(itemKey, keyValue + ":" + itemText + ";" + itemType);
+                break;
+            default:
+                value.put(itemKey, keyValue + ";" + itemType);
+                break;
         }
 
         return value;
@@ -481,7 +485,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi, Gene
             JSONObject object = getObjectUsingAddress(address, popup);
 
             boolean enabled = visible;
-            if (object != null && object.has(KEY.READ_ONLY) && object.getBoolean(KEY.READ_ONLY) && visible) {
+            if (object != null && object.has(JsonFormConstants.READ_ONLY) && object.getBoolean(JsonFormConstants.READ_ONLY) && visible) {
                 enabled = false;
             }
 
@@ -578,7 +582,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi, Gene
                         JSONObject questionObject = getObjectUsingAddress(address, popup);
                         for (int i = 0; i < questionObject.getJSONArray("options").length(); i++) {
                             JSONObject curOption = questionObject.getJSONArray("options").getJSONObject(i);
-                            if (curOption.getString(KEY.KEY).equals(checkBoxKey)) {
+                            if (curOption.getString(JsonFormConstants.KEY).equals(checkBoxKey)) {
                                 curOption.put(JsonFormConstants.VALUE, "false");
                                 break;
                             }
@@ -640,7 +644,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi, Gene
         if (address != null && address.length == 2) {
             JSONArray fields = fetchFields(mJSONObject.getJSONObject(address[0]), popup);
             for (int i = 0; i < fields.length(); i++) {
-                if (fields.getJSONObject(i).getString(KEY.KEY).equals(address[1])) {
+                if (fields.getJSONObject(i).getString(JsonFormConstants.KEY).equals(address[1])) {
                     return fields.getJSONObject(i);
                 }
             }
@@ -1005,11 +1009,5 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi, Gene
     @Override
     public void onGenericDataPass(Map<String, SecondaryValueModel> selectedValues) {
 
-    }
-
-    private static class KEY {
-        public static final String TEXT = "text";
-        public static final String KEY = "key";
-        public static final String READ_ONLY = "read_only";
     }
 }

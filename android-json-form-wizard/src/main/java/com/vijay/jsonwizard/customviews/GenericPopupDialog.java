@@ -42,19 +42,23 @@ import java.util.Map;
 import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 
 public class GenericPopupDialog extends DialogFragment {
-    private static JsonFormInteractor jsonFormInteractor = new JsonFormInteractor();
+    private static JsonFormInteractor jsonFormInteractor = JsonFormInteractor.getInstance();
+    private static GenericPopupDialog genericPopupDialog = new GenericPopupDialog();
     private Context context;
     private CommonListener commonListener;
     private JsonFormFragment formFragment;
     private String formIdentity;
     private String formLocation;
     private String stepName;
-    private JSONArray secondValues;
+    private JSONArray secondaryValues;
     private Map<String, SecondaryValueModel> popAssignedValue = new HashMap<>();
     private Map<String, SecondaryValueModel> secondaryValuesMap = new HashMap<>();
     private GenericPopupInterface genericPopupInterface;
-    private String TAG = this.getClass().getSimpleName();
     // private Map<String, String> loadedSubForms = new HashMap<>();
+
+    public static GenericPopupDialog getInstance() {
+        return genericPopupDialog;
+    }
 
     public void setContext(Context context) throws IllegalStateException {
         this.context = context;
@@ -64,6 +68,21 @@ public class GenericPopupDialog extends DialogFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         genericPopupInterface = (GenericPopupInterface) context;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        destroyVariable();
+    }
+
+    private void destroyVariable() {
+        formIdentity = null;
+        formLocation = null;
+        stepName = null;
+        secondaryValues = null;
+        popAssignedValue = new HashMap<>();
+        secondaryValuesMap = new HashMap<>();
     }
 
     @Override
@@ -93,7 +112,7 @@ public class GenericPopupDialog extends DialogFragment {
             try {
                 if (subForm.has(JsonFormConstants.SPECIFY_CONTENT)) {
                     specifyContent = subForm.getJSONArray(JsonFormConstants.SPECIFY_CONTENT);
-                    addSecondaryValues(specifyContent);
+                    addFormValues(specifyContent);
                 } else {
                     Utils.showToast(activity, activity.getApplicationContext().getResources().getString(R.string.please_specify_content));
                     GenericPopupDialog.this.dismiss();
@@ -188,28 +207,30 @@ public class GenericPopupDialog extends DialogFragment {
 
     private void createSecondaryValuesMap() {
         JSONObject jsonObject;
-        if (secondValues != null) {
-            for (int i = 0; i < secondValues.length(); i++) {
+        if (secondaryValues != null) {
+            for (int i = 0; i < secondaryValues.length(); i++) {
                 try {
-                    jsonObject = secondValues.getJSONObject(i);
+                    jsonObject = secondaryValues.getJSONObject(i);
                     String key = jsonObject.getString(JsonFormConstants.KEY);
                     String type = jsonObject.getString(JsonFormConstants.TYPE);
                     JSONArray values = jsonObject.getJSONArray(JsonFormConstants.VALUES);
                     secondaryValuesMap.put(key, new SecondaryValueModel(key, type, values));
+                    popAssignedValue = secondaryValuesMap;
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
+
         }
     }
 
-    private void addSecondaryValues(JSONArray jsonArray) {
+    private void addFormValues(JSONArray jsonArray) {
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject;
             try {
                 jsonObject = jsonArray.getJSONObject(i);
                 String key = jsonObject.getString(JsonFormConstants.KEY);
-                if (secondaryValuesMap.containsKey(key)) {
+                if (secondaryValuesMap != null && secondaryValuesMap.containsKey(key)) {
                     SecondaryValueModel secondaryValueModel = secondaryValuesMap.get(key);
                     String type = secondaryValueModel.getType();
                     if (type != null && (type.equals(JsonFormConstants.CHECK_BOX))) {
@@ -227,7 +248,6 @@ public class GenericPopupDialog extends DialogFragment {
                         } else {
                             jsonObject.put(JsonFormConstants.VALUE, setValues(values, type));
                         }
-
                     }
                 }
             } catch (JSONException e) {
@@ -248,7 +268,6 @@ public class GenericPopupDialog extends DialogFragment {
                         jsonObject.put(JsonFormConstants.VALUE, true);
                     }
                 }
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -298,12 +317,12 @@ public class GenericPopupDialog extends DialogFragment {
         this.stepName = stepName;
     }
 
-    public JSONArray getSecondValues() {
-        return secondValues;
+    public JSONArray getSecondaryValues() {
+        return secondaryValues;
     }
 
-    public void setSecondValues(JSONArray secondValues) {
-        this.secondValues = secondValues;
+    public void setSecondaryValues(JSONArray secondaryValues) {
+        this.secondaryValues = secondaryValues;
     }
 
     public void addSelectedValues(Map<String, String> newValue) {
@@ -325,6 +344,7 @@ public class GenericPopupDialog extends DialogFragment {
         }
 
         createSecondaryValues(key, type, value);
+
     }
 
     private void createSecondaryValues(String key, String type, String value) {
@@ -335,9 +355,10 @@ public class GenericPopupDialog extends DialogFragment {
                 SecondaryValueModel valueModel = popAssignedValue.get(key);
                 if (valueModel != null) {
                     JSONArray jsonArray = valueModel.getValues();
-                    jsonArray.put(value);
+                    if (!checkSimilarity(jsonArray, value)) {
+                        jsonArray.put(value);
+                    }
                 }
-
             } else {
                 if (popAssignedValue != null) {
                     popAssignedValue.put(key, new SecondaryValueModel(key, type, values));
@@ -348,7 +369,25 @@ public class GenericPopupDialog extends DialogFragment {
         }
     }
 
+    private boolean checkSimilarity(JSONArray values, String value) {
+        boolean same = false;
+        try {
+            for (int i = 0; i < values.length(); i++) {
+                String currentValue = values.getString(i);
+                if (currentValue.equals(value)) {
+                    same = true;
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return same;
+    }
+
     private String[] getWidgetType(String value) {
         return value.split(";");
     }
+
 }
