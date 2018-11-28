@@ -3,6 +3,8 @@ package com.vijay.jsonwizard.rules;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.gson.Gson;
+
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rule;
 import org.jeasy.rules.api.RuleListener;
@@ -16,6 +18,7 @@ import org.jeasy.rules.mvel.MVELRuleFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,6 +31,7 @@ public class RulesEngineHelper implements RuleListener {
     private final String RULE_FOLDER_PATH = "rule/";
     private Rules rules;
     private String ruleName;
+    private Gson gson;
 
     public RulesEngineHelper(Context context) {
         this.context = context;
@@ -36,6 +40,7 @@ public class RulesEngineHelper implements RuleListener {
         this.defaultRulesEngine = new DefaultRulesEngine(parameters);
         ((DefaultRulesEngine) this.defaultRulesEngine).registerRuleListener(this);
         this.ruleMap = new HashMap<>();
+        gson = new Gson();
 
     }
 
@@ -70,17 +75,25 @@ public class RulesEngineHelper implements RuleListener {
 
         for (Map.Entry<String, String> entry : relevanceFact.entrySet()) {
 
-            facts.put(entry.getKey(), entry.getValue());
+
+            facts.put(getKey(entry.getKey()), isList(entry.getValue()) ? gson.fromJson(entry.getValue(), ArrayList.class) : entry.getValue());
         }
 
         facts.put(RuleConstant.IS_RELEVANT, false);
-
 
         rules = getRulesFromAsset(RULE_FOLDER_PATH + ruleFilename);
 
         processDefaultRules(rules, facts);
 
         return facts.get(RuleConstant.IS_RELEVANT);
+    }
+
+    private String getKey(String key) {
+        return !key.startsWith(RuleConstant.STEP) && !key.startsWith(RuleConstant.SELECTED_RULE) ? RuleConstant.PREFIX.GLOBAL + key : key;
+    }
+
+    private boolean isList(String value) {
+        return !value.isEmpty() && value.charAt(0) == '[';
     }
 
     @Override

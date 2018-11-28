@@ -3,6 +3,10 @@
   "encounter_type": "Physical Exam",
   "entity_id": "",
   "relational_id": "",
+  "global": {
+    "has_cat_scan": true,
+    "stock_count": 100
+  },
   "metadata": {
     "start": {
       "openmrs_entity_parent": "",
@@ -127,7 +131,7 @@
         }
       },
       {
-        "key": "Child_Birth_Certificate",
+        "key": "Specify Other",
         "openmrs_entity_parent": "",
         "openmrs_entity": "person_attribute",
         "openmrs_entity_id": "Child_Birth_Certificate",
@@ -139,10 +143,14 @@
         "type": "edit_text",
         "hint": "Specify other*",
         "relevance": {
-          "rules-file:sample-rules.yml": {
-            "ex-rules": {
-              "rules-file": "sample-rules.yml"
-            }
+          "step1:delivery_complications": {
+            "ex-checkbox": [
+              {
+                "or": [
+                  "other"
+                ]
+              }
+            ]
           }
         }
       },
@@ -198,7 +206,7 @@
           "err": "Please enter a valid name"
         },
         "relevance": {
-          "rules-file:sample-rules.yml": {
+          "rules-engine": {
             "ex-rules": {
               "rules-file": "sample-rules.yml"
             }
@@ -225,7 +233,7 @@
         "toaster_info_title": "Tobacco cessation counseling",
         "toaster_type": "problem",
         "relevance": {
-          "rules-file:sample-rules.yml": {
+          "rules-engine": {
             "ex-rules": {
               "rules-file": "sample-rules.yml"
             }
@@ -254,7 +262,7 @@
           "err": "Please enter a valid name"
         },
         "relevance": {
-          "rules-file:sample-rules.yml": {
+          "rules-engine": {
             "ex-rules": {
               "rules-file": "sample-rules.yml"
             }
@@ -278,7 +286,7 @@
           "err": "Please enter a valid name"
         },
         "relevance": {
-          "rules-file:sample-rules.yml": {
+          "rules-engine": {
             "ex-rules": {
               "rules-file": "sample-rules.yml"
             }
@@ -297,8 +305,7 @@
         "label_text_color": "#FF9800",
         "hint": "Your favorite hero*?",
         "exclusive": [
-          "none",
-          "other"
+          "none"
         ],
         "options": [
           {

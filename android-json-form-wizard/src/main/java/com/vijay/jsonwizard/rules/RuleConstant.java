@@ -11,5 +11,11 @@ public abstract class RuleConstant {
     public static final String NAME = "name";
     public static final String CONDITION = "condition";
     public static final String RULES_FILE = "rules-file";
+    public static final String RULES_ENGINE = "rules-engine";
     public static final String RESULT = "result";
+
+    public static class PREFIX {
+        public static final String GLOBAL = "global_";
+    }
+
 }
