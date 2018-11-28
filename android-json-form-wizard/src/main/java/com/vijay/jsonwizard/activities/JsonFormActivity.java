@@ -1007,7 +1007,71 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi, Gene
     }
 
     @Override
-    public void onGenericDataPass(Map<String, SecondaryValueModel> selectedValues) {
+    public void onGenericDataPass(Map<String, SecondaryValueModel> selectedValues, String parentKey, String stepName) {
+        if (mJSONObject != null) {
+            JSONObject parentJson = getStep(stepName);
+            JSONArray fields = new JSONArray();
+            try {
+                if (parentJson.has(JsonFormConstants.SECTIONS) && parentJson.get(JsonFormConstants.SECTIONS) instanceof JSONArray) {
+                    JSONArray sections = parentJson.getJSONArray(JsonFormConstants.SECTIONS);
+                    for (int i = 0; i < sections.length(); i++) {
+                        JSONObject sectionJson = sections.getJSONObject(i);
+                        if (sectionJson.has(JsonFormConstants.FIELDS)) {
+                            fields = concatArray(fields, sectionJson.getJSONArray(JsonFormConstants.FIELDS));
+                        }
+                    }
+                } else if (parentJson.has(JsonFormConstants.FIELDS) && parentJson.get(JsonFormConstants.FIELDS) instanceof JSONArray) {
+                    fields = parentJson.getJSONArray(JsonFormConstants.FIELDS);
 
+                }
+
+                if (fields.length() > 0) {
+                    for (int i = 0; i < fields.length(); i++) {
+                        JSONObject item = fields.getJSONObject(i);
+                        if (item != null && item.getString(JsonFormConstants.KEY).equals(parentKey)) {
+                            addSecondaryValues(item, selectedValues);
+                        }
+                    }
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    private void addSecondaryValues(JSONObject item, Map<String, SecondaryValueModel> secondaryValueModel) {
+        JSONObject valueObject;
+        JSONArray secondaryValuesArray = new JSONArray();
+        SecondaryValueModel secondaryValue;
+        for (Object o : secondaryValueModel.entrySet()) {
+            Map.Entry pair = (Map.Entry) o;
+            secondaryValue = (SecondaryValueModel) pair.getValue();
+            valueObject = createSecondaryValueObject(secondaryValue);
+            secondaryValuesArray.put(valueObject);
+        }
+        try {
+            item.put(JsonFormConstants.SECONDARY_VALUE, secondaryValuesArray);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private JSONObject createSecondaryValueObject(SecondaryValueModel value) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            String key = value.getKey();
+            String type = value.getType();
+            JSONArray values = value.getValues();
+
+            jsonObject.put(JsonFormConstants.KEY, key);
+            jsonObject.put(JsonFormConstants.TYPE, type);
+            jsonObject.put(JsonFormConstants.VALUES, values);
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+        return jsonObject;
     }
 }

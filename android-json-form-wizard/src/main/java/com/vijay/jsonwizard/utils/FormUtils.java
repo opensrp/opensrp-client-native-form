@@ -446,6 +446,7 @@ public class FormUtils {
         CommonListener listener = (CommonListener) view.getTag(R.id.radio_button_specify_listener);
         JsonFormFragment formFragment = (JsonFormFragment) view.getTag(R.id.radio_button_specify_fragment);
         JSONArray jsonArray = (JSONArray) view.getTag(R.id.secondaryValues);
+        String parentKey = (String) view.getTag(R.id.extraContentKey);
 
         GenericPopupDialog genericPopupDialog = GenericPopupDialog.getInstance();
         genericPopupDialog.setContext(context);
@@ -455,16 +456,17 @@ public class FormUtils {
         genericPopupDialog.setFormLocation(specifyContentForm);
         genericPopupDialog.setStepName(stepName);
         genericPopupDialog.setSecondaryValues(jsonArray);
+        genericPopupDialog.setParentKey(parentKey);
 
         Activity activity = (Activity) context;
         FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
-        Fragment prev = activity.getFragmentManager().findFragmentByTag(TAG);
+        Fragment prev = activity.getFragmentManager().findFragmentByTag("GenericPopup");
         if (prev != null) {
             ft.remove(prev);
         }
 
         ft.addToBackStack(null);
-        genericPopupDialog.show(ft, TAG);
+        genericPopupDialog.show(ft, "GenericPopup");
     }
 
     public String getValueFromSecondaryValues(String type, String itemString) {

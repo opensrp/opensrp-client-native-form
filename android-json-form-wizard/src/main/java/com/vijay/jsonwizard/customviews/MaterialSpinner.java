@@ -109,10 +109,10 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
     private Integer mHintView;
 
     /*
-    * **********************************************************************************
-    * CONSTRUCTORS
-    * **********************************************************************************
-    */
+     * **********************************************************************************
+     * CONSTRUCTORS
+     * **********************************************************************************
+     */
 
     public MaterialSpinner(Context context) {
         super(context);
@@ -132,10 +132,10 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
 
 
     /*
-    * **********************************************************************************
-    * INITIALISATION METHODS
-    * **********************************************************************************
-    */
+     * **********************************************************************************
+     * INITIALISATION METHODS
+     * **********************************************************************************
+     */
 
     private void init(Context context, AttributeSet attrs) {
         this.context = context;
@@ -274,10 +274,10 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
     }
 
     /*
-    * **********************************************************************************
-    * ANIMATION METHODS
-    * **********************************************************************************
-    */
+     * **********************************************************************************
+     * ANIMATION METHODS
+     * **********************************************************************************
+     */
 
     private void initFloatingLabelAnimator() {
         if (floatingLabelAnimator == null) {
@@ -336,7 +336,7 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
      * **********************************************************************************
      * UTILITY METHODS
      * **********************************************************************************
-    */
+     */
 
     private int dpToPx(float dp) {
         final DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
@@ -381,7 +381,7 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
      * **********************************************************************************
      * DRAWING METHODS
      * **********************************************************************************
-    */
+     */
 
 
     @Override
@@ -482,7 +482,7 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
      * **********************************************************************************
      * LISTENER METHODS
      * **********************************************************************************
-    */
+     */
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -548,10 +548,10 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
 
 
     /*
-    * **********************************************************************************
-    * GETTERS AND SETTERS
-    * **********************************************************************************
-    */
+     * **********************************************************************************
+     * GETTERS AND SETTERS
+     * **********************************************************************************
+     */
 
     public int getBaseColor() {
         return baseColor;

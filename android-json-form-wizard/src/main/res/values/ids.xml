@@ -46,8 +46,9 @@
 
     <item name="extraRelCheck" type="id" />
     <item name="extraRelArray" type="id" />
-    <item name="extraRelContent" type="id" />
-    <item name="extraRelContentForm" type="id" />
+    <item name="extraContent" type="id" />
+    <item name="extraContentForm" type="id" />
     <item name="extraPopup" type="id" />
     <item name="secondaryValues" type="id" />
+    <item name="extraContentKey" type="id" />
 </resources>

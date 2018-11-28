@@ -2,6 +2,8 @@ package com.vijay.jsonwizard.customviews;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -49,12 +51,13 @@ public class GenericPopupDialog extends DialogFragment {
     private JsonFormFragment formFragment;
     private String formIdentity;
     private String formLocation;
+    private String parentKey;
     private String stepName;
     private JSONArray secondaryValues;
     private Map<String, SecondaryValueModel> popAssignedValue = new HashMap<>();
     private Map<String, SecondaryValueModel> secondaryValuesMap = new HashMap<>();
     private GenericPopupInterface genericPopupInterface;
-    // private Map<String, String> loadedSubForms = new HashMap<>();
+    private JSONArray specifyContent;
 
     public static GenericPopupDialog getInstance() {
         return genericPopupDialog;
@@ -73,14 +76,10 @@ public class GenericPopupDialog extends DialogFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        destroyVariable();
+        destroyVariables();
     }
 
-    private void destroyVariable() {
-        formIdentity = null;
-        formLocation = null;
-        stepName = null;
-        secondaryValues = null;
+    private void destroyVariables() {
         popAssignedValue = new HashMap<>();
         secondaryValuesMap = new HashMap<>();
     }
@@ -92,18 +91,8 @@ public class GenericPopupDialog extends DialogFragment {
         if (context == null) {
             throw new IllegalStateException("The Context is not set. Did you forget to set context with Generic Dialog setContext method?");
         }
-        setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Light_Dialog);
-    }
 
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        ViewGroup dialogView = (ViewGroup) inflater.inflate(R.layout.native_form_generic_dialog, container, false);
-
-        Button cancelButton;
-        Button okButton;
-        JSONArray specifyContent = null;
         Activity activity = (Activity) context;
 
         createSecondaryValuesMap();
@@ -123,6 +112,23 @@ public class GenericPopupDialog extends DialogFragment {
 
         }
 
+        setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Light_Dialog);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        ViewGroup dialogView = (ViewGroup) inflater.inflate(R.layout.native_form_generic_dialog, container, false);
+
+        Button cancelButton;
+        Button okButton;
+
         new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
@@ -141,6 +147,7 @@ public class GenericPopupDialog extends DialogFragment {
             genericDialogContent.addView(view);
         }
 
+        Activity activity = (Activity) context;
         JsonApi jsonApi = (JsonApi) activity;
         jsonApi.refreshSkipLogic(null, null, true);
 
@@ -156,13 +163,14 @@ public class GenericPopupDialog extends DialogFragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                GenericPopupDialog.this.dismiss();
                 passData();
+                GenericPopupDialog.this.dismiss();
             }
         });
 
         return dialogView;
     }
+
 
     public JSONObject getSubFormJson(String subFormsLocation, Context context) {
         String defaultSubFormLocation = "json/sub_form";
@@ -180,16 +188,14 @@ public class GenericPopupDialog extends DialogFragment {
     }
 
     private void passData() {
-        genericPopupInterface.onGenericDataPass(popAssignedValue);
+        genericPopupInterface.onGenericDataPass(popAssignedValue, parentKey, stepName);
     }
 
     private String loadSubForm(String defaultSubFormLocation, Context context) {
         StringBuilder stringBuilder = new StringBuilder();
         try {
             InputStream inputStream = context.getAssets().open(defaultSubFormLocation + "/" + formIdentity + ".json");
-            BufferedReader reader = null;
-            reader = new BufferedReader(new InputStreamReader(inputStream,
-                    "UTF-8"));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
 
             String jsonString;
             while ((jsonString = reader.readLine()) != null) {
@@ -390,4 +396,7 @@ public class GenericPopupDialog extends DialogFragment {
         return value.split(";");
     }
 
+    public void setParentKey(String parentKey) {
+        this.parentKey = parentKey;
+    }
 }
