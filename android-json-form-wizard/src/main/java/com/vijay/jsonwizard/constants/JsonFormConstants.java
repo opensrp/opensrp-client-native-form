@@ -96,6 +96,8 @@ public class JsonFormConstants {
     public static final String EDIT_BUTTON = "edit_button";
     public static final String CUSTOM_TEXT = "custom_text";
     public static final String COUNT = "count";
+    public static final String CALCULATION = "calculation";
+    public static final String HIDDEN = "hidden";
 
     public static class JSON_FORM_KEY {
         public static final String EX_RULES = "ex-rules";

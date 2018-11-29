@@ -12,6 +12,7 @@ import com.vijay.jsonwizard.widgets.ButtonFactory;
 import com.vijay.jsonwizard.widgets.CheckBoxFactory;
 import com.vijay.jsonwizard.widgets.ComponentSpacerFactory;
 import com.vijay.jsonwizard.widgets.DatePickerFactory;
+import com.vijay.jsonwizard.widgets.HiddenTextFactory;
 import com.vijay.jsonwizard.widgets.NativeEditTextFactory;
 import com.vijay.jsonwizard.widgets.GpsFactory;
 import com.vijay.jsonwizard.widgets.HorizontalLineFactory;
@@ -55,6 +56,7 @@ public class JsonFormInteractor {
     protected void registerWidgets() {
         map.put(JsonFormConstants.SECTION_LABEL, new SectionFactory());
         map.put(JsonFormConstants.EDIT_TEXT, new EditTextFactory());
+        map.put(JsonFormConstants.HIDDEN, new HiddenTextFactory());
         map.put(JsonFormConstants.LABEL, new LabelFactory());
         map.put(JsonFormConstants.CHECK_BOX, new CheckBoxFactory());
         map.put(JsonFormConstants.RADIO_BUTTON, new RadioButtonFactory());

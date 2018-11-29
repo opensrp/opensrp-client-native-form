@@ -26,3 +26,10 @@ priority: 1
 condition: "step2_first_name_yo == 'Tim' && (step2_super_heroes.contains('batman') || step2_super_heroes.contains('the_flash')) "
 actions:
   - "isRelevant = true"
+---
+name: step1_happiness_level
+description: Happiness level calculation
+priority: 1
+condition: "step1_First_Name == 'John' && (step1_hepb_immun_status == 'Stacy' && global_has_cat_scan == 'true') "
+actions:
+  - "calculation = 1"

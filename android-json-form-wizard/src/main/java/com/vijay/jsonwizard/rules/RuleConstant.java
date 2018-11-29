@@ -13,6 +13,7 @@ public abstract class RuleConstant {
     public static final String RULES_FILE = "rules-file";
     public static final String RULES_ENGINE = "rules-engine";
     public static final String RESULT = "result";
+    public static final String CALCULATION = "calculation";
 
     public static class PREFIX {
         public static final String GLOBAL = "global_";

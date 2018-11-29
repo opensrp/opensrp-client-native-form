@@ -239,6 +239,20 @@
             }
           }
         }
+      },
+      {
+        "key": "happiness_level",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person_attribute",
+        "openmrs_entity_id": "calculation_happiness_level",
+        "type": "hidden",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-rules.yml"
+            }
+          }
+        }
       }
     ]
   },

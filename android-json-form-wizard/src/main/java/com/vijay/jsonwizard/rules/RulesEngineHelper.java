@@ -11,7 +11,6 @@ import org.jeasy.rules.api.RuleListener;
 import org.jeasy.rules.api.Rules;
 import org.jeasy.rules.api.RulesEngine;
 import org.jeasy.rules.core.DefaultRulesEngine;
-import org.jeasy.rules.core.InferenceRulesEngine;
 import org.jeasy.rules.core.RulesEngineParameters;
 import org.jeasy.rules.mvel.MVELRuleFactory;
 
@@ -25,22 +24,22 @@ import java.util.Map;
 public class RulesEngineHelper implements RuleListener {
     public final String TAG = RulesEngineHelper.class.getCanonicalName();
     private Context context;
-    private RulesEngine inferentialRulesEngine;
     private RulesEngine defaultRulesEngine;
     private Map<String, Rules> ruleMap;
     private final String RULE_FOLDER_PATH = "rule/";
     private Rules rules;
-    private String ruleName;
+    private String selectedRuleName;
     private Gson gson;
+    private Map<String, String> globalValues;
 
-    public RulesEngineHelper(Context context) {
+    public RulesEngineHelper(Context context, Map<String, String> globalValues) {
         this.context = context;
-        this.inferentialRulesEngine = new InferenceRulesEngine();
         RulesEngineParameters parameters = new RulesEngineParameters().skipOnFirstAppliedRule(true);
         this.defaultRulesEngine = new DefaultRulesEngine(parameters);
         ((DefaultRulesEngine) this.defaultRulesEngine).registerRuleListener(this);
         this.ruleMap = new HashMap<>();
         gson = new Gson();
+        this.globalValues = globalValues;
 
     }
 
@@ -58,26 +57,14 @@ public class RulesEngineHelper implements RuleListener {
         }
     }
 
-    protected void processInferentialRules(Rules rules, Facts facts) {
-
-        inferentialRulesEngine.fire(rules, facts);
-    }
-
     protected void processDefaultRules(Rules rules, Facts facts) {
 
         defaultRulesEngine.fire(rules, facts);
     }
 
-    public boolean getRelevance(Map<String, String> relevanceFact, String ruleFilename, String ruleOfChoice) {
-        ruleName = ruleOfChoice;
+    public boolean getRelevance(Map<String, String> relevanceFact, String ruleFilename) {
 
-        Facts facts = new Facts();
-
-        for (Map.Entry<String, String> entry : relevanceFact.entrySet()) {
-
-
-            facts.put(getKey(entry.getKey()), isList(entry.getValue()) ? gson.fromJson(entry.getValue(), ArrayList.class) : entry.getValue());
-        }
+        Facts facts = initializeFacts(relevanceFact);
 
         facts.put(RuleConstant.IS_RELEVANT, false);
 
@@ -86,6 +73,38 @@ public class RulesEngineHelper implements RuleListener {
         processDefaultRules(rules, facts);
 
         return facts.get(RuleConstant.IS_RELEVANT);
+    }
+
+    public String getCalculation(Map<String, String> calculationFact, String ruleFilename) {
+
+        Facts facts = initializeFacts(calculationFact);
+
+        facts.put(RuleConstant.CALCULATION, "0");
+
+        rules = getRulesFromAsset(RULE_FOLDER_PATH + ruleFilename);
+
+        processDefaultRules(rules, facts);
+
+        return String.valueOf(facts.get(RuleConstant.CALCULATION));
+    }
+
+    private Facts initializeFacts(Map<String, String> factMap) {
+
+        if (globalValues != null) {
+            factMap.putAll(globalValues);
+        }
+
+        selectedRuleName = factMap.get(RuleConstant.SELECTED_RULE);
+
+        Facts facts = new Facts();
+
+        for (Map.Entry<String, String> entry : factMap.entrySet()) {
+
+
+            facts.put(getKey(entry.getKey()), isList(entry.getValue()) ? gson.fromJson(entry.getValue(), ArrayList.class) : entry.getValue());
+        }
+
+        return facts;
     }
 
     private String getKey(String key) {
@@ -98,7 +117,7 @@ public class RulesEngineHelper implements RuleListener {
 
     @Override
     public boolean beforeEvaluate(Rule rule, Facts facts) {
-        return ruleName.equals(rule.getName());
+        return selectedRuleName.equals(rule.getName());
     }
 
     @Override

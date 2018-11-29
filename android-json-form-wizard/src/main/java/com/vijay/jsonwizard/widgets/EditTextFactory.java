@@ -59,8 +59,8 @@ public class EditTextFactory implements FormWidgetFactory {
                 getLayout(), null);
         MaterialEditText editText = rootLayout.findViewById(R.id.edit_text);
         ImageView editButton = rootLayout.findViewById(R.id.material_edit_text_edit_button);
-        FormUtils.showEditButton(jsonObject,editText,editButton,listener);
-        attachJson(stepName, context, formFragment, jsonObject, editText,editButton);
+        FormUtils.showEditButton(jsonObject, editText, editButton, listener);
+        attachJson(stepName, context, formFragment, jsonObject, editText, editButton);
 
         JSONArray canvasIds = new JSONArray();
         rootLayout.setId(ViewUtil.generateViewId());
@@ -81,6 +81,7 @@ public class EditTextFactory implements FormWidgetFactory {
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
         String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
+        String calculation = jsonObject.optString(JsonFormConstants.CALCULATION);
 
         editText.setId(ViewUtil.generateViewId());
         editText.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
@@ -93,8 +94,8 @@ public class EditTextFactory implements FormWidgetFactory {
         if (!TextUtils.isEmpty(jsonObject.optString(JsonFormConstants.VALUE))) {
             editText.setText(jsonObject.optString(JsonFormConstants.VALUE));
         }
-        editText.setHint(jsonObject.getString(JsonFormConstants.HINT));
-        editText.setFloatingLabelText(jsonObject.getString(JsonFormConstants.HINT));
+        editText.setHint(jsonObject.optString(JsonFormConstants.HINT));
+        editText.setFloatingLabelText(jsonObject.optString(JsonFormConstants.HINT));
 
         if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
             boolean readyOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
@@ -121,15 +122,21 @@ public class EditTextFactory implements FormWidgetFactory {
         }
 
         editText.addTextChangedListener(new GenericTextWatcher(stepName, formFragment, editText));
-        if (relevance != null && context instanceof JsonApi) {
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             editText.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(editText);
         }
 
-        if (constraints != null && context instanceof JsonApi) {
+        if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
             editText.setTag(R.id.constraints, constraints);
             ((JsonApi) context).addConstrainedView(editText);
         }
+
+        if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
+            editText.setTag(R.id.calculation, calculation);
+            ((JsonApi) context).addCalculationLogicView(editText);
+        }
+
 
     }
 

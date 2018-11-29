@@ -1,8 +1,10 @@
 package com.vijay.jsonwizard.interfaces;
 
 import android.view.View;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -33,17 +35,23 @@ public interface JsonApi {
 
     void clearSkipLogicViews();
 
+    void clearCalculationLogicViews();
+
     void clearConstrainedViews();
 
     void clearFormDataViews();
 
     void addSkipLogicView(View view);
 
+    void addCalculationLogicView(View view);
+
     void addConstrainedView(View view);
 
     void refreshHiddenViews();
 
     void refreshSkipLogic(String parentKey, String childKey);
+
+    void refreshCalculationLogic(String parentKey, String childKey);
 
     void addFormDataView(View view);
 

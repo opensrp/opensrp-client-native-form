@@ -19,3 +19,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Add checkbox multi select Skip Logic
 - Add checkbox multi select exclusive selector logic 
+
+[1.3.0] - 11-29-2018
+----------------------
+###Added
+- Integrate rules engine for rule support using yaml configs
+- Support for skip logic using complex rules
+- Support for calculations for fields using complex rules
