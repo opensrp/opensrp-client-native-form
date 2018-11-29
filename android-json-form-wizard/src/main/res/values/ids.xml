@@ -50,5 +50,4 @@
     <item name="extraContentForm" type="id" />
     <item name="extraPopup" type="id" />
     <item name="secondaryValues" type="id" />
-    <item name="extraContentKey" type="id" />
 </resources>

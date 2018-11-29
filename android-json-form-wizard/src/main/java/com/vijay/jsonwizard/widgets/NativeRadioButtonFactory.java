@@ -7,6 +7,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
@@ -271,8 +272,8 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
     private void createSpecifyTextView(Context context, RelativeLayout rootLayout, JSONObject jsonObject, CommonListener listener,
                                        JSONObject item, String stepName, JsonFormFragment formFragment, Boolean readOnly) throws JSONException {
         String text;
-        if (jsonObject.has(JsonFormConstants.SECONDARY_VALUE)) {
-            text = getSpecifyText(jsonObject.getJSONArray(JsonFormConstants.SECONDARY_VALUE));
+        if (item.has(JsonFormConstants.SECONDARY_VALUE)) {
+            text = getSpecifyText(item.getJSONArray(JsonFormConstants.SECONDARY_VALUE));
         } else {
             text = item.getString(JsonFormConstants.NATIVE_RADIO_SPECIFY_INFO);
         }
@@ -295,8 +296,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         specifyTextView.setTag(R.id.native_radio_button_specify_textview, specifyTextView);
         specifyTextView.setTag(R.id.native_radio_button_main_textview, getMainTextView());
         specifyTextView.setTag(R.id.native_radio_button_context, context);
-        specifyTextView.setTag(R.id.secondaryValues, getSecondaryValues(jsonObject));
-        specifyTextView.setTag(R.id.extraContentKey, jsonObject.getString(JsonFormConstants.KEY));
+        specifyTextView.setTag(R.id.secondaryValues, getSecondaryValues(item));
         specifyTextView.setText(createSpecifyText(text));
         specifyTextView.setOnClickListener(listener);
         specifyTextView.setEnabled(!readOnly);
@@ -308,7 +308,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             try {
                 value = jsonObject.getJSONArray(JsonFormConstants.SECONDARY_VALUE);
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.i(TAG, Log.getStackTraceString(e));
             }
         }
 

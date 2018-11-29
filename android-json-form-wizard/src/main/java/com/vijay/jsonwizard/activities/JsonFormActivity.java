@@ -59,6 +59,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi, Gene
 
     private static final String TAG = JsonFormActivity.class.getSimpleName();
     private GenericPopupDialog genericPopupDialog = GenericPopupDialog.getInstance();
+    private FormUtils formUtils = new FormUtils();
     private Toolbar mToolbar;
     private JSONObject mJSONObject;
     private PropertyManager propertyManager;
@@ -201,7 +202,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi, Gene
                     }
                 }
             } catch (Exception e) {
-
+                Log.i(TAG, Log.getStackTraceString(e));
             }
 
         }
@@ -397,13 +398,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi, Gene
                     public void onClick(DialogInterface dialog, int which) {
                         JsonFormActivity.this.finish();
                     }
-                })
-                .setPositiveButton(R.string.no, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                })
-                .create();
+                }).create();
 
         dialog.show();
     }
@@ -836,11 +831,11 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi, Gene
                             for (int k = 0; k < jsonArray.length(); k++) {
                                 JSONObject item = jsonArray.getJSONObject(k);
                                 if (item.has(JsonFormConstants.EXTRA_REL) && item.has(JsonFormConstants.HAS_EXTRA_REL)) {
-                                    fields = concatArray(fields, specifyFields(item));
+                                    fields = formUtils.concatArray(fields, specifyFields(item));
                                 }
                             }
                         } else {
-                            fields = concatArray(fields, sectionJson.getJSONArray(JsonFormConstants.FIELDS));
+                            fields = formUtils.concatArray(fields, sectionJson.getJSONArray(JsonFormConstants.FIELDS));
                         }
 
                     }
@@ -902,7 +897,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi, Gene
             try {
                 JSONArray jsonArray = jsonObject.getJSONArray(JsonFormConstants.SPECIFY_CONTENT);
                 if (jsonArray != null && jsonArray.length() > 0) {
-                    fieldArray = concatArray(fields, jsonArray);
+                    fieldArray = formUtils.concatArray(fields, jsonArray);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -912,24 +907,6 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi, Gene
         return fieldArray;
     }
 
-    private JSONArray concatArray(JSONArray... arrs)
-            throws JSONException {
-        JSONArray result = new JSONArray();
-        for (JSONArray arr : arrs) {
-            for (int i = 0; i < arr.length(); i++) {
-                result.put(arr.get(i));
-            }
-        }
-        return result;
-    }
-
-    public JSONObject getmJSONObject() {
-        return mJSONObject;
-    }
-
-    public void setmJSONObject(JSONObject mJSONObject) {
-        this.mJSONObject = mJSONObject;
-    }
 
     public String getConfirmCloseTitle() {
         return confirmCloseTitle;
@@ -1006,8 +983,16 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi, Gene
         return new ExObjectResult(false, false);
     }
 
+    /**
+     * Receives the generic popup data from Generic Dialog fragment
+     *
+     * @param selectedValues
+     * @param parentKey
+     * @param stepName
+     * @param childKey
+     */
     @Override
-    public void onGenericDataPass(Map<String, SecondaryValueModel> selectedValues, String parentKey, String stepName) {
+    public void onGenericDataPass(Map<String, SecondaryValueModel> selectedValues, String parentKey, String stepName, String childKey) {
         if (mJSONObject != null) {
             JSONObject parentJson = getStep(stepName);
             JSONArray fields = new JSONArray();
@@ -1017,7 +1002,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi, Gene
                     for (int i = 0; i < sections.length(); i++) {
                         JSONObject sectionJson = sections.getJSONObject(i);
                         if (sectionJson.has(JsonFormConstants.FIELDS)) {
-                            fields = concatArray(fields, sectionJson.getJSONArray(JsonFormConstants.FIELDS));
+                            fields = formUtils.concatArray(fields, sectionJson.getJSONArray(JsonFormConstants.FIELDS));
                         }
                     }
                 } else if (parentJson.has(JsonFormConstants.FIELDS) && parentJson.get(JsonFormConstants.FIELDS) instanceof JSONArray) {
@@ -1029,18 +1014,58 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi, Gene
                     for (int i = 0; i < fields.length(); i++) {
                         JSONObject item = fields.getJSONObject(i);
                         if (item != null && item.getString(JsonFormConstants.KEY).equals(parentKey)) {
-                            addSecondaryValues(item, selectedValues);
+                            addSecondaryValues(getJsonObjectToUpdate(item, childKey), selectedValues);
                         }
                     }
                 }
 
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.i(TAG, Log.getStackTraceString(e));
             }
         }
     }
 
+    /**
+     * Finds the actual widget to be updated and secondary values added on
+     *
+     * @param jsonObject
+     * @param childKey
+     * @return
+     */
+    private JSONObject getJsonObjectToUpdate(JSONObject jsonObject, String childKey) {
+        JSONObject item = new JSONObject();
+        try {
+            if (jsonObject != null && jsonObject.has(JsonFormConstants.TYPE)) {
+                if ((jsonObject.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.NATIVE_RADIO_BUTTON) || jsonObject.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) && childKey != null) {
+                    JSONArray options = jsonObject.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
+                    if (options != null) {
+                        for (int i = 0; i < options.length(); i++) {
+                            JSONObject childItem = options.getJSONObject(i);
+                            if (childItem != null && childItem.has(JsonFormConstants.KEY) && childKey.equals(childItem.getString(JsonFormConstants.KEY))) {
+                                item = childItem;
+                            }
+                        }
+                    }
+                } else {
+                    item = jsonObject;
+                }
+            } else {
+                item = jsonObject;
+            }
+        } catch (Exception e) {
+            Log.i(TAG, Log.getStackTraceString(e));
+        }
 
+        return item;
+    }
+
+
+    /**
+     * Adding the secondary values on to the specific json widget
+     *
+     * @param item
+     * @param secondaryValueModel
+     */
     private void addSecondaryValues(JSONObject item, Map<String, SecondaryValueModel> secondaryValueModel) {
         JSONObject valueObject;
         JSONArray secondaryValuesArray = new JSONArray();
@@ -1054,10 +1079,16 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi, Gene
         try {
             item.put(JsonFormConstants.SECONDARY_VALUE, secondaryValuesArray);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.i(TAG, Log.getStackTraceString(e));
         }
     }
 
+    /**
+     * Creates the secondary values objects
+     *
+     * @param value
+     * @return
+     */
     private JSONObject createSecondaryValueObject(SecondaryValueModel value) {
         JSONObject jsonObject = new JSONObject();
         try {
@@ -1069,7 +1100,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi, Gene
             jsonObject.put(JsonFormConstants.TYPE, type);
             jsonObject.put(JsonFormConstants.VALUES, values);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.i(TAG, Log.getStackTraceString(e));
 
         }
         return jsonObject;

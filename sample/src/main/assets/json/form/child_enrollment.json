@@ -57,7 +57,6 @@
   "step1": {
     "title": "Birth Registration",
     "fields": [
-      /*
       {
         "key": "Child_Photo",
         "openmrs_entity_parent": "",
@@ -1361,8 +1360,7 @@
         "text_size": "18px",
         "label_text_style": "bold",
         "name": "This is the normal edit text design"
-      }
-      */
+      },
       {
         "key": "repiratory_exam",
         "openmrs_entity_parent": "",
@@ -1390,44 +1388,44 @@
             "specify_info_color": "#b5b5b5",
             "specify_widget": "check_box",
             "specify_content": "respiratory_exam_abnormal_sub_form",
-            "specify_content_form": ""
-          }
-        ],
-        "secondary_value": [
-          {
-            "key": "respiratory_exam_abnormal",
-            "type": "check_box",
-            "values": [
-              "rapid_breathing:Rapid breathing:true",
-              "other:Other:true"
-            ]
-          },
-          {
-            "key": "respiratory_exam_radio_button",
-            "type": "native_radio",
-            "values": [
-              "1:Not done"
-            ]
-          },
-          {
-            "key": "respiratory_exam_abnormal_other",
-            "type": "edit_text",
-            "values": [
-              "other:Respiratory exam answer"
-            ]
-          },
-          {
-            "key": "place_birth",
-            "type": "spinner",
-            "values": [
-              "Home"
-            ]
-          },
-          {
-            "key": "last_name",
-            "type": "normal_edit_text",
-            "values": [
-              "Normal edit text"
+            "specify_content_form": "",
+            "secondary_value": [
+              {
+                "key": "respiratory_exam_abnormal",
+                "type": "check_box",
+                "values": [
+                  "rapid_breathing:Rapid breathing:true",
+                  "other:Other:true"
+                ]
+              },
+              {
+                "key": "respiratory_exam_radio_button",
+                "type": "native_radio",
+                "values": [
+                  "1:Not done"
+                ]
+              },
+              {
+                "key": "respiratory_exam_abnormal_other",
+                "type": "edit_text",
+                "values": [
+                  "other:Respiratory exam answer"
+                ]
+              },
+              {
+                "key": "place_birth",
+                "type": "spinner",
+                "values": [
+                  "Home"
+                ]
+              },
+              {
+                "key": "last_name",
+                "type": "normal_edit_text",
+                "values": [
+                  "Normal edit text"
+                ]
+              }
             ]
           }
         ]
@@ -1459,44 +1457,44 @@
             "specify_info_color": "#b5b5b5",
             "specify_widget": "check_box",
             "specify_content": "respiratory_exam_abnormal_sub_form",
-            "specify_content_form": ""
-          }
-        ],
-        "secondary_value": [
-          {
-            "key": "respiratory_exam_abnormal",
-            "type": "check_box",
-            "values": [
-              "cough:Cough:true",
-              "other:Other:true"
-            ]
-          },
-          {
-            "key": "respiratory_exam_radio_button",
-            "type": "native_radio",
-            "values": [
-              "3:Abnormal"
-            ]
-          },
-          {
-            "key": "respiratory_exam_abnormal_other",
-            "type": "edit_text",
-            "values": [
-              "other:Respiratory exam answer two"
-            ]
-          },
-          {
-            "key": "place_birth",
-            "type": "spinner",
-            "values": [
-              "Health facility"
-            ]
-          },
-          {
-            "key": "last_name",
-            "type": "normal_edit_text",
-            "values": [
-              "Normal edit text two"
+            "specify_content_form": "",
+            "secondary_value": [
+              {
+                "key": "respiratory_exam_abnormal",
+                "type": "check_box",
+                "values": [
+                  "cough:Cough:true",
+                  "other:Other:true"
+                ]
+              },
+              {
+                "key": "respiratory_exam_radio_button",
+                "type": "native_radio",
+                "values": [
+                  "3:Abnormal"
+                ]
+              },
+              {
+                "key": "respiratory_exam_abnormal_other",
+                "type": "edit_text",
+                "values": [
+                  "other:Respiratory exam answer two"
+                ]
+              },
+              {
+                "key": "place_birth",
+                "type": "spinner",
+                "values": [
+                  "Health facility"
+                ]
+              },
+              {
+                "key": "last_name",
+                "type": "normal_edit_text",
+                "values": [
+                  "Normal edit text two"
+                ]
+              }
             ]
           }
         ]
@@ -1531,93 +1529,6 @@
             "specify_content_form": ""
           }
         ]
-      },
-      {
-        "key": "occupation",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "concept",
-        "openmrs_entity_id": "161641AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-        "openmrs_data_type": "select one",
-        "type": "check_box",
-        "label": "Occupation",
-        "hint": "Occupation",
-        "label_text_style": "bold",
-        "options": [
-          {
-            "key": "student",
-            "text": "Student",
-            "openmrs_entity_parent": "",
-            "openmrs_entity": "Student",
-            "openmrs_entity_id": "159465"
-          },
-          {
-            "key": "unemployed",
-            "text": "Unemployed",
-            "openmrs_entity_parent": "",
-            "openmrs_entity": "Unemployed",
-            "openmrs_entity_id": "123801"
-          },
-          {
-            "key": "formal_employment",
-            "text": "Formal employment",
-            "openmrs_entity_parent": "",
-            "openmrs_entity": "",
-            "openmrs_entity_id": ""
-          },
-          {
-            "key": "informal_employment_sex_worker",
-            "text": "Informal employment (sex worker)",
-            "openmrs_entity_parent": "",
-            "openmrs_entity": "Sex worker",
-            "openmrs_entity_id": "160579"
-          },
-          {
-            "key": "informal_employment_other",
-            "text": "Informal employment (other)",
-            "openmrs_entity_parent": "",
-            "openmrs_entity": "Casual Labour",
-            "openmrs_entity_id": "159613"
-          },
-          {
-            "key": "other",
-            "text": "Other (specify)",
-            "openmrs_entity_parent": "",
-            "openmrs_entity": "",
-            "openmrs_entity_id": ""
-          }
-        ],
-        "v_required": {
-          "value": "true",
-          "err": "Please select at least one occupation"
-        }
-      },
-      {
-        "key": "occupation_other",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "hint": "Specify *",
-        "edit_type": "name",
-        "relevance": {
-          "step1:occupation": {
-            "ex-checkbox": [
-              {
-                "or": [
-                  "other"
-                ]
-              }
-            ]
-          }
-        },
-        "v_required": {
-          "value": false,
-          "err": "Please specify your occupation"
-        },
-        "v_regex": {
-          "value": "[A-Za-z\\s\.\-]*",
-          "err": "Please specify your occupation"
-        }
       }
     ]
   }

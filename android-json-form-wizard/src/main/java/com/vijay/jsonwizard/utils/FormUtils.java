@@ -56,7 +56,6 @@ public class FormUtils {
     private static final String START_JAVAROSA_PROPERTY = "start";
     private static final String END_JAVAROSA_PROPERTY = "end";
     private static final String TODAY_JAVAROSA_PROPERTY = "today";
-    private final String TAG = this.getClass().getName();
 
     public static LinearLayout.LayoutParams getLinearLayoutParams(int width, int height, int left, int top, int right, int bottom) {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(width, height);
@@ -446,7 +445,9 @@ public class FormUtils {
         CommonListener listener = (CommonListener) view.getTag(R.id.radio_button_specify_listener);
         JsonFormFragment formFragment = (JsonFormFragment) view.getTag(R.id.radio_button_specify_fragment);
         JSONArray jsonArray = (JSONArray) view.getTag(R.id.secondaryValues);
-        String parentKey = (String) view.getTag(R.id.extraContentKey);
+        String parentKey = (String) view.getTag(R.id.key);
+        String type = (String) view.getTag(R.id.type);
+        String childKey;
 
         GenericPopupDialog genericPopupDialog = GenericPopupDialog.getInstance();
         genericPopupDialog.setContext(context);
@@ -457,6 +458,10 @@ public class FormUtils {
         genericPopupDialog.setStepName(stepName);
         genericPopupDialog.setSecondaryValues(jsonArray);
         genericPopupDialog.setParentKey(parentKey);
+        if (type.equals(JsonFormConstants.CHECK_BOX) || type.equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
+            childKey = (String) view.getTag(R.id.childKey);
+            genericPopupDialog.setChildKey(childKey);
+        }
 
         Activity activity = (Activity) context;
         FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
@@ -483,5 +488,16 @@ public class FormUtils {
         }
 
         return newString;
+    }
+
+    public JSONArray concatArray(JSONArray... arrs)
+            throws JSONException {
+        JSONArray result = new JSONArray();
+        for (JSONArray arr : arrs) {
+            for (int i = 0; i < arr.length(); i++) {
+                result.put(arr.get(i));
+            }
+        }
+        return result;
     }
 }

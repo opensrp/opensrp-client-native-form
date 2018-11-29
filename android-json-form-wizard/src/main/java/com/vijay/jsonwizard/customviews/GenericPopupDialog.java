@@ -2,12 +2,11 @@ package com.vijay.jsonwizard.customviews;
 
 import android.app.Activity;
 import android.app.DialogFragment;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,18 +45,22 @@ import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 public class GenericPopupDialog extends DialogFragment {
     private static JsonFormInteractor jsonFormInteractor = JsonFormInteractor.getInstance();
     private static GenericPopupDialog genericPopupDialog = new GenericPopupDialog();
+    private Activity activity;
+    private JsonApi jsonApi;
     private Context context;
     private CommonListener commonListener;
     private JsonFormFragment formFragment;
     private String formIdentity;
     private String formLocation;
     private String parentKey;
+    private String childKey = null;
     private String stepName;
     private JSONArray secondaryValues;
     private Map<String, SecondaryValueModel> popAssignedValue = new HashMap<>();
     private Map<String, SecondaryValueModel> secondaryValuesMap = new HashMap<>();
     private GenericPopupInterface genericPopupInterface;
     private JSONArray specifyContent;
+    private String TAG = this.getClass().getSimpleName();
 
     public static GenericPopupDialog getInstance() {
         return genericPopupDialog;
@@ -71,6 +74,9 @@ public class GenericPopupDialog extends DialogFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         genericPopupInterface = (GenericPopupInterface) context;
+        activity = (Activity) context;
+        jsonApi = (JsonApi) activity;
+        jsonApi.refreshSkipLogic(null, null, true);
     }
 
     @Override
@@ -93,7 +99,8 @@ public class GenericPopupDialog extends DialogFragment {
         }
 
 
-        Activity activity = (Activity) context;
+        activity = (Activity) context;
+        jsonApi = (JsonApi) activity;
 
         createSecondaryValuesMap();
         JSONObject subForm = getSubFormJson(formLocation, context);
@@ -107,7 +114,7 @@ public class GenericPopupDialog extends DialogFragment {
                     GenericPopupDialog.this.dismiss();
                 }
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.i(TAG, Log.getStackTraceString(e));
             }
 
         }
@@ -118,6 +125,7 @@ public class GenericPopupDialog extends DialogFragment {
     @Override
     public void onResume() {
         super.onResume();
+        jsonApi.refreshSkipLogic(null, null, true);
     }
 
 
@@ -147,8 +155,6 @@ public class GenericPopupDialog extends DialogFragment {
             genericDialogContent.addView(view);
         }
 
-        Activity activity = (Activity) context;
-        JsonApi jsonApi = (JsonApi) activity;
         jsonApi.refreshSkipLogic(null, null, true);
 
         cancelButton = dialogView.findViewById(R.id.generic_dialog_cancel_button);
@@ -173,7 +179,7 @@ public class GenericPopupDialog extends DialogFragment {
 
 
     public JSONObject getSubFormJson(String subFormsLocation, Context context) {
-        String defaultSubFormLocation = "json/sub_form";
+        String defaultSubFormLocation = JsonFormConstants.DEFAULT_SUB_FORM_LOCATION;
         if (subFormsLocation != null && !subFormsLocation.equals("")) {
             defaultSubFormLocation = subFormsLocation;
         }
@@ -181,14 +187,14 @@ public class GenericPopupDialog extends DialogFragment {
         try {
             return new JSONObject(loadSubForm(defaultSubFormLocation, context));
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.i(TAG, Log.getStackTraceString(e));
         }
 
         return null;
     }
 
     private void passData() {
-        genericPopupInterface.onGenericDataPass(popAssignedValue, parentKey, stepName);
+        genericPopupInterface.onGenericDataPass(popAssignedValue, parentKey, stepName, childKey);
     }
 
     private String loadSubForm(String defaultSubFormLocation, Context context) {
@@ -203,9 +209,9 @@ public class GenericPopupDialog extends DialogFragment {
             }
             inputStream.close();
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            Log.i(TAG, Log.getStackTraceString(e));
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.i(TAG, Log.getStackTraceString(e));
         }
 
         return stringBuilder.toString();
@@ -223,7 +229,7 @@ public class GenericPopupDialog extends DialogFragment {
                     secondaryValuesMap.put(key, new SecondaryValueModel(key, type, values));
                     popAssignedValue = secondaryValuesMap;
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    Log.i(TAG, Log.getStackTraceString(e));
                 }
             }
 
@@ -257,7 +263,7 @@ public class GenericPopupDialog extends DialogFragment {
                     }
                 }
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.i(TAG, Log.getStackTraceString(e));
             }
         }
     }
@@ -275,7 +281,7 @@ public class GenericPopupDialog extends DialogFragment {
                     }
                 }
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.i(TAG, Log.getStackTraceString(e));
             }
         }
     }
@@ -287,7 +293,7 @@ public class GenericPopupDialog extends DialogFragment {
             try {
                 value = formUtils.getValueFromSecondaryValues(type, jsonArray.getString(i));
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.i(TAG, Log.getStackTraceString(e));
             }
         }
 
@@ -386,7 +392,7 @@ public class GenericPopupDialog extends DialogFragment {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.i(TAG, Log.getStackTraceString(e));
         }
 
         return same;
@@ -398,5 +404,13 @@ public class GenericPopupDialog extends DialogFragment {
 
     public void setParentKey(String parentKey) {
         this.parentKey = parentKey;
+    }
+
+    public String getChildKey() {
+        return childKey;
+    }
+
+    public void setChildKey(String childKey) {
+        this.childKey = childKey;
     }
 }
