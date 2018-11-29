@@ -872,11 +872,11 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi, Gene
                     for (int j = 0; j < options.length(); j++) {
                         JSONObject jsonObject = options.getJSONObject(j);
                         String objectKey = (String) jsonObject.get(JsonFormConstants.KEY);
-                        if (objectKey.equals(optionKey) && jsonObject.has(JsonFormConstants.SPECIFY_CONTENT)) {
+                        if (objectKey.equals(optionKey) && jsonObject.has(JsonFormConstants.CONTENT_FORM)) {
                             if (extraFieldsWithValues != null) {
                                 fields = extraFieldsWithValues;
                             } else {
-                                fields = getSubFormFields(jsonObject.get(JsonFormConstants.SPECIFY_CONTENT).toString(), jsonObject.get(JsonFormConstants.SPECIFY_CONTENT_FORM).toString(), fields);
+                                fields = getSubFormFields(jsonObject.get(JsonFormConstants.CONTENT_FORM).toString(), jsonObject.get(JsonFormConstants.CONTENT_FORM_LOCATION).toString(), fields);
                             }
                         }
                     }
@@ -895,7 +895,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi, Gene
         JSONObject jsonObject = genericPopupDialog.getSubFormJson("", getApplicationContext());
         if (jsonObject != null) {
             try {
-                JSONArray jsonArray = jsonObject.getJSONArray(JsonFormConstants.SPECIFY_CONTENT);
+                JSONArray jsonArray = jsonObject.getJSONArray(JsonFormConstants.CONTENT_FORM);
                 if (jsonArray != null && jsonArray.length() > 0) {
                     fieldArray = formUtils.concatArray(fields, jsonArray);
                 }
@@ -1023,6 +1023,11 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi, Gene
                 Log.i(TAG, Log.getStackTraceString(e));
             }
         }
+    }
+
+    @Override
+    public void clearSecondaryFields() {
+        extraFieldsWithValues = null;
     }
 
     /**

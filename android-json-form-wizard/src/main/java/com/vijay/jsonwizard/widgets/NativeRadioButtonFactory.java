@@ -281,8 +281,8 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
         String text_color = item.optString(JsonFormConstants.NATIVE_RADIO_SPECIFY_INFO_COLOR, JsonFormConstants.DEFAULT_HINT_TEXT_COLOR);
         String specifyWidget = item.optString(JsonFormConstants.NATIVE_RADIO_SPECIFY_WIDGET, "");
-        String specifyContent = item.optString(JsonFormConstants.SPECIFY_CONTENT, null);
-        String specifyContentForm = item.optString(JsonFormConstants.SPECIFY_CONTENT_FORM, null);
+        String specifyContent = item.optString(JsonFormConstants.CONTENT_FORM, null);
+        String specifyContentForm = item.optString(JsonFormConstants.CONTENT_FORM_LOCATION, null);
         CustomTextView specifyTextView = rootLayout.findViewById(R.id.specifyTextView);
         specifyTextView.setVisibility(View.VISIBLE);
         addTextViewAttributes(context, jsonObject, item, specifyTextView, stepName, text_color);

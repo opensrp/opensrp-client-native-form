@@ -1,5 +1,5 @@
 {
-  "specify_content": [
+  "content_form": [
     {
       "key": "respiratory_exam_abnormal",
       "openmrs_entity_parent": "",

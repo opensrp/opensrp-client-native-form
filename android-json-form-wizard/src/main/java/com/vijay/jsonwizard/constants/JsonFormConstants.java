@@ -74,7 +74,7 @@ public class JsonFormConstants {
     public static final String NATIVE_RADIO_BUTTON_MULTI_RELEVANCE = "multi_relevance";
     public static final String NATIVE_RADIO_SPECIFY_INFO = "specify_info";
     public static final String NATIVE_RADIO_SPECIFY_WIDGET = "specify_widget";
-    public static final String SPECIFY_CONTENT = "specify_content";
+    public static final String CONTENT_FORM = "content_form";
     public static final String NATIVE_RADIO_SPECIFY_INFO_COLOR = "specify_info_color";
     public static final String NATIVE_RADIO_EXTRA_INFO = "extra_info";
     public static final String NATIVE_RADIO_EXTRA_INFO_COLOR = "extra_info_color";
@@ -99,7 +99,7 @@ public class JsonFormConstants {
     public static final String EDIT_BUTTON = "edit_button";
     public static final String CUSTOM_TEXT = "custom_text";
     public static final String SECONDARY_VALUE = "secondary_value";
-    public static final String SPECIFY_CONTENT_FORM = "specify_content_form";
+    public static final String CONTENT_FORM_LOCATION = "content_form_location";
     public static final String VALUES = "values";
     public static final String EXTRA_REL = "extra_rel";
     public static final String HAS_EXTRA_REL = "has_extra_rel";

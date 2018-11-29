@@ -590,7 +590,7 @@
             "text": "Placenta previa",
             "value": false,
             "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "text_size": "30sp"
+            "text_size": "15sp"
           },
           {
             "key": "cord_prolapse",
@@ -1387,8 +1387,8 @@
             "specify_info": "Specify",
             "specify_info_color": "#b5b5b5",
             "specify_widget": "check_box",
-            "specify_content": "respiratory_exam_abnormal_sub_form",
-            "specify_content_form": "",
+            "content_form": "child_enrollment_sub_form",
+            "content_form_location": "",
             "secondary_value": [
               {
                 "key": "respiratory_exam_abnormal",
@@ -1456,8 +1456,8 @@
             "specify_info": "Specify",
             "specify_info_color": "#b5b5b5",
             "specify_widget": "check_box",
-            "specify_content": "respiratory_exam_abnormal_sub_form",
-            "specify_content_form": "",
+            "content_form": "child_enrollment_sub_form",
+            "content_form_location": "",
             "secondary_value": [
               {
                 "key": "respiratory_exam_abnormal",
@@ -1525,8 +1525,8 @@
             "specify_info": "Specify",
             "specify_info_color": "#b5b5b5",
             "specify_widget": "check_box",
-            "specify_content": "respiratory_exam_abnormal_sub_form",
-            "specify_content_form": ""
+            "content_form": "child_enrollment_sub_form",
+            "content_form_location": ""
           }
         ]
       }

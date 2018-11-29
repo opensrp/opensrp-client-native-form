@@ -106,8 +106,8 @@ public class GenericPopupDialog extends DialogFragment {
         JSONObject subForm = getSubFormJson(formLocation, context);
         if (subForm != null) {
             try {
-                if (subForm.has(JsonFormConstants.SPECIFY_CONTENT)) {
-                    specifyContent = subForm.getJSONArray(JsonFormConstants.SPECIFY_CONTENT);
+                if (subForm.has(JsonFormConstants.CONTENT_FORM)) {
+                    specifyContent = subForm.getJSONArray(JsonFormConstants.CONTENT_FORM);
                     addFormValues(specifyContent);
                 } else {
                     Utils.showToast(activity, activity.getApplicationContext().getResources().getString(R.string.please_specify_content));
@@ -155,12 +155,11 @@ public class GenericPopupDialog extends DialogFragment {
             genericDialogContent.addView(view);
         }
 
-        jsonApi.refreshSkipLogic(null, null, true);
-
         cancelButton = dialogView.findViewById(R.id.generic_dialog_cancel_button);
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                genericPopupInterface.clearSecondaryFields();
                 GenericPopupDialog.this.dismiss();
             }
         });
