@@ -22,16 +22,16 @@
     <item name="label_dialog_info" type="id" />
     <item name="label_dialog_title" type="id" />
 
-    <item name="native_radio_button_specify_textview" type="id" />
-    <item name="native_radio_button_main_textview" type="id" />
-    <item name="radio_button_specify_type" type="id" />
-    <item name="radio_button_specify_widget" type="id" />
+    <item name="specify_textview" type="id" />
+    <item name="main_textview" type="id" />
+    <item name="specify_type" type="id" />
+    <item name="specify_widget" type="id" />
     <item name="specify_content" type="id" />
     <item name="specify_content_form" type="id" />
-    <item name="radio_button_specify_listener" type="id" />
-    <item name="radio_button_specify_step_name" type="id" />
-    <item name="radio_button_specify_fragment" type="id" />
-    <item name="native_radio_button_context" type="id" />
+    <item name="specify_listener" type="id" />
+    <item name="specify_step_name" type="id" />
+    <item name="specify_fragment" type="id" />
+    <item name="button_context" type="id" />
     <item name="number_selector_textview" type="id" />
     <item name="number_selector_item" type="id" />
     <item name="number_selector_number_of_selectors" type="id" />

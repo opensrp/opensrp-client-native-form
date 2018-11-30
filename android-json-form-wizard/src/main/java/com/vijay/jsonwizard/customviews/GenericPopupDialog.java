@@ -23,6 +23,7 @@ import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.SecondaryValueModel;
 import com.vijay.jsonwizard.utils.Utils;
+import com.vijay.jsonwizard.views.CustomTextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -56,6 +57,8 @@ public class GenericPopupDialog extends DialogFragment {
     private String childKey = null;
     private String stepName;
     private JSONArray secondaryValues;
+    private JSONArray newSelectedValues;
+    private CustomTextView customTextView;
     private Map<String, SecondaryValueModel> popAssignedValue = new HashMap<>();
     private Map<String, SecondaryValueModel> secondaryValuesMap = new HashMap<>();
     private JSONArray specifyContent;
@@ -124,6 +127,11 @@ public class GenericPopupDialog extends DialogFragment {
     public void onResume() {
         super.onResume();
         jsonApi.refreshSkipLogic(null, null, true);
+        ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
+        params.width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.90);
+        params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        getDialog().getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
+
     }
 
 
@@ -366,9 +374,9 @@ public class GenericPopupDialog extends DialogFragment {
                     JSONArray jsonArray = valueModel.getValues();
                     if (!checkSimilarity(jsonArray, value)) {
                         jsonArray.put(value);
-                        valueModel.setValues(removeUnselectedItems(jsonArray, value));
                     }
 
+                    valueModel.setValues(removeUnselectedItems(jsonArray, value));
                 }
             } else {
                 if (popAssignedValue != null) {
@@ -427,6 +435,10 @@ public class GenericPopupDialog extends DialogFragment {
         return value.split(";");
     }
 
+    public String getParentKey() {
+        return parentKey;
+    }
+
     public void setParentKey(String parentKey) {
         this.parentKey = parentKey;
     }
@@ -438,6 +450,11 @@ public class GenericPopupDialog extends DialogFragment {
     public void setChildKey(String childKey) {
         this.childKey = childKey;
     }
+
+    public void setCustomTextView(CustomTextView customTextView) {
+        this.customTextView = customTextView;
+    }
+
 
     /**
      * Receives the generic popup data from Generic Dialog fragment
@@ -475,6 +492,7 @@ public class GenericPopupDialog extends DialogFragment {
                     }
                 }
 
+                customTextView.setText("(" + formUtils.getSpecifyText(newSelectedValues) + ")");
                 jsonApi.setmJSONObject(mJSONObject);
 
             } catch (JSONException e) {
@@ -536,6 +554,7 @@ public class GenericPopupDialog extends DialogFragment {
         }
         try {
             item.put(JsonFormConstants.SECONDARY_VALUE, secondaryValuesArray);
+            newSelectedValues = secondaryValuesArray;
         } catch (Exception e) {
             Log.i(TAG, Log.getStackTraceString(e));
         }

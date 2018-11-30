@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
@@ -440,40 +441,48 @@ public class FormUtils {
     }
 
     public void showGenericDialog(View view) {
-        Context context = (Context) view.getTag(R.id.native_radio_button_context);
+        Context context = (Context) view.getTag(R.id.button_context);
         String specifyContent = (String) view.getTag(R.id.specify_content);
         String specifyContentForm = (String) view.getTag(R.id.specify_content_form);
-        String stepName = (String) view.getTag(R.id.radio_button_specify_step_name);
-        CommonListener listener = (CommonListener) view.getTag(R.id.radio_button_specify_listener);
-        JsonFormFragment formFragment = (JsonFormFragment) view.getTag(R.id.radio_button_specify_fragment);
+        String stepName = (String) view.getTag(R.id.specify_step_name);
+        CommonListener listener = (CommonListener) view.getTag(R.id.specify_listener);
+        JsonFormFragment formFragment = (JsonFormFragment) view.getTag(R.id.specify_fragment);
         JSONArray jsonArray = (JSONArray) view.getTag(R.id.secondaryValues);
         String parentKey = (String) view.getTag(R.id.key);
         String type = (String) view.getTag(R.id.type);
+        CustomTextView customTextView = (CustomTextView) view.getTag(R.id.specify_textview);
         String childKey;
 
-        GenericPopupDialog genericPopupDialog = GenericPopupDialog.getInstance();
-        genericPopupDialog.setContext(context);
-        genericPopupDialog.setCommonListener(listener);
-        genericPopupDialog.setFormFragment(formFragment);
-        genericPopupDialog.setFormIdentity(specifyContent);
-        genericPopupDialog.setFormLocation(specifyContentForm);
-        genericPopupDialog.setStepName(stepName);
-        genericPopupDialog.setSecondaryValues(jsonArray);
-        genericPopupDialog.setParentKey(parentKey);
-        if (type.equals(JsonFormConstants.CHECK_BOX) || type.equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
-            childKey = (String) view.getTag(R.id.childKey);
-            genericPopupDialog.setChildKey(childKey);
+        if (specifyContent != null) {
+            GenericPopupDialog genericPopupDialog = GenericPopupDialog.getInstance();
+            genericPopupDialog.setContext(context);
+            genericPopupDialog.setCommonListener(listener);
+            genericPopupDialog.setFormFragment(formFragment);
+            genericPopupDialog.setFormIdentity(specifyContent);
+            genericPopupDialog.setFormLocation(specifyContentForm);
+            genericPopupDialog.setStepName(stepName);
+            genericPopupDialog.setSecondaryValues(jsonArray);
+            genericPopupDialog.setParentKey(parentKey);
+            genericPopupDialog.setCustomTextView(customTextView);
+            if (type.equals(JsonFormConstants.CHECK_BOX) || type.equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
+                childKey = (String) view.getTag(R.id.childKey);
+                genericPopupDialog.setChildKey(childKey);
+            }
+
+            Activity activity = (Activity) context;
+            FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
+            Fragment prev = activity.getFragmentManager().findFragmentByTag("GenericPopup");
+            if (prev != null) {
+                ft.remove(prev);
+            }
+
+            ft.addToBackStack(null);
+            genericPopupDialog.show(ft, "GenericPopup");
+        } else {
+            Toast.makeText(context, "Please specify the sub form to display ", Toast.LENGTH_LONG).show();
         }
 
-        Activity activity = (Activity) context;
-        FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
-        Fragment prev = activity.getFragmentManager().findFragmentByTag("GenericPopup");
-        if (prev != null) {
-            ft.remove(prev);
-        }
 
-        ft.addToBackStack(null);
-        genericPopupDialog.show(ft, "GenericPopup");
     }
 
     public String getValueFromSecondaryValues(String type, String itemString) {
@@ -540,5 +549,26 @@ public class FormUtils {
 
         }
         return text;
+    }
+
+    public String getSpecifyText(JSONArray jsonArray) {
+        FormUtils formUtils = new FormUtils();
+        StringBuilder specifyText = new StringBuilder();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            try {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                if (jsonObject != null) {
+                    String type = jsonObject.optString(JsonFormConstants.TYPE, null);
+                    JSONArray itemArray = jsonObject.getJSONArray(JsonFormConstants.VALUES);
+                    for (int j = 0; j < itemArray.length(); j++) {
+                        specifyText.append(formUtils.getValueFromSecondaryValues(type, itemArray.getString(j)));
+
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return specifyText.toString().replaceAll(", $", "");
     }
 }

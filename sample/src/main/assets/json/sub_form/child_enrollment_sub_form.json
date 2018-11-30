@@ -62,6 +62,29 @@
       ]
     },
     {
+      "key": "respiratory_exam_abnormal_other",
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "",
+      "openmrs_entity_id": "",
+      "type": "edit_text",
+      "hint": "Specify",
+      "v_regex": {
+        "value": "[A-Za-z\\s\.\-]*",
+        "err": "Please enter valid content"
+      },
+      "relevance": {
+        "step1:respiratory_exam_abnormal": {
+          "ex-checkbox": [
+            {
+              "or": [
+                "other"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
       "key": "respiratory_exam_radio_button",
       "openmrs_entity_parent": "",
       "openmrs_entity": "",
@@ -86,81 +109,6 @@
           "text": "Abnormal"
         }
       ]
-    },
-    {
-      "key": "last_name",
-      "openmrs_entity_parent": "",
-      "openmrs_entity": "person",
-      "openmrs_entity_id": "last_name",
-      "type": "normal_edit_text",
-      "edit_type": "name",
-      "edit_text_style": "bordered",
-      "v_required": {
-        "value": "true",
-        "err": "Please enter the last name"
-      },
-      "v_regex": {
-        "value": "[A-Za-z\\s\.\-]*",
-        "err": "Please enter a valid name"
-      },
-      "relevance": {
-        "step1:respiratory_exam_radio_button": {
-          "type": "string",
-          "ex": "equalTo(., \"3\")"
-        }
-      }
-    },
-    {
-      "key": "respiratory_exam_abnormal_other",
-      "openmrs_entity_parent": "",
-      "openmrs_entity": "",
-      "openmrs_entity_id": "",
-      "type": "edit_text",
-      "hint": "Specify",
-      "v_regex": {
-        "value": "[A-Za-z\\s\.\-]*",
-        "err": "Please enter valid content"
-      },
-      "relevance": {
-        "step1:respiratory_exam_abnormal": {
-          "ex-checkbox": [
-            {
-              "or": [
-                "other"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    {
-      "key": "place_birth",
-      "openmrs_entity_parent": "",
-      "openmrs_entity": "concept",
-      "openmrs_entity_id": "1572AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-      "openmrs_data_type": "select one",
-      "type": "spinner",
-      "hint": "Place of birth *",
-      "label_info_title": "Place of birth spinner",
-      "label_info_text": "here is some text on this dialog",
-      "values": [
-        "Health facility",
-        "Home"
-      ],
-      "openmrs_choice_ids": {
-        "Health facility": "1588AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-        "Home": "1536AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-      },
-      "v_required": {
-        "value": true,
-        "err": "Please enter the place of birth"
-      },
-      "relevance": {
-        "step1:respiratory_exam_radio_button": {
-          "type": "string",
-          "ex": "equalTo(., \"3\")"
-        }
-      }
     }
   ]
 }

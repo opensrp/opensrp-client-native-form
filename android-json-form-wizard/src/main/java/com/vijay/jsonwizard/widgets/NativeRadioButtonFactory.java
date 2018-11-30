@@ -49,11 +49,12 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
     private CustomTextView customTextView;
     private CustomTextView extraInfoTextView;
+    private FormUtils formUtils = new FormUtils();
 
     public static void showDateDialog(View view) {
-        Context context = (Context) view.getTag(R.id.native_radio_button_context);
-        CustomTextView customTextView = (CustomTextView) view.getTag(R.id.native_radio_button_specify_textview);
-        CustomTextView mainTextView = (CustomTextView) view.getTag(R.id.native_radio_button_main_textview);
+        Context context = (Context) view.getTag(R.id.button_context);
+        CustomTextView customTextView = (CustomTextView) view.getTag(R.id.specify_textview);
+        CustomTextView mainTextView = (CustomTextView) view.getTag(R.id.main_textview);
         DatePickerDialog datePickerDialog = new DatePickerDialog();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             datePickerDialog.setCalendarViewShown(false);
@@ -273,7 +274,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
                                        JSONObject item, String stepName, JsonFormFragment formFragment, Boolean readOnly) throws JSONException {
         String text;
         if (item.has(JsonFormConstants.SECONDARY_VALUE)) {
-            text = getSpecifyText(item.getJSONArray(JsonFormConstants.SECONDARY_VALUE));
+            text = formUtils.getSpecifyText(item.getJSONArray(JsonFormConstants.SECONDARY_VALUE));
         } else {
             text = item.getString(JsonFormConstants.NATIVE_RADIO_SPECIFY_INFO);
         }
@@ -286,18 +287,20 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         CustomTextView specifyTextView = rootLayout.findViewById(R.id.specifyTextView);
         specifyTextView.setVisibility(View.VISIBLE);
         addTextViewAttributes(context, jsonObject, item, specifyTextView, stepName, text_color);
-        specifyTextView.setTag(R.id.radio_button_specify_type, JsonFormConstants.NATIVE_RADIO_SPECIFY_INFO);
-        specifyTextView.setTag(R.id.radio_button_specify_widget, specifyWidget);
+        specifyTextView.setTag(R.id.specify_type, JsonFormConstants.NATIVE_RADIO_SPECIFY_INFO);
+        specifyTextView.setTag(R.id.specify_widget, specifyWidget);
         specifyTextView.setTag(R.id.specify_content, specifyContent);
         specifyTextView.setTag(R.id.specify_content_form, specifyContentForm);
-        specifyTextView.setTag(R.id.radio_button_specify_listener, listener);
-        specifyTextView.setTag(R.id.radio_button_specify_step_name, stepName);
-        specifyTextView.setTag(R.id.radio_button_specify_fragment, formFragment);
-        specifyTextView.setTag(R.id.native_radio_button_specify_textview, specifyTextView);
-        specifyTextView.setTag(R.id.native_radio_button_main_textview, getMainTextView());
-        specifyTextView.setTag(R.id.native_radio_button_context, context);
+        specifyTextView.setTag(R.id.specify_listener, listener);
+        specifyTextView.setTag(R.id.specify_step_name, stepName);
+        specifyTextView.setTag(R.id.specify_fragment, formFragment);
+        specifyTextView.setTag(R.id.specify_textview, specifyTextView);
+        specifyTextView.setTag(R.id.main_textview, getMainTextView());
+        specifyTextView.setTag(R.id.button_context, context);
         specifyTextView.setTag(R.id.secondaryValues, getSecondaryValues(item));
+        specifyTextView.setTag(R.id.specify_textview, specifyTextView);
         specifyTextView.setText(createSpecifyText(text));
+        specifyTextView.setId(ViewUtil.generateViewId());
         specifyTextView.setOnClickListener(listener);
         specifyTextView.setEnabled(!readOnly);
     }
@@ -363,26 +366,5 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
     private void setExtraInfoTextView(CustomTextView customTextView) {
         extraInfoTextView = customTextView;
-    }
-
-    private String getSpecifyText(JSONArray jsonArray) {
-        FormUtils formUtils = new FormUtils();
-        StringBuilder specifyText = new StringBuilder();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            try {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                if (jsonObject != null) {
-                    String type = jsonObject.optString(JsonFormConstants.TYPE, null);
-                    JSONArray itemArray = jsonObject.getJSONArray(JsonFormConstants.VALUES);
-                    for (int j = 0; j < itemArray.length(); j++) {
-                        specifyText.append(formUtils.getValueFromSecondaryValues(type, itemArray.getString(j)));
-
-                    }
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        return specifyText.toString().replaceAll(", $", "");
     }
 }
