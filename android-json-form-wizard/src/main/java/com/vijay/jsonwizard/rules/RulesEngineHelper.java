@@ -26,7 +26,7 @@ public class RulesEngineHelper implements RuleListener {
     private Context context;
     private RulesEngine defaultRulesEngine;
     private Map<String, Rules> ruleMap;
-    private final String RULE_FOLDER_PATH = "rule/";
+    private String RULE_FOLDER_PATH = "rule/";
     private Rules rules;
     private String selectedRuleName;
     private Gson gson;
@@ -138,6 +138,14 @@ public class RulesEngineHelper implements RuleListener {
     @Override
     public void onFailure(Rule rule, Facts facts, Exception exception) {
 
+    }
+
+    public void setRulesFolderPath(String path) {
+        RULE_FOLDER_PATH = path;
+    }
+
+    public String getRulesFolderPath() {
+        return RULE_FOLDER_PATH;
     }
 
 }

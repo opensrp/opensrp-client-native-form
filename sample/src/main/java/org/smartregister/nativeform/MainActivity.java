@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int REQUEST_CODE_GET_JSON = 1234;
 
     @Override
@@ -34,10 +34,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton floatingActionButton = findViewById(R.id.fab);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.child_enrollment).setOnClickListener(this);
+        findViewById(R.id.rules_engine_skip_logic).setOnClickListener(this);
     }
 
     @Override
@@ -125,12 +127,13 @@ public class MainActivity extends AppCompatActivity {
                         continue;
                     }
                 }
-
-                intent.putExtra("json", form.toString());
-                Log.d(getClass().getName(), "form is " + form.toString());
-                startActivityForResult(intent, jsonFormActivityRequestCode);
             }
+
+            intent.putExtra("json", form.toString());
+            Log.d(getClass().getName(), "form is " + form.toString());
+            startActivityForResult(intent, jsonFormActivityRequestCode);
         }
+
     }
 
 
@@ -156,5 +159,33 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return null;
+    }
+
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
+
+        try {
+            switch (id) {
+                case R.id.child_enrollment:
+
+                    startForm(REQUEST_CODE_GET_JSON, "child_enrollment", null);
+                    break;
+
+                case R.id.rules_engine_skip_logic:
+
+                    startForm(REQUEST_CODE_GET_JSON, "rules_engine_demo", null);
+                    break;
+
+                default:
+                    break;
+
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }

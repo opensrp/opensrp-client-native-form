@@ -20,9 +20,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add checkbox multi select Skip Logic
 - Add checkbox multi select exclusive selector logic 
 
-[1.3.0] - 11-29-2018
+[1.3.0] - 11-30-2018
 ----------------------
+- Support for calculations for fields using complex rules
+
+###Changed
+- New way to demo notable features in native form sample App - Multiple buttons with mnemonic feature name titles
+
+##### Fixed
+- Improved optimization during json form render for special views (constrained, calculated and relevance views)
+
 ###Added
 - Integrate rules engine for rule support using yaml configs
 - Support for skip logic using complex rules
-- Support for calculations for fields using complex rules
