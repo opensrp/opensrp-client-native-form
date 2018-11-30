@@ -20,11 +20,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_GET_JSON = 1234;
 
+    @Override
+    public void onBackPressed() {
+
+        ;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

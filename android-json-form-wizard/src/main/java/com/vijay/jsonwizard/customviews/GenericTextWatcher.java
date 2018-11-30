@@ -45,32 +45,45 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
     }
 
     public void afterTextChanged(Editable editable) {
-        if (((Activity) formFragment.getContext()).getCurrentFocus().equals(mView)) {
-            String text = (String) mView.getTag(R.id.raw_value);
 
-            if (text == null) {
-                text = editable.toString();
-            }
+        //Check if trigger is Automatic
+        if (!((Activity) formFragment.getContext()).getCurrentFocus().equals(mView)) {
+            if (mView.getTag(R.id.is_first_time) != null) {
 
-            Log.d("RealtimeValidation", "afterTextChanged called");
-            JsonApi api = null;
-            if (formFragment.getContext() instanceof JsonApi) {
-                api = (JsonApi) formFragment.getContext();
+                mView.setTag(R.id.is_first_time, null);
+                return;
             } else {
-                throw new RuntimeException("Could not fetch context");
-            }
 
-            String key = (String) mView.getTag(R.id.key);
-            String openMrsEntityParent = (String) mView.getTag(R.id.openmrs_entity_parent);
-            String openMrsEntity = (String) mView.getTag(R.id.openmrs_entity);
-            String openMrsEntityId = (String) mView.getTag(R.id.openmrs_entity_id);
-            try {
-                api.writeValue(mStepName, key, text, openMrsEntityParent, openMrsEntity, openMrsEntityId);
-            } catch (JSONException e) {
-                // TODO- handle
-                e.printStackTrace();
+                mView.setTag(R.id.is_first_time, true);
             }
         }
+
+        String text = (String) mView.getTag(R.id.raw_value);
+
+        if (text == null) {
+            text = editable.toString();
+        }
+
+        Log.d("RealtimeValidation", "afterTextChanged called");
+        JsonApi api = null;
+        if (formFragment.getContext() instanceof JsonApi) {
+            api = (JsonApi) formFragment.getContext();
+        } else {
+            throw new RuntimeException("Could not fetch context");
+        }
+
+        String key = (String) mView.getTag(R.id.key);
+        String openMrsEntityParent = (String) mView.getTag(R.id.openmrs_entity_parent);
+        String openMrsEntity = (String) mView.getTag(R.id.openmrs_entity);
+        String openMrsEntityId = (String) mView.getTag(R.id.openmrs_entity_id);
+        try {
+            api.writeValue(mStepName, key, text, openMrsEntityParent, openMrsEntity, openMrsEntityId);
+        } catch (JSONException e) {
+            // TODO- handle
+            e.printStackTrace();
+        }
+
+
     }
 
     @Override

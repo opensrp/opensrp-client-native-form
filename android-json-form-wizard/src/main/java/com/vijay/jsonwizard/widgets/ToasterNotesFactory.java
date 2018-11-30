@@ -2,6 +2,7 @@ package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.customviews.ToasterLinearLayout;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
@@ -33,11 +35,12 @@ public class ToasterNotesFactory implements FormWidgetFactory {
         String openMrsEntity = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_ID);
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
+        String calculation = jsonObject.optString(JsonFormConstants.CALCULATION);
 
         List<View> views = new ArrayList<>(1);
         JSONArray canvasIds = new JSONArray();
 
-        LinearLayout linearLayout = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.native_form_toaster_notes, null);
+        ToasterLinearLayout linearLayout = (ToasterLinearLayout) LayoutInflater.from(context).inflate(R.layout.native_form_toaster_notes, null);
         linearLayout.setId(ViewUtil.generateViewId());
         canvasIds.put(linearLayout.getId());
         linearLayout.setTag(R.id.canvas_ids, canvasIds.toString());
@@ -48,9 +51,13 @@ public class ToasterNotesFactory implements FormWidgetFactory {
         linearLayout.setTag(R.id.type, jsonObject.getString("type"));
         linearLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
 
-        if (relevance != null && context instanceof JsonApi) {
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             linearLayout.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(linearLayout);
+        }
+        if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
+            linearLayout.setTag(R.id.calculation, calculation);
+            ((JsonApi) context).addCalculationLogicView(linearLayout);
         }
 
         attachJson(views, context, jsonObject, linearLayout, listener);
@@ -95,6 +102,7 @@ public class ToasterNotesFactory implements FormWidgetFactory {
         }
 
         toasterNotesTextView.setText(text);
+        linearLayout.setTag(R.id.original_text, text);
         toasterNotesTextView.setTextColor(Color.parseColor(textColor));
 
         if (infoText != null) {

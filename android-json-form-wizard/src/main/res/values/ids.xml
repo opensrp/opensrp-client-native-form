@@ -22,6 +22,8 @@
     <item name="skip_validation" type="id" />
     <item name="label_dialog_info" type="id" />
     <item name="label_dialog_title" type="id" />
+    <item name="original_text" type="id" />
+    <item name="is_first_time" type="id" />
 
     <item name="native_radio_button_specify_textview" type="id" />
     <item name="native_radio_button_main_textview" type="id" />

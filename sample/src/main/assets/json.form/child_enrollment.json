@@ -208,7 +208,7 @@
         "relevance": {
           "rules-engine": {
             "ex-rules": {
-              "rules-file": "sample-rules.yml"
+              "rules-file": "sample-relevance-rules.yml"
             }
           }
         }
@@ -227,15 +227,22 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Tobacco cessation counseling",
+        "text": "Elly has {kid_count} kids and {grand_children} grand children!",
         "text_color": "#000000",
         "toaster_info_text": "Healthcare providers should routinely offer advice and psycho-social interventions for tobacco cessation to all pregnant women who are either current tobacco users or recent tobacco quitters.",
-        "toaster_info_title": "Tobacco cessation counseling",
+        "toaster_info_title": "Elly has {kid_count} kids and {grand_children} grand children!",
         "toaster_type": "problem",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-calculation-rules.yml"
+            }
+          }
+        },
         "relevance": {
           "rules-engine": {
             "ex-rules": {
-              "rules-file": "sample-rules.yml"
+              "rules-file": "sample-relevance-rules.yml"
             }
           }
         }
@@ -249,7 +256,7 @@
         "calculation": {
           "rules-engine": {
             "ex-rules": {
-              "rules-file": "sample-rules.yml"
+              "rules-file": "sample-calculation-rules.yml"
             }
           }
         }
@@ -278,7 +285,7 @@
         "relevance": {
           "rules-engine": {
             "ex-rules": {
-              "rules-file": "sample-rules.yml"
+              "rules-file": "sample-relevance-rules.yml"
             }
           }
         }
@@ -302,7 +309,7 @@
         "relevance": {
           "rules-engine": {
             "ex-rules": {
-              "rules-file": "sample-rules.yml"
+              "rules-file": "sample-calculation-rules.yml"
             }
           }
         }

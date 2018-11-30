@@ -101,7 +101,7 @@ public class RulesEngineHelper implements RuleListener {
         for (Map.Entry<String, String> entry : factMap.entrySet()) {
 
 
-            facts.put(getKey(entry.getKey()), isList(entry.getValue()) ? gson.fromJson(entry.getValue(), ArrayList.class) : entry.getValue());
+            facts.put(getKey(entry.getKey()), isList(entry.getValue()) ? gson.fromJson(entry.getValue(), ArrayList.class) : entry.getValue().trim());
         }
 
         return facts;

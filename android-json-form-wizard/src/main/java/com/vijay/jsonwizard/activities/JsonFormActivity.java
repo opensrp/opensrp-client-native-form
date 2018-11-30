@@ -34,6 +34,7 @@ import com.vijay.jsonwizard.comparisons.NotEqualToComparison;
 import com.vijay.jsonwizard.comparisons.RegexComparison;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.CheckBox;
+import com.vijay.jsonwizard.customviews.TextableView;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.interfaces.OnActivityRequestPermissionResultListener;
@@ -188,8 +189,8 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     item.put("openmrs_entity_parent", openMrsEntityParent);
                     item.put("openmrs_entity", openMrsEntity);
                     item.put("openmrs_entity_id", openMrsEntityId);
-                    refreshSkipLogic(key, null);
                     refreshCalculationLogic(key, null);
+                    refreshSkipLogic(key, null);
                     refreshConstraints(key, null);
                     refreshMediaLogic(key, value);
                     return;
@@ -216,7 +217,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                         String anotherKeyAtIndex = innerItem.getString(JsonFormConstants.KEY);
                         if (childKey.equals(anotherKeyAtIndex)) {
                             innerItem.put(JsonFormConstants.VALUE, value);
-                            refreshSkipLogic(parentKey, childKey);
+                            refreshCalculationLogic(parentKey, childKey);
                             refreshSkipLogic(parentKey, childKey);
                             refreshConstraints(parentKey, childKey);
                             return;
@@ -1029,7 +1030,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
     private List<String> getRules(String filename, String fieldKey) {
 
-        List<String> rules = ruleKeys.get(fieldKey);
+        List<String> rules = ruleKeys.get(filename + ":" + fieldKey);
 
         try {
 
@@ -1043,7 +1044,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     Map<String, Object> map = ((Map<String, Object>) object);
 
                     String name = map.get(RuleConstant.NAME).toString();
-                    ruleKeys.put(name, getConditionKeys(map.get(RuleConstant.CONDITION).toString()));
+                    ruleKeys.put(filename + ":" + name, getConditionKeys(map.get(RuleConstant.CONDITION).toString()));
                     if (name.equals(fieldKey)) {
                         break;
                     }
@@ -1056,7 +1057,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         }
 
 
-        return ruleKeys.get(fieldKey);
+        return ruleKeys.get(filename + ":" + fieldKey);
     }
 
     private List<String> getConditionKeys(String condition) {
@@ -1084,13 +1085,39 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     private void updateCalculation(Map<String, String> valueMap, View view, String rulesFile) {
 
         try {
+
+
             String calculation = rulesEngineHelper.getCalculation(valueMap, rulesFile);
-            ((TextView) view).setText(calculation);
+
+            if (view instanceof TextableView) {
+                TextableView textView = ((TextableView) view);
+                textView.setText(calculation.charAt(0) == '{' ? getRenderText(calculation, textView.getTag(R.id.original_text).toString()) : calculation);
+            } else {
+
+                ((TextView) view).setText(calculation);
+            }
 
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
             Log.d(TAG, "calling updateCalculation on Non TextView or Text View decendant");
         }
 
+    }
+
+    private String getRenderText(String calculation, String textTemplate) throws Exception {
+        JSONObject jsonObject = new JSONObject(calculation);
+        Map<String, String> valueMap = new Gson().fromJson((jsonObject).toString(), new TypeToken<HashMap<String, String>>() {
+        }.getType());
+
+        return stringFormat(textTemplate, valueMap);
+    }
+
+    public String stringFormat(String string, Map<String, String> valueMap) {
+
+        for (Map.Entry<String, String> entry : valueMap.entrySet()) {
+            string = string.replace("{" + entry.getKey() + "}", entry.getValue());
+        }
+
+        return string;
     }
 }
