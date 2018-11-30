@@ -2,6 +2,7 @@ package com.vijay.jsonwizard.interfaces;
 
 import android.view.View;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -62,4 +63,10 @@ public interface JsonApi {
     void removeOnActivityRequestPermissionResultListener(Integer requestCode);
 
     void resetFocus();
+
+    JSONObject getmJSONObject();
+
+    void setmJSONObject(JSONObject jsonObject);
+
+    void updateGenericPopupSecondaryValues(JSONArray jsonArray);
 }

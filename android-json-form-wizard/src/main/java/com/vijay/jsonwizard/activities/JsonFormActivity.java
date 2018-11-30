@@ -33,14 +33,12 @@ import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.CheckBox;
 import com.vijay.jsonwizard.customviews.GenericPopupDialog;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
-import com.vijay.jsonwizard.interfaces.GenericPopupInterface;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.interfaces.OnActivityRequestPermissionResultListener;
 import com.vijay.jsonwizard.interfaces.OnActivityResultListener;
 import com.vijay.jsonwizard.utils.ExObjectResult;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.PropertyManager;
-import com.vijay.jsonwizard.utils.SecondaryValueModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,7 +53,7 @@ import java.util.regex.Pattern;
 
 import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 
-public class JsonFormActivity extends AppCompatActivity implements JsonApi, GenericPopupInterface {
+public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
     private static final String TAG = JsonFormActivity.class.getSimpleName();
     private GenericPopupDialog genericPopupDialog = GenericPopupDialog.getInstance();
@@ -167,9 +165,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi, Gene
                         if (popup) {
                             String itemText = "";
                             if (itemType.equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
-                                itemText = getRadioButtonText(item, value);
+                                itemText = formUtils.getRadioButtonText(item, value);
                             }
-                            genericPopupDialog.addSelectedValues(addAssignedValue(keyAtIndex, "", value, itemType, itemText));
+                            genericPopupDialog.addSelectedValues(formUtils.addAssignedValue(keyAtIndex, "", value, itemType, itemText));
                             extraFieldsWithValues = fields;
                         }
                         item.put(JsonFormConstants.VALUE, value);
@@ -185,28 +183,6 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi, Gene
                 }
             }
         }
-    }
-
-    private String getRadioButtonText(JSONObject item, String value) {
-        String text = "";
-        if (item != null && item.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
-            try {
-                JSONArray options = item.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
-                for (int i = 0; i < options.length(); i++) {
-                    JSONObject option = options.getJSONObject(i);
-                    if (option != null && option.has(JsonFormConstants.KEY)) {
-                        String key = option.getString(JsonFormConstants.KEY);
-                        if (key.equals(value)) {
-                            text = option.getString(JsonFormConstants.TEXT);
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                Log.i(TAG, Log.getStackTraceString(e));
-            }
-
-        }
-        return text;
     }
 
     @Override
@@ -236,7 +212,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi, Gene
                         if (childKey.equals(anotherKeyAtIndex)) {
                             innerItem.put(JsonFormConstants.VALUE, value);
                             if (popup) {
-                                genericPopupDialog.addSelectedValues(addAssignedValue(keyAtIndex, childKey, value, itemType, itemText));
+                                genericPopupDialog.addSelectedValues(formUtils.addAssignedValue(keyAtIndex, childKey, value, itemType, itemText));
                                 extraFieldsWithValues = fields;
                             }
                             refreshSkipLogic(parentKey, childKey, popup);
@@ -247,23 +223,6 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi, Gene
                 }
             }
         }
-    }
-
-    private Map<String, String> addAssignedValue(String itemKey, String optionKey, String keyValue, String itemType, String itemText) {
-        Map<String, String> value = new HashMap<>();
-        switch (itemType) {
-            case JsonFormConstants.CHECK_BOX:
-                value.put(itemKey, optionKey + ":" + itemText + ":" + keyValue + ";" + itemType);
-                break;
-            case JsonFormConstants.NATIVE_RADIO_BUTTON:
-                value.put(itemKey, keyValue + ":" + itemText + ";" + itemType);
-                break;
-            default:
-                value.put(itemKey, keyValue + ";" + itemType);
-                break;
-        }
-
-        return value;
     }
 
     @Override
@@ -983,131 +942,18 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi, Gene
         return new ExObjectResult(false, false);
     }
 
-    /**
-     * Receives the generic popup data from Generic Dialog fragment
-     *
-     * @param selectedValues
-     * @param parentKey
-     * @param stepName
-     * @param childKey
-     */
     @Override
-    public void onGenericDataPass(Map<String, SecondaryValueModel> selectedValues, String parentKey, String stepName, String childKey) {
-        if (mJSONObject != null) {
-            JSONObject parentJson = getStep(stepName);
-            JSONArray fields = new JSONArray();
-            try {
-                if (parentJson.has(JsonFormConstants.SECTIONS) && parentJson.get(JsonFormConstants.SECTIONS) instanceof JSONArray) {
-                    JSONArray sections = parentJson.getJSONArray(JsonFormConstants.SECTIONS);
-                    for (int i = 0; i < sections.length(); i++) {
-                        JSONObject sectionJson = sections.getJSONObject(i);
-                        if (sectionJson.has(JsonFormConstants.FIELDS)) {
-                            fields = formUtils.concatArray(fields, sectionJson.getJSONArray(JsonFormConstants.FIELDS));
-                        }
-                    }
-                } else if (parentJson.has(JsonFormConstants.FIELDS) && parentJson.get(JsonFormConstants.FIELDS) instanceof JSONArray) {
-                    fields = parentJson.getJSONArray(JsonFormConstants.FIELDS);
-
-                }
-
-                if (fields.length() > 0) {
-                    for (int i = 0; i < fields.length(); i++) {
-                        JSONObject item = fields.getJSONObject(i);
-                        if (item != null && item.getString(JsonFormConstants.KEY).equals(parentKey)) {
-                            addSecondaryValues(getJsonObjectToUpdate(item, childKey), selectedValues);
-                        }
-                    }
-                }
-
-            } catch (JSONException e) {
-                Log.i(TAG, Log.getStackTraceString(e));
-            }
-        }
+    public JSONObject getmJSONObject() {
+        return mJSONObject;
     }
 
     @Override
-    public void clearSecondaryFields() {
-        extraFieldsWithValues = null;
+    public void setmJSONObject(JSONObject mJSONObject) {
+        this.mJSONObject = mJSONObject;
     }
 
-    /**
-     * Finds the actual widget to be updated and secondary values added on
-     *
-     * @param jsonObject
-     * @param childKey
-     * @return
-     */
-    private JSONObject getJsonObjectToUpdate(JSONObject jsonObject, String childKey) {
-        JSONObject item = new JSONObject();
-        try {
-            if (jsonObject != null && jsonObject.has(JsonFormConstants.TYPE)) {
-                if ((jsonObject.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.NATIVE_RADIO_BUTTON) || jsonObject.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) && childKey != null) {
-                    JSONArray options = jsonObject.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
-                    if (options != null) {
-                        for (int i = 0; i < options.length(); i++) {
-                            JSONObject childItem = options.getJSONObject(i);
-                            if (childItem != null && childItem.has(JsonFormConstants.KEY) && childKey.equals(childItem.getString(JsonFormConstants.KEY))) {
-                                item = childItem;
-                            }
-                        }
-                    }
-                } else {
-                    item = jsonObject;
-                }
-            } else {
-                item = jsonObject;
-            }
-        } catch (Exception e) {
-            Log.i(TAG, Log.getStackTraceString(e));
-        }
-
-        return item;
-    }
-
-
-    /**
-     * Adding the secondary values on to the specific json widget
-     *
-     * @param item
-     * @param secondaryValueModel
-     */
-    private void addSecondaryValues(JSONObject item, Map<String, SecondaryValueModel> secondaryValueModel) {
-        JSONObject valueObject;
-        JSONArray secondaryValuesArray = new JSONArray();
-        SecondaryValueModel secondaryValue;
-        for (Object o : secondaryValueModel.entrySet()) {
-            Map.Entry pair = (Map.Entry) o;
-            secondaryValue = (SecondaryValueModel) pair.getValue();
-            valueObject = createSecondaryValueObject(secondaryValue);
-            secondaryValuesArray.put(valueObject);
-        }
-        try {
-            item.put(JsonFormConstants.SECONDARY_VALUE, secondaryValuesArray);
-        } catch (Exception e) {
-            Log.i(TAG, Log.getStackTraceString(e));
-        }
-    }
-
-    /**
-     * Creates the secondary values objects
-     *
-     * @param value
-     * @return
-     */
-    private JSONObject createSecondaryValueObject(SecondaryValueModel value) {
-        JSONObject jsonObject = new JSONObject();
-        try {
-            String key = value.getKey();
-            String type = value.getType();
-            JSONArray values = value.getValues();
-
-            jsonObject.put(JsonFormConstants.KEY, key);
-            jsonObject.put(JsonFormConstants.TYPE, type);
-            jsonObject.put(JsonFormConstants.VALUES, values);
-        } catch (Exception e) {
-            Log.i(TAG, Log.getStackTraceString(e));
-
-        }
-        return jsonObject;
+    @Override
+    public void updateGenericPopupSecondaryValues(JSONArray jsonArray) {
+        extraFieldsWithValues = jsonArray;
     }
 }

@@ -9,6 +9,7 @@ import android.graphics.Typeface;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,6 +57,7 @@ public class FormUtils {
     private static final String START_JAVAROSA_PROPERTY = "start";
     private static final String END_JAVAROSA_PROPERTY = "end";
     private static final String TODAY_JAVAROSA_PROPERTY = "today";
+    private final String TAG = this.getClass().getSimpleName();
 
     public static LinearLayout.LayoutParams getLinearLayoutParams(int width, int height, int left, int top, int right, int bottom) {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(width, height);
@@ -499,5 +501,44 @@ public class FormUtils {
             }
         }
         return result;
+    }
+
+    public Map<String, String> addAssignedValue(String itemKey, String optionKey, String keyValue, String itemType, String itemText) {
+        Map<String, String> value = new HashMap<>();
+        switch (itemType) {
+            case JsonFormConstants.CHECK_BOX:
+                value.put(itemKey, optionKey + ":" + itemText + ":" + keyValue + ";" + itemType);
+                break;
+            case JsonFormConstants.NATIVE_RADIO_BUTTON:
+                value.put(itemKey, keyValue + ":" + itemText + ";" + itemType);
+                break;
+            default:
+                value.put(itemKey, keyValue + ";" + itemType);
+                break;
+        }
+
+        return value;
+    }
+
+    public String getRadioButtonText(JSONObject item, String value) {
+        String text = "";
+        if (item != null && item.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
+            try {
+                JSONArray options = item.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
+                for (int i = 0; i < options.length(); i++) {
+                    JSONObject option = options.getJSONObject(i);
+                    if (option != null && option.has(JsonFormConstants.KEY)) {
+                        String key = option.getString(JsonFormConstants.KEY);
+                        if (key.equals(value)) {
+                            text = option.getString(JsonFormConstants.TEXT);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                Log.i(TAG, Log.getStackTraceString(e));
+            }
+
+        }
+        return text;
     }
 }

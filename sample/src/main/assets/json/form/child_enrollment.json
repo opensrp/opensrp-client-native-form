@@ -57,1310 +57,1311 @@
   "step1": {
     "title": "Birth Registration",
     "fields": [
-      {
-        "key": "Child_Photo",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "choose_image",
-        "uploadButtonText": "Take a photo of the child"
-      },
-      {
-        "key": "gps",
-        "openmrs_entity_parent": "usual_residence",
-        "openmrs_entity": "person_address",
-        "openmrs_entity_id": "geopoint",
-        "openmrs_data_type": "text",
-        "type": "gps"
-      },
-      {
-        "key": "Home_Facility",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "openmrs_data_type": "text",
-        "type": "tree",
-        "hint": "Child's home health facility *",
-        "tree": [
-        ],
-        "v_required": {
-          "value": true,
-          "err": "Please enter the child's home facility"
-        }
-      },
-      {
-        "key": "ZEIR_ID",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "person_identifier",
-        "openmrs_entity_id": "ZEIR_ID",
-        "type": "barcode",
-        "barcode_type": "qrcode",
-        "hint": "Child's ZEIR ID *",
-        "scanButtonText": "Scan QR Code",
-        "v_numeric": {
-          "value": "true",
-          "err": "Please enter a valid ID"
-        },
-        "v_required": {
-          "value": "true",
-          "err": "Please enter the Child's ZEIR ID"
-        }
-      },
-      {
-        "key": "Child_Register_Card_Number",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "person_attribute",
-        "openmrs_entity_id": "Child_Register_Card_Number",
-        "read_only": true,
-        "value": "1891389133",
-        "type": "edit_text",
-        "hint": "Child's register card number"
-      },
-      {
-        "key": "Child_Birth_Certificate",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "person_attribute",
-        "openmrs_entity_id": "Child_Birth_Certificate",
-        "read_only": true,
-        "v_required": {
-          "value": "true",
-          "err": "Please enter child's birth certificate"
-        },
-        "type": "edit_text",
-        "hint": "Child's birth certificate number"
-      },
-      {
-        "key": "First_Name",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "person",
-        "openmrs_entity_id": "first_name",
-        "type": "edit_text",
-        "hint": "First name",
-        "edit_type": "name",
-        "v_regex": {
-          "value": "[A-Za-z\\s\.\-]*",
-          "err": "Please enter a valid name"
-        }
-      },
-      {
-        "key": "Last_Name",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "person",
-        "openmrs_entity_id": "last_name",
-        "type": "edit_text",
-        "hint": "Last name *",
-        "edit_type": "name",
-        "v_required": {
-          "value": "true",
-          "err": "Please enter the last name"
-        },
-        "v_regex": {
-          "value": "[A-Za-z\\s\.\-]*",
-          "err": "Please enter a valid name"
-        }
-      },
-      {
-        "key": "Sex",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "person",
-        "openmrs_entity_id": "gender",
-        "type": "spinner",
-        "read_only": true,
-        "hint": "Sex *",
-        "values": [
-          "Male",
-          "Female"
-        ],
-        "v_required": {
-          "value": "true",
-          "err": "Please enter the sex"
-        }
-      },
-      {
-        "key": "Date_Birth",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "person",
-        "openmrs_entity_id": "birthdate",
-        "type": "date_picker",
-        "hint": "Child's DOB *",
-        "expanded": false,
-        "duration": {
-          "label": "Age"
-        },
-        "min_date": "today-5y",
-        "max_date": "today",
-        "v_required": {
-          "value": "true",
-          "err": "Please enter the date of birth"
-        }
-      },
-      {
-        "key": "First_Health_Facility_Contact",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "concept",
-        "openmrs_entity_id": "163260AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-        "openmrs_data_type": "text",
-        "type": "date_picker",
-        "hint": "Date first seen *",
-        "expanded": false,
-        "min_date": "today-5y",
-        "max_date": "today",
-        "v_required": {
-          "value": "true",
-          "err": "Enter the date that the child was first seen at a health facility for immunization services"
-        },
-        "constraints": [
-          {
-            "type": "date",
-            "ex": "greaterThanEqualTo(., step1:Date_Birth)",
-            "err": "Date first seen can't occur before date of birth"
-          }
-        ]
-      },
-      {
-        "key": "Birth_Weight",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "concept",
-        "openmrs_entity_id": "5916AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-        "openmrs_data_type": "text",
-        "type": "edit_text",
-        "hint": "Birth weight (kg) *",
-        "v_min": {
-          "value": "0.1",
-          "err": "Weight must be greater than 0"
-        },
-        "v_max": {
-          "value": "200",
-          "err": "Weight must be less than 200"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "Enter a valid weight"
-        },
-        "v_required": {
-          "value": "true",
-          "err": "Enter the child's birth weight"
-        }
-      },
-      {
-        "key": "Mother_Guardian_First_Name",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "person",
-        "openmrs_entity_id": "first_name",
-        "entity_id": "mother",
-        "type": "edit_text",
-        "hint": "Mother/guardian first name *",
-        "edit_type": "name",
-        "look_up": "true",
-        "v_required": {
-          "value": "true",
-          "err": "Please enter the mother/guardian's first name"
-        },
-        "v_regex": {
-          "value": "[A-Za-z\\s\.\-]*",
-          "err": "Please enter a valid name"
-        }
-      },
-      {
-        "key": "Mother_Guardian_Last_Name",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "person",
-        "openmrs_entity_id": "last_name",
-        "entity_id": "mother",
-        "type": "edit_text",
-        "hint": "Mother/guardian last name *",
-        "edit_type": "name",
-        "look_up": "true",
-        "v_required": {
-          "value": "true",
-          "err": "Please enter the mother/guardian's last name"
-        },
-        "v_regex": {
-          "value": "[A-Za-z\\s\.\-]*",
-          "err": "Please enter a valid name"
-        }
-      },
-      {
-        "key": "Mother_Guardian_Date_Birth",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "person",
-        "openmrs_entity_id": "birthdate",
-        "entity_id": "mother",
-        "type": "date_picker",
-        "hint": "Mother/guardian DOB",
-        "look_up": "true",
-        "expanded": false,
-        "duration": {
-          "label": "Age"
-        },
-        "min_date": "01-01-1900",
-        "max_date": "today-10y"
-      },
-      {
-        "key": "Mother_Guardian_NRC",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "person_attribute",
-        "openmrs_entity_id": "NRC_Number",
-        "entity_id": "mother",
-        "type": "edit_text",
-        "hint": "Mother/guardian NRC number",
-        "v_regex": {
-          "value": "([0-9]{6}/[0-9]{2}/[0-9])|\s*",
-          "err": "Number must take the format of ######/##/#"
-        }
-      },
-      {
-        "key": "Mother_Guardian_Number",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "concept",
-        "openmrs_entity_id": "159635AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-        "type": "edit_text",
-        "hint": "Mother/guardian phone number",
-        "v_numeric": {
-          "value": "true",
-          "err": "Number must begin with 095, 096, or 097 and must be a total of 10 digits in length"
-        },
-        "v_regex": {
-          "value": "(09[5-7][0-9]{7})|\s*",
-          "err": "Number must begin with 095, 096, or 097 and must be a total of 10 digits in length"
-        }
-      },
-      {
-        "key": "plan_breastfeed",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "spinner",
-        "hint": "What are your thoughts on breastfeeding",
-        "values": [
-          "I plan to breastfeed",
-          "I do not want to breastfeed"
-        ],
-        "has_media_content": true,
-        "media": [
-          {
-            "media_type": "text",
-            "media_trigger_value": "I plan to breastfeed",
-            "media_link": "",
-            "media_text": "This is an excellent choice. You are making a good choice to give your child the best start to life.\nBreastmilk is clean and wholesome and provides all the essential nutrients and vitamins your baby needs for a healthy start to life. Give only breastmilk in the first 5 months of life including no water, tea, or milk or any other liquid and immediately breastfeed within an hour of delivery."
-          },
-          {
-            "media_type": "video",
-            "media_trigger_value": "I do not want to breastfeed",
-            "media_link": "android.resource://org.smartregister.nativeform/raw/understandingbreastfeeding",
-            "media_text": ""
-          }
-        ],
-        "v_required": {
-          "value": "true",
-          "err": "Please answer the question"
-        }
-      },
-      {
-        "key": "Father_Guardian_Name",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "concept",
-        "openmrs_entity_id": "1594AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-        "openmrs_data_type": "text",
-        "type": "edit_text",
-        "hint": "Father/guardian full name",
-        "edit_type": "name",
-        "v_regex": {
-          "value": "[A-Za-z\\s\.\-]*",
-          "err": "Please enter a valid name"
-        }
-      },
-      {
-        "key": "Father_Guardian_NRC",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "person_attribute",
-        "openmrs_entity_id": "Father_NRC_Number",
-        "type": "edit_text",
-        "hint": "Father/guardian NRC number",
-        "v_regex": {
-          "value": "([0-9]{6}/[0-9]{2}/[0-9])|\s*",
-          "err": "Number must take the format of ######/##/#"
-        }
-      },
-      {
-        "key": "Place_Birth",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "concept",
-        "openmrs_entity_id": "1572AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-        "openmrs_data_type": "select one",
-        "type": "spinner",
-        "read_only": true,
-        "hint": "Place of birth *",
-        "label_info_title": "Place of birth spinner",
-        "label_info_text": "here is some text on this dialog",
-        "values": [
-          "Health facility",
-          "Home"
-        ],
-        "openmrs_choice_ids": {
-          "Health facility": "1588AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-          "Home": "1536AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-        },
-        "v_required": {
-          "value": true,
-          "err": "Please enter the place of birth"
-        }
-      },
-      {
-        "key": "Birth_Facility_Name",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "concept",
-        "openmrs_entity_id": "163531AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-        "openmrs_data_type": "text",
-        "type": "tree",
-        "hint": "Which health facility was the child born in? *",
-        "tree": [
-        ],
-        "v_required": {
-          "value": true,
-          "err": "Please enter the birth facility name"
-        },
-        "relevance": {
-          "step1:Place_Birth": {
-            "type": "string",
-            "ex": "equalTo(., \"Health facility\")"
-          }
-        }
-      },
-      {
-        "key": "Birth_Facility_Name_Other",
-        "openmrs_entity_parent": "163531AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-        "openmrs_entity": "concept",
-        "openmrs_entity_id": "160632AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-        "type": "edit_text",
-        "hint": "Other health facility *",
-        "edit_type": "name",
-        "v_required": {
-          "value": true,
-          "err": "Please specify the health facility the child was born in"
-        },
-        "relevance": {
-          "step1:Birth_Facility_Name": {
-            "type": "string",
-            "ex": "equalTo(., \"[\"Other\"]\")"
-          }
-        }
-      },
-      {
-        "key": "Residential_Area",
-        "openmrs_entity_parent": "usual_residence",
-        "openmrs_entity": "person_address",
-        "openmrs_entity_id": "address3",
-        "openmrs_data_type": "text",
-        "type": "tree",
-        "hint": "Child's residential area *",
-        "tree": [
-        ],
-        "v_required": {
-          "value": true,
-          "err": "Please enter the child's residential area"
-        }
-      },
-      {
-        "key": "Residential_Area_Other",
-        "openmrs_entity_parent": "usual_residence",
-        "openmrs_entity": "person_address",
-        "openmrs_entity_id": "address5",
-        "type": "edit_text",
-        "hint": "Other residential area *",
-        "edit_type": "name",
-        "v_required": {
-          "value": true,
-          "err": "Please specify the residential area"
-        },
-        "relevance": {
-          "step1:Residential_Area": {
-            "type": "string",
-            "ex": "equalTo(., \"[\"Other\"]\")"
-          }
-        }
-      },
-      {
-        "key": "Residential_Address",
-        "openmrs_entity_parent": "usual_residence",
-        "openmrs_entity": "person_address",
-        "openmrs_entity_id": "address2",
-        "type": "edit_text",
-        "hint": "Home address *",
-        "edit_type": "name",
-        "v_required": {
-          "value": true,
-          "err": "Please enter the home address"
-        }
-      },
-      {
-        "key": "Physical_Landmark",
-        "openmrs_entity_parent": "usual_residence",
-        "openmrs_entity": "person_address",
-        "openmrs_entity_id": "address1",
-        "type": "edit_text",
-        "hint": "Landmark",
-        "edit_type": "name"
-      },
-      {
-        "key": "CHW_Name",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "person_attribute",
-        "openmrs_entity_id": "CHW_Name",
-        "type": "edit_text",
-        "hint": "CHW name",
-        "edit_type": "name",
-        "v_regex": {
-          "value": "[A-Za-z\\s\.\-]*",
-          "err": "Please enter a valid name"
-        }
-      },
-      {
-        "key": "CHW_Phone_Number",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "person_attribute",
-        "openmrs_entity_id": "CHW_Phone_Number",
-        "type": "edit_text",
-        "hint": "CHW phone number",
-        "v_numeric": {
-          "value": "true",
-          "err": "Number must begin with 095, 096, or 097 and must be a total of 10 digits in length"
-        },
-        "v_regex": {
-          "value": "(09[5-7][0-9]{7})|\s*",
-          "err": "Number must begin with 095, 096, or 097 and must be a total of 10 digits in length"
-        },
-        "relevance": {
-          "step1:delivery_complications": {
-            "ex-checkbox": [
-              {
-                "or": [
-                  "severe_bleeding"
-                ]
-              },
-              {
-                "and": [
-                  "perineal_tear",
-                  "placenta_previa"
-                ]
-              },
-              {
-                "and": [
-                  "cord_prolapse",
-                  "abnormal_presentation"
-                ],
-                "or": [
-                  "prolonged_obstructed_labour"
-                ]
+      /*
+            {
+              "key": "Child_Photo",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "",
+              "openmrs_entity_id": "",
+              "type": "choose_image",
+              "uploadButtonText": "Take a photo of the child"
+            },
+            {
+              "key": "gps",
+              "openmrs_entity_parent": "usual_residence",
+              "openmrs_entity": "person_address",
+              "openmrs_entity_id": "geopoint",
+              "openmrs_data_type": "text",
+              "type": "gps"
+            },
+            {
+              "key": "Home_Facility",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "",
+              "openmrs_entity_id": "",
+              "openmrs_data_type": "text",
+              "type": "tree",
+              "hint": "Child's home health facility *",
+              "tree": [
+              ],
+              "v_required": {
+                "value": true,
+                "err": "Please enter the child's home facility"
               }
-            ]
-          }
-        }
-      },
-      {
-        "key": "delivery_complications",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "concept",
-        "openmrs_entity_id": "161641AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-        "openmrs_data_type": "select one",
-        "type": "check_box",
-        "label": "Any delivery complications?",
-        "label_text_size": "18sp",
-        "label_text_color": "#FF9800",
-        "hint": "Any delivery complications?",
-        "exclusive": [
-          "none"
-        ],
-        "options": [
-          {
-            "key": "none",
-            "text": "None",
-            "value": false,
-            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-          },
-          {
-            "key": "severe_bleeding",
-            "text": "Severe bleeding/Hemorrhage",
-            "value": false,
-            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "text_color": "#000000"
-          },
-          {
-            "key": "placenta_previa",
-            "text": "Placenta previa",
-            "value": false,
-            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "text_size": "15sp"
-          },
-          {
-            "key": "cord_prolapse",
-            "text": "Cord prolapse",
-            "value": false,
-            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "text_size": "10sp"
-          },
-          {
-            "key": "prolonged_obstructed_labour",
-            "text": "Prolonged/obstructed labour",
-            "value": false,
-            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-          },
-          {
-            "key": "abnormal_presentation",
-            "text": "Abnormal presentation",
-            "value": false,
-            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "text_color": "#FF9800"
-          },
-          {
-            "key": "perineal_tear",
-            "text": "Perineal tear (2, 3 or 4th degree)",
-            "value": false,
-            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-          },
-          {
-            "key": "Other",
-            "text": "Other",
-            "value": false,
-            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-          }
-        ],
-        "v_required": {
-          "value": "false"
-        }
-      },
-      {
-        "key": "delivery_complications",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "concept",
-        "openmrs_entity_id": "161641AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-        "openmrs_data_type": "select one",
-        "type": "check_box",
-        "label": "Any physiological symptoms?",
-        "label_text_style": "bold",
-        "options": [
-          {
-            "key": "None",
-            "text": "None",
-            "value": false,
-            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-          },
-          {
-            "key": "fatigue",
-            "text": "Fatigue",
-            "value": false,
-            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-          },
-          {
-            "key": "visual_disturbance",
-            "text": "Visual disturbance",
-            "value": false,
-            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-          },
-          {
-            "key": "other",
-            "text": "Other",
-            "value": false,
-            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-          }
-        ],
-        "v_required": {
-          "value": "false"
-        }
-      },
-      {
-        "key": "symp_sev_preeclampsia",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "check_box",
-        "label": "Any symptoms of severe pre-eclampsia?",
-        "label_text_style": "bold",
-        "text_color": "#000000",
-        "read_only": true,
-        "exclusive": [
-          "none"
-        ],
-        "options": [
-          {
-            "key": "none",
-            "text": "None",
-            "value": false,
-            "openmrs_entity": "",
-            "openmrs_entity_id": ""
-          },
-          {
-            "key": "severe_headache",
-            "text": "Severe headache",
-            "value": false,
-            "openmrs_entity": "Headache",
-            "openmrs_entity_id": "139084",
-            "label_info_title": "Severe Headache",
-            "label_info_text": "Check if the patient experience frequent long headaches"
-          },
-          {
-            "key": "blurred_vision",
-            "text": "Blurred vision",
-            "value": false,
-            "openmrs_entity": "Blurred vision",
-            "openmrs_entity_id": "147104"
-          },
-          {
-            "key": "epigastric_pain",
-            "text": "Epigastric pain",
-            "value": false,
-            "openmrs_entity": "",
-            "openmrs_entity_id": "141128"
-          },
-          {
-            "key": "dizziness",
-            "text": "Dizziness",
-            "value": false,
-            "openmrs_entity": "",
-            "openmrs_entity_id": ""
-          },
-          {
-            "key": "vomiting",
-            "text": "Vomiting",
-            "value": false,
-            "openmrs_entity": "",
-            "openmrs_entity_id": ""
-          }
-        ],
-        "v_required": {
-          "value": true,
-          "err": "Please specify any other symptoms or select none"
-        }
-      },
-      {
-        "key": "PMTCT_Status",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "concept",
-        "openmrs_entity_id": "1396AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-        "type": "spinner",
-        "hint": "HIV exposure",
-        "values": [
-          "CE",
-          "MSU",
-          "CNE"
-        ],
-        "openmrs_choice_ids": {
-          "CE": "703AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-          "MSU": "1067AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-          "CNE": "664AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-        }
-      },
-      {
-        "key": "label_3",
-        "type": "label",
-        "text": "This is hinted text: <Enter name to show this>",
-        "text_color": "#000000",
-        "hint_on_text": true,
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "relevance": {
-          "step1:Date_Birth": {
-            "type": "string",
-            "ex": "notEqualTo(.,\"\")"
-          }
-        }
-      },
-      {
-        "key": "label_site_ipv_assess",
-        "type": "label",
-        "text": "1. Are all of the following in place at your facility:",
-        "text_size": "22px",
-        "text_color": "#000000",
-        "v_required": {
-          "value": true
-        }
-      },
-      {
-        "key": "enabled_label",
-        "type": "label",
-        "text": "This is enabled: <Hinted here>",
-        "hint_on_text": true,
-        "text_color": "#FFC100",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "v_required": {
-          "value": true
-        },
-        "label_info_text": "Checking out the display oof the info icon needed to display this infomation",
-        "label_info_title": "Highest Level of School"
-      },
-      {
-        "key": "enabled_label",
-        "type": "label",
-        "text": "This is enabled",
-        "hint_on_text": false,
-        "text_color": "#FFC100",
-        "text_size": "17sp",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "v_required": {
-          "value": true
-        },
-        "label_info_text": "Checking out the display oof the info icon needed to display this infomation",
-        "label_info_title": "Highest Level of School"
-      },
-      {
-        "key": "divider1",
-        "type": "h_line",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": ""
-      },
-      {
-        "key": "disabled_label",
-        "type": "label",
-        "text": "This is disabled: <Hinted txt here>",
-        "read_only": true,
-        "hint_on_text": true,
-        "text_color": "#000000",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": ""
-      },
-      {
-        "key": "label_1",
-        "type": "label",
-        "text": "The ZEIR ID given is unique",
-        "has_bg": true,
-        "top_padding": "10dp",
-        "left_padding": "20dp",
-        "right_padding": "20dp",
-        "text_size": "14sp",
-        "text_color": "#000000",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": ""
-      },
-      {
-        "key": "label_2",
-        "type": "label",
-        "text": "*Terms and conditions apply",
-        "has_bg": true,
-        "text_size": "12sp",
-        "text_color": "#737373",
-        "left_padding": "20dp",
-        "right_padding": "20dp",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": ""
-      },
-      {
-        "key": "label_1",
-        "type": "label",
-        "text": "The child's register card number should also be unique",
-        "has_bg": true,
-        "left_padding": "20dp",
-        "right_padding": "20dp",
-        "text_size": "14sp",
-        "text_color": "#000000",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": ""
-      },
-      {
-        "key": "label_2",
-        "type": "label",
-        "text": "The format for this might differ based on country",
-        "has_bg": true,
-        "text_size": "12sp",
-        "text_color": "#737373",
-        "bottom_padding": "20dp",
-        "bottom_margin": "20dp",
-        "left_padding": "20dp",
-        "right_padding": "20dp",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": ""
-      },
-      {
-        "key": "site_ipv_assess",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "openmrs_data_type": "select one",
-        "label": "1. A protocol or standard operating procedure for Intimate Partner Violence (IPV); \n\n2. A health worker trained on how to ask about IPV and how to provide the minimum response or beyond;\n\n3. A private setting;\n\n4. A way to ensure confidentiality;\n\n5. Time to allow for appropriate disclosure; and\n\n6. A system for referral in place.",
-        "label_text_size": "18px",
-        "type": "native_radio",
-        "options": [
-          {
-            "key": "1",
-            "text": "Yes"
-          },
-          {
-            "key": "0",
-            "text": "No"
-          }
-        ],
-        "value": "",
-        "v_required": {
-          "value": true,
-          "err": "Please select where stock was issued"
-        }
-      },
-      {
-        "key": "spacer",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "spacer",
-        "type": "spacer",
-        "spacer_height": "20sp"
-      },
-      {
-        "key": "native_radio",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "read_only": true,
-        "label": "Highest Level of School.",
-        "label_text_size": "18px",
-        "label_text_color": "#FF9800",
-        "label_info_text": "Checking out the display oof the info icon needed to display this information",
-        "label_info_title": "Highest Level of School",
-        "options": [
-          {
-            "key": "primary_school",
-            "text": "Primary school",
-            "text_color": "#000000",
-            "specify_info": "Specify",
-            "specify_info_color": "#000000",
-            "extra_info": "Here we go",
-            "label_info_text": "Checking out the display oof the info icon needed to display this information",
-            "label_info_title": "Highest Level of School",
-            "extra_info_color": "#445567"
-          },
-          {
-            "key": "high_school",
-            "text": "High School",
-            "text_size": "18px",
-            "specify_info": "Specify",
-            "extra_info": "Here we go"
-          },
-          {
-            "key": "higher_education",
-            "text": "College/University",
-            "text_color": "#358CB7"
-          }
-        ],
-        "value": "high_school",
-        "v_required": {
-          "value": true
-        }
-      },
-      {
-        "key": "native_radio_tertiary_education",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "Completed Tertiary education?",
-        "label_text_size": "18px",
-        "label_text_style": "bold",
-        "options": [
-          {
-            "key": "yes",
-            "text": "Yes",
-            "text_size": "18px"
-          },
-          {
-            "key": "no",
-            "text": "No",
-            "text_size": "18px"
-          }
-        ],
-        "value": "",
-        "v_required": {
-          "value": true
-        }
-      },
-      {
-        "key": "native_radio_notification_updates2",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "Is the user registered for notification updates?",
-        "label_text_size": "18px",
-        "label_text_style": "bold_italic",
-        "options": [
-          {
-            "key": "yes",
-            "text": "Yes"
-          },
-          {
-            "key": "no",
-            "text": "No"
-          }
-        ],
-        "value": "",
-        "v_required": {
-          "value": true
-        },
-        "relevance": {
-          "step1:native_radio_tertiary_education": {
-            "type": "string",
-            "ex": "equalTo(., \"yes\")"
-          }
-        }
-      },
-      {
-        "key": "spacer",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "spacer",
-        "type": "spacer",
-        "spacer_height": "20sp"
-      },
-      {
-        "key": "toaster_notes",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "person_attribute",
-        "openmrs_entity_id": "toaster_notes",
-        "type": "toaster_notes",
-        "text": "This is an information note",
-        "text_color": "#1199F9",
-        "toaster_type": "info",
-        "toaster_info_text": "This is an information note, This is an information note, This is an information note, This is an information note,This is an information note, This is an information note",
-        "toaster_info_title": "Information Toaster Info Title"
-      },
-      {
-        "key": "toaster_notes",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "person_attribute",
-        "openmrs_entity_id": "toaster_notes",
-        "type": "toaster_notes",
-        "text": "This is an information note, This is an information note, This is an information note, This is an information note,This is an information note, This is an information note, This is an information note,This is an information note",
-        "toaster_type": "info"
-      },
-      {
-        "key": "toaster_notes",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "person_attribute",
-        "openmrs_entity_id": "toaster_notes",
-        "type": "toaster_notes",
-        "text": "This is an positive note",
-        "text_color": "#3E7E2E",
-        "toaster_type": "positive"
-      },
-      {
-        "key": "toaster_notes",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "person_attribute",
-        "openmrs_entity_id": "toaster_notes",
-        "type": "toaster_notes",
-        "text": "This is an warning note",
-        "text_color": "#FFC100",
-        "toaster_type": "warning"
-      },
-      {
-        "key": "spacer",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "spacer",
-        "type": "spacer",
-        "spacer_height": "40sp"
-      },
-      {
-        "key": "toaster_notes",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "person_attribute",
-        "openmrs_entity_id": "toaster_notes",
-        "type": "toaster_notes",
-        "text": "This is an danger note",
-        "text_color": "#CF0800",
-        "toaster_type": "problem"
-      },
-      {
-        "key": "spacer",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "spacer",
-        "type": "spacer",
-        "spacer_height": "10sp"
-      },
-      {
-        "key": "toaster_notes",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "toaster_notes",
-        "text": "Lets test with this for relevance",
-        "toaster_type": "problem",
-        "relevance": {
-          "step1:native_radio_notification_updates": {
-            "type": "string",
-            "ex": "equalTo(., \"yes\")"
-          }
-        }
-      },
-      {
-        "key": "spacer",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "spacer",
-        "type": "spacer",
-        "spacer_height": "10sp"
-      },
-      {
-        "key": "native_radio_notification_updates",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "Is the user registered for notification updates?",
-        "label_text_size": "18px",
-        "label_text_style": "bold_italic",
-        "options": [
-          {
-            "key": "yes",
-            "text": "Yes"
-          },
-          {
-            "key": "no",
-            "text": "No"
-          }
-        ],
-        "value": "",
-        "v_required": {
-          "value": true
-        }
-      },
-      {
-        "key": "spacer",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "spacer",
-        "type": "spacer",
-        "spacer_height": "10sp"
-      },
-      {
-        "key": "enabled_label",
-        "type": "label",
-        "text": "Please select the number of family members",
-        "text_color": "#000000",
-        "v_required": {
-          "value": true
-        }
-      },
-      {
-        "key": "enabled_label",
-        "type": "label",
-        "label_text_style": "bold",
-        "text": "This is a bold text label that is also required.",
-        "text_color": "#000000",
-        "v_required": {
-          "value": true
-        }
-      },
-      {
-        "key": "spacer",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "spacer",
-        "type": "spacer",
-        "spacer_height": "15sp"
-      },
-      {
-        "key": "enabled_label",
-        "type": "label",
-        "label_text_style": "bold",
-        "text": "This is the normal edit text design",
-        "text_color": "#000000",
-        "v_required": {
-          "value": true
-        }
-      },
-      {
-        "key": "Last_Name",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "person",
-        "openmrs_entity_id": "last_name",
-        "type": "normal_edit_text",
-        "edit_type": "name",
-        "edit_text_style": "bordered",
-        "v_required": {
-          "value": "true",
-          "err": "Please enter the last name"
-        },
-        "v_regex": {
-          "value": "[A-Za-z\\s\.\-]*",
-          "err": "Please enter a valid name"
-        }
-      },
-      {
-        "key": "nerd",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "person",
-        "openmrs_entity_id": "last_name",
-        "type": "normal_edit_text",
-        "hint": "Guardians name *",
-        "edit_type": "name",
-        "read_only": true,
-        "edit_text_style": "bordered",
-        "v_required": {
-          "value": "true",
-          "err": "Please enter the guardians name"
-        },
-        "v_regex": {
-          "value": "[A-Za-z\\s\.\-]*",
-          "err": "Please enter a valid name"
-        }
-      },
-      {
-        "key": "numbers_selector",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "numbers_selector",
-        "number_of_selectors": "5",
-        "start_number": "1",
-        "max_value": "20",
-        "text_size": "18px",
-        "text_color": "#000000",
-        "selected_text_color": "#ffffff",
-        "v_required": {
-          "value": true
-        }
-      },
-      {
-        "key": "spacer",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "spacer",
-        "type": "spacer",
-        "spacer_height": "15sp"
-      },
-      {
-        "key": "numbers_selector_two",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "numbers_selector",
-        "number_of_selectors": "5",
-        "start_number": "0",
-        "max_value": "20",
-        "text_size": "18px",
-        "text_color": "#000000",
-        "selected_text_color": "#ffffff",
-        "v_required": {
-          "value": true
-        }
-      },
-      {
-        "key": "spacer",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "spacer",
-        "type": "spacer",
-        "spacer_height": "15sp"
-      },
-      {
-        "key": "numbers_selector_four",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "numbers_selector",
-        "number_of_selectors": "5",
-        "start_number": "10",
-        "max_value": "20",
-        "text_size": "18px",
-        "text_color": "#000000",
-        "selected_text_color": "#ffffff",
-        "v_required": {
-          "value": true
-        }
-      },
-      {
-        "key": "tobacco_user",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "Uses tobacco products?",
-        "multi_relevance": true,
-        "options": [
-          {
-            "key": "yes",
-            "text": "Yes",
-            "openmrs_entity_parent": "",
-            "openmrs_entity": "",
-            "openmrs_entity_id": ""
-          },
-          {
-            "key": "no",
-            "text": "No",
-            "openmrs_entity_parent": "",
-            "openmrs_entity": "",
-            "openmrs_entity_id": ""
-          },
-          {
-            "key": "recently_quit",
-            "text": "Recently quit",
-            "openmrs_entity_parent": "",
-            "openmrs_entity": "",
-            "openmrs_entity_id": ""
-          }
-        ],
-        "v_required": {
-          "value": true,
-          "err": "Please select if you use any tobacco products"
-        }
-      },
-      {
-        "key": "tobacco_cessation_toaster",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "toaster_notes",
-        "text": "Tobacco cessation counseling",
-        "text_color": "#000000",
-        "toaster_info_text": "Healthcare providers should routinely offer advice and psycho-social interventions for tobacco cessation to all pregnant women who are either current tobacco users or recent tobacco quitters.",
-        "toaster_info_title": "Tobacco cessation counseling",
-        "toaster_type": "problem",
-        "relevance": {
-          "step1:tobacco_user": {
-            "ex-checkbox": [
-              {
-                "or": [
-                  "yes",
-                  "recently_quit"
-                ]
+            },
+            {
+              "key": "ZEIR_ID",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "person_identifier",
+              "openmrs_entity_id": "ZEIR_ID",
+              "type": "barcode",
+              "barcode_type": "qrcode",
+              "hint": "Child's ZEIR ID *",
+              "scanButtonText": "Scan QR Code",
+              "v_numeric": {
+                "value": "true",
+                "err": "Please enter a valid ID"
+              },
+              "v_required": {
+                "value": "true",
+                "err": "Please enter the Child's ZEIR ID"
               }
-            ]
-          }
-        }
-      },
-      {
-        "key": "enabled_label",
-        "type": "label",
-        "label_text_style": "bold",
-        "label_number": "1",
-        "text": "This is the normal edit text design",
-        "text_color": "#000000",
-        "v_required": {
-          "value": true
-        }
-      },
-      {
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "key": "section",
-        "type": "section_label",
-        "section_background": "#F6C8C9",
-        "text_color": "#FFFFFF",
-        "text_size": "18px",
-        "label_text_style": "bold",
-        "name": "This is the normal edit text design"
-      },
+            },
+            {
+              "key": "Child_Register_Card_Number",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "person_attribute",
+              "openmrs_entity_id": "Child_Register_Card_Number",
+              "read_only": true,
+              "value": "1891389133",
+              "type": "edit_text",
+              "hint": "Child's register card number"
+            },
+            {
+              "key": "Child_Birth_Certificate",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "person_attribute",
+              "openmrs_entity_id": "Child_Birth_Certificate",
+              "read_only": true,
+              "v_required": {
+                "value": "true",
+                "err": "Please enter child's birth certificate"
+              },
+              "type": "edit_text",
+              "hint": "Child's birth certificate number"
+            },
+            {
+              "key": "First_Name",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "person",
+              "openmrs_entity_id": "first_name",
+              "type": "edit_text",
+              "hint": "First name",
+              "edit_type": "name",
+              "v_regex": {
+                "value": "[A-Za-z\\s\.\-]*",
+                "err": "Please enter a valid name"
+              }
+            },
+            {
+              "key": "Last_Name",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "person",
+              "openmrs_entity_id": "last_name",
+              "type": "edit_text",
+              "hint": "Last name *",
+              "edit_type": "name",
+              "v_required": {
+                "value": "true",
+                "err": "Please enter the last name"
+              },
+              "v_regex": {
+                "value": "[A-Za-z\\s\.\-]*",
+                "err": "Please enter a valid name"
+              }
+            },
+            {
+              "key": "Sex",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "person",
+              "openmrs_entity_id": "gender",
+              "type": "spinner",
+              "read_only": true,
+              "hint": "Sex *",
+              "values": [
+                "Male",
+                "Female"
+              ],
+              "v_required": {
+                "value": "true",
+                "err": "Please enter the sex"
+              }
+            },
+            {
+              "key": "Date_Birth",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "person",
+              "openmrs_entity_id": "birthdate",
+              "type": "date_picker",
+              "hint": "Child's DOB *",
+              "expanded": false,
+              "duration": {
+                "label": "Age"
+              },
+              "min_date": "today-5y",
+              "max_date": "today",
+              "v_required": {
+                "value": "true",
+                "err": "Please enter the date of birth"
+              }
+            },
+            {
+              "key": "First_Health_Facility_Contact",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "concept",
+              "openmrs_entity_id": "163260AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "openmrs_data_type": "text",
+              "type": "date_picker",
+              "hint": "Date first seen *",
+              "expanded": false,
+              "min_date": "today-5y",
+              "max_date": "today",
+              "v_required": {
+                "value": "true",
+                "err": "Enter the date that the child was first seen at a health facility for immunization services"
+              },
+              "constraints": [
+                {
+                  "type": "date",
+                  "ex": "greaterThanEqualTo(., step1:Date_Birth)",
+                  "err": "Date first seen can't occur before date of birth"
+                }
+              ]
+            },
+            {
+              "key": "Birth_Weight",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "concept",
+              "openmrs_entity_id": "5916AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "openmrs_data_type": "text",
+              "type": "edit_text",
+              "hint": "Birth weight (kg) *",
+              "v_min": {
+                "value": "0.1",
+                "err": "Weight must be greater than 0"
+              },
+              "v_max": {
+                "value": "200",
+                "err": "Weight must be less than 200"
+              },
+              "v_numeric_integer": {
+                "value": "true",
+                "err": "Enter a valid weight"
+              },
+              "v_required": {
+                "value": "true",
+                "err": "Enter the child's birth weight"
+              }
+            },
+            {
+              "key": "Mother_Guardian_First_Name",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "person",
+              "openmrs_entity_id": "first_name",
+              "entity_id": "mother",
+              "type": "edit_text",
+              "hint": "Mother/guardian first name *",
+              "edit_type": "name",
+              "look_up": "true",
+              "v_required": {
+                "value": "true",
+                "err": "Please enter the mother/guardian's first name"
+              },
+              "v_regex": {
+                "value": "[A-Za-z\\s\.\-]*",
+                "err": "Please enter a valid name"
+              }
+            },
+            {
+              "key": "Mother_Guardian_Last_Name",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "person",
+              "openmrs_entity_id": "last_name",
+              "entity_id": "mother",
+              "type": "edit_text",
+              "hint": "Mother/guardian last name *",
+              "edit_type": "name",
+              "look_up": "true",
+              "v_required": {
+                "value": "true",
+                "err": "Please enter the mother/guardian's last name"
+              },
+              "v_regex": {
+                "value": "[A-Za-z\\s\.\-]*",
+                "err": "Please enter a valid name"
+              }
+            },
+            {
+              "key": "Mother_Guardian_Date_Birth",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "person",
+              "openmrs_entity_id": "birthdate",
+              "entity_id": "mother",
+              "type": "date_picker",
+              "hint": "Mother/guardian DOB",
+              "look_up": "true",
+              "expanded": false,
+              "duration": {
+                "label": "Age"
+              },
+              "min_date": "01-01-1900",
+              "max_date": "today-10y"
+            },
+            {
+              "key": "Mother_Guardian_NRC",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "person_attribute",
+              "openmrs_entity_id": "NRC_Number",
+              "entity_id": "mother",
+              "type": "edit_text",
+              "hint": "Mother/guardian NRC number",
+              "v_regex": {
+                "value": "([0-9]{6}/[0-9]{2}/[0-9])|\s*",
+                "err": "Number must take the format of ######/##/#"
+              }
+            },
+            {
+              "key": "Mother_Guardian_Number",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "concept",
+              "openmrs_entity_id": "159635AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "type": "edit_text",
+              "hint": "Mother/guardian phone number",
+              "v_numeric": {
+                "value": "true",
+                "err": "Number must begin with 095, 096, or 097 and must be a total of 10 digits in length"
+              },
+              "v_regex": {
+                "value": "(09[5-7][0-9]{7})|\s*",
+                "err": "Number must begin with 095, 096, or 097 and must be a total of 10 digits in length"
+              }
+            },
+            {
+              "key": "plan_breastfeed",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "",
+              "openmrs_entity_id": "",
+              "type": "spinner",
+              "hint": "What are your thoughts on breastfeeding",
+              "values": [
+                "I plan to breastfeed",
+                "I do not want to breastfeed"
+              ],
+              "has_media_content": true,
+              "media": [
+                {
+                  "media_type": "text",
+                  "media_trigger_value": "I plan to breastfeed",
+                  "media_link": "",
+                  "media_text": "This is an excellent choice. You are making a good choice to give your child the best start to life.\nBreastmilk is clean and wholesome and provides all the essential nutrients and vitamins your baby needs for a healthy start to life. Give only breastmilk in the first 5 months of life including no water, tea, or milk or any other liquid and immediately breastfeed within an hour of delivery."
+                },
+                {
+                  "media_type": "video",
+                  "media_trigger_value": "I do not want to breastfeed",
+                  "media_link": "android.resource://org.smartregister.nativeform/raw/understandingbreastfeeding",
+                  "media_text": ""
+                }
+              ],
+              "v_required": {
+                "value": "true",
+                "err": "Please answer the question"
+              }
+            },
+            {
+              "key": "Father_Guardian_Name",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "concept",
+              "openmrs_entity_id": "1594AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "openmrs_data_type": "text",
+              "type": "edit_text",
+              "hint": "Father/guardian full name",
+              "edit_type": "name",
+              "v_regex": {
+                "value": "[A-Za-z\\s\.\-]*",
+                "err": "Please enter a valid name"
+              }
+            },
+            {
+              "key": "Father_Guardian_NRC",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "person_attribute",
+              "openmrs_entity_id": "Father_NRC_Number",
+              "type": "edit_text",
+              "hint": "Father/guardian NRC number",
+              "v_regex": {
+                "value": "([0-9]{6}/[0-9]{2}/[0-9])|\s*",
+                "err": "Number must take the format of ######/##/#"
+              }
+            },
+            {
+              "key": "Place_Birth",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "concept",
+              "openmrs_entity_id": "1572AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "openmrs_data_type": "select one",
+              "type": "spinner",
+              "read_only": true,
+              "hint": "Place of birth *",
+              "label_info_title": "Place of birth spinner",
+              "label_info_text": "here is some text on this dialog",
+              "values": [
+                "Health facility",
+                "Home"
+              ],
+              "openmrs_choice_ids": {
+                "Health facility": "1588AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "Home": "1536AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+              },
+              "v_required": {
+                "value": true,
+                "err": "Please enter the place of birth"
+              }
+            },
+            {
+              "key": "Birth_Facility_Name",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "concept",
+              "openmrs_entity_id": "163531AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "openmrs_data_type": "text",
+              "type": "tree",
+              "hint": "Which health facility was the child born in? *",
+              "tree": [
+              ],
+              "v_required": {
+                "value": true,
+                "err": "Please enter the birth facility name"
+              },
+              "relevance": {
+                "step1:Place_Birth": {
+                  "type": "string",
+                  "ex": "equalTo(., \"Health facility\")"
+                }
+              }
+            },
+            {
+              "key": "Birth_Facility_Name_Other",
+              "openmrs_entity_parent": "163531AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "openmrs_entity": "concept",
+              "openmrs_entity_id": "160632AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "type": "edit_text",
+              "hint": "Other health facility *",
+              "edit_type": "name",
+              "v_required": {
+                "value": true,
+                "err": "Please specify the health facility the child was born in"
+              },
+              "relevance": {
+                "step1:Birth_Facility_Name": {
+                  "type": "string",
+                  "ex": "equalTo(., \"[\"Other\"]\")"
+                }
+              }
+            },
+            {
+              "key": "Residential_Area",
+              "openmrs_entity_parent": "usual_residence",
+              "openmrs_entity": "person_address",
+              "openmrs_entity_id": "address3",
+              "openmrs_data_type": "text",
+              "type": "tree",
+              "hint": "Child's residential area *",
+              "tree": [
+              ],
+              "v_required": {
+                "value": true,
+                "err": "Please enter the child's residential area"
+              }
+            },
+            {
+              "key": "Residential_Area_Other",
+              "openmrs_entity_parent": "usual_residence",
+              "openmrs_entity": "person_address",
+              "openmrs_entity_id": "address5",
+              "type": "edit_text",
+              "hint": "Other residential area *",
+              "edit_type": "name",
+              "v_required": {
+                "value": true,
+                "err": "Please specify the residential area"
+              },
+              "relevance": {
+                "step1:Residential_Area": {
+                  "type": "string",
+                  "ex": "equalTo(., \"[\"Other\"]\")"
+                }
+              }
+            },
+            {
+              "key": "Residential_Address",
+              "openmrs_entity_parent": "usual_residence",
+              "openmrs_entity": "person_address",
+              "openmrs_entity_id": "address2",
+              "type": "edit_text",
+              "hint": "Home address *",
+              "edit_type": "name",
+              "v_required": {
+                "value": true,
+                "err": "Please enter the home address"
+              }
+            },
+            {
+              "key": "Physical_Landmark",
+              "openmrs_entity_parent": "usual_residence",
+              "openmrs_entity": "person_address",
+              "openmrs_entity_id": "address1",
+              "type": "edit_text",
+              "hint": "Landmark",
+              "edit_type": "name"
+            },
+            {
+              "key": "CHW_Name",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "person_attribute",
+              "openmrs_entity_id": "CHW_Name",
+              "type": "edit_text",
+              "hint": "CHW name",
+              "edit_type": "name",
+              "v_regex": {
+                "value": "[A-Za-z\\s\.\-]*",
+                "err": "Please enter a valid name"
+              }
+            },
+            {
+              "key": "CHW_Phone_Number",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "person_attribute",
+              "openmrs_entity_id": "CHW_Phone_Number",
+              "type": "edit_text",
+              "hint": "CHW phone number",
+              "v_numeric": {
+                "value": "true",
+                "err": "Number must begin with 095, 096, or 097 and must be a total of 10 digits in length"
+              },
+              "v_regex": {
+                "value": "(09[5-7][0-9]{7})|\s*",
+                "err": "Number must begin with 095, 096, or 097 and must be a total of 10 digits in length"
+              },
+              "relevance": {
+                "step1:delivery_complications": {
+                  "ex-checkbox": [
+                    {
+                      "or": [
+                        "severe_bleeding"
+                      ]
+                    },
+                    {
+                      "and": [
+                        "perineal_tear",
+                        "placenta_previa"
+                      ]
+                    },
+                    {
+                      "and": [
+                        "cord_prolapse",
+                        "abnormal_presentation"
+                      ],
+                      "or": [
+                        "prolonged_obstructed_labour"
+                      ]
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "key": "delivery_complications",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "concept",
+              "openmrs_entity_id": "161641AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "openmrs_data_type": "select one",
+              "type": "check_box",
+              "label": "Any delivery complications?",
+              "label_text_size": "18sp",
+              "label_text_color": "#FF9800",
+              "hint": "Any delivery complications?",
+              "exclusive": [
+                "none"
+              ],
+              "options": [
+                {
+                  "key": "none",
+                  "text": "None",
+                  "value": false,
+                  "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                },
+                {
+                  "key": "severe_bleeding",
+                  "text": "Severe bleeding/Hemorrhage",
+                  "value": false,
+                  "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                  "text_color": "#000000"
+                },
+                {
+                  "key": "placenta_previa",
+                  "text": "Placenta previa",
+                  "value": false,
+                  "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                  "text_size": "15sp"
+                },
+                {
+                  "key": "cord_prolapse",
+                  "text": "Cord prolapse",
+                  "value": false,
+                  "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                  "text_size": "10sp"
+                },
+                {
+                  "key": "prolonged_obstructed_labour",
+                  "text": "Prolonged/obstructed labour",
+                  "value": false,
+                  "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                },
+                {
+                  "key": "abnormal_presentation",
+                  "text": "Abnormal presentation",
+                  "value": false,
+                  "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                  "text_color": "#FF9800"
+                },
+                {
+                  "key": "perineal_tear",
+                  "text": "Perineal tear (2, 3 or 4th degree)",
+                  "value": false,
+                  "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                },
+                {
+                  "key": "Other",
+                  "text": "Other",
+                  "value": false,
+                  "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                }
+              ],
+              "v_required": {
+                "value": "false"
+              }
+            },
+            {
+              "key": "delivery_complications",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "concept",
+              "openmrs_entity_id": "161641AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "openmrs_data_type": "select one",
+              "type": "check_box",
+              "label": "Any physiological symptoms?",
+              "label_text_style": "bold",
+              "options": [
+                {
+                  "key": "None",
+                  "text": "None",
+                  "value": false,
+                  "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                },
+                {
+                  "key": "fatigue",
+                  "text": "Fatigue",
+                  "value": false,
+                  "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                },
+                {
+                  "key": "visual_disturbance",
+                  "text": "Visual disturbance",
+                  "value": false,
+                  "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                },
+                {
+                  "key": "other",
+                  "text": "Other",
+                  "value": false,
+                  "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                }
+              ],
+              "v_required": {
+                "value": "false"
+              }
+            },
+            {
+              "key": "symp_sev_preeclampsia",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "",
+              "openmrs_entity_id": "",
+              "type": "check_box",
+              "label": "Any symptoms of severe pre-eclampsia?",
+              "label_text_style": "bold",
+              "text_color": "#000000",
+              "read_only": true,
+              "exclusive": [
+                "none"
+              ],
+              "options": [
+                {
+                  "key": "none",
+                  "text": "None",
+                  "value": false,
+                  "openmrs_entity": "",
+                  "openmrs_entity_id": ""
+                },
+                {
+                  "key": "severe_headache",
+                  "text": "Severe headache",
+                  "value": false,
+                  "openmrs_entity": "Headache",
+                  "openmrs_entity_id": "139084",
+                  "label_info_title": "Severe Headache",
+                  "label_info_text": "Check if the patient experience frequent long headaches"
+                },
+                {
+                  "key": "blurred_vision",
+                  "text": "Blurred vision",
+                  "value": false,
+                  "openmrs_entity": "Blurred vision",
+                  "openmrs_entity_id": "147104"
+                },
+                {
+                  "key": "epigastric_pain",
+                  "text": "Epigastric pain",
+                  "value": false,
+                  "openmrs_entity": "",
+                  "openmrs_entity_id": "141128"
+                },
+                {
+                  "key": "dizziness",
+                  "text": "Dizziness",
+                  "value": false,
+                  "openmrs_entity": "",
+                  "openmrs_entity_id": ""
+                },
+                {
+                  "key": "vomiting",
+                  "text": "Vomiting",
+                  "value": false,
+                  "openmrs_entity": "",
+                  "openmrs_entity_id": ""
+                }
+              ],
+              "v_required": {
+                "value": true,
+                "err": "Please specify any other symptoms or select none"
+              }
+            },
+            {
+              "key": "PMTCT_Status",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "concept",
+              "openmrs_entity_id": "1396AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "type": "spinner",
+              "hint": "HIV exposure",
+              "values": [
+                "CE",
+                "MSU",
+                "CNE"
+              ],
+              "openmrs_choice_ids": {
+                "CE": "703AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "MSU": "1067AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "CNE": "664AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+              }
+            },
+            {
+              "key": "label_3",
+              "type": "label",
+              "text": "This is hinted text: <Enter name to show this>",
+              "text_color": "#000000",
+              "hint_on_text": true,
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "",
+              "openmrs_entity_id": "",
+              "relevance": {
+                "step1:Date_Birth": {
+                  "type": "string",
+                  "ex": "notEqualTo(.,\"\")"
+                }
+              }
+            },
+            {
+              "key": "label_site_ipv_assess",
+              "type": "label",
+              "text": "1. Are all of the following in place at your facility:",
+              "text_size": "22px",
+              "text_color": "#000000",
+              "v_required": {
+                "value": true
+              }
+            },
+            {
+              "key": "enabled_label",
+              "type": "label",
+              "text": "This is enabled: <Hinted here>",
+              "hint_on_text": true,
+              "text_color": "#FFC100",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "",
+              "openmrs_entity_id": "",
+              "v_required": {
+                "value": true
+              },
+              "label_info_text": "Checking out the display oof the info icon needed to display this infomation",
+              "label_info_title": "Highest Level of School"
+            },
+            {
+              "key": "enabled_label",
+              "type": "label",
+              "text": "This is enabled",
+              "hint_on_text": false,
+              "text_color": "#FFC100",
+              "text_size": "17sp",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "",
+              "openmrs_entity_id": "",
+              "v_required": {
+                "value": true
+              },
+              "label_info_text": "Checking out the display oof the info icon needed to display this infomation",
+              "label_info_title": "Highest Level of School"
+            },
+            {
+              "key": "divider1",
+              "type": "h_line",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "",
+              "openmrs_entity_id": ""
+            },
+            {
+              "key": "disabled_label",
+              "type": "label",
+              "text": "This is disabled: <Hinted txt here>",
+              "read_only": true,
+              "hint_on_text": true,
+              "text_color": "#000000",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "",
+              "openmrs_entity_id": ""
+            },
+            {
+              "key": "label_1",
+              "type": "label",
+              "text": "The ZEIR ID given is unique",
+              "has_bg": true,
+              "top_padding": "10dp",
+              "left_padding": "20dp",
+              "right_padding": "20dp",
+              "text_size": "14sp",
+              "text_color": "#000000",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "",
+              "openmrs_entity_id": ""
+            },
+            {
+              "key": "label_2",
+              "type": "label",
+              "text": "*Terms and conditions apply",
+              "has_bg": true,
+              "text_size": "12sp",
+              "text_color": "#737373",
+              "left_padding": "20dp",
+              "right_padding": "20dp",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "",
+              "openmrs_entity_id": ""
+            },
+            {
+              "key": "label_1",
+              "type": "label",
+              "text": "The child's register card number should also be unique",
+              "has_bg": true,
+              "left_padding": "20dp",
+              "right_padding": "20dp",
+              "text_size": "14sp",
+              "text_color": "#000000",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "",
+              "openmrs_entity_id": ""
+            },
+            {
+              "key": "label_2",
+              "type": "label",
+              "text": "The format for this might differ based on country",
+              "has_bg": true,
+              "text_size": "12sp",
+              "text_color": "#737373",
+              "bottom_padding": "20dp",
+              "bottom_margin": "20dp",
+              "left_padding": "20dp",
+              "right_padding": "20dp",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "",
+              "openmrs_entity_id": ""
+            },
+            {
+              "key": "site_ipv_assess",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "",
+              "openmrs_entity_id": "",
+              "openmrs_data_type": "select one",
+              "label": "1. A protocol or standard operating procedure for Intimate Partner Violence (IPV); \n\n2. A health worker trained on how to ask about IPV and how to provide the minimum response or beyond;\n\n3. A private setting;\n\n4. A way to ensure confidentiality;\n\n5. Time to allow for appropriate disclosure; and\n\n6. A system for referral in place.",
+              "label_text_size": "18px",
+              "type": "native_radio",
+              "options": [
+                {
+                  "key": "1",
+                  "text": "Yes"
+                },
+                {
+                  "key": "0",
+                  "text": "No"
+                }
+              ],
+              "value": "",
+              "v_required": {
+                "value": true,
+                "err": "Please select where stock was issued"
+              }
+            },
+            {
+              "key": "spacer",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "",
+              "openmrs_entity_id": "spacer",
+              "type": "spacer",
+              "spacer_height": "20sp"
+            },
+            {
+              "key": "native_radio",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "",
+              "openmrs_entity_id": "",
+              "type": "native_radio",
+              "read_only": true,
+              "label": "Highest Level of School.",
+              "label_text_size": "18px",
+              "label_text_color": "#FF9800",
+              "label_info_text": "Checking out the display oof the info icon needed to display this information",
+              "label_info_title": "Highest Level of School",
+              "options": [
+                {
+                  "key": "primary_school",
+                  "text": "Primary school",
+                  "text_color": "#000000",
+                  "specify_info": "Specify",
+                  "specify_info_color": "#000000",
+                  "extra_info": "Here we go",
+                  "label_info_text": "Checking out the display oof the info icon needed to display this information",
+                  "label_info_title": "Highest Level of School",
+                  "extra_info_color": "#445567"
+                },
+                {
+                  "key": "high_school",
+                  "text": "High School",
+                  "text_size": "18px",
+                  "specify_info": "Specify",
+                  "extra_info": "Here we go"
+                },
+                {
+                  "key": "higher_education",
+                  "text": "College/University",
+                  "text_color": "#358CB7"
+                }
+              ],
+              "value": "high_school",
+              "v_required": {
+                "value": true
+              }
+            },
+            {
+              "key": "native_radio_tertiary_education",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "",
+              "openmrs_entity_id": "",
+              "type": "native_radio",
+              "label": "Completed Tertiary education?",
+              "label_text_size": "18px",
+              "label_text_style": "bold",
+              "options": [
+                {
+                  "key": "yes",
+                  "text": "Yes",
+                  "text_size": "18px"
+                },
+                {
+                  "key": "no",
+                  "text": "No",
+                  "text_size": "18px"
+                }
+              ],
+              "value": "",
+              "v_required": {
+                "value": true
+              }
+            },
+            {
+              "key": "native_radio_notification_updates2",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "",
+              "openmrs_entity_id": "",
+              "type": "native_radio",
+              "label": "Is the user registered for notification updates?",
+              "label_text_size": "18px",
+              "label_text_style": "bold_italic",
+              "options": [
+                {
+                  "key": "yes",
+                  "text": "Yes"
+                },
+                {
+                  "key": "no",
+                  "text": "No"
+                }
+              ],
+              "value": "",
+              "v_required": {
+                "value": true
+              },
+              "relevance": {
+                "step1:native_radio_tertiary_education": {
+                  "type": "string",
+                  "ex": "equalTo(., \"yes\")"
+                }
+              }
+            },
+            {
+              "key": "spacer",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "",
+              "openmrs_entity_id": "spacer",
+              "type": "spacer",
+              "spacer_height": "20sp"
+            },
+            {
+              "key": "toaster_notes",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "person_attribute",
+              "openmrs_entity_id": "toaster_notes",
+              "type": "toaster_notes",
+              "text": "This is an information note",
+              "text_color": "#1199F9",
+              "toaster_type": "info",
+              "toaster_info_text": "This is an information note, This is an information note, This is an information note, This is an information note,This is an information note, This is an information note",
+              "toaster_info_title": "Information Toaster Info Title"
+            },
+            {
+              "key": "toaster_notes",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "person_attribute",
+              "openmrs_entity_id": "toaster_notes",
+              "type": "toaster_notes",
+              "text": "This is an information note, This is an information note, This is an information note, This is an information note,This is an information note, This is an information note, This is an information note,This is an information note",
+              "toaster_type": "info"
+            },
+            {
+              "key": "toaster_notes",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "person_attribute",
+              "openmrs_entity_id": "toaster_notes",
+              "type": "toaster_notes",
+              "text": "This is an positive note",
+              "text_color": "#3E7E2E",
+              "toaster_type": "positive"
+            },
+            {
+              "key": "toaster_notes",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "person_attribute",
+              "openmrs_entity_id": "toaster_notes",
+              "type": "toaster_notes",
+              "text": "This is an warning note",
+              "text_color": "#FFC100",
+              "toaster_type": "warning"
+            },
+            {
+              "key": "spacer",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "",
+              "openmrs_entity_id": "spacer",
+              "type": "spacer",
+              "spacer_height": "40sp"
+            },
+            {
+              "key": "toaster_notes",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "person_attribute",
+              "openmrs_entity_id": "toaster_notes",
+              "type": "toaster_notes",
+              "text": "This is an danger note",
+              "text_color": "#CF0800",
+              "toaster_type": "problem"
+            },
+            {
+              "key": "spacer",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "",
+              "openmrs_entity_id": "spacer",
+              "type": "spacer",
+              "spacer_height": "10sp"
+            },
+            {
+              "key": "toaster_notes",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "",
+              "openmrs_entity_id": "",
+              "type": "toaster_notes",
+              "text": "Lets test with this for relevance",
+              "toaster_type": "problem",
+              "relevance": {
+                "step1:native_radio_notification_updates": {
+                  "type": "string",
+                  "ex": "equalTo(., \"yes\")"
+                }
+              }
+            },
+            {
+              "key": "spacer",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "",
+              "openmrs_entity_id": "spacer",
+              "type": "spacer",
+              "spacer_height": "10sp"
+            },
+            {
+              "key": "native_radio_notification_updates",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "",
+              "openmrs_entity_id": "",
+              "type": "native_radio",
+              "label": "Is the user registered for notification updates?",
+              "label_text_size": "18px",
+              "label_text_style": "bold_italic",
+              "options": [
+                {
+                  "key": "yes",
+                  "text": "Yes"
+                },
+                {
+                  "key": "no",
+                  "text": "No"
+                }
+              ],
+              "value": "",
+              "v_required": {
+                "value": true
+              }
+            },
+            {
+              "key": "spacer",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "",
+              "openmrs_entity_id": "spacer",
+              "type": "spacer",
+              "spacer_height": "10sp"
+            },
+            {
+              "key": "enabled_label",
+              "type": "label",
+              "text": "Please select the number of family members",
+              "text_color": "#000000",
+              "v_required": {
+                "value": true
+              }
+            },
+            {
+              "key": "enabled_label",
+              "type": "label",
+              "label_text_style": "bold",
+              "text": "This is a bold text label that is also required.",
+              "text_color": "#000000",
+              "v_required": {
+                "value": true
+              }
+            },
+            {
+              "key": "spacer",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "",
+              "openmrs_entity_id": "spacer",
+              "type": "spacer",
+              "spacer_height": "15sp"
+            },
+            {
+              "key": "enabled_label",
+              "type": "label",
+              "label_text_style": "bold",
+              "text": "This is the normal edit text design",
+              "text_color": "#000000",
+              "v_required": {
+                "value": true
+              }
+            },
+            {
+              "key": "Last_Name",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "person",
+              "openmrs_entity_id": "last_name",
+              "type": "normal_edit_text",
+              "edit_type": "name",
+              "edit_text_style": "bordered",
+              "v_required": {
+                "value": "true",
+                "err": "Please enter the last name"
+              },
+              "v_regex": {
+                "value": "[A-Za-z\\s\.\-]*",
+                "err": "Please enter a valid name"
+              }
+            },
+            {
+              "key": "nerd",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "person",
+              "openmrs_entity_id": "last_name",
+              "type": "normal_edit_text",
+              "hint": "Guardians name *",
+              "edit_type": "name",
+              "read_only": true,
+              "edit_text_style": "bordered",
+              "v_required": {
+                "value": "true",
+                "err": "Please enter the guardians name"
+              },
+              "v_regex": {
+                "value": "[A-Za-z\\s\.\-]*",
+                "err": "Please enter a valid name"
+              }
+            },
+            {
+              "key": "numbers_selector",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "",
+              "openmrs_entity_id": "",
+              "type": "numbers_selector",
+              "number_of_selectors": "5",
+              "start_number": "1",
+              "max_value": "20",
+              "text_size": "18px",
+              "text_color": "#000000",
+              "selected_text_color": "#ffffff",
+              "v_required": {
+                "value": true
+              }
+            },
+            {
+              "key": "spacer",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "",
+              "openmrs_entity_id": "spacer",
+              "type": "spacer",
+              "spacer_height": "15sp"
+            },
+            {
+              "key": "numbers_selector_two",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "",
+              "openmrs_entity_id": "",
+              "type": "numbers_selector",
+              "number_of_selectors": "5",
+              "start_number": "0",
+              "max_value": "20",
+              "text_size": "18px",
+              "text_color": "#000000",
+              "selected_text_color": "#ffffff",
+              "v_required": {
+                "value": true
+              }
+            },
+            {
+              "key": "spacer",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "",
+              "openmrs_entity_id": "spacer",
+              "type": "spacer",
+              "spacer_height": "15sp"
+            },
+            {
+              "key": "numbers_selector_four",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "",
+              "openmrs_entity_id": "",
+              "type": "numbers_selector",
+              "number_of_selectors": "5",
+              "start_number": "10",
+              "max_value": "20",
+              "text_size": "18px",
+              "text_color": "#000000",
+              "selected_text_color": "#ffffff",
+              "v_required": {
+                "value": true
+              }
+            },
+            {
+              "key": "tobacco_user",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "",
+              "openmrs_entity_id": "",
+              "type": "native_radio",
+              "label": "Uses tobacco products?",
+              "multi_relevance": true,
+              "options": [
+                {
+                  "key": "yes",
+                  "text": "Yes",
+                  "openmrs_entity_parent": "",
+                  "openmrs_entity": "",
+                  "openmrs_entity_id": ""
+                },
+                {
+                  "key": "no",
+                  "text": "No",
+                  "openmrs_entity_parent": "",
+                  "openmrs_entity": "",
+                  "openmrs_entity_id": ""
+                },
+                {
+                  "key": "recently_quit",
+                  "text": "Recently quit",
+                  "openmrs_entity_parent": "",
+                  "openmrs_entity": "",
+                  "openmrs_entity_id": ""
+                }
+              ],
+              "v_required": {
+                "value": true,
+                "err": "Please select if you use any tobacco products"
+              }
+            },
+            {
+              "key": "tobacco_cessation_toaster",
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "",
+              "openmrs_entity_id": "",
+              "type": "toaster_notes",
+              "text": "Tobacco cessation counseling",
+              "text_color": "#000000",
+              "toaster_info_text": "Healthcare providers should routinely offer advice and psycho-social interventions for tobacco cessation to all pregnant women who are either current tobacco users or recent tobacco quitters.",
+              "toaster_info_title": "Tobacco cessation counseling",
+              "toaster_type": "problem",
+              "relevance": {
+                "step1:tobacco_user": {
+                  "ex-checkbox": [
+                    {
+                      "or": [
+                        "yes",
+                        "recently_quit"
+                      ]
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "key": "enabled_label",
+              "type": "label",
+              "label_text_style": "bold",
+              "label_number": "1",
+              "text": "This is the normal edit text design",
+              "text_color": "#000000",
+              "v_required": {
+                "value": true
+              }
+            },
+            {
+              "openmrs_entity_parent": "",
+              "openmrs_entity": "",
+              "openmrs_entity_id": "",
+              "key": "section",
+              "type": "section_label",
+              "section_background": "#F6C8C9",
+              "text_color": "#FFFFFF",
+              "text_size": "18px",
+              "label_text_style": "bold",
+              "name": "This is the normal edit text design"
+            },*/
       {
         "key": "repiratory_exam",
         "openmrs_entity_parent": "",
