@@ -58,8 +58,8 @@ public class NativeEditTextFactory implements FormWidgetFactory {
                 getLayout(), null);
         NativeEditText editText = rootLayout.findViewById(R.id.normal_edit_text);
         ImageView editButton = rootLayout.findViewById(R.id.normal_edit_text_edit_button);
-        FormUtils.showEditButton(jsonObject,editText,editButton,listener);
-        makeFromJson(stepName, context, formFragment, jsonObject, editText,editButton);
+        FormUtils.showEditButton(jsonObject, editText, editButton, listener);
+        makeFromJson(stepName, context, formFragment, jsonObject, editText, editButton);
 
         addRequiredValidator(jsonObject, editText);
         addRegexValidator(jsonObject, editText);
@@ -114,7 +114,13 @@ public class NativeEditTextFactory implements FormWidgetFactory {
         }
         editText.setHint(jsonObject.optString(JsonFormConstants.HINT));
 
-        if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
+        if (jsonObject.has(JsonFormConstants.DISABLED) || (jsonObject.has(JsonFormConstants.DISABLED)
+                && jsonObject.has(JsonFormConstants.READ_ONLY))) {
+            boolean disabled = jsonObject.getBoolean(JsonFormConstants.DISABLED);
+            editText.setEnabled(!disabled);
+            editText.setFocusable(!disabled);
+            editButton.setVisibility(View.GONE);
+        } else if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
             boolean readyOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
             editText.setEnabled(!readyOnly);
             editButton.setVisibility(View.VISIBLE);

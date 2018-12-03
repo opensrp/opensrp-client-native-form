@@ -32,6 +32,7 @@ public class JsonFormConstants {
     public static final String NAME = "name";
     public static final String TYPE = "type";
     public static final String READ_ONLY = "read_only";
+    public static final String DISABLED = "disabled";
     public static final String BEHAVIOUR_FINISH_FORM = "finish_form";
     public static final String BEHAVIOUR_NEXT_STEP = "next_step";
     public static final String HINT = "hint";

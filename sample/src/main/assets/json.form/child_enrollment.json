@@ -111,6 +111,7 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "person_attribute",
         "openmrs_entity_id": "Child_Register_Card_Number",
+        "disabled":true,
         "read_only":true,
         "value": "1891389133",
         "type": "edit_text",
@@ -1186,6 +1187,9 @@
         "type": "normal_edit_text",
         "edit_type": "name",
         "edit_text_style": "bordered",
+        "value":"1909319333",
+        "disabled":false,
+        "read_only":true,
         "v_required": {
           "value": "true",
           "err": "Please enter the last name"
