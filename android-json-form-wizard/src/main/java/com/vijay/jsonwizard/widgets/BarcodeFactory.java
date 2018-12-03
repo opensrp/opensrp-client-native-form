@@ -51,11 +51,11 @@ public class BarcodeFactory implements FormWidgetFactory {
                                        CommonListener listener, Boolean popup) {
         List<View> views = new ArrayList<>(1);
         try {
-            String openMrsEntityParent = jsonObject.getString("openmrs_entity_parent");
-            String openMrsEntity = jsonObject.getString("openmrs_entity");
-            String openMrsEntityId = jsonObject.getString("openmrs_entity_id");
-            String relevance = jsonObject.optString("relevance");
-            final String constraints = jsonObject.optString("constraints");
+            String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
+            String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
+            String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
+            String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
+            final String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
             String value = jsonObject.optString(JsonFormConstants.VALUE, null);
 
             RelativeLayout rootLayout = (RelativeLayout) LayoutInflater.from(context)
@@ -94,7 +94,7 @@ public class BarcodeFactory implements FormWidgetFactory {
                 @Override
                 public void onClick(View v) {
                     launchBarcodeScanner((Activity) context, editText,
-                            jsonObject.optString("barcode_type"));
+                            jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
                 }
             });
 
@@ -133,7 +133,7 @@ public class BarcodeFactory implements FormWidgetFactory {
                 public void onFocusChange(View v, boolean hasFocus) {
                     if (hasFocus) {
                         launchBarcodeScanner((Activity) context, editText,
-                                jsonObject.optString("barcode_type"));
+                                jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
                     }
                 }
             });
@@ -147,7 +147,7 @@ public class BarcodeFactory implements FormWidgetFactory {
                 @Override
                 public void onClick(View v) {
                     launchBarcodeScanner((Activity) context, editText,
-                            jsonObject.optString("barcode_type"));
+                            jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
                 }
             });
 

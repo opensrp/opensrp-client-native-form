@@ -31,11 +31,12 @@ import java.util.Map;
  * Created by vijay on 24-05-2015.
  */
 public class CheckBoxFactory implements FormWidgetFactory {
+
     private void showEditButton(JSONObject jsonObject, List<View> editableViews, ImageView editButton,
                                 CommonListener listener) throws JSONException {
         editButton.setTag(R.id.editable_view, editableViews);
         editButton.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
-        editButton.setTag(R.id.type, jsonObject.getString("type"));
+        editButton.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
         editButton.setOnClickListener(listener);
     }
 
@@ -66,7 +67,6 @@ public class CheckBoxFactory implements FormWidgetFactory {
         }
 
         views.add(rootLayout);
-
         return views;
     }
 
@@ -100,7 +100,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
             checkBox.setTag(R.id.raw_value, item.getString(JsonFormConstants.TEXT));
             checkBox.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
             checkBox.setTag(R.id.extraPopup, popup);
-            checkBox.setTag(R.id.type, jsonObject.getString("type"));
+            checkBox.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
             checkBox.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
             checkBox.setTag(R.id.openmrs_entity, openMrsEntity);
             checkBox.setTag(R.id.openmrs_entity_id, openMrsEntityId);
@@ -132,7 +132,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
                 ((JsonApi) context).addSkipLogicView(checkBox);
             }
 
-            String constraints = item.optString("constraints");
+            String constraints = item.optString(JsonFormConstants.CONSTRAINTS);
             if (constraints != null && context instanceof JsonApi) {
                 checkBox.setTag(R.id.constraints, constraints);
                 ((JsonApi) context).addConstrainedView(checkBox);

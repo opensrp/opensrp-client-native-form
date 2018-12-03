@@ -104,6 +104,7 @@ public class JsonFormConstants {
     public static final String EXTRA_REL = "extra_rel";
     public static final String HAS_EXTRA_REL = "has_extra_rel";
     public static final String DEFAULT_SUB_FORM_LOCATION = "json/sub_form";
+    public static final String BARCODE_TYPE = "barcode_type";
 
     public static class JSON_FORM_KEY {
         public static final String EX_CHECKBOX = "ex-checkbox";

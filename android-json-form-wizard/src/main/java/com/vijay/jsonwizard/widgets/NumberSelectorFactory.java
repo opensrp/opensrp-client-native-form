@@ -216,7 +216,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
     @SuppressLint("NewApi")
     private void createTextViews(Context context, JSONObject jsonObject, LinearLayout linearLayout, CommonListener listener, String stepName) throws JSONException {
         int startSelectionNumber = jsonObject.optInt(JsonFormConstants.START_SELECTION_NUMBER, 1);
-        int width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.87);
+        int width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.85);
         int numberOfSelectors = jsonObject.optInt(JsonFormConstants.NUMBER_OF_SELECTORS, 5);
         int maxValue = jsonObject.optInt(JsonFormConstants.MAX_SELECTION_VALUE, 20);
         for (int i = 0; i < numberOfSelectors; i++) {
@@ -264,7 +264,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
 
         CustomTextView customTextView = FormUtils.getTextViewWith(context, Integer.parseInt(textSize), getText(item, startSelectionNumber,
                 numberOfSelectors, maxValue), jsonObject.getString(JsonFormConstants.KEY),
-                jsonObject.getString("type"), "", "", "",
+                jsonObject.getString(JsonFormConstants.TYPE), "", "", "",
                 "", layoutParams, FormUtils.FONT_BOLD_PATH, 0, textColor);
 
         customTextView.setId(ViewUtil.generateViewId());
