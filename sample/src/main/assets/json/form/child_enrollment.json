@@ -1365,6 +1365,22 @@
         "name": "This is the normal edit text design"
       },
       {
+        "key": "respiratory_exam_abnormal",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "check_box",
+        "options": [
+          {
+            "key": "dyspnoea",
+            "text": "Dyspnoea",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "value": false
+          }
+        ]
+      },
+      {
         "key": "repiratory_exam",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
