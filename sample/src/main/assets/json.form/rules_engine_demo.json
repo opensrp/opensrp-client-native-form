@@ -156,7 +156,7 @@
         "openmrs_entity": "person",
         "openmrs_entity_id": "first_name",
         "type": "edit_text",
-        "hint": "Enter First name as Ben",
+        "hint": "Enter 'Ben' and select Batman",
         "edit_type": "name",
         "v_required": {
           "value": "true",

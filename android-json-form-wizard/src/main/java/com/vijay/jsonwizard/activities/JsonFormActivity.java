@@ -375,6 +375,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 .setPositiveButton(R.string.no, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        Log.d(TAG, "No button on dialog in " + JsonFormActivity.class.getCanonicalName());
                     }
                 })
                 .create();
@@ -430,7 +431,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 try {
                     JSONObject calculation = new JSONObject(calculationTag);
                     Iterator<String> keys = calculation.keys();
-                    boolean ok = true;
+
                     while (keys.hasNext()) {
                         String curKey = keys.next();
 
@@ -441,10 +442,8 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                         Map<String, String> curValueMap = getValueFromAddress(address);
 
                         updateCalculation(curValueMap, curView, address[1]);
-
-                        break;
                     }
-                    toggleViewVisibility(curView, ok);
+
                 } catch (Exception e) {
                     Log.e(TAG, e.getMessage());
                 }
@@ -471,27 +470,32 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 }
             }
 
-            for (int i = 0; i < canvasViewIds.length(); i++) {
-                int curId = canvasViewIds.getInt(i);
-                View curCanvasView = findViewById(curId);
-                if (visible) {
-                    if (curCanvasView != null) {
-                        curCanvasView.setEnabled(true);
-                        curCanvasView.setVisibility(View.VISIBLE);
-                    }
-                    if (curCanvasView instanceof MaterialEditText || curCanvasView instanceof RelativeLayout || view instanceof LinearLayout) {
-                        curCanvasView.setFocusable(true);
-                    }
-                } else {
-                    if (curCanvasView != null) {
-                        curCanvasView.setEnabled(false);
-                        curCanvasView.setVisibility(View.GONE);
-                    }
-                }
-            }
+            updateCanvas(view, visible, canvasViewIds);
+
         } catch (Exception e) {
             Log.e(TAG, view.toString());
             Log.e(TAG, Log.getStackTraceString(e));
+        }
+    }
+
+    private void updateCanvas(View view, boolean visible, JSONArray canvasViewIds) throws JSONException {
+        for (int i = 0; i < canvasViewIds.length(); i++) {
+            int curId = canvasViewIds.getInt(i);
+            View curCanvasView = findViewById(curId);
+            if (visible) {
+                if (curCanvasView != null) {
+                    curCanvasView.setEnabled(true);
+                    curCanvasView.setVisibility(View.VISIBLE);
+                }
+                if (curCanvasView instanceof MaterialEditText || curCanvasView instanceof RelativeLayout || view instanceof LinearLayout) {
+                    curCanvasView.setFocusable(true);
+                }
+            } else {
+                if (curCanvasView != null) {
+                    curCanvasView.setEnabled(false);
+                    curCanvasView.setVisibility(View.GONE);
+                }
+            }
         }
     }
 
@@ -1113,11 +1117,11 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     }
 
     public String stringFormat(String string, Map<String, String> valueMap) {
-
+        String resString = string;
         for (Map.Entry<String, String> entry : valueMap.entrySet()) {
-            string = string.replace("{" + entry.getKey() + "}", entry.getValue());
+            resString = resString.replace("{" + entry.getKey() + "}", entry.getValue());
         }
 
-        return string;
+        return resString;
     }
 }

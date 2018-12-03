@@ -79,9 +79,6 @@ public class EditTextFactory implements FormWidgetFactory {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
-        String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
-        String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
-        String calculation = jsonObject.optString(JsonFormConstants.CALCULATION);
 
         editText.setId(ViewUtil.generateViewId());
         editText.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
@@ -122,6 +119,18 @@ public class EditTextFactory implements FormWidgetFactory {
         }
 
         editText.addTextChangedListener(new GenericTextWatcher(stepName, formFragment, editText));
+
+
+        initSpecialViewsRefs(context, jsonObject, editText);
+
+
+    }
+
+    private void initSpecialViewsRefs(Context context, JSONObject jsonObject, MaterialEditText editText) {
+        String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
+        String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
+        String calculation = jsonObject.optString(JsonFormConstants.CALCULATION);
+
         if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             editText.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(editText);
@@ -136,8 +145,6 @@ public class EditTextFactory implements FormWidgetFactory {
             editText.setTag(R.id.calculation, calculation);
             ((JsonApi) context).addCalculationLogicView(editText);
         }
-
-
     }
 
     protected int getLayout() {

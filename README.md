@@ -29,7 +29,7 @@ Thanks to this [Android Native JSON Form Library](https://github.com/vijayrawats
 > **JSON Form** is written using **JSON (syntax)** which can be found [here](http://json.org/).
 
 
-# Features
+# Features63
 
 1. It enables definition of Android forms in JSON
 2. It enables one to define metadata for OpenMRS forms
@@ -1181,6 +1181,87 @@ If you want to specify relevance on the basis of whether a particular value HAS 
  The checkbox implementation also introduces a new field `exclusive` in which you specify the array value of a key or set of keys e.g. `exclusive: ["none"]` which if selected excludes/clears all other entries.
  e.g. in the above example the exclusive key array contains the key `"none"` , thus selecting the item with key none on the multi-select checkbox clears all others.
 
+
+### Skip logic using the rules engine
+
+ OpenSRP Client Native Forms is now integrated with a rules engine for skip logic and also complex fields calculations. We use the J-Easy Library which can be found [Here](https://github.com/j-easy/easy-rules).
+ Rules are defined in yaml configuration files that are stored in the `assets/rule` folder. You can define multiple rules in multiple configs to be used by one json form
+ 
+ When defining the skip logic and calculations for your forms keep Calculations and Relevance in separate files. e.g if i am doing a form called `physical_exam` , under `assets/rules` i should have two files namely
+ `physical-exam-relevance-rules.yml`
+ `physical-exam-calculations-rules.yml`
+ 
+ You can name the files any thing you want so long as you don't mix calculations and relevance definitions.
+ 
+ Separating and naming the files this way per form is however the recommended approach
+ 
+ The j-easy library uses MVEL expression language which is java like to define its rules. There are a few subtle differences but those can be found in the MVEL Documentation [Here](http://mvel.documentnode.com/)
+ 
+ Once you have the rules defined, you need to reference them like this in the form's json
+ 
+```
+{
+        "key": "happiness_level",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person_attribute",
+        "openmrs_entity_id": "calculation_happiness_level",
+        "type": "edit_text",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-calculation-rules.yml"
+            }
+          }
+        },
+         "relevance": {
+           "rules-engine": {
+             "ex-rules": {
+               "rules-file": "sample-relevance-rules.yml"
+             }
+           }
+         }
+      } 
+```
+In the example above, the relevance and the calculations for the edit text with key "happiness_level" are defined in the `assets/rule/sample-relevance-rules.yml` and `assets/rule/sample-calculation-rules.yml` files respectively.
+The calculation setting here means that the value for this field is calculated rather than entered, its calculation rules being defined in the `sample-calculation-rules.yml` file.
+
+The Sample App now has the various sections separated for easier reference. Once you run the app , clicking on the RULES ENGINE LOGIC button guides you through various configurations for relevance and calculations.
+You can check out the corresponding rules files under `assets/rule` to see how they are configured.
+
+NB: 
+    - When defining rules, always prefix with the step name they reference e.g. if its a key `age` in `step 1` then the field reference in the condition should be as `step1_age` e.g. `condition: "step1_hepb_immun_status < 60 || step1_hepb_immun_status > 100"`
+    - The name of the rule should be the key of the field it configures also be prefixed with its step  e.g. `name: step1_happiness_level`
+    - The action of a calculation should always be an assignment to the key calculation e.g. 
+     ```
+    actions:
+      - "calculation = calculation + 1"
+     ```
+    - The action of a relevance should always be an assignment to the key is relevant e.g. 
+     ```
+    actions:
+      - "isRelevant = true"
+     ```
+
+You can also inject global values in the root of the json form and they can be used during the relevance/calculation evaluations. useful e.g. if you want to inject external settings that are part of the logic
+ ```
+,
+  "global": {
+    "has_cat_scan": true,
+    "stock_count": 100
+  },
+ ```
+Here is complete example definition of the calculation for happiness level which is configured in the sample app. Its value depends on the first name from step 1 being set to Martin (case sensitive) and a global value for `has_cat_scan` being
+set to `true`.
+
+```
+name: step1_happiness_level
+description: Happiness level calculation
+priority: 1
+condition: "step1_First_Name == 'Martin' && global_has_cat_scan == 'true' "
+actions:
+  - "calculation = 1"
+ ```
+ 
 6. More input field types:
  
  ### Extra input field types
