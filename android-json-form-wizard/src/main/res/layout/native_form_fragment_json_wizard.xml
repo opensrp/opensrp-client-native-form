@@ -1,17 +1,77 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/scroll_view"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/main_layout"
+    <ScrollView
+        android:id="@+id/scroll_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:paddingLeft="@dimen/default_left_margin"
-        android:paddingRight="@dimen/default_right_margin"
-        android:paddingTop="8dp">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-    </LinearLayout>
-</ScrollView>
+        <LinearLayout
+            android:id="@+id/container_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <include layout="@layout/toolbar_container_form" />
+
+            <LinearLayout
+                android:id="@+id/main_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/form_container_default_margin"
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:paddingEnd="@dimen/form_container_default_padding"
+                android:paddingStart="@dimen/form_container_default_padding"
+                android:paddingTop="8dp" />
+
+            <RelativeLayout
+                android:id="@+id/bottom_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/form_container_default_margin"
+                android:elevation="@dimen/form_container_navigation_elevation"
+                android:visibility="gone">
+
+                <Button
+                    android:id="@+id/previous"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toStartOf="@+id/next"
+                    android:paddingBottom="@dimen/form_container_top_bottom_navigation_padding"
+                    android:paddingEnd="@dimen/form_container_start_end_navigation_padding"
+                    android:paddingStart="@dimen/form_container_start_end_navigation_padding"
+                    android:paddingTop="@dimen/form_container_top_bottom_navigation_padding"
+                    android:text="@string/previous"
+                    android:textAllCaps="true"
+                    android:textAppearance="?android:textAppearanceSmall"
+                    android:textColor="@color/button_navy_blue"
+                    android:textSize="@dimen/form_container_navigation_text_size" />
+
+                <Button
+                    android:id="@+id/next"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="@dimen/form_container_default_margin"
+                    android:paddingBottom="@dimen/form_container_top_bottom_navigation_padding"
+                    android:paddingEnd="@dimen/form_container_start_end_navigation_padding"
+                    android:paddingStart="@dimen/form_container_start_end_navigation_padding"
+                    android:paddingTop="@dimen/form_container_top_bottom_navigation_padding"
+                    android:text="@string/next"
+                    android:textAllCaps="true"
+                    android:textAppearance="?android:textAppearanceSmall"
+                    android:textColor="@color/button_navy_blue"
+                    android:textSize="@dimen/form_container_navigation_text_size" />
+            </RelativeLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
