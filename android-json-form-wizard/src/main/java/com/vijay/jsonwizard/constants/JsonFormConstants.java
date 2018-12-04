@@ -93,16 +93,19 @@ public class JsonFormConstants {
     public static final String NORMAL = "normal";
     public static final String ITALIC = "italic";
     public static final String BOLD_ITALIC = "bold_italic";
-    public static final String EDIT_BUTTON = "edit_button" ;
-    public static final String CUSTOM_TEXT = "custom_text" ;
+    public static final String EDIT_BUTTON = "edit_button";
+    public static final String CUSTOM_TEXT = "custom_text";
 
     public static class JSON_FORM_KEY {
         public static final String EX_CHECKBOX = "ex-checkbox";
         public static final String OR = "or";
         public static final String AND = "and";
         public static final String EXCLUSIVE = "exclusive";
-        public static final String JSON = "json";
         public static final String NOT = "not";
+
+        public static final String JSON = "json";
+        public static final String FORM = "form";
+        public static final String STEPNAME = "stepName";
     }
 
     public static class BARCODE_CONSTANTS {
