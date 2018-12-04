@@ -24,6 +24,7 @@ import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -57,11 +58,20 @@ public class ImagePickerFactory implements FormWidgetFactory {
     }
 
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, Boolean popup) throws Exception {
-        String openMrsEntityParent = jsonObject.getString("openmrs_entity_parent");
-        String openMrsEntity = jsonObject.getString("openmrs_entity");
-        String openMrsEntityId = jsonObject.getString("openmrs_entity_id");
-        String relevance = jsonObject.optString("relevance");
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
+        return attachJson(stepName, context, formFragment, jsonObject, listener, popup);
+    }
+
+    @Override
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+        return attachJson(stepName, context, formFragment, jsonObject, listener, false);
+    }
+
+    private List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws JSONException {
+        String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
+        String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
+        String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
+        String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
         JSONArray canvasIds = new JSONArray();
 
         List<View> views = new ArrayList<>(1);
@@ -74,7 +84,7 @@ public class ImagePickerFactory implements FormWidgetFactory {
         imageView.setTag(R.id.extraPopup, popup);
         imageView.setTag(R.id.openmrs_entity, openMrsEntity);
         imageView.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-        imageView.setTag(R.id.type, jsonObject.getString("type"));
+        imageView.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
         imageView.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
         if (relevance != null && context instanceof JsonApi) {
             imageView.setTag(R.id.relevance, relevance);
@@ -111,7 +121,7 @@ public class ImagePickerFactory implements FormWidgetFactory {
         imageView.setOnClickListener(listener);
         views.add(imageView);
 
-        uploadButton.setText(jsonObject.getString("uploadButtonText"));
+        uploadButton.setText(jsonObject.getString(JsonFormConstants.UPLOAD_BUTTON_TEXT));
         uploadButton.setBackgroundColor(context.getResources().getColor(R.color.primary));
         uploadButton.setMinHeight(0);
         uploadButton.setMinimumHeight(0);
@@ -133,7 +143,7 @@ public class ImagePickerFactory implements FormWidgetFactory {
         uploadButton.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
         uploadButton.setTag(R.id.openmrs_entity, openMrsEntity);
         uploadButton.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-        uploadButton.setTag(R.id.type, jsonObject.getString("type"));
+        uploadButton.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);

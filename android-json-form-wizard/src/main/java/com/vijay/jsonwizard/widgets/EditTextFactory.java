@@ -52,7 +52,17 @@ public class EditTextFactory implements FormWidgetFactory {
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener
-            listener, Boolean popup) throws Exception {
+            listener, boolean popup) throws Exception {
+        return attachJson(stepName, context, formFragment, jsonObject, listener, popup);
+    }
+
+    @Override
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+        return attachJson(stepName, context, formFragment, jsonObject, listener, false);
+    }
+
+    private List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener
+            listener, boolean popup) throws Exception {
         List<View> views = new ArrayList<>(1);
 
         RelativeLayout rootLayout = (RelativeLayout) LayoutInflater.from(context).inflate(
@@ -60,7 +70,7 @@ public class EditTextFactory implements FormWidgetFactory {
         MaterialEditText editText = rootLayout.findViewById(R.id.edit_text);
         ImageView editButton = rootLayout.findViewById(R.id.material_edit_text_edit_button);
         FormUtils.showEditButton(jsonObject, editText, editButton, listener);
-        attachJson(stepName, context, formFragment, jsonObject, editText, editButton);
+        attachLayout(stepName, context, formFragment, jsonObject, editText, editButton);
 
         JSONArray canvasIds = new JSONArray();
         rootLayout.setId(ViewUtil.generateViewId());
@@ -73,8 +83,8 @@ public class EditTextFactory implements FormWidgetFactory {
         return views;
     }
 
-    protected void attachJson(String stepName, Context context, JsonFormFragment formFragment,
-                              JSONObject jsonObject, MaterialEditText editText, ImageView editButton)
+    protected void attachLayout(String stepName, Context context, JsonFormFragment formFragment,
+                                JSONObject jsonObject, MaterialEditText editText, ImageView editButton)
             throws Exception {
 
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
@@ -114,9 +124,9 @@ public class EditTextFactory implements FormWidgetFactory {
         // edit type check
         String editType = jsonObject.optString(JsonFormConstants.EDIT_TYPE);
         if (!TextUtils.isEmpty(editType)) {
-            if ("number".equals(editType)) {
+            if (JsonFormConstants.NUMBER.equals(editType)) {
                 editText.setRawInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-            } else if ("name".equals(editType)) {
+            } else if (JsonFormConstants.NAME.equals(editType)) {
                 editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
             }
         }

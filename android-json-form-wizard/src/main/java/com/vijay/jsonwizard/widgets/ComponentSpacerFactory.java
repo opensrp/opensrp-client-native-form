@@ -16,6 +16,7 @@ import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -24,7 +25,17 @@ import java.util.List;
 public class ComponentSpacerFactory implements FormWidgetFactory {
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener
-            listener, Boolean popup) throws Exception {
+            listener, boolean popup) throws Exception {
+        return attachJson(stepName, context, formFragment, jsonObject, listener, popup);
+    }
+
+    @Override
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+        return attachJson(stepName, context, formFragment, jsonObject, listener, false);
+    }
+
+    private List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener
+            listener, boolean popup) throws JSONException {
         String openMrsEntityParent = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_ID);
@@ -50,11 +61,12 @@ public class ComponentSpacerFactory implements FormWidgetFactory {
             ((JsonApi) context).addSkipLogicView(linearLayout);
         }
 
-        attachJson(views, context, jsonObject, linearLayout);
+        attachLayout(views, context, jsonObject, linearLayout);
         return views;
     }
 
-    private void attachJson(List<View> views, Context context, JSONObject jsonObject, LinearLayout linearLayout) {
+
+    private void attachLayout(List<View> views, Context context, JSONObject jsonObject, LinearLayout linearLayout) {
         String height = jsonObject.optString(JsonFormConstants.SPACER_HEIGHT);
         TextView spacerView = linearLayout.findViewById(R.id.spacer_view);
         int viewHeight = 0;

@@ -148,6 +148,28 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     @Override
     public void writeValue(String stepName, String key, String value, String openMrsEntityParent,
                            String openMrsEntity, String openMrsEntityId, boolean popup) throws JSONException {
+        firstWriteValue(stepName, key, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
+    }
+
+    @Override
+    public void writeValue(String stepName, String parentKey, String childObjectKey, String childKey,
+                           String value, String openMrsEntityParent, String openMrsEntity,
+                           String openMrsEntityId, boolean popup)
+            throws JSONException {
+        secondWriteValue(stepName, parentKey, childObjectKey, childKey, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
+    }
+
+    @Override
+    public void writeValue(String stepName, String key, String value, String openMrsEntityParent, String openMrsEntity, String openMrsEntityId) throws JSONException {
+        firstWriteValue(stepName, key, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, false);
+    }
+
+    @Override
+    public void writeValue(String stepName, String parentKey, String childObjectKey, String childKey, String value, String openMrsEntityParent, String openMrsEntity, String openMrsEntityId) throws JSONException {
+        secondWriteValue(stepName, parentKey, childObjectKey, childKey, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, false);
+    }
+
+    private void firstWriteValue(String stepName, String key, String value, String openMrsEntityParent, String openMrsEntity, String openMrsEntityId, boolean popup) throws JSONException {
         synchronized (mJSONObject) {
             JSONObject jsonObject = mJSONObject.getJSONObject(stepName);
             JSONArray fields = fetchFields(jsonObject, popup);
@@ -185,11 +207,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         }
     }
 
-    @Override
-    public void writeValue(String stepName, String parentKey, String childObjectKey, String childKey,
-                           String value, String openMrsEntityParent, String openMrsEntity,
-                           String openMrsEntityId, boolean popup)
-            throws JSONException {
+    private void secondWriteValue(String stepName, String parentKey, String childObjectKey, String childKey, String value, String openMrsEntityParent, String openMrsEntity, String openMrsEntityId, boolean popup) throws JSONException {
         synchronized (mJSONObject) {
             JSONObject jsonObject = mJSONObject.getJSONObject(stepName);
             JSONArray fields = fetchFields(jsonObject, popup);

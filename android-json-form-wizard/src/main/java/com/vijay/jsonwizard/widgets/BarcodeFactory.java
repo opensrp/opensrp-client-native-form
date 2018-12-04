@@ -45,10 +45,20 @@ import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 public class BarcodeFactory implements FormWidgetFactory {
     private static final String TYPE_QR = "qrcode";
 
+
+    @Override
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+        return attachJson(stepName, context, formFragment, jsonObject, listener, true);
+    }
+
     @Override
     public List<View> getViewsFromJson(String stepName, final Context context,
                                        JsonFormFragment formFragment, final JSONObject jsonObject,
-                                       CommonListener listener, Boolean popup) {
+                                       CommonListener listener, boolean popup) {
+        return attachJson(stepName, context, formFragment, jsonObject, listener, popup);
+    }
+
+    private List<View> attachJson(String stepName, final Context context, JsonFormFragment formFragment, final JSONObject jsonObject, CommonListener listener, boolean popup) {
         List<View> views = new ArrayList<>(1);
         try {
             String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);

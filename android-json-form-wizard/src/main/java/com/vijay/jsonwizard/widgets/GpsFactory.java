@@ -29,6 +29,7 @@ import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -72,13 +73,24 @@ public class GpsFactory implements FormWidgetFactory {
     @Override
     public List<View> getViewsFromJson(String stepName, final Context context,
                                        JsonFormFragment formFragment, JSONObject jsonObject,
-                                       CommonListener listener, Boolean popup) throws Exception {
+                                       CommonListener listener, boolean popup) throws Exception {
+        return attachJson(stepName, context, formFragment, jsonObject, listener, popup);
+    }
+
+    @Override
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+        return attachJson(stepName, context, formFragment, jsonObject, listener, false);
+    }
+
+    private List<View> attachJson(String stepName, final Context context,
+                                  JsonFormFragment formFragment, JSONObject jsonObject,
+                                  CommonListener listener, boolean popup) throws JSONException {
         List<View> views = new ArrayList<>();
 
-        String openMrsEntityParent = jsonObject.getString("openmrs_entity_parent");
-        String openMrsEntity = jsonObject.getString("openmrs_entity");
-        String openMrsEntityId = jsonObject.getString("openmrs_entity_id");
-        String relevance = jsonObject.optString("relevance");
+        String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
+        String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
+        String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
+        String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
 
         LinearLayout rootLayout = (LinearLayout) LayoutInflater.from(context)
                 .inflate(R.layout.item_gps, null);
@@ -100,7 +112,7 @@ public class GpsFactory implements FormWidgetFactory {
         recordButton.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
         recordButton.setTag(R.id.openmrs_entity, openMrsEntity);
         recordButton.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-        recordButton.setTag(R.id.type, jsonObject.getString("type"));
+        recordButton.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
         recordButton.setTag(R.id.extraPopup, popup);
         if (relevance != null && context instanceof JsonApi) {
             recordButton.setTag(R.id.relevance, relevance);
@@ -127,7 +139,7 @@ public class GpsFactory implements FormWidgetFactory {
         TextView altitudeTV = rootLayout.findViewById(R.id.altitude);
         TextView accuracyTV = rootLayout.findViewById(R.id.accuracy);
         //setCoordinates(context, latitudeTV, longitudeTV, altitudeTV, accuracyTV, "", "", "", "");
-        attachJSON(context, jsonObject, recordButton, latitudeTV, longitudeTV, altitudeTV, accuracyTV);
+        attachLayout(context, jsonObject, recordButton, latitudeTV, longitudeTV, altitudeTV, accuracyTV);
 
         gpsDialog = new GpsDialog(context, recordButton, latitudeTV, longitudeTV, altitudeTV, accuracyTV);
 
@@ -151,7 +163,7 @@ public class GpsFactory implements FormWidgetFactory {
         return views;
     }
 
-    public void attachJSON(Context context, @NonNull JSONObject jsonObject, @NonNull View dataView, @NonNull TextView latitudeTv, @NonNull TextView longitudeTv, @NonNull TextView altitudeTv, @NonNull TextView accuracyTv) {
+    public void attachLayout(Context context, @NonNull JSONObject jsonObject, @NonNull View dataView, @NonNull TextView latitudeTv, @NonNull TextView longitudeTv, @NonNull TextView altitudeTv, @NonNull TextView accuracyTv) {
         String latitude = "";
         String longitude = "";
         String accuracy = "";

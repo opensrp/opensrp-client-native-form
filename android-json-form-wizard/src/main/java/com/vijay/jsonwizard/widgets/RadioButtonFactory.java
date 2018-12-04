@@ -33,17 +33,17 @@ import static com.vijay.jsonwizard.utils.FormUtils.getTextViewWith;
  */
 public class RadioButtonFactory implements FormWidgetFactory {
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, Boolean popup) throws Exception {
-        String openMrsEntityParent = jsonObject.getString("openmrs_entity_parent");
-        String openMrsEntity = jsonObject.getString("openmrs_entity");
-        String openMrsEntityId = jsonObject.getString("openmrs_entity_id");
-        String relevance = jsonObject.optString("relevance");
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
+        String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
+        String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
+        String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
+        String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
 
         List<View> views = new ArrayList<>(1);
 
         JSONArray canvasIds = new JSONArray();
-        CustomTextView textView = getTextViewWith(context, 27, jsonObject.getString("label"), jsonObject.getString(JsonFormConstants.KEY),
-                jsonObject.getString("type"), openMrsEntityParent, openMrsEntity, openMrsEntityId,
+        CustomTextView textView = getTextViewWith(context, 27, jsonObject.getString(JsonFormConstants.LABEL), jsonObject.getString(JsonFormConstants.KEY),
+                jsonObject.getString(JsonFormConstants.TYPE), openMrsEntityParent, openMrsEntity, openMrsEntityId,
                 relevance,
                 getLinearLayoutParams(MATCH_PARENT, WRAP_CONTENT, 0, 0, 0, 0), FONT_BOLD_PATH);
         canvasIds.put(textView.getId());
@@ -101,5 +101,10 @@ public class RadioButtonFactory implements FormWidgetFactory {
         }
 
         return views;
+    }
+
+    @Override
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+        return null;
     }
 }

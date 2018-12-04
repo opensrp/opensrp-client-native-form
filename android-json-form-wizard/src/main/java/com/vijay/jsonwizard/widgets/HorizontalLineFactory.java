@@ -15,6 +15,7 @@ import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.utils.FormUtils;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -29,7 +30,16 @@ import java.util.List;
 public class HorizontalLineFactory implements FormWidgetFactory {
 
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, Boolean popup) throws Exception {
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
+        return attachJson(stepName, context, formFragment, jsonObject, listener, popup);
+    }
+
+    @Override
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+        return attachJson(stepName, context, formFragment, jsonObject, listener, false);
+    }
+
+    private List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws JSONException {
         // Create the view
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
@@ -37,10 +47,10 @@ public class HorizontalLineFactory implements FormWidgetFactory {
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
         String key = jsonObject.getString(JsonFormConstants.KEY);
 
-        String topMargin = jsonObject.optString("top_margin", "0dp");
-        String bottomMargin = jsonObject.optString("bottom_margin", "0dp");
+        String topMargin = jsonObject.optString(JsonFormConstants.TOP_MARGIN, "0dp");
+        String bottomMargin = jsonObject.optString(JsonFormConstants.BOTTOM_MARGIN, "0dp");
 
-        String leftMargin = jsonObject.optString("left_margin", "0dp");
+        String leftMargin = jsonObject.optString(JsonFormConstants.LEFT_MARGIN, "0dp");
         String rightMargin = jsonObject.optString("right_margin", "0dp");
 
         String height = jsonObject.optString("height", "1dp");

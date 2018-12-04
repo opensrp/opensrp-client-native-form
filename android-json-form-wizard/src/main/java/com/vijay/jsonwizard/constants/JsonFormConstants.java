@@ -105,6 +105,14 @@ public class JsonFormConstants {
     public static final String HAS_EXTRA_REL = "has_extra_rel";
     public static final String DEFAULT_SUB_FORM_LOCATION = "json/sub_form";
     public static final String BARCODE_TYPE = "barcode_type";
+    public static final String MIN_DATE = "min_date";
+    public static final String MAX_DATE = "max_date";
+    public static final String EXPANDED = "expanded";
+    public static final String NUMBER = "number";
+    public static final String TOP_MARGIN = "top_margin";
+    public static final String BOTTOM_MARGIN = "bottom_margin";
+    public static final String LEFT_MARGIN = "left_margin";
+    public static final String UPLOAD_BUTTON_TEXT = "uploadButtonText";
 
     public static class JSON_FORM_KEY {
         public static final String EX_CHECKBOX = "ex-checkbox";

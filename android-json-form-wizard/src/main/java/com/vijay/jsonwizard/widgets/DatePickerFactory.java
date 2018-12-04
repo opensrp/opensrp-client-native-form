@@ -162,7 +162,17 @@ public class DatePickerFactory implements FormWidgetFactory {
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject,
-                                       CommonListener listener, Boolean popup) {
+                                       CommonListener listener, boolean popup) {
+        return attachJson(stepName, context, formFragment, jsonObject, listener, popup);
+    }
+
+    @Override
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+        return attachJson(stepName, context, formFragment, jsonObject, listener, false);
+    }
+
+    private List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject,
+                                  CommonListener listener, boolean popup) {
         List<View> views = new ArrayList<>(1);
         try {
 
@@ -173,7 +183,7 @@ public class DatePickerFactory implements FormWidgetFactory {
 
             TextView duration = dateViewRelativeLayout.findViewById(R.id.duration);
 
-            attachJson(stepName, context, formFragment, jsonObject, editText, duration);
+            attachLayout(stepName, context, formFragment, jsonObject, editText, duration);
 
             JSONArray canvasIds = new JSONArray();
             dateViewRelativeLayout.setId(ViewUtil.generateViewId());
@@ -191,21 +201,21 @@ public class DatePickerFactory implements FormWidgetFactory {
         return views;
     }
 
-    protected void attachJson(String stepName, final Context context, JsonFormFragment formFragment, JSONObject jsonObject, final MaterialEditText editText, final TextView duration) {
+    protected void attachLayout(String stepName, final Context context, JsonFormFragment formFragment, JSONObject jsonObject, final MaterialEditText editText, final TextView duration) {
 
         try {
-            String openMrsEntityParent = jsonObject.getString("openmrs_entity_parent");
-            String openMrsEntity = jsonObject.getString("openmrs_entity");
-            String openMrsEntityId = jsonObject.getString("openmrs_entity_id");
-            String relevance = jsonObject.optString("relevance");
-            String constraints = jsonObject.optString("constraints");
+            String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
+            String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
+            String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
+            String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
+            String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
 
             duration.setTag(R.id.key, jsonObject.getString(KEY.KEY));
             duration.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
             duration.setTag(R.id.openmrs_entity, openMrsEntity);
             duration.setTag(R.id.openmrs_entity_id, openMrsEntityId);
             if (jsonObject.has(KEY.DURATION)) {
-                duration.setTag(R.id.label, jsonObject.getJSONObject(KEY.DURATION).getString("label"));
+                duration.setTag(R.id.label, jsonObject.getJSONObject(KEY.DURATION).getString(JsonFormConstants.LABEL));
             }
 
             editText.setHint(jsonObject.getString(KEY.HINT));
@@ -262,8 +272,8 @@ public class DatePickerFactory implements FormWidgetFactory {
                 }
             });
 
-            if (jsonObject.has("min_date") && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                Calendar minDate = FormUtils.getDate(jsonObject.getString("min_date"));
+            if (jsonObject.has(JsonFormConstants.MIN_DATE) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                Calendar minDate = FormUtils.getDate(jsonObject.getString(JsonFormConstants.MIN_DATE));
                 minDate.set(Calendar.HOUR_OF_DAY, 0);
                 minDate.set(Calendar.MINUTE, 0);
                 minDate.set(Calendar.SECOND, 0);
@@ -271,8 +281,8 @@ public class DatePickerFactory implements FormWidgetFactory {
                 datePickerDialog.setMinDate(minDate.getTimeInMillis());
             }
 
-            if (jsonObject.has("max_date") && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                Calendar maxDate = FormUtils.getDate(jsonObject.getString("max_date"));
+            if (jsonObject.has(JsonFormConstants.MAX_DATE) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                Calendar maxDate = FormUtils.getDate(jsonObject.getString(JsonFormConstants.MAX_DATE));
                 maxDate.set(Calendar.HOUR_OF_DAY, 23);
                 maxDate.set(Calendar.MINUTE, 59);
                 maxDate.set(Calendar.SECOND, 59);
@@ -280,7 +290,7 @@ public class DatePickerFactory implements FormWidgetFactory {
                 datePickerDialog.setMaxDate(maxDate.getTimeInMillis());
             }
 
-            if (jsonObject.has("expanded") && jsonObject.getBoolean("expanded")
+            if (jsonObject.has(JsonFormConstants.EXPANDED) && jsonObject.getBoolean(JsonFormConstants.EXPANDED)
                     && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                 datePickerDialog.setCalendarViewShown(true);
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {

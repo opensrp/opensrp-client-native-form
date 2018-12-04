@@ -23,6 +23,14 @@ public interface JsonApi {
                     String openMrsEntityId, boolean popup)
             throws JSONException;
 
+    void writeValue(String stepName, String key, String value, String openMrsEntityParent,
+                    String openMrsEntity, String openMrsEntityId) throws JSONException;
+
+    void writeValue(String stepName, String parentKey, String childObjectKey, String childKey,
+                    String value, String openMrsEntityParent, String openMrsEntity,
+                    String openMrsEntityId)
+            throws JSONException;
+
     void writeMetaDataValue(String metaDataKey, Map<String, String> values)
             throws JSONException;
 
