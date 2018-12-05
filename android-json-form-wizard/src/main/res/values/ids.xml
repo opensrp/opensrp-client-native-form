@@ -31,7 +31,7 @@
     <item name="specify_listener" type="id" />
     <item name="specify_step_name" type="id" />
     <item name="specify_fragment" type="id" />
-    <item name="button_context" type="id" />
+    <item name="specify_context" type="id" />
     <item name="number_selector_textview" type="id" />
     <item name="number_selector_item" type="id" />
     <item name="number_selector_number_of_selectors" type="id" />

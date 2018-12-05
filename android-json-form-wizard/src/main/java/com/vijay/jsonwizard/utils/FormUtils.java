@@ -441,7 +441,7 @@ public class FormUtils {
     }
 
     public void showGenericDialog(View view) {
-        Context context = (Context) view.getTag(R.id.button_context);
+        Context context = (Context) view.getTag(R.id.specify_context);
         String specifyContent = (String) view.getTag(R.id.specify_content);
         String specifyContentForm = (String) view.getTag(R.id.specify_content_form);
         String stepName = (String) view.getTag(R.id.specify_step_name);
@@ -463,7 +463,9 @@ public class FormUtils {
             genericPopupDialog.setStepName(stepName);
             genericPopupDialog.setSecondaryValues(jsonArray);
             genericPopupDialog.setParentKey(parentKey);
-            genericPopupDialog.setCustomTextView(customTextView);
+            if (customTextView != null) {
+                genericPopupDialog.setCustomTextView(customTextView);
+            }
             if (type.equals(JsonFormConstants.CHECK_BOX) || type.equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
                 childKey = (String) view.getTag(R.id.childKey);
                 genericPopupDialog.setChildKey(childKey);
@@ -570,5 +572,18 @@ public class FormUtils {
             }
         }
         return specifyText.toString().replaceAll(", $", "");
+    }
+
+    public JSONArray getSecondaryValues(JSONObject jsonObject) {
+        JSONArray value = null;
+        if (jsonObject != null && jsonObject.has(JsonFormConstants.SECONDARY_VALUE)) {
+            try {
+                value = jsonObject.getJSONArray(JsonFormConstants.SECONDARY_VALUE);
+            } catch (JSONException e) {
+                Log.i(TAG, Log.getStackTraceString(e));
+            }
+        }
+
+        return value;
     }
 }

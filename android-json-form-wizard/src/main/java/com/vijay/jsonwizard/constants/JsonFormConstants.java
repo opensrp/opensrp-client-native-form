@@ -72,10 +72,10 @@ public class JsonFormConstants {
     public static final String HORIZONTAL_LINE = "h_line";
     public static final String NATIVE_RADIO_BUTTON = "native_radio";
     public static final String NATIVE_RADIO_BUTTON_MULTI_RELEVANCE = "multi_relevance";
-    public static final String NATIVE_RADIO_SPECIFY_INFO = "specify_info";
-    public static final String NATIVE_RADIO_SPECIFY_WIDGET = "specify_widget";
+    public static final String CONTENT_INFO = "specify_info";
+    public static final String CONTENT_WIDGET = "specify_widget";
     public static final String CONTENT_FORM = "content_form";
-    public static final String NATIVE_RADIO_SPECIFY_INFO_COLOR = "specify_info_color";
+    public static final String CONTENT_INFO_COLOR = "specify_info_color";
     public static final String NATIVE_RADIO_EXTRA_INFO = "extra_info";
     public static final String NATIVE_RADIO_EXTRA_INFO_COLOR = "extra_info_color";
     public static final String DEFAULT_TEXT_COLOR = "#212121";
