@@ -81,7 +81,19 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         View rootView = inflater.inflate(R.layout.native_form_fragment_json_wizard, null);
         mMainView = (LinearLayout) rootView.findViewById(R.id.main_layout);
         mScrollView = (ScrollView) rootView.findViewById(R.id.scroll_view);
+        setupToolbarBackButton();
         return rootView;
+    }
+
+    private void setupToolbarBackButton() {
+        if (getArguments() != null) {
+            String stepName = getArguments().getString(JsonFormConstants.STEPNAME);
+            if (getStep(stepName).optBoolean(JsonFormConstants.DISPLAY_BACK_BUTTON)) {
+                getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_close);
+                setUpBackButton();
+            }
+        }
+
     }
 
     @Override
