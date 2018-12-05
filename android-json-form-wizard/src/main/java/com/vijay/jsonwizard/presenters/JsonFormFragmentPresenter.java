@@ -420,7 +420,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         }
     }
 
-    private void showInformationDialog(View view) {
+    public void showInformationDialog(View view) {
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(getView().getContext(), R.style.AppThemeAlertDialog);
         builderSingle.setTitle((String) view.getTag(R.id.label_dialog_title));
         builderSingle.setMessage((String) view.getTag(R.id.label_dialog_info));
