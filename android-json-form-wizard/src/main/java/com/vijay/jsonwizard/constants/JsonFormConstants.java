@@ -116,4 +116,8 @@ public class JsonFormConstants {
         // intent request code to handle updating play services if needed.
         public static final int RC_HANDLE_GMS = 9001;
     }
+
+    public static class EDIT_TEXT_TYPE {
+        public static final String NUMBER = "number";
+    }
 }

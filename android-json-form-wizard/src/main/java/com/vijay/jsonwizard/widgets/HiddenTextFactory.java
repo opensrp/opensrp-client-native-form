@@ -40,6 +40,7 @@ public class HiddenTextFactory implements FormWidgetFactory {
         hiddenText.setTag(R.id.canvas_ids, canvasIds.toString());
 
         ((JsonApi) context).addFormDataView(hiddenText);
+        rootLayout.setVisibility(View.GONE);
         views.add(rootLayout);
         return views;
     }

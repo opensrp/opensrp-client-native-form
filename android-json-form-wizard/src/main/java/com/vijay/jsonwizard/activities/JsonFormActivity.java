@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -52,11 +53,14 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -86,6 +90,8 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
     private RulesEngineHelper rulesEngineHelper = null;
 
+    private final Set<Character> JAVA_OPERATORS = new HashSet<>(Arrays.asList(new Character[]{'(', '!', '?', '+', '-', '*', '/', '%', '+', '-', '.', '^', ')', '<', '>', '=', '{', '}', ':', ';'}));
+
     public void init(String json) {
         try {
             mJSONObject = new JSONObject(json);
@@ -106,7 +112,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             confirmCloseMessage = getString(R.string.confirm_form_close_explanation);
 
         } catch (JSONException e) {
-            Log.d(TAG, "Initialization error. Json passed is invalid : " + e.getMessage());
+            Log.d(TAG, "Initialization error. Json passed is invalid : " + e.getMessage(), e);
         }
     }
 
@@ -410,13 +416,13 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                                 ok = ok && comparison;
                                 if (!ok) break;
                             } catch (Exception e) {
-                                Log.e(TAG, e.getMessage());
+                                Log.e(TAG, e.getMessage(), e);
                             }
                         }
                     }
                     toggleViewVisibility(curView, ok);
                 } catch (Exception e) {
-                    Log.e(TAG, e.getMessage());
+                    Log.e(TAG, e.getMessage(), e);
                 }
             }
         }
@@ -445,7 +451,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     }
 
                 } catch (Exception e) {
-                    Log.e(TAG, e.getMessage());
+                    Log.e(TAG, e.getMessage(), e);
                 }
             }
         }
@@ -610,9 +616,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     formObject.put(RuleConstant.STEP, formObject.getString(RuleConstant.STEP));
 
                     result.putAll(getValueFromAddressCore(formObject));
-                    result.put(RuleConstant.SELECTED_RULE, address[2]);
-
                 }
+
+                result.put(RuleConstant.SELECTED_RULE, address[2]);
 
             } else {
 
@@ -661,16 +667,16 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     }
                 }
             } else {
-                result.put(object.has(RuleConstant.IS_RULE_CHECK) ? object.get("step") + "_" + object.get("key") : JsonFormConstants.VALUE, object.optString(JsonFormConstants.VALUE));
+                result.put(getKey(object), getValue(object));
             }
         } else {
-            result.put(object.has(RuleConstant.IS_RULE_CHECK) ? object.get("step") + "_" + object.get("key") : JsonFormConstants.VALUE, object.optString(JsonFormConstants.VALUE));
+            result.put(getKey(object), getValue(object));
         }
 
         if (object.has(RuleConstant.IS_RULE_CHECK) && (object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.CHECK_BOX) || object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.NATIVE_RADIO_BUTTON))) {
             List<String> selectedValues = new ArrayList<>(result.keySet());
             result.clear();
-            result.put(object.get("step") + "_" + object.get("key"), selectedValues.toString());
+            result.put(getKey(object), selectedValues.toString());
         }
 
         return result;
@@ -1048,7 +1054,24 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     Map<String, Object> map = ((Map<String, Object>) object);
 
                     String name = map.get(RuleConstant.NAME).toString();
-                    ruleKeys.put(filename + ":" + name, getConditionKeys(map.get(RuleConstant.CONDITION).toString()));
+
+                    List<String> actions = new ArrayList<>();
+
+                    String conditionString = map.get(RuleConstant.CONDITION).toString();
+
+                    List<String> fields = (List<String>) map.get(RuleConstant.ACTIONS);
+                    if (fields != null) {
+                        for (String field : fields) {
+                            if (field.trim().startsWith(RuleConstant.CALCULATION)) {
+                                conditionString += " " + field;
+                            }
+                        }
+
+                    }
+
+                    actions.addAll(getConditionKeys(conditionString));
+                    ruleKeys.put(filename + ":" + name, actions);
+
                     if (name.equals(fieldKey)) {
                         break;
                     }
@@ -1057,7 +1080,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             }
 
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, e.getMessage(), e);
         }
 
 
@@ -1070,11 +1093,8 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
         for (int i = 0; i < conditionTokens.length; i++) {
 
-            if (conditionTokens[i].startsWith("(" + RuleConstant.STEP) || conditionTokens[i].startsWith(RuleConstant.STEP) || conditionTokens[i].startsWith(RuleConstant.PREFIX.GLOBAL)) {
-                String conditionToken = conditionTokens[i];
-
-                conditionToken = conditionToken.contains(".") ? conditionToken.substring(0, conditionToken.indexOf('.')) : conditionToken;
-                conditionToken = conditionToken.charAt(0) == '(' ? conditionToken.substring(1) : conditionToken;
+            if (conditionTokens[i].contains(RuleConstant.STEP) || conditionTokens[i].contains(RuleConstant.PREFIX.GLOBAL)) {
+                String conditionToken = cleanToken(conditionTokens[i]);
 
                 conditionKeys.put(conditionToken, true);
             }
@@ -1084,6 +1104,31 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         return new ArrayList<>(conditionKeys.keySet());
 
 
+    }
+
+    @NonNull
+    private String cleanToken(String conditionTokenRaw) {
+
+        String conditionToken = conditionTokenRaw.trim();
+
+
+        for (int i = 0; i < conditionToken.length(); i++) {
+
+            if (JAVA_OPERATORS.contains(conditionToken.charAt(i))) {
+
+                if (i == 0) {
+                    conditionToken = cleanToken(conditionToken.substring(1));
+                } else {
+
+                    conditionToken = conditionToken.substring(0, conditionToken.indexOf(conditionToken.charAt(i)));
+
+                    break;
+                }
+            }
+
+        }
+
+        return conditionToken;
     }
 
     private void updateCalculation(Map<String, String> valueMap, View view, String rulesFile) {
@@ -1096,13 +1141,17 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             if (view instanceof TextableView) {
                 TextableView textView = ((TextableView) view);
                 textView.setText(calculation.charAt(0) == '{' ? getRenderText(calculation, textView.getTag(R.id.original_text).toString()) : calculation);
+            } else if (view instanceof EditText) {
+                ((EditText) view).setText(calculation);
+                view.setTag(R.id.is_first_time, true);
+
             } else {
 
                 ((TextView) view).setText(calculation);
             }
 
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, e.getMessage(), e);
             Log.d(TAG, "calling updateCalculation on Non TextView or Text View decendant");
         }
 
@@ -1123,5 +1172,19 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         }
 
         return resString;
+    }
+
+    private String getValue(JSONObject object) throws JSONException {
+        String value = object.optString(JsonFormConstants.VALUE);
+
+        if (object.has(JsonFormConstants.EDIT_TYPE) && object.getString(JsonFormConstants.EDIT_TYPE).equals(JsonFormConstants.EDIT_TEXT_TYPE.NUMBER) && TextUtils.isEmpty(object.optString(JsonFormConstants.VALUE))) {
+            value = "0";
+        }
+
+        return value;
+    }
+
+    private String getKey(JSONObject object) throws JSONException {
+        return object.has(RuleConstant.IS_RULE_CHECK) ? object.get(RuleConstant.STEP) + "_" + object.get(JsonFormConstants.KEY) : JsonFormConstants.VALUE;
     }
 }

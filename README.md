@@ -1222,14 +1222,15 @@ If you want to specify relevance on the basis of whether a particular value HAS 
          }
       } 
 ```
-In the example above, the relevance and the calculations for the edit text with key "happiness_level" are defined in the `assets/rule/sample-relevance-rules.yml` and `assets/rule/sample-calculation-rules.yml` files respectively.
+In the example above, the relevance and the calculations for the edit text with key `happiness_level` are defined in the `assets/rule/sample-relevance-rules.yml` and `assets/rule/sample-calculation-rules.yml` files respectively.
 The calculation setting here means that the value for this field is calculated rather than entered, its calculation rules being defined in the `sample-calculation-rules.yml` file.
 
 The Sample App now has the various sections separated for easier reference. Once you run the app , clicking on the RULES ENGINE LOGIC button guides you through various configurations for relevance and calculations.
 You can check out the corresponding rules files under `assets/rule` to see how they are configured.
 
 NB: 
-    - When defining rules, always prefix with the step name they reference e.g. if its a key `age` in `step 1` then the field reference in the condition should be as `step1_age` e.g. `condition: "step1_hepb_immun_status < 60 || step1_hepb_immun_status > 100"`
+    - When defining rules, always prefix with the step name they reference e.g. if its a key `age` in `step 1` then the field reference in the condition should be as `step1_age` 
+      e.g. `condition: "step1_hepb_immun_status < 60 || step1_hepb_immun_status > 100"`
     - The name of the rule should be the key of the field it configures also be prefixed with its step  e.g. `name: step1_happiness_level`
     - The action of a calculation should always be an assignment to the key calculation e.g. 
      ```

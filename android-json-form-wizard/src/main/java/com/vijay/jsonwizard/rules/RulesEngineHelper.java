@@ -96,6 +96,8 @@ public class RulesEngineHelper implements RuleListener {
 
         selectedRuleName = factMap.get(RuleConstant.SELECTED_RULE);
 
+        Log.d("Selected Rule", selectedRuleName);
+
         Facts facts = new Facts();
 
         for (Map.Entry<String, String> entry : factMap.entrySet()) {
@@ -117,7 +119,7 @@ public class RulesEngineHelper implements RuleListener {
 
     @Override
     public boolean beforeEvaluate(Rule rule, Facts facts) {
-        return selectedRuleName.equals(rule.getName());
+        return selectedRuleName != null && selectedRuleName.equals(rule.getName());
     }
 
     @Override
