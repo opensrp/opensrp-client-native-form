@@ -492,7 +492,9 @@ public class GenericPopupDialog extends DialogFragment {
                     }
                 }
 
-                customTextView.setText("(" + formUtils.getSpecifyText(newSelectedValues) + ")");
+                if (newSelectedValues.length() > 0) {
+                    customTextView.setText("(" + formUtils.getSpecifyText(newSelectedValues) + ")");
+                }
                 jsonApi.setmJSONObject(mJSONObject);
 
             } catch (JSONException e) {
