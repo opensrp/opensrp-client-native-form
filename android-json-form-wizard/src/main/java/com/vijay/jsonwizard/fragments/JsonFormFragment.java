@@ -59,7 +59,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     public static JsonFormFragment getFormFragment(String stepName) {
         JsonFormFragment jsonFormFragment = new JsonFormFragment();
         Bundle bundle = new Bundle();
-        bundle.putString("stepName", stepName);
+        bundle.putString(JsonFormConstants.JSON_FORM_KEY.STEPNAME, stepName);
         jsonFormFragment.setArguments(bundle);
         return jsonFormFragment;
     }
@@ -78,7 +78,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.native_form_fragment_json_wizard, null);
+        View rootView = inflater.inflate(R.layout.native_json_form_fragment, null);
         mMainView = (LinearLayout) rootView.findViewById(R.id.main_layout);
         mScrollView = (ScrollView) rootView.findViewById(R.id.scroll_view);
         return rootView;
