@@ -1,11 +1,15 @@
 package com.vijay.jsonwizard.utils;
 
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,10 +18,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.customviews.GenericPopupDialog;
+import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.views.CustomTextView;
@@ -51,6 +58,7 @@ public class FormUtils {
     private static final String START_JAVAROSA_PROPERTY = "start";
     private static final String END_JAVAROSA_PROPERTY = "end";
     private static final String TODAY_JAVAROSA_PROPERTY = "today";
+    private final String TAG = this.getClass().getSimpleName();
 
     public static LinearLayout.LayoutParams getLinearLayoutParams(int width, int height, int left, int top, int right, int bottom) {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(width, height);
@@ -230,9 +238,10 @@ public class FormUtils {
         return px;
     }
 
-    public static Map<String, View> createRadioButtonAndCheckBoxLabel(List<View> views, JSONObject jsonObject, Context context, JSONArray canvasIds, Boolean
-            readOnly, CommonListener listener) throws JSONException {
-        Map<String,View>  createdViewsMap = new HashMap<>();
+    public static Map<String, View> createRadioButtonAndCheckBoxLabel(LinearLayout linearLayout, JSONObject jsonObject, Context context,
+                                                                      JSONArray canvasIds, Boolean
+                                                                              readOnly, CommonListener listener) throws JSONException {
+        Map<String, View> createdViewsMap = new HashMap<>();
         String label = jsonObject.optString(JsonFormConstants.LABEL, "");
         if (!TextUtils.isEmpty(label)) {
             String asterisks = "";
@@ -259,13 +268,13 @@ public class FormUtils {
             labelText.setText(Html.fromHtml(combinedLabelText));
             labelText.setTextSize(labelTextSize);
             canvasIds.put(relativeLayout.getId());
-            if(readOnly){
+            if (readOnly) {
                 editButton.setVisibility(View.VISIBLE);
             }
             relativeLayout.setEnabled(!readOnly);
-            views.add(relativeLayout);
-            createdViewsMap.put(JsonFormConstants.EDIT_BUTTON,editButton);
-            createdViewsMap.put(JsonFormConstants.CUSTOM_TEXT,labelText);
+            linearLayout.addView(relativeLayout);
+            createdViewsMap.put(JsonFormConstants.EDIT_BUTTON, editButton);
+            createdViewsMap.put(JsonFormConstants.CUSTOM_TEXT, labelText);
         }
         return createdViewsMap;
     }
@@ -309,7 +318,7 @@ public class FormUtils {
     }
 
     public static void showEditButton(JSONObject jsonObject, View editableView, ImageView editButton, CommonListener listener) throws JSONException {
-        editButton.setTag(R.id.editable_view,editableView);
+        editButton.setTag(R.id.editable_view, editableView);
         editButton.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
         editButton.setTag(R.id.type, jsonObject.getString("type"));
         editButton.setOnClickListener(listener);
@@ -429,5 +438,157 @@ public class FormUtils {
                 view.setTypeface(null, Typeface.NORMAL);
                 break;
         }
+    }
+
+    public void showGenericDialog(View view) {
+        Context context = (Context) view.getTag(R.id.specify_context);
+        String specifyContent = (String) view.getTag(R.id.specify_content);
+        String specifyContentForm = (String) view.getTag(R.id.specify_content_form);
+        String stepName = (String) view.getTag(R.id.specify_step_name);
+        CommonListener listener = (CommonListener) view.getTag(R.id.specify_listener);
+        JsonFormFragment formFragment = (JsonFormFragment) view.getTag(R.id.specify_fragment);
+        JSONArray jsonArray = (JSONArray) view.getTag(R.id.secondaryValues);
+        String parentKey = (String) view.getTag(R.id.key);
+        String type = (String) view.getTag(R.id.type);
+        CustomTextView customTextView = (CustomTextView) view.getTag(R.id.specify_textview);
+        String childKey;
+
+        if (specifyContent != null) {
+            GenericPopupDialog genericPopupDialog = GenericPopupDialog.getInstance();
+            genericPopupDialog.setContext(context);
+            genericPopupDialog.setCommonListener(listener);
+            genericPopupDialog.setFormFragment(formFragment);
+            genericPopupDialog.setFormIdentity(specifyContent);
+            genericPopupDialog.setFormLocation(specifyContentForm);
+            genericPopupDialog.setStepName(stepName);
+            genericPopupDialog.setSecondaryValues(jsonArray);
+            genericPopupDialog.setParentKey(parentKey);
+            if (customTextView != null) {
+                genericPopupDialog.setCustomTextView(customTextView);
+            }
+            if (type.equals(JsonFormConstants.CHECK_BOX) || type.equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
+                childKey = (String) view.getTag(R.id.childKey);
+                genericPopupDialog.setChildKey(childKey);
+            }
+
+            Activity activity = (Activity) context;
+            FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
+            Fragment prev = activity.getFragmentManager().findFragmentByTag("GenericPopup");
+            if (prev != null) {
+                ft.remove(prev);
+            }
+
+            ft.addToBackStack(null);
+            genericPopupDialog.show(ft, "GenericPopup");
+        } else {
+            Toast.makeText(context, "Please specify the sub form to display ", Toast.LENGTH_LONG).show();
+        }
+
+
+    }
+
+    public String getValueFromSecondaryValues(String type, String itemString) {
+        String newString;
+        String[] strings = itemString.split(":");
+        if (type.equals(JsonFormConstants.CHECK_BOX) || type.equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
+            newString = strings[1];
+        } else {
+            if (strings.length > 1) {
+                newString = strings[1];
+            } else {
+                newString = strings[0];
+            }
+        }
+
+        return newString;
+    }
+
+    public JSONArray concatArray(JSONArray... arrs)
+            throws JSONException {
+        JSONArray result = new JSONArray();
+        for (JSONArray arr : arrs) {
+            for (int i = 0; i < arr.length(); i++) {
+                result.put(arr.get(i));
+            }
+        }
+        return result;
+    }
+
+    public Map<String, String> addAssignedValue(String itemKey, String optionKey, String keyValue, String itemType, String itemText) {
+        Map<String, String> value = new HashMap<>();
+        switch (itemType) {
+            case JsonFormConstants.CHECK_BOX:
+                value.put(itemKey, optionKey + ":" + itemText + ":" + keyValue + ";" + itemType);
+                break;
+            case JsonFormConstants.NATIVE_RADIO_BUTTON:
+                value.put(itemKey, keyValue + ":" + itemText + ";" + itemType);
+                break;
+            default:
+                value.put(itemKey, keyValue + ";" + itemType);
+                break;
+        }
+
+        return value;
+    }
+
+    public String getRadioButtonText(JSONObject item, String value) {
+        String text = "";
+        if (item != null && item.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
+            try {
+                JSONArray options = item.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
+                for (int i = 0; i < options.length(); i++) {
+                    JSONObject option = options.getJSONObject(i);
+                    if (option != null && option.has(JsonFormConstants.KEY)) {
+                        String key = option.getString(JsonFormConstants.KEY);
+                        if (key.equals(value)) {
+                            text = option.getString(JsonFormConstants.TEXT);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                Log.i(TAG, Log.getStackTraceString(e));
+            }
+
+        }
+        return text;
+    }
+
+    public String getSpecifyText(JSONArray jsonArray) {
+        FormUtils formUtils = new FormUtils();
+        StringBuilder specifyText = new StringBuilder();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            try {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                if (jsonObject != null) {
+                    String type = jsonObject.optString(JsonFormConstants.TYPE, null);
+                    JSONArray itemArray = jsonObject.getJSONArray(JsonFormConstants.VALUES);
+                    for (int j = 0; j < itemArray.length(); j++) {
+                        String s = formUtils.getValueFromSecondaryValues(type, itemArray.getString(j));
+                        if(!TextUtils.isEmpty(s)) {
+                            specifyText.append(s + ",");
+                        }
+
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return specifyText.toString().replaceAll(",$", "");
+    }
+
+    public JSONArray getSecondaryValues(JSONObject jsonObject, String type) {
+        JSONArray value = null;
+        String widgetType = type.equals(JsonFormConstants.NATIVE_ACCORDION) ? JsonFormConstants.VALUE : JsonFormConstants.SECONDARY_VALUE;
+
+        if (jsonObject != null && jsonObject.has(widgetType)) {
+            try {
+                value = jsonObject.getJSONArray(widgetType);
+            } catch (JSONException e) {
+                Log.i(TAG, Log.getStackTraceString(e));
+            }
+        }
+
+        return value;
     }
 }

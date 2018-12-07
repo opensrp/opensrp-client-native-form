@@ -1,0 +1,48 @@
+{
+  "content_form": [
+    {
+      "key": "respiratory_exam_radio_button",
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "",
+      "openmrs_entity_id": "",
+      "type": "native_radio",
+      "label": "Respiratory exam",
+      "label_text_style": "bold",
+      "text_color": "#000000",
+      "extra_rel": true,
+      "has_extra_rel": "3",
+      "options": [
+        {
+          "key": "1",
+          "text": "Not done"
+        },
+        {
+          "key": "2",
+          "text": "Normal"
+        },
+        {
+          "key": "3",
+          "text": "Abnormal"
+        }
+      ]
+    },
+    {
+      "key": "respiratory_exam_abnormal_other",
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "",
+      "openmrs_entity_id": "",
+      "type": "edit_text",
+      "hint": "Specify",
+      "v_regex": {
+        "value": "[A-Za-z\\s\.\-]*",
+        "err": "Please enter valid content"
+      },
+      "relevance": {
+        "step1:respiratory_exam_radio_button": {
+          "type": "string",
+          "ex": "equalTo(., \"3\")"
+        }
+      }
+    }
+  ]
+}

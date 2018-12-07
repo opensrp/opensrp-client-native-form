@@ -40,6 +40,7 @@ public class JsonFormConstants {
     public static final String BEHAVIOUR = "behaviour";
     public static final String RESULT = "result";
     public static final String VALUE = "value";
+    public static final String SECOND_VALUE = "second_value";
     public static final String OPENMRS_ENTITY_PARENT = "openmrs_entity_parent";
     public static final String OPENMRS_ENTITY = "openmrs_entity";
     public static final String OPENMRS_ENTITY_ID = "openmrs_entity_id";
@@ -71,8 +72,10 @@ public class JsonFormConstants {
     public static final String HORIZONTAL_LINE = "h_line";
     public static final String NATIVE_RADIO_BUTTON = "native_radio";
     public static final String NATIVE_RADIO_BUTTON_MULTI_RELEVANCE = "multi_relevance";
-    public static final String NATIVE_RADIO_SPECIFY_INFO = "specify_info";
-    public static final String NATIVE_RADIO_SPECIFY_INFO_COLOR = "specify_info_color";
+    public static final String CONTENT_INFO = "specify_info";
+    public static final String CONTENT_WIDGET = "specify_widget";
+    public static final String CONTENT_FORM = "content_form";
+    public static final String CONTENT_INFO_COLOR = "specify_info_color";
     public static final String NATIVE_RADIO_EXTRA_INFO = "extra_info";
     public static final String NATIVE_RADIO_EXTRA_INFO_COLOR = "extra_info_color";
     public static final String DEFAULT_TEXT_COLOR = "#212121";
@@ -95,6 +98,22 @@ public class JsonFormConstants {
     public static final String BOLD_ITALIC = "bold_italic";
     public static final String EDIT_BUTTON = "edit_button";
     public static final String CUSTOM_TEXT = "custom_text";
+    public static final String SECONDARY_VALUE = "secondary_value";
+    public static final String CONTENT_FORM_LOCATION = "content_form_location";
+    public static final String VALUES = "values";
+    public static final String EXTRA_REL = "extra_rel";
+    public static final String HAS_EXTRA_REL = "has_extra_rel";
+    public static final String DEFAULT_SUB_FORM_LOCATION = "json.form/sub_form";
+    public static final String BARCODE_TYPE = "barcode_type";
+    public static final String MIN_DATE = "min_date";
+    public static final String MAX_DATE = "max_date";
+    public static final String EXPANDED = "expanded";
+    public static final String NUMBER = "number";
+    public static final String TOP_MARGIN = "top_margin";
+    public static final String BOTTOM_MARGIN = "bottom_margin";
+    public static final String LEFT_MARGIN = "left_margin";
+    public static final String UPLOAD_BUTTON_TEXT = "uploadButtonText";
+    public static final String NATIVE_ACCORDION = "native_accordion";
 
     public static class JSON_FORM_KEY {
         public static final String EX_CHECKBOX = "ex-checkbox";
