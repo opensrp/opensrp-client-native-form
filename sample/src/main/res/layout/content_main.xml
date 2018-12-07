@@ -26,6 +26,15 @@
             android:theme="@style/AppTheme" />
 
         <Button
+            android:id="@+id/wizard_form"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="WIZARD (MULTI-STEP FORM)"
+            android:textColor="@android:color/white"
+            android:theme="@style/AppTheme" />
+
+        <Button
             android:id="@+id/rules_engine_skip_logic"
             style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="match_parent"

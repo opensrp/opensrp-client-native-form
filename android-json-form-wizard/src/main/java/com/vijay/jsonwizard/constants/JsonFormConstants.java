@@ -105,9 +105,11 @@ public class JsonFormConstants {
         public static final String OR = "or";
         public static final String AND = "and";
         public static final String EXCLUSIVE = "exclusive";
-        public static final String JSON = "json";
         public static final String NOT = "not";
         public static final String GLOBAL = "global";
+        public static final String JSON = "json";
+        public static final String FORM = "form";
+        public static final String STEPNAME = "stepName";
     }
 
     public static class BARCODE_CONSTANTS {
