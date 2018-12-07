@@ -30,4 +30,7 @@
     <color name="toaster_note_yellow_icon">#FFC100</color>
     <color name="dialog_button_blue_color">#4118D0</color>
     <color name="customAppThemeBlue">#218CC5</color>
+
+    <color name="button_navy_blue">#2539BC</color>
+
 </resources>

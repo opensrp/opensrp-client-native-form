@@ -32,6 +32,7 @@ import com.vijay.jsonwizard.comparisons.RegexComparison;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.CheckBox;
 import com.vijay.jsonwizard.customviews.GenericPopupDialog;
+import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.interfaces.OnActivityRequestPermissionResultListener;
@@ -44,6 +45,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -56,6 +58,8 @@ import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
     private static final String TAG = JsonFormActivity.class.getSimpleName();
+    private static final String JSON_STATE = "jsonState";
+    private static final String FORM_STATE = "formState";
     private GenericPopupDialog genericPopupDialog = GenericPopupDialog.getInstance();
     private FormUtils formUtils = new FormUtils();
     private Toolbar mToolbar;
@@ -71,6 +75,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     private String confirmCloseTitle;
     private String confirmCloseMessage;
     private JSONArray extraFieldsWithValues;
+    private Form form;
 
     public void init(String json) {
         try {
@@ -101,8 +106,10 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             init(getIntent().getStringExtra(JsonFormConstants.JSON_FORM_KEY.JSON));
             initializeFormFragment();
             onFormStart();
+            this.form = extractForm(getIntent().getSerializableExtra(JsonFormConstants.JSON_FORM_KEY.FORM));
         } else {
-            init(savedInstanceState.getString("jsonState"));
+            init(savedInstanceState.getString(JSON_STATE));
+            this.form = extractForm(savedInstanceState.getSerializable(FORM_STATE));
         }
     }
 
@@ -276,7 +283,8 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString("jsonState", mJSONObject.toString());
+        outState.putString(JSON_STATE, mJSONObject.toString());
+        outState.putSerializable(FORM_STATE, form);
     }
 
     @Override
@@ -903,6 +911,10 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         this.confirmCloseMessage = confirmCloseMessage;
     }
 
+    public Form getForm() {
+        return form;
+    }
+
     private boolean isRelevant(Map<String, String> curValueMap, JSONObject curRelevance) throws Exception {
         if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_CHECKBOX)) {
             JSONArray exArray = curRelevance.getJSONArray(JsonFormConstants.JSON_FORM_KEY.EX_CHECKBOX);
@@ -970,6 +982,13 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     @Override
     public void setmJSONObject(JSONObject mJSONObject) {
         this.mJSONObject = mJSONObject;
+    }
+
+    private Form extractForm(Serializable serializable) {
+        if (serializable != null && serializable instanceof Form) {
+            return (Form) serializable;
+        }
+        return new Form();
     }
 
     @Override

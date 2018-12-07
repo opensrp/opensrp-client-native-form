@@ -31,7 +31,6 @@
     <string name="label_text_string">%1$s %2$s</string>
     <string name="the_toaster_icon">The toaster icon</string>
     <string name="asterisks">*</string>
-    <string name="next">Next</string>
     <string name="save">Save</string>
     <string name="radio_button_date_change">tap to change</string>
     <string name="select_one">Select a Number</string>
@@ -58,7 +57,9 @@
     <string name="barcode_success">Barcode read successfully</string>
     <string name="barcode_failure">No barcode captured</string>
     <string name="barcode_error">"Error reading barcode: %1$s"</string>
-
     <string name="allow_camera_management">You need to allow the app to use the camera to scan QR codes&#8230;</string>
     <string name="please_specify_content">Please specify content to be displayed by the pop up&#8230;</string>
+    <string name="previous">Previous</string>
+    <string name="next">Next</string>
+    <string name="submit">Submit</string>
 </resources>

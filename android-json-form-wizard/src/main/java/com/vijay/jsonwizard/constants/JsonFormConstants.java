@@ -103,7 +103,7 @@ public class JsonFormConstants {
     public static final String VALUES = "values";
     public static final String EXTRA_REL = "extra_rel";
     public static final String HAS_EXTRA_REL = "has_extra_rel";
-    public static final String DEFAULT_SUB_FORM_LOCATION = "json/sub_form";
+    public static final String DEFAULT_SUB_FORM_LOCATION = "json.form/sub_form";
     public static final String BARCODE_TYPE = "barcode_type";
     public static final String MIN_DATE = "min_date";
     public static final String MAX_DATE = "max_date";
@@ -120,8 +120,11 @@ public class JsonFormConstants {
         public static final String OR = "or";
         public static final String AND = "and";
         public static final String EXCLUSIVE = "exclusive";
-        public static final String JSON = "json";
         public static final String NOT = "not";
+
+        public static final String JSON = "json";
+        public static final String FORM = "form";
+        public static final String STEPNAME = "stepName";
     }
 
     public static class BARCODE_CONSTANTS {
