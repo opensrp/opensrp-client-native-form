@@ -42,17 +42,17 @@ public class CheckBoxFactory implements FormWidgetFactory {
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
-        return attachJson(stepName, context, formFragment, jsonObject, listener, false);
+        return attachJson(stepName, context, jsonObject, listener, false);
     }
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
                                        JSONObject jsonObject, CommonListener
                                                listener, boolean popup) throws Exception {
-        return attachJson(stepName, context, formFragment, jsonObject, listener, popup);
+        return attachJson(stepName, context, jsonObject, listener, popup);
     }
 
-    private List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment,
+    private List<View> attachJson(String stepName, Context context,
                                   JSONObject jsonObject, CommonListener
                                           listener, boolean popup) throws JSONException {
         boolean readOnly = false;

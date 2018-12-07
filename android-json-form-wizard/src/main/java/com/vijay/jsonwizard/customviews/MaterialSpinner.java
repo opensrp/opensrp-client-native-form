@@ -605,13 +605,13 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
         invalidate();
     }
 
+    public CharSequence getHint() {
+        return hint;
+    }
+
     public void setHint(int resid) {
         CharSequence hint = getResources().getString(resid);
         setHint(hint);
-    }
-
-    public CharSequence getHint() {
-        return hint;
     }
 
     public void setHintView(Integer resId) {
@@ -627,13 +627,13 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
         invalidate();
     }
 
+    public CharSequence getFloatingLabelText() {
+        return this.floatingLabelText;
+    }
+
     public void setFloatingLabelText(int resid) {
         String floatingLabelText = getResources().getString(resid);
         setFloatingLabelText(floatingLabelText);
-    }
-
-    public CharSequence getFloatingLabelText() {
-        return this.floatingLabelText;
     }
 
     public int getFloatingLabelColor() {
@@ -747,11 +747,6 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
         requestLayout();
     }
 
-    public void setError(int resid) {
-        CharSequence error = getResources().getString(resid);
-        setError(error);
-    }
-
     @Override
     public void setEnabled(boolean enabled) {
         if (!enabled) {
@@ -763,6 +758,11 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
 
     public CharSequence getError() {
         return this.error;
+    }
+
+    public void setError(int resid) {
+        CharSequence error = getResources().getString(resid);
+        setError(error);
     }
 
     public void setRtl() {
@@ -799,14 +799,14 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
     }
 
     @Override
-    public void setAdapter(SpinnerAdapter adapter) {
-        hintAdapter = new HintAdapter(adapter, getContext());
-        super.setAdapter(hintAdapter);
+    public SpinnerAdapter getAdapter() {
+        return hintAdapter != null ? hintAdapter.getWrappedAdapter() : null;
     }
 
     @Override
-    public SpinnerAdapter getAdapter() {
-        return hintAdapter != null ? hintAdapter.getWrappedAdapter() : null;
+    public void setAdapter(SpinnerAdapter adapter) {
+        hintAdapter = new HintAdapter(adapter, getContext());
+        super.setAdapter(hintAdapter);
     }
 
     private float pxToDp(float px) {

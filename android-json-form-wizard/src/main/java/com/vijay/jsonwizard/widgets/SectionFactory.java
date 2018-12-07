@@ -26,15 +26,15 @@ import java.util.List;
 public class SectionFactory implements FormWidgetFactory {
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
-        return attachJson(stepName, context, formFragment, jsonObject, listener, popup);
+        return attachJson(context, jsonObject);
     }
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
-        return attachJson(stepName, context, formFragment, jsonObject, listener, false);
+        return attachJson(context, jsonObject);
     }
 
-    private List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws JSONException {
+    private List<View> attachJson(Context context, JSONObject jsonObject) throws JSONException {
         List<View> views = new ArrayList<>(1);
         String text = jsonObject.getString(JsonFormConstants.NAME);
         LinearLayout rootLayout = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.native_form_item_section_label, null);

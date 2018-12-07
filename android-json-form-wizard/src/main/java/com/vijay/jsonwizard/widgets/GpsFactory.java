@@ -74,17 +74,17 @@ public class GpsFactory implements FormWidgetFactory {
     public List<View> getViewsFromJson(String stepName, final Context context,
                                        JsonFormFragment formFragment, JSONObject jsonObject,
                                        CommonListener listener, boolean popup) throws Exception {
-        return attachJson(stepName, context, formFragment, jsonObject, listener, popup);
+        return attachJson(stepName, context, jsonObject, popup);
     }
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
-        return attachJson(stepName, context, formFragment, jsonObject, listener, false);
+        return attachJson(stepName, context, jsonObject, false);
     }
 
     private List<View> attachJson(String stepName, final Context context,
-                                  JsonFormFragment formFragment, JSONObject jsonObject,
-                                  CommonListener listener, boolean popup) throws JSONException {
+                                  JSONObject jsonObject,
+                                  boolean popup) throws JSONException {
         List<View> views = new ArrayList<>();
 
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);

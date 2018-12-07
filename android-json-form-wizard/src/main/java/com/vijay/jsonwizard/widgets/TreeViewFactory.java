@@ -68,55 +68,29 @@ public class TreeViewFactory implements FormWidgetFactory {
     @Override
     public List<View> getViewsFromJson(String stepName, final Context context, JsonFormFragment formFragment, JSONObject
             jsonObject, CommonListener listener, boolean popup) throws JSONException {
-        return attachJson(stepName, context, formFragment, jsonObject, listener, popup);
+        return attachJson(stepName, context, formFragment, jsonObject, popup);
     }
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
-        return attachJson(stepName, context, formFragment, jsonObject, listener, false);
+        return attachJson(stepName, context, formFragment, jsonObject, false);
     }
 
     private List<View> attachJson(String stepName, final Context context, JsonFormFragment formFragment, JSONObject
-            jsonObject, CommonListener listener, boolean popup) throws JSONException {
+            jsonObject, boolean popup) throws JSONException {
         List<View> views = new ArrayList<>(1);
-        String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
-        String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
-        String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
         String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
+        final String defaultValueString = jsonObject.optString(JsonFormConstants.DEFAULT);
+        final String valueString = jsonObject.optString(JsonFormConstants.VALUE);
 
         JSONArray canvasIds = new JSONArray();
         RelativeLayout rootLayout = (RelativeLayout) LayoutInflater.from(context).inflate(
                 R.layout.native_form_item_edit_text, null);
         rootLayout.setId(ViewUtil.generateViewId());
         canvasIds.put(rootLayout.getId());
-        final MaterialEditText editText = rootLayout.findViewById(R.id.edit_text);
-        editText.setHint(jsonObject.getString(JsonFormConstants.HINT));
-        editText.setFloatingLabelText(jsonObject.getString(JsonFormConstants.HINT));
-        editText.setId(ViewUtil.generateViewId());
-        editText.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
-        editText.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
-        editText.setTag(R.id.openmrs_entity, openMrsEntity);
-        editText.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-        editText.setTag(R.id.extraPopup, popup);
-        editText.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
-        if (jsonObject.has(JsonFormConstants.V_REQUIRED)) {
-            JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
-            String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
-            if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
-                editText.addValidator(new RequiredValidator(requiredObject.getString(JsonFormConstants.ERR)));
-            }
 
-        }
-        final String defaultValueString = jsonObject.optString(JsonFormConstants.DEFAULT);
-        final String valueString = jsonObject.optString(JsonFormConstants.VALUE);
-
-        if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
-            boolean readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
-            editText.setEnabled(!readOnly);
-            editText.setFocusable(!readOnly);
-        }
-
+        final MaterialEditText editText = createEditText(rootLayout, jsonObject, popup, stepName);
         ArrayList<String> defaultValue = new ArrayList<>();
         try {
             JSONArray jsonArray = new JSONArray(defaultValueString);
@@ -134,7 +108,6 @@ public class TreeViewFactory implements FormWidgetFactory {
             }
         } catch (JSONException e) {
         }
-
 
         final TreeViewDialog treeViewDialog = new TreeViewDialog(context,
                 jsonObject.getJSONArray(JsonFormConstants.TREE), defaultValue, value);
@@ -208,4 +181,38 @@ public class TreeViewFactory implements FormWidgetFactory {
 
         return views;
     }
+
+    private MaterialEditText createEditText(RelativeLayout rootLayout, JSONObject jsonObject, boolean popup, String stepName) throws JSONException {
+        String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
+        String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
+        String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
+        final MaterialEditText editText = rootLayout.findViewById(R.id.edit_text);
+        editText.setHint(jsonObject.getString(JsonFormConstants.HINT));
+        editText.setFloatingLabelText(jsonObject.getString(JsonFormConstants.HINT));
+        editText.setId(ViewUtil.generateViewId());
+        editText.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+        editText.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
+        editText.setTag(R.id.openmrs_entity, openMrsEntity);
+        editText.setTag(R.id.openmrs_entity_id, openMrsEntityId);
+        editText.setTag(R.id.extraPopup, popup);
+        editText.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+        if (jsonObject.has(JsonFormConstants.V_REQUIRED)) {
+            JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
+            String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
+            if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
+                editText.addValidator(new RequiredValidator(requiredObject.getString(JsonFormConstants.ERR)));
+            }
+
+        }
+
+        if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
+            boolean readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
+            editText.setEnabled(!readOnly);
+            editText.setFocusable(!readOnly);
+        }
+
+
+        return editText;
+    }
+
 }

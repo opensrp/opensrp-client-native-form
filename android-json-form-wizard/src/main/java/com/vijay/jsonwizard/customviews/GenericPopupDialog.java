@@ -417,10 +417,8 @@ public class GenericPopupDialog extends DialogFragment {
                 String value = list.get(k);
                 String[] splitValues = value.split(":");
                 String[] currentValues = currentValue.split(":");
-                if (splitValues.length == 3 && currentValues.length == 3) {
-                    if (splitValues[0].equals(currentValues[0]) && splitValues[1].equals(currentValues[1]) && currentValues[2].equals("false")) {
-                        list.remove(k);
-                    }
+                if (splitValues.length == 3 && currentValues.length == 3 && splitValues[0].equals(currentValues[0]) && splitValues[1].equals(currentValues[1]) && currentValues[2].equals("false")) {
+                    list.remove(k);
                 }
             }
         } catch (Exception e) {

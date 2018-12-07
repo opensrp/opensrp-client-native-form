@@ -30,6 +30,7 @@ import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -48,22 +49,19 @@ public class BarcodeFactory implements FormWidgetFactory {
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
-        return attachJson(stepName, context, formFragment, jsonObject, listener, true);
+        return attachJson(stepName, context, formFragment, jsonObject, true);
     }
 
     @Override
     public List<View> getViewsFromJson(String stepName, final Context context,
                                        JsonFormFragment formFragment, final JSONObject jsonObject,
                                        CommonListener listener, boolean popup) {
-        return attachJson(stepName, context, formFragment, jsonObject, listener, popup);
+        return attachJson(stepName, context, formFragment, jsonObject, popup);
     }
 
-    private List<View> attachJson(String stepName, final Context context, JsonFormFragment formFragment, final JSONObject jsonObject, CommonListener listener, boolean popup) {
+    private List<View> attachJson(String stepName, final Context context, JsonFormFragment formFragment, final JSONObject jsonObject, boolean popup) {
         List<View> views = new ArrayList<>(1);
         try {
-            String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
-            String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
-            String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
             String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
             final String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
             String value = jsonObject.optString(JsonFormConstants.VALUE, null);
@@ -72,30 +70,7 @@ public class BarcodeFactory implements FormWidgetFactory {
                     .inflate(R.layout.native_form_item_barcode, null);
             final int canvasId = ViewUtil.generateViewId();
             rootLayout.setId(canvasId);
-            final MaterialEditText editText = rootLayout
-                    .findViewById(R.id.edit_text);
-            editText.setHint(jsonObject.getString(JsonFormConstants.HINT));
-            JSONArray canvasIdsArray = new JSONArray();
-            canvasIdsArray.put(canvasId);
-            editText.setTag(R.id.canvas_ids, canvasIdsArray.toString());
-            editText.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
-            editText.setFloatingLabelText(jsonObject.getString(JsonFormConstants.HINT));
-            editText.setId(ViewUtil.generateViewId());
-            editText.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
-            editText.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
-            editText.setTag(R.id.extraPopup, popup);
-            editText.setTag(R.id.openmrs_entity, openMrsEntity);
-            editText.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-            if (jsonObject.has(JsonFormConstants.V_REQUIRED)) {
-                JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
-                String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
-                if (!TextUtils.isEmpty(requiredValue) && (Boolean.TRUE.toString().equalsIgnoreCase(requiredValue))) {
-                    editText.addValidator(
-                            new RequiredValidator(requiredObject.getString(JsonFormConstants.ERR)));
-                }
-            }
-
-
+            final MaterialEditText editText = createEditText(rootLayout, jsonObject, canvasId, stepName, popup);
             if (value != null && !checkValue(value)) {
                 editText.setText(value);
             }
@@ -135,9 +110,7 @@ public class BarcodeFactory implements FormWidgetFactory {
                         });
             }
 
-            GenericTextWatcher textWatcher = new GenericTextWatcher(stepName,
-                    formFragment,
-                    editText);
+            GenericTextWatcher textWatcher = new GenericTextWatcher(stepName, formFragment, editText);
             textWatcher.addOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
@@ -148,31 +121,7 @@ public class BarcodeFactory implements FormWidgetFactory {
                 }
             });
 
-            Button scanButton = rootLayout.findViewById(R.id.scan_button);
-            scanButton.setBackgroundColor(context.getResources().getColor(R.color.primary));
-            scanButton.setMinHeight(0);
-            scanButton.setMinimumHeight(0);
-            scanButton.setText(jsonObject.getString("scanButtonText"));
-            scanButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    launchBarcodeScanner((Activity) context, editText,
-                            jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
-                }
-            });
-
-            if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
-                boolean readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
-                editText.setEnabled(!readOnly);
-                editText.setFocusable(!readOnly);
-                if (readOnly) {
-                    scanButton.setBackgroundDrawable(new ColorDrawable(context.getResources()
-                            .getColor(android.R.color.darker_gray)));
-                    scanButton.setClickable(false);
-                    scanButton.setEnabled(false);
-                    scanButton.setFocusable(false);
-                }
-            }
+            addScanButton(context, jsonObject, editText, rootLayout);
 
             editText.addTextChangedListener(textWatcher);
             if (relevance != null && context instanceof JsonApi) {
@@ -192,6 +141,63 @@ public class BarcodeFactory implements FormWidgetFactory {
         }
 
         return views;
+    }
+
+    private MaterialEditText createEditText(RelativeLayout rootLayout, JSONObject jsonObject, int canvasId, String stepName, boolean popup) throws JSONException {
+        String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
+        String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
+        String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
+        final MaterialEditText editText = rootLayout.findViewById(R.id.edit_text);
+        editText.setHint(jsonObject.getString(JsonFormConstants.HINT));
+        JSONArray canvasIdsArray = new JSONArray();
+        canvasIdsArray.put(canvasId);
+        editText.setTag(R.id.canvas_ids, canvasIdsArray.toString());
+        editText.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+        editText.setFloatingLabelText(jsonObject.getString(JsonFormConstants.HINT));
+        editText.setId(ViewUtil.generateViewId());
+        editText.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+        editText.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
+        editText.setTag(R.id.extraPopup, popup);
+        editText.setTag(R.id.openmrs_entity, openMrsEntity);
+        editText.setTag(R.id.openmrs_entity_id, openMrsEntityId);
+        if (jsonObject.has(JsonFormConstants.V_REQUIRED)) {
+            JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
+            String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
+            if (!TextUtils.isEmpty(requiredValue) && (Boolean.TRUE.toString().equalsIgnoreCase(requiredValue))) {
+                editText.addValidator(
+                        new RequiredValidator(requiredObject.getString(JsonFormConstants.ERR)));
+            }
+        }
+
+        return editText;
+    }
+
+    private void addScanButton(final Context context, final JSONObject jsonObject, final MaterialEditText editText, RelativeLayout rootLayout) throws JSONException {
+        Button scanButton = rootLayout.findViewById(R.id.scan_button);
+        scanButton.setBackgroundColor(context.getResources().getColor(R.color.primary));
+        scanButton.setMinHeight(0);
+        scanButton.setMinimumHeight(0);
+        scanButton.setText(jsonObject.getString("scanButtonText"));
+        scanButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launchBarcodeScanner((Activity) context, editText,
+                        jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
+            }
+        });
+
+        if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
+            boolean readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
+            editText.setEnabled(!readOnly);
+            editText.setFocusable(!readOnly);
+            if (readOnly) {
+                scanButton.setBackgroundDrawable(new ColorDrawable(context.getResources()
+                        .getColor(android.R.color.darker_gray)));
+                scanButton.setClickable(false);
+                scanButton.setEnabled(false);
+                scanButton.setFocusable(false);
+            }
+        }
     }
 
     private void launchBarcodeScanner(Activity activity, MaterialEditText editText, String barcodeType) {
