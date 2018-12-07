@@ -1412,8 +1412,7 @@
                 "key": "respiratory_exam_abnormal",
                 "type": "check_box",
                 "values": [
-                  "rapid_breathing:Rapid breathing:true",
-                  "other:Other:true"
+                  "rapid_breathing:Rapid breathing:true"
                 ]
               },
               {

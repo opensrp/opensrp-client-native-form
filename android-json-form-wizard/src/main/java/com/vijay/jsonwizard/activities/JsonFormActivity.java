@@ -441,13 +441,23 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                         curCanvasView.setEnabled(true);
                         curCanvasView.setVisibility(View.VISIBLE);
                     }
-                    if (curCanvasView instanceof MaterialEditText || curCanvasView instanceof RelativeLayout || view instanceof LinearLayout) {
+                    if (curCanvasView instanceof RelativeLayout || view instanceof LinearLayout) {
                         curCanvasView.setFocusable(true);
+                    }
+                    if (view instanceof EditText) {
+                        view.setFocusable(true);
                     }
                 } else {
                     if (curCanvasView != null) {
                         curCanvasView.setEnabled(false);
                         curCanvasView.setVisibility(View.GONE);
+                    }
+                    if (view instanceof EditText) {
+                        EditText editText = (EditText) view;
+                        if (!TextUtils.isEmpty(editText.getText().toString())) {
+                            editText.setText("");
+                        }
+
                     }
                 }
             }

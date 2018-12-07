@@ -491,12 +491,12 @@ public class FormUtils {
         String newString;
         String[] strings = itemString.split(":");
         if (type.equals(JsonFormConstants.CHECK_BOX) || type.equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
-            newString = strings[1] + ", ";
+            newString = strings[1];
         } else {
             if (strings.length > 1) {
-                newString = strings[1] + ", ";
+                newString = strings[1];
             } else {
-                newString = strings[0] + ", ";
+                newString = strings[0];
             }
         }
 
@@ -563,7 +563,10 @@ public class FormUtils {
                     String type = jsonObject.optString(JsonFormConstants.TYPE, null);
                     JSONArray itemArray = jsonObject.getJSONArray(JsonFormConstants.VALUES);
                     for (int j = 0; j < itemArray.length(); j++) {
-                        specifyText.append(formUtils.getValueFromSecondaryValues(type, itemArray.getString(j)));
+                        String s = formUtils.getValueFromSecondaryValues(type, itemArray.getString(j));
+                        if(!TextUtils.isEmpty(s)) {
+                            specifyText.append(s + ",");
+                        }
 
                     }
                 }
@@ -571,7 +574,7 @@ public class FormUtils {
                 e.printStackTrace();
             }
         }
-        return specifyText.toString().replaceAll(", $", "");
+        return specifyText.toString().replaceAll(",$", "");
     }
 
     public JSONArray getSecondaryValues(JSONObject jsonObject, String type) {
