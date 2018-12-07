@@ -32,7 +32,16 @@ public class ButtonFactory implements FormWidgetFactory {
     @Override
     public List<View> getViewsFromJson(String stepName, final Context context,
                                        final JsonFormFragment formFragment, JSONObject jsonObject,
-                                       CommonListener listener) throws Exception {
+                                       CommonListener listener, boolean popup) throws Exception {
+        return attachJson(stepName, context, formFragment, jsonObject, listener, popup);
+    }
+
+    @Override
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+        return attachJson(stepName, context, formFragment, jsonObject, listener, false);
+    }
+
+    private List<View> attachJson(String stepName, final Context context, final JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws JSONException {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
@@ -66,6 +75,7 @@ public class ButtonFactory implements FormWidgetFactory {
         button.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         button.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
         button.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+        button.setTag(R.id.extraPopup, popup);
 
         if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
             button.setEnabled(!jsonObject.getBoolean(JsonFormConstants.READ_ONLY));
@@ -86,7 +96,7 @@ public class ButtonFactory implements FormWidgetFactory {
                         if (!TextUtils.isEmpty(addressString)) {
                             String[] address = addressString.split(":");
                             JSONObject jsonObject = ((JsonApi) context)
-                                    .getObjectUsingAddress(address);
+                                    .getObjectUsingAddress(address, false);
                             jsonObject.put(JsonFormConstants.VALUE, Boolean.TRUE.toString());
 
                             switch (behaviour) {
