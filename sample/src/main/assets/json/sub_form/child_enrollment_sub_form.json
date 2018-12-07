@@ -6,7 +6,7 @@
       "openmrs_entity": "",
       "openmrs_entity_id": "",
       "type": "check_box",
-      "label": "Abnormal (specify)",
+      "label": "Abnormal",
       "label_text_style": "bold",
       "text_color": "#000000",
       "options": [

@@ -113,6 +113,7 @@ public class JsonFormConstants {
     public static final String BOTTOM_MARGIN = "bottom_margin";
     public static final String LEFT_MARGIN = "left_margin";
     public static final String UPLOAD_BUTTON_TEXT = "uploadButtonText";
+    public static final String NATIVE_ACCORDION = "native_accordion";
 
     public static class JSON_FORM_KEY {
         public static final String EX_CHECKBOX = "ex-checkbox";

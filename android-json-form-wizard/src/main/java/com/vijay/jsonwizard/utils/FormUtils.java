@@ -488,7 +488,7 @@ public class FormUtils {
     }
 
     public String getValueFromSecondaryValues(String type, String itemString) {
-        String newString = "";
+        String newString;
         String[] strings = itemString.split(":");
         if (type.equals(JsonFormConstants.CHECK_BOX) || type.equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
             newString = strings[1] + ", ";
@@ -574,11 +574,13 @@ public class FormUtils {
         return specifyText.toString().replaceAll(", $", "");
     }
 
-    public JSONArray getSecondaryValues(JSONObject jsonObject) {
+    public JSONArray getSecondaryValues(JSONObject jsonObject, String type) {
         JSONArray value = null;
-        if (jsonObject != null && jsonObject.has(JsonFormConstants.SECONDARY_VALUE)) {
+        String widgetType = type.equals(JsonFormConstants.NATIVE_ACCORDION) ? JsonFormConstants.VALUE : JsonFormConstants.SECONDARY_VALUE;
+
+        if (jsonObject != null && jsonObject.has(widgetType)) {
             try {
-                value = jsonObject.getJSONArray(JsonFormConstants.SECONDARY_VALUE);
+                value = jsonObject.getJSONArray(widgetType);
             } catch (JSONException e) {
                 Log.i(TAG, Log.getStackTraceString(e));
             }
