@@ -568,6 +568,7 @@
         "label_text_size": "18sp",
         "label_text_color": "#FF9800",
         "hint": "Any delivery complications?",
+        "read_only": true,
         "exclusive": [
           "none"
         ],

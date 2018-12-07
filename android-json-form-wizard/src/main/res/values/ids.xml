@@ -23,7 +23,7 @@
     <item name="label_dialog_title" type="id" />
 
     <item name="native_radio_button_specify_textview" type="id" />
-    <item name="native_radio_button_main_textview" type="id" />
+    <item name="native_radio_button" type="id" />
     <item name="radio_button_specify_type" type="id" />
     <item name="native_radio_button_context" type="id" />
     <item name="number_selector_textview" type="id" />

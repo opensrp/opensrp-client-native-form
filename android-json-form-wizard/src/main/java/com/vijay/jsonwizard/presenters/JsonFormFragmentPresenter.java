@@ -380,13 +380,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
     private void setCheckboxesEditable(View editButton) {
         List<View> checkboxLayouts = (ArrayList<View>) editButton.getTag(R.id.editable_view);
         for (View checkboxLayout : checkboxLayouts) {
-            if (checkboxLayout instanceof ViewGroup) {
-                ViewGroup group = (ViewGroup) checkboxLayout;
-                for (int id = 0; id < group.getChildCount(); id++) {
-                    group.getChildAt(id).setFocusable(true);
-                    group.getChildAt(id).setEnabled(true);
-                }
-            }
+            setViewGroupEditable(checkboxLayout);
         }
     }
 
@@ -396,15 +390,20 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         radioGroup.setFocusable(true);
         for (int i = 0; i < radioGroup.getChildCount(); i++) {
             View childElement = radioGroup.getChildAt(i);
-            if (childElement instanceof ViewGroup) {
-                ViewGroup group = (ViewGroup) childElement;
-                for (int id = 0; id < group.getChildCount(); id++) {
-                    group.getChildAt(id).setFocusable(true);
-                    group.getChildAt(id).setEnabled(true);
-                }
-            }
+            setViewGroupEditable(childElement);
         }
 
+    }
+
+    private void setViewGroupEditable(View childElement) {
+        if (childElement instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) childElement;
+            for (int id = 0; id < group.getChildCount(); id++) {
+                group.getChildAt(id).setFocusable(true);
+                group.getChildAt(id).setEnabled(true);
+                setViewGroupEditable(group.getChildAt(id));
+            }
+        }
     }
 
     private void showInformationDialog(View view) {
