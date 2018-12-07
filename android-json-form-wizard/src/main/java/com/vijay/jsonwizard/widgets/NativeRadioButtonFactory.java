@@ -240,6 +240,9 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         radioButton.setTextSize(FormUtils.getValueFromSpOrDpOrPx(optionTextSize, context));
         radioButton.setText(item.getString(JsonFormConstants.TEXT));
         radioButton.setEnabled(!readOnly);
+        if (readOnly) {
+            radioButton.setTextColor(context.getResources().getColor(R.color.disabled_color));
+        }
         setRadioButton(radioButton);
     }
 
