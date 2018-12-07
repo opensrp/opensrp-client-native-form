@@ -3,6 +3,7 @@ package com.vijay.jsonwizard.utils;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.Html;
 import android.text.TextUtils;
@@ -428,6 +429,20 @@ public class FormUtils {
             default:
                 view.setTypeface(null, Typeface.NORMAL);
                 break;
+        }
+    }
+
+    public static void setEditMode(JSONObject jsonObject, AppCompatEditText editText, ImageView editButton) throws JSONException {
+        if (jsonObject.has(JsonFormConstants.DISABLED) || (jsonObject.has(JsonFormConstants.DISABLED)
+                && jsonObject.has(JsonFormConstants.READ_ONLY))) {
+            boolean disabled = jsonObject.getBoolean(JsonFormConstants.DISABLED);
+            editText.setEnabled(!disabled);
+            editText.setFocusable(!disabled);
+            editButton.setVisibility(View.GONE);
+        } else if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
+            boolean readyOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
+            editText.setEnabled(!readyOnly);
+            editButton.setVisibility(View.VISIBLE);
         }
     }
 }

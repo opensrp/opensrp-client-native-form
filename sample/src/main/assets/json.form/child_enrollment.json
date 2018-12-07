@@ -1188,7 +1188,6 @@
         "edit_type": "name",
         "edit_text_style": "bordered",
         "value":"1909319333",
-        "disabled":false,
         "read_only":true,
         "v_required": {
           "value": "true",
