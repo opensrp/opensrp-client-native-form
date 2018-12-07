@@ -154,7 +154,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         try {
             mStepDetails = new JSONObject(step.toString());
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, e.getMessage(), e);
         }
         List<View> views = mJsonFormInteractor.fetchFormElements(mStepName, formFragment, mStepDetails,
                 getView().getCommonListener());

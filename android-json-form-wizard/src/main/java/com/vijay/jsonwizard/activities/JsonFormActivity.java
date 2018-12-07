@@ -484,27 +484,6 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         }
     }
 
-    private void updateCanvas(View view, boolean visible, JSONArray canvasViewIds) throws JSONException {
-        for (int i = 0; i < canvasViewIds.length(); i++) {
-            int curId = canvasViewIds.getInt(i);
-            View curCanvasView = findViewById(curId);
-            if (visible) {
-                if (curCanvasView != null) {
-                    curCanvasView.setEnabled(true);
-                    curCanvasView.setVisibility(View.VISIBLE);
-                }
-                if (curCanvasView instanceof MaterialEditText || curCanvasView instanceof RelativeLayout || view instanceof LinearLayout) {
-                    curCanvasView.setFocusable(true);
-                }
-            } else {
-                if (curCanvasView != null) {
-                    curCanvasView.setEnabled(false);
-                    curCanvasView.setVisibility(View.GONE);
-                }
-            }
-        }
-    }
-
     /**
      * This method checks if all views being watched for constraints enforce those constraints
      * This library currently only supports constraints on views that store the value in {@link MaterialEditText}
@@ -649,6 +628,12 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                             }
                         } else {
                             Log.e(TAG, "option for Key " + options.getJSONObject(j).getString(JsonFormConstants.KEY) + " has NO value");
+                        }
+                        //Backward compatibility Fix
+                        if (options.getJSONObject(j).has(JsonFormConstants.VALUE)) {
+                            result.put(JsonFormConstants.VALUE, options.getJSONObject(j).getString(JsonFormConstants.VALUE));
+                        } else {
+                            result.put(JsonFormConstants.VALUE, "false");
                         }
                     }
                     break;
@@ -1193,5 +1178,26 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
     private String getKey(JSONObject object) throws JSONException {
         return object.has(RuleConstant.IS_RULE_CHECK) ? object.get(RuleConstant.STEP) + "_" + object.get(JsonFormConstants.KEY) : JsonFormConstants.VALUE;
+    }
+
+    private void updateCanvas(View view, boolean visible, JSONArray canvasViewIds) throws JSONException {
+        for (int i = 0; i < canvasViewIds.length(); i++) {
+            int curId = canvasViewIds.getInt(i);
+            View curCanvasView = view.getRootView().findViewById(curId);
+            if (visible) {
+                if (curCanvasView != null) {
+                    curCanvasView.setEnabled(true);
+                    curCanvasView.setVisibility(View.VISIBLE);
+                }
+                if (curCanvasView instanceof MaterialEditText || curCanvasView instanceof RelativeLayout || view instanceof LinearLayout) {
+                    curCanvasView.setFocusable(true);
+                }
+            } else {
+                if (curCanvasView != null) {
+                    curCanvasView.setEnabled(false);
+                    curCanvasView.setVisibility(View.GONE);
+                }
+            }
+        }
     }
 }
