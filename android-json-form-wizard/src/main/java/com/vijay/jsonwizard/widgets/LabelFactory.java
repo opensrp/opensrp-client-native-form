@@ -33,7 +33,17 @@ public class LabelFactory implements FormWidgetFactory {
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener
-            listener) throws Exception {
+            listener, boolean popup) throws Exception {
+        return attachJson(stepName, context, jsonObject, listener, popup);
+    }
+
+    @Override
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+        return attachJson(stepName, context, jsonObject, listener, false);
+    }
+
+    private List<View> attachJson(String stepName, Context context, JSONObject jsonObject, CommonListener
+            listener, boolean popup) throws JSONException {
         List<View> views = new ArrayList<>(1);
         RelativeLayout relativeLayout = FormUtils.createLabelRelativeLayout(jsonObject, context, listener);
 
@@ -63,6 +73,7 @@ public class LabelFactory implements FormWidgetFactory {
         relativeLayout.setId(ViewUtil.generateViewId());
         canvasIds.put(relativeLayout.getId());
         relativeLayout.setTag(R.id.canvas_ids, canvasIds.toString());
+        relativeLayout.setTag(R.id.extraPopup, popup);
         views.add(relativeLayout);
         return views;
     }

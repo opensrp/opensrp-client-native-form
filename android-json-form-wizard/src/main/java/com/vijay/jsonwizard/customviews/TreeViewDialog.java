@@ -49,6 +49,40 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
         init(structure, defaultValue, value);
     }
 
+    private static void retrieveValue(HashMap<TreeNode, String> treeNodeHashMap, TreeNode node,
+                                      ArrayList<String> value) {
+        if (node.getParent() != null) {
+            value.add(getTreeNodeKey(treeNodeHashMap, node));
+            retrieveValue(treeNodeHashMap, node.getParent(), value);
+        }
+    }
+
+    private static String getTreeNodeKey(HashMap<TreeNode, String> treeNodeHashMap, TreeNode node) {
+        if (treeNodeHashMap.containsKey(node)) {
+            return treeNodeHashMap.get(node);
+        }
+        return null;
+    }
+
+    private static void setSelectedValue(TreeNode treeNode, int level, ArrayList<String> defaultValue, HashMap<TreeNode, String> treeNodeHashMap) {
+        if (treeNode != null) {
+            if (defaultValue != null && level >= 0 && level < defaultValue.size()) {
+                String levelValue = defaultValue.get(level);
+                String nodeValue = getTreeNodeKey(treeNodeHashMap, treeNode);
+                if (nodeValue != null && nodeValue.equals(levelValue)) {
+                    treeNode.setExpanded(true);
+                    List<TreeNode> children = treeNode.getChildren();
+                    for (TreeNode curChild : children) {
+                        setSelectedValue(curChild, level + 1, defaultValue, treeNodeHashMap);
+                    }
+                    return;
+                }
+            }
+
+            treeNode.setExpanded(false);
+        }
+    }
+
     private void init(JSONArray nodes, ArrayList<String> defaultValue,
                       final ArrayList<String> value) throws JSONException {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -132,27 +166,8 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
         }
     }
 
-    private static void retrieveValue(HashMap<TreeNode, String> treeNodeHashMap, TreeNode node,
-                                      ArrayList<String> value) {
-        if (node.getParent() != null) {
-            value.add(getTreeNodeKey(treeNodeHashMap, node));
-            retrieveValue(treeNodeHashMap, node.getParent(), value);
-        }
-    }
-
-    private static String getTreeNodeKey(HashMap<TreeNode, String> treeNodeHashMap, TreeNode node) {
-        if (treeNodeHashMap.containsKey(node)) {
-            return treeNodeHashMap.get(node);
-        }
-        return null;
-    }
-
     public ArrayList<String> getValue() {
         return this.value;
-    }
-
-    public ArrayList<String> getName() {
-        return this.name;
     }
 
     private void setValue(final ArrayList<String> value) {
@@ -160,22 +175,7 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
         extractName();
     }
 
-    private static void setSelectedValue(TreeNode treeNode, int level, ArrayList<String> defaultValue, HashMap<TreeNode, String> treeNodeHashMap) {
-        if (treeNode != null) {
-            if (defaultValue != null && level >= 0 && level < defaultValue.size()) {
-                String levelValue = defaultValue.get(level);
-                String nodeValue = getTreeNodeKey(treeNodeHashMap, treeNode);
-                if (nodeValue != null && nodeValue.equals(levelValue)) {
-                    treeNode.setExpanded(true);
-                    List<TreeNode> children = treeNode.getChildren();
-                    for (TreeNode curChild : children) {
-                        setSelectedValue(curChild, level + 1, defaultValue, treeNodeHashMap);
-                    }
-                    return;
-                }
-            }
-
-            treeNode.setExpanded(false);
-        }
+    public ArrayList<String> getName() {
+        return this.name;
     }
 }

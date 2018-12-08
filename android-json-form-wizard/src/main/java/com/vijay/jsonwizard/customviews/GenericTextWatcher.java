@@ -76,8 +76,9 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
         String openMrsEntityParent = (String) mView.getTag(R.id.openmrs_entity_parent);
         String openMrsEntity = (String) mView.getTag(R.id.openmrs_entity);
         String openMrsEntityId = (String) mView.getTag(R.id.openmrs_entity_id);
+        Boolean popup = (Boolean) mView.getTag(R.id.extraPopup);
         try {
-            api.writeValue(mStepName, key, text, openMrsEntityParent, openMrsEntity, openMrsEntityId);
+            api.writeValue(mStepName, key, text, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
         } catch (JSONException e) {
             // TODO- handle
             e.printStackTrace();

@@ -26,7 +26,7 @@ public class HiddenTextFactory implements FormWidgetFactory {
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener
-            listener) throws Exception {
+            listener, boolean popup) throws Exception {
         List<View> views = new ArrayList<>(1);
 
         RelativeLayout rootLayout = (RelativeLayout) LayoutInflater.from(context).inflate(
@@ -38,11 +38,17 @@ public class HiddenTextFactory implements FormWidgetFactory {
         rootLayout.setId(ViewUtil.generateViewId());
         canvasIds.put(rootLayout.getId());
         hiddenText.setTag(R.id.canvas_ids, canvasIds.toString());
+        hiddenText.setTag(R.id.extraPopup, popup);
 
         ((JsonApi) context).addFormDataView(hiddenText);
         rootLayout.setVisibility(View.GONE);
         views.add(rootLayout);
         return views;
+    }
+
+    @Override
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+        return getViewsFromJson(stepName, context, formFragment, jsonObject, listener, false);
     }
 
     protected void attachJson(String stepName, Context context, JsonFormFragment formFragment,

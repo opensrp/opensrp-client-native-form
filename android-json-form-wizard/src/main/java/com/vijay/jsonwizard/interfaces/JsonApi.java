@@ -2,6 +2,7 @@ package com.vijay.jsonwizard.interfaces;
 
 import android.view.View;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,9 +16,17 @@ public interface JsonApi {
     JSONObject getStep(String stepName);
 
     void writeValue(String stepName, String key, String value, String openMrsEntityParent,
-                    String openMrsEntity, String openMrsEntityId) throws JSONException;
+                    String openMrsEntity, String openMrsEntityId, boolean popup) throws JSONException;
 
     void writeValue(String stepName, String prentKey, String childObjectKey, String childKey,
+                    String value, String openMrsEntityParent, String openMrsEntity,
+                    String openMrsEntityId, boolean popup)
+            throws JSONException;
+
+    void writeValue(String stepName, String key, String value, String openMrsEntityParent,
+                    String openMrsEntity, String openMrsEntityId) throws JSONException;
+
+    void writeValue(String stepName, String parentKey, String childObjectKey, String childKey,
                     String value, String openMrsEntityParent, String openMrsEntity,
                     String openMrsEntityId)
             throws JSONException;
@@ -47,17 +56,17 @@ public interface JsonApi {
 
     void addConstrainedView(View view);
 
-    void refreshHiddenViews();
+    void refreshHiddenViews(boolean popup);
 
-    void refreshSkipLogic(String parentKey, String childKey);
+    void refreshSkipLogic(String parentKey, String childKey, boolean popup);
 
-    void refreshCalculationLogic(String parentKey, String childKey);
+    void refreshCalculationLogic(String parentKey, String childKey, boolean popup);
 
     void addFormDataView(View view);
 
     ArrayList<View> getFormDataViews();
 
-    JSONObject getObjectUsingAddress(String[] address) throws JSONException;
+    JSONObject getObjectUsingAddress(String[] address, boolean popup) throws JSONException;
 
     void refreshConstraints(String parentKey, String childKey);
 
@@ -68,4 +77,10 @@ public interface JsonApi {
     void removeOnActivityRequestPermissionResultListener(Integer requestCode);
 
     void resetFocus();
+
+    JSONObject getmJSONObject();
+
+    void setmJSONObject(JSONObject jsonObject);
+
+    void updateGenericPopupSecondaryValues(JSONArray jsonArray);
 }
