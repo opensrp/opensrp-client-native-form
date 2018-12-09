@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Allow multiple installations side by side for opensrp apps that use the select image function
   - Starting Opensrp Client Native Form library Snapshot Version *1.0.5-SNAPSHOT* and Release Version *1.0.3* from Any opensrp implementations utilizing the library should now specify the File Provider authority in the manifest as
      `android:authorities="${applicationId}.fileprovider"`
+     
+     
+[1.3.0] - 11-29-2018
+----------------------
+##### Changed
+- The checkbox UI XML to use Linear layouts with layout widths instead of Relative layouts
+
+##### Fixed
+- Checkbox widget all options select/deselect on moving to the next step and back caused by same view Id assignment
+
+###Added
+- The specify extra information popup. This enables you to define multiple widgets on the specify extra info popup. Examples of how to add it are in the sample json file
+
 
 ###Added
  
@@ -19,3 +32,4 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Add checkbox multi select Skip Logic
 - Add checkbox multi select exclusive selector logic 
+

@@ -28,5 +28,9 @@
     <color name="toaster_note_red_icon">#CF0800</color>
     <color name="toaster_note_yellow">#F7F6C3</color>
     <color name="toaster_note_yellow_icon">#FFC100</color>
+    <color name="dialog_button_blue_color">#4118D0</color>
     <color name="customAppThemeBlue">#218CC5</color>
+
+    <color name="button_navy_blue">#2539BC</color>
+
 </resources>

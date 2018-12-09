@@ -1,8 +1,5 @@
 package com.vijay.jsonwizard.customviews;
 
-import org.json.JSONException;
-
-import android.support.v7.widget.TintContextWrapper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -13,11 +10,13 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.presenters.JsonFormFragmentPresenter;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
 
 public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListener {
 
-    private View   mView;
+    private View mView;
     private String mStepName;
     private ArrayList<View.OnFocusChangeListener> onFocusChangeListeners;
     private JsonFormFragment formFragment;
@@ -53,7 +52,7 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
 
         Log.d("RealtimeValidation", "afterTextChanged called");
         JsonApi api = null;
-        if(formFragment.getContext() instanceof JsonApi) {
+        if (formFragment.getContext() instanceof JsonApi) {
             api = (JsonApi) formFragment.getContext();
         } else {
             throw new RuntimeException("Could not fetch context");
@@ -63,8 +62,9 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
         String openMrsEntityParent = (String) mView.getTag(R.id.openmrs_entity_parent);
         String openMrsEntity = (String) mView.getTag(R.id.openmrs_entity);
         String openMrsEntityId = (String) mView.getTag(R.id.openmrs_entity_id);
+        Boolean popup = (Boolean) mView.getTag(R.id.extraPopup);
         try {
-            api.writeValue(mStepName, key, text, openMrsEntityParent, openMrsEntity, openMrsEntityId);
+            api.writeValue(mStepName, key, text, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
         } catch (JSONException e) {
             // TODO- handle
             e.printStackTrace();
@@ -73,7 +73,7 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
 
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
-        if(!hasFocus) {
+        if (!hasFocus) {
             JsonFormFragmentPresenter.validate(formFragment, mView, false);
         }
         for (View.OnFocusChangeListener curListener : onFocusChangeListeners) {

@@ -24,6 +24,7 @@ import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -57,60 +58,26 @@ public class ImagePickerFactory implements FormWidgetFactory {
     }
 
     @Override
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
+        return attachJson(stepName, context, jsonObject, listener, popup);
+    }
+
+    @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
-        String openMrsEntityParent = jsonObject.getString("openmrs_entity_parent");
-        String openMrsEntity = jsonObject.getString("openmrs_entity");
-        String openMrsEntityId = jsonObject.getString("openmrs_entity_id");
-        String relevance = jsonObject.optString("relevance");
+        return attachJson(stepName, context, jsonObject, listener, false);
+    }
+
+    private List<View> attachJson(String stepName, Context context, JSONObject jsonObject, CommonListener listener, boolean popup) throws JSONException {
+        String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
+        String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
+        String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
+        String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
         JSONArray canvasIds = new JSONArray();
 
         List<View> views = new ArrayList<>(1);
-        ImageView imageView = new ImageView(context);
-        imageView.setId(ViewUtil.generateViewId());
-        canvasIds.put(imageView.getId());
-        imageView.setImageDrawable(context.getResources().getDrawable(R.mipmap.add_photo_background));
-        imageView.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
-        imageView.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
-        imageView.setTag(R.id.openmrs_entity, openMrsEntity);
-        imageView.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-        imageView.setTag(R.id.type, jsonObject.getString("type"));
-        imageView.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
-        if (relevance != null && context instanceof JsonApi) {
-            imageView.setTag(R.id.relevance, relevance);
-            ((JsonApi) context).addSkipLogicView(imageView);
-        }
-
-        JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
-        if (requiredObject != null) {
-            String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
-            if (!TextUtils.isEmpty(requiredValue)) {
-                imageView.setTag(R.id.v_required, requiredValue);
-                imageView.setTag(R.id.error, requiredObject.optString(JsonFormConstants.ERR));
-            }
-        }
-
-        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        int imageHeight = FormUtils.dpToPixels(context, context.getResources().getBoolean(R.bool.isTablet) ? 200 : 100);
-        imageView.setLayoutParams(FormUtils.getLinearLayoutParams(FormUtils.MATCH_PARENT, imageHeight, 0, 0, 0, (int) context
-                .getResources().getDimension(R.dimen.default_bottom_margin)));
-        String imagePath = jsonObject.optString(JsonFormConstants.VALUE);
+        createImageView(context, canvasIds, jsonObject, popup, stepName, listener, views);
         Button uploadButton = new Button(context);
-        if (!TextUtils.isEmpty(imagePath)) {
-            imageView.setTag(R.id.imagePath, imagePath);
-            imageView.setImageBitmap(ImageUtils.loadBitmapFromFile(context, imagePath, ImageUtils.getDeviceWidth(context), FormUtils.dpToPixels(context, 200)));
-        }
-
-        if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
-            boolean readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
-            uploadButton.setEnabled(!readOnly);
-            uploadButton.setFocusable(!readOnly);
-        }
-
-        ((JsonApi) context).addFormDataView(imageView);
-        imageView.setOnClickListener(listener);
-        views.add(imageView);
-
-        uploadButton.setText(jsonObject.getString("uploadButtonText"));
+        uploadButton.setText(jsonObject.getString(JsonFormConstants.UPLOAD_BUTTON_TEXT));
         uploadButton.setBackgroundColor(context.getResources().getColor(R.color.primary));
         uploadButton.setMinHeight(0);
         uploadButton.setMinimumHeight(0);
@@ -132,7 +99,7 @@ public class ImagePickerFactory implements FormWidgetFactory {
         uploadButton.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
         uploadButton.setTag(R.id.openmrs_entity, openMrsEntity);
         uploadButton.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-        uploadButton.setTag(R.id.type, jsonObject.getString("type"));
+        uploadButton.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -144,10 +111,64 @@ public class ImagePickerFactory implements FormWidgetFactory {
         uploadButton.setTag(R.id.canvas_ids, canvasIds.toString());
 
         views.add(uploadButton);
+
+        if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
+            boolean readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
+            uploadButton.setEnabled(!readOnly);
+            uploadButton.setFocusable(!readOnly);
+        }
+
         if (relevance != null && context instanceof JsonApi) {
             uploadButton.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(uploadButton);
         }
         return views;
+    }
+
+    private void createImageView(Context context, JSONArray canvasIds, JSONObject jsonObject, boolean popup, String stepName, CommonListener listener, List<View> views) throws JSONException {
+        String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
+        String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
+        String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
+        String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
+        ImageView imageView = new ImageView(context);
+        imageView.setId(ViewUtil.generateViewId());
+        canvasIds.put(imageView.getId());
+        imageView.setImageDrawable(context.getResources().getDrawable(R.mipmap.add_photo_background));
+        imageView.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+        imageView.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
+        imageView.setTag(R.id.extraPopup, popup);
+        imageView.setTag(R.id.openmrs_entity, openMrsEntity);
+        imageView.setTag(R.id.openmrs_entity_id, openMrsEntityId);
+        imageView.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
+        imageView.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+        if (relevance != null && context instanceof JsonApi) {
+            imageView.setTag(R.id.relevance, relevance);
+            ((JsonApi) context).addSkipLogicView(imageView);
+        }
+
+        JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
+        if (requiredObject != null) {
+            String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
+            if (!TextUtils.isEmpty(requiredValue)) {
+                imageView.setTag(R.id.v_required, requiredValue);
+                imageView.setTag(R.id.error, requiredObject.optString(JsonFormConstants.ERR));
+            }
+        }
+
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        int imageHeight = FormUtils.dpToPixels(context, context.getResources().getBoolean(R.bool.isTablet) ? 200 : 100);
+        imageView.setLayoutParams(FormUtils.getLinearLayoutParams(FormUtils.MATCH_PARENT, imageHeight, 0, 0, 0, (int) context
+                .getResources().getDimension(R.dimen.default_bottom_margin)));
+
+        String imagePath = jsonObject.optString(JsonFormConstants.VALUE);
+        if (!TextUtils.isEmpty(imagePath)) {
+            imageView.setTag(R.id.imagePath, imagePath);
+            imageView.setImageBitmap(ImageUtils.loadBitmapFromFile(context, imagePath, ImageUtils.getDeviceWidth(context), FormUtils.dpToPixels(context, 200)));
+        }
+
+
+        ((JsonApi) context).addFormDataView(imageView);
+        imageView.setOnClickListener(listener);
+        views.add(imageView);
     }
 }

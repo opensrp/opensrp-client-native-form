@@ -31,6 +31,8 @@ import com.vijay.jsonwizard.comparisons.NotEqualToComparison;
 import com.vijay.jsonwizard.comparisons.RegexComparison;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.CheckBox;
+import com.vijay.jsonwizard.customviews.GenericPopupDialog;
+import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.interfaces.OnActivityRequestPermissionResultListener;
@@ -43,6 +45,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -55,9 +58,11 @@ import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
     private static final String TAG = JsonFormActivity.class.getSimpleName();
-
+    private static final String JSON_STATE = "jsonState";
+    private static final String FORM_STATE = "formState";
+    private GenericPopupDialog genericPopupDialog = GenericPopupDialog.getInstance();
+    private FormUtils formUtils = new FormUtils();
     private Toolbar mToolbar;
-
     private JSONObject mJSONObject;
     private PropertyManager propertyManager;
     private HashMap<String, View> skipLogicViews;
@@ -67,9 +72,10 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     private HashMap<String, Comparison> comparisons;
     private HashMap<Integer, OnActivityResultListener> onActivityResultListeners;
     private HashMap<Integer, OnActivityRequestPermissionResultListener> onActivityRequestPermissionResultListeners;
-
     private String confirmCloseTitle;
     private String confirmCloseMessage;
+    private JSONArray extraFieldsWithValues;
+    private Form form;
 
     public void init(String json) {
         try {
@@ -91,7 +97,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.native_form_activity_json_form);
-        mToolbar = (Toolbar) findViewById(R.id.tb_top);
+        mToolbar = findViewById(R.id.tb_top);
         setSupportActionBar(mToolbar);
         skipLogicViews = new HashMap<>();
         onActivityResultListeners = new HashMap<>();
@@ -100,8 +106,10 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             init(getIntent().getStringExtra(JsonFormConstants.JSON_FORM_KEY.JSON));
             initializeFormFragment();
             onFormStart();
+            this.form = extractForm(getIntent().getSerializableExtra(JsonFormConstants.JSON_FORM_KEY.FORM));
         } else {
-            init(savedInstanceState.getString("jsonState"));
+            init(savedInstanceState.getString(JSON_STATE));
+            this.form = extractForm(savedInstanceState.getSerializable(FORM_STATE));
         }
     }
 
@@ -146,25 +154,58 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
     @Override
     public void writeValue(String stepName, String key, String value, String openMrsEntityParent,
-                           String openMrsEntity, String openMrsEntityId) throws JSONException {
+                           String openMrsEntity, String openMrsEntityId, boolean popup) throws JSONException {
+        widgetsWriteValue(stepName, key, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
+    }
+
+    @Override
+    public void writeValue(String stepName, String parentKey, String childObjectKey, String childKey,
+                           String value, String openMrsEntityParent, String openMrsEntity,
+                           String openMrsEntityId, boolean popup)
+            throws JSONException {
+        checkBoxWriteValue(stepName, parentKey, childObjectKey, childKey, value, popup);
+    }
+
+    @Override
+    public void writeValue(String stepName, String key, String value, String openMrsEntityParent, String openMrsEntity, String openMrsEntityId) throws JSONException {
+        widgetsWriteValue(stepName, key, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, false);
+    }
+
+    @Override
+    public void writeValue(String stepName, String parentKey, String childObjectKey, String childKey, String value, String openMrsEntityParent, String openMrsEntity, String openMrsEntityId) throws JSONException {
+        checkBoxWriteValue(stepName, parentKey, childObjectKey, childKey, value, false);
+    }
+
+    private void widgetsWriteValue(String stepName, String key, String value, String openMrsEntityParent, String openMrsEntity, String openMrsEntityId, boolean popup) throws JSONException {
         synchronized (mJSONObject) {
             JSONObject jsonObject = mJSONObject.getJSONObject(stepName);
-            JSONArray fields = fetchFields(jsonObject);
+            JSONArray fields = fetchFields(jsonObject, popup);
             for (int i = 0; i < fields.length(); i++) {
                 JSONObject item = fields.getJSONObject(i);
-                String keyAtIndex = item.getString(KEY.KEY);
+                String keyAtIndex = item.getString(JsonFormConstants.KEY);
+                String itemType = "";
+                if (popup) {
+                    itemType = item.getString(JsonFormConstants.TYPE);
+                }
                 if (key.equals(keyAtIndex)) {
-                    if (item.has(KEY.TEXT)) {
-                        item.put(KEY.TEXT, value);
+                    if (item.has(JsonFormConstants.TEXT)) {
+                        item.put(JsonFormConstants.TEXT, value);
                     } else {
+                        if (popup) {
+                            String itemText = "";
+                            if (itemType.equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
+                                itemText = formUtils.getRadioButtonText(item, value);
+                            }
+                            genericPopupDialog.addSelectedValues(formUtils.addAssignedValue(keyAtIndex, "", value, itemType, itemText));
+                            extraFieldsWithValues = fields;
+                        }
                         item.put(JsonFormConstants.VALUE, value);
-
                     }
 
-                    item.put("openmrs_entity_parent", openMrsEntityParent);
-                    item.put("openmrs_entity", openMrsEntity);
-                    item.put("openmrs_entity_id", openMrsEntityId);
-                    refreshSkipLogic(key, null);
+                    item.put(JsonFormConstants.OPENMRS_ENTITY_PARENT, openMrsEntityParent);
+                    item.put(JsonFormConstants.OPENMRS_ENTITY, openMrsEntity);
+                    item.put(JsonFormConstants.OPENMRS_ENTITY_ID, openMrsEntityId);
+                    refreshSkipLogic(key, null, popup);
                     refreshConstraints(key, null);
                     refreshMediaLogic(key, value);
                     return;
@@ -173,25 +214,33 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         }
     }
 
-    @Override
-    public void writeValue(String stepName, String parentKey, String childObjectKey, String childKey,
-                           String value, String openMrsEntityParent, String openMrsEntity,
-                           String openMrsEntityId)
-            throws JSONException {
+    private void checkBoxWriteValue(String stepName, String parentKey, String childObjectKey, String childKey, String value, boolean popup) throws JSONException {
         synchronized (mJSONObject) {
             JSONObject jsonObject = mJSONObject.getJSONObject(stepName);
-            JSONArray fields = fetchFields(jsonObject);
+            JSONArray fields = fetchFields(jsonObject, popup);
             for (int i = 0; i < fields.length(); i++) {
                 JSONObject item = fields.getJSONObject(i);
-                String keyAtIndex = item.getString(KEY.KEY);
+                String keyAtIndex = item.getString(JsonFormConstants.KEY);
+                String itemType = "";
+                if (popup) {
+                    itemType = item.getString(JsonFormConstants.TYPE);
+                }
                 if (parentKey.equals(keyAtIndex)) {
                     JSONArray jsonArray = item.getJSONArray(childObjectKey);
                     for (int j = 0; j < jsonArray.length(); j++) {
                         JSONObject innerItem = jsonArray.getJSONObject(j);
-                        String anotherKeyAtIndex = innerItem.getString(KEY.KEY);
+                        String anotherKeyAtIndex = innerItem.getString(JsonFormConstants.KEY);
+                        String itemText = "";
+                        if (itemType.equals(JsonFormConstants.CHECK_BOX)) {
+                            itemText = innerItem.getString(JsonFormConstants.TEXT);
+                        }
                         if (childKey.equals(anotherKeyAtIndex)) {
                             innerItem.put(JsonFormConstants.VALUE, value);
-                            refreshSkipLogic(parentKey, childKey);
+                            if (popup) {
+                                genericPopupDialog.addSelectedValues(formUtils.addAssignedValue(keyAtIndex, childKey, value, itemType, itemText));
+                                extraFieldsWithValues = fields;
+                            }
+                            refreshSkipLogic(parentKey, childKey, popup);
                             refreshConstraints(parentKey, childKey);
                             return;
                         }
@@ -234,7 +283,8 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString("jsonState", mJSONObject.toString());
+        outState.putString(JSON_STATE, mJSONObject.toString());
+        outState.putSerializable(FORM_STATE, form);
     }
 
     @Override
@@ -279,14 +329,14 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     }
 
     @Override
-    public void refreshHiddenViews() {
+    public void refreshHiddenViews(boolean popup) {
         for (View curView : formDataViews) {
             String addressString = (String) curView.getTag(R.id.address);
             String[] address = addressString.split(":");
             try {
-                JSONObject viewData = getObjectUsingAddress(address);
+                JSONObject viewData = getObjectUsingAddress(address, popup);
                 if (viewData.has("hidden") && viewData.getBoolean("hidden")) {
-                    toggleViewVisibility(curView, false);
+                    toggleViewVisibility(curView, false, popup);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -333,60 +383,99 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     public void onClick(DialogInterface dialog, int which) {
                         JsonFormActivity.this.finish();
                     }
-                })
-                .setPositiveButton(R.string.no, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                })
-                .create();
+                }).create();
 
         dialog.show();
     }
 
     @Override
-    public void refreshSkipLogic(String parentKey, String childKey) {
+    public void refreshSkipLogic(String parentKey, String childKey, boolean popup) {
         initComparisons();
         for (View curView : skipLogicViews.values()) {
-            String relevanceTag = (String) curView.getTag(R.id.relevance);
-            if (relevanceTag != null && relevanceTag.length() > 0) {
-                try {
-                    JSONObject relevance = new JSONObject(relevanceTag);
-                    Iterator<String> keys = relevance.keys();
-                    boolean ok = true;
-                    while (keys.hasNext()) {
-                        String curKey = keys.next();
-                        String[] address = curKey.split(":");
-                        if (address.length == 2) {
-                            JSONObject curRelevance = relevance.getJSONObject(curKey);
-                            Map<String, String> curValueMap = getValueFromAddress(address);
+            addRelevance(curView, popup);
+        }
+    }
 
-                            try {
-                                boolean comparison = isRelevant(curValueMap, curRelevance);
 
-                                ok = ok && comparison;
-                                if (!ok) break;
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+    private void addRelevance(View view, Boolean popup) {
+        String relevanceTag = (String) view.getTag(R.id.relevance);
+        if (relevanceTag != null && relevanceTag.length() > 0) {
+            try {
+                JSONObject relevance = new JSONObject(relevanceTag);
+                Iterator<String> keys = relevance.keys();
+                boolean ok = true;
+                while (keys.hasNext()) {
+                    String curKey = keys.next();
+                    String[] address = curKey.split(":");
+                    if (address.length == 2) {
+                        JSONObject curRelevance = relevance.getJSONObject(curKey);
+                        Map<String, String> curValueMap = getValueFromAddress(address, popup);
+
+                        try {
+                            boolean comparison = isRelevant(curValueMap, curRelevance);
+                            ok = ok && comparison;
+                            if (!ok) break;
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
+                    } else if (address.length == 3) {
+                        Log.i("JSONACT", String.valueOf(address.length));
                     }
-                    toggleViewVisibility(curView, ok);
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
+                toggleViewVisibility(view, ok, popup);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
 
-    protected void toggleViewVisibility(View view, boolean visible) {
+    protected void toggleViewVisibility(View view, boolean visible, boolean popup) {
         try {
             JSONArray canvasViewIds = new JSONArray((String) view.getTag(R.id.canvas_ids));
+            setReadOnlyAndFocus(view, visible, popup);
+            for (int i = 0; i < canvasViewIds.length(); i++) {
+                int curId = canvasViewIds.getInt(i);
+                View curCanvasView = view.getRootView().findViewById(curId);
+                if (visible) {
+                    if (curCanvasView != null) {
+                        curCanvasView.setEnabled(true);
+                        curCanvasView.setVisibility(View.VISIBLE);
+                    }
+                    if (curCanvasView instanceof RelativeLayout || view instanceof LinearLayout) {
+                        curCanvasView.setFocusable(true);
+                    }
+                    if (view instanceof EditText) {
+                        view.setFocusable(true);
+                    }
+                } else {
+                    if (curCanvasView != null) {
+                        curCanvasView.setEnabled(false);
+                        curCanvasView.setVisibility(View.GONE);
+                    }
+                    if (view instanceof EditText) {
+                        EditText editText = (EditText) view;
+                        if (!TextUtils.isEmpty(editText.getText().toString())) {
+                            editText.setText("");
+                        }
+
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            Log.e(TAG, view.toString());
+            Log.e(TAG, Log.getStackTraceString(e));
+        }
+    }
+
+    private void setReadOnlyAndFocus(View view, boolean visible, boolean popup) {
+        try {
             String addressString = (String) view.getTag(R.id.address);
             String[] address = addressString.split(":");
-            JSONObject object = getObjectUsingAddress(address);
+            JSONObject object = getObjectUsingAddress(address, popup);
+
             boolean enabled = visible;
-            if (object.has(KEY.READ_ONLY) && object.getBoolean(KEY.READ_ONLY) && visible) {
+            if (object != null && object.has(JsonFormConstants.READ_ONLY) && object.getBoolean(JsonFormConstants.READ_ONLY) && visible) {
                 enabled = false;
             }
 
@@ -397,28 +486,8 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     view.setFocusableInTouchMode(enabled);
                 }
             }
-
-            for (int i = 0; i < canvasViewIds.length(); i++) {
-                int curId = canvasViewIds.getInt(i);
-                View curCanvasView = findViewById(curId);
-                if (visible) {
-                    if (curCanvasView != null) {
-                        curCanvasView.setEnabled(true);
-                        curCanvasView.setVisibility(View.VISIBLE);
-                    }
-                    if (curCanvasView instanceof MaterialEditText || curCanvasView instanceof RelativeLayout || view instanceof LinearLayout) {
-                        curCanvasView.setFocusable(true);
-                    }
-                } else {
-                    if (curCanvasView != null) {
-                        curCanvasView.setEnabled(false);
-                        curCanvasView.setVisibility(View.GONE);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            Log.e(TAG, view.toString());
-            Log.e(TAG, Log.getStackTraceString(e));
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
@@ -438,12 +507,12 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         }
 
         if (changedViewKey != null && constrainedViews.containsKey(changedViewKey)) {
-            checkViewConstraints(constrainedViews.get(changedViewKey));
+            checkViewConstraints(constrainedViews.get(changedViewKey), false);
         }
 
         for (View curView : constrainedViews.values()) {
             if (changedViewKey == null || !getViewKey(curView).equals(changedViewKey)) {
-                checkViewConstraints(curView);
+                checkViewConstraints(curView, false);
             }
         }
     }
@@ -466,7 +535,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
     @Override
     public void resetFocus() {
-        EditText defaultFocusView = (EditText) findViewById(R.id.default_focus_view);
+        EditText defaultFocusView = findViewById(R.id.default_focus_view);
         defaultFocusView.requestFocus();
         InputMethodManager inputManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         if (inputManager != null && getCurrentFocus() != null) {
@@ -474,7 +543,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         }
     }
 
-    private void checkViewConstraints(View curView) {
+    private void checkViewConstraints(View curView, boolean popup) {
         String constraintTag = (String) curView.getTag(R.id.constraints);
         if (constraintTag != null && constraintTag.length() > 0) {
             try {
@@ -486,7 +555,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 for (int i = 0; i < constraint.length(); i++) {
                     JSONObject curConstraint = constraint.getJSONObject(i);
                     if (address.length == 2) {
-                        String value = getValueFromAddress(address).get(JsonFormConstants.VALUE);
+                        String value = getValueFromAddress(address, popup).get(JsonFormConstants.VALUE);
                         errorMessage = enforceConstraint(value, curView, curConstraint);
                         if (errorMessage != null) break;
                     }
@@ -500,10 +569,10 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                         ((CheckBox) curView).setChecked(false);
                         Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
                         String checkBoxKey = (String) curView.getTag(R.id.childKey);
-                        JSONObject questionObject = getObjectUsingAddress(address);
-                        for (int i = 0; i < questionObject.getJSONArray("options").length(); i++) {
-                            JSONObject curOption = questionObject.getJSONArray("options").getJSONObject(i);
-                            if (curOption.getString(KEY.KEY).equals(checkBoxKey)) {
+                        JSONObject questionObject = getObjectUsingAddress(address, popup);
+                        for (int i = 0; i < questionObject.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME).length(); i++) {
+                            JSONObject curOption = questionObject.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME).getJSONObject(i);
+                            if (curOption.getString(JsonFormConstants.KEY).equals(checkBoxKey)) {
                                 curOption.put(JsonFormConstants.VALUE, "false");
                                 break;
                             }
@@ -516,40 +585,44 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         }
     }
 
-    private Map<String, String> getValueFromAddress(String[] address) throws Exception {
+    private Map<String, String> getValueFromAddress(String[] address, boolean popup) throws Exception {
         Map<String, String> result = new HashMap<>();
-        JSONObject object = getObjectUsingAddress(address);
+        JSONObject object = getObjectUsingAddress(address, popup);
         if (object != null) {
-            if (object.getString("type").equals("check_box")) {
-                JSONArray options = object.getJSONArray("options");
-                for (int j = 0; j < options.length(); j++) {
-                    if (options.getJSONObject(j).has(JsonFormConstants.VALUE)) {
-                        result.put(options.getJSONObject(j).getString(JsonFormConstants.KEY), options.getJSONObject(j).getString(JsonFormConstants.VALUE));
-                    } else {
-                        Log.e(TAG, "option for Key " + options.getJSONObject(j).getString(JsonFormConstants.KEY) + " has NO value");
-                    }
-                }
-
-            } else if (object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
-                Boolean multiRelevance = object.optBoolean(JsonFormConstants.NATIVE_RADIO_BUTTON_MULTI_RELEVANCE, false);
-                if (multiRelevance) {
-                    JSONArray jsonArray = object.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
-                    for (int j = 0; j < jsonArray.length(); j++) {
-                        if (object.has(JsonFormConstants.VALUE)) {
-                            if (object.getString(JsonFormConstants.VALUE).equals(jsonArray.getJSONObject(j).getString(JsonFormConstants.KEY))) {
-                                result.put(jsonArray.getJSONObject(j).getString(JsonFormConstants.KEY), String.valueOf(true));
-                            } else {
-                                result.put(jsonArray.getJSONObject(j).getString(JsonFormConstants.KEY), String.valueOf(false));
-                            }
+            switch (object.getString(JsonFormConstants.TYPE)) {
+                case JsonFormConstants.CHECK_BOX:
+                    JSONArray options = object.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
+                    for (int j = 0; j < options.length(); j++) {
+                        if (options.getJSONObject(j).has(JsonFormConstants.VALUE)) {
+                            result.put(options.getJSONObject(j).getString(JsonFormConstants.KEY), options.getJSONObject(j).getString(JsonFormConstants.VALUE));
                         } else {
-                            Log.e(TAG, "option for Key " + jsonArray.getJSONObject(j).getString(JsonFormConstants.KEY) + " has NO value");
+                            Log.e(TAG, "option for Key " + options.getJSONObject(j).getString(JsonFormConstants.KEY) + " has NO value");
                         }
                     }
-                } else {
+
+                    break;
+                case JsonFormConstants.NATIVE_RADIO_BUTTON:
+                    Boolean multiRelevance = object.optBoolean(JsonFormConstants.NATIVE_RADIO_BUTTON_MULTI_RELEVANCE, false);
+                    if (multiRelevance) {
+                        JSONArray jsonArray = object.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
+                        for (int j = 0; j < jsonArray.length(); j++) {
+                            if (object.has(JsonFormConstants.VALUE)) {
+                                if (object.getString(JsonFormConstants.VALUE).equals(jsonArray.getJSONObject(j).getString(JsonFormConstants.KEY))) {
+                                    result.put(jsonArray.getJSONObject(j).getString(JsonFormConstants.KEY), String.valueOf(true));
+                                } else {
+                                    result.put(jsonArray.getJSONObject(j).getString(JsonFormConstants.KEY), String.valueOf(false));
+                                }
+                            } else {
+                                Log.e(TAG, "option for Key " + jsonArray.getJSONObject(j).getString(JsonFormConstants.KEY) + " has NO value");
+                            }
+                        }
+                    } else {
+                        result.put(JsonFormConstants.VALUE, object.optString(JsonFormConstants.VALUE));
+                    }
+                    break;
+                default:
                     result.put(JsonFormConstants.VALUE, object.optString(JsonFormConstants.VALUE));
-                }
-            } else {
-                result.put(JsonFormConstants.VALUE, object.optString(JsonFormConstants.VALUE));
+                    break;
             }
         }
 
@@ -557,11 +630,11 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     }
 
     @Override
-    public JSONObject getObjectUsingAddress(String[] address) throws JSONException {
+    public JSONObject getObjectUsingAddress(String[] address, boolean popup) throws JSONException {
         if (address != null && address.length == 2) {
-            JSONArray fields = fetchFields(mJSONObject.getJSONObject(address[0]));
+            JSONArray fields = fetchFields(mJSONObject.getJSONObject(address[0]), popup);
             for (int i = 0; i < fields.length(); i++) {
-                if (fields.getJSONObject(i).getString(KEY.KEY).equals(address[1])) {
+                if (fields.getJSONObject(i).getString(JsonFormConstants.KEY).equals(address[1])) {
                     return fields.getJSONObject(i);
                 }
             }
@@ -637,7 +710,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                         args[i] = valueMatcher.group(1);
                     } else {
                         try {
-                            args[i] = getValueFromAddress(curArg.split(":")).get(JsonFormConstants.VALUE);
+                            args[i] = getValueFromAddress(curArg.split(":"), false).get(JsonFormConstants.VALUE);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -739,7 +812,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         return errorMessage;
     }
 
-    private JSONArray fetchFields(JSONObject parentJson) {
+    private JSONArray fetchFields(JSONObject parentJson, Boolean popup) {
         JSONArray fields = new JSONArray();
         try {
             if (parentJson.has(JsonFormConstants.SECTIONS) && parentJson.get(JsonFormConstants.SECTIONS) instanceof JSONArray) {
@@ -748,37 +821,89 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 for (int i = 0; i < sections.length(); i++) {
                     JSONObject sectionJson = sections.getJSONObject(i);
                     if (sectionJson.has(JsonFormConstants.FIELDS)) {
-                        fields = concatArray(fields, sectionJson.getJSONArray(JsonFormConstants.FIELDS));
+                        if (popup) {
+                            JSONArray jsonArray = sectionJson.getJSONArray(JsonFormConstants.FIELDS);
+                            for (int k = 0; k < jsonArray.length(); k++) {
+                                JSONObject item = jsonArray.getJSONObject(k);
+                                if (item.getString(JsonFormConstants.KEY).equals(genericPopupDialog.getParentKey())) {
+                                    if (item.has(JsonFormConstants.EXTRA_REL) && item.has(JsonFormConstants.HAS_EXTRA_REL)) {
+                                        fields = formUtils.concatArray(fields, specifyFields(item));
+                                    }
+                                }
+                            }
+                        } else {
+                            fields = formUtils.concatArray(fields, sectionJson.getJSONArray(JsonFormConstants.FIELDS));
+                        }
+
                     }
                 }
             } else if (parentJson.has(JsonFormConstants.FIELDS) && parentJson.get(JsonFormConstants.FIELDS) instanceof JSONArray) {
-                fields = parentJson.getJSONArray(JsonFormConstants.FIELDS);
+                if (popup) {
+                    JSONArray jsonArray = parentJson.getJSONArray(JsonFormConstants.FIELDS);
+                    for (int k = 0; k < jsonArray.length(); k++) {
+                        JSONObject item = jsonArray.getJSONObject(k);
+                        if (item.getString(JsonFormConstants.KEY).equals(genericPopupDialog.getParentKey()) && item.has(JsonFormConstants.EXTRA_REL) && item.has(JsonFormConstants.HAS_EXTRA_REL)) {
+                            fields = specifyFields(item);
+                        }
+                    }
+                } else {
+                    fields = parentJson.getJSONArray(JsonFormConstants.FIELDS);
+                }
+
             }
         } catch (JSONException e) {
-
+            e.printStackTrace();
         }
 
         return fields;
     }
 
-    private JSONArray concatArray(JSONArray... arrs)
-            throws JSONException {
-        JSONArray result = new JSONArray();
-        for (JSONArray arr : arrs) {
-            for (int i = 0; i < arr.length(); i++) {
-                result.put(arr.get(i));
+    private JSONArray specifyFields(JSONObject parentJson) {
+        JSONArray fields = new JSONArray();
+        if (parentJson.has(JsonFormConstants.HAS_EXTRA_REL)) {
+            String optionKey;
+            try {
+                optionKey = (String) parentJson.get(JsonFormConstants.HAS_EXTRA_REL);
+                JSONArray options = parentJson.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
+                if (options.length() > 0) {
+                    for (int j = 0; j < options.length(); j++) {
+                        JSONObject jsonObject = options.getJSONObject(j);
+                        String objectKey = (String) jsonObject.get(JsonFormConstants.KEY);
+                        if (objectKey.equals(optionKey) && jsonObject.has(JsonFormConstants.CONTENT_FORM)) {
+                            if (extraFieldsWithValues != null) {
+                                fields = extraFieldsWithValues;
+                            } else {
+                                fields = getSubFormFields(jsonObject.get(JsonFormConstants.CONTENT_FORM).toString(), jsonObject.get(JsonFormConstants.CONTENT_FORM_LOCATION).toString(), fields);
+                            }
+                        }
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         }
-        return result;
+        return fields;
     }
 
-    public JSONObject getmJSONObject() {
-        return mJSONObject;
+    private JSONArray getSubFormFields(String subFormName, String subFormLocation, JSONArray fields) {
+        JSONArray fieldArray = new JSONArray();
+        genericPopupDialog.setFormIdentity(subFormName);
+        genericPopupDialog.setFormLocation(subFormLocation);
+        JSONObject jsonObject = genericPopupDialog.getSubFormJson("", getApplicationContext());
+        if (jsonObject != null) {
+            try {
+                JSONArray jsonArray = jsonObject.getJSONArray(JsonFormConstants.CONTENT_FORM);
+                if (jsonArray != null && jsonArray.length() > 0) {
+                    fieldArray = formUtils.concatArray(fields, jsonArray);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return fieldArray;
     }
 
-    public void setmJSONObject(JSONObject mJSONObject) {
-        this.mJSONObject = mJSONObject;
-    }
 
     public String getConfirmCloseTitle() {
         return confirmCloseTitle;
@@ -796,16 +921,16 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         this.confirmCloseMessage = confirmCloseMessage;
     }
 
+    public Form getForm() {
+        return form;
+    }
+
     private boolean isRelevant(Map<String, String> curValueMap, JSONObject curRelevance) throws Exception {
-
         if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_CHECKBOX)) {
-
             JSONArray exArray = curRelevance.getJSONArray(JsonFormConstants.JSON_FORM_KEY.EX_CHECKBOX);
 
             for (int i = 0; i < exArray.length(); i++) {
-
                 ExObjectResult exObjectResult = isExObjectRelevant(curValueMap, exArray.getJSONObject(i));
-
                 if (exObjectResult.isRelevant()) {
                     return true;
                 } else if (!exObjectResult.isRelevant() && exObjectResult.isFinal()) {
@@ -813,41 +938,29 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 }
 
             }
-
             return false;
-
         } else {
-
             return doComparison(curValueMap.get(JsonFormConstants.VALUE), curRelevance);
         }
     }
 
     private ExObjectResult isExObjectRelevant(Map<String, String> curValueMap, JSONObject object) throws Exception {
-
         if (object.has(JsonFormConstants.JSON_FORM_KEY.NOT)) {
-
             JSONArray orArray = object.getJSONArray(JsonFormConstants.JSON_FORM_KEY.NOT);
 
             for (int i = 0; i < orArray.length(); i++) {
-
                 if (!Boolean.valueOf(curValueMap.get(orArray.getString(i)))) {
-
                     return new ExObjectResult(true, false);
                 } else {
-
                     return new ExObjectResult(false, true);
                 }
-
             }
-
         }
 
         if (object.has(JsonFormConstants.JSON_FORM_KEY.OR)) {
-
             JSONArray orArray = object.getJSONArray(JsonFormConstants.JSON_FORM_KEY.OR);
 
             for (int i = 0; i < orArray.length(); i++) {
-
                 if (Boolean.valueOf(curValueMap.get(orArray.getString(i)))) {
                     return new ExObjectResult(true, true);
                 }
@@ -857,30 +970,39 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         }
 
         if (object.has(JsonFormConstants.JSON_FORM_KEY.AND)) {
-
             JSONArray andArray = object.getJSONArray(JsonFormConstants.JSON_FORM_KEY.AND);
 
             for (int i = 0; i < andArray.length(); i++) {
-
                 if (!Boolean.valueOf(curValueMap.get(andArray.getString(i)))) {
-
                     return new ExObjectResult(false, false);
                 }
             }
-
             return new ExObjectResult(true, false);
 
         }
 
-
         return new ExObjectResult(false, false);
     }
 
-    private static class KEY {
-        public static final String TEXT = "text";
+    @Override
+    public JSONObject getmJSONObject() {
+        return mJSONObject;
+    }
 
-        public static final String KEY = "key";
+    @Override
+    public void setmJSONObject(JSONObject mJSONObject) {
+        this.mJSONObject = mJSONObject;
+    }
 
-        public static final String READ_ONLY = "read_only";
+    private Form extractForm(Serializable serializable) {
+        if (serializable != null && serializable instanceof Form) {
+            return (Form) serializable;
+        }
+        return new Form();
+    }
+
+    @Override
+    public void updateGenericPopupSecondaryValues(JSONArray jsonArray) {
+        extraFieldsWithValues = jsonArray;
     }
 }

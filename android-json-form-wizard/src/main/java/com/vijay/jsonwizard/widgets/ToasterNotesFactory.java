@@ -27,8 +27,17 @@ import java.util.List;
 public class ToasterNotesFactory implements FormWidgetFactory {
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener
-            listener) throws JSONException {
+            listener, boolean popup) throws JSONException {
+        return attachJson(stepName, context, jsonObject, listener, popup);
+    }
 
+    @Override
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+        return attachJson(stepName, context, jsonObject, listener, false);
+    }
+
+    private List<View> attachJson(String stepName, Context context, JSONObject jsonObject, CommonListener
+            listener, boolean popup) throws JSONException {
         String openMrsEntityParent = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_ID);
@@ -45,7 +54,8 @@ public class ToasterNotesFactory implements FormWidgetFactory {
         linearLayout.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
         linearLayout.setTag(R.id.openmrs_entity, openMrsEntity);
         linearLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-        linearLayout.setTag(R.id.type, jsonObject.getString("type"));
+        linearLayout.setTag(R.id.extraPopup, popup);
+        linearLayout.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
         linearLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
 
         if (relevance != null && context instanceof JsonApi) {
@@ -53,11 +63,11 @@ public class ToasterNotesFactory implements FormWidgetFactory {
             ((JsonApi) context).addSkipLogicView(linearLayout);
         }
 
-        attachJson(views, context, jsonObject, linearLayout, listener);
+        attachLayout(views, context, jsonObject, linearLayout, listener);
         return views;
     }
 
-    private void attachJson(List<View> views, Context context, JSONObject jsonObject, LinearLayout linearLayout, CommonListener listener)
+    private void attachLayout(List<View> views, Context context, JSONObject jsonObject, LinearLayout linearLayout, CommonListener listener)
             throws JSONException {
         String type = jsonObject.optString(JsonFormConstants.TOASTER_TYPE, JsonFormConstants.TOASTER_INFO);
         String text = jsonObject.optString(JsonFormConstants.TEXT, "");

@@ -76,7 +76,7 @@ public class DatePickerDialog extends DialogFragment {
             }
         });
 
-        datePicker = (DatePicker) dialogView.findViewById(R.id.date_picker);
+        datePicker = dialogView.findViewById(R.id.date_picker);
         if (minDate != -1) {
             datePicker.setMinDate(minDate);
         }
@@ -91,7 +91,7 @@ public class DatePickerDialog extends DialogFragment {
         }
         DatePickerUtils.themeDatePicker(datePicker, new char[]{'d', 'm', 'y'});
 
-        cancelButton = (Button) dialogView.findViewById(R.id.cancel_button);
+        cancelButton = dialogView.findViewById(R.id.cancel_button);
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,7 +99,7 @@ public class DatePickerDialog extends DialogFragment {
             }
         });
 
-        okButton = (Button) dialogView.findViewById(R.id.ok_button);
+        okButton = dialogView.findViewById(R.id.ok_button);
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
