@@ -13,9 +13,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ----------------------
 ##### Changed
 - The checkbox UI XML to use Linear layouts with layout widths instead of Relative layouts
+- New way to demo notable features in native form sample App - Multiple buttons with mnemonic feature name titles
 
 ##### Fixed
 - Checkbox widget all options select/deselect on moving to the next step and back caused by same view Id assignment
+- Improved optimization during json form render for special views (constrained, calculated and relevance views)
 
 ###Added
 - The specify extra information popup. This enables you to define multiple widgets on the specify extra info popup. Examples of how to add it are in the sample json file
@@ -32,4 +34,5 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Add checkbox multi select Skip Logic
 - Add checkbox multi select exclusive selector logic 
-
+- Integrate rules engine for rule support using yaml configs
+- Support for skip logic using complex rules 

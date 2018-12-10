@@ -98,6 +98,9 @@ public class JsonFormConstants {
     public static final String BOLD_ITALIC = "bold_italic";
     public static final String EDIT_BUTTON = "edit_button";
     public static final String CUSTOM_TEXT = "custom_text";
+    public static final String COUNT = "count";
+    public static final String CALCULATION = "calculation";
+    public static final String HIDDEN = "hidden";
     public static final String SECONDARY_VALUE = "secondary_value";
     public static final String CONTENT_FORM_LOCATION = "content_form_location";
     public static final String VALUES = "values";
@@ -116,12 +119,13 @@ public class JsonFormConstants {
     public static final String NATIVE_ACCORDION = "native_accordion";
 
     public static class JSON_FORM_KEY {
+        public static final String EX_RULES = "ex-rules";
         public static final String EX_CHECKBOX = "ex-checkbox";
         public static final String OR = "or";
         public static final String AND = "and";
         public static final String EXCLUSIVE = "exclusive";
         public static final String NOT = "not";
-
+        public static final String GLOBAL = "global";
         public static final String JSON = "json";
         public static final String FORM = "form";
         public static final String STEPNAME = "stepName";
@@ -132,5 +136,9 @@ public class JsonFormConstants {
         public static final int BARCODE_REQUEST_CODE = 0x0000c0de;
         // intent request code to handle updating play services if needed.
         public static final int RC_HANDLE_GMS = 9001;
+    }
+
+    public static class EDIT_TEXT_TYPE {
+        public static final String NUMBER = "number";
     }
 }

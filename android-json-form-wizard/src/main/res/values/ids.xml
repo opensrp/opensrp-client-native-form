@@ -17,10 +17,13 @@
     <item name="openmrs_entity" type='id' />
     <item name="openmrs_entity_id" type='id' />
     <item name="relevance" type="id" />
+    <item name="calculation" type="id" />
     <item name="constraints" type="id" />
     <item name="skip_validation" type="id" />
     <item name="label_dialog_info" type="id" />
     <item name="label_dialog_title" type="id" />
+    <item name="original_text" type="id" />
+    <item name="is_first_time" type="id" />
 
     <item name="specify_textview" type="id" />
     <item name="main_textview" type="id" />

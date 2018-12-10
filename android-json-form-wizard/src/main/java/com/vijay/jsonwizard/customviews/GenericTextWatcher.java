@@ -1,5 +1,6 @@
 package com.vijay.jsonwizard.customviews;
 
+import android.app.Activity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -34,16 +35,29 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
     }
 
     public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
+        //any code here should check if correct view has current focus , see afterTextChanged
         Log.d("GenericTextWatcher", "beforeTextChanged called");
     }
 
     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
+        //any code here should check if correct view has current focus, see afterTextChanged
         Log.d("GenericTextWatcher", "beforeTextChanged called");
     }
 
     public void afterTextChanged(Editable editable) {
+
+        //Check if trigger is Automatic
+        if (!((Activity) formFragment.getContext()).getCurrentFocus().equals(mView)) {
+            if (mView.getTag(R.id.is_first_time) != null) {
+
+                mView.setTag(R.id.is_first_time, null);
+                return;
+            } else {
+
+                mView.setTag(R.id.is_first_time, true);
+            }
+        }
+
         String text = (String) mView.getTag(R.id.raw_value);
 
         if (text == null) {
@@ -69,6 +83,8 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
             // TODO- handle
             e.printStackTrace();
         }
+
+
     }
 
     @Override

@@ -44,17 +44,23 @@ public interface JsonApi {
 
     void clearSkipLogicViews();
 
+    void clearCalculationLogicViews();
+
     void clearConstrainedViews();
 
     void clearFormDataViews();
 
     void addSkipLogicView(View view);
 
+    void addCalculationLogicView(View view);
+
     void addConstrainedView(View view);
 
     void refreshHiddenViews(boolean popup);
 
     void refreshSkipLogic(String parentKey, String childKey, boolean popup);
+
+    void refreshCalculationLogic(String parentKey, String childKey, boolean popup);
 
     void addFormDataView(View view);
 
