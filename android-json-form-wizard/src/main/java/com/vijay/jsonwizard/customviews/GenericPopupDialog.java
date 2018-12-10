@@ -56,6 +56,7 @@ public class GenericPopupDialog extends DialogFragment {
     private String parentKey;
     private String childKey = null;
     private String stepName;
+    private String widgetType;
     private JSONArray secondaryValues;
     private JSONArray newSelectedValues;
     private CustomTextView customTextView;
@@ -223,7 +224,7 @@ public class GenericPopupDialog extends DialogFragment {
         return stringBuilder.toString();
     }
 
-    private void createSecondaryValuesMap() {
+    protected void createSecondaryValuesMap() {
         JSONObject jsonObject;
         if (secondaryValues != null) {
             for (int i = 0; i < secondaryValues.length(); i++) {
@@ -364,7 +365,7 @@ public class GenericPopupDialog extends DialogFragment {
 
     }
 
-    private void createSecondaryValues(String key, String type, String value) {
+    protected void createSecondaryValues(String key, String type, String value) {
         JSONArray values = new JSONArray();
         values.put(value);
         if (type != null && type.equals(JsonFormConstants.CHECK_BOX)) {
@@ -388,7 +389,7 @@ public class GenericPopupDialog extends DialogFragment {
         }
     }
 
-    private boolean checkSimilarity(JSONArray values, String value) {
+    protected boolean checkSimilarity(JSONArray values, String value) {
         boolean same = false;
         try {
             for (int i = 0; i < values.length(); i++) {
@@ -405,7 +406,7 @@ public class GenericPopupDialog extends DialogFragment {
         return same;
     }
 
-    private JSONArray removeUnselectedItems(JSONArray jsonArray, String currentValue) {
+    protected JSONArray removeUnselectedItems(JSONArray jsonArray, String currentValue) {
         JSONArray values;
         ArrayList<String> list = new ArrayList<>();
         try {
@@ -508,7 +509,7 @@ public class GenericPopupDialog extends DialogFragment {
      * @param childKey
      * @return
      */
-    private JSONObject getJsonObjectToUpdate(JSONObject jsonObject, String childKey) {
+    protected JSONObject getJsonObjectToUpdate(JSONObject jsonObject, String childKey) {
         JSONObject item = new JSONObject();
         try {
             if (jsonObject != null && jsonObject.has(JsonFormConstants.TYPE)) {
@@ -542,7 +543,7 @@ public class GenericPopupDialog extends DialogFragment {
      * @param item
      * @param secondaryValueModel
      */
-    private void addSecondaryValues(JSONObject item, Map<String, SecondaryValueModel> secondaryValueModel) {
+    protected void addSecondaryValues(JSONObject item, Map<String, SecondaryValueModel> secondaryValueModel) {
         JSONObject valueObject;
         JSONArray secondaryValuesArray = new JSONArray();
         SecondaryValueModel secondaryValue;
@@ -566,7 +567,7 @@ public class GenericPopupDialog extends DialogFragment {
      * @param value
      * @return
      */
-    private JSONObject createSecondaryValueObject(SecondaryValueModel value) {
+    protected JSONObject createSecondaryValueObject(SecondaryValueModel value) {
         JSONObject jsonObject = new JSONObject();
         try {
             String key = value.getKey();
@@ -582,4 +583,38 @@ public class GenericPopupDialog extends DialogFragment {
         }
         return jsonObject;
     }
+
+    public String getWidgetType() {
+        return widgetType;
+    }
+
+    public void setWidgetType(String widgetType) {
+        this.widgetType = widgetType;
+    }
+
+
+    public JSONArray getNewSelectedValues() {
+        return newSelectedValues;
+    }
+
+    public void setNewSelectedValues(JSONArray newSelectedValues) {
+        this.newSelectedValues = newSelectedValues;
+    }
+
+    public Map<String, SecondaryValueModel> getPopAssignedValue() {
+        return popAssignedValue;
+    }
+
+    public void setPopAssignedValue(Map<String, SecondaryValueModel> popAssignedValue) {
+        this.popAssignedValue = popAssignedValue;
+    }
+
+    public Map<String, SecondaryValueModel> getSecondaryValuesMap() {
+        return secondaryValuesMap;
+    }
+
+    public void setSecondaryValuesMap(Map<String, SecondaryValueModel> secondaryValuesMap) {
+        this.secondaryValuesMap = secondaryValuesMap;
+    }
+
 }

@@ -463,6 +463,7 @@ public class FormUtils {
             genericPopupDialog.setStepName(stepName);
             genericPopupDialog.setSecondaryValues(jsonArray);
             genericPopupDialog.setParentKey(parentKey);
+            genericPopupDialog.setWidgetType(type);
             if (customTextView != null) {
                 genericPopupDialog.setCustomTextView(customTextView);
             }
@@ -564,7 +565,7 @@ public class FormUtils {
                     JSONArray itemArray = jsonObject.getJSONArray(JsonFormConstants.VALUES);
                     for (int j = 0; j < itemArray.length(); j++) {
                         String s = formUtils.getValueFromSecondaryValues(type, itemArray.getString(j));
-                        if(!TextUtils.isEmpty(s)) {
+                        if (!TextUtils.isEmpty(s)) {
                             specifyText.append(s + ",");
                         }
 
