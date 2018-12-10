@@ -21,6 +21,7 @@ import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -48,13 +49,20 @@ public class SpinnerFactory implements FormWidgetFactory {
     }
 
     @Override
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
+        return attachJson(stepName, context, jsonObject, listener, popup);
+    }
+
+    @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
-        String openMrsEntityParent = jsonObject.getString("openmrs_entity_parent");
-        String openMrsEntity = jsonObject.getString("openmrs_entity");
-        String openMrsEntityId = jsonObject.getString("openmrs_entity_id");
-        String relevance = jsonObject.optString("relevance");
-        String labelInfoText = jsonObject.optString(JsonFormConstants.LABEL_INFO_TEXT, "");
-        String labelInfoTitle = jsonObject.optString(JsonFormConstants.LABEL_INFO_TITLE, "");
+        return attachJson(stepName, context, jsonObject, listener, false);
+    }
+
+    private List<View> attachJson(String stepName, Context context, JSONObject jsonObject, CommonListener listener, boolean popup) throws JSONException {
+        String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
+        String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
+        String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
+        String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
 
         List<View> views = new ArrayList<>(1);
         JSONArray canvasIds = new JSONArray();
@@ -63,7 +71,8 @@ public class SpinnerFactory implements FormWidgetFactory {
         spinnerRelativeLayout.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
         spinnerRelativeLayout.setTag(R.id.openmrs_entity, openMrsEntity);
         spinnerRelativeLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-        spinnerRelativeLayout.setTag(R.id.type, jsonObject.getString("type"));
+        spinnerRelativeLayout.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
+        spinnerRelativeLayout.setTag(R.id.extraPopup, popup);
         spinnerRelativeLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
         spinnerRelativeLayout.setId(ViewUtil.generateViewId());
         canvasIds.put(spinnerRelativeLayout.getId());
@@ -73,12 +82,22 @@ public class SpinnerFactory implements FormWidgetFactory {
             spinnerRelativeLayout.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(spinnerRelativeLayout);
         }
+        addSpinner(jsonObject, spinnerRelativeLayout, listener, canvasIds, stepName, popup, context);
+        views.add(spinnerRelativeLayout);
+        return views;
+    }
 
+    private void addSpinner(JSONObject jsonObject, RelativeLayout spinnerRelativeLayout, CommonListener listener, JSONArray canvasIds, String stepName, boolean popup, Context context) throws JSONException {
+        String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
+        String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
+        String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
+        String labelInfoText = jsonObject.optString(JsonFormConstants.LABEL_INFO_TEXT, "");
+        String labelInfoTitle = jsonObject.optString(JsonFormConstants.LABEL_INFO_TITLE, "");
 
         MaterialSpinner spinner = spinnerRelativeLayout.findViewById(R.id.material_spinner);
         ImageView spinnerInfoIconImageView = spinnerRelativeLayout.findViewById(R.id.spinner_info_icon);
         ImageView editButton = spinnerRelativeLayout.findViewById(R.id.spinner_edit_button);
-        FormUtils.showEditButton(jsonObject,spinner,editButton,listener);
+        FormUtils.showEditButton(jsonObject, spinner, editButton, listener);
         String hint = jsonObject.optString(JsonFormConstants.HINT);
         if (!TextUtils.isEmpty(hint)) {
             spinner.setHint(jsonObject.getString(JsonFormConstants.HINT));
@@ -92,8 +111,10 @@ public class SpinnerFactory implements FormWidgetFactory {
         spinner.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
         spinner.setTag(R.id.openmrs_entity, openMrsEntity);
         spinner.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-        spinner.setTag(R.id.type, jsonObject.getString("type"));
+        spinner.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
         spinner.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+        spinner.setTag(R.id.extraPopup, popup);
+        spinner.setId(ViewUtil.generateViewId());
 
         JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
         if (requiredObject != null) {
@@ -115,7 +136,7 @@ public class SpinnerFactory implements FormWidgetFactory {
             editButton.setVisibility(View.VISIBLE);
         }
 
-        JSONArray valuesJson = jsonObject.optJSONArray("values");
+        JSONArray valuesJson = jsonObject.optJSONArray(JsonFormConstants.VALUES);
         String[] values = null;
         if (valuesJson != null && valuesJson.length() > 0) {
             values = new String[valuesJson.length()];
@@ -139,7 +160,5 @@ public class SpinnerFactory implements FormWidgetFactory {
         // views.add(spinner);
         FormUtils.showInfoIcon(jsonObject, listener, labelInfoText, labelInfoTitle, spinnerInfoIconImageView);
         spinner.setTag(R.id.canvas_ids, canvasIds.toString());
-        views.add(spinnerRelativeLayout);
-        return views;
     }
 }

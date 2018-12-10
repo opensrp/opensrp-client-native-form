@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rengwuxian.materialedittext.validation.RegexpValidator;
 import com.rey.material.util.ViewUtil;
@@ -25,7 +26,9 @@ import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
+
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
@@ -160,23 +163,34 @@ public class DatePickerFactory implements FormWidgetFactory {
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject,
-                                       CommonListener listener) throws Exception {
+                                       CommonListener listener, boolean popup) {
+        return attachJson(stepName, context, formFragment, jsonObject, popup);
+    }
+
+    @Override
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+        return attachJson(stepName, context, formFragment, jsonObject, false);
+    }
+
+    private List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject,
+                                  boolean popup) {
         List<View> views = new ArrayList<>(1);
         try {
 
             RelativeLayout dateViewRelativeLayout = (RelativeLayout) LayoutInflater
                     .from(context).inflate(getLayout(), null);
 
-            MaterialEditText editText = (MaterialEditText) dateViewRelativeLayout.findViewById(R.id.edit_text);
+            MaterialEditText editText = dateViewRelativeLayout.findViewById(R.id.edit_text);
 
-            TextView duration = (TextView) dateViewRelativeLayout.findViewById(R.id.duration);
+            TextView duration = dateViewRelativeLayout.findViewById(R.id.duration);
 
-            attachJson(stepName, context, formFragment, jsonObject, editText, duration);
+            attachLayout(stepName, context, formFragment, jsonObject, editText, duration);
 
             JSONArray canvasIds = new JSONArray();
             dateViewRelativeLayout.setId(ViewUtil.generateViewId());
             canvasIds.put(dateViewRelativeLayout.getId());
             editText.setTag(R.id.canvas_ids, canvasIds.toString());
+            editText.setTag(R.id.extraPopup, popup);
 
             ((JsonApi) context).addFormDataView(editText);
             views.add(dateViewRelativeLayout);
@@ -188,96 +202,27 @@ public class DatePickerFactory implements FormWidgetFactory {
         return views;
     }
 
-    protected void attachJson(String stepName, final Context context, JsonFormFragment formFragment, JSONObject jsonObject, final MaterialEditText editText, final TextView duration) {
+    protected void attachLayout(String stepName, final Context context, JsonFormFragment formFragment, JSONObject jsonObject, final MaterialEditText editText, final TextView duration) {
 
         try {
-            String openMrsEntityParent = jsonObject.getString("openmrs_entity_parent");
-            String openMrsEntity = jsonObject.getString("openmrs_entity");
-            String openMrsEntityId = jsonObject.getString("openmrs_entity_id");
-            String relevance = jsonObject.optString("relevance");
-            String constraints = jsonObject.optString("constraints");
+            String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
+            String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
+            String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
+            String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
+            String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
 
             duration.setTag(R.id.key, jsonObject.getString(KEY.KEY));
             duration.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
             duration.setTag(R.id.openmrs_entity, openMrsEntity);
             duration.setTag(R.id.openmrs_entity_id, openMrsEntityId);
             if (jsonObject.has(KEY.DURATION)) {
-                duration.setTag(R.id.label, jsonObject.getJSONObject(KEY.DURATION).getString("label"));
+                duration.setTag(R.id.label, jsonObject.getJSONObject(KEY.DURATION).getString(JsonFormConstants.LABEL));
             }
 
-            editText.setHint(jsonObject.getString(KEY.HINT));
-            editText.setFloatingLabelText(jsonObject.getString(KEY.HINT));
-            editText.setId(ViewUtil.generateViewId());
-            editText.setTag(R.id.key, jsonObject.getString(KEY.KEY));
-            editText.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
-            editText.setTag(R.id.openmrs_entity, openMrsEntity);
-            editText.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-            editText.setTag(R.id.address, stepName + ":" + jsonObject.getString(KEY.KEY));
-            if (jsonObject.has(JsonFormConstants.V_REQUIRED)) {
-                JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
-                String requiredValue = requiredObject.getString(KEY.VALUE);
-                if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
-                    editText.addValidator(new RequiredValidator(requiredObject.getString(JsonFormConstants.ERR)));
-                }
-            }
+            updateEditText(editText, jsonObject, stepName, context, duration);
+            final DatePickerDialog datePickerDialog = createDateDialog(context, duration, editText, jsonObject);
 
-            if (!TextUtils.isEmpty(jsonObject.optString(KEY.VALUE))) {
-                updateDateText(editText, duration, jsonObject.optString(KEY.VALUE));
-            } else if (jsonObject.has(KEY.DEFAULT)) {
-                updateDateText(editText, duration,
-                        DATE_FORMAT.format(FormUtils.getDate(jsonObject.getString(KEY.DEFAULT)).getTime()));
-            }
-
-            if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
-                boolean readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
-                editText.setEnabled(!readOnly);
-                editText.setFocusable(!readOnly);
-            }
-
-            editText.addValidator(new RegexpValidator(
-                    context.getResources().getString(R.string.badly_formed_date),
-                    DATE_FORMAT_REGEX));
-
-            final DatePickerDialog datePickerDialog = new DatePickerDialog();
-            datePickerDialog.setContext(context);
-
-            datePickerDialog.setOnDateSetListener(new android.app.DatePickerDialog.OnDateSetListener() {
-                @Override
-                public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                    Calendar calendarDate = Calendar.getInstance();
-                    calendarDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                    calendarDate.set(Calendar.MONTH, monthOfYear);
-                    calendarDate.set(Calendar.YEAR, year);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB
-                            && calendarDate.getTimeInMillis() >= view.getMinDate()
-                            && calendarDate.getTimeInMillis() <= view.getMaxDate()) {
-                        updateDateText(editText, duration,
-                                DATE_FORMAT.format(calendarDate.getTime()));
-                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                        updateDateText(editText, duration, "");
-                    }
-                }
-            });
-
-            if (jsonObject.has("min_date") && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                Calendar minDate = FormUtils.getDate(jsonObject.getString("min_date"));
-                minDate.set(Calendar.HOUR_OF_DAY, 0);
-                minDate.set(Calendar.MINUTE, 0);
-                minDate.set(Calendar.SECOND, 0);
-                minDate.set(Calendar.MILLISECOND, 0);
-                datePickerDialog.setMinDate(minDate.getTimeInMillis());
-            }
-
-            if (jsonObject.has("max_date") && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                Calendar maxDate = FormUtils.getDate(jsonObject.getString("max_date"));
-                maxDate.set(Calendar.HOUR_OF_DAY, 23);
-                maxDate.set(Calendar.MINUTE, 59);
-                maxDate.set(Calendar.SECOND, 59);
-                maxDate.set(Calendar.MILLISECOND, 999);
-                datePickerDialog.setMaxDate(maxDate.getTimeInMillis());
-            }
-
-            if (jsonObject.has("expanded") && jsonObject.getBoolean("expanded")
+            if (jsonObject.has(JsonFormConstants.EXPANDED) && jsonObject.getBoolean(JsonFormConstants.EXPANDED)
                     && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                 datePickerDialog.setCalendarViewShown(true);
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
@@ -323,6 +268,89 @@ public class DatePickerFactory implements FormWidgetFactory {
             e.printStackTrace();
         }
 
+    }
+
+    private void updateEditText(MaterialEditText editText, JSONObject jsonObject, String stepName, Context context, TextView duration) throws JSONException {
+
+        String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
+        String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
+        String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
+
+        editText.setHint(jsonObject.getString(KEY.HINT));
+        editText.setFloatingLabelText(jsonObject.getString(KEY.HINT));
+        editText.setId(ViewUtil.generateViewId());
+        editText.setTag(R.id.key, jsonObject.getString(KEY.KEY));
+        editText.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
+        editText.setTag(R.id.openmrs_entity, openMrsEntity);
+        editText.setTag(R.id.openmrs_entity_id, openMrsEntityId);
+        editText.setTag(R.id.address, stepName + ":" + jsonObject.getString(KEY.KEY));
+        if (jsonObject.has(JsonFormConstants.V_REQUIRED)) {
+            JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
+            String requiredValue = requiredObject.getString(KEY.VALUE);
+            if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
+                editText.addValidator(new RequiredValidator(requiredObject.getString(JsonFormConstants.ERR)));
+            }
+        }
+
+        if (!TextUtils.isEmpty(jsonObject.optString(KEY.VALUE))) {
+            updateDateText(editText, duration, jsonObject.optString(KEY.VALUE));
+        } else if (jsonObject.has(KEY.DEFAULT)) {
+            updateDateText(editText, duration,
+                    DATE_FORMAT.format(FormUtils.getDate(jsonObject.getString(KEY.DEFAULT)).getTime()));
+        }
+
+        if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
+            boolean readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
+            editText.setEnabled(!readOnly);
+            editText.setFocusable(!readOnly);
+        }
+
+        editText.addValidator(new RegexpValidator(
+                context.getResources().getString(R.string.badly_formed_date),
+                DATE_FORMAT_REGEX));
+    }
+
+    private DatePickerDialog createDateDialog(Context context, final TextView duration, final MaterialEditText editText, JSONObject jsonObject) throws JSONException {
+        final DatePickerDialog datePickerDialog = new DatePickerDialog();
+        datePickerDialog.setContext(context);
+
+        datePickerDialog.setOnDateSetListener(new android.app.DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                Calendar calendarDate = Calendar.getInstance();
+                calendarDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                calendarDate.set(Calendar.MONTH, monthOfYear);
+                calendarDate.set(Calendar.YEAR, year);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB
+                        && calendarDate.getTimeInMillis() >= view.getMinDate()
+                        && calendarDate.getTimeInMillis() <= view.getMaxDate()) {
+                    updateDateText(editText, duration,
+                            DATE_FORMAT.format(calendarDate.getTime()));
+                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                    updateDateText(editText, duration, "");
+                }
+            }
+        });
+
+        if (jsonObject.has(JsonFormConstants.MIN_DATE) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            Calendar minDate = FormUtils.getDate(jsonObject.getString(JsonFormConstants.MIN_DATE));
+            minDate.set(Calendar.HOUR_OF_DAY, 0);
+            minDate.set(Calendar.MINUTE, 0);
+            minDate.set(Calendar.SECOND, 0);
+            minDate.set(Calendar.MILLISECOND, 0);
+            datePickerDialog.setMinDate(minDate.getTimeInMillis());
+        }
+
+        if (jsonObject.has(JsonFormConstants.MAX_DATE) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            Calendar maxDate = FormUtils.getDate(jsonObject.getString(JsonFormConstants.MAX_DATE));
+            maxDate.set(Calendar.HOUR_OF_DAY, 23);
+            maxDate.set(Calendar.MINUTE, 59);
+            maxDate.set(Calendar.SECOND, 59);
+            maxDate.set(Calendar.MILLISECOND, 999);
+            datePickerDialog.setMaxDate(maxDate.getTimeInMillis());
+        }
+
+        return datePickerDialog;
     }
 
     protected int getLayout() {

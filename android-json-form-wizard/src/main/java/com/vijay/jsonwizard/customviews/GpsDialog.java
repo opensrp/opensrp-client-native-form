@@ -27,8 +27,8 @@ public class GpsDialog extends Dialog implements LocationListener, GoogleApiClie
     private final double MIN_ACCURACY = 4d;
     private final View dataView;
     private final TextView latitudeTV, longitudeTV, altitudeTV, accuracyTV;
-    private TextView dialogAccuracyTV;
     private final Context context;
+    private TextView dialogAccuracyTV;
     private GoogleApiClient googleApiClient;
     private Location lastLocation;
 

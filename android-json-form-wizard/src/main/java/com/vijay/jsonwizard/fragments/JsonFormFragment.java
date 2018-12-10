@@ -89,7 +89,8 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         super.onViewCreated(view, savedInstanceState);
         mJsonApi.clearFormDataViews();
         presenter.addFormElements();
-        mJsonApi.refreshSkipLogic(null, null);
+        mJsonApi.refreshCalculationLogic(null, null, false);
+        mJsonApi.refreshSkipLogic(null, null, false);
         mJsonApi.refreshConstraints(null, null);
     }
 
@@ -201,9 +202,9 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     @Override
     public void writeValue(String stepName, String key, String selectedValue, String openMrsEntityParent,
-                           String openMrsEntity, String openMrsEntityId) {
+                           String openMrsEntity, String openMrsEntityId, boolean popup) {
         try {
-            mJsonApi.writeValue(stepName, key, selectedValue, openMrsEntityParent, openMrsEntity, openMrsEntityId);
+            mJsonApi.writeValue(stepName, key, selectedValue, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
         } catch (JSONException e) {
             // TODO - handle
             e.printStackTrace();
@@ -213,11 +214,11 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     @Override
     public void writeValue(String stepName, String prentKey, String childObjectKey, String childKey,
                            String value, String openMrsEntityParent, String openMrsEntity,
-                           String openMrsEntityId) {
+                           String openMrsEntityId, boolean popup) {
         Log.d(CONST_REAL_TIME_VALIDATION, CONST_FRAGMENT_WRITEVALUE_CALLED);
         try {
             mJsonApi.writeValue(stepName, prentKey, childObjectKey, childKey, value,
-                    openMrsEntityParent, openMrsEntity, openMrsEntityId);
+                    openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
         } catch (JSONException e) {
             // TODO - handle
             e.printStackTrace();
@@ -270,7 +271,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         for (View view : views) {
             mMainView.addView(view);
         }
-        mJsonApi.refreshHiddenViews();
+        mJsonApi.refreshHiddenViews(false);
         mJsonApi.resetFocus();
     }
 

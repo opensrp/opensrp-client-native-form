@@ -111,7 +111,7 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "person_attribute",
         "openmrs_entity_id": "Child_Register_Card_Number",
-        "read_only":true,
+        "read_only": true,
         "value": "1891389133",
         "type": "edit_text",
         "hint": "Child's register card number"
@@ -121,7 +121,7 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "person_attribute",
         "openmrs_entity_id": "Child_Birth_Certificate",
-        "read_only":true,
+        "read_only": true,
         "v_required": {
           "value": "true",
           "err": "Please enter child's birth certificate"
@@ -165,7 +165,7 @@
         "openmrs_entity": "person",
         "openmrs_entity_id": "gender",
         "type": "spinner",
-        "read_only":true,
+        "read_only": true,
         "hint": "Sex *",
         "values": [
           "Male",
@@ -389,7 +389,7 @@
         "openmrs_entity_id": "1572AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
         "openmrs_data_type": "select one",
         "type": "spinner",
-        "read_only":true,
+        "read_only": true,
         "hint": "Place of birth *",
         "label_info_title": "Place of birth spinner",
         "label_info_text": "here is some text on this dialog",
@@ -591,7 +591,7 @@
             "text": "Placenta previa",
             "value": false,
             "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "text_size": "30sp"
+            "text_size": "15sp"
           },
           {
             "key": "cord_prolapse",
@@ -678,7 +678,7 @@
         "label": "Any symptoms of severe pre-eclampsia?",
         "label_text_style": "bold",
         "text_color": "#000000",
-        "read_only":true,
+        "read_only": true,
         "exclusive": [
           "none"
         ],
@@ -920,7 +920,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "read_only":true,
+        "read_only": true,
         "label": "Highest Level of School.",
         "label_text_size": "18px",
         "label_text_color": "#FF9800",
@@ -933,6 +933,7 @@
             "text_color": "#000000",
             "specify_info": "Specify",
             "specify_info_color": "#000000",
+            "specify_widget": "date_picker",
             "extra_info": "Here we go",
             "label_info_text": "Checking out the display oof the info icon needed to display this information",
             "label_info_title": "Highest Level of School",
@@ -943,6 +944,7 @@
             "text": "High School",
             "text_size": "18px",
             "specify_info": "Specify",
+            "specify_widget": "date_picker",
             "extra_info": "Here we go"
           },
           {
@@ -1361,6 +1363,152 @@
         "text_size": "18px",
         "label_text_style": "bold",
         "name": "This is the normal edit text design"
+      },
+      {
+        "key": "respiratory_exam_abnormal",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "check_box",
+        "options": [
+          {
+            "key": "dyspnoea",
+            "text": "Dyspnoea",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "value": false
+          }
+        ]
+      },
+      {
+        "key": "repiratory_exam",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Respiratory exam",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "extra_rel": true,
+        "has_extra_rel": "3",
+        "options": [
+          {
+            "key": "1",
+            "text": "Not done"
+          },
+          {
+            "key": "2",
+            "text": "Normal"
+          },
+          {
+            "key": "3",
+            "text": "Abnormal",
+            "specify_info": "Specify",
+            "specify_info_color": "#b5b5b5",
+            "specify_widget": "check_box",
+            "content_form": "child_enrollment_sub_form",
+            "content_form_location": "",
+            "secondary_value": [
+              {
+                "key": "respiratory_exam_abnormal",
+                "type": "check_box",
+                "values": [
+                  "rapid_breathing:Rapid breathing:true"
+                ]
+              },
+              {
+                "key": "respiratory_exam_radio_button",
+                "type": "native_radio",
+                "values": [
+                  "1:Not done"
+                ]
+              },
+              {
+                "key": "respiratory_exam_abnormal_other",
+                "type": "edit_text",
+                "values": [
+                  "other:Respiratory exam answer"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "repiratory_exam_two",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Respiratory exam Two",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "extra_rel": true,
+        "has_extra_rel": "3",
+        "options": [
+          {
+            "key": "1",
+            "text": "Not done"
+          },
+          {
+            "key": "2",
+            "text": "Normal"
+          },
+          {
+            "key": "3",
+            "text": "Abnormal",
+            "specify_info": "Specify",
+            "specify_info_color": "#b5b5b5",
+            "specify_widget": "check_box",
+            "content_form": "child_enrollment_two_sub_form",
+            "content_form_location": "",
+            "secondary_value": [
+              {
+                "key": "respiratory_exam_radio_button",
+                "type": "native_radio",
+                "values": [
+                  "3:Abnormal"
+                ]
+              },
+              {
+                "key": "respiratory_exam_abnormal_other",
+                "type": "edit_text",
+                "values": [
+                  "other:Respiratory exam answer two"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "repiratory_exam_three",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Respiratory exam three",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "extra_rel": true,
+        "has_extra_rel": "3",
+        "options": [
+          {
+            "key": "1",
+            "text": "Not done"
+          },
+          {
+            "key": "2",
+            "text": "Normal"
+          },
+          {
+            "key": "3",
+            "text": "Abnormal",
+            "specify_info": "Specify",
+            "specify_info_color": "#b5b5b5",
+            "specify_widget": "check_box"
+          }
+        ]
       }
     ]
   }

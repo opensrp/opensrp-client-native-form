@@ -91,6 +91,11 @@ dependencies {
         exclude group: 'com.android.support', module: 'recyclerview-v7'
     }
 
+    implementation 'org.jeasy:easy-rules-core:3.2.0'
+    implementation 'org.jeasy:easy-rules-mvel:3.2.0'
+
+    implementation 'com.google.code.gson:gson:2.8.5'
+
 // PowerMock
     def powerMockVersion = '1.7.1'
     testImplementation "org.powermock:powermock-module-junit4:$powerMockVersion"
