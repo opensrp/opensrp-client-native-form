@@ -141,7 +141,7 @@ public class ImagePickerFactory implements FormWidgetFactory {
         imageView.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         imageView.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
         imageView.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
-        if (relevance != null && context instanceof JsonApi) {
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             imageView.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(imageView);
         }
