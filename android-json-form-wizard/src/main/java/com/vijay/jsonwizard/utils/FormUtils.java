@@ -97,7 +97,7 @@ public class FormUtils {
             textView.setTextColor(Color.parseColor(textColor));
         }
 
-        if (relevance != null && context instanceof JsonApi) {
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             textView.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(textView);
         }
