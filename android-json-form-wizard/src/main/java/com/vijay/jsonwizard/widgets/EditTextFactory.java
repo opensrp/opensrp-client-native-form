@@ -69,7 +69,9 @@ public class EditTextFactory implements FormWidgetFactory {
                 getLayout(), null);
         MaterialEditText editText = rootLayout.findViewById(R.id.edit_text);
         ImageView editButton = rootLayout.findViewById(R.id.material_edit_text_edit_button);
+
         FormUtils.showEditButton(jsonObject, editText, editButton, listener);
+
         attachLayout(stepName, context, formFragment, jsonObject, editText, editButton);
 
         JSONArray canvasIds = new JSONArray();
@@ -102,14 +104,9 @@ public class EditTextFactory implements FormWidgetFactory {
         if (!TextUtils.isEmpty(jsonObject.optString(JsonFormConstants.VALUE))) {
             editText.setText(jsonObject.optString(JsonFormConstants.VALUE));
         }
-        editText.setHint(jsonObject.optString(JsonFormConstants.HINT));
-        editText.setFloatingLabelText(jsonObject.optString(JsonFormConstants.HINT));
-
-        if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
-            boolean readyOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
-            editText.setEnabled(!readyOnly);
-            editButton.setVisibility(View.VISIBLE);
-        }
+        editText.setHint(jsonObject.getString(JsonFormConstants.HINT));
+        editText.setFloatingLabelText(jsonObject.getString(JsonFormConstants.HINT));
+        FormUtils.setEditMode(jsonObject, editText, editButton);
 
         addRequiredValidator(jsonObject, editText);
         addLengthValidator(jsonObject, editText);
@@ -130,11 +127,7 @@ public class EditTextFactory implements FormWidgetFactory {
         }
 
         editText.addTextChangedListener(new GenericTextWatcher(stepName, formFragment, editText));
-
-
         initSpecialViewsRefs(context, jsonObject, editText);
-
-
     }
 
     private void initSpecialViewsRefs(Context context, JSONObject jsonObject, MaterialEditText editText) {

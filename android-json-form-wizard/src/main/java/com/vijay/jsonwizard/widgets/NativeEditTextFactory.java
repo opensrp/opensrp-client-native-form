@@ -126,11 +126,7 @@ public class NativeEditTextFactory implements FormWidgetFactory {
         }
         editText.setHint(jsonObject.optString(JsonFormConstants.HINT));
 
-        if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
-            boolean readyOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
-            editText.setEnabled(!readyOnly);
-            editButton.setVisibility(View.VISIBLE);
-        }
+        FormUtils.setEditMode(jsonObject, editText, editButton);
         // edit type check
         if (!TextUtils.isEmpty(editType)) {
             if ("number".equals(editType)) {
