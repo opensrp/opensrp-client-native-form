@@ -140,13 +140,13 @@ public class CheckBoxFactory implements FormWidgetFactory {
 
             ((JsonApi) context).addFormDataView(checkBox);
 
-            if (relevance != null && context instanceof JsonApi) {
+            if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
                 checkBox.setTag(R.id.relevance, relevance);
                 ((JsonApi) context).addSkipLogicView(checkBox);
             }
 
             String constraints = item.optString(JsonFormConstants.CONSTRAINTS);
-            if (constraints != null && context instanceof JsonApi) {
+            if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
                 checkBox.setTag(R.id.constraints, constraints);
                 ((JsonApi) context).addConstrainedView(checkBox);
             }

@@ -80,8 +80,10 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.native_json_form_fragment, null);
-        mMainView = (LinearLayout) rootView.findViewById(R.id.main_layout);
-        mScrollView = (ScrollView) rootView.findViewById(R.id.scroll_view);
+
+        mMainView = rootView.findViewById(R.id.main_layout);
+        mScrollView = rootView.findViewById(R.id.scroll_view);
+
         setupToolbarBackButton();
         return rootView;
     }

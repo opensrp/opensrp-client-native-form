@@ -213,7 +213,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         rootLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
         canvasIds.put(rootLayout.getId());
         rootLayout.setTag(R.id.canvas_ids, canvasIds.toString());
-        if (relevance != null && context instanceof JsonApi) {
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             rootLayout.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(rootLayout);
         }

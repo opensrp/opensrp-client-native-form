@@ -1,6 +1,7 @@
 package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -55,7 +56,7 @@ public class ComponentSpacerFactory implements FormWidgetFactory {
         linearLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
         linearLayout.setTag(R.id.extraPopup, popup);
 
-        if (relevance != null && context instanceof JsonApi) {
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             linearLayout.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(linearLayout);
         }

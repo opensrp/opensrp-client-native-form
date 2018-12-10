@@ -118,7 +118,7 @@ public class ImagePickerFactory implements FormWidgetFactory {
             uploadButton.setFocusable(!readOnly);
         }
 
-        if (relevance != null && context instanceof JsonApi) {
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             uploadButton.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(uploadButton);
         }
