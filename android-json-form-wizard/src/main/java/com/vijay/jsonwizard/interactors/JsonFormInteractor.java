@@ -12,12 +12,13 @@ import com.vijay.jsonwizard.widgets.ButtonFactory;
 import com.vijay.jsonwizard.widgets.CheckBoxFactory;
 import com.vijay.jsonwizard.widgets.ComponentSpacerFactory;
 import com.vijay.jsonwizard.widgets.DatePickerFactory;
-import com.vijay.jsonwizard.widgets.NativeEditTextFactory;
+import com.vijay.jsonwizard.widgets.EditTextFactory;
 import com.vijay.jsonwizard.widgets.GpsFactory;
+import com.vijay.jsonwizard.widgets.HiddenTextFactory;
 import com.vijay.jsonwizard.widgets.HorizontalLineFactory;
 import com.vijay.jsonwizard.widgets.ImagePickerFactory;
 import com.vijay.jsonwizard.widgets.LabelFactory;
-import com.vijay.jsonwizard.widgets.EditTextFactory;
+import com.vijay.jsonwizard.widgets.NativeEditTextFactory;
 import com.vijay.jsonwizard.widgets.NativeRadioButtonFactory;
 import com.vijay.jsonwizard.widgets.NumberSelectorFactory;
 import com.vijay.jsonwizard.widgets.RadioButtonFactory;
@@ -44,7 +45,7 @@ public class JsonFormInteractor {
     private static final JsonFormInteractor INSTANCE = new JsonFormInteractor();
     protected Map<String, FormWidgetFactory> map = new HashMap<>();
 
-    protected JsonFormInteractor() {
+    public JsonFormInteractor() {
         registerWidgets();
     }
 
@@ -55,6 +56,7 @@ public class JsonFormInteractor {
     protected void registerWidgets() {
         map.put(JsonFormConstants.SECTION_LABEL, new SectionFactory());
         map.put(JsonFormConstants.EDIT_TEXT, new EditTextFactory());
+        map.put(JsonFormConstants.HIDDEN, new HiddenTextFactory());
         map.put(JsonFormConstants.LABEL, new LabelFactory());
         map.put(JsonFormConstants.CHECK_BOX, new CheckBoxFactory());
         map.put(JsonFormConstants.RADIO_BUTTON, new RadioButtonFactory());
@@ -74,29 +76,29 @@ public class JsonFormInteractor {
     }
 
     public List<View> fetchFormElements(String stepName, JsonFormFragment formFragment,
-                                        JSONObject parentJson, CommonListener listener) {
+                                        JSONObject parentJson, CommonListener listener, Boolean popup) {
         Log.d(TAG, "fetchFormElements called");
         List<View> viewsFromJson = new ArrayList<>(5);
         try {
 
             if (parentJson.has(JsonFormConstants.SECTIONS) && parentJson.get(JsonFormConstants.SECTIONS) instanceof JSONArray) {
                 JSONArray sections = parentJson.getJSONArray(JsonFormConstants.SECTIONS);
-                fetchSections(viewsFromJson, stepName, formFragment, sections, listener);
+                fetchSections(viewsFromJson, stepName, formFragment, sections, listener, popup);
 
             } else if (parentJson.has(JsonFormConstants.FIELDS) && parentJson.get(JsonFormConstants.FIELDS) instanceof JSONArray) {
                 JSONArray fields = parentJson.getJSONArray(JsonFormConstants.FIELDS);
-                fetchFields(viewsFromJson, stepName, formFragment, fields, listener);
+                fetchFields(viewsFromJson, stepName, formFragment, fields, listener, popup);
             }
 
         } catch (JSONException e) {
-            Log.d(TAG, "Json exception occurred : " + e.getMessage());
+            Log.e(TAG, "Json exception occurred : " + e.getMessage());
             e.printStackTrace();
         }
         return viewsFromJson;
     }
 
     private void fetchSections(List<View> viewsFromJson, String stepName, JsonFormFragment formFragment,
-                               JSONArray sections, CommonListener listener) {
+                               JSONArray sections, CommonListener listener, Boolean popup) {
 
         try {
             if (sections == null || sections.length() == 0) {
@@ -107,12 +109,12 @@ public class JsonFormInteractor {
                 JSONObject sectionJson = sections.getJSONObject(i);
 
                 if (sectionJson.has(JsonFormConstants.NAME)) {
-                    fetchViews(viewsFromJson, stepName, formFragment, JsonFormConstants.SECTION_LABEL, sectionJson, listener);
+                    fetchViews(viewsFromJson, stepName, formFragment, JsonFormConstants.SECTION_LABEL, sectionJson, listener, popup);
                 }
 
                 if (sectionJson.has(JsonFormConstants.FIELDS)) {
                     JSONArray fields = sectionJson.getJSONArray(JsonFormConstants.FIELDS);
-                    fetchFields(viewsFromJson, stepName, formFragment, fields, listener);
+                    fetchFields(viewsFromJson, stepName, formFragment, fields, listener, popup);
                 }
 
 
@@ -123,8 +125,8 @@ public class JsonFormInteractor {
         }
     }
 
-    private void fetchFields(List<View> viewsFromJson, String stepName, JsonFormFragment formFragment,
-                             JSONArray fields, CommonListener listener) {
+    public void fetchFields(List<View> viewsFromJson, String stepName, JsonFormFragment formFragment,
+                            JSONArray fields, CommonListener listener, Boolean popup) {
 
         try {
             if (fields == null || fields.length() == 0) {
@@ -133,7 +135,7 @@ public class JsonFormInteractor {
 
             for (int i = 0; i < fields.length(); i++) {
                 JSONObject childJson = fields.getJSONObject(i);
-                fetchViews(viewsFromJson, stepName, formFragment, childJson.getString(JsonFormConstants.TYPE), childJson, listener);
+                fetchViews(viewsFromJson, stepName, formFragment, childJson.getString(JsonFormConstants.TYPE), childJson, listener, popup);
             }
         } catch (JSONException e) {
             Log.d(TAG, "Json exception occurred : " + e.getMessage());
@@ -142,10 +144,10 @@ public class JsonFormInteractor {
     }
 
     private void fetchViews(List<View> viewsFromJson, String stepName, JsonFormFragment formFragment,
-                            String type, JSONObject jsonObject, CommonListener listener) {
+                            String type, JSONObject jsonObject, CommonListener listener, Boolean popup) {
 
         try {
-            List<View> views = map.get(type).getViewsFromJson(stepName, formFragment.getActivity(), formFragment, jsonObject, listener);
+            List<View> views = map.get(type).getViewsFromJson(stepName, formFragment.getActivity(), formFragment, jsonObject, listener, popup);
             if (views.size() > 0) {
                 viewsFromJson.addAll(views);
             }

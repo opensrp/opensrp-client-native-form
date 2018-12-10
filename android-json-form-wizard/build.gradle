@@ -19,14 +19,14 @@ jacoco {
 }
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion '28.0.3'
+    compileSdkVersion androidCompileSdkVersion
+    buildToolsVersion androidBuildToolsVersion
 
     defaultPublishConfig !isReleaseBuild() ? "debug" : "release"
 
     defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 28
+        minSdkVersion androidMinSdkVersion
+        targetSdkVersion androidTargetSdkVersion
         versionCode Integer.parseInt(project.VERSION_CODE)
         versionName project.VERSION_NAME
     }
@@ -90,6 +90,11 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
         exclude group: 'com.android.support', module: 'recyclerview-v7'
     }
+
+    implementation 'org.jeasy:easy-rules-core:3.2.0'
+    implementation 'org.jeasy:easy-rules-mvel:3.2.0'
+
+    implementation 'com.google.code.gson:gson:2.8.5'
 
 // PowerMock
     def powerMockVersion = '1.7.1'

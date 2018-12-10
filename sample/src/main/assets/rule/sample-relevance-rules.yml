@@ -1,0 +1,35 @@
+---
+name: step1_hepb_immun_status
+description: hepb immunization status
+priority: 1
+condition: "step1_First_Name.equalsIgnoreCase('Martin') || step1_First_Name == 'Stacy'"
+actions:
+  - "isRelevant = true"
+---
+name: step2_hoodini_label
+description: first name
+priority: 1
+condition: "step1_happiness_level == 1 "
+actions:
+  - "isRelevant = true"
+---
+name: step2_first_name_yo
+description: sibling first name
+priority: 1
+condition: "step1_firstname.equalsIgnoreCase('Martin') "
+actions:
+  - "isRelevant = true"
+---
+name: step2_last_name_yo
+description: last name
+priority: 1
+condition: "step2_first_name_yo == 'Ben' && (step2_super_heroes.contains('batman') || step2_super_heroes.contains('the_flash')) "
+actions:
+  - "isRelevant = true"
+---
+name: step1_tobacco_cessation_toaster
+description: cease tobacco toaster
+priority: 1
+condition: "step1_hepb_immun_status > 10 && step1_hepb_immun_status < 30"
+actions:
+  - "isRelevant = true"

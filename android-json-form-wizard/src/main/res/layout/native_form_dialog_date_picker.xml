@@ -9,26 +9,42 @@
         android:id="@+id/date_picker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="40dp"
-        android:layout_marginRight="40dp" />
+        android:layout_marginLeft="@dimen/dialog_content_margin"
+        android:layout_marginRight="@dimen/dialog_content_margin" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:orientation="horizontal">
+        android:layout_marginLeft="@dimen/dialog_content_margin"
+        android:layout_marginRight="@dimen/dialog_content_margin"
+        android:layout_marginBottom="10dp">
 
         <Button
             android:id="@+id/cancel_button"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="@string/cancel" />
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_toStartOf="@id/ok_button"
+            android:layout_toLeftOf="@id/ok_button"
+            android:background="@null"
+            android:text="@string/cancel"
+            android:textAllCaps="true"
+            android:textColor="@color/dialog_button_blue_color"
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/ok_button"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="@string/ok" />
-    </LinearLayout>
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:background="@null"
+            android:text="@string/done"
+            android:textAllCaps="true"
+            android:textColor="@color/dialog_button_blue_color"
+            android:textStyle="bold" />
+    </RelativeLayout>
 </LinearLayout>

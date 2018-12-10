@@ -51,7 +51,17 @@ public class NativeEditTextFactory implements FormWidgetFactory {
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener
-            listener) throws Exception {
+            listener, boolean popup) throws Exception {
+        return attachJson(stepName, context, formFragment, jsonObject, listener, popup);
+    }
+
+    @Override
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+        return attachJson(stepName, context, formFragment, jsonObject, listener, false);
+    }
+
+    private List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener
+            listener, boolean popup) throws Exception {
         List<View> views = new ArrayList<>(1);
 
         RelativeLayout rootLayout = (RelativeLayout) LayoutInflater.from(context).inflate(
@@ -72,6 +82,7 @@ public class NativeEditTextFactory implements FormWidgetFactory {
         rootLayout.setId(ViewUtil.generateViewId());
         canvasIds.put(rootLayout.getId());
         editText.setTag(R.id.canvas_ids, canvasIds.toString());
+        editText.setTag(R.id.extraPopup, popup);
 
         ((JsonApi) context).addFormDataView(editText);
         views.add(rootLayout);
@@ -88,6 +99,7 @@ public class NativeEditTextFactory implements FormWidgetFactory {
         String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
         String editTextStyle = jsonObject.optString(JsonFormConstants.EDIT_TEXT_STYLE, "");
         String editType = jsonObject.optString(JsonFormConstants.EDIT_TYPE);
+        String calculation = jsonObject.optString(JsonFormConstants.CALCULATION);
 
         editText.setId(ViewUtil.generateViewId());
         editText.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
@@ -125,14 +137,19 @@ public class NativeEditTextFactory implements FormWidgetFactory {
         }
 
         editText.addTextChangedListener(new GenericTextWatcher(stepName, formFragment, editText));
-        if (relevance != null && context instanceof JsonApi) {
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             editText.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(editText);
         }
 
-        if (constraints != null && context instanceof JsonApi) {
+        if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
             editText.setTag(R.id.constraints, constraints);
             ((JsonApi) context).addConstrainedView(editText);
+        }
+
+        if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
+            editText.setTag(R.id.calculation, calculation);
+            ((JsonApi) context).addCalculationLogicView(editText);
         }
 
     }

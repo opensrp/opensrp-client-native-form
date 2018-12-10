@@ -2,7 +2,6 @@ package org.smartregister.nativeform;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -11,6 +10,9 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.vijay.jsonwizard.activities.JsonFormActivity;
+import com.vijay.jsonwizard.activities.JsonWizardFormActivity;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.domain.Form;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,29 +23,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int REQUEST_CODE_GET_JSON = 1234;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    startForm(REQUEST_CODE_GET_JSON, "child_enrollment", null);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
+        findViewById(R.id.child_enrollment).setOnClickListener(this);
+        findViewById(R.id.wizard_form).setOnClickListener(this);
+        findViewById(R.id.rules_engine_skip_logic).setOnClickListener(this);
     }
 
     @Override
@@ -63,9 +55,15 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
-        } else if (id == R.id.action_add) {
+        } else if (id == R.id.action_single) {
             try {
-                startForm(REQUEST_CODE_GET_JSON, "child_enrollment", null);
+                startForm(REQUEST_CODE_GET_JSON, "single_form", null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (id == R.id.action_wizard) {
+            try {
+                startForm(REQUEST_CODE_GET_JSON, "wizard_form", null);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -95,13 +93,26 @@ public class MainActivity extends AppCompatActivity {
         final String VALUE = "value";
 
         String currentLocationId = "Kenya";
-        Intent intent = new Intent(this, JsonFormActivity.class);
 
-        JSONObject form = getFormJson(formName);
-        if (form != null) {
-            form.getJSONObject("metadata").put("encounter_location", currentLocationId);
 
-            if (formName.equals("child_enrollment")) {
+        JSONObject jsonForm = getFormJson(formName);
+        if (jsonForm != null) {
+            jsonForm.getJSONObject("metadata").put("encounter_location", currentLocationId);
+
+            if (formName.equals("wizard_form")) {
+                Intent intent = new Intent(this, JsonWizardFormActivity.class);
+                intent.putExtra("json", jsonForm.toString());
+                Log.d(getClass().getName(), "form is " + jsonForm.toString());
+
+                Form form = new Form();
+                form.setName(getString(R.string.profile));
+                form.setActionBarBackground(R.color.profile_actionbar);
+                form.setNavigationBackground(R.color.profile_navigation);
+                intent.putExtra(JsonFormConstants.JSON_FORM_KEY.FORM, form);
+
+                startActivityForResult(intent, jsonFormActivityRequestCode);
+            } else {
+
 
                 if (entityId == null) {
                     entityId = "ABC" + Math.random();
@@ -109,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                 // Inject zeir id into the form
-                JSONObject stepOne = form.getJSONObject(STEP1);
+                JSONObject stepOne = jsonForm.getJSONObject(STEP1);
                 JSONArray jsonArray = stepOne.getJSONArray(FIELDS);
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -121,11 +132,14 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
 
-                intent.putExtra("json", form.toString());
-                Log.d(getClass().getName(), "form is " + form.toString());
+                Intent intent = new Intent(this, JsonFormActivity.class);
+                intent.putExtra("json", jsonForm.toString());
+                Log.d(getClass().getName(), "form is " + jsonForm.toString());
                 startActivityForResult(intent, jsonFormActivityRequestCode);
             }
+
         }
+
     }
 
 
@@ -151,5 +165,37 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return null;
+    }
+
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
+
+        try {
+            switch (id) {
+                case R.id.child_enrollment:
+
+                    startForm(REQUEST_CODE_GET_JSON, "single_form", null);
+                    break;
+                case R.id.wizard_form:
+
+                    startForm(REQUEST_CODE_GET_JSON, "wizard_form", null);
+                    break;
+
+                case R.id.rules_engine_skip_logic:
+
+                    startForm(REQUEST_CODE_GET_JSON, "rules_engine_demo", null);
+                    break;
+
+                default:
+                    break;
+
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }
