@@ -211,10 +211,8 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             for (int i = 0; i < fields.length(); i++) {
                 JSONObject item = fields.getJSONObject(i);
                 String keyAtIndex = item.getString(JsonFormConstants.KEY);
-                String itemType = "";
-                if (popup) {
-                    itemType = item.getString(JsonFormConstants.TYPE);
-                }
+                String itemType = item.has(JsonFormConstants.TYPE) ? item.getString(JsonFormConstants.TYPE) : "";
+                keyAtIndex = itemType.equals(JsonFormConstants.NUMBER_SELECTORS) ? keyAtIndex + "_spinner" : keyAtIndex;
                 if (key.equals(keyAtIndex)) {
                     if (item.has(JsonFormConstants.TEXT)) {
                         item.put(JsonFormConstants.TEXT, value);
@@ -664,6 +662,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
         if (object != null) {
 
+            //reset the rules check value
+            object.put(RuleConstant.IS_RULE_CHECK, false);
+
             if (object.has(RuleConstant.RESULT)) {
                 JSONArray jsonArray = object.getJSONArray(RuleConstant.RESULT);
 
@@ -698,7 +699,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     JSONArray options = object.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
                     for (int j = 0; j < options.length(); j++) {
                         if (options.getJSONObject(j).has(JsonFormConstants.VALUE)) {
-                            if (object.has(RuleConstant.IS_RULE_CHECK)) {
+                            if (object.has(RuleConstant.IS_RULE_CHECK) && object.getBoolean(RuleConstant.IS_RULE_CHECK)) {
                                 if (Boolean.valueOf(options.getJSONObject(j).getString(JsonFormConstants.VALUE))) {
                                     result.put(options.getJSONObject(j).getString(JsonFormConstants.KEY), options.getJSONObject(j).getString(JsonFormConstants.VALUE));
                                 }
@@ -726,7 +727,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                                 if (object.getString(JsonFormConstants.VALUE).equals(jsonArray.getJSONObject(j).getString(JsonFormConstants.KEY))) {
                                     result.put(jsonArray.getJSONObject(j).getString(JsonFormConstants.KEY), String.valueOf(true));
                                 } else {
-                                    if (!object.has(RuleConstant.IS_RULE_CHECK)) {
+                                    if (!object.has(RuleConstant.IS_RULE_CHECK) || !object.getBoolean(RuleConstant.IS_RULE_CHECK)) {
                                         result.put(jsonArray.getJSONObject(j).getString(JsonFormConstants.KEY), String.valueOf(false));
                                     }
                                 }
@@ -744,7 +745,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     break;
             }
 
-            if (object.has(RuleConstant.IS_RULE_CHECK) && (object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.CHECK_BOX) || (object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.NATIVE_RADIO_BUTTON) && object.optBoolean(JsonFormConstants.NATIVE_RADIO_BUTTON_MULTI_RELEVANCE, false)))) {
+            if (object.has(RuleConstant.IS_RULE_CHECK) && object.getBoolean(RuleConstant.IS_RULE_CHECK) && (object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.CHECK_BOX) || (object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.NATIVE_RADIO_BUTTON) && object.optBoolean(JsonFormConstants.NATIVE_RADIO_BUTTON_MULTI_RELEVANCE, false)))) {
                 List<String> selectedValues = new ArrayList<>(result.keySet());
                 result.clear();
                 result.put(getKey(object), selectedValues.toString());
@@ -1324,7 +1325,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     }
 
     private String getKey(JSONObject object) throws JSONException {
-        return object.has(RuleConstant.IS_RULE_CHECK) ? object.get(RuleConstant.STEP) + "_" + object.get(JsonFormConstants.KEY) : JsonFormConstants.VALUE;
+        return object.has(RuleConstant.IS_RULE_CHECK) && object.getBoolean(RuleConstant.IS_RULE_CHECK) ? object.get(RuleConstant.STEP) + "_" + object.get(JsonFormConstants.KEY) : JsonFormConstants.VALUE;
     }
 
     private void updateCanvas(View view, boolean visible, JSONArray canvasViewIds) throws JSONException {

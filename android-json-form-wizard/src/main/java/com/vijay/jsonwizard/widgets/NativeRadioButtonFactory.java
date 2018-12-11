@@ -233,7 +233,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             radioGroup.addView(radioGroupLayout);
         }
 
-        if (relevance != null && context instanceof JsonApi) {
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             radioGroup.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(radioGroup);
         }

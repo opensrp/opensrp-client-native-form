@@ -97,7 +97,7 @@ public class FormUtils {
             textView.setTextColor(Color.parseColor(textColor));
         }
 
-        if (relevance != null && context instanceof JsonApi) {
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             textView.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(textView);
         }
@@ -295,7 +295,7 @@ public class FormUtils {
         relativeLayout.setTag(R.id.openmrs_entity, openMrsEntity);
         relativeLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         relativeLayout.setId(ViewUtil.generateViewId());
-        if (relevance != null && context instanceof JsonApi) {
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             relativeLayout.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(relativeLayout);
         }

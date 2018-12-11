@@ -255,12 +255,12 @@ public class DatePickerFactory implements FormWidgetFactory {
             });
             editText.addTextChangedListener(genericTextWatcher);
 
-            if (relevance != null && context instanceof JsonApi) {
+            if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
                 editText.setTag(R.id.relevance, relevance);
                 ((JsonApi) context).addSkipLogicView(editText);
             }
 
-            if (constraints != null && context instanceof JsonApi) {
+            if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
                 editText.setTag(R.id.constraints, constraints);
                 ((JsonApi) context).addConstrainedView(editText);
             }
