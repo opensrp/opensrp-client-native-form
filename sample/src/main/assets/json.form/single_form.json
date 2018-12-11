@@ -55,6 +55,7 @@
     }
   },
   "step1": {
+    "display_back_button": "true",
     "title": "Birth Registration",
     "fields": [
       {
