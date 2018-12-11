@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -89,11 +90,16 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         if (getArguments() != null) {
             String stepName = getArguments().getString(JsonFormConstants.STEPNAME);
             if (getStep(stepName).optBoolean(JsonFormConstants.DISPLAY_BACK_BUTTON)) {
-                getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_close);
+                getSupportActionBar().setHomeAsUpIndicator(getHomeUpIndicator());
                 setUpBackButton();
             }
         }
 
+    }
+
+    @DrawableRes
+    protected int getHomeUpIndicator() {
+        return R.drawable.ic_action_close;
     }
 
     @Override
