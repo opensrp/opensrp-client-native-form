@@ -211,10 +211,8 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             for (int i = 0; i < fields.length(); i++) {
                 JSONObject item = fields.getJSONObject(i);
                 String keyAtIndex = item.getString(JsonFormConstants.KEY);
-                String itemType = "";
-                if (popup) {
-                    itemType = item.getString(JsonFormConstants.TYPE);
-                }
+                String itemType = item.has(JsonFormConstants.TYPE) ? item.getString(JsonFormConstants.TYPE) : "";
+                keyAtIndex = itemType.equals(JsonFormConstants.NUMBER_SELECTORS) ? keyAtIndex + "_spinner" : keyAtIndex;
                 if (key.equals(keyAtIndex)) {
                     if (item.has(JsonFormConstants.TEXT)) {
                         item.put(JsonFormConstants.TEXT, value);
