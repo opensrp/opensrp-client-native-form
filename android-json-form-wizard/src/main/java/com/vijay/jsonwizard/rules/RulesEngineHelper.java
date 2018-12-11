@@ -96,7 +96,11 @@ public class RulesEngineHelper implements RuleListener {
 
         selectedRuleName = factMap.get(RuleConstant.SELECTED_RULE);
 
-        Log.d("Selected Rule", selectedRuleName);
+        if (selectedRuleName != null) {
+            Log.d("Selected Rule", selectedRuleName);
+        } else {
+            Log.e("Selected Rule", "NO SELECTED RULE, We must be in calculation mode");
+        }
 
         Facts facts = new Facts();
 

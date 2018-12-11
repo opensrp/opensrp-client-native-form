@@ -25,6 +25,7 @@ import java.io.InputStreamReader;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int REQUEST_CODE_GET_JSON = 1234;
+    private static final String TAG = MainActivity.class.getCanonicalName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,13 +60,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             try {
                 startForm(REQUEST_CODE_GET_JSON, "single_form", null);
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(TAG, e.getMessage(), e);
             }
         } else if (id == R.id.action_wizard) {
             try {
                 startForm(REQUEST_CODE_GET_JSON, "wizard_form", null);
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(TAG, e.getMessage(), e);
             }
         }
 
@@ -159,9 +160,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             return new JSONObject(stringBuilder.toString());
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, e.getMessage(), e);
+            ;
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, e.getMessage(), e);
+            ;
         }
 
         return null;
@@ -194,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, e.getMessage(), e);
         }
 
     }
