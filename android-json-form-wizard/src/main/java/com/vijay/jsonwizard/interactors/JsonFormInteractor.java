@@ -14,6 +14,7 @@ import com.vijay.jsonwizard.widgets.ComponentSpacerFactory;
 import com.vijay.jsonwizard.widgets.DatePickerFactory;
 import com.vijay.jsonwizard.widgets.EditTextFactory;
 import com.vijay.jsonwizard.widgets.GpsFactory;
+import com.vijay.jsonwizard.widgets.HiddenTextFactory;
 import com.vijay.jsonwizard.widgets.HorizontalLineFactory;
 import com.vijay.jsonwizard.widgets.ImagePickerFactory;
 import com.vijay.jsonwizard.widgets.LabelFactory;
@@ -55,6 +56,7 @@ public class JsonFormInteractor {
     protected void registerWidgets() {
         map.put(JsonFormConstants.SECTION_LABEL, new SectionFactory());
         map.put(JsonFormConstants.EDIT_TEXT, new EditTextFactory());
+        map.put(JsonFormConstants.HIDDEN, new HiddenTextFactory());
         map.put(JsonFormConstants.LABEL, new LabelFactory());
         map.put(JsonFormConstants.CHECK_BOX, new CheckBoxFactory());
         map.put(JsonFormConstants.RADIO_BUTTON, new RadioButtonFactory());
@@ -89,7 +91,7 @@ public class JsonFormInteractor {
             }
 
         } catch (JSONException e) {
-            Log.d(TAG, "Json exception occurred : " + e.getMessage());
+            Log.e(TAG, "Json exception occurred : " + e.getMessage());
             e.printStackTrace();
         }
         return viewsFromJson;

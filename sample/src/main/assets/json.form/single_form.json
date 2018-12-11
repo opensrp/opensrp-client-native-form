@@ -55,6 +55,7 @@
     }
   },
   "step1": {
+    "display_back_button": "true",
     "title": "Birth Registration",
     "fields": [
       {
@@ -111,7 +112,7 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "person_attribute",
         "openmrs_entity_id": "Child_Register_Card_Number",
-        "read_only": true,
+        "disabled": true,
         "value": "1891389133",
         "type": "edit_text",
         "hint": "Child's register card number"
@@ -165,7 +166,7 @@
         "openmrs_entity": "person",
         "openmrs_entity_id": "gender",
         "type": "spinner",
-        "read_only": true,
+        "disabled": true,
         "hint": "Sex *",
         "values": [
           "Male",
@@ -568,6 +569,7 @@
         "label_text_size": "18sp",
         "label_text_color": "#FF9800",
         "hint": "Any delivery complications?",
+        "read_only": true,
         "exclusive": [
           "none"
         ],
@@ -1188,6 +1190,9 @@
         "type": "normal_edit_text",
         "edit_type": "name",
         "edit_text_style": "bordered",
+        "value":"1909319333",
+        "disabled":true,
+        "read_only":false,
         "v_required": {
           "value": "true",
           "err": "Please enter the last name"

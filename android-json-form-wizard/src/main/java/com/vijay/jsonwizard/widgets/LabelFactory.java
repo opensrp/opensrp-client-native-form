@@ -154,7 +154,9 @@ public class LabelFactory implements FormWidgetFactory {
             numberText.setTextSize(labelTextSize);
             numberText.setEnabled(!jsonObject.optBoolean(JsonFormConstants.READ_ONLY, false));//Gotcha: Should be set before createLabelText is used
             numberText.setText(labelNumber + ". ");
-            numberText.setTextColor(Color.parseColor(labelTextColor));
+            if (labelTextColor != null) {
+                numberText.setTextColor(Color.parseColor(labelTextColor));
+            }
         }
 
     }

@@ -2,7 +2,6 @@ package org.smartregister.nativeform;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -24,56 +23,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int REQUEST_CODE_GET_JSON = 1234;
-
-    private FloatingActionButton fab1;
-    private FloatingActionButton fab2;
-    private boolean isFABOpen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton floatingActionButton = findViewById(R.id.fab);
-        fab1 = findViewById(R.id.fab1);
-        fab2 = findViewById(R.id.fab2);
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!isFABOpen) {
-                    showFABMenu();
-                } else {
-                    closeFABMenu();
-                }
-            }
-        });
-
-        fab1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    startForm(REQUEST_CODE_GET_JSON, "single_form", null);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        fab2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    startForm(REQUEST_CODE_GET_JSON, "wizard_form", null);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
+        findViewById(R.id.child_enrollment).setOnClickListener(this);
+        findViewById(R.id.wizard_form).setOnClickListener(this);
+        findViewById(R.id.rules_engine_skip_logic).setOnClickListener(this);
     }
 
     @Override
@@ -137,7 +99,20 @@ public class MainActivity extends AppCompatActivity {
         if (jsonForm != null) {
             jsonForm.getJSONObject("metadata").put("encounter_location", currentLocationId);
 
-            if (formName.equals("single_form")) {
+            if (formName.equals("wizard_form")) {
+                Intent intent = new Intent(this, JsonWizardFormActivity.class);
+                intent.putExtra("json", jsonForm.toString());
+                Log.d(getClass().getName(), "form is " + jsonForm.toString());
+
+                Form form = new Form();
+                form.setName(getString(R.string.profile));
+                form.setActionBarBackground(R.color.profile_actionbar);
+                form.setNavigationBackground(R.color.profile_navigation);
+                intent.putExtra(JsonFormConstants.JSON_FORM_KEY.FORM, form);
+
+                startActivityForResult(intent, jsonFormActivityRequestCode);
+            } else {
+
 
                 if (entityId == null) {
                     entityId = "ABC" + Math.random();
@@ -161,20 +136,10 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("json", jsonForm.toString());
                 Log.d(getClass().getName(), "form is " + jsonForm.toString());
                 startActivityForResult(intent, jsonFormActivityRequestCode);
-            } else if (formName.equals("wizard_form")) {
-                Intent intent = new Intent(this, JsonWizardFormActivity.class);
-                intent.putExtra("json", jsonForm.toString());
-                Log.d(getClass().getName(), "form is " + jsonForm.toString());
-
-                Form form = new Form();
-                form.setName(getString(R.string.profile));
-                form.setActionBarBackground(R.color.profile_actionbar);
-                form.setNavigationBackground(R.color.profile_navigation);
-                intent.putExtra(JsonFormConstants.JSON_FORM_KEY.FORM, form);
-
-                startActivityForResult(intent, jsonFormActivityRequestCode);
             }
+
         }
+
     }
 
 
@@ -202,15 +167,35 @@ public class MainActivity extends AppCompatActivity {
         return null;
     }
 
-    private void showFABMenu() {
-        isFABOpen = true;
-        fab1.animate().translationY(-getResources().getDimension(R.dimen.standard_60));
-        fab2.animate().translationY(-getResources().getDimension(R.dimen.standard_120));
-    }
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
 
-    private void closeFABMenu() {
-        isFABOpen = false;
-        fab1.animate().translationY(0);
-        fab2.animate().translationY(0);
+        try {
+            switch (id) {
+                case R.id.child_enrollment:
+
+                    startForm(REQUEST_CODE_GET_JSON, "single_form", null);
+                    break;
+                case R.id.wizard_form:
+
+                    startForm(REQUEST_CODE_GET_JSON, "wizard_form", null);
+                    break;
+
+                case R.id.rules_engine_skip_logic:
+
+                    startForm(REQUEST_CODE_GET_JSON, "rules_engine_demo", null);
+                    break;
+
+                default:
+                    break;
+
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }

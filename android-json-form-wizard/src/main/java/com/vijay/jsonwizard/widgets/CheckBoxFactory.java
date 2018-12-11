@@ -75,11 +75,12 @@ public class CheckBoxFactory implements FormWidgetFactory {
                 showEditButton(jsonObject, editableCheckBoxes, editButton, listener);
             }
 
-        }
 
+        }
         views.add(rootLayout);
         return views;
     }
+
 
     protected int getLayout() {
         return R.layout.native_form_compound_button_parent;
@@ -88,6 +89,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
     private ArrayList<View> addCheckBoxOptionsElements(JSONObject jsonObject, Context context, Boolean readOnly,
                                                        JSONArray canvasIds,
                                                        String stepName, LinearLayout linearLayout, CommonListener listener, boolean popup) throws JSONException {
+
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
