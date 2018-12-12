@@ -204,7 +204,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         checkBoxWriteValue(stepName, parentKey, childObjectKey, childKey, value, false);
     }
 
-    private void widgetsWriteValue(String stepName, String key, String value, String openMrsEntityParent, String openMrsEntity, String openMrsEntityId, boolean popup) throws JSONException {
+    protected void widgetsWriteValue(String stepName, String key, String value, String openMrsEntityParent, String openMrsEntity, String openMrsEntityId, boolean popup) throws JSONException {
         synchronized (mJSONObject) {
             JSONObject jsonObject = mJSONObject.getJSONObject(stepName);
             JSONArray fields = fetchFields(jsonObject, popup);
@@ -242,7 +242,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         }
     }
 
-    private void checkBoxWriteValue(String stepName, String parentKey, String childObjectKey, String childKey, String value, boolean popup) throws JSONException {
+    protected void checkBoxWriteValue(String stepName, String parentKey, String childObjectKey, String childKey, String value, boolean popup) throws JSONException {
         synchronized (mJSONObject) {
             JSONObject jsonObject = mJSONObject.getJSONObject(stepName);
             JSONArray fields = fetchFields(jsonObject, popup);
@@ -875,7 +875,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         return args;
     }
 
-    private void refreshMediaLogic(String key, String value) {
+    protected void refreshMediaLogic(String key, String value) {
         try {
             JSONObject object = getStep("step1");
             JSONArray fields = object.getJSONArray("fields");

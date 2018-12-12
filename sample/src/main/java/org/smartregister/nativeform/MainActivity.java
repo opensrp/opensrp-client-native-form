@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.child_enrollment).setOnClickListener(this);
         findViewById(R.id.wizard_form).setOnClickListener(this);
         findViewById(R.id.rules_engine_skip_logic).setOnClickListener(this);
+        findViewById(R.id.generic_dialog_button).setOnClickListener(this);
     }
 
     @Override
@@ -170,29 +171,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         int id = view.getId();
-
         try {
             switch (id) {
                 case R.id.child_enrollment:
-
                     startForm(REQUEST_CODE_GET_JSON, "single_form", null);
                     break;
                 case R.id.wizard_form:
-
                     startForm(REQUEST_CODE_GET_JSON, "wizard_form", null);
                     break;
-
                 case R.id.rules_engine_skip_logic:
-
                     startForm(REQUEST_CODE_GET_JSON, "rules_engine_demo", null);
                     break;
-
+                case R.id.generic_dialog_button:
+                    startForm(REQUEST_CODE_GET_JSON, "generic_popup_form", null);
+                    break;
                 default:
                     break;
-
             }
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }

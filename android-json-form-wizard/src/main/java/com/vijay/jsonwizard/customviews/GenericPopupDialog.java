@@ -200,7 +200,7 @@ public class GenericPopupDialog extends DialogFragment {
         return null;
     }
 
-    private void passData() {
+    protected void passData() {
         onGenericDataPass(popAssignedValue, parentKey, stepName, childKey);
     }
 
@@ -242,7 +242,7 @@ public class GenericPopupDialog extends DialogFragment {
         }
     }
 
-    private void addFormValues(JSONArray jsonArray) {
+    protected void addFormValues(JSONArray jsonArray) {
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject;
             try {
@@ -274,7 +274,7 @@ public class GenericPopupDialog extends DialogFragment {
         }
     }
 
-    private void setCompoundButtonValues(JSONArray options, JSONArray secondValues) {
+    protected void setCompoundButtonValues(JSONArray options, JSONArray secondValues) {
         for (int i = 0; i < options.length(); i++) {
             JSONObject jsonObject;
             try {
@@ -292,7 +292,7 @@ public class GenericPopupDialog extends DialogFragment {
         }
     }
 
-    private String setValues(JSONArray jsonArray, String type) {
+    protected String setValues(JSONArray jsonArray, String type) {
         FormUtils formUtils = new FormUtils();
         String value = "";
         for (int i = 0; i < jsonArray.length(); i++) {
@@ -306,7 +306,7 @@ public class GenericPopupDialog extends DialogFragment {
         return value.replaceAll(", $", "");
     }
 
-    private String getValueKey(String value) {
+    protected String getValueKey(String value) {
         String key = "";
         String[] strings = value.split(":");
         if (strings.length > 0) {
@@ -329,10 +329,6 @@ public class GenericPopupDialog extends DialogFragment {
 
     public void setFormLocation(String formLocation) {
         this.formLocation = formLocation;
-    }
-
-    public void setStepName(String stepName) {
-        this.stepName = stepName;
     }
 
     public JSONArray getSecondaryValues() {
@@ -430,7 +426,7 @@ public class GenericPopupDialog extends DialogFragment {
         return values;
     }
 
-    private String[] getWidgetType(String value) {
+    protected String[] getWidgetType(String value) {
         return value.split(";");
     }
 
@@ -453,7 +449,6 @@ public class GenericPopupDialog extends DialogFragment {
     public void setCustomTextView(CustomTextView customTextView) {
         this.customTextView = customTextView;
     }
-
 
     /**
      * Receives the generic popup data from Generic Dialog fragment
@@ -536,7 +531,6 @@ public class GenericPopupDialog extends DialogFragment {
         return item;
     }
 
-
     /**
      * Adding the secondary values on to the specific json widget
      *
@@ -592,7 +586,6 @@ public class GenericPopupDialog extends DialogFragment {
         this.widgetType = widgetType;
     }
 
-
     public JSONArray getNewSelectedValues() {
         return newSelectedValues;
     }
@@ -617,4 +610,19 @@ public class GenericPopupDialog extends DialogFragment {
         this.secondaryValuesMap = secondaryValuesMap;
     }
 
+    public JsonApi getJsonApi() {
+        return jsonApi;
+    }
+
+    public void setJsonApi(JsonApi jsonApi) {
+        this.jsonApi = jsonApi;
+    }
+
+    public String getStepName() {
+        return stepName;
+    }
+
+    public void setStepName(String stepName) {
+        this.stepName = stepName;
+    }
 }
