@@ -1346,7 +1346,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
     @Override
     public void updateGenericPopupSecondaryValues(JSONArray jsonArray) {
-        extraFieldsWithValues = jsonArray;
+        setExtraFieldsWithValues(jsonArray);
     }
 
     public JSONArray getExtraFieldsWithValues() {
