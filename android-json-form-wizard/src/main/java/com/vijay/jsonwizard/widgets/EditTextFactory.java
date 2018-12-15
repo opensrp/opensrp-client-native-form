@@ -104,8 +104,10 @@ public class EditTextFactory implements FormWidgetFactory {
         if (!TextUtils.isEmpty(jsonObject.optString(JsonFormConstants.VALUE))) {
             editText.setText(jsonObject.optString(JsonFormConstants.VALUE));
         }
-        editText.setHint(jsonObject.getString(JsonFormConstants.HINT));
-        editText.setFloatingLabelText(jsonObject.getString(JsonFormConstants.HINT));
+        if (jsonObject.has(JsonFormConstants.HINT)) {
+            editText.setHint(jsonObject.getString(JsonFormConstants.HINT));
+            editText.setFloatingLabelText(jsonObject.getString(JsonFormConstants.HINT));
+        }
         FormUtils.setEditMode(jsonObject, editText, editButton);
 
         addRequiredValidator(jsonObject, editText);

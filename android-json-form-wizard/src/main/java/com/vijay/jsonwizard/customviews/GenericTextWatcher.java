@@ -21,6 +21,7 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
     private String mStepName;
     private ArrayList<View.OnFocusChangeListener> onFocusChangeListeners;
     private JsonFormFragment formFragment;
+    private static String TAG = GenericTextWatcher.class.getCanonicalName();
 
     public GenericTextWatcher(String stepName, JsonFormFragment formFragment, View view) {
         this.formFragment = formFragment;
@@ -44,18 +45,16 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
         Log.d("GenericTextWatcher", "beforeTextChanged called");
     }
 
-    public void afterTextChanged(Editable editable) {
+    public synchronized void afterTextChanged(Editable editable) {
+        View currentFocus = ((Activity) formFragment.getContext()).getCurrentFocus();
 
-        //Check if trigger is Automatic
-        if (!((Activity) formFragment.getContext()).getCurrentFocus().equals(mView)) {
-            if (mView.getTag(R.id.is_first_time) != null) {
+        String prev = mView.getTag(R.id.previous) != null ? mView.getTag(R.id.previous).toString() : null;
 
-                mView.setTag(R.id.is_first_time, null);
-                return;
-            } else {
+        //Check if trigger is Automatic and that text hasn't changed
+        if ((currentFocus != null || !currentFocus.equals(mView)) && (prev != null && prev.equals(editable.toString()))) {
 
-                mView.setTag(R.id.is_first_time, true);
-            }
+            return;
+
         }
 
         String text = (String) mView.getTag(R.id.raw_value);
@@ -63,6 +62,8 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
         if (text == null) {
             text = editable.toString();
         }
+
+        mView.setTag(R.id.previous, text);
 
         Log.d("RealtimeValidation", "afterTextChanged called");
         JsonApi api = null;
@@ -80,8 +81,7 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
         try {
             api.writeValue(mStepName, key, text, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
         } catch (JSONException e) {
-            // TODO- handle
-            e.printStackTrace();
+            Log.e(TAG, e.getMessage(), e);
         }
 
 
