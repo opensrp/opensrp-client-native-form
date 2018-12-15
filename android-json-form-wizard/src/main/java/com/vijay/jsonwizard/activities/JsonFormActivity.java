@@ -1369,7 +1369,8 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         extraFieldsWithValues = jsonArray;
     }
 
-    private String cleanConditionString(String conditionString) {
+    private String cleanConditionString(String conditionStringRaw) {
+        String conditionString = conditionStringRaw;
 
         for (String token : PREFICES_OF_INTEREST) {
 
