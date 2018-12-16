@@ -1283,7 +1283,17 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
             String calculation = rulesEngineHelper.getCalculation(valueMap, rulesFile);
 
-            if (view instanceof TextableView) {
+            if (view instanceof CheckBox) {
+
+                //For now were only handling checkbox titles only
+
+                TextView checkboxLabel = ((View) view.getParent().getParent()).findViewById(R.id.label_text);
+                if (checkboxLabel != null) {
+                    checkboxLabel.setText(getRenderText(calculation, checkboxLabel.getTag(R.id.original_text).toString()));
+                }
+
+
+            } else if (view instanceof TextableView) {
                 TextableView textView = ((TextableView) view);
                 textView.setText(calculation.charAt(0) == '{' ? getRenderText(calculation, textView.getTag(R.id.original_text).toString()) : calculation);
             } else if (view instanceof EditText) {

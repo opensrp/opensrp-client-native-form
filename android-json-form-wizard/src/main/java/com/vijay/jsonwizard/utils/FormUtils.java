@@ -267,6 +267,7 @@ public class FormUtils {
             String textStyle = jsonObject.optString(JsonFormConstants.TEXT_STYLE, JsonFormConstants.NORMAL);
             setTextStyle(textStyle, labelText);
             labelText.setText(Html.fromHtml(combinedLabelText));
+            labelText.setTag(R.id.original_text, Html.fromHtml(combinedLabelText));
             labelText.setTextSize(labelTextSize);
             canvasIds.put(relativeLayout.getId());
             if (readOnly) {
