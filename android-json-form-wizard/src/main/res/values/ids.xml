@@ -52,4 +52,5 @@
     <item name="extraContentForm" type="id" />
     <item name="extraPopup" type="id" />
     <item name="secondaryValues" type="id" />
+    <item name="is_automatic" type="id" />
 </resources>

@@ -2,9 +2,11 @@ package com.vijay.jsonwizard.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -47,6 +49,7 @@ import com.vijay.jsonwizard.rules.RulesEngineHelper;
 import com.vijay.jsonwizard.utils.ExObjectResult;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.PropertyManager;
+import com.vijay.jsonwizard.widgets.NumberSelectorFactory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -97,6 +100,8 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     private JSONArray extraFieldsWithValues;
     private Form form;
 
+    LocalBroadcastManager localBroadcastManager;
+
     public void init(String json) {
         try {
             mJSONObject = new JSONObject(json);
@@ -117,6 +122,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
             confirmCloseTitle = getString(R.string.confirm_form_close);
             confirmCloseMessage = getString(R.string.confirm_form_close_explanation);
+            localBroadcastManager = LocalBroadcastManager.getInstance(this);
 
         } catch (JSONException e) {
             Log.d(TAG, "Initialization error. Json passed is invalid : " + e.getMessage(), e);
@@ -216,8 +222,8 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 JSONObject item = fields.getJSONObject(i);
                 String keyAtIndex = item.getString(JsonFormConstants.KEY);
                 String itemType = item.has(JsonFormConstants.TYPE) ? item.getString(JsonFormConstants.TYPE) : "";
-                keyAtIndex = itemType.equals(JsonFormConstants.NUMBER_SELECTORS) ? keyAtIndex + "_spinner" : keyAtIndex;
-                if (key.equals(keyAtIndex)) {
+                keyAtIndex = itemType.equals(JsonFormConstants.NUMBER_SELECTOR) ? keyAtIndex + "_spinner" : keyAtIndex;
+                if (key.equals(keyAtIndex) || isNumberSelector(key, keyAtIndex)) {
                     if (item.has(JsonFormConstants.TEXT)) {
                         item.put(JsonFormConstants.TEXT, value);
                     } else {
@@ -242,6 +248,10 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 }
             }
         }
+    }
+
+    private boolean isNumberSelector(String itemKey, String selectedKey) {
+        return selectedKey.startsWith(JsonFormConstants.NUMBER_SELECTOR) && itemKey.substring(0, itemKey.lastIndexOf('_')).equals(selectedKey.substring(0, selectedKey.lastIndexOf('_')));
     }
 
     private void checkBoxWriteValue(String stepName, String parentKey, String childObjectKey, String childKey, String value, boolean popup) throws JSONException {
@@ -651,10 +661,17 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                                 break;
                             }
                         }
+                    } else if (curView instanceof LinearLayout && curView.getTag(R.id.key).toString().startsWith(JsonFormConstants.NUMBER_SELECTOR) && !TextUtils.isEmpty(errorMessage) && (curView.getTag(R.id.previous) == null || !curView.getTag(R.id.previous).equals(errorMessage))) {
+
+                        Intent localIntent = new Intent(JsonFormConstants.INTENT_ACTION.NUMBER_SELECTOR_FACTORY);
+                        localIntent.putExtra(JsonFormConstants.MAX_SELECTION_VALUE, Integer.valueOf(errorMessage));
+                        localBroadcastManager.sendBroadcast(localIntent);
+                        curView.setTag(R.id.previous, errorMessage); //Store value to avoid re-fires
+
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(TAG, e.getMessage(), e);
             }
         }
     }
@@ -951,7 +968,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             Exception {
         String type = constraint.getString("type").toLowerCase();
         String ex = constraint.getString("ex");
-        String errorMessage = constraint.getString(JsonFormConstants.ERR);
+        String errorMessage = type.equals(JsonFormConstants.NUMBER_SELECTOR) ? constraint.optString(JsonFormConstants.ERR) : constraint.getString(JsonFormConstants.ERR);
         Pattern pattern = Pattern.compile("(" + functionRegex + ")\\((.*)\\)");
         Matcher matcher = pattern.matcher(ex);
         if (matcher.find()) {
@@ -962,6 +979,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             boolean viewDoesntHaveValue = TextUtils.isEmpty(value);
             if (view instanceof CheckBox) {
                 viewDoesntHaveValue = !((CheckBox) view).isChecked();
+            } else if (view instanceof LinearLayout && view.getTag(R.id.key).toString().startsWith(JsonFormConstants.NUMBER_SELECTOR)) {
+                return args.length > 1 ? args[1] : "";//clever fix to pass back the max value for number selectors
+
             }
 
             if (viewDoesntHaveValue
@@ -1388,5 +1408,19 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         }
 
         return conditionString.replaceAll("  ", " ");
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        localBroadcastManager.registerReceiver(NumberSelectorFactory.getNumberSelectorsReceiver(), new IntentFilter(JsonFormConstants.INTENT_ACTION.NUMBER_SELECTOR_FACTORY));
+
+    }
+
+    @Override
+    public void onPause() {
+        localBroadcastManager.unregisterReceiver(NumberSelectorFactory.getNumberSelectorsReceiver());
+        super.onPause();
     }
 }
