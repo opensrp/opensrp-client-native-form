@@ -13,6 +13,7 @@ import org.jeasy.rules.api.RulesEngine;
 import org.jeasy.rules.core.DefaultRulesEngine;
 import org.jeasy.rules.core.RulesEngineParameters;
 import org.jeasy.rules.mvel.MVELRuleFactory;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -85,7 +86,7 @@ public class RulesEngineHelper implements RuleListener {
 
         processDefaultRules(rules, facts);
 
-        return String.valueOf(facts.get(RuleConstant.CALCULATION));
+        return formatCalculationReturnValue(facts.get(RuleConstant.CALCULATION));
     }
 
     private Facts initializeFacts(Map<String, String> factMap) {
@@ -107,7 +108,7 @@ public class RulesEngineHelper implements RuleListener {
         for (Map.Entry<String, String> entry : factMap.entrySet()) {
 
 
-            facts.put(getKey(entry.getKey()), isList(entry.getValue()) ? gson.fromJson(entry.getValue(), ArrayList.class) : entry.getValue().trim());
+            facts.put(getKey(entry.getKey()), getValue(entry.getValue()));
         }
 
         return facts;
@@ -115,6 +116,40 @@ public class RulesEngineHelper implements RuleListener {
 
     private String getKey(String key) {
         return !key.startsWith(RuleConstant.STEP) && !key.startsWith(RuleConstant.SELECTED_RULE) ? RuleConstant.PREFIX.GLOBAL + key : key;
+    }
+
+    private Object getValue(String value) {
+
+        String rawValue = value.trim();
+
+        if (isList(rawValue)) {
+
+            return gson.fromJson(rawValue, ArrayList.class);
+
+        } else if ("true".equals(rawValue) || "false".equals(rawValue)) {
+
+            return Boolean.valueOf(rawValue);
+
+        } else {
+
+            try {
+
+                return Integer.valueOf(rawValue);
+
+            } catch (NumberFormatException e) {
+
+                try {
+
+                    return Float.valueOf(rawValue);
+
+                } catch (NumberFormatException e2) {
+
+                    return rawValue;
+                }
+            }
+
+        }
+
     }
 
     private boolean isList(String value) {
@@ -128,22 +163,22 @@ public class RulesEngineHelper implements RuleListener {
 
     @Override
     public void afterEvaluate(Rule rule, Facts facts, boolean evaluationResult) {
-//Overriden
+        //Overriden
     }
 
     @Override
     public void beforeExecute(Rule rule, Facts facts) {
-//Overriden
+        //Overriden
     }
 
     @Override
     public void onSuccess(Rule rule, Facts facts) {
-//Overriden
+        //Overriden
     }
 
     @Override
     public void onFailure(Rule rule, Facts facts, Exception exception) {
-//Overriden
+        //Overriden
     }
 
     public void setRulesFolderPath(String path) {
@@ -152,6 +187,24 @@ public class RulesEngineHelper implements RuleListener {
 
     public String getRulesFolderPath() {
         return RULE_FOLDER_PATH;
+    }
+
+    private String formatCalculationReturnValue(Object rawValue) {
+        String value = String.valueOf(rawValue).trim();
+        if (rawValue instanceof Map) {
+
+            return new JSONObject((Map<String, String>) rawValue).toString();
+
+        } else if (value.contains(".")) {
+            try {
+
+                value = String.valueOf((float) Math.round(Float.valueOf(value) * 100) / 100);
+            } catch (NumberFormatException e) {
+
+            }
+        }
+
+        return value;
     }
 
 }

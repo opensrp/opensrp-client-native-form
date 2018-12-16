@@ -91,7 +91,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     private String confirmCloseMessage;
     private Map<String, List<String>> ruleKeys = new HashMap<>();
     private RulesEngineHelper rulesEngineHelper = null;
-    private final Set<Character> JAVA_OPERATORS = new HashSet<>(Arrays.asList(new Character[]{'(', '!', ',', '?', '+', '-', '*', '/', '%', '+', '-', '.', '^', ')', '<', '>', '=', '{', '}', ':', ';'}));
+    private final Set<Character> JAVA_OPERATORS = new HashSet<>(Arrays.asList(new Character[]{'(', '!', ',', '?', '+', '-', '*', '/', '%', '+', '-', '.', '[', ']', '^', ')', '<', '>', '=', '{', '}', ':', ';'}));
+    private final List<String> PREFICES_OF_INTEREST = Arrays.asList(new String[]{RuleConstant.PREFIX.GLOBAL, RuleConstant.STEP});
+
     private JSONArray extraFieldsWithValues;
     private Form form;
 
@@ -102,7 +104,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 mJSONObject = new JSONObject();
                 throw new JSONException("Form encounter_type not set");
             }
+
             Map<String, String> globalValues = null;
+
             //populate them global values
             if (mJSONObject.has(JsonFormConstants.JSON_FORM_KEY.GLOBAL)) {
                 globalValues = new Gson().fromJson(mJSONObject.getJSONObject(JsonFormConstants.JSON_FORM_KEY.GLOBAL).toString(), new TypeToken<HashMap<String, String>>() {
@@ -700,7 +704,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     for (int j = 0; j < options.length(); j++) {
                         if (options.getJSONObject(j).has(JsonFormConstants.VALUE)) {
                             if (object.has(RuleConstant.IS_RULE_CHECK) && object.getBoolean(RuleConstant.IS_RULE_CHECK)) {
-                                if (Boolean.valueOf(options.getJSONObject(j).getString(JsonFormConstants.VALUE))) {
+                                if (Boolean.valueOf(options.getJSONObject(j).getString(JsonFormConstants.VALUE))) {//Rules engine useth only true values
                                     result.put(options.getJSONObject(j).getString(JsonFormConstants.KEY), options.getJSONObject(j).getString(JsonFormConstants.VALUE));
                                 }
                             } else {
@@ -709,11 +713,14 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                         } else {
                             Log.e(TAG, "option for Key " + options.getJSONObject(j).getString(JsonFormConstants.KEY) + " has NO value");
                         }
+
                         //Backward compatibility Fix
-                        if (options.getJSONObject(j).has(JsonFormConstants.VALUE)) {
-                            result.put(JsonFormConstants.VALUE, options.getJSONObject(j).getString(JsonFormConstants.VALUE));
-                        } else {
-                            result.put(JsonFormConstants.VALUE, "false");
+                        if (object.has(RuleConstant.IS_RULE_CHECK) && !object.getBoolean(RuleConstant.IS_RULE_CHECK)) {
+                            if (options.getJSONObject(j).has(JsonFormConstants.VALUE)) {
+                                result.put(JsonFormConstants.VALUE, options.getJSONObject(j).getString(JsonFormConstants.VALUE));
+                            } else {
+                                result.put(JsonFormConstants.VALUE, "false");
+                            }
                         }
                     }
                     break;
@@ -1228,7 +1235,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     }
 
     private List<String> getConditionKeys(String condition) {
-        String[] conditionTokens = condition.split(" ");
+        String[] conditionTokens = cleanConditionString(condition).split(" ");
         Map<String, Boolean> conditionKeys = new HashMap<>();
 
         for (int i = 0; i < conditionTokens.length; i++) {
@@ -1238,7 +1245,6 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
                 conditionKeys.put(conditionToken, true);
             }
-
         }
 
         return new ArrayList<>(conditionKeys.keySet());
@@ -1275,15 +1281,24 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
         try {
 
-
             String calculation = rulesEngineHelper.getCalculation(valueMap, rulesFile);
 
-            if (view instanceof TextableView) {
+            if (view instanceof CheckBox) {
+
+                //For now were only handling checkbox titles only
+
+                TextView checkboxLabel = ((View) view.getParent().getParent()).findViewById(R.id.label_text);
+                if (checkboxLabel != null) {
+                    checkboxLabel.setText(getRenderText(calculation, checkboxLabel.getTag(R.id.original_text).toString()));
+                }
+
+
+            } else if (view instanceof TextableView) {
                 TextableView textView = ((TextableView) view);
                 textView.setText(calculation.charAt(0) == '{' ? getRenderText(calculation, textView.getTag(R.id.original_text).toString()) : calculation);
             } else if (view instanceof EditText) {
+
                 ((EditText) view).setText(calculation);
-                view.setTag(R.id.is_first_time, true);
 
             } else {
 
@@ -1297,9 +1312,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
     }
 
-    private String getRenderText(String calculation, String textTemplate) throws Exception {
-        JSONObject jsonObject = new JSONObject(calculation);
-        Map<String, String> valueMap = new Gson().fromJson((jsonObject).toString(), new TypeToken<HashMap<String, String>>() {
+    private String getRenderText(String calculation, String textTemplate) {
+
+        Map<String, String> valueMap = new Gson().fromJson(calculation, new TypeToken<HashMap<String, String>>() {
         }.getType());
 
         return stringFormat(textTemplate, valueMap);
@@ -1362,5 +1377,16 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     @Override
     public void updateGenericPopupSecondaryValues(JSONArray jsonArray) {
         extraFieldsWithValues = jsonArray;
+    }
+
+    private String cleanConditionString(String conditionStringRaw) {
+        String conditionString = conditionStringRaw;
+
+        for (String token : PREFICES_OF_INTEREST) {
+
+            conditionString = conditionString.replaceAll(token, " " + token);
+        }
+
+        return conditionString.replaceAll("  ", " ");
     }
 }
