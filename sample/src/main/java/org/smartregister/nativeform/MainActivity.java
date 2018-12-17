@@ -190,6 +190,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     startForm(REQUEST_CODE_GET_JSON, "rules_engine_demo", null);
                     break;
 
+                case R.id.numbers_selector_widget:
+
+                    startForm(REQUEST_CODE_GET_JSON, "numbers_selector_widget_demo", null);
+                    break;
+
                 default:
                     break;
 

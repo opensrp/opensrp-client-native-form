@@ -222,7 +222,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 JSONObject item = fields.getJSONObject(i);
                 String keyAtIndex = item.getString(JsonFormConstants.KEY);
                 String itemType = item.has(JsonFormConstants.TYPE) ? item.getString(JsonFormConstants.TYPE) : "";
-                keyAtIndex = itemType.equals(JsonFormConstants.NUMBER_SELECTOR) ? keyAtIndex + "_spinner" : keyAtIndex;
+                keyAtIndex = itemType.equals(JsonFormConstants.NUMBERS_SELECTOR) ? keyAtIndex + "_spinner" : keyAtIndex;
                 if (key.equals(keyAtIndex) || isNumberSelector(key, keyAtIndex)) {
                     if (item.has(JsonFormConstants.TEXT)) {
                         item.put(JsonFormConstants.TEXT, value);
@@ -251,7 +251,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     }
 
     private boolean isNumberSelector(String itemKey, String selectedKey) {
-        return selectedKey.startsWith(JsonFormConstants.NUMBER_SELECTOR) && itemKey.substring(0, itemKey.lastIndexOf('_')).equals(selectedKey.substring(0, selectedKey.lastIndexOf('_')));
+        return selectedKey.startsWith(JsonFormConstants.NUMBERS_SELECTOR) && itemKey.substring(0, itemKey.lastIndexOf('_')).equals(selectedKey.substring(0, selectedKey.lastIndexOf('_')));
     }
 
     private void checkBoxWriteValue(String stepName, String parentKey, String childObjectKey, String childKey, String value, boolean popup) throws JSONException {
@@ -468,7 +468,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
                     JSONObject curRelevance = relevance.has(curKey) ? relevance.getJSONObject(curKey) : null;
 
-                    String[] address = curKey.contains(":") ? curKey.split(":") : new String[]{curKey, curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getString(RuleConstant.RULES_FILE), view.getTag(R.id.address).toString().replace(':', '_')};
+                    String[] address = getAddress(view, curKey, curRelevance);
 
                     if (address.length > 1) {
                         Map<String, String> curValueMap = getValueFromAddress(address, popup);
@@ -489,6 +489,10 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 Log.e(TAG, e.getMessage(), e);
             }
         }
+    }
+
+    private String[] getAddress(View view, String curKey, JSONObject curRelevance) throws JSONException {
+        return curKey.contains(":") ? curKey.split(":") : new String[]{curKey, curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getString(RuleConstant.RULES_FILE), view.getTag(R.id.address).toString().replace(':', '_')};
     }
 
 
@@ -630,16 +634,39 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         String constraintTag = (String) curView.getTag(R.id.constraints);
         if (constraintTag != null && constraintTag.length() > 0) {
             try {
-                String addressString = (String) curView.getTag(R.id.address);
-                String[] address = addressString.split(":");
 
-                JSONArray constraint = new JSONArray(constraintTag);
+
                 String errorMessage = null;
-                for (int i = 0; i < constraint.length(); i++) {
-                    JSONObject curConstraint = constraint.getJSONObject(i);
-                    if (address.length == 2) {
-                        String value = getValueFromAddress(address, popup).get(JsonFormConstants.VALUE);
-                        errorMessage = enforceConstraint(value, curView, curConstraint);
+                String[] address = null;
+
+                if (constraintTag.charAt(0) == '[') {
+                    String addressString = (String) curView.getTag(R.id.address);
+                    address = addressString.split(":");
+
+                    JSONArray constraint = new JSONArray(constraintTag);
+                    for (int i = 0; i < constraint.length(); i++) {
+                        JSONObject curConstraint = constraint.getJSONObject(i);
+                        if (address.length == 2) {
+                            String value = getValueFromAddress(address, popup).get(JsonFormConstants.VALUE);
+                            errorMessage = enforceConstraint(value, curView, curConstraint);
+                            if (errorMessage != null) break;
+                        }
+                    }
+
+                } else {
+//Rules Engine
+                    JSONObject constraint = new JSONObject(constraintTag);
+                    Iterator<String> keys = constraint.keys();
+                    while (keys.hasNext()) {
+                        String curKey = keys.next();
+
+                        JSONObject curConstraint = constraint.getJSONObject(curKey);
+
+                        address = getAddress(curView, curKey, curConstraint);
+
+                        Map<String, String> curValueMap = getValueFromAddress(address, popup);
+
+                        errorMessage = enforceConstraint(curValueMap, curView, curConstraint);
                         if (errorMessage != null) break;
                     }
                 }
@@ -661,10 +688,12 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                                 break;
                             }
                         }
-                    } else if (curView instanceof LinearLayout && curView.getTag(R.id.key).toString().startsWith(JsonFormConstants.NUMBER_SELECTOR) && !TextUtils.isEmpty(errorMessage) && (curView.getTag(R.id.previous) == null || !curView.getTag(R.id.previous).equals(errorMessage))) {
+                    } else if (curView instanceof LinearLayout && curView.getTag(R.id.key).toString().startsWith(JsonFormConstants.NUMBERS_SELECTOR) && !TextUtils.isEmpty(errorMessage) && (curView.getTag(R.id.previous) == null || !curView.getTag(R.id.previous).equals(errorMessage))) {
 
                         Intent localIntent = new Intent(JsonFormConstants.INTENT_ACTION.NUMBER_SELECTOR_FACTORY);
                         localIntent.putExtra(JsonFormConstants.MAX_SELECTION_VALUE, Integer.valueOf(errorMessage));
+                        localIntent.putExtra(JsonFormConstants.JSON_OBJECT_KEY, curView.getTag(R.id.key).toString());
+                        localIntent.putExtra(JsonFormConstants.STEPNAME, address[0]);
                         localBroadcastManager.sendBroadcast(localIntent);
                         curView.setTag(R.id.previous, errorMessage); //Store value to avoid re-fires
 
@@ -966,9 +995,10 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
      */
     private String enforceConstraint(String value, View view, JSONObject constraint) throws
             Exception {
+
         String type = constraint.getString("type").toLowerCase();
         String ex = constraint.getString("ex");
-        String errorMessage = type.equals(JsonFormConstants.NUMBER_SELECTOR) ? constraint.optString(JsonFormConstants.ERR) : constraint.getString(JsonFormConstants.ERR);
+        String errorMessage = type.equals(JsonFormConstants.NUMBERS_SELECTOR) ? constraint.optString(JsonFormConstants.ERR) : constraint.getString(JsonFormConstants.ERR);
         Pattern pattern = Pattern.compile("(" + functionRegex + ")\\((.*)\\)");
         Matcher matcher = pattern.matcher(ex);
         if (matcher.find()) {
@@ -979,7 +1009,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             boolean viewDoesntHaveValue = TextUtils.isEmpty(value);
             if (view instanceof CheckBox) {
                 viewDoesntHaveValue = !((CheckBox) view).isChecked();
-            } else if (view instanceof LinearLayout && view.getTag(R.id.key).toString().startsWith(JsonFormConstants.NUMBER_SELECTOR)) {
+            } else if (isNumberSelectorConstraint(view)) {
                 return args.length > 1 ? args[1] : "";//clever fix to pass back the max value for number selectors
 
             }
@@ -995,6 +1025,20 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         }
 
         return errorMessage;
+    }
+
+    private String enforceConstraint(Map<String, String> curValueMap, View view, JSONObject constraint) throws
+            Exception {
+        String errorMessage = "";
+        if (isNumberSelectorConstraint(view)) {
+
+            errorMessage = curValueMap.size() == 0 ? "" : rulesEngineHelper.getConstraint(curValueMap, constraint.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getString(RuleConstant.RULES_FILE));
+        }
+        return errorMessage;
+    }
+
+    private boolean isNumberSelectorConstraint(View view) {
+        return view instanceof LinearLayout && view.getTag(R.id.key).toString().startsWith(JsonFormConstants.NUMBERS_SELECTOR);
     }
 
     private JSONArray fetchFields(JSONObject parentJson, Boolean popup) {
@@ -1212,7 +1256,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     List<String> fields = (List<String>) map.get(RuleConstant.ACTIONS);
                     if (fields != null) {
                         for (String field : fields) {
-                            if (field.trim().startsWith(RuleConstant.CALCULATION)) {
+                            if (field.trim().startsWith(RuleConstant.CALCULATION) || field.trim().startsWith(RuleConstant.CONSTRAINT)) {
                                 conditionString += " " + field;
                             }
                         }

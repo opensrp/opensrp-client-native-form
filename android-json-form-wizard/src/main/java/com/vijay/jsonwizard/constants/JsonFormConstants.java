@@ -58,7 +58,7 @@ public class JsonFormConstants {
     public static final String V_NUMERIC_INTEGER = "v_numeric_integer";
     public static final String V_MIN = "v_min";
     public static final String V_MAX = "v_max";
-    public static final String NUMBER_SELECTOR = "numbers_selector";
+    public static final String NUMBERS_SELECTOR = "numbers_selector";
     public static final String START_SELECTION_NUMBER = "start_number";
     public static final String NUMBER_OF_SELECTORS = "number_of_selectors";
     public static final String NUMBER_OF_SELECTORS_ORIGINAL = "number_of_selectors_original";
@@ -123,6 +123,7 @@ public class JsonFormConstants {
     public static final String LEFT_MARGIN = "left_margin";
     public static final String UPLOAD_BUTTON_TEXT = "uploadButtonText";
     public static final String NATIVE_ACCORDION = "native_accordion";
+    public static final String JSON_OBJECT_KEY = "json_object_key";
 
     public static class JSON_FORM_KEY {
         public static final String EX_RULES = "ex-rules";

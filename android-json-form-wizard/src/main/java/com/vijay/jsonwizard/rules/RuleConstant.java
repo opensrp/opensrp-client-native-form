@@ -14,6 +14,7 @@ public abstract class RuleConstant {
     public static final String RULES_ENGINE = "rules-engine";
     public static final String RESULT = "result";
     public static final String CALCULATION = "calculation";
+    public static final String CONSTRAINT = "constraint";
     public static final String ACTIONS = "actions";
 
     public static class PREFIX {

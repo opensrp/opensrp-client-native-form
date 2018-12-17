@@ -102,12 +102,12 @@ public class CheckBoxFactory implements FormWidgetFactory {
             String labelInfoText = item.optString(JsonFormConstants.LABEL_INFO_TEXT, "");
             String labelInfoTitle = item.optString(JsonFormConstants.LABEL_INFO_TITLE, "");
 
-            LinearLayout checkboxLayout =
-                    (LinearLayout) LayoutInflater.from(context).inflate(R.layout.native_form_item_checkbox, null);
+            LinearLayout checkboxLayout = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.native_form_item_checkbox, null);
             createCheckBoxText(checkboxLayout, item, context, readOnly);
 
             final CheckBox checkBox = checkboxLayout.findViewById(R.id.checkbox);
             checkBoxes.add(checkBox);
+            checkBox.setTag(jsonObject.getString(JsonFormConstants.TYPE));
             checkBox.setTag(R.id.raw_value, item.getString(JsonFormConstants.TEXT));
             checkBox.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
             checkBox.setTag(R.id.extraPopup, popup);
@@ -120,6 +120,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
             checkBox.setOnCheckedChangeListener(listener);
             checkBox.setId(ViewUtil.generateViewId());
             checkboxLayout.setId(ViewUtil.generateViewId());
+            checkboxLayout.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE) + "_parent");
             canvasIds.put(checkboxLayout.getId());
 
             if (!TextUtils.isEmpty(item.optString(JsonFormConstants.VALUE))) {

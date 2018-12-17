@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.CompoundButton;
 
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
@@ -69,9 +70,9 @@ public interface JsonFormFragmentView<V extends ViewState> extends MvpView {
 
     void backClick();
 
-    void unCheckAllExcept(String parentKey, String childKey);
+    void unCheckAllExcept(String parentKey, String childKey, CompoundButton compoundButton);
 
-    void unCheck(String parentKey, String exclusiveKey);
+    void unCheck(String parentKey, String exclusiveKey, CompoundButton compoundButton);
 
     String getCount();
 

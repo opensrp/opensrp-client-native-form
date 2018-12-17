@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.AppCompatRadioButton;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
@@ -327,31 +329,46 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     }
 
     @Override
-    public void unCheckAllExcept(String parentKey, String childKey) {
+    public void unCheckAllExcept(String parentKey, String childKey, CompoundButton compoundButton) {
+
+        ViewGroup mMainView = compoundButton instanceof CheckBox ? (ViewGroup) compoundButton.getParent().getParent() : (ViewGroup) compoundButton.getParent().getParent().getParent();
+
         int childCount = mMainView.getChildCount();
+
         for (int i = 0; i < childCount; i++) {
             View view = mMainView.getChildAt(i);
 
-            if (view instanceof RadioButton) {
-                RadioButton radio = (RadioButton) view;
-                String parentKeyAtIndex = (String) radio.getTag(R.id.key);
-                String childKeyAtIndex = (String) radio.getTag(R.id.childKey);
-                if (radio.isChecked() && parentKeyAtIndex.equals(parentKey) && !childKeyAtIndex.equals(childKey)) {
-                    radio.setChecked(false);
-                }
-            } else if (view instanceof ViewGroup && ((ViewGroup) view).getChildCount() > 0 && ((ViewGroup) view).getChildAt(0) instanceof CheckBox) {
-                CheckBox checkBox = (CheckBox) ((ViewGroup) view).getChildAt(0);
-                String parentKeyAtIndex = (String) checkBox.getTag(R.id.key);
-                String childKeyAtIndex = (String) checkBox.getTag(R.id.childKey);
-                if (checkBox.isChecked() && parentKeyAtIndex.equals(parentKey) && !childKeyAtIndex.equals(childKey)) {
-                    checkBox.setChecked(false);
-                }
+            if (isRadioButton(view)) {
+
+                unCheckRadio(view, parentKey, childKey);
+
+            } else if (isCheckbox(view)) {
+
+                uncheckCheckbox(view, parentKey, childKey);
             }
         }
     }
 
+    private void uncheckCheckbox(View view, String parentKey, String childKey) {
+        CheckBox checkBox = view.findViewWithTag(JsonFormConstants.CHECK_BOX);
+        String parentKeyAtIndex = (String) checkBox.getTag(R.id.key);
+        String childKeyAtIndex = (String) checkBox.getTag(R.id.childKey);
+        if (checkBox.isChecked() && parentKeyAtIndex.equals(parentKey) && !childKeyAtIndex.equals(childKey)) {
+            checkBox.setChecked(false);
+        }
+    }
+
+    private void unCheckRadio(View view, String parentKey, String childKey) {
+        AppCompatRadioButton radio = (((ViewGroup) view).getChildAt(0)).findViewWithTag(JsonFormConstants.NATIVE_RADIO_BUTTON);
+        String parentKeyAtIndex = (String) radio.getTag(R.id.key);
+        String childKeyAtIndex = (String) radio.getTag(R.id.childKey);
+        if (radio.isChecked() && parentKeyAtIndex.equals(parentKey) && !childKeyAtIndex.equals(childKey)) {
+            radio.setChecked(false);
+        }
+    }
+
     @Override
-    public void unCheck(String parentKey, String exclusiveKey) {
+    public void unCheck(String parentKey, String exclusiveKey, CompoundButton compoundButton) {
         int childCount = mMainView.getChildCount();
         for (int i = 0; i < childCount; i++) {
             View view = mMainView.getChildAt(i);
@@ -364,8 +381,8 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
                     radio.setChecked(false);
                     break;
                 }
-            } else if (view instanceof ViewGroup && ((ViewGroup) view).getChildCount() > 0 && ((ViewGroup) view).getChildAt(0) instanceof CheckBox) {
-                CheckBox checkBox = (CheckBox) ((ViewGroup) view).getChildAt(0);
+            } else if (isCheckbox(view)) {
+                CheckBox checkBox = ((LinearLayout) view).findViewWithTag(JsonFormConstants.CHECK_BOX);
                 String parentKeyAtIndex = (String) checkBox.getTag(R.id.key);
                 String childKeyAtIndex = (String) checkBox.getTag(R.id.childKey);
                 if (checkBox.isChecked() && parentKeyAtIndex.equals(parentKey) && childKeyAtIndex.equals(exclusiveKey)) {
@@ -458,6 +475,16 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     public Map<String, List<View>> getLookUpMap() {
         return lookUpMap;
+    }
+
+    private boolean isCheckbox(View view) {
+
+        return view instanceof LinearLayout && view.getTag(R.id.type).equals(JsonFormConstants.CHECK_BOX + "_parent");
+    }
+
+    private boolean isRadioButton(View view) {
+
+        return view instanceof RelativeLayout && view.getTag(R.id.type).equals(JsonFormConstants.NATIVE_RADIO_BUTTON);
     }
 
 }

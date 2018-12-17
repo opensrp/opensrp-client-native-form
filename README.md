@@ -979,6 +979,42 @@ Death | A deceased child/patient is reported
    * `v_regex` - This is used for validating input using [Regular Expression](https://en.wikipedia.org/wiki/Regular_expression) 
    * `v_min` - This validation ensures input entered is not below minimum value stated
    * `v_max` - Ensure that the input entered is not above the maximum value stated
+   
+The Number Selector widget has constraints which can be defined in either of two ways
+   * Using the Rules engine as shown below
+```
+,
+    "constraints": {
+      "rules-engine": {
+        "ex-rules": {
+          "rules-file": "sample-constraint-rules.yml"
+        }
+  }
+}
+
+```
+   
+``` 
+name: step1_numbers_selector_three
+description: Number Selectors
+priority: 1
+condition: "true"
+actions:
+  - "constraint = (step1_numbers_selector - step1_numbers_selector_two)"
+
+``` 
+ * Using the legacy approach
+ ```
+     "constraints": [
+       {
+         "type": "numbers_selector",
+         "ex": "lessThanEqualTo(., step1:numbers_selector)"
+       }
+     ]
+
+```
+NB: The constraints for the Number Selector widget restrict the maximum value for the widget whose constraint is defined.
+
 
 5. Different types of comparisons were added for the **Skip Logic**
 
@@ -1230,7 +1266,7 @@ You can check out the corresponding rules files under `assets/rule` to see how t
 
 NB: 
     - When defining rules, always prefix with the step name they reference e.g. if its a key `age` in `step 1` then the field reference in the condition should be as `step1_age` 
-      e.g. `condition: "step1_hepb_immun_status < 60 || step1_hepb_immun_status > 100"`
+      e.g. `condition: "step1_hepb_immun_status < 60 || step1_hepb_immun_status > 100"` or if field contains a value which is a list like the checkbox widget `step2_super_heroes.contains('batman')`
     - The name of the rule should be the key of the field it configures also be prefixed with its step  e.g. `name: step1_happiness_level`
     - The action of a calculation should always be an assignment to the key calculation e.g. 
      ```
