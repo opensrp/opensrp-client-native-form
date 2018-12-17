@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.child_enrollment).setOnClickListener(this);
         findViewById(R.id.wizard_form).setOnClickListener(this);
         findViewById(R.id.rules_engine_skip_logic).setOnClickListener(this);
+        findViewById(R.id.numbers_selector_widget).setOnClickListener(this);
     }
 
     @Override
