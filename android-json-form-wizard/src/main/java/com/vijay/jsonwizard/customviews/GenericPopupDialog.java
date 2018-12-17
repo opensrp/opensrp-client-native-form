@@ -49,7 +49,10 @@ public class GenericPopupDialog extends DialogFragment {
     private Activity activity;
     private JsonApi jsonApi;
     private Context context;
+
     private CommonListener commonListener;
+
+
     private JsonFormFragment formFragment;
     private String formIdentity;
     private String formLocation;
@@ -62,6 +65,7 @@ public class GenericPopupDialog extends DialogFragment {
     private CustomTextView customTextView;
     private Map<String, SecondaryValueModel> popAssignedValue = new HashMap<>();
     private Map<String, SecondaryValueModel> secondaryValuesMap = new HashMap<>();
+
     private JSONArray specifyContent;
     private String TAG = this.getClass().getSimpleName();
 
@@ -317,14 +321,6 @@ public class GenericPopupDialog extends DialogFragment {
             key = strings[0];
         }
         return key;
-    }
-
-    public void setCommonListener(CommonListener commonListener) {
-        this.commonListener = commonListener;
-    }
-
-    public void setFormFragment(JsonFormFragment formFragment) {
-        this.formFragment = formFragment;
     }
 
     public void setFormIdentity(String formIdentity) {
@@ -628,5 +624,25 @@ public class GenericPopupDialog extends DialogFragment {
 
     public void setStepName(String stepName) {
         this.stepName = stepName;
+    }
+
+    public CommonListener getCommonListener() {
+        return commonListener;
+    }
+
+    public void setCommonListener(CommonListener commonListener) {
+        this.commonListener = commonListener;
+    }
+
+    public JsonFormFragment getFormFragment() {
+        return formFragment;
+    }
+
+    public void setFormFragment(JsonFormFragment formFragment) {
+        this.formFragment = formFragment;
+    }
+
+    public JSONArray getSpecifyContent() {
+        return specifyContent;
     }
 }
