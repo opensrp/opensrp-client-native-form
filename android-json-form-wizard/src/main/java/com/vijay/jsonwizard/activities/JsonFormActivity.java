@@ -39,8 +39,8 @@ import com.vijay.jsonwizard.customviews.GenericPopupDialog;
 import com.vijay.jsonwizard.customviews.TextableView;
 import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
-import com.vijay.jsonwizard.interfaces.LifeCycleListener;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.interfaces.LifeCycleListener;
 import com.vijay.jsonwizard.interfaces.OnActivityRequestPermissionResultListener;
 import com.vijay.jsonwizard.interfaces.OnActivityResultListener;
 import com.vijay.jsonwizard.rules.RuleConstant;
@@ -146,7 +146,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             this.form = extractForm(savedInstanceState.getSerializable(FORM_STATE));
         }
         for (LifeCycleListener lifeCycleListener : lifeCycleListeners) {
-            lifeCycleListener.onStart();
+            lifeCycleListener.onCreate(savedInstanceState);
         }
     }
 
@@ -1406,6 +1406,14 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     @Override
     public void unregisterLifecycleListener(LifeCycleListener lifeCycleListener) {
         lifeCycleListeners.remove(lifeCycleListener);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        for (LifeCycleListener lifeCycleListener : lifeCycleListeners) {
+            lifeCycleListener.onStart();
+        }
     }
 
     @Override

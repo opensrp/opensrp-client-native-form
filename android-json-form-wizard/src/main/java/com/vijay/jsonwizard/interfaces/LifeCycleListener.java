@@ -7,6 +7,8 @@ import android.os.Bundle;
  */
 public interface LifeCycleListener {
 
+    void onCreate(Bundle savedInstanceState);
+
     void onStart();
 
     void onResume();
@@ -20,4 +22,5 @@ public interface LifeCycleListener {
     void onLowMemory();
 
     void onDestroy();
+
 }
