@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -195,7 +196,7 @@ public class GenericPopupDialog extends DialogFragment {
 
     public JSONObject getSubFormJson(String subFormsLocation, Context context) {
         String defaultSubFormLocation = JsonFormConstants.DEFAULT_SUB_FORM_LOCATION;
-        if (subFormsLocation != null && !subFormsLocation.equals("")) {
+        if (!TextUtils.isEmpty(subFormsLocation)) {
             defaultSubFormLocation = subFormsLocation;
         }
 

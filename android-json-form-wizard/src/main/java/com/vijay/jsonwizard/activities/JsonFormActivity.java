@@ -1027,7 +1027,8 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                             if (extraFieldsWithValues != null) {
                                 fields = extraFieldsWithValues;
                             } else {
-                                fields = getSubFormFields(jsonObject.get(JsonFormConstants.CONTENT_FORM).toString(), jsonObject.get(JsonFormConstants.CONTENT_FORM_LOCATION).toString(), fields);
+                                String formLocation = jsonObject.has(JsonFormConstants.CONTENT_FORM_LOCATION) ? jsonObject.getString(JsonFormConstants.CONTENT_FORM_LOCATION) : "";
+                                fields = getSubFormFields(jsonObject.get(JsonFormConstants.CONTENT_FORM).toString(), formLocation, fields);
                             }
                         }
                     }
