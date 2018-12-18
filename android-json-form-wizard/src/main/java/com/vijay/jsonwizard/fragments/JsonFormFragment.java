@@ -369,12 +369,14 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     @Override
     public void unCheck(String parentKey, String exclusiveKey, CompoundButton compoundButton) {
+
+        ViewGroup mMainView = compoundButton instanceof CheckBox ? (ViewGroup) compoundButton.getParent().getParent() : (ViewGroup) compoundButton.getParent().getParent().getParent();
         int childCount = mMainView.getChildCount();
         for (int i = 0; i < childCount; i++) {
             View view = mMainView.getChildAt(i);
 
             if (view instanceof RadioButton) {
-                RadioButton radio = (RadioButton) view;
+                AppCompatRadioButton radio = (((ViewGroup) view).getChildAt(0)).findViewWithTag(JsonFormConstants.NATIVE_RADIO_BUTTON);
                 String parentKeyAtIndex = (String) radio.getTag(R.id.key);
                 String childKeyAtIndex = (String) radio.getTag(R.id.childKey);
                 if (radio.isChecked() && parentKeyAtIndex.equals(parentKey) && childKeyAtIndex.equals(exclusiveKey)) {
