@@ -42,10 +42,8 @@ public class NumberSelectorFactory implements FormWidgetFactory {
     private static HashMap<ViewParent, CustomTextView> selectedTextViews = new HashMap<>();
     private SelectedNumberClickListener selectedNumberClickListener = new SelectedNumberClickListener();
     private Spinner spinner;
-    private String stepName;
     private Context context;
     private CommonListener listener;
-    private LinearLayout rootLayout;
     public static final String TAG = NumberSelectorFactory.class.getCanonicalName();
     private static NumberSelectorFactoryReceiver receiver;
     private Map<String, JSONObject> jsonObjectMap = new HashMap<>();
@@ -213,8 +211,6 @@ public class NumberSelectorFactory implements FormWidgetFactory {
 
     private List<View> attachJson(String stepName, Context context, JSONObject jsonObject, CommonListener
             listener, boolean popup) throws JSONException {
-
-        this.stepName = stepName;
         this.context = context;
         this.listener = listener;
 
@@ -228,7 +224,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
         String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
 
-        rootLayout = (LinearLayout) LayoutInflater.from(context).inflate(getLayout(), null);
+        LinearLayout rootLayout = (LinearLayout) LayoutInflater.from(context).inflate(getLayout(), null);
 
         rootLayout.setId(ViewUtil.generateViewId());
         rootLayout.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));

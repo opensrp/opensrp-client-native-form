@@ -100,7 +100,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     private JSONArray extraFieldsWithValues;
     private Form form;
 
-    LocalBroadcastManager localBroadcastManager;
+    private LocalBroadcastManager localBroadcastManager;
 
     public void init(String json) {
         try {
