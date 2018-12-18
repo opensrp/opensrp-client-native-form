@@ -6,6 +6,7 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.Html;
 import android.text.TextUtils;
@@ -96,7 +97,7 @@ public class FormUtils {
             textView.setTextColor(Color.parseColor(textColor));
         }
 
-        if (relevance != null && context instanceof JsonApi) {
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             textView.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(textView);
         }
@@ -266,6 +267,7 @@ public class FormUtils {
             String textStyle = jsonObject.optString(JsonFormConstants.TEXT_STYLE, JsonFormConstants.NORMAL);
             setTextStyle(textStyle, labelText);
             labelText.setText(Html.fromHtml(combinedLabelText));
+            labelText.setTag(R.id.original_text, Html.fromHtml(combinedLabelText));
             labelText.setTextSize(labelTextSize);
             canvasIds.put(relativeLayout.getId());
             if (readOnly) {
@@ -294,7 +296,7 @@ public class FormUtils {
         relativeLayout.setTag(R.id.openmrs_entity, openMrsEntity);
         relativeLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         relativeLayout.setId(ViewUtil.generateViewId());
-        if (relevance != null && context instanceof JsonApi) {
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             relativeLayout.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(relativeLayout);
         }
@@ -437,6 +439,20 @@ public class FormUtils {
             default:
                 view.setTypeface(null, Typeface.NORMAL);
                 break;
+        }
+    }
+
+    public static void setEditMode(JSONObject jsonObject, AppCompatEditText editText, ImageView editButton) throws JSONException {
+        if (jsonObject.has(JsonFormConstants.DISABLED) || (jsonObject.has(JsonFormConstants.DISABLED)
+                && jsonObject.has(JsonFormConstants.READ_ONLY))) {
+            boolean disabled = jsonObject.getBoolean(JsonFormConstants.DISABLED);
+            editText.setEnabled(!disabled);
+            editText.setFocusable(!disabled);
+            editButton.setVisibility(View.GONE);
+        } else if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
+            boolean readyOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
+            editText.setEnabled(!readyOnly);
+            editButton.setVisibility(View.VISIBLE);
         }
     }
 

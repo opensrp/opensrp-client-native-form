@@ -139,12 +139,12 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         }
         spinner.setLayoutParams(layoutParams);
         spinner.setId(ViewUtil.generateViewId());
-        spinner.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+        spinner.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY) + "_spinner");
         spinner.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
         spinner.setTag(R.id.openmrs_entity, openMrsEntity);
         spinner.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         spinner.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
-        spinner.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+        spinner.setTag(R.id.address, stepName + ":" + spinner.getTag(R.id.key));
         spinner.post(new Runnable() {
             @Override
             public void run() {
@@ -178,6 +178,13 @@ public class NumberSelectorFactory implements FormWidgetFactory {
 
     private void createNumberSelector(CustomTextView textView) {
         Spinner spinner = (Spinner) textView.getTag(R.id.number_selector_spinner);
+
+        LinearLayout parent = ((LinearLayout) textView.getTag(R.id.toolbar_parent_layout));
+
+        if (spinner != null && parent.findViewById(spinner.getId()) == null) {
+            parent.addView(spinner);
+        }
+
         spinner.performClick();
     }
 
@@ -215,7 +222,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         rootLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
         canvasIds.put(rootLayout.getId());
         rootLayout.setTag(R.id.canvas_ids, canvasIds.toString());
-        if (relevance != null && context instanceof JsonApi) {
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             rootLayout.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(rootLayout);
         }
@@ -238,16 +245,13 @@ public class NumberSelectorFactory implements FormWidgetFactory {
                 spinner.setTag(R.id.number_selector_textview, customTextView);
                 spinner.setTag(R.id.extraPopup, popup);
                 customTextView.setTag(R.id.number_selector_spinner, spinner);
+                customTextView.setTag(R.id.toolbar_parent_layout, linearLayout);
                 customTextView.setOnClickListener(selectedNumberClickListener);
             } else {
                 customTextView.setOnClickListener(listener);
             }
             linearLayout.addView(customTextView);
             showSelectedTextView(jsonObject, customTextView);
-        }
-
-        if (spinner != null) {
-            linearLayout.addView(spinner);
         }
     }
 
@@ -273,8 +277,8 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         LinearLayout.LayoutParams layoutParams = FormUtils.getLinearLayoutParams(width / numberOfSelectors, FormUtils.WRAP_CONTENT, 1, 2, 1, 2);
 
         CustomTextView customTextView = FormUtils.getTextViewWith(context, Integer.parseInt(textSize), getText(item, startSelectionNumber,
-                numberOfSelectors, maxValue), jsonObject.getString(JsonFormConstants.KEY),
-                jsonObject.getString(JsonFormConstants.TYPE), "", "", "",
+                numberOfSelectors, maxValue), jsonObject.getString(JsonFormConstants.KEY) + "_textview",
+                jsonObject.getString(JsonFormConstants.TYPE), openMrsEntityParent, openMrsEntity, openMrsEntityId,
                 "", layoutParams, FormUtils.FONT_BOLD_PATH, 0, textColor);
 
         customTextView.setId(ViewUtil.generateViewId());

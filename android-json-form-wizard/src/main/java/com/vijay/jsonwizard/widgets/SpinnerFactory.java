@@ -78,7 +78,7 @@ public class SpinnerFactory implements FormWidgetFactory {
         canvasIds.put(spinnerRelativeLayout.getId());
         spinnerRelativeLayout.setTag(R.id.canvas_ids, canvasIds.toString());
 
-        if (relevance != null && context instanceof JsonApi) {
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             spinnerRelativeLayout.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(spinnerRelativeLayout);
         }

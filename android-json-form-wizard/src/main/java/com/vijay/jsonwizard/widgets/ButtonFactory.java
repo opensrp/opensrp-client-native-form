@@ -123,7 +123,7 @@ public class ButtonFactory implements FormWidgetFactory {
         ((JsonApi) context).addFormDataView(button);
         views.add(button);
         button.setTag(R.id.canvas_ids, canvasIds.toString());
-        if (relevance != null && context instanceof JsonApi) {
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             button.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(button);
         }

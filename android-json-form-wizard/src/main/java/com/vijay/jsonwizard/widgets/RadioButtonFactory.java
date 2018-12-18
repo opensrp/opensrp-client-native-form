@@ -90,7 +90,7 @@ public class RadioButtonFactory implements FormWidgetFactory {
             radioButtons.add(radioButton);
 
             views.add(radioButton);
-            if (relevance != null && context instanceof JsonApi) {
+            if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
                 radioButton.setTag(R.id.relevance, relevance);
                 ((JsonApi) context).addSkipLogicView(radioButton);
             }

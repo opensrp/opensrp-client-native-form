@@ -116,7 +116,8 @@ public class PropertyManager {
                                     if (isUserInformed) {
                                         new AlertDialog.Builder(mContext)
                                                 .setTitle("Permission Denied")
-                                                .setMessage("Without this permission the app will be unable to make calls. " +
+                                                .setMessage("The app needs this permission to capture the device information required when submitting forms. " +
+                                                        "Without this permission the app will not function properly. " +
                                                         "Are you sure you want to deny this permission?")
                                                 .setPositiveButton("NO", new DialogInterface.OnClickListener() {
                                                     public void onClick(DialogInterface dialog, int which) {

@@ -32,6 +32,7 @@ public class JsonFormConstants {
     public static final String NAME = "name";
     public static final String TYPE = "type";
     public static final String READ_ONLY = "read_only";
+    public static final String DISABLED = "disabled";
     public static final String BEHAVIOUR_FINISH_FORM = "finish_form";
     public static final String BEHAVIOUR_NEXT_STEP = "next_step";
     public static final String HINT = "hint";
@@ -98,6 +99,10 @@ public class JsonFormConstants {
     public static final String BOLD_ITALIC = "bold_italic";
     public static final String EDIT_BUTTON = "edit_button";
     public static final String CUSTOM_TEXT = "custom_text";
+
+    public static final String STEPNAME = "stepName";
+    public static final String DISPLAY_BACK_BUTTON = "display_back_button";
+
     public static final String COUNT = "count";
     public static final String CALCULATION = "calculation";
     public static final String HIDDEN = "hidden";
