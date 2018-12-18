@@ -40,6 +40,7 @@ import com.vijay.jsonwizard.customviews.TextableView;
 import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.interfaces.LifeCycleListener;
 import com.vijay.jsonwizard.interfaces.OnActivityRequestPermissionResultListener;
 import com.vijay.jsonwizard.interfaces.OnActivityResultListener;
 import com.vijay.jsonwizard.rules.RuleConstant;
@@ -87,6 +88,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     private HashMap<String, Comparison> comparisons;
     private HashMap<Integer, OnActivityResultListener> onActivityResultListeners;
     private HashMap<Integer, OnActivityRequestPermissionResultListener> onActivityRequestPermissionResultListeners;
+    private List<LifeCycleListener> lifeCycleListeners;
     private String confirmCloseTitle;
     private String confirmCloseMessage;
     private Map<String, List<String>> ruleKeys = new HashMap<>();
@@ -133,6 +135,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         calculationLogicViews = new HashMap<>();
         onActivityResultListeners = new HashMap<>();
         onActivityRequestPermissionResultListeners = new HashMap<>();
+        lifeCycleListeners = new ArrayList<>();
         if (savedInstanceState == null) {
             init(getIntent().getStringExtra(JsonFormConstants.JSON_FORM_KEY.JSON));
             initializeFormFragment();
@@ -142,7 +145,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             init(savedInstanceState.getString(JSON_STATE));
             this.form = extractForm(savedInstanceState.getSerializable(FORM_STATE));
         }
-
+        for (LifeCycleListener lifeCycleListener : lifeCycleListeners) {
+            lifeCycleListener.onCreate(savedInstanceState);
+        }
     }
 
     public void initializeFormFragment() {
@@ -316,6 +321,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         super.onSaveInstanceState(outState);
         outState.putString(JSON_STATE, mJSONObject.toString());
         outState.putSerializable(FORM_STATE, form);
+        for (LifeCycleListener lifeCycleListener : lifeCycleListeners) {
+            lifeCycleListener.onSaveInstanceState(outState);
+        }
     }
 
     @Override
@@ -1388,5 +1396,63 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         }
 
         return conditionString.replaceAll("  ", " ");
+    }
+
+    @Override
+    public void registerLifecycleListener(LifeCycleListener lifeCycleListener) {
+        lifeCycleListeners.add(lifeCycleListener);
+    }
+
+    @Override
+    public void unregisterLifecycleListener(LifeCycleListener lifeCycleListener) {
+        lifeCycleListeners.remove(lifeCycleListener);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        for (LifeCycleListener lifeCycleListener : lifeCycleListeners) {
+            lifeCycleListener.onStart();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        for (LifeCycleListener lifeCycleListener : lifeCycleListeners) {
+            lifeCycleListener.onResume();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        for (LifeCycleListener lifeCycleListener : lifeCycleListeners) {
+            lifeCycleListener.onPause();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        for (LifeCycleListener lifeCycleListener : lifeCycleListeners) {
+            lifeCycleListener.onStop();
+        }
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        for (LifeCycleListener lifeCycleListener : lifeCycleListeners) {
+            lifeCycleListener.onLowMemory();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        for (LifeCycleListener lifeCycleListener : lifeCycleListeners) {
+            lifeCycleListener.onDestroy();
+        }
     }
 }
