@@ -27,10 +27,19 @@
 
         <Button
             android:id="@+id/wizard_form"
+            style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="WIZARD (MULTI-STEP FORM)"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/rules_engine_skip_logic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="RULES ENGINE LOGIC"
             android:textColor="@android:color/white"
             android:theme="@style/AppTheme" />
 
@@ -43,12 +52,12 @@
             android:textColor="@android:color/white" />
 
         <Button
-            android:id="@+id/rules_engine_skip_logic"
+            android:id="@+id/generic_dialog_button"
             style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="RULES ENGINE LOGIC"
+            android:text="GENERIC POPUP"
             android:textColor="@android:color/white" />
 
     </LinearLayout>
