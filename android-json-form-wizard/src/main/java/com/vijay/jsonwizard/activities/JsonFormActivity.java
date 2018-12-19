@@ -227,7 +227,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 JSONObject item = fields.getJSONObject(i);
                 String keyAtIndex = item.getString(JsonFormConstants.KEY);
                 String itemType = item.has(JsonFormConstants.TYPE) ? item.getString(JsonFormConstants.TYPE) : "";
-                keyAtIndex = itemType.equals(JsonFormConstants.NUMBERS_SELECTOR) ? keyAtIndex + "_spinner" : keyAtIndex;
+                keyAtIndex = itemType.equals(JsonFormConstants.NUMBERS_SELECTOR) ? keyAtIndex + JsonFormConstants.SUFFIX.SPINNER : keyAtIndex;
                 if (key.equals(keyAtIndex) || isNumberSelector(key, keyAtIndex)) {
                     if (item.has(JsonFormConstants.TEXT)) {
                         item.put(JsonFormConstants.TEXT, value);
@@ -256,7 +256,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     }
 
     private boolean isNumberSelector(String itemKey, String selectedKey) {
-        return selectedKey.startsWith(JsonFormConstants.NUMBERS_SELECTOR) && itemKey.substring(0, itemKey.lastIndexOf('_')).equals(selectedKey.substring(0, selectedKey.lastIndexOf('_')));
+        return selectedKey.startsWith(JsonFormConstants.NUMBERS_SELECTOR) && ((itemKey.substring(0, itemKey.lastIndexOf('_')).equals(selectedKey.substring(0, selectedKey.lastIndexOf('_'))) || selectedKey.equals(itemKey + JsonFormConstants.SUFFIX.SPINNER)));
     }
 
     protected void checkBoxWriteValue(String stepName, String parentKey, String childObjectKey, String childKey, String value, boolean popup) throws JSONException {
@@ -641,7 +641,6 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         if (constraintTag != null && constraintTag.length() > 0) {
             try {
 
-
                 String errorMessage = null;
                 String[] address = null;
 
@@ -701,6 +700,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                             localIntent.putExtra(JsonFormConstants.MAX_SELECTION_VALUE, Integer.valueOf(errorMessage));
                             localIntent.putExtra(JsonFormConstants.JSON_OBJECT_KEY, curView.getTag(R.id.key).toString());
                             localIntent.putExtra(JsonFormConstants.STEPNAME, address[0]);
+                            localIntent.putExtra(JsonFormConstants.IS_POPUP, popup);
                             localBroadcastManager.sendBroadcast(localIntent);
                             curView.setTag(R.id.previous, errorMessage); //Store value to avoid re-fires
                         }
@@ -754,7 +754,6 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
             }
         }
-
 
         return result;
     }

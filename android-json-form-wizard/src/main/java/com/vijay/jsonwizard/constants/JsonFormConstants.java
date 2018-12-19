@@ -124,6 +124,7 @@ public class JsonFormConstants {
     public static final String UPLOAD_BUTTON_TEXT = "uploadButtonText";
     public static final String NATIVE_ACCORDION = "native_accordion";
     public static final String JSON_OBJECT_KEY = "json_object_key";
+    public static final String IS_POPUP = "is_popup";
 
     public static class JSON_FORM_KEY {
         public static final String EX_RULES = "ex-rules";
@@ -152,4 +153,11 @@ public class JsonFormConstants {
     public static class INTENT_ACTION {
         public static final String NUMBER_SELECTOR_FACTORY = "NumberSelectorFactoryAction";
     }
+
+    public static class SUFFIX {
+        public static final String SPINNER = "_spinner";
+        public static final String TEXT_VIEW = "_textview";
+    }
+
+
 }

@@ -229,7 +229,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
             mJsonApi.writeValue(stepName, key, selectedValue, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
         } catch (JSONException e) {
             // TODO - handle
-            e.printStackTrace();
+            Log.e(TAG, e.getMessage(), e);
         }
     }
 
@@ -243,7 +243,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
                     openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
         } catch (JSONException e) {
             // TODO - handle
-            e.printStackTrace();
+            Log.e(TAG, e.getMessage(), e);
         }
     }
 
