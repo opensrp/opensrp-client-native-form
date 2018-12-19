@@ -32,6 +32,7 @@ public class RulesEngineHelper implements RuleListener {
     private String selectedRuleName;
     private Gson gson;
     private Map<String, String> globalValues;
+    private RulesEngineUtil rulesEngineUtil;
 
     public RulesEngineHelper(Context context, Map<String, String> globalValues) {
         this.context = context;
@@ -41,6 +42,7 @@ public class RulesEngineHelper implements RuleListener {
         this.ruleMap = new HashMap<>();
         gson = new Gson();
         this.globalValues = globalValues;
+        this.rulesEngineUtil = new RulesEngineUtil();
 
     }
 
@@ -89,6 +91,19 @@ public class RulesEngineHelper implements RuleListener {
         return formatCalculationReturnValue(facts.get(RuleConstant.CALCULATION));
     }
 
+    public String getConstraint(Map<String, String> constraintFact, String ruleFilename) {
+
+        Facts facts = initializeFacts(constraintFact);
+
+        facts.put(RuleConstant.CONSTRAINT, "0");
+
+        rules = getRulesFromAsset(RULE_FOLDER_PATH + ruleFilename);
+
+        processDefaultRules(rules, facts);
+
+        return formatCalculationReturnValue(facts.get(RuleConstant.CONSTRAINT));
+    }
+
     private Facts initializeFacts(Map<String, String> factMap) {
 
         if (globalValues != null) {
@@ -104,6 +119,7 @@ public class RulesEngineHelper implements RuleListener {
         }
 
         Facts facts = new Facts();
+        facts.put("helper", rulesEngineUtil);
 
         for (Map.Entry<String, String> entry : factMap.entrySet()) {
 

@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.child_enrollment).setOnClickListener(this);
         findViewById(R.id.wizard_form).setOnClickListener(this);
         findViewById(R.id.rules_engine_skip_logic).setOnClickListener(this);
+        findViewById(R.id.numbers_selector_widget).setOnClickListener(this);
         findViewById(R.id.generic_dialog_button).setOnClickListener(this);
     }
 
@@ -184,6 +185,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case R.id.rules_engine_skip_logic:
                     startForm(REQUEST_CODE_GET_JSON, "rules_engine_demo", null);
+                    break;
+                case R.id.numbers_selector_widget:
+                    startForm(REQUEST_CODE_GET_JSON, "constraints_demo", null);
                     break;
                 case R.id.generic_dialog_button:
                     startForm(REQUEST_CODE_GET_JSON, "generic_popup_form", null);

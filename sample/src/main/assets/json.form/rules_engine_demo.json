@@ -130,6 +130,76 @@
             }
           }
         }
+      },
+      {
+        "key": "Date_Birth",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person",
+        "openmrs_entity_id": "birthdate",
+        "type": "date_picker",
+        "hint": "Select various DOBs",
+        "expanded": false,
+        "duration": {
+          "label": "Age"
+        },
+        "min_date": "today-5y",
+        "max_date": "today"
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "15sp"
+      },
+      {
+        "key": "alpha_toaster",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "I show up because the birth date is greater than 3 years",
+        "text_color": "#000000",
+        "toaster_type": "info",
+        "v_required": {
+          "value": true
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "15sp"
+      },
+      {
+        "key": "beta_toaster",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "I show up because the birth date is less than or equal to 2 years",
+        "text_color": "#000000",
+        "toaster_type": "warning",
+        "v_required": {
+          "value": true
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-relevance-rules.yml"
+            }
+          }
+        }
       }
     ]
   },

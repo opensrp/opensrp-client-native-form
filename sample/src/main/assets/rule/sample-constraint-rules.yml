@@ -1,0 +1,14 @@
+---
+name: step1_numbers_selector_three
+description: Number Selectors
+priority: 1
+condition: "true"
+actions:
+  - "constraint = (step1_numbers_selector - step1_numbers_selector_two)"
+---
+name: step1_ultrasound_done
+description: Number Selectors
+priority: 1
+condition: "true"
+actions:
+  - 'constraint = ["min_date" : helper.minDate("today-2y"), "max_date" : helper.maxDate("today+2y")]'
