@@ -80,6 +80,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     private static final String JSON_STATE = "jsonState";
     private static final String FORM_STATE = "formState";
     private final Set<Character> JAVA_OPERATORS = new HashSet<>(Arrays.asList(new Character[]{'(', '!', ',', '?', '+', '-', '*', '/', '%', '+', '-', '.', '^', ')', '<', '>', '=', '{', '}', ':', ';'}));
+    private final List<String> PREFICES_OF_INTEREST = Arrays.asList(new String[]{RuleConstant.PREFIX.GLOBAL, RuleConstant.STEP});
     private GenericPopupDialog genericPopupDialog = GenericPopupDialog.getInstance();
     private FormUtils formUtils = new FormUtils();
     private Toolbar mToolbar;
@@ -98,7 +99,6 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     private String confirmCloseMessage;
     private Map<String, List<String>> ruleKeys = new HashMap<>();
     private RulesEngineHelper rulesEngineHelper = null;
-    private final List<String> PREFICES_OF_INTEREST = Arrays.asList(new String[]{RuleConstant.PREFIX.GLOBAL, RuleConstant.STEP});
     private JSONArray extraFieldsWithValues;
     private Form form;
 
@@ -758,7 +758,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         return result;
     }
 
-    private Map<String, String> getValueFromAddressCore(JSONObject object) throws JSONException {
+    protected Map<String, String> getValueFromAddressCore(JSONObject object) throws JSONException {
         Map<String, String> result = new HashMap<>();
 
         if (object != null) {
@@ -1224,6 +1224,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             JSONArray orArray = object.getJSONArray(JsonFormConstants.JSON_FORM_KEY.OR);
 
             for (int i = 0; i < orArray.length(); i++) {
+                String orArrayIndex = orArray.getString(i);
                 if (Boolean.valueOf(curValueMap.get(orArray.getString(i)))) {
                     return new ExObjectResult(true, true);
                 }
@@ -1410,7 +1411,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         return resString;
     }
 
-    private String getValue(JSONObject object) throws JSONException {
+    protected String getValue(JSONObject object) throws JSONException {
         String value = object.optString(JsonFormConstants.VALUE);
 
         if (object.has(JsonFormConstants.EDIT_TYPE) && object.getString(JsonFormConstants.EDIT_TYPE).equals(JsonFormConstants.EDIT_TEXT_TYPE.NUMBER) && TextUtils.isEmpty(object.optString(JsonFormConstants.VALUE))) {
@@ -1420,7 +1421,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         return value;
     }
 
-    private String getKey(JSONObject object) throws JSONException {
+    protected String getKey(JSONObject object) throws JSONException {
         return object.has(RuleConstant.IS_RULE_CHECK) && object.getBoolean(RuleConstant.IS_RULE_CHECK) ? object.get(RuleConstant.STEP) + "_" + object.get(JsonFormConstants.KEY) : JsonFormConstants.VALUE;
     }
 

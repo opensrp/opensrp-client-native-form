@@ -50,10 +50,7 @@ public class GenericPopupDialog extends DialogFragment {
     private Activity activity;
     private JsonApi jsonApi;
     private Context context;
-
     private CommonListener commonListener;
-
-
     private JsonFormFragment formFragment;
     private String formIdentity;
     private String formLocation;
@@ -72,6 +69,11 @@ public class GenericPopupDialog extends DialogFragment {
 
     public static GenericPopupDialog getInstance() {
         return genericPopupDialog;
+    }
+
+    @Override
+    public Context getContext() {
+        return context;
     }
 
     public void setContext(Context context) throws IllegalStateException {
@@ -133,11 +135,12 @@ public class GenericPopupDialog extends DialogFragment {
     public void onResume() {
         super.onResume();
         jsonApi.refreshSkipLogic(null, null, true);
-        ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
-        params.width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.90);
-        params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        getDialog().getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
-
+        if (!getWidgetType().equals(JsonFormConstants.NATIVE_ACCORDION)) {
+            ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
+            params.width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.90);
+            params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            getDialog().getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
+        }
     }
 
 
@@ -322,14 +325,6 @@ public class GenericPopupDialog extends DialogFragment {
             key = strings[0];
         }
         return key;
-    }
-
-    public void setFormIdentity(String formIdentity) {
-        this.formIdentity = formIdentity;
-    }
-
-    public void setFormLocation(String formLocation) {
-        this.formLocation = formLocation;
     }
 
     public JSONArray getSecondaryValues() {
@@ -645,5 +640,25 @@ public class GenericPopupDialog extends DialogFragment {
 
     public JSONArray getSpecifyContent() {
         return specifyContent;
+    }
+
+    public void setSpecifyContent(JSONArray specifyContent) {
+        this.specifyContent = specifyContent;
+    }
+
+    public String getFormIdentity() {
+        return formIdentity;
+    }
+
+    public void setFormIdentity(String formIdentity) {
+        this.formIdentity = formIdentity;
+    }
+
+    public String getFormLocation() {
+        return formLocation;
+    }
+
+    public void setFormLocation(String formLocation) {
+        this.formLocation = formLocation;
     }
 }
