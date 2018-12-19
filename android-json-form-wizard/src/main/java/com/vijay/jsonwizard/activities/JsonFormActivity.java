@@ -75,6 +75,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     private static final String TAG = JsonFormActivity.class.getSimpleName();
     private static final String JSON_STATE = "jsonState";
     private static final String FORM_STATE = "formState";
+    private final Set<Character> JAVA_OPERATORS = new HashSet<>(Arrays.asList(new Character[]{'(', '!', ',', '?', '+', '-', '*', '/', '%', '+', '-', '.', '^', ')', '<', '>', '=', '{', '}', ':', ';'}));
     private GenericPopupDialog genericPopupDialog = GenericPopupDialog.getInstance();
     private FormUtils formUtils = new FormUtils();
     private Toolbar mToolbar;
@@ -93,9 +94,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     private String confirmCloseMessage;
     private Map<String, List<String>> ruleKeys = new HashMap<>();
     private RulesEngineHelper rulesEngineHelper = null;
-    private final Set<Character> JAVA_OPERATORS = new HashSet<>(Arrays.asList(new Character[]{'(', '!', ',', '?', '+', '-', '*', '/', '%', '+', '-', '.', '[', ']', '^', ')', '<', '>', '=', '{', '}', ':', ';'}));
     private final List<String> PREFICES_OF_INTEREST = Arrays.asList(new String[]{RuleConstant.PREFIX.GLOBAL, RuleConstant.STEP});
-
     private JSONArray extraFieldsWithValues;
     private Form form;
 
@@ -213,7 +212,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         checkBoxWriteValue(stepName, parentKey, childObjectKey, childKey, value, false);
     }
 
-    private void widgetsWriteValue(String stepName, String key, String value, String openMrsEntityParent, String openMrsEntity, String openMrsEntityId, boolean popup) throws JSONException {
+    protected void widgetsWriteValue(String stepName, String key, String value, String openMrsEntityParent, String openMrsEntity, String openMrsEntityId, boolean popup) throws JSONException {
         synchronized (mJSONObject) {
             JSONObject jsonObject = mJSONObject.getJSONObject(stepName);
             JSONArray fields = fetchFields(jsonObject, popup);
@@ -249,7 +248,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         }
     }
 
-    private void checkBoxWriteValue(String stepName, String parentKey, String childObjectKey, String childKey, String value, boolean popup) throws JSONException {
+    protected void checkBoxWriteValue(String stepName, String parentKey, String childObjectKey, String childKey, String value, boolean popup) throws JSONException {
         synchronized (mJSONObject) {
             JSONObject jsonObject = mJSONObject.getJSONObject(stepName);
             JSONArray fields = fetchFields(jsonObject, popup);
@@ -463,14 +462,11 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 boolean ok = true;
                 while (keys.hasNext()) {
                     String curKey = keys.next();
-
                     JSONObject curRelevance = relevance.has(curKey) ? relevance.getJSONObject(curKey) : null;
-
                     String[] address = curKey.contains(":") ? curKey.split(":") : new String[]{curKey, curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getString(RuleConstant.RULES_FILE), view.getTag(R.id.address).toString().replace(':', '_')};
 
                     if (address.length > 1) {
                         Map<String, String> curValueMap = getValueFromAddress(address, popup);
-
                         try {
                             boolean comparison = isRelevant(curValueMap, curRelevance);
 
@@ -894,7 +890,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         return args;
     }
 
-    private void refreshMediaLogic(String key, String value) {
+    protected void refreshMediaLogic(String key, String value) {
         try {
             JSONObject object = getStep("step1");
             JSONArray fields = object.getJSONArray("fields");
@@ -985,7 +981,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         return errorMessage;
     }
 
-    private JSONArray fetchFields(JSONObject parentJson, Boolean popup) {
+    protected JSONArray fetchFields(JSONObject parentJson, Boolean popup) {
         JSONArray fields = new JSONArray();
         try {
             if (parentJson.has(JsonFormConstants.SECTIONS) && parentJson.get(JsonFormConstants.SECTIONS) instanceof JSONArray) {
@@ -1031,7 +1027,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         return fields;
     }
 
-    private JSONArray specifyFields(JSONObject parentJson) {
+    protected JSONArray specifyFields(JSONObject parentJson) {
         JSONArray fields = new JSONArray();
         if (parentJson.has(JsonFormConstants.HAS_EXTRA_REL)) {
             String optionKey;
@@ -1046,7 +1042,8 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                             if (extraFieldsWithValues != null) {
                                 fields = extraFieldsWithValues;
                             } else {
-                                fields = getSubFormFields(jsonObject.get(JsonFormConstants.CONTENT_FORM).toString(), jsonObject.get(JsonFormConstants.CONTENT_FORM_LOCATION).toString(), fields);
+                                String formLocation = jsonObject.has(JsonFormConstants.CONTENT_FORM_LOCATION) ? jsonObject.getString(JsonFormConstants.CONTENT_FORM_LOCATION) : "";
+                                fields = getSubFormFields(jsonObject.get(JsonFormConstants.CONTENT_FORM).toString(), formLocation, fields);
                             }
                         }
                     }
@@ -1058,7 +1055,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         return fields;
     }
 
-    private JSONArray getSubFormFields(String subFormName, String subFormLocation, JSONArray
+    protected JSONArray getSubFormFields(String subFormName, String subFormLocation, JSONArray
             fields) {
         JSONArray fieldArray = new JSONArray();
         genericPopupDialog.setFormIdentity(subFormName);
@@ -1102,18 +1099,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     private boolean isRelevant(Map<String, String> curValueMap, JSONObject curRelevance) throws
             Exception {
 
-
-        if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_RULES))
-
-        {
-
+        if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_RULES)) {
             return curValueMap.size() == 0 ? false : rulesEngineHelper.getRelevance(curValueMap, curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getString(RuleConstant.RULES_FILE));
-
-        } else if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_CHECKBOX))
-
-        {
-
-
+        } else if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_CHECKBOX)) {
             JSONArray exArray = curRelevance.getJSONArray(JsonFormConstants.JSON_FORM_KEY.EX_CHECKBOX);
 
             for (int i = 0; i < exArray.length(); i++) {
@@ -1126,9 +1114,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
             }
             return false;
-        } else
-
-        {
+        } else {
             return doComparison(curValueMap.get(JsonFormConstants.VALUE), curRelevance);
         }
 
@@ -1384,7 +1370,15 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
     @Override
     public void updateGenericPopupSecondaryValues(JSONArray jsonArray) {
-        extraFieldsWithValues = jsonArray;
+        setExtraFieldsWithValues(jsonArray);
+    }
+
+    public JSONArray getExtraFieldsWithValues() {
+        return extraFieldsWithValues;
+    }
+
+    public void setExtraFieldsWithValues(JSONArray extraFieldsWithValues) {
+        this.extraFieldsWithValues = extraFieldsWithValues;
     }
 
     private String cleanConditionString(String conditionStringRaw) {

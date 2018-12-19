@@ -479,6 +479,7 @@ public class FormUtils {
             genericPopupDialog.setStepName(stepName);
             genericPopupDialog.setSecondaryValues(jsonArray);
             genericPopupDialog.setParentKey(parentKey);
+            genericPopupDialog.setWidgetType(type);
             if (customTextView != null) {
                 genericPopupDialog.setCustomTextView(customTextView);
             }

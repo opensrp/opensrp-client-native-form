@@ -1222,7 +1222,7 @@
         }
       },
       {
-        "key": "numbers_selector",
+        "key": "children",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
@@ -1235,7 +1235,8 @@
         "selected_text_color": "#ffffff",
         "v_required": {
           "value": true
-        }
+        },
+        "value": "3"
       },
       {
         "key": "spacer",
@@ -1246,7 +1247,7 @@
         "spacer_height": "15sp"
       },
       {
-        "key": "numbers_selector_two",
+        "key": "mothers",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
@@ -1259,7 +1260,8 @@
         "selected_text_color": "#ffffff",
         "v_required": {
           "value": true
-        }
+        },
+        "value": "13"
       },
       {
         "key": "spacer",
@@ -1270,7 +1272,7 @@
         "spacer_height": "15sp"
       },
       {
-        "key": "numbers_selector_four",
+        "key": "parents",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",

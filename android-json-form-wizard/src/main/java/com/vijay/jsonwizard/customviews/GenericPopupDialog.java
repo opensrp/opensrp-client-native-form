@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,18 +50,23 @@ public class GenericPopupDialog extends DialogFragment {
     private Activity activity;
     private JsonApi jsonApi;
     private Context context;
+
     private CommonListener commonListener;
+
+
     private JsonFormFragment formFragment;
     private String formIdentity;
     private String formLocation;
     private String parentKey;
     private String childKey = null;
     private String stepName;
+    private String widgetType;
     private JSONArray secondaryValues;
     private JSONArray newSelectedValues;
     private CustomTextView customTextView;
     private Map<String, SecondaryValueModel> popAssignedValue = new HashMap<>();
     private Map<String, SecondaryValueModel> secondaryValuesMap = new HashMap<>();
+
     private JSONArray specifyContent;
     private String TAG = this.getClass().getSimpleName();
 
@@ -152,14 +158,7 @@ public class GenericPopupDialog extends DialogFragment {
             }
         };
 
-        List<View> listOfViews = new ArrayList<>();
-        jsonFormInteractor.fetchFields(listOfViews, stepName, formFragment, specifyContent, commonListener, true);
-
-        LinearLayout genericDialogContent = dialogView.findViewById(
-                R.id.generic_dialog_content);
-        for (View view : listOfViews) {
-            genericDialogContent.addView(view);
-        }
+        initiateViews(dialogView);
 
         cancelButton = dialogView.findViewById(R.id.generic_dialog_cancel_button);
         cancelButton.setOnClickListener(new View.OnClickListener() {
@@ -183,10 +182,21 @@ public class GenericPopupDialog extends DialogFragment {
         return dialogView;
     }
 
+    protected void initiateViews(ViewGroup dialogView) {
+        List<View> listOfViews = new ArrayList<>();
+        jsonFormInteractor.fetchFields(listOfViews, stepName, formFragment, specifyContent, commonListener, true);
+
+        LinearLayout genericDialogContent = dialogView.findViewById(
+                R.id.generic_dialog_content);
+        for (View view : listOfViews) {
+            genericDialogContent.addView(view);
+        }
+    }
+
 
     public JSONObject getSubFormJson(String subFormsLocation, Context context) {
         String defaultSubFormLocation = JsonFormConstants.DEFAULT_SUB_FORM_LOCATION;
-        if (subFormsLocation != null && !subFormsLocation.equals("")) {
+        if (!TextUtils.isEmpty(subFormsLocation)) {
             defaultSubFormLocation = subFormsLocation;
         }
 
@@ -199,7 +209,7 @@ public class GenericPopupDialog extends DialogFragment {
         return null;
     }
 
-    private void passData() {
+    protected void passData() {
         onGenericDataPass(popAssignedValue, parentKey, stepName, childKey);
     }
 
@@ -223,7 +233,7 @@ public class GenericPopupDialog extends DialogFragment {
         return stringBuilder.toString();
     }
 
-    private void createSecondaryValuesMap() {
+    protected void createSecondaryValuesMap() {
         JSONObject jsonObject;
         if (secondaryValues != null) {
             for (int i = 0; i < secondaryValues.length(); i++) {
@@ -241,7 +251,7 @@ public class GenericPopupDialog extends DialogFragment {
         }
     }
 
-    private void addFormValues(JSONArray jsonArray) {
+    protected void addFormValues(JSONArray jsonArray) {
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject;
             try {
@@ -273,7 +283,7 @@ public class GenericPopupDialog extends DialogFragment {
         }
     }
 
-    private void setCompoundButtonValues(JSONArray options, JSONArray secondValues) {
+    protected void setCompoundButtonValues(JSONArray options, JSONArray secondValues) {
         for (int i = 0; i < options.length(); i++) {
             JSONObject jsonObject;
             try {
@@ -291,7 +301,7 @@ public class GenericPopupDialog extends DialogFragment {
         }
     }
 
-    private String setValues(JSONArray jsonArray, String type) {
+    protected String setValues(JSONArray jsonArray, String type) {
         FormUtils formUtils = new FormUtils();
         String value = "";
         for (int i = 0; i < jsonArray.length(); i++) {
@@ -305,7 +315,7 @@ public class GenericPopupDialog extends DialogFragment {
         return value.replaceAll(", $", "");
     }
 
-    private String getValueKey(String value) {
+    protected String getValueKey(String value) {
         String key = "";
         String[] strings = value.split(":");
         if (strings.length > 0) {
@@ -314,24 +324,12 @@ public class GenericPopupDialog extends DialogFragment {
         return key;
     }
 
-    public void setCommonListener(CommonListener commonListener) {
-        this.commonListener = commonListener;
-    }
-
-    public void setFormFragment(JsonFormFragment formFragment) {
-        this.formFragment = formFragment;
-    }
-
     public void setFormIdentity(String formIdentity) {
         this.formIdentity = formIdentity;
     }
 
     public void setFormLocation(String formLocation) {
         this.formLocation = formLocation;
-    }
-
-    public void setStepName(String stepName) {
-        this.stepName = stepName;
     }
 
     public JSONArray getSecondaryValues() {
@@ -364,7 +362,7 @@ public class GenericPopupDialog extends DialogFragment {
 
     }
 
-    private void createSecondaryValues(String key, String type, String value) {
+    protected void createSecondaryValues(String key, String type, String value) {
         JSONArray values = new JSONArray();
         values.put(value);
         if (type != null && type.equals(JsonFormConstants.CHECK_BOX)) {
@@ -388,7 +386,7 @@ public class GenericPopupDialog extends DialogFragment {
         }
     }
 
-    private boolean checkSimilarity(JSONArray values, String value) {
+    protected boolean checkSimilarity(JSONArray values, String value) {
         boolean same = false;
         try {
             for (int i = 0; i < values.length(); i++) {
@@ -405,7 +403,7 @@ public class GenericPopupDialog extends DialogFragment {
         return same;
     }
 
-    private JSONArray removeUnselectedItems(JSONArray jsonArray, String currentValue) {
+    protected JSONArray removeUnselectedItems(JSONArray jsonArray, String currentValue) {
         JSONArray values;
         ArrayList<String> list = new ArrayList<>();
         try {
@@ -429,7 +427,7 @@ public class GenericPopupDialog extends DialogFragment {
         return values;
     }
 
-    private String[] getWidgetType(String value) {
+    protected String[] getWidgetType(String value) {
         return value.split(";");
     }
 
@@ -452,7 +450,6 @@ public class GenericPopupDialog extends DialogFragment {
     public void setCustomTextView(CustomTextView customTextView) {
         this.customTextView = customTextView;
     }
-
 
     /**
      * Receives the generic popup data from Generic Dialog fragment
@@ -508,7 +505,7 @@ public class GenericPopupDialog extends DialogFragment {
      * @param childKey
      * @return
      */
-    private JSONObject getJsonObjectToUpdate(JSONObject jsonObject, String childKey) {
+    protected JSONObject getJsonObjectToUpdate(JSONObject jsonObject, String childKey) {
         JSONObject item = new JSONObject();
         try {
             if (jsonObject != null && jsonObject.has(JsonFormConstants.TYPE)) {
@@ -535,14 +532,13 @@ public class GenericPopupDialog extends DialogFragment {
         return item;
     }
 
-
     /**
      * Adding the secondary values on to the specific json widget
      *
      * @param item
      * @param secondaryValueModel
      */
-    private void addSecondaryValues(JSONObject item, Map<String, SecondaryValueModel> secondaryValueModel) {
+    protected void addSecondaryValues(JSONObject item, Map<String, SecondaryValueModel> secondaryValueModel) {
         JSONObject valueObject;
         JSONArray secondaryValuesArray = new JSONArray();
         SecondaryValueModel secondaryValue;
@@ -566,7 +562,7 @@ public class GenericPopupDialog extends DialogFragment {
      * @param value
      * @return
      */
-    private JSONObject createSecondaryValueObject(SecondaryValueModel value) {
+    protected JSONObject createSecondaryValueObject(SecondaryValueModel value) {
         JSONObject jsonObject = new JSONObject();
         try {
             String key = value.getKey();
@@ -581,5 +577,73 @@ public class GenericPopupDialog extends DialogFragment {
 
         }
         return jsonObject;
+    }
+
+    public String getWidgetType() {
+        return widgetType;
+    }
+
+    public void setWidgetType(String widgetType) {
+        this.widgetType = widgetType;
+    }
+
+    public JSONArray getNewSelectedValues() {
+        return newSelectedValues;
+    }
+
+    public void setNewSelectedValues(JSONArray newSelectedValues) {
+        this.newSelectedValues = newSelectedValues;
+    }
+
+    public Map<String, SecondaryValueModel> getPopAssignedValue() {
+        return popAssignedValue;
+    }
+
+    public void setPopAssignedValue(Map<String, SecondaryValueModel> popAssignedValue) {
+        this.popAssignedValue = popAssignedValue;
+    }
+
+    public Map<String, SecondaryValueModel> getSecondaryValuesMap() {
+        return secondaryValuesMap;
+    }
+
+    public void setSecondaryValuesMap(Map<String, SecondaryValueModel> secondaryValuesMap) {
+        this.secondaryValuesMap = secondaryValuesMap;
+    }
+
+    public JsonApi getJsonApi() {
+        return jsonApi;
+    }
+
+    public void setJsonApi(JsonApi jsonApi) {
+        this.jsonApi = jsonApi;
+    }
+
+    public String getStepName() {
+        return stepName;
+    }
+
+    public void setStepName(String stepName) {
+        this.stepName = stepName;
+    }
+
+    public CommonListener getCommonListener() {
+        return commonListener;
+    }
+
+    public void setCommonListener(CommonListener commonListener) {
+        this.commonListener = commonListener;
+    }
+
+    public JsonFormFragment getFormFragment() {
+        return formFragment;
+    }
+
+    public void setFormFragment(JsonFormFragment formFragment) {
+        this.formFragment = formFragment;
+    }
+
+    public JSONArray getSpecifyContent() {
+        return specifyContent;
     }
 }
