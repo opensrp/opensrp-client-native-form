@@ -114,7 +114,7 @@ public class GpsFactory implements FormWidgetFactory {
         recordButton.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         recordButton.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
         recordButton.setTag(R.id.extraPopup, popup);
-        if (relevance != null && context instanceof JsonApi) {
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             recordButton.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(recordButton);
         }

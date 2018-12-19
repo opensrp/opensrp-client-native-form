@@ -32,6 +32,7 @@ public class JsonFormConstants {
     public static final String NAME = "name";
     public static final String TYPE = "type";
     public static final String READ_ONLY = "read_only";
+    public static final String DISABLED = "disabled";
     public static final String BEHAVIOUR_FINISH_FORM = "finish_form";
     public static final String BEHAVIOUR_NEXT_STEP = "next_step";
     public static final String HINT = "hint";
@@ -57,9 +58,10 @@ public class JsonFormConstants {
     public static final String V_NUMERIC_INTEGER = "v_numeric_integer";
     public static final String V_MIN = "v_min";
     public static final String V_MAX = "v_max";
-    public static final String NUMBER_SELECTORS = "numbers_selector";
+    public static final String NUMBERS_SELECTOR = "numbers_selector";
     public static final String START_SELECTION_NUMBER = "start_number";
     public static final String NUMBER_OF_SELECTORS = "number_of_selectors";
+    public static final String NUMBER_OF_SELECTORS_ORIGINAL = "number_of_selectors_original";
     public static final String MAX_SELECTION_VALUE = "max_value";
     public static final String EDIT_TYPE = "edit_type";
     public static final String TEXT = "text";
@@ -98,6 +100,13 @@ public class JsonFormConstants {
     public static final String BOLD_ITALIC = "bold_italic";
     public static final String EDIT_BUTTON = "edit_button";
     public static final String CUSTOM_TEXT = "custom_text";
+
+    public static final String STEPNAME = "stepName";
+    public static final String DISPLAY_BACK_BUTTON = "display_back_button";
+
+    public static final String COUNT = "count";
+    public static final String CALCULATION = "calculation";
+    public static final String HIDDEN = "hidden";
     public static final String SECONDARY_VALUE = "secondary_value";
     public static final String CONTENT_FORM_LOCATION = "content_form_location";
     public static final String VALUES = "values";
@@ -114,14 +123,17 @@ public class JsonFormConstants {
     public static final String LEFT_MARGIN = "left_margin";
     public static final String UPLOAD_BUTTON_TEXT = "uploadButtonText";
     public static final String NATIVE_ACCORDION = "native_accordion";
+    public static final String JSON_OBJECT_KEY = "json_object_key";
+    public static final String IS_POPUP = "is_popup";
 
     public static class JSON_FORM_KEY {
+        public static final String EX_RULES = "ex-rules";
         public static final String EX_CHECKBOX = "ex-checkbox";
         public static final String OR = "or";
         public static final String AND = "and";
         public static final String EXCLUSIVE = "exclusive";
         public static final String NOT = "not";
-
+        public static final String GLOBAL = "global";
         public static final String JSON = "json";
         public static final String FORM = "form";
         public static final String STEPNAME = "stepName";
@@ -133,4 +145,19 @@ public class JsonFormConstants {
         // intent request code to handle updating play services if needed.
         public static final int RC_HANDLE_GMS = 9001;
     }
+
+    public static class EDIT_TEXT_TYPE {
+        public static final String NUMBER = "number";
+    }
+
+    public static class INTENT_ACTION {
+        public static final String NUMBER_SELECTOR_FACTORY = "NumberSelectorFactoryAction";
+    }
+
+    public static class SUFFIX {
+        public static final String SPINNER = "_spinner";
+        public static final String TEXT_VIEW = "_textview";
+    }
+
+
 }

@@ -6,6 +6,7 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.Html;
 import android.text.TextUtils;
@@ -53,7 +54,8 @@ public class FormUtils {
     public static final int WRAP_CONTENT = -2;
     public static final String METADATA_PROPERTY = "metadata";
     public static final String LOOK_UP_JAVAROSA_PROPERTY = "look_up";
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
+    public static final String NATIIVE_FORM_DATE_FORMAT_PATTERN = "dd-MM-yyyy";
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(NATIIVE_FORM_DATE_FORMAT_PATTERN);
     private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final String START_JAVAROSA_PROPERTY = "start";
     private static final String END_JAVAROSA_PROPERTY = "end";
@@ -96,7 +98,7 @@ public class FormUtils {
             textView.setTextColor(Color.parseColor(textColor));
         }
 
-        if (relevance != null && context instanceof JsonApi) {
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             textView.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(textView);
         }
@@ -266,6 +268,7 @@ public class FormUtils {
             String textStyle = jsonObject.optString(JsonFormConstants.TEXT_STYLE, JsonFormConstants.NORMAL);
             setTextStyle(textStyle, labelText);
             labelText.setText(Html.fromHtml(combinedLabelText));
+            labelText.setTag(R.id.original_text, Html.fromHtml(combinedLabelText));
             labelText.setTextSize(labelTextSize);
             canvasIds.put(relativeLayout.getId());
             if (readOnly) {
@@ -294,7 +297,7 @@ public class FormUtils {
         relativeLayout.setTag(R.id.openmrs_entity, openMrsEntity);
         relativeLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         relativeLayout.setId(ViewUtil.generateViewId());
-        if (relevance != null && context instanceof JsonApi) {
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             relativeLayout.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(relativeLayout);
         }
@@ -440,6 +443,20 @@ public class FormUtils {
         }
     }
 
+    public static void setEditMode(JSONObject jsonObject, AppCompatEditText editText, ImageView editButton) throws JSONException {
+        if (jsonObject.has(JsonFormConstants.DISABLED) || (jsonObject.has(JsonFormConstants.DISABLED)
+                && jsonObject.has(JsonFormConstants.READ_ONLY))) {
+            boolean disabled = jsonObject.getBoolean(JsonFormConstants.DISABLED);
+            editText.setEnabled(!disabled);
+            editText.setFocusable(!disabled);
+            editButton.setVisibility(View.GONE);
+        } else if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
+            boolean readyOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
+            editText.setEnabled(!readyOnly);
+            editButton.setVisibility(View.VISIBLE);
+        }
+    }
+
     public void showGenericDialog(View view) {
         Context context = (Context) view.getTag(R.id.specify_context);
         String specifyContent = (String) view.getTag(R.id.specify_content);
@@ -463,6 +480,7 @@ public class FormUtils {
             genericPopupDialog.setStepName(stepName);
             genericPopupDialog.setSecondaryValues(jsonArray);
             genericPopupDialog.setParentKey(parentKey);
+            genericPopupDialog.setWidgetType(type);
             if (customTextView != null) {
                 genericPopupDialog.setCustomTextView(customTextView);
             }
@@ -564,7 +582,7 @@ public class FormUtils {
                     JSONArray itemArray = jsonObject.getJSONArray(JsonFormConstants.VALUES);
                     for (int j = 0; j < itemArray.length(); j++) {
                         String s = formUtils.getValueFromSecondaryValues(type, itemArray.getString(j));
-                        if(!TextUtils.isEmpty(s)) {
+                        if (!TextUtils.isEmpty(s)) {
                             specifyText.append(s + ",");
                         }
 

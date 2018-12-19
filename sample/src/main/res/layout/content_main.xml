@@ -1,18 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
     android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-     tools:showIn="@layout/activity_main"
-    tools:context="org.smartregister.nativeform.MainActivity">
+    tools:context="org.smartregister.nativeform.MainActivity"
+    tools:showIn="@layout/activity_main">
 
-    <TextView
-        android:text="Hello World!"
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/child_enrollment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="BIRTH REGISTER"
+            android:textColor="@android:color/white"
+            android:theme="@style/AppTheme" />
+
+        <Button
+            android:id="@+id/wizard_form"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="WIZARD (MULTI-STEP FORM)"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/rules_engine_skip_logic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="RULES ENGINE LOGIC"
+            android:textColor="@android:color/white"
+            android:theme="@style/AppTheme" />
+
+        <Button
+            android:id="@+id/numbers_selector_widget"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="CONSTRAINTS"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/generic_dialog_button"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="GENERIC POPUP"
+            android:textColor="@android:color/white" />
+
+    </LinearLayout>
 </RelativeLayout>

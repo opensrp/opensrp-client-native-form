@@ -99,6 +99,7 @@ public class NativeEditTextFactory implements FormWidgetFactory {
         String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
         String editTextStyle = jsonObject.optString(JsonFormConstants.EDIT_TEXT_STYLE, "");
         String editType = jsonObject.optString(JsonFormConstants.EDIT_TYPE);
+        String calculation = jsonObject.optString(JsonFormConstants.CALCULATION);
 
         editText.setId(ViewUtil.generateViewId());
         editText.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
@@ -125,11 +126,7 @@ public class NativeEditTextFactory implements FormWidgetFactory {
         }
         editText.setHint(jsonObject.optString(JsonFormConstants.HINT));
 
-        if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
-            boolean readyOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
-            editText.setEnabled(!readyOnly);
-            editButton.setVisibility(View.VISIBLE);
-        }
+        FormUtils.setEditMode(jsonObject, editText, editButton);
         // edit type check
         if (!TextUtils.isEmpty(editType)) {
             if ("number".equals(editType)) {
@@ -140,14 +137,19 @@ public class NativeEditTextFactory implements FormWidgetFactory {
         }
 
         editText.addTextChangedListener(new GenericTextWatcher(stepName, formFragment, editText));
-        if (relevance != null && context instanceof JsonApi) {
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             editText.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(editText);
         }
 
-        if (constraints != null && context instanceof JsonApi) {
+        if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
             editText.setTag(R.id.constraints, constraints);
             ((JsonApi) context).addConstrainedView(editText);
+        }
+
+        if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
+            editText.setTag(R.id.calculation, calculation);
+            ((JsonApi) context).addCalculationLogicView(editText);
         }
 
     }
