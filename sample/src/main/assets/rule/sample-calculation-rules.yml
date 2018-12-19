@@ -4,7 +4,7 @@ description: cease tobacco toaster
 priority: 1
 condition: "step1_hepb_immun_status < 60 || step1_hepb_immun_status > 100"
 actions:
- - 'calculation = ["kid_count" : step1_hepb_immun_status, "grand_children" : (step1_hepb_immun_status * 2)]'
+ - 'calculation = ["kid_count" : step1_hepb_immun_status, "grand_children" : (step1_hepb_immun_status * 2) , "heros" : global_heroes]'
 
 ---
 name: step1_happiness_level

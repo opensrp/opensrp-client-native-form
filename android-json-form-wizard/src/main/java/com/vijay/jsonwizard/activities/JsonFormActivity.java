@@ -1394,17 +1394,16 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     }
 
     private String getRenderText(String calculation, String textTemplate) {
-
-        Map<String, String> valueMap = new Gson().fromJson(calculation, new TypeToken<HashMap<String, String>>() {
+        Map<String, Object> valueMap = new Gson().fromJson(calculation, new TypeToken<HashMap<String, Object>>() {
         }.getType());
 
         return stringFormat(textTemplate, valueMap);
     }
 
-    public String stringFormat(String string, Map<String, String> valueMap) {
+    public String stringFormat(String string, Map<String, Object> valueMap) {
         String resString = string;
-        for (Map.Entry<String, String> entry : valueMap.entrySet()) {
-            resString = resString.replace("{" + entry.getKey() + "}", entry.getValue());
+        for (Map.Entry<String, Object> entry : valueMap.entrySet()) {
+            resString = resString.replace("{" + entry.getKey() + "}", getTemplateValue(entry.getValue()));
         }
 
         return resString;
@@ -1539,5 +1538,23 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         for (LifeCycleListener lifeCycleListener : lifeCycleListeners) {
             lifeCycleListener.onDestroy();
         }
+    }
+
+    private String getTemplateValue(Object object) {
+        String result = "";
+        if (object instanceof List) {
+            List<String> valueList = (List<String>) object;
+            for (int i = 0; i < valueList.size(); i++) {
+                result += valueList.get(i);
+                if (i != (valueList.size() - 1)) {
+                    result += ", ";
+                }
+            }
+        } else {
+            result = object.toString();
+            result = result.contains(".0") ? result.substring(0, result.indexOf(".0")) : result;//Fix automatic conversion float bug
+        }
+
+        return result;
     }
 }
