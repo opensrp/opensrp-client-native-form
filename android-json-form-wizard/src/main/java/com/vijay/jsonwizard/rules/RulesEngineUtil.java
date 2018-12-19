@@ -147,6 +147,14 @@ public class RulesEngineUtil {
 
     }
 
+    public String getWeeksAndDaysFromDays(Integer days) {
+
+        double weeks = Math.round(Math.floor(days / 7));
+        Integer dayz = days % 7;
+
+        return String.format("%.0f weeks %d days", weeks, dayz);
+    }
+
     public String formatDate(String dateString, String duration) {
 
         LocalDate date = new LocalDate(Utils.reverseDateString(dateString, "-"));
