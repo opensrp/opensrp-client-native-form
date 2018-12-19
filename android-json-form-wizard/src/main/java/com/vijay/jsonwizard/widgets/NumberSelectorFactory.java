@@ -329,7 +329,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
 
         if (item == numberOfSelectors - 1) {
             customTextView.setTag(R.id.number_selector_layout, linearLayout);
-            customTextView.setTag(R.id.number_selector_jsonObject, jsonObject);
+            customTextView.setTag(R.id.json_object, jsonObject);
         }
 
         return customTextView;

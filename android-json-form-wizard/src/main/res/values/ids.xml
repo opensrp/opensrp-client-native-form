@@ -39,7 +39,7 @@
     <item name="number_selector_number_of_selectors" type="id" />
     <item name="number_selector_max_number" type="id" />
     <item name="number_selector_layout" type="id" />
-    <item name="number_selector_jsonObject" type="id" />
+    <item name="json_object" type="id" />
     <item name="number_selector_default_text_color" type="id" />
     <item name="number_selector_selected_text_color" type="id" />
     <item name="number_selector_listener" type="id" />

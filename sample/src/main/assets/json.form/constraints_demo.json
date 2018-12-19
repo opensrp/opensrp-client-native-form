@@ -1,6 +1,6 @@
 {
   "count": "1",
-  "encounter_type": "Numbers Selector Demo",
+  "encounter_type": "Constraints Demo",
   "entity_id": "",
   "relational_id": "",
   "global": {
@@ -56,8 +56,49 @@
     }
   },
   "step1": {
-    "title": "Numbers Selector Constraints Demo",
+    "title": "Constraints Demo",
     "fields": [
+      {
+        "key": "ultrasound_done",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Ultrasound done?",
+        "label_info_text": "An ultrasound is recommended for all women before 24 weeks gestation or even after if deemed necessary (e.g. to identify the number of fetuses, fetal presentation, or placenta location).",
+        "label_info_title": "Ultrasound done?",
+        "label_text_style": "bold",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "specify_info": "ultrasound date",
+            "specify_widget": "date_picker"
+          },
+          {
+            "key": "no",
+            "text": "No",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          }
+        ],
+        "v_required": {
+          "value": true
+        },
+        "min_date": "15-12-2016",
+        "max_date": "today",
+        "constraints": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-constraint-rules.yml"
+            }
+          }
+        }
+      },
       {
         "key": "spacer",
         "openmrs_entity_parent": "",

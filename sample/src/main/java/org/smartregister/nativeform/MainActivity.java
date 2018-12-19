@@ -193,7 +193,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 case R.id.numbers_selector_widget:
 
-                    startForm(REQUEST_CODE_GET_JSON, "numbers_selector_widget_demo", null);
+                    startForm(REQUEST_CODE_GET_JSON, "constraints_demo", null);
                     break;
 
                 default:

@@ -37,4 +37,5 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Integrate rules engine for rule support using yaml configs
 - Support for skip logic using complex rules 
 - Support for constraint logic using complex rules for number selector widget
-- Added helper class for use in rules engine - added method to get difference in days for 2 dates to be used in condition or action , example syntax `calculation = (1 + helper.getDifferenceDays('2018-12-18'))` 
+- Add helper class for use in rules engine - added method to get difference in days for 2 dates to be used in condition or action , example syntax `calculation = (1 + helper.getDifferenceDays('2018-12-18'))` 
+- Add skip logic based on date duration

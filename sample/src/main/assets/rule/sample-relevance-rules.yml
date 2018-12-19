@@ -33,3 +33,18 @@ priority: 1
 condition: "step1_hepb_immun_status > 10 && step1_hepb_immun_status < 30"
 actions:
   - "isRelevant = true"
+
+---
+name: step1_alpha_toaster
+description: cease tobacco toaster
+priority: 1
+condition: 'helper.formatDate(step1_Date_Birth,"y") > 3'
+actions:
+  - "isRelevant = true"
+---
+name: step1_beta_toaster
+description: cease tobacco toaster
+priority: 1
+condition: 'helper.formatDate(step1_Date_Birth,"y") <= 2'
+actions:
+  - "isRelevant = true"

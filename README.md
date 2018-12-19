@@ -1298,6 +1298,11 @@ condition: "step1_First_Name == 'Martin' && global_has_cat_scan == 'true' "
 actions:
   - "calculation = 1"
  ```
+ **OTHER EXAMPLES**
+ ```condition: 'helper.formatDate(step1_Date_Birth,"y") <= 2'``` checks whether the date of birth is less than or equal to 2 years
+ ```- 'calculation = helper.formatDate("19-12-2020","y")'```  gets number of weeks from passed date. you can also use `d` for days `m` for months `w` for weeks
+ ```- 'calculation = helper.formatDate("19-12-2020","wd")'``` outputs special format `28 weeks 5 days`
+ 
  
 6. More input field types:
  

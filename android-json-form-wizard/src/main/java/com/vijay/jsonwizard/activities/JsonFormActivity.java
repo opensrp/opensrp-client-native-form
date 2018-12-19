@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -690,12 +691,25 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                         }
                     } else if (curView instanceof LinearLayout && curView.getTag(R.id.key).toString().startsWith(JsonFormConstants.NUMBERS_SELECTOR) && !TextUtils.isEmpty(errorMessage) && (curView.getTag(R.id.previous) == null || !curView.getTag(R.id.previous).equals(errorMessage))) {
 
-                        Intent localIntent = new Intent(JsonFormConstants.INTENT_ACTION.NUMBER_SELECTOR_FACTORY);
-                        localIntent.putExtra(JsonFormConstants.MAX_SELECTION_VALUE, Integer.valueOf(errorMessage));
-                        localIntent.putExtra(JsonFormConstants.JSON_OBJECT_KEY, curView.getTag(R.id.key).toString());
-                        localIntent.putExtra(JsonFormConstants.STEPNAME, address[0]);
-                        localBroadcastManager.sendBroadcast(localIntent);
-                        curView.setTag(R.id.previous, errorMessage); //Store value to avoid re-fires
+                        if (!"false".equals(errorMessage)) {
+                            Intent localIntent = new Intent(JsonFormConstants.INTENT_ACTION.NUMBER_SELECTOR_FACTORY);
+                            localIntent.putExtra(JsonFormConstants.MAX_SELECTION_VALUE, Integer.valueOf(errorMessage));
+                            localIntent.putExtra(JsonFormConstants.JSON_OBJECT_KEY, curView.getTag(R.id.key).toString());
+                            localIntent.putExtra(JsonFormConstants.STEPNAME, address[0]);
+                            localBroadcastManager.sendBroadcast(localIntent);
+                            curView.setTag(R.id.previous, errorMessage); //Store value to avoid re-fires
+                        }
+
+                    } else if (curView instanceof RadioGroup && curView.getTag(R.id.type).toString().equals(JsonFormConstants.NATIVE_RADIO_BUTTON) && !TextUtils.isEmpty(errorMessage) && (curView.getTag(R.id.previous) == null || !curView.getTag(R.id.previous).equals(errorMessage))) {
+
+                        JSONObject jsonObject = (JSONObject) curView.getTag(R.id.json_object);
+                        JSONObject jsonObjectNew = new JSONObject(errorMessage);
+                        Iterator<String> keys = jsonObjectNew.keys();
+
+                        while (keys.hasNext()) {
+                            String key = keys.next();
+                            jsonObject.put(key, jsonObjectNew.getString(key));
+                        }
 
                     }
                 }
@@ -1033,12 +1047,20 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         if (isNumberSelectorConstraint(view)) {
 
             errorMessage = curValueMap.size() == 0 ? "" : rulesEngineHelper.getConstraint(curValueMap, constraint.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getString(RuleConstant.RULES_FILE));
+        } else if (isDatePickerNativeRadio(view)) {
+
+            errorMessage = curValueMap.size() == 0 ? "" : rulesEngineHelper.getConstraint(curValueMap, constraint.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getString(RuleConstant.RULES_FILE));
         }
         return errorMessage;
     }
 
+
     private boolean isNumberSelectorConstraint(View view) {
         return view instanceof LinearLayout && view.getTag(R.id.key).toString().startsWith(JsonFormConstants.NUMBERS_SELECTOR);
+    }
+
+    private boolean isDatePickerNativeRadio(View view) {
+        return view.getTag(R.id.type).toString().equals(JsonFormConstants.NATIVE_RADIO_BUTTON);
     }
 
     private JSONArray fetchFields(JSONObject parentJson, Boolean popup) {
@@ -1299,7 +1321,8 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     }
 
     private List<String> getConditionKeys(String condition) {
-        String[] conditionTokens = cleanConditionString(condition).split(" ");
+        String cleanString = cleanConditionString(condition);
+        String[] conditionTokens = cleanString.split(" ");
         Map<String, Boolean> conditionKeys = new HashMap<>();
 
         for (int i = 0; i < conditionTokens.length; i++) {

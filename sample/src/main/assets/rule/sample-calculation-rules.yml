@@ -12,4 +12,4 @@ description: Happiness level calculation
 priority: 1
 condition: "step1_First_Name == 'Martin' && global_has_cat_scan == 'true' "
 actions:
-  - "calculation = 1"
+  - 'calculation = helper.formatDate("19-12-2020","y")'
