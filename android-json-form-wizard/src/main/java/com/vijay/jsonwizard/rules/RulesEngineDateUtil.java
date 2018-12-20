@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by ndegwamartin on 17/12/2018.
  */
-public class RulesEngineUtil {
+public class RulesEngineDateUtil {
 
     public long getDifferenceDays(String dateString) {
 
@@ -237,6 +237,17 @@ public class RulesEngineUtil {
         } else {
             return "";
         }
+    }
+
+    public String getSecondaryValue(String value) {
+
+        if (value.contains(":")) {
+            String[] valArray = value.split(":");
+            return valArray[1];
+        } else {
+            return value;
+        }
+
     }
 
 }

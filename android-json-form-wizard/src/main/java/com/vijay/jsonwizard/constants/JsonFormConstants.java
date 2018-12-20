@@ -151,7 +151,8 @@ public class JsonFormConstants {
     }
 
     public static class INTENT_ACTION {
-        public static final String NUMBER_SELECTOR_FACTORY = "NumberSelectorFactoryAction";
+        public static final String NUMBER_SELECTOR_FACTORY = "number_selector_factory";
+        public static final String JSON_FORM_ACTIVITY = "json_form_activity";
     }
 
     public static class SUFFIX {
@@ -159,5 +160,11 @@ public class JsonFormConstants {
         public static final String TEXT_VIEW = "_textview";
     }
 
-
+    public static class INTENT_KEY {
+        public static final String MESSAGE = "message";
+        public static final String MESSAGE_TYPE = "message_type";
+    }
+    public static class MESSAGE_TYPE {
+        public static final String GLOBAL_VALUES = "global_values";
+    }
 }

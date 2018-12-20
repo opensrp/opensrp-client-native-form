@@ -6,6 +6,7 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Build;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
@@ -55,6 +56,7 @@ public class DatePickerFactory implements FormWidgetFactory {
             }
             duration.setText(durationText);
         }
+
     }
 
 
@@ -133,6 +135,9 @@ public class DatePickerFactory implements FormWidgetFactory {
             }
 
             updateEditText(editText, jsonObject, stepName, context, duration);
+
+            editText.setTag(R.id.json_object, jsonObject);
+
             final DatePickerDialog datePickerDialog = createDateDialog(context, duration, editText, jsonObject);
 
             if (jsonObject.has(JsonFormConstants.EXPANDED) && jsonObject.getBoolean(JsonFormConstants.EXPANDED)
