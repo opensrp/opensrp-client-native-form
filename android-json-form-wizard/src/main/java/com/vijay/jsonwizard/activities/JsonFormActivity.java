@@ -79,7 +79,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     private static final String TAG = JsonFormActivity.class.getSimpleName();
     private static final String JSON_STATE = "jsonState";
     private static final String FORM_STATE = "formState";
-    private final Set<Character> JAVA_OPERATORS = new HashSet<>(Arrays.asList(new Character[]{'(', '!', ',', '?', '+', '-', '*', '/', '%', '+', '-', '.', '^', ')', '<', '>', '=', '{', '}', ':', ';'}));
+    private final Set<Character> JAVA_OPERATORS = new HashSet<>(Arrays.asList(new Character[]{'(', '!', ',', '?', '+', '-', '*', '/', '[', ']', '%', '+', '-', '.', '^', ')', '<', '>', '=', '{', '}', ':', ';'}));
     private GenericPopupDialog genericPopupDialog = GenericPopupDialog.getInstance();
     private FormUtils formUtils = new FormUtils();
     private Toolbar mToolbar;
@@ -1261,9 +1261,13 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 Iterable<Object> ruleObjects = yaml.loadAll(inputStreamReader);
 
                 for (Object object : ruleObjects) {
+
                     Map<String, Object> map = ((Map<String, Object>) object);
 
                     String name = map.get(RuleConstant.NAME).toString();
+                    if (ruleKeys.containsKey(filename + ":" + name)) {
+                        continue;
+                    }
 
                     List<String> actions = new ArrayList<>();
 
@@ -1381,6 +1385,27 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
                 ((EditText) view).setText(calculation);
 
+            } else if (view instanceof RadioGroup) {
+                RadioGroup radioButton = (RadioGroup) view;
+                int count = radioButton.getChildCount();
+                for (int i = 0; i < count; i++) {
+                    TextView renderView = radioButton.getChildAt(i).findViewById(R.id.extraInfoTextView);
+
+                    // if (((AppCompatRadioButton) ((ViewGroup) radioButton.getChildAt(i).findViewById(R.id.radioContentLinearLayout)).getChildAt(0)).isChecked()) {
+
+                    if (renderView.getTag(R.id.original_text) == null) {
+                        renderView.setTag(R.id.original_text, renderView.getText());
+                    }
+                    renderView.setText(calculation.charAt(0) == '{' ? getRenderText(calculation, renderView.getTag(R.id.original_text).toString()) : calculation);
+
+                    renderView.setVisibility(renderView.getText().toString().contains("{") || renderView.getText().toString().equals("0") ? View.GONE : View.VISIBLE);
+                    // break;
+                    //} else {
+                    //  renderView.setVisibility(renderView.getText().toString().contains("{") ? View.GONE : View.VISIBLE);
+                    //}
+
+                }
+
             } else {
 
                 ((TextView) view).setText(calculation);
@@ -1425,13 +1450,20 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
     private void updateCanvas(View view, boolean visible, JSONArray canvasViewIds) throws JSONException {
         for (int i = 0; i < canvasViewIds.length(); i++) {
+
             int curId = canvasViewIds.getInt(i);
+
             View curCanvasView = view.getRootView().findViewById(curId);
+
+            if (curCanvasView == null) {
+
+                continue;
+            }
+
             if (visible) {
-                if (curCanvasView != null) {
-                    curCanvasView.setEnabled(true);
-                    curCanvasView.setVisibility(View.VISIBLE);
-                }
+                curCanvasView.setEnabled(true);
+                curCanvasView.setVisibility(View.VISIBLE);
+
                 if (curCanvasView instanceof RelativeLayout || view instanceof LinearLayout) {
                     curCanvasView.setFocusable(true);
                 }
@@ -1439,10 +1471,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     view.setFocusable(true);
                 }
             } else {
-                if (curCanvasView != null) {
-                    curCanvasView.setEnabled(false);
-                    curCanvasView.setVisibility(View.GONE);
-                }
+                curCanvasView.setEnabled(false);
+                curCanvasView.setVisibility(View.GONE);
+
                 if (view instanceof EditText) {
                     EditText editText = (EditText) view;
                     if (!TextUtils.isEmpty(editText.getText().toString())) {

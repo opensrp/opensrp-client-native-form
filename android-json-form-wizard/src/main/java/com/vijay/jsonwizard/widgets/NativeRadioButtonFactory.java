@@ -213,6 +213,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
         String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
+        String calculation = jsonObject.optString(JsonFormConstants.CALCULATION);
         JSONArray options = jsonObject.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
         Boolean extraRelCheck = jsonObject.optBoolean(JsonFormConstants.EXTRA_REL, false);
         String extraRelArray = null;
@@ -278,6 +279,11 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
             radioGroup.setTag(R.id.constraints, constraints);
             ((JsonApi) context).addConstrainedView(radioGroup);
+        }
+
+        if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
+            radioGroup.setTag(R.id.calculation, calculation);
+            ((JsonApi) context).addCalculationLogicView(radioGroup);
         }
 
         FormUtils.setRadioExclusiveClick(radioGroup);
