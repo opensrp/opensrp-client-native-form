@@ -364,7 +364,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
     }
 
 
-    private void nativeRadioButtonClickActions(View view) {
+    protected void nativeRadioButtonClickActions(View view) {
         String type = (String) view.getTag(R.id.specify_type);
         String specifyWidget = (String) view.getTag(R.id.specify_widget);
         Log.i(TAG, "The dialog content widget is this: " + specifyWidget);
@@ -398,7 +398,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         }
     }
 
-    private void setRadioViewsEditable(View editButton) {
+    protected void setRadioViewsEditable(View editButton) {
         RadioGroup radioGroup = (RadioGroup) editButton.getTag(R.id.editable_view);
         radioGroup.setEnabled(true);
         radioGroup.setFocusable(true);

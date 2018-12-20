@@ -239,9 +239,8 @@ public class FormUtils {
         return px;
     }
 
-    public static Map<String, View> createRadioButtonAndCheckBoxLabel(LinearLayout linearLayout, JSONObject jsonObject, Context context,
-                                                                      JSONArray canvasIds, Boolean
-                                                                              readOnly, CommonListener listener) throws JSONException {
+    public static Map<String, View> createRadioButtonAndCheckBoxLabel(String stepName, LinearLayout linearLayout, JSONObject jsonObject, Context context,
+                                                                      JSONArray canvasIds, Boolean readOnly, CommonListener listener) throws JSONException {
         Map<String, View> createdViewsMap = new HashMap<>();
         String label = jsonObject.optString(JsonFormConstants.LABEL, "");
         if (!TextUtils.isEmpty(label)) {
@@ -250,7 +249,7 @@ public class FormUtils {
                     .getResources().getDimension(R.dimen.default_label_text_size))), context);
             String labelTextColor = jsonObject.optString(JsonFormConstants.LABEL_TEXT_COLOR, JsonFormConstants.DEFAULT_TEXT_COLOR);
             JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
-            RelativeLayout relativeLayout = createLabelRelativeLayout(jsonObject, context, listener);
+            RelativeLayout relativeLayout = createLabelRelativeLayout(stepName, canvasIds, jsonObject, context, listener);
 
             CustomTextView labelText = relativeLayout.findViewById(R.id.label_text);
             ImageView editButton = relativeLayout.findViewById(R.id.label_edit_button);
@@ -281,7 +280,7 @@ public class FormUtils {
         return createdViewsMap;
     }
 
-    public static RelativeLayout createLabelRelativeLayout(JSONObject jsonObject, Context context, CommonListener listener) throws JSONException {
+    public static RelativeLayout createLabelRelativeLayout(String stepName, JSONArray canvasIds, JSONObject jsonObject, Context context, CommonListener listener) throws JSONException {
         String openMrsEntityParent = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT, null);
         String openMrsEntity = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY, null);
         String openMrsEntityId = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_ID, null);
@@ -290,11 +289,15 @@ public class FormUtils {
         String labelInfoTitle = jsonObject.optString(JsonFormConstants.LABEL_INFO_TITLE, "");
 
         RelativeLayout relativeLayout = (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.native_form_labels, null);
+        relativeLayout.setId(ViewUtil.generateViewId());
+        canvasIds.put(relativeLayout.getId());
+        relativeLayout.setTag(R.id.canvas_ids, canvasIds.toString());
         relativeLayout.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
         relativeLayout.setTag(R.id.type, jsonObject.getString("type"));
         relativeLayout.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
         relativeLayout.setTag(R.id.openmrs_entity, openMrsEntity);
         relativeLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
+        relativeLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
         relativeLayout.setId(ViewUtil.generateViewId());
         if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             relativeLayout.setTag(R.id.relevance, relevance);
@@ -303,18 +306,20 @@ public class FormUtils {
 
         ImageView imageView = relativeLayout.findViewById(R.id.label_info);
 
-        showInfoIcon(jsonObject, listener, labelInfoText, labelInfoTitle, imageView);
+        showInfoIcon(stepName, jsonObject, listener, labelInfoText, labelInfoTitle, imageView, canvasIds);
 
         return relativeLayout;
     }
 
-    public static void showInfoIcon(JSONObject jsonObject, CommonListener listener, String labelInfoText, String labelInfoTitle, ImageView imageView) throws JSONException {
+    public static void showInfoIcon(String stepName, JSONObject jsonObject, CommonListener listener, String labelInfoText, String labelInfoTitle, ImageView imageView, JSONArray canvasIds) throws JSONException {
         if (!TextUtils.isEmpty(labelInfoText)) {
             imageView.setVisibility(View.VISIBLE);
             imageView.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
             imageView.setTag(R.id.type, jsonObject.getString("type"));
             imageView.setTag(R.id.label_dialog_info, labelInfoText);
             imageView.setTag(R.id.label_dialog_title, labelInfoTitle);
+            imageView.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+            imageView.setTag(R.id.canvas_ids, canvasIds.toString());
             imageView.setOnClickListener(listener);
         }
     }
@@ -470,8 +475,7 @@ public class FormUtils {
         String childKey;
 
         if (specifyContent != null) {
-            GenericPopupDialog genericPopupDialog = GenericPopupDialog.getInstance();
-            genericPopupDialog.setContext(context);
+            GenericPopupDialog genericPopupDialog = new GenericPopupDialog();
             genericPopupDialog.setCommonListener(listener);
             genericPopupDialog.setFormFragment(formFragment);
             genericPopupDialog.setFormIdentity(specifyContent);

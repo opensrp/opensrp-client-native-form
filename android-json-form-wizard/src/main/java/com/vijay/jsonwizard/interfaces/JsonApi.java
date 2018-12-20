@@ -2,6 +2,8 @@ package com.vijay.jsonwizard.interfaces;
 
 import android.view.View;
 
+import com.vijay.jsonwizard.customviews.GenericPopupDialog;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -87,4 +89,6 @@ public interface JsonApi {
     void registerLifecycleListener(LifeCycleListener lifeCycleListener);
 
     void unregisterLifecycleListener(LifeCycleListener lifeCycleListener);
+
+    void setGenericPopup(GenericPopupDialog context);
 }

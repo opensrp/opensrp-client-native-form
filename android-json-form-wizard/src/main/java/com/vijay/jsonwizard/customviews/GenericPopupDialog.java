@@ -20,6 +20,7 @@ import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 import com.vijay.jsonwizard.interfaces.CommonListener;
+import com.vijay.jsonwizard.interfaces.GenericDialogInterface;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.SecondaryValueModel;
@@ -43,17 +44,12 @@ import java.util.Map;
 
 import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 
-public class GenericPopupDialog extends DialogFragment {
+public class GenericPopupDialog extends DialogFragment implements GenericDialogInterface {
     private static JsonFormInteractor jsonFormInteractor = JsonFormInteractor.getInstance();
-    private static GenericPopupDialog genericPopupDialog = new GenericPopupDialog();
     private FormUtils formUtils = new FormUtils();
-    private Activity activity;
     private JsonApi jsonApi;
     private Context context;
-
     private CommonListener commonListener;
-
-
     private JsonFormFragment formFragment;
     private String formIdentity;
     private String formLocation;
@@ -70,20 +66,13 @@ public class GenericPopupDialog extends DialogFragment {
     private JSONArray specifyContent;
     private String TAG = this.getClass().getSimpleName();
 
-    public static GenericPopupDialog getInstance() {
-        return genericPopupDialog;
-    }
-
-    public void setContext(Context context) throws IllegalStateException {
-        this.context = context;
-    }
-
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        activity = (Activity) context;
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        context = activity;
         jsonApi = (JsonApi) activity;
         jsonApi.refreshSkipLogic(null, null, true);
+        jsonApi.setGenericPopup(this);
     }
 
     @Override
@@ -100,31 +89,31 @@ public class GenericPopupDialog extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         if (context == null) {
             throw new IllegalStateException("The Context is not set. Did you forget to set context with Generic Dialog setContext method?");
         }
 
-
-        activity = (Activity) context;
-        jsonApi = (JsonApi) activity;
+        jsonApi = (JsonApi) context;
 
         createSecondaryValuesMap();
-        JSONObject subForm = getSubFormJson(formLocation, context);
-        if (subForm != null) {
-            try {
-                if (subForm.has(JsonFormConstants.CONTENT_FORM)) {
-                    specifyContent = subForm.getJSONArray(JsonFormConstants.CONTENT_FORM);
-                    addFormValues(specifyContent);
-                } else {
-                    Utils.showToast(activity, activity.getApplicationContext().getResources().getString(R.string.please_specify_content));
-                    GenericPopupDialog.this.dismiss();
+        if (!TextUtils.isEmpty(formIdentity)) {
+            JSONObject subForm = getSubFormJson(formIdentity, formLocation, context);
+            if (subForm != null) {
+                try {
+                    if (subForm.has(JsonFormConstants.CONTENT_FORM)) {
+                        specifyContent = subForm.getJSONArray(JsonFormConstants.CONTENT_FORM);
+                        addFormValues(specifyContent);
+                    } else {
+                        Utils.showToast(context, context.getApplicationContext().getResources().getString(R.string.please_specify_content));
+                        GenericPopupDialog.this.dismiss();
+                    }
+                } catch (JSONException e) {
+                    Log.i(TAG, Log.getStackTraceString(e));
                 }
-            } catch (JSONException e) {
-                Log.i(TAG, Log.getStackTraceString(e));
-            }
 
+            }
         }
+
 
         setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Light_Dialog);
     }
@@ -139,7 +128,6 @@ public class GenericPopupDialog extends DialogFragment {
         getDialog().getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
 
     }
-
 
     @Nullable
     @Override
@@ -193,15 +181,15 @@ public class GenericPopupDialog extends DialogFragment {
         }
     }
 
-
-    public JSONObject getSubFormJson(String subFormsLocation, Context context) {
+    @Override
+    public JSONObject getSubFormJson(String formIdentity, String subFormsLocation, Context context) {
         String defaultSubFormLocation = JsonFormConstants.DEFAULT_SUB_FORM_LOCATION;
         if (!TextUtils.isEmpty(subFormsLocation)) {
             defaultSubFormLocation = subFormsLocation;
         }
 
         try {
-            return new JSONObject(loadSubForm(defaultSubFormLocation, context));
+            return new JSONObject(loadSubForm(formIdentity, defaultSubFormLocation, context));
         } catch (JSONException e) {
             Log.i(TAG, Log.getStackTraceString(e));
         }
@@ -213,7 +201,7 @@ public class GenericPopupDialog extends DialogFragment {
         onGenericDataPass(popAssignedValue, parentKey, stepName, childKey);
     }
 
-    private String loadSubForm(String defaultSubFormLocation, Context context) {
+    private String loadSubForm(String formIdentity, String defaultSubFormLocation, Context context) {
         StringBuilder stringBuilder = new StringBuilder();
         try {
             InputStream inputStream = context.getAssets().open(defaultSubFormLocation + "/" + formIdentity + ".json");
@@ -324,14 +312,6 @@ public class GenericPopupDialog extends DialogFragment {
         return key;
     }
 
-    public void setFormIdentity(String formIdentity) {
-        this.formIdentity = formIdentity;
-    }
-
-    public void setFormLocation(String formLocation) {
-        this.formLocation = formLocation;
-    }
-
     public JSONArray getSecondaryValues() {
         return secondaryValues;
     }
@@ -340,26 +320,28 @@ public class GenericPopupDialog extends DialogFragment {
         this.secondaryValues = secondaryValues;
     }
 
+    @Override
     public void addSelectedValues(Map<String, String> newValue) {
-        Iterator newValueIterator = newValue.entrySet().iterator();
-        String key = "";
-        String type = "";
-        String iteratorValue = "";
-        String value = "";
-        while (newValueIterator.hasNext()) {
-            Map.Entry pair = (Map.Entry) newValueIterator.next();
-            key = String.valueOf(pair.getKey());
-            iteratorValue = String.valueOf(pair.getValue());
+        if (newValue != null) {
+            Iterator newValueIterator = newValue.entrySet().iterator();
+            String key = "";
+            String type = "";
+            String iteratorValue = "";
+            String value = "";
+            while (newValueIterator.hasNext()) {
+                Map.Entry pair = (Map.Entry) newValueIterator.next();
+                key = String.valueOf(pair.getKey());
+                iteratorValue = String.valueOf(pair.getValue());
+            }
+
+            String[] widgetValues = getWidgetType(iteratorValue);
+            if (widgetValues.length > 1) {
+                type = widgetValues[1];
+                value = widgetValues[0];
+            }
+
+            createSecondaryValues(key, type, value);
         }
-
-        String[] widgetValues = getWidgetType(iteratorValue);
-        if (widgetValues.length > 1) {
-            type = widgetValues[1];
-            value = widgetValues[0];
-        }
-
-        createSecondaryValues(key, type, value);
-
     }
 
     protected void createSecondaryValues(String key, String type, String value) {
@@ -646,4 +628,27 @@ public class GenericPopupDialog extends DialogFragment {
     public JSONArray getSpecifyContent() {
         return specifyContent;
     }
+
+    public void setSpecifyContent(JSONArray specifyContent) {
+        this.specifyContent = specifyContent;
+    }
+
+    public String getFormIdentity() {
+        return formIdentity;
+    }
+
+    @Override
+    public void setFormIdentity(String formIdentity) {
+        this.formIdentity = formIdentity;
+    }
+
+    public String getFormLocation() {
+        return formLocation;
+    }
+
+    @Override
+    public void setFormLocation(String formLocation) {
+        this.formLocation = formLocation;
+    }
+
 }
