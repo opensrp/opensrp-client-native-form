@@ -444,16 +444,19 @@ public class FormUtils {
     }
 
     public static void setEditMode(JSONObject jsonObject, AppCompatEditText editText, ImageView editButton) throws JSONException {
-        if (jsonObject.has(JsonFormConstants.DISABLED) || (jsonObject.has(JsonFormConstants.DISABLED)
+        if (jsonObject.has(JsonFormConstants.EDITABLE) || (jsonObject.has(JsonFormConstants.EDITABLE)
                 && jsonObject.has(JsonFormConstants.READ_ONLY))) {
-            boolean disabled = jsonObject.getBoolean(JsonFormConstants.DISABLED);
-            editText.setEnabled(!disabled);
-            editText.setFocusable(!disabled);
-            editButton.setVisibility(View.GONE);
+            boolean editable = jsonObject.getBoolean(JsonFormConstants.EDITABLE);
+            if (editable) {
+                editButton.setVisibility(View.VISIBLE);
+            }
+            editText.setEnabled(editable);
+            editText.setFocusable(editable);
+
         } else if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
             boolean readyOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
             editText.setEnabled(!readyOnly);
-            editButton.setVisibility(View.VISIBLE);
+            editButton.setVisibility(View.GONE);
         }
     }
 

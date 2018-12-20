@@ -112,7 +112,7 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "person_attribute",
         "openmrs_entity_id": "Child_Register_Card_Number",
-        "disabled": true,
+        "editable":true,
         "value": "1891389133",
         "type": "edit_text",
         "hint": "Child's register card number"
@@ -166,7 +166,7 @@
         "openmrs_entity": "person",
         "openmrs_entity_id": "gender",
         "type": "spinner",
-        "disabled": true,
+        "editable": true,
         "hint": "Sex *",
         "values": [
           "Male",
@@ -1191,7 +1191,7 @@
         "edit_type": "name",
         "edit_text_style": "bordered",
         "value":"1909319333",
-        "disabled":true,
+        "editable":false,
         "read_only":false,
         "v_required": {
           "value": "true",
