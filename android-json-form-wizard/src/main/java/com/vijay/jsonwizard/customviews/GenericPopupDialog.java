@@ -31,11 +31,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -97,7 +92,12 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
 
         createSecondaryValuesMap();
         if (!TextUtils.isEmpty(formIdentity)) {
-            JSONObject subForm = getSubFormJson(formIdentity, formLocation, context);
+            JSONObject subForm = null;
+            try {
+                subForm = FormUtils.getSubFormJson(formIdentity, formLocation, context);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             if (subForm != null) {
                 try {
                     if (subForm.has(JsonFormConstants.CONTENT_FORM)) {
@@ -181,44 +181,9 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         }
     }
 
-    @Override
-    public JSONObject getSubFormJson(String formIdentity, String subFormsLocation, Context context) {
-        String defaultSubFormLocation = JsonFormConstants.DEFAULT_SUB_FORM_LOCATION;
-        if (!TextUtils.isEmpty(subFormsLocation)) {
-            defaultSubFormLocation = subFormsLocation;
-        }
-
-        try {
-            return new JSONObject(loadSubForm(formIdentity, defaultSubFormLocation, context));
-        } catch (JSONException e) {
-            Log.i(TAG, Log.getStackTraceString(e));
-        }
-
-        return null;
-    }
 
     protected void passData() {
         onGenericDataPass(popAssignedValue, parentKey, stepName, childKey);
-    }
-
-    private String loadSubForm(String formIdentity, String defaultSubFormLocation, Context context) {
-        StringBuilder stringBuilder = new StringBuilder();
-        try {
-            InputStream inputStream = context.getAssets().open(defaultSubFormLocation + "/" + formIdentity + ".json");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-
-            String jsonString;
-            while ((jsonString = reader.readLine()) != null) {
-                stringBuilder.append(jsonString);
-            }
-            inputStream.close();
-        } catch (UnsupportedEncodingException e) {
-            Log.i(TAG, Log.getStackTraceString(e));
-        } catch (IOException e) {
-            Log.i(TAG, Log.getStackTraceString(e));
-        }
-
-        return stringBuilder.toString();
     }
 
     protected void createSecondaryValuesMap() {

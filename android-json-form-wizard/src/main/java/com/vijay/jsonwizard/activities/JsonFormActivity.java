@@ -1061,7 +1061,12 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         JSONArray fieldArray = new JSONArray();
         genericDialogInterface.setFormIdentity(subFormName);
         genericDialogInterface.setFormLocation(subFormLocation);
-        JSONObject jsonObject = genericDialogInterface.getSubFormJson(subFormName, "", getApplicationContext());
+        JSONObject jsonObject = null;
+        try {
+            jsonObject = FormUtils.getSubFormJson(subFormName, "", getApplicationContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if (jsonObject != null) {
             try {
                 JSONArray jsonArray = jsonObject.getJSONArray(JsonFormConstants.CONTENT_FORM);

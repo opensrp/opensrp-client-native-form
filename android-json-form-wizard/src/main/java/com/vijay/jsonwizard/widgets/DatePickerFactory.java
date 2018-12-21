@@ -264,6 +264,7 @@ public class DatePickerFactory implements FormWidgetFactory {
                 editText.setTag(R.id.constraints, constraints);
                 ((JsonApi) context).addConstrainedView(editText);
             }
+            editText.setFocusable(false);
         } catch (Exception e) {
             e.printStackTrace();
         }

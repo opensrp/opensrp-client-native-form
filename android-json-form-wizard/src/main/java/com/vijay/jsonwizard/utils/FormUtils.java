@@ -34,6 +34,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -427,6 +431,10 @@ public class FormUtils {
         return calendarDate;
     }
 
+    /**
+     * @param textStyle
+     * @param view
+     */
     public static void setTextStyle(String textStyle, AppCompatTextView view) {
         switch (textStyle) {
             case JsonFormConstants.BOLD:
@@ -459,6 +467,29 @@ public class FormUtils {
             editText.setEnabled(!readyOnly);
             editButton.setVisibility(View.VISIBLE);
         }
+    }
+
+    public static JSONObject getSubFormJson(String formIdentity, String subFormsLocation, Context context) throws Exception {
+        String defaultSubFormLocation = JsonFormConstants.DEFAULT_SUB_FORM_LOCATION;
+        if (!TextUtils.isEmpty(subFormsLocation)) {
+            defaultSubFormLocation = subFormsLocation;
+        }
+        return new JSONObject(loadSubForm(formIdentity, defaultSubFormLocation, context));
+    }
+
+    public static String loadSubForm(String formIdentity, String defaultSubFormLocation, Context context) throws IOException {
+        StringBuilder stringBuilder = new StringBuilder();
+        InputStream inputStream = context.getAssets().open(defaultSubFormLocation + "/" + formIdentity + ".json");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+
+        String jsonString;
+        while ((jsonString = reader.readLine()) != null) {
+            stringBuilder.append(jsonString);
+        }
+        inputStream.close();
+
+
+        return stringBuilder.toString();
     }
 
     public void showGenericDialog(View view) {
@@ -600,7 +631,7 @@ public class FormUtils {
 
     public JSONArray getSecondaryValues(JSONObject jsonObject, String type) {
         JSONArray value = null;
-        String widgetType = type.equals(JsonFormConstants.NATIVE_ACCORDION) ? JsonFormConstants.VALUE : JsonFormConstants.SECONDARY_VALUE;
+        String widgetType = type.equals(JsonFormConstants.EXPANSION_PANEL) ? JsonFormConstants.VALUE : JsonFormConstants.SECONDARY_VALUE;
 
         if (jsonObject != null && jsonObject.has(widgetType)) {
             try {
