@@ -6,7 +6,6 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.Html;
 import android.text.TextUtils;
@@ -443,17 +442,22 @@ public class FormUtils {
         }
     }
 
-    public static void setEditMode(JSONObject jsonObject, AppCompatEditText editText, ImageView editButton) throws JSONException {
-        if (jsonObject.has(JsonFormConstants.DISABLED) || (jsonObject.has(JsonFormConstants.DISABLED)
-                && jsonObject.has(JsonFormConstants.READ_ONLY))) {
-            boolean disabled = jsonObject.getBoolean(JsonFormConstants.DISABLED);
-            editText.setEnabled(!disabled);
-            editText.setFocusable(!disabled);
-            editButton.setVisibility(View.GONE);
+    public static void setEditMode(JSONObject jsonObject, View editableView, ImageView editButton) throws JSONException {
+        if (jsonObject.has(JsonFormConstants.EDITABLE)) {
+            boolean editable = jsonObject.getBoolean(JsonFormConstants.EDITABLE);
+            if (editable) {
+                editButton.setVisibility(View.VISIBLE);
+                editableView.setEnabled(false);
+            } else {
+                editButton.setVisibility(View.GONE);
+            }
         } else if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
             boolean readyOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
-            editText.setEnabled(!readyOnly);
+            editableView.setEnabled(!readyOnly);
+            editButton.setVisibility(View.GONE);
+        } else if (jsonObject.has(JsonFormConstants.EDITABLE) && jsonObject.has(JsonFormConstants.READ_ONLY)) {
             editButton.setVisibility(View.VISIBLE);
+            editableView.setEnabled(false);
         }
     }
 
