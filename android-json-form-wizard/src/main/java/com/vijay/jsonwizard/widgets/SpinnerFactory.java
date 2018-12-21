@@ -155,7 +155,7 @@ public class SpinnerFactory implements FormWidgetFactory {
         }
         ((JsonApi) context).addFormDataView(spinner);
         // views.add(spinner);
-        FormUtils.showInfoIcon(jsonObject, listener, labelInfoText, labelInfoTitle, spinnerInfoIconImageView);
+        FormUtils.showInfoIcon(stepName, jsonObject, listener, labelInfoText, labelInfoTitle, spinnerInfoIconImageView, canvasIds);
         spinner.setTag(R.id.canvas_ids, canvasIds.toString());
     }
 }

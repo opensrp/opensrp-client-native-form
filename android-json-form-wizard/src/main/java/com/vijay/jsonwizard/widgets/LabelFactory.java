@@ -45,7 +45,8 @@ public class LabelFactory implements FormWidgetFactory {
     private List<View> attachJson(String stepName, Context context, JSONObject jsonObject, CommonListener
             listener, boolean popup) throws JSONException {
         List<View> views = new ArrayList<>(1);
-        RelativeLayout relativeLayout = FormUtils.createLabelRelativeLayout(jsonObject, context, listener);
+        JSONArray canvasIds = new JSONArray();
+        RelativeLayout relativeLayout = FormUtils.createLabelRelativeLayout(stepName, canvasIds, jsonObject, context, listener);
 
         relativeLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
 
@@ -69,7 +70,6 @@ public class LabelFactory implements FormWidgetFactory {
         createLabelTextView(jsonObject, context, relativeLayout);
 
         // Set the id for the view
-        JSONArray canvasIds = new JSONArray();
         relativeLayout.setId(ViewUtil.generateViewId());
         canvasIds.put(relativeLayout.getId());
         relativeLayout.setTag(R.id.canvas_ids, canvasIds.toString());
@@ -87,8 +87,8 @@ public class LabelFactory implements FormWidgetFactory {
      * @throws JSONException
      */
     private void createLabelTextView(JSONObject jsonObject, Context context, RelativeLayout relativeLayout) throws JSONException {
-        boolean hintOnText = jsonObject.optBoolean("hint_on_text", false);
-        boolean hasBg = jsonObject.optBoolean("has_bg", false);
+        boolean hintOnText = jsonObject.optBoolean(JsonFormConstants.HINT_ON_TEXT, false);
+        boolean hasBg = jsonObject.optBoolean(JsonFormConstants.HAS_BG, false);
         String labelNumber = jsonObject.optString(JsonFormConstants.LABEL_NUMBER, null);
 
         String bgColor = null;
@@ -97,27 +97,19 @@ public class LabelFactory implements FormWidgetFactory {
         String leftPadding = null;
         String rightPadding = null;
         if (hasBg) {
-            bgColor = jsonObject.optString("bg_color", "#F3F3F3");
-
-            topPadding = jsonObject.optString("top_padding", "5dp");
-            bottomPadding = jsonObject.optString("bottom_padding", "5dp");
-            leftPadding = jsonObject.optString("left_padding", "5dp");
-            rightPadding = jsonObject.optString("right_padding", "5dp");
+            bgColor = jsonObject.optString(JsonFormConstants.BG_COLOR, "#F3F3F3");
+            topPadding = jsonObject.optString(JsonFormConstants.TOP_PADDING, "5dp");
+            bottomPadding = jsonObject.optString(JsonFormConstants.BOTTOM_PADDING, "5dp");
+            leftPadding = jsonObject.optString(JsonFormConstants.LEFT_PADDING, "5dp");
+            rightPadding = jsonObject.optString(JsonFormConstants.RIGHT_PADDING, "5dp");
         }
 
         int bgColorInt = 0;
         if (hasBg) {
             bgColorInt = Color.parseColor(bgColor);
         }
-        int labelTextSize = FormUtils.getValueFromSpOrDpOrPx(jsonObject.optString("text_size", String.valueOf(context.getResources().getDimension(R
-                .dimen.default_label_text_size))), context);
 
         CustomTextView labelText = relativeLayout.findViewById(R.id.label_text);
-        if (labelNumber != null) {
-            numberText = relativeLayout.findViewById(R.id.label_text_number);
-            numberText.setVisibility(View.VISIBLE);
-        }
-
         if (bgColorInt != 0) {
             labelText.setBackgroundColor(bgColorInt);
             if (labelNumber != null) {
@@ -132,14 +124,9 @@ public class LabelFactory implements FormWidgetFactory {
                     FormUtils.getValueFromSpOrDpOrPx(rightPadding, context),
                     FormUtils.getValueFromSpOrDpOrPx(bottomPadding, context)
             );
-            if (labelNumber != null) {
-                numberText.setPadding(
-                        FormUtils.getValueFromSpOrDpOrPx(leftPadding, context),
-                        FormUtils.getValueFromSpOrDpOrPx(topPadding, context),
-                        FormUtils.getValueFromSpOrDpOrPx(rightPadding, context),
-                        FormUtils.getValueFromSpOrDpOrPx(bottomPadding, context));
-            }
         }
+        int labelTextSize = FormUtils.getValueFromSpOrDpOrPx(jsonObject.optString(JsonFormConstants.TEXT_SIZE, String.valueOf(context.getResources().getDimension(R
+                .dimen.default_label_text_size))), context);
         String textStyle = jsonObject.optString(JsonFormConstants.TEXT_STYLE, JsonFormConstants.NORMAL);
         FormUtils.setTextStyle(textStyle, labelText);
         labelText.setTextSize(labelTextSize);
@@ -147,7 +134,27 @@ public class LabelFactory implements FormWidgetFactory {
         labelText.setHintOnText(hintOnText);//Gotcha: Should be set before createLabelText is used
         labelText.setText(createLabelText(jsonObject));
 
-        if (labelNumber != null) {
+        createNumberLabel(relativeLayout, labelNumber, jsonObject, labelTextSize, textStyle, context);
+    }
+
+    private void createNumberLabel(RelativeLayout relativeLayout, String labelNumber, JSONObject jsonObject, int labelTextSize, String textStyle, Context context) {
+        if (!TextUtils.isEmpty(labelNumber)) {
+            boolean hasBg = jsonObject.optBoolean(JsonFormConstants.HAS_BG, false);
+
+            String topPadding = null;
+            String bottomPadding = null;
+            String leftPadding = null;
+            String rightPadding = null;
+            if (hasBg) {
+                topPadding = jsonObject.optString(JsonFormConstants.TOP_PADDING, "5dp");
+                bottomPadding = jsonObject.optString(JsonFormConstants.BOTTOM_PADDING, "5dp");
+                leftPadding = jsonObject.optString(JsonFormConstants.LEFT_PADDING, "5dp");
+                rightPadding = jsonObject.optString(JsonFormConstants.RIGHT_PADDING, "5dp");
+            }
+
+
+            numberText = relativeLayout.findViewById(R.id.label_text_number);
+            numberText.setVisibility(View.VISIBLE);
             Boolean readOnly = jsonObject.optBoolean(JsonFormConstants.READ_ONLY);
             String labelTextColor = readOnly ? "#737373" : jsonObject.optString(JsonFormConstants.TEXT_COLOR, null);
             FormUtils.setTextStyle(textStyle, numberText);
@@ -157,8 +164,12 @@ public class LabelFactory implements FormWidgetFactory {
             if (labelTextColor != null) {
                 numberText.setTextColor(Color.parseColor(labelTextColor));
             }
+            numberText.setPadding(
+                    FormUtils.getValueFromSpOrDpOrPx(leftPadding, context),
+                    FormUtils.getValueFromSpOrDpOrPx(topPadding, context),
+                    FormUtils.getValueFromSpOrDpOrPx(rightPadding, context),
+                    FormUtils.getValueFromSpOrDpOrPx(bottomPadding, context));
         }
-
     }
 
     /**
