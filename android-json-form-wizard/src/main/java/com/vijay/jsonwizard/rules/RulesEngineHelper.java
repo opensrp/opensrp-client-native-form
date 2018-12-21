@@ -1,226 +1,79 @@
 package com.vijay.jsonwizard.rules;
 
-import android.content.Context;
-import android.util.Log;
+/**
+ * Created by ndegwamartin on 17/12/2018.
+ * This class is used by the rules engine while it parses configurations written in teh yaml.
+ * On can for instance reference the get difference days in 'calculations' like helper.getDifferenceDays("2018-12-20") and use the value like any other. See native form sample app
+ */
+public class RulesEngineHelper {
 
-import com.google.gson.Gson;
+    private RulesEngineDateUtil rulesEngineDateUtil = new RulesEngineDateUtil();
 
-import org.jeasy.rules.api.Facts;
-import org.jeasy.rules.api.Rule;
-import org.jeasy.rules.api.RuleListener;
-import org.jeasy.rules.api.Rules;
-import org.jeasy.rules.api.RulesEngine;
-import org.jeasy.rules.core.DefaultRulesEngine;
-import org.jeasy.rules.core.RulesEngineParameters;
-import org.jeasy.rules.mvel.MVELRuleFactory;
-import org.json.JSONObject;
+    public long getDifferenceDays(String dateString) {
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-public class RulesEngineHelper implements RuleListener {
-    public final String TAG = RulesEngineHelper.class.getCanonicalName();
-    private Context context;
-    private RulesEngine defaultRulesEngine;
-    private Map<String, Rules> ruleMap;
-    private String RULE_FOLDER_PATH = "rule/";
-    private Rules rules;
-    private String selectedRuleName;
-    private Gson gson;
-    private Map<String, String> globalValues;
-    private RulesEngineUtil rulesEngineUtil;
-
-    public RulesEngineHelper(Context context, Map<String, String> globalValues) {
-        this.context = context;
-        RulesEngineParameters parameters = new RulesEngineParameters().skipOnFirstAppliedRule(true);
-        this.defaultRulesEngine = new DefaultRulesEngine(parameters);
-        ((DefaultRulesEngine) this.defaultRulesEngine).registerRuleListener(this);
-        this.ruleMap = new HashMap<>();
-        gson = new Gson();
-        this.globalValues = globalValues;
-        this.rulesEngineUtil = new RulesEngineUtil();
+        return rulesEngineDateUtil.getDifferenceDays(dateString);
 
     }
 
-    private Rules getRulesFromAsset(String fileName) {
-        try {
-            if (!ruleMap.containsKey(fileName)) {
+    public long getDifferenceDays(String dateString, String dateString2) {
 
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(context.getAssets().open(fileName)));
-                ruleMap.put(fileName, MVELRuleFactory.createRulesFrom(bufferedReader));
-            }
-            return ruleMap.get(fileName);
-        } catch (IOException e) {
-            Log.e(TAG, e.getMessage(), e);
-            return null;
-        }
+        return rulesEngineDateUtil.getDifferenceDays(dateString, dateString2);
+
     }
 
-    protected void processDefaultRules(Rules rules, Facts facts) {
-
-        defaultRulesEngine.fire(rules, facts);
+    public String addDuration(String dateString, String durationString) {
+        return rulesEngineDateUtil.addDuration(dateString, durationString);
     }
 
-    public boolean getRelevance(Map<String, String> relevanceFact, String ruleFilename) {
+    public String subtractDuration(String dateString, String durationString) {
 
-        Facts facts = initializeFacts(relevanceFact);
-
-        facts.put(RuleConstant.IS_RELEVANT, false);
-
-        rules = getRulesFromAsset(RULE_FOLDER_PATH + ruleFilename);
-
-        processDefaultRules(rules, facts);
-
-        return facts.get(RuleConstant.IS_RELEVANT);
+        return rulesEngineDateUtil.subtractDuration(dateString, durationString);
     }
 
-    public String getCalculation(Map<String, String> calculationFact, String ruleFilename) {
+    public String getDuration(String date) {
+        return rulesEngineDateUtil.getDuration(date);
 
-        Facts facts = initializeFacts(calculationFact);
-
-        facts.put(RuleConstant.CALCULATION, "0");
-
-        rules = getRulesFromAsset(RULE_FOLDER_PATH + ruleFilename);
-
-        processDefaultRules(rules, facts);
-
-        return formatCalculationReturnValue(facts.get(RuleConstant.CALCULATION));
     }
 
-    public String getConstraint(Map<String, String> constraintFact, String ruleFilename) {
+    public String getWeeksAndDaysFromDays(Integer days) {
 
-        Facts facts = initializeFacts(constraintFact);
-
-        facts.put(RuleConstant.CONSTRAINT, "0");
-
-        rules = getRulesFromAsset(RULE_FOLDER_PATH + ruleFilename);
-
-        processDefaultRules(rules, facts);
-
-        return formatCalculationReturnValue(facts.get(RuleConstant.CONSTRAINT));
+        return rulesEngineDateUtil.getWeeksAndDaysFromDays(days);
     }
 
-    private Facts initializeFacts(Map<String, String> factMap) {
+    public String formatDate(String dateString, String duration) {
 
-        if (globalValues != null) {
-            factMap.putAll(globalValues);
-        }
+        return rulesEngineDateUtil.formatDate(dateString, duration);
+    }
 
-        selectedRuleName = factMap.get(RuleConstant.SELECTED_RULE);
 
-        if (selectedRuleName != null) {
-            Log.d("Selected Rule", selectedRuleName);
+    public String addDuration(String durationString) {
+        return rulesEngineDateUtil.addDuration(durationString);
+    }
+
+    public String subtractDuration(String durationString) {
+        return rulesEngineDateUtil.subtractDuration(durationString);
+    }
+
+    public String minDate(String minimumDate) {
+
+        return rulesEngineDateUtil.minDate(minimumDate);
+    }
+
+    public String maxDate(String maximumDate) {
+
+        return rulesEngineDateUtil.maxDate(maximumDate);
+    }
+
+    //A secondary value has the format key:name e.g. ultrasound_done:yes
+    public String getSecondaryValue(String value) {
+
+        if (value.contains(":")) {
+            String[] valArray = value.split(":");
+            return valArray[1];
         } else {
-            Log.e("Selected Rule", "NO SELECTED RULE, We must be in calculation mode");
+            return value;
         }
 
-        Facts facts = new Facts();
-        facts.put("helper", rulesEngineUtil);
-
-        for (Map.Entry<String, String> entry : factMap.entrySet()) {
-
-
-            facts.put(getKey(entry.getKey()), getValue(entry.getValue()));
-        }
-
-        return facts;
-    }
-
-    private String getKey(String key) {
-        return !key.startsWith(RuleConstant.STEP) && !key.startsWith(RuleConstant.SELECTED_RULE) ? RuleConstant.PREFIX.GLOBAL + key : key;
-    }
-
-    private Object getValue(String value) {
-
-        String rawValue = value.trim();
-
-        if (isList(rawValue)) {
-
-            return gson.fromJson(rawValue, ArrayList.class);
-
-        } else if ("true".equals(rawValue) || "false".equals(rawValue)) {
-
-            return Boolean.valueOf(rawValue);
-
-        } else {
-
-            try {
-
-                return Integer.valueOf(rawValue);
-
-            } catch (NumberFormatException e) {
-
-                try {
-
-                    return Float.valueOf(rawValue);
-
-                } catch (NumberFormatException e2) {
-
-                    return rawValue;
-                }
-            }
-
-        }
-
-    }
-
-    private boolean isList(String value) {
-        return !value.isEmpty() && value.charAt(0) == '[';
-    }
-
-    @Override
-    public boolean beforeEvaluate(Rule rule, Facts facts) {
-        return selectedRuleName != null && selectedRuleName.equals(rule.getName());
-    }
-
-    @Override
-    public void afterEvaluate(Rule rule, Facts facts, boolean evaluationResult) {
-        //Overriden
-    }
-
-    @Override
-    public void beforeExecute(Rule rule, Facts facts) {
-        //Overriden
-    }
-
-    @Override
-    public void onSuccess(Rule rule, Facts facts) {
-        //Overriden
-    }
-
-    @Override
-    public void onFailure(Rule rule, Facts facts, Exception exception) {
-        //Overriden
-    }
-
-    public void setRulesFolderPath(String path) {
-        RULE_FOLDER_PATH = path;
-    }
-
-    public String getRulesFolderPath() {
-        return RULE_FOLDER_PATH;
-    }
-
-    private String formatCalculationReturnValue(Object rawValue) {
-        String value = String.valueOf(rawValue).trim();
-        if (rawValue instanceof Map) {
-
-            return new JSONObject((Map<String, String>) rawValue).toString();
-
-        } else if (value.contains(".")) {
-            try {
-
-                value = String.valueOf((float) Math.round(Float.valueOf(value) * 100) / 100);
-            } catch (NumberFormatException e) {
-
-            }
-        }
-
-        return value;
     }
 
 }
