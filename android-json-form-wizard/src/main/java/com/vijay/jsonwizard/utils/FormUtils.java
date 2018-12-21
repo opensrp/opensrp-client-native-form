@@ -643,4 +643,40 @@ public class FormUtils {
 
         return value;
     }
+
+    private JSONObject getJsonItem(String key, Context context, String stepName) {
+        JSONObject newItem = new JSONObject();
+        JsonApi jsonApi = (JsonApi) context;
+        JSONObject mJSONObject = jsonApi.getmJSONObject();
+        if (mJSONObject != null) {
+            JSONObject parentJson = jsonApi.getStep(stepName);
+            JSONArray fields = new JSONArray();
+            try {
+                if (parentJson.has(JsonFormConstants.SECTIONS) && parentJson.get(JsonFormConstants.SECTIONS) instanceof JSONArray) {
+                    JSONArray sections = parentJson.getJSONArray(JsonFormConstants.SECTIONS);
+                    for (int i = 0; i < sections.length(); i++) {
+                        JSONObject sectionJson = sections.getJSONObject(i);
+                        if (sectionJson.has(JsonFormConstants.FIELDS)) {
+                            fields = concatArray(fields, sectionJson.getJSONArray(JsonFormConstants.FIELDS));
+                        }
+                    }
+                } else if (parentJson.has(JsonFormConstants.FIELDS) && parentJson.get(JsonFormConstants.FIELDS) instanceof JSONArray) {
+                    fields = parentJson.getJSONArray(JsonFormConstants.FIELDS);
+
+                }
+
+                if (fields.length() > 0) {
+                    for (int i = 0; i < fields.length(); i++) {
+                        JSONObject item = fields.getJSONObject(i);
+                        if (item != null && item.getString(JsonFormConstants.KEY).equals(key)) {
+                            newItem = item;
+                        }
+                    }
+                }
+            } catch (JSONException e) {
+                Log.i(TAG, Log.getStackTraceString(e));
+            }
+        }
+        return newItem;
+    }
 }

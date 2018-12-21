@@ -94,10 +94,11 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     private String confirmCloseTitle;
     private String confirmCloseMessage;
     private Map<String, List<String>> ruleKeys = new HashMap<>();
+    private GenericDialogInterface genericDialogInterface;
     private RulesEngineHelper rulesEngineHelper = null;
     private JSONArray extraFieldsWithValues;
     private Form form;
-    private GenericDialogInterface genericDialogInterface;
+    private Map<String, String> globalValues = null;
 
     public void init(String json) {
         try {
@@ -106,8 +107,6 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 mJSONObject = new JSONObject();
                 throw new JSONException("Form encounter_type not set");
             }
-
-            Map<String, String> globalValues = null;
 
             //populate them global values
             if (mJSONObject.has(JsonFormConstants.JSON_FORM_KEY.GLOBAL)) {
@@ -659,7 +658,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(TAG, e.getMessage(), e);
             }
         }
     }

@@ -522,10 +522,10 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
 
                     if (isChecked) {
                         if (exclusiveSet.contains(childKey)) {
-                            getView().unCheckAllExcept(parentKey, childKey);
+                            getView().unCheckAllExcept(parentKey, childKey, compoundButton);
                         } else {
                             for (String excludeKey : exclusiveSet) {
-                                getView().unCheck(parentKey, excludeKey);
+                                getView().unCheck(parentKey, excludeKey, compoundButton);
                             }
                         }
                     }
@@ -548,7 +548,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                 popup = false;
             }
 
-            getView().unCheckAllExcept(parentKey, childKey);
+            getView().unCheckAllExcept(parentKey, childKey, compoundButton);
 
             getView().writeValue(mStepName, parentKey, childKey, openMrsEntityParent,
                     openMrsEntity, openMrsEntityId, popup);
