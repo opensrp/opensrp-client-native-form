@@ -87,8 +87,8 @@ public class LabelFactory implements FormWidgetFactory {
      * @throws JSONException
      */
     private void createLabelTextView(JSONObject jsonObject, Context context, RelativeLayout relativeLayout) throws JSONException {
-        boolean hintOnText = jsonObject.optBoolean("hint_on_text", false);
-        boolean hasBg = jsonObject.optBoolean("has_bg", false);
+        boolean hintOnText = jsonObject.optBoolean(JsonFormConstants.HINT_ON_TEXT, false);
+        boolean hasBg = jsonObject.optBoolean(JsonFormConstants.HAS_BG, false);
         String labelNumber = jsonObject.optString(JsonFormConstants.LABEL_NUMBER, null);
 
         String bgColor = null;
@@ -97,19 +97,19 @@ public class LabelFactory implements FormWidgetFactory {
         String leftPadding = null;
         String rightPadding = null;
         if (hasBg) {
-            bgColor = jsonObject.optString("bg_color", "#F3F3F3");
+            bgColor = jsonObject.optString(JsonFormConstants.BG_COLOR, "#F3F3F3");
 
-            topPadding = jsonObject.optString("top_padding", "5dp");
-            bottomPadding = jsonObject.optString("bottom_padding", "5dp");
-            leftPadding = jsonObject.optString("left_padding", "5dp");
-            rightPadding = jsonObject.optString("right_padding", "5dp");
+            topPadding = jsonObject.optString(JsonFormConstants.TOP_PADDING, "5dp");
+            bottomPadding = jsonObject.optString(JsonFormConstants.BOTTOM_PADDING, "5dp");
+            leftPadding = jsonObject.optString(JsonFormConstants.LEFT_PADDING, "5dp");
+            rightPadding = jsonObject.optString(JsonFormConstants.RIGHT_PADDING, "5dp");
         }
 
         int bgColorInt = 0;
         if (hasBg) {
             bgColorInt = Color.parseColor(bgColor);
         }
-        int labelTextSize = FormUtils.getValueFromSpOrDpOrPx(jsonObject.optString("text_size", String.valueOf(context.getResources().getDimension(R
+        int labelTextSize = FormUtils.getValueFromSpOrDpOrPx(jsonObject.optString(JsonFormConstants.TEXT_SIZE, String.valueOf(context.getResources().getDimension(R
                 .dimen.default_label_text_size))), context);
 
         CustomTextView labelText = relativeLayout.findViewById(R.id.label_text);

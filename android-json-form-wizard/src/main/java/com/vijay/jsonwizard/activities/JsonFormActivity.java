@@ -51,7 +51,6 @@ import com.vijay.jsonwizard.interfaces.OnActivityRequestPermissionResultListener
 import com.vijay.jsonwizard.interfaces.OnActivityResultListener;
 import com.vijay.jsonwizard.rules.RuleConstant;
 import com.vijay.jsonwizard.rules.RulesEngineFactory;
-import com.vijay.jsonwizard.rules.RulesEngineHelper;
 import com.vijay.jsonwizard.utils.ExObjectResult;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.PropertyManager;
@@ -102,7 +101,6 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     private String confirmCloseMessage;
     private Map<String, List<String>> ruleKeys = new HashMap<>();
     private GenericDialogInterface genericDialogInterface;
-    private RulesEngineHelper rulesEngineHelper = null;
     private JSONArray extraFieldsWithValues;
     private Form form;
     private Map<String, String> globalValues = null;

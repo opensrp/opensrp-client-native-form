@@ -21,7 +21,6 @@ import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
@@ -355,15 +354,6 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         }
     }
 
-    private void unCheckRadio(View view, String parentKey, String childKey) {
-        AppCompatRadioButton radio = (((ViewGroup) view).getChildAt(0)).findViewWithTag(JsonFormConstants.NATIVE_RADIO_BUTTON);
-        String parentKeyAtIndex = (String) radio.getTag(R.id.key);
-        String childKeyAtIndex = (String) radio.getTag(R.id.childKey);
-        if (radio.isChecked() && parentKeyAtIndex.equals(parentKey) && !childKeyAtIndex.equals(childKey)) {
-            radio.setChecked(false);
-        }
-    }
-
     @Override
     public void unCheck(String parentKey, String exclusiveKey, CompoundButton compoundButton) {
 
@@ -477,13 +467,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     }
 
     private boolean isCheckbox(View view) {
-
         return view instanceof LinearLayout && view.getTag(R.id.type).equals(JsonFormConstants.CHECK_BOX + "_parent");
-    }
-
-    private boolean isRadioButton(View view) {
-
-        return view instanceof RelativeLayout && view.getTag(R.id.type).equals(JsonFormConstants.NATIVE_RADIO_BUTTON);
     }
 
 }
