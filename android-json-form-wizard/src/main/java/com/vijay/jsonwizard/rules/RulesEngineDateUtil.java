@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by ndegwamartin on 17/12/2018.
  */
-public class RulesEngineUtil {
+public class RulesEngineDateUtil {
 
     public long getDifferenceDays(String dateString) {
 
@@ -147,6 +147,14 @@ public class RulesEngineUtil {
 
     }
 
+    public String getWeeksAndDaysFromDays(Integer days) {
+
+        double weeks = Math.round(Math.floor(days / 7));
+        Integer dayz = days % 7;
+
+        return String.format("%.0f weeks %d days", weeks, dayz);
+    }
+
     public String formatDate(String dateString, String duration) {
 
         LocalDate date = new LocalDate(Utils.reverseDateString(dateString, "-"));
@@ -229,6 +237,17 @@ public class RulesEngineUtil {
         } else {
             return "";
         }
+    }
+
+    public String getSecondaryValue(String value) {
+
+        if (value.contains(":")) {
+            String[] valArray = value.split(":");
+            return valArray[1];
+        } else {
+            return value;
+        }
+
     }
 
 }

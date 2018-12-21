@@ -55,6 +55,7 @@ public class DatePickerFactory implements FormWidgetFactory {
             }
             duration.setText(durationText);
         }
+
     }
 
 
@@ -133,6 +134,9 @@ public class DatePickerFactory implements FormWidgetFactory {
             }
 
             updateEditText(editText, jsonObject, stepName, context, duration);
+
+            editText.setTag(R.id.json_object, jsonObject);
+
             final DatePickerDialog datePickerDialog = createDateDialog(context, duration, editText, jsonObject);
 
             if (jsonObject.has(JsonFormConstants.EXPANDED) && jsonObject.getBoolean(JsonFormConstants.EXPANDED)
