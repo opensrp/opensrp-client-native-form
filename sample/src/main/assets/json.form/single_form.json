@@ -67,6 +67,274 @@
         "uploadButtonText": "Take a photo of the child"
       },
       {
+        "key": "medications",
+        "openmrs_entity_parent": "Current drugs used",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "1193",
+        "type": "check_box",
+        "label": "Which medications is she still taking?",
+        "label_info_text": "The woman reported taking these medications in the previous contact. Un-select the medications that she has stopped taking. If still taking, leave them selected.",
+        "label_info_title": "Medication follow-up",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "exclusive": [
+          "dont_know",
+          "none"
+        ],
+        "options": [
+          {
+            "key": "none",
+            "text": "None",
+            "value": false,
+            "openmrs_entity_id": "1193"
+          },
+          {
+            "key": "dont_know",
+            "text": "Don't know",
+            "value": false,
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "antacids",
+            "text": "Antacids",
+            "value": false,
+            "openmrs_entity": "ANTACID",
+            "openmrs_entity_id": "944"
+          },
+          {
+            "key": "aspirin",
+            "text": "Aspirin",
+            "value": false,
+            "openmrs_entity": "Aspirine",
+            "openmrs_entity_id": "71617"
+          },
+          {
+            "key": "calcium",
+            "text": "Calcium",
+            "value": false,
+            "openmrs_entity": "Calcium",
+            "openmrs_entity_id": "72650"
+          },
+          {
+            "key": "doxylamine",
+            "text": "Doxylamine",
+            "value": false,
+            "openmrs_entity": "DOXYLAMINE",
+            "openmrs_entity_id": "75229"
+          },
+          {
+            "key": "folic_acid",
+            "text": "Folic Acid",
+            "value": false,
+            "openmrs_entity": "FOLIC ACID",
+            "openmrs_entity_id": "76613"
+          },
+          {
+            "key": "iron",
+            "text": "Iron",
+            "value": false,
+            "openmrs_entity": "IRON",
+            "openmrs_entity_id": "78218"
+          },
+          {
+            "key": "magnesium",
+            "text": "Magnesium",
+            "value": false,
+            "openmrs_entity": "MAGNESIUM",
+            "openmrs_entity_id": "79224"
+          },
+          {
+            "key": "metoclopramide",
+            "text": "Metoclopramide",
+            "value": false,
+            "openmrs_entity": "METOCLOPRAMIDE",
+            "openmrs_entity_id": "79755"
+          },
+          {
+            "key": "vitamina",
+            "text": "Vitamin A",
+            "value": false,
+            "openmrs_entity": "VITAMIN A",
+            "openmrs_entity_id": "86339"
+          },
+          {
+            "key": "analgesic",
+            "text": "Analgesic",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "anti_convulsive",
+            "text": "Anti-convulsive",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "anti_diabetic",
+            "text": "Anti-diabetic",
+            "value": false,
+            "openmrs_entity": "Diabetes medications",
+            "openmrs_entity_id": "159460"
+          },
+          {
+            "key": "anti_heartburn",
+            "text": "Anti-heartburn",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "anthelmintic",
+            "text": "Anthelmintic",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "anti_hypertensive",
+            "text": "Anti-hypertensive",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "anti_malaria",
+            "text": "Anti-malaria",
+            "value": false,
+            "openmrs_entity": "ANTIMALARIA MEDICATIONS",
+            "openmrs_entity_id": "5839"
+          },
+          {
+            "key": "antivirals",
+            "text": "Antivirals",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "arvs",
+            "text": "Antiretrovirals (ARVs)",
+            "value": false,
+            "openmrs_entity": "ON ANTIRETROVIRALS",
+            "openmrs_entity_id": "1462"
+          },
+          {
+            "key": "antitussive",
+            "text": "Antitussive",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "asthma",
+            "text": "Asthma",
+            "value": false,
+            "openmrs_entity": "Asthma",
+            "openmrs_entity_id": "121375"
+          },
+          {
+            "key": "cotrimoxazole",
+            "text": "Cotrimoxazole",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "antibiotics",
+            "text": "Other antibiotics",
+            "value": false,
+            "openmrs_entity": "ANTIBIOTICS",
+            "openmrs_entity_id": "1195"
+          },
+          {
+            "key": "hematinic",
+            "text": "Hematinic",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "hemorrhoidal",
+            "text": "Hemorrhoidal medication",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "multivitamin",
+            "text": "Multivitamin",
+            "value": false,
+            "openmrs_entity": "MULTIVITAMIN",
+            "openmrs_entity_id": "461"
+          },
+          {
+            "key": "thyroid",
+            "text": "Thyroid medication",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "other",
+            "text": "Other (specify)",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Please specify the medication(s) that the woman is still taking"
+        }
+      },
+      {
+        "key": "medications_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Specify",
+        "v_regex": {
+          "value": "[A-Za-z\\s\.\-]*",
+          "err": "Please enter valid content"
+        },
+        "relevance": {
+          "step1:medications": {
+            "ex-checkbox": [
+              {
+                "or": [
+                  "other"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "penicillin_comply",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Is she taking her penicillin treatment for syphilis?",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "label_info_text": "A maximum of up to 3 weekly doses may be required.",
+        "label_info_title": "Syphilis Compliance",
+        "options": [
+          {
+            "key": "1",
+            "text": "Yes"
+          },
+          {
+            "key": "0",
+            "text": "No"
+          }
+        ]
+      },
+      {
         "key": "gps",
         "openmrs_entity_parent": "usual_residence",
         "openmrs_entity": "person_address",
@@ -924,7 +1192,6 @@
         "type": "native_radio",
         "read_only": true,
         "label": "Highest Level of School.",
-        "label_text_size": "18px",
         "label_text_color": "#FF9800",
         "label_info_text": "Checking out the display oof the info icon needed to display this information",
         "label_info_title": "Highest Level of School",
