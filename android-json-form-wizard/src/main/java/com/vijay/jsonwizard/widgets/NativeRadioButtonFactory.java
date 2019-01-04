@@ -401,7 +401,6 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         specifyTextView.setTag(R.id.native_radio_button, getRadioButton());
         specifyTextView.setTag(R.id.specify_context, context);
         specifyTextView.setTag(R.id.secondaryValues, formUtils.getSecondaryValues(item, jsonObject.getString(JsonFormConstants.TYPE)));
-        specifyTextView.setTag(R.id.specify_textview, specifyTextView);
         specifyTextView.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
         specifyTextView.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
         specifyTextView.setText(createSpecifyText(text));

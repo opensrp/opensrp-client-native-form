@@ -31,7 +31,6 @@
             android:layout_toRightOf="@+id/mainRadioButton"
             android:ellipsize="end"
             android:textStyle="italic"
-            android:text="Awesome text"
             android:visibility="gone" />
     </LinearLayout>
 

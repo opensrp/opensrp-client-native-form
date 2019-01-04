@@ -2,6 +2,8 @@ package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Build;
+import android.text.Layout;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -110,7 +112,9 @@ public class ToasterNotesFactory implements FormWidgetFactory {
             default:
                 break;
         }
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            toasterNotesTextView.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD);
+        }
         toasterNotesTextView.setText(text);
         linearLayout.setTag(R.id.original_text, text);
         toasterNotesTextView.setTextColor(Color.parseColor(textColor));
