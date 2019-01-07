@@ -58,7 +58,7 @@
     "display_back_button": "true",
     "title": "Birth Registration",
     "fields": [
-     /* {
+      {
         "key": "Child_Photo",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -380,8 +380,8 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "person_attribute",
         "openmrs_entity_id": "Child_Register_Card_Number",
-        "editable":true,
-        "read_only":false,
+        "editable": true,
+        "read_only": false,
         "value": "1891389133",
         "type": "edit_text",
         "hint": "Child's register card number"
@@ -1183,7 +1183,7 @@
         "openmrs_entity_id": "spacer",
         "type": "spacer",
         "spacer_height": "20sp"
-      },*/
+      },
       {
         "key": "native_radio",
         "openmrs_entity_parent": "",
@@ -1226,7 +1226,7 @@
         "v_required": {
           "value": true
         }
-      }/*,
+      },
       {
         "key": "native_radio_tertiary_education",
         "openmrs_entity_parent": "",
@@ -1458,7 +1458,7 @@
         "type": "normal_edit_text",
         "edit_type": "name",
         "edit_text_style": "bordered",
-        "value":"1909319333",
+        "value": "1909319333",
         "v_required": {
           "value": "true",
           "err": "Please enter the last name"
@@ -1780,7 +1780,7 @@
             "specify_info_color": "#b5b5b5",
             "specify_widget": "check_box"
           }
-      }*/
-    ]
-  }
-}
+          }
+        ]
+      }
+    }
