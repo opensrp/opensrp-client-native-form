@@ -175,7 +175,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
                 } else {
                     radioButton.setText(arrayString[0]);
                 }
-                radioButton.setChecked(true);
+                radioButton.performClick();
             }
         });
     }
