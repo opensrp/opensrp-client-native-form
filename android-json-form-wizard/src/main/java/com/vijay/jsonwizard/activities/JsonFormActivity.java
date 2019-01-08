@@ -267,9 +267,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                             genericDialogInterface.addSelectedValues(formUtils.addAssignedValue(keyAtIndex, "", value, itemType, itemText));
                             extraFieldsWithValues = fields;
                         }
-                        if (!TextUtils.isEmpty(value)) {
-                            item.put(JsonFormConstants.VALUE, value);
-                        }
+                        item.put(JsonFormConstants.VALUE, itemType.equals(JsonFormConstants.HIDDEN) && TextUtils.isEmpty(value) ? item.has(JsonFormConstants.VALUE) && !TextUtils.isEmpty(item.getString(JsonFormConstants.VALUE)) ? item.getString(JsonFormConstants.VALUE) : value : value);
                     }
                     item.put(JsonFormConstants.OPENMRS_ENTITY_PARENT, openMrsEntityParent);
                     item.put(JsonFormConstants.OPENMRS_ENTITY, openMrsEntity);

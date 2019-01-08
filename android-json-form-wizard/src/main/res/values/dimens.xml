@@ -29,6 +29,7 @@
     <dimen name="default_label_text_size">20px</dimen>
     <dimen name="options_default_text_size">18px</dimen>
     <dimen name="specify_date_default_text_size">6sp</dimen>
+    <dimen name="extra_info_default_text_size">7sp</dimen>
     <dimen name="options_extra_info_text_size">18px</dimen>
     <dimen name="native_radio_button_padding">20dp</dimen>
     <dimen name="native_radio_button_text_view_initial_left_margin">55dp</dimen>
