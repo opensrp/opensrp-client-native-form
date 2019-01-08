@@ -16,7 +16,6 @@
             style="@style/Material.Drawable.RadioButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:paddingStart="@dimen/native_radio_button_padding"
             android:paddingLeft="@dimen/native_radio_button_padding"
             android:textSize="20sp" />
@@ -26,14 +25,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
-            android:layout_marginLeft="4dp"
             android:layout_marginEnd="4dp"
-            android:layout_toEndOf="@+id/mainRadioButton"
-            android:layout_toRightOf="@+id/mainRadioButton"
             android:ellipsize="end"
-            android:textSize="@dimen/specify_date_default_text_size"
+            android:text="Real programmers set the universal constants at the start such that the universe evolves to contain the disk with the data they want"
             android:textStyle="italic"
-            android:visibility="gone" />
+            android:visibility="visible" />
     </LinearLayout>
 
 

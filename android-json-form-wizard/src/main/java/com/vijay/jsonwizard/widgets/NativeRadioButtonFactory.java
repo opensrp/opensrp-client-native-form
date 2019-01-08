@@ -476,6 +476,11 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
     private void createSpecifyTextView(Context context, RelativeLayout rootLayout, JSONObject jsonObject, CommonListener listener,
                                        JSONObject item, String stepName, JsonFormFragment formFragment, Boolean readOnly) throws JSONException {
 
+        String text = item.has(JsonFormConstants.SECONDARY_VALUE) ?
+                item.has(JsonFormConstants.CONTENT_WIDGET) && item.getString(JsonFormConstants.CONTENT_WIDGET).equals(JsonFormConstants.DATE_PICKER) ?
+                        context.getResources().getString(R.string.radio_button_date_change) :
+                        formUtils.getSpecifyText(item.getJSONArray(JsonFormConstants.SECONDARY_VALUE)) : item.getString(JsonFormConstants.CONTENT_INFO);
+
         String text_color = item.optString(JsonFormConstants.CONTENT_INFO_COLOR, JsonFormConstants.DEFAULT_HINT_TEXT_COLOR);
         String specifyWidget = item.optString(JsonFormConstants.CONTENT_WIDGET, "");
         String specifyContent = item.optString(JsonFormConstants.CONTENT_FORM, null);
@@ -496,8 +501,6 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         specifyTextView.setTag(R.id.secondaryValues, formUtils.getSecondaryValues(item, jsonObject.getString(JsonFormConstants.TYPE)));
         specifyTextView.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
         specifyTextView.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
-        String text = !TextUtils.isEmpty(secondaryValueDate) ? context.getResources().getString(R.string.radio_button_date_change) : item.getString(JsonFormConstants.CONTENT_INFO);
-
         specifyTextView.setText(createSpecifyText(text));
         specifyTextView.setTextSize(context.getResources().getDimension(R.dimen.specify_date_default_text_size));
 
