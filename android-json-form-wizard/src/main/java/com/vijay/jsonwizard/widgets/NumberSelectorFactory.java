@@ -36,16 +36,16 @@ import java.util.List;
 import java.util.Map;
 
 public class NumberSelectorFactory implements FormWidgetFactory {
+    public static final String TAG = NumberSelectorFactory.class.getCanonicalName();
     private static CustomTextView selectedTextView;
     private static int selectedItem = -1;
     private static HashMap<ViewParent, CustomTextView> selectedTextViews = new HashMap<>();
     private static ArrayAdapter<String> dataAdapter;
+    private static NumberSelectorFactoryReceiver receiver;
     private SelectedNumberClickListener selectedNumberClickListener = new SelectedNumberClickListener();
     private Spinner spinner;
     private Context context;
     private CommonListener listener;
-    public static final String TAG = NumberSelectorFactory.class.getCanonicalName();
-    private static NumberSelectorFactoryReceiver receiver;
     private Map<String, JSONObject> jsonObjectMap = new HashMap<>();
     private Map<String, LinearLayout> rootLayoutMap = new HashMap<>();
 
@@ -190,6 +190,10 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         }
     }
 
+    public static NumberSelectorFactoryReceiver getNumberSelectorsReceiver() {
+        return receiver;
+    }
+
     private void createNumberSelector(CustomTextView textView) {
         final Spinner spinner = (Spinner) textView.getTag(R.id.number_selector_spinner);
 
@@ -266,7 +270,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
     @SuppressLint("NewApi")
     private void createTextViews(Context context, JSONObject jsonObject, LinearLayout linearLayout, CommonListener listener, String stepName, boolean popup) throws JSONException {
         int startSelectionNumber = jsonObject.optInt(JsonFormConstants.START_SELECTION_NUMBER, 1);
-        int width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.85);
+        int width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.83);
         int numberOfSelectors = jsonObject.optInt(JsonFormConstants.NUMBER_OF_SELECTORS, 5);
 
         if (linearLayout.getTag(R.id.is_automatic) == null) {
@@ -380,11 +384,6 @@ public class NumberSelectorFactory implements FormWidgetFactory {
             createNumberSelector((CustomTextView) view);
         }
     }
-
-    public static NumberSelectorFactoryReceiver getNumberSelectorsReceiver() {
-        return receiver;
-    }
-
 
     public class NumberSelectorFactoryReceiver extends BroadcastReceiver {
 
