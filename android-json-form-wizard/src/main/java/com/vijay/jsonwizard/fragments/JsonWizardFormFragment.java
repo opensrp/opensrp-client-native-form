@@ -166,7 +166,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
         navigationToolbar = rootView.findViewById(R.id.navigation_toolbar);
     }
 
-    private void setupCustomToolbar() {
+    protected void setupCustomToolbar() {
         setUpBackButton();
 
         try {
@@ -204,7 +204,10 @@ public class JsonWizardFormFragment extends JsonFormFragment {
         return null;
     }
 
-    ////////////////////////////////////////////////////////////////
+    public TextView getStepName() {
+        return stepName;
+    }
+////////////////////////////////////////////////////////////////
     // Inner classes
     ////////////////////////////////////////////////////////////////
 

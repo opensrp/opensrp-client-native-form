@@ -36,9 +36,10 @@
                 android:layout_toLeftOf="@id/generic_dialog_done_button"
                 android:background="@null"
                 android:text="@string/cancel"
+                android:textSize="20sp"
                 android:textAllCaps="true"
                 android:textColor="@color/dialog_button_blue_color"
-                android:textStyle="bold" />
+                />
 
             <Button
                 android:id="@+id/generic_dialog_done_button"
@@ -48,9 +49,10 @@
                 android:layout_alignParentRight="true"
                 android:background="@null"
                 android:text="@string/done"
+                android:textSize="20sp"
                 android:textAllCaps="true"
                 android:textColor="@color/dialog_button_blue_color"
-                android:textStyle="bold" />
+                />
         </RelativeLayout>
     </LinearLayout>
 </ScrollView>

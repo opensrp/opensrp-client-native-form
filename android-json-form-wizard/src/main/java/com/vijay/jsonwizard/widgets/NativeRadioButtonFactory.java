@@ -52,7 +52,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
     private static final String TAG = NativeRadioButtonFactory.class.getCanonicalName();
     private RadioButton radioButton;
     private CustomTextView extraInfoTextView;
-    private FormUtils formUtils = new FormUtils();
+    private static FormUtils formUtils = new FormUtils();
 
     public static void showDateDialog(View view) {
 
@@ -140,37 +140,23 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
                     radioButton.setText(arrayString[0] + ": " + DATE_FORMAT.format(calendarDate.getTime()));
                     customTextView.setText(createSpecifyText(context.getResources().getString(R.string.radio_button_date_change)));
 
+                    if (context instanceof JsonFormActivity) {
+                        HashMap<String, String> map = new HashMap<>();
+                        map.put(customTextView.getTag(R.id.key).toString(), customTextView.getTag(R.id.childKey) + ":" + DATE_FORMAT.format(calendarDate.getTime()));
 
-                    try {
+                        Intent intent = new Intent(JsonFormConstants.INTENT_ACTION.JSON_FORM_ACTIVITY);
+                        intent.putExtra(JsonFormConstants.INTENT_KEY.MESSAGE, map);
+                        intent.putExtra(JsonFormConstants.INTENT_KEY.MESSAGE_TYPE, JsonFormConstants.MESSAGE_TYPE.GLOBAL_VALUES);
 
-                        if (context instanceof JsonFormActivity) {
-
-                            HashMap<String, String> map = new HashMap<>();
-
-                            map.put(customTextView.getTag(R.id.key).toString(), customTextView.getTag(R.id.childKey) + ":" + DATE_FORMAT.format(calendarDate.getTime()));
-
-                            Intent intent = new Intent(JsonFormConstants.INTENT_ACTION.JSON_FORM_ACTIVITY);
-                            intent.putExtra(JsonFormConstants.INTENT_KEY.MESSAGE, map);
-                            intent.putExtra(JsonFormConstants.INTENT_KEY.MESSAGE_TYPE, JsonFormConstants.MESSAGE_TYPE.GLOBAL_VALUES);
-
-                            ((JsonFormActivity) context).getLocalBroadcastManager().sendBroadcast(intent);
-                        }
-
-
-                        JSONObject parentJsonObject = (JSONObject) ((View) customTextView.getParent().getParent().getParent()).getTag(R.id.json_object);
-
-                        if (parentJsonObject != null) {
-
-                            JSONObject jsonObject = new JSONObject();
-                            jsonObject.put(JsonFormConstants.KEY, parentJsonObject.getString(JsonFormConstants.KEY));
-                            jsonObject.put(JsonFormConstants.TYPE, JsonFormConstants.DATE_PICKER);
-                            jsonObject.put(JsonFormConstants.VALUE, DATE_FORMAT.format(calendarDate.getTime()));
-
-                            parentJsonObject.put(JsonFormConstants.SECONDARY_VALUE, jsonObject);
-                        }
-                    } catch (JSONException e) {
-                        Log.e(TAG, e.getMessage(), e);
+                        ((JsonFormActivity) context).getLocalBroadcastManager().sendBroadcast(intent);
                     }
+                    String key = (String) customTextView.getTag(R.id.key);
+                    String childKey = (String) customTextView.getTag(R.id.childKey);
+                    String stepName = (String) customTextView.getTag(R.id.specify_step_name);
+                    Context context = (Context) customTextView.getTag(R.id.specify_context);
+
+
+                    onGenericDataPass(key, childKey, stepName, context, calendarDate);
 
                 } else {
                     radioButton.setText(arrayString[0]);
@@ -178,6 +164,83 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
                 radioButton.setChecked(true);
             }
         });
+    }
+
+    private static void onGenericDataPass(String parentKey, String childKey, String stepName, Context context, Calendar calendarDate) {
+        Activity activity = (Activity) context;
+        JsonApi jsonApi = (JsonApi) activity;
+        JSONObject mJSONObject = jsonApi.getmJSONObject();
+        if (mJSONObject != null) {
+            JSONObject parentJson = jsonApi.getStep(stepName);
+            JSONArray fields = new JSONArray();
+            try {
+                if (parentJson.has(JsonFormConstants.SECTIONS) && parentJson.get(JsonFormConstants.SECTIONS) instanceof JSONArray) {
+                    JSONArray sections = parentJson.getJSONArray(JsonFormConstants.SECTIONS);
+                    for (int i = 0; i < sections.length(); i++) {
+                        JSONObject sectionJson = sections.getJSONObject(i);
+                        if (sectionJson.has(JsonFormConstants.FIELDS)) {
+                            fields = formUtils.concatArray(fields, sectionJson.getJSONArray(JsonFormConstants.FIELDS));
+                        }
+                    }
+                } else if (parentJson.has(JsonFormConstants.FIELDS) && parentJson.get(JsonFormConstants.FIELDS) instanceof JSONArray) {
+                    fields = parentJson.getJSONArray(JsonFormConstants.FIELDS);
+
+                }
+
+                if (fields.length() > 0) {
+                    for (int i = 0; i < fields.length(); i++) {
+                        JSONObject item = fields.getJSONObject(i);
+                        if (item != null && item.getString(JsonFormConstants.KEY).equals(parentKey)) {
+                            radioButtonOptionAssignSecondaryValue(item, childKey, calendarDate);
+                        }
+                    }
+                }
+
+                jsonApi.setmJSONObject(mJSONObject);
+
+            } catch (JSONException e) {
+                Log.i(TAG, Log.getStackTraceString(e));
+            }
+        }
+    }
+
+    /**
+     * This assign the secondary value to the radio button options
+     * @param jsonObject
+     * @param childKey
+     * @param calendarDate
+     * @throws JSONException
+     */
+    private static void radioButtonOptionAssignSecondaryValue(JSONObject jsonObject, String childKey, Calendar calendarDate) throws JSONException {
+        if (jsonObject.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
+            JSONArray jsonArray = jsonObject.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject option = jsonArray.getJSONObject(i);
+                if (option.has(JsonFormConstants.KEY) && option.getString(JsonFormConstants.KEY).equals(childKey)) {
+                    addSecondaryValue(option, calendarDate);
+                }
+            }
+        }
+    }
+
+    /**
+     * Add the secondary value object
+     * @param item
+     * @param calendarDate
+     * @throws JSONException
+     */
+    private static void addSecondaryValue(JSONObject item, Calendar calendarDate) throws JSONException {
+        JSONObject valueObject = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        valueObject.put(JsonFormConstants.KEY, item.getString(JsonFormConstants.KEY));
+        valueObject.put(JsonFormConstants.TYPE, JsonFormConstants.DATE_PICKER);
+        valueObject.put(JsonFormConstants.VALUE, jsonArray.put(DATE_FORMAT.format(calendarDate.getTime())));
+
+        try {
+            item.put(JsonFormConstants.SECONDARY_VALUE, valueObject);
+        } catch (Exception e) {
+            Log.i(TAG, Log.getStackTraceString(e));
+        }
     }
 
     private static String createSpecifyText(String text) {
@@ -401,7 +464,6 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         specifyTextView.setTag(R.id.native_radio_button, getRadioButton());
         specifyTextView.setTag(R.id.specify_context, context);
         specifyTextView.setTag(R.id.secondaryValues, formUtils.getSecondaryValues(item, jsonObject.getString(JsonFormConstants.TYPE)));
-        specifyTextView.setTag(R.id.specify_textview, specifyTextView);
         specifyTextView.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
         specifyTextView.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
         specifyTextView.setText(createSpecifyText(text));
