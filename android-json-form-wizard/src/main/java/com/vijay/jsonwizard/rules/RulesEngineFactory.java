@@ -207,7 +207,9 @@ public class RulesEngineFactory implements RuleListener {
 
     private String formatCalculationReturnValue(Object rawValue) {
         String value = String.valueOf(rawValue).trim();
-        if (rawValue instanceof Map) {
+        if (value.isEmpty()) {
+            return "0";
+        } else if (rawValue instanceof Map) {
 
             return new JSONObject((Map<String, String>) rawValue).toString();
 
@@ -218,6 +220,8 @@ public class RulesEngineFactory implements RuleListener {
             } catch (NumberFormatException e) {
 
             }
+        } else if (value.startsWith("-")) {
+            value = "0";
         }
 
         return value;

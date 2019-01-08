@@ -82,7 +82,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     private static final String TAG = JsonFormActivity.class.getSimpleName();
     private static final String JSON_STATE = "jsonState";
     private static final String FORM_STATE = "formState";
-    private final Set<Character> JAVA_OPERATORS = new HashSet<>(Arrays.asList('(', '!', ',', '?', '+', '-', '*', '/', '%', '+', '-', '.', '^', ')', '<', '>', '=', '{', '}', ':', ';'));
+    private final Set<Character> JAVA_OPERATORS = new HashSet<>(Arrays.asList('(', '!', ',', '?', '+', '-', '*', '/', '%', '+', '-', '.', '^', ')', '<', '>', '=', '{', '}', ':', ';', '[', ']'));
     private final List<String> PREFICES_OF_INTEREST = Arrays.asList(RuleConstant.PREFIX.GLOBAL, RuleConstant.STEP);
     private FormUtils formUtils = new FormUtils();
     private Toolbar mToolbar;
@@ -250,8 +250,12 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 JSONObject item = fields.getJSONObject(i);
                 String keyAtIndex = item.getString(JsonFormConstants.KEY);
                 String itemType = item.has(JsonFormConstants.TYPE) ? item.getString(JsonFormConstants.TYPE) : "";
-                keyAtIndex = itemType.equals(JsonFormConstants.NUMBERS_SELECTOR) ? keyAtIndex + JsonFormConstants.SUFFIX.SPINNER : keyAtIndex;
-                if (key.equals(keyAtIndex) || isNumberSelector(key, keyAtIndex)) {
+                boolean isSpecialWidget = isSpecialWidget(key, itemType);
+
+                if (key.equals(keyAtIndex) || isSpecialWidget) {
+
+                    String cleanKey = isSpecialWidget ? cleanWidgetKey(key, itemType) : key;
+
                     if (item.has(JsonFormConstants.TEXT)) {
                         item.put(JsonFormConstants.TEXT, value);
                     } else {
@@ -270,18 +274,39 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     item.put(JsonFormConstants.OPENMRS_ENTITY_PARENT, openMrsEntityParent);
                     item.put(JsonFormConstants.OPENMRS_ENTITY, openMrsEntity);
                     item.put(JsonFormConstants.OPENMRS_ENTITY_ID, openMrsEntityId);
-                    refreshCalculationLogic(key, null, popup);
-                    refreshSkipLogic(key, null, popup);
-                    refreshConstraints(key, null);
-                    refreshMediaLogic(key, value);
+                    refreshCalculationLogic(cleanKey, null, popup);
+                    refreshSkipLogic(cleanKey, null, popup);
+                    refreshConstraints(cleanKey, null);
+                    refreshMediaLogic(cleanKey, value);
                     return;
                 }
             }
         }
     }
 
-    private boolean isNumberSelector(String itemKey, String selectedKey) {
-        return selectedKey.startsWith(JsonFormConstants.NUMBERS_SELECTOR) && ((itemKey.substring(0, itemKey.lastIndexOf('_')).equals(selectedKey.substring(0, selectedKey.lastIndexOf('_'))) || selectedKey.equals(itemKey + JsonFormConstants.SUFFIX.SPINNER)));
+    private boolean isSpecialWidget(String itemKey, String itemType) {
+
+        if (isNumberSelector(itemKey, itemType)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private String cleanWidgetKey(String itemKey, String itemType) {
+
+        String key = itemKey;
+
+        if (isNumberSelector(itemKey, itemType)) {
+
+            key = itemKey.endsWith(JsonFormConstants.SUFFIX.TEXT_VIEW) ? itemKey.substring(0, itemKey.indexOf(JsonFormConstants.SUFFIX.TEXT_VIEW)) : itemKey.substring(0, itemKey.indexOf(JsonFormConstants.SUFFIX.SPINNER));
+        }
+
+        return key;
+    }
+
+    private boolean isNumberSelector(String itemKey, String itemType) {
+        return itemType.equals(JsonFormConstants.NUMBERS_SELECTOR) && itemKey != null && (itemKey.endsWith(JsonFormConstants.SUFFIX.TEXT_VIEW) || itemKey.endsWith(JsonFormConstants.SUFFIX.SPINNER));
     }
 
     protected void checkBoxWriteValue(String stepName, String parentKey, String childObjectKey, String childKey, String value, boolean popup) throws JSONException {
@@ -694,7 +719,8 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
                         Map<String, String> curValueMap = getValueFromAddress(address, popup);
 
-                        errorMessage = enforceConstraint(curValueMap, curView, curConstraint);
+                        errorMessage = enforceConstraint(curValueMap, curConstraint);
+
                         if (errorMessage != null) break;
                     }
                 }
@@ -716,17 +742,16 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                                 break;
                             }
                         }
-                    } else if (curView instanceof LinearLayout && curView.getTag(R.id.key).toString().startsWith(JsonFormConstants.NUMBERS_SELECTOR) && !TextUtils.isEmpty(errorMessage) && (curView.getTag(R.id.previous) == null || !curView.getTag(R.id.previous).equals(errorMessage))) {
+                    } else if (curView.getTag(R.id.type).toString().equals(JsonFormConstants.NUMBERS_SELECTOR) && !TextUtils.isEmpty(errorMessage) && (curView.getTag(R.id.previous) == null || !curView.getTag(R.id.previous).equals(errorMessage))) {
 
-                        if (!"false".equals(errorMessage)) {
-                            Intent localIntent = new Intent(JsonFormConstants.INTENT_ACTION.NUMBER_SELECTOR_FACTORY);
-                            localIntent.putExtra(JsonFormConstants.MAX_SELECTION_VALUE, Integer.valueOf(errorMessage));
-                            localIntent.putExtra(JsonFormConstants.JSON_OBJECT_KEY, curView.getTag(R.id.key).toString());
-                            localIntent.putExtra(JsonFormConstants.STEPNAME, address[0]);
-                            localIntent.putExtra(JsonFormConstants.IS_POPUP, popup);
-                            localBroadcastManager.sendBroadcast(localIntent);
-                            curView.setTag(R.id.previous, errorMessage); //Store value to avoid re-fires
-                        }
+                        Intent localIntent = new Intent(JsonFormConstants.INTENT_ACTION.NUMBER_SELECTOR_FACTORY);
+                        localIntent.putExtra(JsonFormConstants.MAX_SELECTION_VALUE, Integer.valueOf(errorMessage));
+                        localIntent.putExtra(JsonFormConstants.JSON_OBJECT_KEY, curView.getTag(R.id.key).toString());
+                        localIntent.putExtra(JsonFormConstants.STEPNAME, address[0]);
+                        localIntent.putExtra(JsonFormConstants.IS_POPUP, popup);
+                        localBroadcastManager.sendBroadcast(localIntent);
+                        curView.setTag(R.id.previous, errorMessage); //Store value to avoid re-fires
+
 
                     } else if (curView instanceof RadioGroup && curView.getTag(R.id.type).toString().equals(JsonFormConstants.NATIVE_RADIO_BUTTON) && !TextUtils.isEmpty(errorMessage) && (curView.getTag(R.id.previous) == null || !curView.getTag(R.id.previous).equals(errorMessage))) {
 
@@ -1049,7 +1074,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             boolean viewDoesntHaveValue = TextUtils.isEmpty(value);
             if (view instanceof CheckBox) {
                 viewDoesntHaveValue = !((CheckBox) view).isChecked();
-            } else if (isNumberSelectorConstraint(view)) {
+            } else if (isNumberSelectorConstraint(view) || isDatePickerNativeRadio(view)) {
                 return args.length > 1 ? args[1] : "";//clever fix to pass back the max value for number selectors
 
             }
@@ -1067,21 +1092,12 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         return errorMessage;
     }
 
-    private String enforceConstraint(Map<String, String> curValueMap, View view, JSONObject constraint) throws
-            Exception {
-        String errorMessage = "";
-        if (isNumberSelectorConstraint(view)) {
-
-            errorMessage = curValueMap.size() == 0 ? "" : rulesEngineFactory.getConstraint(curValueMap, constraint.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getString(RuleConstant.RULES_FILE));
-        } else if (isDatePickerNativeRadio(view)) {
-
-            errorMessage = curValueMap.size() == 0 ? "" : rulesEngineFactory.getConstraint(curValueMap, constraint.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getString(RuleConstant.RULES_FILE));
-        }
-        return errorMessage;
+    private String enforceConstraint(Map<String, String> curValueMap, JSONObject constraint) throws Exception {
+        return curValueMap.size() == 0 ? "0" : rulesEngineFactory.getConstraint(curValueMap, constraint.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getString(RuleConstant.RULES_FILE));
     }
 
     private boolean isNumberSelectorConstraint(View view) {
-        return view instanceof LinearLayout && view.getTag(R.id.key).toString().startsWith(JsonFormConstants.NUMBERS_SELECTOR);
+        return view.getTag(R.id.type).equals(JsonFormConstants.NUMBERS_SELECTOR);
     }
 
     private boolean isDatePickerNativeRadio(View view) {
@@ -1399,10 +1415,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     checkboxLabel.setText(getRenderText(calculation, checkboxLabel.getTag(R.id.original_text).toString()));
                 }
 
-
             } else if (view instanceof TextableView) {
                 TextableView textView = ((TextableView) view);
-                textView.setText(calculation.charAt(0) == '{' ? getRenderText(calculation, textView.getTag(R.id.original_text).toString()) : calculation);
+                textView.setText(calculation.charAt(0) == '{' ? getRenderText(calculation, textView.getTag(R.id.original_text).toString()) : (textView.getTag(R.id.original_text) != null && "0".equals(calculation)) ? textView.getTag(R.id.original_text).toString() : calculation);
             } else if (view instanceof EditText) {
 
                 ((EditText) view).setText(calculation);
