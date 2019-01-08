@@ -32,15 +32,15 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_gravity="center_vertical"
+            android:layout_marginStart="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
             android:layout_toStartOf="@+id/toaster_notes_info"
             android:layout_toLeftOf="@+id/toaster_notes_info"
             android:layout_toEndOf="@+id/toaster_notes_image"
             android:layout_toRightOf="@+id/toaster_notes_image"
             android:gravity="center_vertical"
-            android:layout_marginEnd="15dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
             android:textSize="16sp" />
 
         <ImageView

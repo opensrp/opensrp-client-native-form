@@ -126,10 +126,10 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             ValidationStatus validationStatus = SpinnerFactory.validate(formFragmentView, spinner);
             if (!validationStatus.isValid()) {
                 if (requestFocus) validationStatus.requestAttention();
-                spinner.setError(validationStatus.getErrorMessage());
+                setSpinnerError(spinner, validationStatus.getErrorMessage());
                 return validationStatus;
             } else {
-                spinner.setError(null);
+                setSpinnerError(spinner, null);
             }
         } else if (childAt instanceof CustomTextView) {
             CustomTextView customTextView = (CustomTextView) childAt;
@@ -353,7 +353,12 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                 }
                 break;
             case JsonFormConstants.EDIT_TEXT:
-                setViewEditable(v);
+                String infoIcon = (String) v.getTag(R.id.label_dialog_info);
+                if (!TextUtils.isEmpty(infoIcon)) {
+                    showInformationDialog(v);
+                } else {
+                    setViewEditable(v);
+                }
                 break;
             case JsonFormConstants.NORMAL_EDIT_TEXT:
                 setViewEditable(v);
@@ -613,5 +618,13 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             Log.d(TAG, e.getMessage());
         }
         return null;
+    }
+
+    private static void setSpinnerError(MaterialSpinner spinner, String spinnerError) {
+        try {
+            spinner.setError(spinnerError);
+        } catch (IllegalArgumentException e) {
+            Log.e(TAG, e.getMessage(), e);
+        }
     }
 }

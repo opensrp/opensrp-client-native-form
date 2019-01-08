@@ -7,9 +7,10 @@
 
     <LinearLayout
         android:id="@+id/radioContentLinearLayout"
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
         <RadioButton
             android:id="@+id/mainRadioButton"
             style="@style/Material.Drawable.RadioButton"
@@ -30,10 +31,10 @@
             android:layout_toEndOf="@+id/mainRadioButton"
             android:layout_toRightOf="@+id/mainRadioButton"
             android:ellipsize="end"
+            android:textSize="@dimen/specify_date_default_text_size"
             android:textStyle="italic"
             android:visibility="gone" />
     </LinearLayout>
-
 
 
     <com.vijay.jsonwizard.views.CustomTextView

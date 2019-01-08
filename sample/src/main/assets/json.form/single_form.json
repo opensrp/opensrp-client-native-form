@@ -419,6 +419,8 @@
         "openmrs_entity_id": "last_name",
         "type": "edit_text",
         "hint": "Last name *",
+        "label_info_text": "If LMP is unknown and ultrasound wasn't done or it wasn't done early (before 24 weeks), then assess GA based on Symphysis Fundal Height (SFH) or abdominal palpation. Compare this GA against ultrasound GA (if done).",
+        "label_info_title": "GA from SFH or abdominal palpation - weeks",
         "edit_type": "name",
         "v_required": {
           "value": "true",
@@ -1185,7 +1187,7 @@
         "spacer_height": "20sp"
       },
       {
-        "key": "native_radio",
+        "key": "sfh_edd",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
@@ -1222,10 +1224,18 @@
             "text_color": "#358CB7"
           }
         ],
-        "value": "high_school",
         "v_required": {
           "value": true
         }
+      },
+      {
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "key": "sfh_edd_date",
+        "type": "hidden",
+        "label_text_style": "bold",
+        "text_color": "#FF0000"
       },
       {
         "key": "native_radio_tertiary_education",
@@ -1780,7 +1790,8 @@
             "specify_info_color": "#b5b5b5",
             "specify_widget": "check_box"
           }
-          }
         ]
       }
-    }
+    ]
+  }
+}

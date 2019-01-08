@@ -99,7 +99,7 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
         String prev = mView.getTag(R.id.previous) != null ? mView.getTag(R.id.previous).toString() : null;
 
         //Check if trigger is Automatic and that text hasn't changed
-        return ((currentFocus != null || !currentFocus.equals(mView)) && (prev != null && prev.equals(text)));
+        return ((currentFocus == null || !currentFocus.equals(mView)) && (prev != null && prev.equals(text)));
 
 
     }
