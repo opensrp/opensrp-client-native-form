@@ -183,7 +183,9 @@
             "text": "Abnormal",
             "specify_info": "Specify",
             "specify_info_color": "#b5b5b5",
-            "specify_widget": "check_box"
+            "specify_widget": "check_box",
+            "content_form": "child_enrollment_third_sub_form",
+            "content_form_location": ""
           }
         ]
       }

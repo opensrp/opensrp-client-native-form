@@ -110,7 +110,6 @@ public class ToasterNotesFactory implements FormWidgetFactory {
             default:
                 break;
         }
-
         toasterNotesTextView.setText(text);
         linearLayout.setTag(R.id.original_text, text);
         toasterNotesTextView.setTextColor(Color.parseColor(textColor));

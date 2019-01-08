@@ -11,9 +11,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
-        android:paddingTop="8dp"
+        android:text="1 "
         android:paddingBottom="8dp"
-        android:textAlignment="center"
         android:visibility="gone" />
 
     <com.vijay.jsonwizard.views.CustomTextView
@@ -24,7 +23,6 @@
         android:layout_toLeftOf="@+id/label_edit_button"
         android:layout_toEndOf="@+id/label_text_number"
         android:layout_toRightOf="@+id/label_text_number"
-        android:paddingTop="8dp"
         android:paddingBottom="8dp" />
     <ImageView
         android:background="@null"
@@ -35,9 +33,8 @@
         android:layout_toLeftOf="@+id/label_info"
         android:layout_marginLeft="4dp"
         android:layout_marginStart="4dp"
-        android:paddingBottom="4dp"
-        android:paddingTop="4dp"
-        android:layout_gravity="center_vertical"
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="4dp"
         android:contentDescription="@string/info_label"
         app:srcCompat="@drawable/edit_button_bg"
         android:visibility="gone" />
@@ -47,7 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_gravity="center_vertical"
+        android:layout_gravity="fill_vertical"
         android:contentDescription="@string/info_label"
         android:src="@drawable/ic_icon_info_filled"
         android:visibility="invisible" />

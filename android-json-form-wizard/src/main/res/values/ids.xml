@@ -24,6 +24,7 @@
     <item name="label_dialog_title" type="id" />
     <item name="original_text" type="id" />
     <item name="specify_textview" type="id" />
+    <item name="specify_extra_info_textview" type="id" />
     <item name="main_textview" type="id" />
     <item name="specify_type" type="id" />
     <item name="specify_widget" type="id" />

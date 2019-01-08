@@ -622,7 +622,7 @@ public class FormUtils {
                     for (int j = 0; j < itemArray.length(); j++) {
                         String s = formUtils.getValueFromSecondaryValues(type, itemArray.getString(j));
                         if (!TextUtils.isEmpty(s)) {
-                            specifyText.append(s + ",");
+                            specifyText.append(s).append(",").append(" ");
                         }
 
                     }
@@ -631,7 +631,7 @@ public class FormUtils {
                 e.printStackTrace();
             }
         }
-        return specifyText.toString().replaceAll(",$", "");
+        return specifyText.toString().replaceAll(", $", "");
     }
 
     public JSONArray getSecondaryValues(JSONObject jsonObject, String type) {
