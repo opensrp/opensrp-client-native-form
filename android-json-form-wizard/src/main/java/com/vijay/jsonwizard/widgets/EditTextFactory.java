@@ -67,8 +67,9 @@ public class EditTextFactory implements FormWidgetFactory {
 
         RelativeLayout rootLayout = (RelativeLayout) LayoutInflater.from(context).inflate(
                 getLayout(), null);
-        MaterialEditText editText = rootLayout.findViewById(R.id.edit_text);
-        ImageView editButton = rootLayout.findViewById(R.id.material_edit_text_edit_button);
+        RelativeLayout editTextLayout = rootLayout.findViewById(R.id.edit_text_layout);
+        MaterialEditText editText = editTextLayout.findViewById(R.id.edit_text);
+        ImageView editButton = editTextLayout.findViewById(R.id.material_edit_text_edit_button);
 
         FormUtils.showEditButton(jsonObject, editText, editButton, listener);
 
@@ -80,9 +81,22 @@ public class EditTextFactory implements FormWidgetFactory {
         editText.setTag(R.id.canvas_ids, canvasIds.toString());
         editText.setTag(R.id.extraPopup, popup);
 
+        attachInfoIcon(stepName, jsonObject, rootLayout, canvasIds, listener);
+
         ((JsonApi) context).addFormDataView(editText);
         views.add(rootLayout);
         return views;
+    }
+
+    private void attachInfoIcon(String stepName, JSONObject jsonObject, RelativeLayout rootLayout, JSONArray canvasIds, CommonListener listener) throws JSONException {
+        if (jsonObject.has(JsonFormConstants.LABEL_INFO_TEXT)) {
+            String labelInfoText = jsonObject.optString(JsonFormConstants.LABEL_INFO_TEXT, "");
+            String labelInfoTitle = jsonObject.optString(JsonFormConstants.LABEL_INFO_TITLE, "");
+
+            ImageView infoIcon = rootLayout.findViewById(R.id.info_icon);
+            FormUtils.showInfoIcon(stepName, jsonObject, listener, labelInfoText, labelInfoTitle, infoIcon, canvasIds);
+        }
+
     }
 
     protected void attachLayout(String stepName, Context context, JsonFormFragment formFragment,

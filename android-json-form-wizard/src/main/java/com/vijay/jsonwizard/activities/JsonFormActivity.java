@@ -263,7 +263,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                             genericDialogInterface.addSelectedValues(formUtils.addAssignedValue(keyAtIndex, "", value, itemType, itemText));
                             extraFieldsWithValues = fields;
                         }
-                        item.put(JsonFormConstants.VALUE, value);
+                        if (!TextUtils.isEmpty(value)) {
+                            item.put(JsonFormConstants.VALUE, value);
+                        }
                     }
                     item.put(JsonFormConstants.OPENMRS_ENTITY_PARENT, openMrsEntityParent);
                     item.put(JsonFormConstants.OPENMRS_ENTITY, openMrsEntity);
@@ -413,7 +415,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             String[] address = addressString.split(":");
             try {
                 JSONObject viewData = getObjectUsingAddress(address, popup);
-                if (viewData.has("hidden") && viewData.getBoolean("hidden")) {
+                if (viewData.has(JsonFormConstants.HIDDEN) && viewData.getBoolean(JsonFormConstants.HIDDEN)) {
                     toggleViewVisibility(curView, false, popup);
                 }
             } catch (Exception e) {

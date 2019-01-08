@@ -353,7 +353,12 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                 }
                 break;
             case JsonFormConstants.EDIT_TEXT:
-                setViewEditable(v);
+                String infoIcon = (String) v.getTag(R.id.label_dialog_info);
+                if (!TextUtils.isEmpty(infoIcon)) {
+                    showInformationDialog(v);
+                } else {
+                    setViewEditable(v);
+                }
                 break;
             case JsonFormConstants.NORMAL_EDIT_TEXT:
                 setViewEditable(v);
