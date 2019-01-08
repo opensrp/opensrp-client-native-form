@@ -161,6 +161,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
                 } else {
                     radioButton.setText(arrayString[0]);
                 }
+                radioButton.setChecked(false);
                 radioButton.performClick();
             }
         });
@@ -206,6 +207,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
     /**
      * This assign the secondary value to the radio button options
+     *
      * @param jsonObject
      * @param childKey
      * @param calendarDate
@@ -225,6 +227,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
     /**
      * Add the secondary value object
+     *
      * @param item
      * @param calendarDate
      * @throws JSONException
