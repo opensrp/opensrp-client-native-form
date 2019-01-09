@@ -29,12 +29,12 @@
             android:layout_marginEnd="4dp"
             android:ellipsize="end"
             android:textStyle="italic"
-            android:visibility="visible" />
+            android:visibility="gone" />
     </LinearLayout>
 
 
     <com.vijay.jsonwizard.views.CustomTextView
-        android:id="@+id/specifyTextViewnew"
+        android:id="@+id/reasonsTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/radioContentLinearLayout"
@@ -42,16 +42,16 @@
         android:layout_marginLeft="@dimen/native_radio_button_text_view_initial_left_margin"
         android:layout_marginEnd="4dp"
         android:ellipsize="end"
-        android:text="Real programmers set the universal constants at the start such that the universe evolves to contain the disk with the data they want"
         android:textStyle="italic"
-        android:visibility="visible" />
+        android:gravity="center_vertical|start"
+        android:visibility="invisible" />
 
 
     <com.vijay.jsonwizard.views.CustomTextView
         android:id="@+id/extraInfoTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/specifyTextViewnew"
+        android:layout_below="@+id/reasonsTextView"
         android:layout_marginStart="@dimen/native_radio_button_text_view_initial_left_margin"
         android:layout_marginLeft="@dimen/native_radio_button_text_view_initial_left_margin"
         android:layout_marginTop="2dp"
