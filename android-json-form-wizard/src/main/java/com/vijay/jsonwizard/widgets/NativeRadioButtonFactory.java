@@ -477,7 +477,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
                                        JSONObject item, String stepName, JsonFormFragment formFragment, Boolean readOnly) throws JSONException {
 
         String text = item.has(JsonFormConstants.SECONDARY_VALUE) ?
-                item.has(JsonFormConstants.CONTENT_WIDGET) && item.getString(JsonFormConstants.CONTENT_WIDGET).equals(JsonFormConstants.DATE_PICKER) ?
+                item.has(JsonFormConstants.CONTENT_WIDGET) && (item.has(JsonFormConstants.CONTENT_WIDGET) && item.getString(JsonFormConstants.CONTENT_WIDGET).equals(JsonFormConstants.DATE_PICKER)) ?
                         context.getResources().getString(R.string.radio_button_date_change) :
                         formUtils.getSpecifyText(item.getJSONArray(JsonFormConstants.SECONDARY_VALUE)) : item.getString(JsonFormConstants.CONTENT_INFO);
 
