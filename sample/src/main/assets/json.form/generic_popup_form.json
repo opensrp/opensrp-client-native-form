@@ -156,7 +156,13 @@
               }
             ]
           }
-        ]
+        ],
+        "relevance": {
+          "step1:repiratory_exam": {
+            "type": "string",
+            "ex": "equalTo(., \"1\")"
+          }
+        }
       },
       {
         "key": "repiratory_exam_three",
@@ -187,7 +193,50 @@
             "content_form": "child_enrollment_third_sub_form",
             "content_form_location": ""
           }
-        ]
+        ],
+        "relevance": {
+          "step1:repiratory_exam_two": {
+            "type": "string",
+            "ex": "equalTo(., \"2\")"
+          }
+        }
+      },
+      {
+        "key": "repiratory_exam_four",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Respiratory exam four",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "extra_rel": true,
+        "has_extra_rel": "3",
+        "options": [
+          {
+            "key": "1",
+            "text": "Not done"
+          },
+          {
+            "key": "2",
+            "text": "Normal"
+          },
+          {
+            "key": "3",
+            "text": "Abnormal",
+            "specify_info": "Specify",
+            "specify_info_color": "#b5b5b5",
+            "specify_widget": "check_box",
+            "content_form": "child_enrollment_third_sub_form",
+            "content_form_location": ""
+          }
+        ],
+        "relevance": {
+          "step1:repiratory_exam_three": {
+            "type": "string",
+            "ex": "equalTo(., \"3\")"
+          }
+        }
       }
     ]
   }

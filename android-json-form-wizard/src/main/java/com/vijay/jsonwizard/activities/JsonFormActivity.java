@@ -15,9 +15,11 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -41,6 +43,7 @@ import com.vijay.jsonwizard.comparisons.RegexComparison;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.CheckBox;
 import com.vijay.jsonwizard.customviews.GenericPopupDialog;
+import com.vijay.jsonwizard.customviews.MaterialSpinner;
 import com.vijay.jsonwizard.customviews.TextableView;
 import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
@@ -1508,14 +1511,31 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             } else {
                 curCanvasView.setEnabled(false);
                 curCanvasView.setVisibility(View.GONE);
+                refreshViews(curCanvasView);
+            }
+        }
+    }
 
-                if (view instanceof EditText) {
-                    EditText editText = (EditText) view;
+    private void refreshViews(View childElement) {
+        if (childElement instanceof ViewGroup) {
+            childElement.setFocusable(true);
+            ViewGroup group = (ViewGroup) childElement;
+            for (int id = 0; id < group.getChildCount(); id++) {
+                View child = group.getChildAt(id);
+                if (child instanceof CheckBox) {
+                    ((CheckBox) child).setChecked(false);
+                } else if (child instanceof RadioButton) {
+                    ((RadioButton) child).setChecked(false);
+                } else if (child instanceof EditText) {
+                    EditText editText = (EditText) child;
                     if (!TextUtils.isEmpty(editText.getText().toString())) {
                         editText.setText("");
                     }
-
+                } else if (child instanceof MaterialSpinner) {
+                    MaterialSpinner spinner = (MaterialSpinner) child;
+                    spinner.setSelected(false);
                 }
+                refreshViews(group.getChildAt(id));
             }
         }
     }
