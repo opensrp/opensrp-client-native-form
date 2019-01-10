@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -168,7 +169,9 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
                 GenericPopupDialog.this.dismiss();
             }
         });
-
+        if (getDialog().getWindow() != null) {
+            getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        }
         return dialogView;
     }
 
@@ -416,6 +419,8 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
     public void onGenericDataPass(Map<String, SecondaryValueModel> selectedValues, String parentKey, String stepName, String childKey) {
         RadioButton radioButton = (RadioButton) customTextView.getTag(R.id.native_radio_button);
         radioButton.performClick();
+        radioButton.requestFocusFromTouch();
+        radioButton.requestFocus();
         JSONObject mJSONObject = jsonApi.getmJSONObject();
         if (mJSONObject != null) {
             JSONObject parentJson = jsonApi.getStep(stepName);

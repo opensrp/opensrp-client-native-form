@@ -501,7 +501,9 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         if (item.has(JsonFormConstants.SECONDARY_VALUE)) {
             specifyText = context.getResources().getString(R.string.radio_button_tap_to_change);
             popupReasonsText = formUtils.getSpecifyText(item.getJSONArray(JsonFormConstants.SECONDARY_VALUE));
-            reasonsTextView.setVisibility(View.VISIBLE);
+            if (item.has(JsonFormConstants.CONTENT_WIDGET) && !item.getString(JsonFormConstants.CONTENT_WIDGET).equals(JsonFormConstants.DATE_PICKER)) {
+                reasonsTextView.setVisibility(View.VISIBLE);
+            }
         } else {
             specifyText = item.getString(JsonFormConstants.CONTENT_INFO);
             popupReasonsText = "";
