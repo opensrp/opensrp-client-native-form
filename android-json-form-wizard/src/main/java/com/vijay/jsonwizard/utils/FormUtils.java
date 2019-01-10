@@ -508,6 +508,7 @@ public class FormUtils {
         String parentKey = (String) view.getTag(R.id.key);
         String type = (String) view.getTag(R.id.type);
         CustomTextView customTextView = (CustomTextView) view.getTag(R.id.specify_textview);
+        CustomTextView reasonsTextView = (CustomTextView) view.getTag(R.id.popup_reasons_textview);
         String childKey;
 
         if (specifyContent != null) {
@@ -520,8 +521,9 @@ public class FormUtils {
             genericPopupDialog.setSecondaryValues(jsonArray);
             genericPopupDialog.setParentKey(parentKey);
             genericPopupDialog.setWidgetType(type);
-            if (customTextView != null) {
+            if (customTextView != null && reasonsTextView != null) {
                 genericPopupDialog.setCustomTextView(customTextView);
+                genericPopupDialog.setPopupReasonsTextView(reasonsTextView);
             }
             if (type.equals(JsonFormConstants.CHECK_BOX) || type.equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
                 childKey = (String) view.getTag(R.id.childKey);
@@ -634,13 +636,13 @@ public class FormUtils {
         return specifyText.toString().replaceAll(", $", "");
     }
 
-    public JSONArray getSecondaryValues(JSONObject jsonObject, String type) {
+    public JSONArray getSecondaryValues(JSONObject jsonObject, String type) throws JSONException {
         JSONArray value = null;
-        String widgetType = type.equals(JsonFormConstants.EXPANSION_PANEL) ? JsonFormConstants.VALUE : JsonFormConstants.SECONDARY_VALUE;
+        String secondaryValues = type.equals(JsonFormConstants.EXPANSION_PANEL) ? JsonFormConstants.VALUE : JsonFormConstants.SECONDARY_VALUE;
 
-        if (jsonObject != null && jsonObject.has(widgetType)) {
+        if (jsonObject != null && jsonObject.has(secondaryValues)) {
             try {
-                value = jsonObject.getJSONArray(widgetType);
+                value = jsonObject.getJSONArray(secondaryValues);
             } catch (JSONException e) {
                 Log.i(TAG, Log.getStackTraceString(e));
             }

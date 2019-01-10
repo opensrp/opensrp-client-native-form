@@ -55,6 +55,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
     private JSONArray secondaryValues;
     private JSONArray newSelectedValues;
     private CustomTextView customTextView;
+    private CustomTextView popupReasonsTextView;
     private Map<String, SecondaryValueModel> popAssignedValue = new HashMap<>();
     private Map<String, SecondaryValueModel> secondaryValuesMap = new HashMap<>();
 
@@ -398,6 +399,11 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         this.customTextView = customTextView;
     }
 
+    public void setPopupReasonsTextView(CustomTextView popupReasonsTextView) {
+        this.popupReasonsTextView = popupReasonsTextView;
+    }
+
+
     /**
      * Receives the generic popup data from Generic Dialog fragment
      *
@@ -434,8 +440,10 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
                     }
                 }
 
-                if (newSelectedValues.length() > 0 && customTextView != null) {
-                    customTextView.setText("(" + formUtils.getSpecifyText(newSelectedValues) + ")");
+                if (newSelectedValues.length() > 0 && customTextView != null && popupReasonsTextView != null) {
+                    customTextView.setText("(" + getString(R.string.radio_button_tap_to_change)+ ")");
+                    popupReasonsTextView.setVisibility(View.VISIBLE);
+                    popupReasonsTextView.setText("(" + formUtils.getSpecifyText(newSelectedValues) + ")");
                 }
                 jsonApi.setmJSONObject(mJSONObject);
 
