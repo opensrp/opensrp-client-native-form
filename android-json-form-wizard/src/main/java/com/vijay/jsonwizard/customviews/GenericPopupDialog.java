@@ -90,10 +90,20 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         if (context == null) {
             throw new IllegalStateException("The Context is not set. Did you forget to set context with Generic Dialog setContext method?");
         }
-
         jsonApi = (JsonApi) context;
 
-        createSecondaryValuesMap();
+        try {
+            loadPartialSecondaryValues();
+            createSecondaryValuesMap();
+            loadSubForms();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Light_Dialog);
+    }
+
+    protected void loadSubForms() {
         if (!TextUtils.isEmpty(formIdentity)) {
             JSONObject subForm = null;
             try {
@@ -113,12 +123,26 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
                 } catch (JSONException e) {
                     Log.i(TAG, Log.getStackTraceString(e));
                 }
-
             }
         }
+    }
 
-
-        setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Light_Dialog);
+    protected void loadPartialSecondaryValues() throws JSONException {
+        JSONArray fields = formUtils.getFormFields(getStepName(), context);
+        if (fields != null && fields.length() > 0) {
+            for (int i = 0; i < fields.length(); i++) {
+                JSONObject item = fields.getJSONObject(i);
+                if (item.has(JsonFormConstants.KEY) && item.getString(JsonFormConstants.KEY).equals(parentKey) && item.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
+                    JSONArray options = item.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
+                    for (int k = 0; k < options.length(); k++) {
+                        JSONObject option = options.getJSONObject(k);
+                        if (option != null && option.has(JsonFormConstants.KEY) && option.getString(JsonFormConstants.KEY).equals(childKey) && option.has(JsonFormConstants.SECONDARY_VALUE)) {
+                            setSecondaryValues(option.getJSONArray(JsonFormConstants.SECONDARY_VALUE));
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -191,6 +215,9 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         onGenericDataPass(popAssignedValue, parentKey, stepName, childKey);
     }
 
+    /**
+     * Creates a secondary values map from the secondary values JSONArray on the widget
+     */
     protected void createSecondaryValuesMap() {
         JSONObject jsonObject;
         if (secondaryValues != null) {
@@ -423,22 +450,8 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         radioButton.requestFocus();
         JSONObject mJSONObject = jsonApi.getmJSONObject();
         if (mJSONObject != null) {
-            JSONObject parentJson = jsonApi.getStep(stepName);
-            JSONArray fields = new JSONArray();
+            JSONArray fields = formUtils.getFormFields(stepName, context);
             try {
-                if (parentJson.has(JsonFormConstants.SECTIONS) && parentJson.get(JsonFormConstants.SECTIONS) instanceof JSONArray) {
-                    JSONArray sections = parentJson.getJSONArray(JsonFormConstants.SECTIONS);
-                    for (int i = 0; i < sections.length(); i++) {
-                        JSONObject sectionJson = sections.getJSONObject(i);
-                        if (sectionJson.has(JsonFormConstants.FIELDS)) {
-                            fields = formUtils.concatArray(fields, sectionJson.getJSONArray(JsonFormConstants.FIELDS));
-                        }
-                    }
-                } else if (parentJson.has(JsonFormConstants.FIELDS) && parentJson.get(JsonFormConstants.FIELDS) instanceof JSONArray) {
-                    fields = parentJson.getJSONArray(JsonFormConstants.FIELDS);
-
-                }
-
                 if (fields.length() > 0) {
                     for (int i = 0; i < fields.length(); i++) {
                         JSONObject item = fields.getJSONObject(i);
@@ -460,6 +473,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
             }
         }
     }
+
 
     /**
      * Finds the actual widget to be updated and secondary values added on

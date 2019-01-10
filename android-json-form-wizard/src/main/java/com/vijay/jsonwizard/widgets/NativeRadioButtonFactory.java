@@ -156,7 +156,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
                     String stepName = (String) customTextView.getTag(R.id.specify_step_name);
                     Context context = (Context) customTextView.getTag(R.id.specify_context);
 
-                    JSONArray fields = getFormFields(stepName, context);
+                    JSONArray fields = formUtils.getFormFields(stepName, context);
                     if (fields.length() > 0) {
                         for (int i = 0; i < fields.length(); i++) {
                             try {
@@ -182,32 +182,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         });
     }
 
-    private static JSONArray getFormFields(String stepName, Context context) {
-        Activity activity = (Activity) context;
-        JsonApi jsonApi = (JsonApi) activity;
-        JSONArray fields = new JSONArray();
-        JSONObject mJSONObject = jsonApi.getmJSONObject();
-        if (mJSONObject != null) {
-            JSONObject parentJson = jsonApi.getStep(stepName);
-            try {
-                if (parentJson.has(JsonFormConstants.SECTIONS) && parentJson.get(JsonFormConstants.SECTIONS) instanceof JSONArray) {
-                    JSONArray sections = parentJson.getJSONArray(JsonFormConstants.SECTIONS);
-                    for (int i = 0; i < sections.length(); i++) {
-                        JSONObject sectionJson = sections.getJSONObject(i);
-                        if (sectionJson.has(JsonFormConstants.FIELDS)) {
-                            fields = formUtils.concatArray(fields, sectionJson.getJSONArray(JsonFormConstants.FIELDS));
-                        }
-                    }
-                } else if (parentJson.has(JsonFormConstants.FIELDS) && parentJson.get(JsonFormConstants.FIELDS) instanceof JSONArray) {
-                    fields = parentJson.getJSONArray(JsonFormConstants.FIELDS);
 
-                }
-            } catch (JSONException e) {
-                Log.i(TAG, Log.getStackTraceString(e));
-            }
-        }
-        return fields;
-    }
 
     private static void assignHiddenDateValue(JSONObject widget, Calendar calendarDate) {
         try {
@@ -300,20 +275,6 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         rootLayout.setTag(R.id.extraPopup, popup);
         views.add(rootLayout);
         return views;
-    }
-
-    private JSONObject getMJsonObject(String itemKey, String stepName, Context context) throws JSONException {
-        JSONObject item = new JSONObject();
-        JSONArray fields = getFormFields(stepName, context);
-        if (fields.length() > 0) {
-            for (int i = 0; i < fields.length(); i++) {
-                JSONObject widget = fields.getJSONObject(i);
-                if (widget != null && itemKey.equals(widget.getString(JsonFormConstants.KEY))) {
-                    item = widget;
-                }
-            }
-        }
-        return item;
     }
 
     protected int getLayout() {

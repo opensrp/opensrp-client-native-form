@@ -650,4 +650,38 @@ public class FormUtils {
 
         return value;
     }
+
+    /**
+     * Gets the json form fields
+     * @param stepName
+     * @param context
+     * @return formFields {JSONArray}
+     * @author dubdabasoduba
+     */
+    public JSONArray getFormFields(String stepName, Context context) {
+        Activity activity = (Activity) context;
+        JsonApi jsonApi = (JsonApi) activity;
+        JSONArray fields = new JSONArray();
+        JSONObject mJSONObject = jsonApi.getmJSONObject();
+        if (mJSONObject != null) {
+            JSONObject parentJson = jsonApi.getStep(stepName);
+            try {
+                if (parentJson.has(JsonFormConstants.SECTIONS) && parentJson.get(JsonFormConstants.SECTIONS) instanceof JSONArray) {
+                    JSONArray sections = parentJson.getJSONArray(JsonFormConstants.SECTIONS);
+                    for (int i = 0; i < sections.length(); i++) {
+                        JSONObject sectionJson = sections.getJSONObject(i);
+                        if (sectionJson.has(JsonFormConstants.FIELDS)) {
+                            fields = concatArray(fields, sectionJson.getJSONArray(JsonFormConstants.FIELDS));
+                        }
+                    }
+                } else if (parentJson.has(JsonFormConstants.FIELDS) && parentJson.get(JsonFormConstants.FIELDS) instanceof JSONArray) {
+                    fields = parentJson.getJSONArray(JsonFormConstants.FIELDS);
+
+                }
+            } catch (JSONException e) {
+                Log.i(TAG, Log.getStackTraceString(e));
+            }
+        }
+        return fields;
+    }
 }
