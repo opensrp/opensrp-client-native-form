@@ -275,14 +275,20 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     item.put(JsonFormConstants.OPENMRS_ENTITY_PARENT, openMrsEntityParent);
                     item.put(JsonFormConstants.OPENMRS_ENTITY, openMrsEntity);
                     item.put(JsonFormConstants.OPENMRS_ENTITY_ID, openMrsEntityId);
-                    refreshCalculationLogic(cleanKey, null, popup);
-                    refreshSkipLogic(cleanKey, null, popup);
-                    refreshConstraints(cleanKey, null);
-                    refreshMediaLogic(cleanKey, value);
+
+                    invokeRefreshLogic(value, popup, cleanKey);
                     return;
                 }
             }
         }
+    }
+
+    @Override
+    public void invokeRefreshLogic(String value, boolean popup, String parentKey) {
+        refreshCalculationLogic(parentKey, null, popup);
+        refreshSkipLogic(parentKey, null, popup);
+        refreshConstraints(parentKey, null);
+        refreshMediaLogic(parentKey, value);
     }
 
     private boolean isSpecialWidget(String itemKey, String itemType) {
@@ -336,9 +342,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                                 genericDialogInterface.addSelectedValues(formUtils.addAssignedValue(keyAtIndex, childKey, value, itemType, itemText));
                                 extraFieldsWithValues = fields;
                             }
-                            refreshCalculationLogic(parentKey, childKey, popup);
-                            refreshSkipLogic(parentKey, childKey, popup);
-                            refreshConstraints(parentKey, childKey);
+
+                            invokeRefreshLogic(value, popup, parentKey);
+
                             return;
                         }
                     }

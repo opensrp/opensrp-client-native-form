@@ -68,7 +68,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         super.onAttach(activity);
         context = activity;
         jsonApi = (JsonApi) activity;
-        jsonApi.refreshSkipLogic(null, null, true);
+        jsonApi.invokeRefreshLogic(null, true, null);
         jsonApi.setGenericPopup(this);
     }
 
@@ -123,7 +123,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
     @Override
     public void onResume() {
         super.onResume();
-        jsonApi.refreshSkipLogic(null, null, true);
+        jsonApi.invokeRefreshLogic(null, true, null);
         ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
         params.width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.90);
         params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
@@ -444,7 +444,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
                 }
 
                 if (newSelectedValues.length() > 0 && customTextView != null && popupReasonsTextView != null) {
-                    customTextView.setText("(" + getString(R.string.radio_button_tap_to_change)+ ")");
+                    customTextView.setText("(" + getString(R.string.radio_button_tap_to_change) + ")");
                     popupReasonsTextView.setVisibility(View.VISIBLE);
                     popupReasonsTextView.setText("(" + formUtils.getSpecifyText(newSelectedValues) + ")");
                 }
