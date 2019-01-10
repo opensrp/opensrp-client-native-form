@@ -6,6 +6,12 @@
     android:layout_marginEnd="5dp">
 
     <LinearLayout
+        android:id="@+id/main_radio_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+    <LinearLayout
         android:id="@+id/radioContentLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -44,14 +50,14 @@
         android:ellipsize="end"
         android:text="Real programmers set the universal constants at the start such that the universe evolves to contain the disk with the data they want"
         android:textStyle="italic"
-        android:visibility="visible" />
-
+        android:visibility="gone" />
+    </LinearLayout>
 
     <com.vijay.jsonwizard.views.CustomTextView
         android:id="@+id/extraInfoTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/specifyTextViewnew"
+        android:layout_below="@+id/main_radio_layout"
         android:layout_marginStart="@dimen/native_radio_button_text_view_initial_left_margin"
         android:layout_marginLeft="@dimen/native_radio_button_text_view_initial_left_margin"
         android:layout_marginTop="2dp"
