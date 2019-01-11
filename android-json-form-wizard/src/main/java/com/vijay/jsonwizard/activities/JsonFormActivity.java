@@ -292,7 +292,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         refreshMediaLogic(parentKey, value);
     }
 
-    private boolean isSpecialWidget(String itemType) {
+    protected boolean isSpecialWidget(String itemType) {
 
         if (isNumberSelector(itemType)) {
             return true;
@@ -301,7 +301,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         }
     }
 
-    private String cleanWidgetKey(String itemKey, String itemType) {
+    protected String cleanWidgetKey(String itemKey, String itemType) {
 
         String key = itemKey;
 
