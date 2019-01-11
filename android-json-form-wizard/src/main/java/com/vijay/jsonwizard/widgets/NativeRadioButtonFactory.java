@@ -63,7 +63,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         CustomTextView customTextView = (CustomTextView) view.getTag(R.id.specify_textview);
         RadioButton mainTextView = (RadioButton) view.getTag(R.id.native_radio_button);
         DatePickerDialog datePickerDialog = new DatePickerDialog();
-        JSONObject jsonObject = (JSONObject) ((View) (mainTextView).getParent().getParent().getParent()).getTag(R.id.json_object);
+        JSONObject jsonObject = (JSONObject) ((mainTextView).getTag(R.id.option_json_object));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 
@@ -454,6 +454,8 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         canvasIds.put(radioButton.getId());
         radioButton.setTag(R.id.canvas_ids, canvasIds.toString());
         setRadioButton(radioButton);
+        radioButton.setTag(R.id.json_object, jsonObject);
+        radioButton.setTag(R.id.option_json_object, item);
         radioButton.setTag(R.id.specify_textview, getSpecifyTextView());
         radioButton.setTag(R.id.native_radio_button, getRadioButton());
         radioButton.setTag(R.id.specify_type, JsonFormConstants.CONTENT_INFO);

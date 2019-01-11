@@ -55,4 +55,5 @@
     <item name="extraPopup" type="id" />
     <item name="secondaryValues" type="id" />
     <item name="is_automatic" type="id" />
+    <item name="option_json_object" type="id" />
 </resources>

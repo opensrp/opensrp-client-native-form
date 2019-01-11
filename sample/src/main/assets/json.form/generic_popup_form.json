@@ -76,13 +76,17 @@
             "specify_info": "Specify",
             "specify_widget": "date_picker",
             "label_info_text": "Checking out the display oof the info icon needed to display this information",
-            "label_info_title": "Highest Level of School"
+            "label_info_title": "Highest Level of School",
+            "min_date": "today-5y",
+            "max_date": "today"
           },
           {
             "key": "high_school",
             "text": "High School",
             "specify_info": "Specify",
-            "specify_widget": "date_picker"
+            "specify_widget": "date_picker",
+            "min_date": "today-20y",
+            "max_date": "today+5y"
           },
           {
             "key": "higher_education",
