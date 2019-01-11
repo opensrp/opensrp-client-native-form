@@ -5,6 +5,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -44,6 +45,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
     private TextView stepName;
 
     private Toolbar navigationToolbar;
+    private View bottomNavLayout;
 
     private static final int MENU_NAVIGATION = 100001;
 
@@ -64,7 +66,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
 
         setupNavigation(rootView);
 
-        setupCustomToolbar();
+        setupCustomUI();
 
         return rootView;
     }
@@ -104,12 +106,22 @@ public class JsonWizardFormFragment extends JsonFormFragment {
 
     @Override
     public void updateVisibilityOfNextAndSave(boolean next, boolean save) {
-        getMenu().findItem(com.vijay.jsonwizard.R.id.action_next).setVisible(false);
-        getMenu().findItem(com.vijay.jsonwizard.R.id.action_save).setVisible(false);
+        Form form = getForm();
+        if (form != null && form.isWizard()) {
+            getMenu().findItem(com.vijay.jsonwizard.R.id.action_next).setVisible(false);
+            getMenu().findItem(com.vijay.jsonwizard.R.id.action_save).setVisible(false);
+        } else {
+            getMenu().findItem(com.vijay.jsonwizard.R.id.action_next).setVisible(next);
+            getMenu().findItem(com.vijay.jsonwizard.R.id.action_save).setVisible(save);
+        }
 
         if (next || !save) {
             nextButton.setTag(R.id.NEXT_STATE, true);
             nextButton.setText(getString(R.string.next));
+
+            if (form != null && !TextUtils.isEmpty(form.getNextLabel())) {
+                nextButton.setText(form.getNextLabel());
+            }
 
             nextIcon.setVisibility(View.VISIBLE);
         }
@@ -117,6 +129,11 @@ public class JsonWizardFormFragment extends JsonFormFragment {
         if (save || !next) {
             nextButton.setTag(R.id.NEXT_STATE, false);
             nextButton.setText(getString(R.string.submit));
+
+            if (form != null && !TextUtils.isEmpty(form.getPreviousLabel())) {
+                nextButton.setText(form.getPreviousLabel());
+            }
+
 
             nextIcon.setVisibility(View.INVISIBLE);
         }
@@ -164,22 +181,44 @@ public class JsonWizardFormFragment extends JsonFormFragment {
         stepName = rootView.findViewById(R.id.step_title);
 
         navigationToolbar = rootView.findViewById(R.id.navigation_toolbar);
+
+        bottomNavLayout = rootView.findViewById(R.id.bottom_navigation_layout);
     }
 
-    protected void setupCustomToolbar() {
+    protected void setupCustomUI() {
         setUpBackButton();
 
         try {
             Form form = getForm();
             if (form != null) {
-                getSupportActionBar().setHomeAsUpIndicator(form.getHomeAsUpIndicator());
-                int actionBarColor = getResources().getColor(form.getActionBarBackground());
-                getSupportActionBar().setBackgroundDrawable(new ColorDrawable(actionBarColor));
-
-                int navigationColor = getResources().getColor(form.getNavigationBackground());
-                if (navigationToolbar != null) {
-                    navigationToolbar.setBackgroundColor(navigationColor);
+                if (form.getHomeAsUpIndicator() != 0) {
+                    getSupportActionBar().setHomeAsUpIndicator(form.getHomeAsUpIndicator());
                 }
+
+                if (form.getActionBarBackground() != 0) {
+                    int actionBarColor = getResources().getColor(form.getActionBarBackground());
+                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(actionBarColor));
+                }
+
+                if (form.getNavigationBackground() != 0) {
+                    int navigationColor = getResources().getColor(form.getNavigationBackground());
+                    if (navigationToolbar != null) {
+                        navigationToolbar.setBackgroundColor(navigationColor);
+                    }
+                }
+
+                if (form.isWizard()) {
+                    bottomNavLayout.setVisibility(View.VISIBLE);
+                    navigationToolbar.setVisibility(View.VISIBLE);
+                } else {
+                    bottomNavLayout.setVisibility(View.GONE);
+                    navigationToolbar.setVisibility(View.GONE);
+                }
+
+                if (!TextUtils.isEmpty(form.getPreviousLabel())) {
+                    previousButton.setText(form.getPreviousLabel());
+                }
+
             }
         } catch (Resources.NotFoundException e) {
             Log.e(TAG, e.getMessage(), e);
