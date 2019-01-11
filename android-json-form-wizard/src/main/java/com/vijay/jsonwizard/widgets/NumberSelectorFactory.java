@@ -262,8 +262,6 @@ public class NumberSelectorFactory implements FormWidgetFactory {
 
         rootLayoutMap.put(jsonObject.getString(JsonFormConstants.KEY), rootLayout);
 
-        receiver = new NumberSelectorFactoryReceiver();
-
         return views;
     }
 

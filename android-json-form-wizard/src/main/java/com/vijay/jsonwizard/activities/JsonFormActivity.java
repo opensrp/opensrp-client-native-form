@@ -72,6 +72,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -91,9 +92,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     private Toolbar mToolbar;
     private JSONObject mJSONObject;
     private PropertyManager propertyManager;
-    private HashMap<String, View> skipLogicViews;
-    private HashMap<String, View> calculationLogicViews;
-    private HashMap<String, View> constrainedViews;
+    private Map<String, View> skipLogicViews;
+    private Map<String, View> calculationLogicViews;
+    private Map<String, View> constrainedViews;
     private ArrayList<View> formDataViews;
     private String functionRegex;
     private HashMap<String, Comparison> comparisons;
@@ -163,8 +164,8 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         setContentView(R.layout.native_form_activity_json_form);
         mToolbar = findViewById(R.id.tb_top);
         setSupportActionBar(mToolbar);
-        skipLogicViews = new HashMap<>();
-        calculationLogicViews = new HashMap<>();
+        skipLogicViews = new LinkedHashMap<>();
+        calculationLogicViews = new LinkedHashMap<>();
         onActivityResultListeners = new HashMap<>();
         onActivityRequestPermissionResultListeners = new HashMap<>();
         lifeCycleListeners = new ArrayList<>();
@@ -253,11 +254,11 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 JSONObject item = fields.getJSONObject(i);
                 String keyAtIndex = item.getString(JsonFormConstants.KEY);
                 String itemType = item.has(JsonFormConstants.TYPE) ? item.getString(JsonFormConstants.TYPE) : "";
-                boolean isSpecialWidget = isSpecialWidget(key, itemType);
+                boolean isSpecialWidget = isSpecialWidget(itemType);
 
-                if (key.equals(keyAtIndex) || isSpecialWidget) {
+                String cleanKey = isSpecialWidget ? cleanWidgetKey(key, itemType) : key;
 
-                    String cleanKey = isSpecialWidget ? cleanWidgetKey(key, itemType) : key;
+                if (cleanKey.equals(keyAtIndex)) {
 
                     if (item.has(JsonFormConstants.TEXT)) {
                         item.put(JsonFormConstants.TEXT, value);
@@ -291,29 +292,32 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         refreshMediaLogic(parentKey, value);
     }
 
-    private boolean isSpecialWidget(String itemKey, String itemType) {
+    protected boolean isSpecialWidget(String itemType) {
 
-        if (isNumberSelector(itemKey, itemType)) {
+        if (isNumberSelector(itemType)) {
             return true;
         } else {
             return false;
         }
     }
 
-    private String cleanWidgetKey(String itemKey, String itemType) {
+    protected String cleanWidgetKey(String itemKey, String itemType) {
 
         String key = itemKey;
 
-        if (isNumberSelector(itemKey, itemType)) {
+        if (isNumberSelector(itemType)) {
 
-            key = itemKey.endsWith(JsonFormConstants.SUFFIX.TEXT_VIEW) ? itemKey.substring(0, itemKey.indexOf(JsonFormConstants.SUFFIX.TEXT_VIEW)) : itemKey.substring(0, itemKey.indexOf(JsonFormConstants.SUFFIX.SPINNER));
+            if (itemKey.endsWith(JsonFormConstants.SUFFIX.TEXT_VIEW) || itemKey.endsWith(JsonFormConstants.SUFFIX.SPINNER))
+            {
+                key = itemKey.endsWith(JsonFormConstants.SUFFIX.TEXT_VIEW) ? itemKey.substring(0, itemKey.indexOf(JsonFormConstants.SUFFIX.TEXT_VIEW)) : itemKey.substring(0, itemKey.indexOf(JsonFormConstants.SUFFIX.SPINNER));
+            }
         }
 
         return key;
     }
 
-    private boolean isNumberSelector(String itemKey, String itemType) {
-        return itemType.equals(JsonFormConstants.NUMBERS_SELECTOR) && itemKey != null && (itemKey.endsWith(JsonFormConstants.SUFFIX.TEXT_VIEW) || itemKey.endsWith(JsonFormConstants.SUFFIX.SPINNER));
+    private boolean isNumberSelector(String itemType) {
+        return itemType.equals(JsonFormConstants.NUMBERS_SELECTOR);
     }
 
     protected void checkBoxWriteValue(String stepName, String parentKey, String childObjectKey, String childKey, String value, boolean popup) throws JSONException {
@@ -429,7 +433,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
     @Override
     public void clearConstrainedViews() {
-        constrainedViews = new HashMap<>();
+        constrainedViews = new LinkedHashMap<>();
     }
 
     @Override
