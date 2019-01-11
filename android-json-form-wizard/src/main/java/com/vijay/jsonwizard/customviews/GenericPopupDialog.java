@@ -69,7 +69,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         super.onAttach(activity);
         context = activity;
         jsonApi = (JsonApi) activity;
-        jsonApi.invokeRefreshLogic(null, true, null);
+        jsonApi.invokeRefreshLogic(null, true, null, null);
         jsonApi.setGenericPopup(this);
     }
 
@@ -148,7 +148,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
     @Override
     public void onResume() {
         super.onResume();
-        jsonApi.invokeRefreshLogic(null, true, null);
+        jsonApi.invokeRefreshLogic(null, true, null, null);
         ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
         params.width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.90);
         params.height = ViewGroup.LayoutParams.WRAP_CONTENT;

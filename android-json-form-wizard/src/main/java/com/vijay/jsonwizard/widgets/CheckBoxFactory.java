@@ -61,6 +61,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
         JSONArray canvasIds = new JSONArray();
         ImageView editButton;
         LinearLayout rootLayout = (LinearLayout) LayoutInflater.from(context).inflate(getLayout(), null);
+        rootLayout.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
 
         Map<String, View> labelViews = FormUtils.createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly, listener);
 

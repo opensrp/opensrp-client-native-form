@@ -277,7 +277,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     item.put(JsonFormConstants.OPENMRS_ENTITY, openMrsEntity);
                     item.put(JsonFormConstants.OPENMRS_ENTITY_ID, openMrsEntityId);
 
-                    invokeRefreshLogic(value, popup, cleanKey);
+                    invokeRefreshLogic(value, popup, cleanKey, null);
                     return;
                 }
             }
@@ -285,10 +285,10 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     }
 
     @Override
-    public void invokeRefreshLogic(String value, boolean popup, String parentKey) {
-        refreshCalculationLogic(parentKey, null, popup);
-        refreshSkipLogic(parentKey, null, popup);
-        refreshConstraints(parentKey, null);
+    public void invokeRefreshLogic(String value, boolean popup, String parentKey, String childKey) {
+        refreshCalculationLogic(parentKey, childKey, popup);
+        refreshSkipLogic(parentKey, childKey, popup);
+        refreshConstraints(parentKey, childKey);
         refreshMediaLogic(parentKey, value);
     }
 
@@ -307,8 +307,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
         if (isNumberSelector(itemType)) {
 
-            if (itemKey.endsWith(JsonFormConstants.SUFFIX.TEXT_VIEW) || itemKey.endsWith(JsonFormConstants.SUFFIX.SPINNER))
-            {
+            if (itemKey.endsWith(JsonFormConstants.SUFFIX.TEXT_VIEW) || itemKey.endsWith(JsonFormConstants.SUFFIX.SPINNER)) {
                 key = itemKey.endsWith(JsonFormConstants.SUFFIX.TEXT_VIEW) ? itemKey.substring(0, itemKey.indexOf(JsonFormConstants.SUFFIX.TEXT_VIEW)) : itemKey.substring(0, itemKey.indexOf(JsonFormConstants.SUFFIX.SPINNER));
             }
         }
@@ -347,7 +346,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                                 extraFieldsWithValues = fields;
                             }
 
-                            invokeRefreshLogic(value, popup, parentKey);
+                            invokeRefreshLogic(value, popup, parentKey, childKey);
 
                             return;
                         }
@@ -524,7 +523,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         }
     }
 
-    private void addRelevance(View view, Boolean popup) {
+    protected void addRelevance(View view, Boolean popup) {
         String relevanceTag = (String) view.getTag(R.id.relevance);
         if (relevanceTag != null && relevanceTag.length() > 0) {
             try {

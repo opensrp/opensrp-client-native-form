@@ -213,10 +213,6 @@ public class JsonWizardFormFragment extends JsonFormFragment {
                     previousButton.setText(form.getPreviousLabel());
                 }
 
-                if (form.isHideSaveLabel()) {
-                    updateVisibilityOfNextAndSave(false, false);
-                }
-
             }
         } catch (Resources.NotFoundException e) {
             Log.e(TAG, e.getMessage(), e);
