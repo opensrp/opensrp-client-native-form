@@ -39,9 +39,9 @@ public class JsonFormBarcodeScanActivity extends Activity implements Detector.Pr
     }
 
     /**
-     * Creates and starts the camera.  Note that this uses a higher resolution in comparison
-     * to other detection examples to enable the barcode detector to detect small barcodes
-     * at long distances.
+     * Creates and starts the camera.  Note that this uses a higher resolution in comparison to
+     * other detection examples to enable the barcode detector to detect small barcodes at long
+     * distances.
      * <p>
      * Suppressing InlinedApi since there is a check that the minimum version is met before using
      * the constant.
