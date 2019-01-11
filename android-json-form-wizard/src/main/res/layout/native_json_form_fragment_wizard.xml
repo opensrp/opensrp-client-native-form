@@ -30,7 +30,7 @@
                 android:paddingTop="8dp" />
 
             <RelativeLayout
-                android:id="@+id/bottom_section"
+                android:id="@+id/bottom_navigation_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/form_container_default_margin"
@@ -48,7 +48,7 @@
                     android:paddingTop="@dimen/form_container_top_bottom_navigation_padding"
                     android:text="@string/previous"
                     android:textAllCaps="true"
-                    android:textAppearance="?android:textAppearanceSmall"
+                    android:textAppearance="?android:textAppearanceMedium"
                     android:textColor="@color/button_navy_blue"
                     android:textSize="@dimen/form_container_navigation_text_size" />
 
@@ -65,7 +65,7 @@
                     android:paddingTop="@dimen/form_container_top_bottom_navigation_padding"
                     android:text="@string/next"
                     android:textAllCaps="true"
-                    android:textAppearance="?android:textAppearanceSmall"
+                    android:textAppearance="?android:textAppearanceMedium"
                     android:textColor="@color/button_navy_blue"
                     android:textSize="@dimen/form_container_navigation_text_size" />
             </RelativeLayout>
