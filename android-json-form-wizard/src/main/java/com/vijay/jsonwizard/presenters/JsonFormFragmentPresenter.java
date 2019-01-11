@@ -554,11 +554,15 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             }
 
             getView().unCheckAllExcept(parentKey, childKey, compoundButton);
-
+            String specifyWidget = (String) compoundButton.getTag(R.id.specify_widget);
+            if (!specifyWidget.isEmpty()){
+                nativeRadioButtonClickActions(compoundButton);
+            }
             getView().writeValue(mStepName, parentKey, childKey, openMrsEntityParent,
                     openMrsEntity, openMrsEntityId, popup);
         }
     }
+    public void onFocusChange(View v, boolean hasFocus) {}
 
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         String parentKey = (String) parent.getTag(R.id.key);

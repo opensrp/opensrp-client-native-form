@@ -15,7 +15,6 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
@@ -444,10 +443,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
      * @param childKey
      */
     public void onGenericDataPass(Map<String, SecondaryValueModel> selectedValues, String parentKey, String stepName, String childKey) {
-        RadioButton radioButton = (RadioButton) customTextView.getTag(R.id.native_radio_button);
-        radioButton.performClick();
-        radioButton.requestFocusFromTouch();
-        radioButton.requestFocus();
+
         JSONObject mJSONObject = jsonApi.getmJSONObject();
         if (mJSONObject != null) {
             JSONArray fields = formUtils.getFormFields(stepName, context);
