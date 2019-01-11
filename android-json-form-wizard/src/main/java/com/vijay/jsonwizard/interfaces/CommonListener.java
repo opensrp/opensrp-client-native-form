@@ -7,5 +7,5 @@ import android.widget.Spinner;
 /**
  * Created by vijay on 5/17/15.
  */
-public interface CommonListener extends View.OnClickListener, CompoundButton.OnCheckedChangeListener, Spinner.OnItemSelectedListener {
+public interface CommonListener extends View.OnClickListener, CompoundButton.OnCheckedChangeListener, Spinner.OnItemSelectedListener, View.OnFocusChangeListener{
 }
