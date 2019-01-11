@@ -33,21 +33,15 @@ import com.vijay.jsonwizard.viewstates.JsonFormFragmentViewState;
 public class JsonWizardFormFragment extends JsonFormFragment {
 
     public static final String TAG = JsonWizardFormFragment.class.getName();
-
+    private static final int MENU_NAVIGATION = 100001;
     private BottomNavigationListener navigationListener = new BottomNavigationListener();
-
     private Button previousButton;
     private Button nextButton;
-
     private ImageView previousIcon;
     private ImageView nextIcon;
-
     private TextView stepName;
-
     private Toolbar navigationToolbar;
     private View bottomNavLayout;
-
-    private static final int MENU_NAVIGATION = 100001;
 
     public static JsonWizardFormFragment getFormFragment(String stepName) {
         JsonWizardFormFragment jsonFormFragment = new JsonWizardFormFragment();
@@ -162,7 +156,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
         }
     }
 
-    private void setupNavigation(View rootView) {
+    protected void setupNavigation(View rootView) {
         previousButton = rootView.findViewById(R.id.previous);
         previousIcon = rootView.findViewById(R.id.previous_icon);
 
@@ -219,6 +213,10 @@ public class JsonWizardFormFragment extends JsonFormFragment {
                     previousButton.setText(form.getPreviousLabel());
                 }
 
+                if (form.isHideSaveLabel()) {
+                    updateVisibilityOfNextAndSave(false, false);
+                }
+
             }
         } catch (Resources.NotFoundException e) {
             Log.e(TAG, e.getMessage(), e);
@@ -226,7 +224,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
 
     }
 
-    private void save() {
+    protected void save() {
         try {
             Boolean skipValidation = ((JsonFormActivity) mMainView.getContext()).getIntent().getBooleanExtra(JsonFormConstants.SKIP_VALIDATION, false);
             save(skipValidation);
