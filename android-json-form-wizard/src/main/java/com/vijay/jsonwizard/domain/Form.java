@@ -11,7 +11,11 @@ public class Form implements Serializable {
     private int actionBarBackground;
     private int navigationBackground;
 
-    private boolean wizard = false;
+    private String nextLabel;
+    private String previousLabel;
+    private String saveLabel;
+
+    private boolean wizard = true;
 
     public String getName() {
         return name;
@@ -51,5 +55,29 @@ public class Form implements Serializable {
 
     public void setWizard(boolean wizard) {
         this.wizard = wizard;
+    }
+
+    public void setNextLabel(String nextLabel) {
+        this.nextLabel = nextLabel;
+    }
+
+    public String getNextLabel() {
+        return nextLabel;
+    }
+
+    public void setPreviousLabel(String previousLabel) {
+        this.previousLabel = previousLabel;
+    }
+
+    public String getPreviousLabel() {
+        return previousLabel;
+    }
+
+    public void setSaveLabel(String saveLabel) {
+        this.saveLabel = saveLabel;
+    }
+
+    public String getSaveLabel() {
+        return saveLabel;
     }
 }
