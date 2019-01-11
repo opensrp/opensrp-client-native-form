@@ -21,6 +21,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class RulesEngineFactory implements RuleListener {
     public final String TAG = RulesEngineFactory.class.getCanonicalName();
@@ -78,7 +79,20 @@ public class RulesEngineFactory implements RuleListener {
         return facts.get(RuleConstant.IS_RELEVANT);
     }
 
-    public String getCalculation(Map<String, String> calculationFact, String ruleFilename) {
+    public String getCalculation(Map<String, String> calculationFact_, String ruleFilename) {
+
+        //need to clean curValue map as constraint depend on valid values, empties wont do
+
+        Map<String, String> calculationFact = new HashMap<>();
+
+        Set<Map.Entry<String, String>> entries = calculationFact_.entrySet();
+
+        for (Map.Entry<String, String> entry : entries) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+
+            calculationFact.put(key, value.isEmpty() ? "0" : value);
+        }
 
         Facts facts = initializeFacts(calculationFact);
 
