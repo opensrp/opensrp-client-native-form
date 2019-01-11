@@ -378,23 +378,26 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
     private void createRadioButton(RelativeLayout rootLayout, JSONObject jsonObject, Boolean readOnly, JSONObject item,
                                    CommonListener listener, String stepName, boolean popup, Context context, JSONArray canvasIds, JsonFormFragment formFragment) throws JSONException {
+
+        String specifyInfo = item.optString(JsonFormConstants.CONTENT_INFO, null);
+        String extraInfo = item.optString(JsonFormConstants.NATIVE_RADIO_EXTRA_INFO, null);
+        String text_color = item.optString(JsonFormConstants.CONTENT_INFO_COLOR, JsonFormConstants.DEFAULT_HINT_TEXT_COLOR);
+        CustomTextView specifyTextView = rootLayout.findViewById(R.id.specifyTextView);
+
+        if (specifyInfo != null) {
+            createSepcifyText(rootLayout, jsonObject, readOnly, item, listener, stepName, context, formFragment, text_color, specifyTextView);
+        }
+
+        if (extraInfo != null) {
+            createExtraInfo(rootLayout, jsonObject, readOnly, item, stepName, context, text_color);
+        }
+
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
         String specifyWidget = item.optString(JsonFormConstants.CONTENT_WIDGET, "");
         String specifyContent = item.optString(JsonFormConstants.CONTENT_FORM, null);
         String specifyContentForm = item.optString(JsonFormConstants.CONTENT_FORM_LOCATION, null);
-        String specifyInfo = item.optString(JsonFormConstants.CONTENT_INFO, null);
-        String extraInfo = item.optString(JsonFormConstants.NATIVE_RADIO_EXTRA_INFO, null);
-
-        if (specifyInfo != null) {
-            createSpecifyTextView(context, rootLayout, jsonObject, listener, item, stepName, formFragment, readOnly);
-        }
-
-        if (extraInfo != null) {
-            createExtraInfo(rootLayout, item, jsonObject, stepName, readOnly, context);
-        }
-
 
         final RadioButton radioButton = rootLayout.findViewById(R.id.mainRadioButton);
         radioButton.setId(ViewUtil.generateViewId());
@@ -409,9 +412,10 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
         radioButton.setTag(jsonObject.getString(JsonFormConstants.TYPE));
         radioButton.setOnCheckedChangeListener(listener);
-        getSpecifyTextView().setOnClickListener(new View.OnClickListener() {
+        specifyTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                radioButton.setChecked(false);
                 radioButton.performClick();
             }
         });
@@ -462,26 +466,28 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         radioButton.setTag(R.id.specify_listener, listener);
         radioButton.setTag(R.id.specify_step_name, stepName);
         radioButton.setTag(R.id.specify_fragment, formFragment);
-        radioButton.setTag(R.id.specify_textview, getSpecifyTextView());
-        radioButton.setTag(R.id.popup_reasons_textview, getReasonsTextView());
+        radioButton.setTag(R.id.specify_textview, specifyTextView);
+        radioButton.setTag(R.id.popup_reasons_textview, reasonsTextView);
         radioButton.setTag(R.id.specify_context, context);
         radioButton.setTag(R.id.secondaryValues, formUtils.getSecondaryValues(item, jsonObject.getString(JsonFormConstants.TYPE)));
     }
 
-    private String getSecondaryDateValue(JSONArray values) throws JSONException {
-        String date = "";
-        if (values != null && values.length() > 0) {
-            date = values.getString(0);
-        }
-        return date;
+    private void createExtraInfo(RelativeLayout rootLayout, JSONObject jsonObject, Boolean readOnly, JSONObject item, String stepName, Context context, String text_color) throws JSONException {
+        //Create extrainfo
+        String text = item.getString(JsonFormConstants.NATIVE_RADIO_EXTRA_INFO);
+        CustomTextView extraInfoTextView = rootLayout.findViewById(R.id.extraInfoTextView);
+        extraInfoTextView.setTextSize(context.getResources().getDimension(R.dimen.extra_info_default_text_size));
+        extraInfoTextView.setVisibility(View.VISIBLE);
+        addTextViewAttributes(jsonObject, item, extraInfoTextView, stepName, text_color);
+        extraInfoTextView.setText(text);
+        extraInfoTextView.setEnabled(!readOnly);
     }
 
-    private void createSpecifyTextView(Context context, RelativeLayout rootLayout, JSONObject jsonObject, CommonListener listener,
-                                       JSONObject item, String stepName, JsonFormFragment formFragment, Boolean readOnly) throws JSONException {
+    private void createSepcifyText(RelativeLayout rootLayout, JSONObject jsonObject, Boolean readOnly, JSONObject item, CommonListener listener, String stepName, Context context, JsonFormFragment formFragment, String text_color, CustomTextView specifyTextView) throws JSONException {
+        //Create specify textview
         String specifyText;
         String popupReasonsText;
-        String text_color = item.optString(JsonFormConstants.CONTENT_INFO_COLOR, JsonFormConstants.DEFAULT_HINT_TEXT_COLOR);
-        CustomTextView specifyTextView = rootLayout.findViewById(R.id.specifyTextView);
+
         CustomTextView reasonsTextView = rootLayout.findViewById(R.id.reasonsTextView);
 
         if (item.has(JsonFormConstants.SECONDARY_VALUE)) {
@@ -498,7 +504,6 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         specifyTextView.setVisibility(View.VISIBLE);
         addTextViewAttributes(jsonObject, item, specifyTextView, stepName, text_color);
 
-        specifyTextView.setTag(R.id.native_radio_button, getRadioButton());
         specifyTextView.setTag(R.id.specify_context, context);
         specifyTextView.setTag(R.id.specify_listener, listener);
         specifyTextView.setTag(R.id.specify_step_name, stepName);
@@ -515,17 +520,12 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         setReasonsTextView(reasonsTextView);
     }
 
-    private void createExtraInfo(RelativeLayout rootLayout, JSONObject item, JSONObject jsonObject,
-                                 String stepName, boolean readOnly, Context context) throws JSONException {
-        String text = item.getString(JsonFormConstants.NATIVE_RADIO_EXTRA_INFO);
-        String text_color = item.optString(JsonFormConstants.NATIVE_RADIO_EXTRA_INFO_COLOR, JsonFormConstants.DEFAULT_HINT_TEXT_COLOR);
-
-        CustomTextView extraInfoTextView = rootLayout.findViewById(R.id.extraInfoTextView);
-        extraInfoTextView.setTextSize(context.getResources().getDimension(R.dimen.extra_info_default_text_size));
-        extraInfoTextView.setVisibility(View.VISIBLE);
-        addTextViewAttributes(jsonObject, item, extraInfoTextView, stepName, text_color);
-        extraInfoTextView.setText(text);
-        extraInfoTextView.setEnabled(!readOnly);
+    private String getSecondaryDateValue(JSONArray values) throws JSONException {
+        String date = "";
+        if (values != null && values.length() > 0) {
+            date = values.getString(0);
+        }
+        return date;
     }
 
     private void addTextViewAttributes(JSONObject jsonObject, JSONObject item, CustomTextView customTextView,
