@@ -25,6 +25,7 @@
             android:gravity="center_horizontal|start"
             android:paddingStart="@dimen/native_radio_button_padding"
             android:paddingLeft="@dimen/native_radio_button_padding"
+            android:text="Abnormal"
             android:textSize="20sp" />
 
         <com.vijay.jsonwizard.views.CustomTextView
@@ -35,6 +36,7 @@
             android:layout_marginEnd="4dp"
             android:ellipsize="end"
             android:textStyle="italic"
+            android:text="(tap  to change)"
             android:visibility="gone" />
     </LinearLayout>
 
@@ -48,22 +50,25 @@
         android:layout_marginEnd="4dp"
         android:ellipsize="end"
         android:textStyle="italic"
+        android:text="(Abnormal reasons include this, and the rest)"
         android:gravity="center_vertical|start"
         android:visibility="gone" />
+        <com.vijay.jsonwizard.views.CustomTextView
+            android:id="@+id/extraInfoTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/main_radio_layout"
+            android:layout_marginStart="@dimen/native_radio_button_text_view_initial_left_margin"
+            android:layout_marginLeft="@dimen/native_radio_button_text_view_initial_left_margin"
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:gravity="center_vertical|start"
+            android:layout_marginBottom="16dp"
+            android:text="GA: {lmp_gest_age}\nEDD: {lmp_edd}"
+            android:visibility="gone" />
     </LinearLayout>
 
-    <com.vijay.jsonwizard.views.CustomTextView
-        android:id="@+id/extraInfoTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/main_radio_layout"
-        android:layout_marginStart="@dimen/native_radio_button_text_view_initial_left_margin"
-        android:layout_marginLeft="@dimen/native_radio_button_text_view_initial_left_margin"
-        android:layout_marginTop="2dp"
-        android:ellipsize="end"
-        android:gravity="center_vertical|start"
-        android:paddingTop="2dp"
-        android:visibility="gone" />
+
 
     <ImageView
         android:id="@+id/info_icon"
