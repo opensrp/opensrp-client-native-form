@@ -538,10 +538,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             getView().unCheckAllExcept(parentKey, childKey, compoundButton);
             String specifyWidget = (String) compoundButton.getTag(R.id.specify_widget);
             if (!TextUtils.isEmpty(specifyWidget)) {
-                String type = (String) compoundButton.getTag(R.id.specify_type);
-                if (JsonFormConstants.CONTENT_INFO.equals(type) && specifyWidget.equals(JsonFormConstants.DATE_PICKER)) {
-                    NativeRadioButtonFactory.showDateDialog(compoundButton);
-                }
+                nativeRadioButtonClickActions(compoundButton);
             }
             getView().writeValue(mStepName, parentKey, childKey, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
         }
