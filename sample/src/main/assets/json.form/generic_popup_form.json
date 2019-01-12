@@ -58,6 +58,86 @@
     "title": "Birth Registration",
     "fields": [
       {
+        "key": "sfh_edd",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "read_only": false,
+        "label": "Highest Level of School.",
+        "label_info_text": "Checking out the display oof the info icon needed to display this information",
+        "label_info_title": "Highest Level of School",
+        "min_date": "today-5y",
+        "max_date": "today",
+        "options": [
+          {
+            "key": "primary_school",
+            "text": "Primary school",
+            "specify_info": "Specify",
+            "specify_widget": "date_picker",
+            "label_info_text": "Checking out the display oof the info icon needed to display this information",
+            "label_info_title": "Highest Level of School",
+            "min_date": "today-5y",
+            "max_date": "today"
+          },
+          {
+            "key": "high_school",
+            "text": "High School",
+            "specify_info": "Specify",
+            "specify_widget": "date_picker",
+            "min_date": "today-20y",
+            "max_date": "today+5y"
+          },
+          {
+            "key": "higher_education",
+            "text": "College/University"
+          }
+        ],
+        "v_required": {
+          "value": true
+        }
+      },
+      {
+        "key": "select_gest_age_edd",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Select preferred gestational age",
+        "label_info_text": "If the difference between GA from LMP and early ultrasound is one week or less, then use GA from LMP. If the difference is more than 7 days, use the early ultrasound GA. If ultrasound was done late, use GA from LMP. Between late ultrasound and SFH or abdominal palpation, use your best judgment to select GA.",
+        "label_text_style": "bold",
+        "options": [
+          {
+            "key": "lmp",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "text": "Using LMP",
+            "extra_info": "GA: {lmp_gest_age}\nEDD: {lmp_edd}"
+          },
+          {
+            "key": "ultrasound",
+            "text": "Using ultrasound",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "extra_info": "GA: {ultrasound_gest_age}\nEDD: {ultrasound_edd}"
+          },
+          {
+            "key": "sfh",
+            "text": "Using SFH or abdominal palpation",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "extra_info": "GA: {sfh_gest_age} weeks\nEDD: {sfh_edd}"
+          }
+        ],
+        "value": "none",
+        "v_required": {
+          "value": true
+        }
+      },
+     {
         "key": "repiratory_exam",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -156,7 +236,13 @@
               }
             ]
           }
-        ]
+        ],
+        "relevance": {
+          "step1:repiratory_exam": {
+            "type": "string",
+            "ex": "equalTo(., \"1\")"
+          }
+        }
       },
       {
         "key": "repiratory_exam_three",
@@ -183,7 +269,46 @@
             "text": "Abnormal",
             "specify_info": "Specify",
             "specify_info_color": "#b5b5b5",
-            "specify_widget": "check_box"
+            "specify_widget": "check_box",
+            "content_form": "child_enrollment_third_sub_form",
+            "content_form_location": ""
+          }
+        ],
+        "relevance": {
+          "step1:repiratory_exam_two": {
+            "type": "string",
+            "ex": "equalTo(., \"2\")"
+          }
+        }
+      },
+      {
+        "key": "repiratory_exam_four",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Respiratory exam four",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "extra_rel": true,
+        "has_extra_rel": "3",
+        "options": [
+          {
+            "key": "1",
+            "text": "Not done"
+          },
+          {
+            "key": "2",
+            "text": "Normal"
+          },
+          {
+            "key": "3",
+            "text": "Abnormal",
+            "specify_info": "Specify",
+            "specify_info_color": "#b5b5b5",
+            "specify_widget": "check_box",
+            "content_form": "child_enrollment_third_sub_form",
+            "content_form_location": ""
           }
         ]
       }

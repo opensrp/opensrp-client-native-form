@@ -7,6 +7,7 @@ import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.rey.material.util.ViewUtil;
@@ -46,7 +47,7 @@ public class LabelFactory implements FormWidgetFactory {
             listener, boolean popup) throws JSONException {
         List<View> views = new ArrayList<>(1);
         JSONArray canvasIds = new JSONArray();
-        RelativeLayout relativeLayout = FormUtils.createLabelRelativeLayout(stepName, canvasIds, jsonObject, context, listener);
+        LinearLayout relativeLayout = FormUtils.createLabelRelativeLayout(stepName, canvasIds, jsonObject, context, listener);
 
         relativeLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
 
@@ -86,7 +87,7 @@ public class LabelFactory implements FormWidgetFactory {
      * @param relativeLayout
      * @throws JSONException
      */
-    private void createLabelTextView(JSONObject jsonObject, Context context, RelativeLayout relativeLayout) throws JSONException {
+    private void createLabelTextView(JSONObject jsonObject, Context context, LinearLayout relativeLayout) throws JSONException {
         boolean hintOnText = jsonObject.optBoolean(JsonFormConstants.HINT_ON_TEXT, false);
         boolean hasBg = jsonObject.optBoolean(JsonFormConstants.HAS_BG, false);
         String labelNumber = jsonObject.optString(JsonFormConstants.LABEL_NUMBER, null);
@@ -137,7 +138,7 @@ public class LabelFactory implements FormWidgetFactory {
         createNumberLabel(relativeLayout, labelNumber, jsonObject, labelTextSize, textStyle, context);
     }
 
-    private void createNumberLabel(RelativeLayout relativeLayout, String labelNumber, JSONObject jsonObject, int labelTextSize, String textStyle, Context context) {
+    private void createNumberLabel(LinearLayout relativeLayout, String labelNumber, JSONObject jsonObject, int labelTextSize, String textStyle, Context context) {
         if (!TextUtils.isEmpty(labelNumber)) {
             boolean hasBg = jsonObject.optBoolean(JsonFormConstants.HAS_BG, false);
 

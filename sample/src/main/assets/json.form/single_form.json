@@ -58,13 +58,58 @@
     "display_back_button": "true",
     "title": "Birth Registration",
     "fields": [
-      {
+     /* {
         "key": "Child_Photo",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "choose_image",
         "uploadButtonText": "Take a photo of the child"
+      },
+      {
+        "key": "medications_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Specify",
+        "v_regex": {
+          "value": "[A-Za-z\\s\.\-]*",
+          "err": "Please enter valid content"
+        },
+        "relevance": {
+          "step1:medications": {
+            "ex-checkbox": [
+              {
+                "or": [
+                  "other"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "penicillin_comply",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Is she taking her penicillin treatment for syphilis?",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "label_info_text": "A maximum of up to 3 weekly doses may be required.",
+        "label_info_title": "Syphilis Compliance",
+        "options": [
+          {
+            "key": "1",
+            "text": "Yes"
+          },
+          {
+            "key": "0",
+            "text": "No"
+          }
+        ]
       },
       {
         "key": "gps",
@@ -112,8 +157,8 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "person_attribute",
         "openmrs_entity_id": "Child_Register_Card_Number",
-        "editable":true,
-        "read_only":false,
+        "editable": true,
+        "read_only": false,
         "value": "1891389133",
         "type": "edit_text",
         "hint": "Child's register card number"
@@ -151,6 +196,8 @@
         "openmrs_entity_id": "last_name",
         "type": "edit_text",
         "hint": "Last name *",
+        "label_info_text": "If LMP is unknown and ultrasound wasn't done or it wasn't done early (before 24 weeks), then assess GA based on Symphysis Fundal Height (SFH) or abdominal palpation. Compare this GA against ultrasound GA (if done).",
+        "label_info_title": "GA from SFH or abdominal palpation - weeks",
         "edit_type": "name",
         "v_required": {
           "value": "true",
@@ -882,7 +929,7 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": ""
-      },
+      },*/
       {
         "key": "site_ipv_assess",
         "openmrs_entity_parent": "",
@@ -902,12 +949,36 @@
             "text": "No"
           }
         ],
-        "value": "",
+        "value": "1",
         "v_required": {
           "value": true,
           "err": "Please select where stock was issued"
         }
-      },
+      },{
+        "key": "site_ipv_assess",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "openmrs_data_type": "select one",
+        "label": "1. A protocol or standard operating procedure for Intimate Partner Violence (IPV); \n\n2. A health worker trained on how to ask about IPV and how to provide the minimum response or beyond;\n\n3. A private setting;\n\n4. A way to ensure confidentiality;\n\n5. Time to allow for appropriate disclosure; and\n\n6. A system for referral in place.",
+        "label_text_size": "18px",
+        "type": "native_radio",
+        "options": [
+          {
+            "key": "1",
+            "text": "Yes"
+          },
+          {
+            "key": "0",
+            "text": "No"
+          }
+        ],
+        "value": "1",
+        "v_required": {
+          "value": true,
+          "err": "Please select where stock was issued"
+        }
+      }/*,
       {
         "key": "spacer",
         "openmrs_entity_parent": "",
@@ -917,14 +988,13 @@
         "spacer_height": "20sp"
       },
       {
-        "key": "native_radio",
+        "key": "sfh_edd",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
         "read_only": true,
         "label": "Highest Level of School.",
-        "label_text_size": "18px",
         "label_text_color": "#FF9800",
         "label_info_text": "Checking out the display oof the info icon needed to display this information",
         "label_info_title": "Highest Level of School",
@@ -955,10 +1025,18 @@
             "text_color": "#358CB7"
           }
         ],
-        "value": "high_school",
         "v_required": {
           "value": true
         }
+      },
+      {
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "key": "sfh_edd_date",
+        "type": "hidden",
+        "label_text_style": "bold",
+        "text_color": "#FF0000"
       },
       {
         "key": "native_radio_tertiary_education",
@@ -1030,7 +1108,7 @@
         "openmrs_entity": "person_attribute",
         "openmrs_entity_id": "toaster_notes",
         "type": "toaster_notes",
-        "text": "This is an information note",
+        "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
         "text_color": "#1199F9",
         "toaster_type": "info",
         "toaster_info_text": "This is an information note, This is an information note, This is an information note, This is an information note,This is an information note, This is an information note",
@@ -1061,7 +1139,7 @@
         "openmrs_entity": "person_attribute",
         "openmrs_entity_id": "toaster_notes",
         "type": "toaster_notes",
-        "text": "This is an warning note",
+        "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
         "text_color": "#FFC100",
         "toaster_type": "warning"
       },
@@ -1191,7 +1269,7 @@
         "type": "normal_edit_text",
         "edit_type": "name",
         "edit_text_style": "bordered",
-        "value":"1909319333",
+        "value": "1909319333",
         "v_required": {
           "value": "true",
           "err": "Please enter the last name"
@@ -1514,7 +1592,7 @@
             "specify_widget": "check_box"
           }
         ]
-      }
+    }*/
     ]
   }
 }

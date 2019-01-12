@@ -253,7 +253,7 @@ public class FormUtils {
                     .getResources().getDimension(R.dimen.default_label_text_size))), context);
             String labelTextColor = jsonObject.optString(JsonFormConstants.LABEL_TEXT_COLOR, JsonFormConstants.DEFAULT_TEXT_COLOR);
             JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
-            RelativeLayout relativeLayout = createLabelRelativeLayout(stepName, canvasIds, jsonObject, context, listener);
+            LinearLayout relativeLayout = createLabelRelativeLayout(stepName, canvasIds, jsonObject, context, listener);
 
             CustomTextView labelText = relativeLayout.findViewById(R.id.label_text);
             ImageView editButton = relativeLayout.findViewById(R.id.label_edit_button);
@@ -284,7 +284,7 @@ public class FormUtils {
         return createdViewsMap;
     }
 
-    public static RelativeLayout createLabelRelativeLayout(String stepName, JSONArray canvasIds, JSONObject jsonObject, Context context, CommonListener listener) throws JSONException {
+    public static LinearLayout createLabelRelativeLayout(String stepName, JSONArray canvasIds, JSONObject jsonObject, Context context, CommonListener listener) throws JSONException {
         String openMrsEntityParent = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT, null);
         String openMrsEntity = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY, null);
         String openMrsEntityId = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_ID, null);
@@ -292,7 +292,7 @@ public class FormUtils {
         String labelInfoText = jsonObject.optString(JsonFormConstants.LABEL_INFO_TEXT, "");
         String labelInfoTitle = jsonObject.optString(JsonFormConstants.LABEL_INFO_TITLE, "");
 
-        RelativeLayout relativeLayout = (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.native_form_labels, null);
+        LinearLayout relativeLayout = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.native_form_labels, null);
         relativeLayout.setId(ViewUtil.generateViewId());
         canvasIds.put(relativeLayout.getId());
         relativeLayout.setTag(R.id.canvas_ids, canvasIds.toString());
@@ -508,6 +508,7 @@ public class FormUtils {
         String parentKey = (String) view.getTag(R.id.key);
         String type = (String) view.getTag(R.id.type);
         CustomTextView customTextView = (CustomTextView) view.getTag(R.id.specify_textview);
+        CustomTextView reasonsTextView = (CustomTextView) view.getTag(R.id.popup_reasons_textview);
         String childKey;
 
         if (specifyContent != null) {
@@ -520,8 +521,9 @@ public class FormUtils {
             genericPopupDialog.setSecondaryValues(jsonArray);
             genericPopupDialog.setParentKey(parentKey);
             genericPopupDialog.setWidgetType(type);
-            if (customTextView != null) {
+            if (customTextView != null && reasonsTextView != null) {
                 genericPopupDialog.setCustomTextView(customTextView);
+                genericPopupDialog.setPopupReasonsTextView(reasonsTextView);
             }
             if (type.equals(JsonFormConstants.CHECK_BOX) || type.equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
                 childKey = (String) view.getTag(R.id.childKey);
@@ -622,7 +624,7 @@ public class FormUtils {
                     for (int j = 0; j < itemArray.length(); j++) {
                         String s = formUtils.getValueFromSecondaryValues(type, itemArray.getString(j));
                         if (!TextUtils.isEmpty(s)) {
-                            specifyText.append(s + ",");
+                            specifyText.append(s).append(",").append(" ");
                         }
 
                     }
@@ -631,21 +633,55 @@ public class FormUtils {
                 e.printStackTrace();
             }
         }
-        return specifyText.toString().replaceAll(",$", "");
+        return specifyText.toString().replaceAll(", $", "");
     }
 
-    public JSONArray getSecondaryValues(JSONObject jsonObject, String type) {
+    public JSONArray getSecondaryValues(JSONObject jsonObject, String type) throws JSONException {
         JSONArray value = null;
-        String widgetType = type.equals(JsonFormConstants.EXPANSION_PANEL) ? JsonFormConstants.VALUE : JsonFormConstants.SECONDARY_VALUE;
+        String secondaryValues = type.equals(JsonFormConstants.EXPANSION_PANEL) ? JsonFormConstants.VALUE : JsonFormConstants.SECONDARY_VALUE;
 
-        if (jsonObject != null && jsonObject.has(widgetType)) {
+        if (jsonObject != null && jsonObject.has(secondaryValues)) {
             try {
-                value = jsonObject.getJSONArray(widgetType);
+                value = jsonObject.getJSONArray(secondaryValues);
             } catch (JSONException e) {
                 Log.i(TAG, Log.getStackTraceString(e));
             }
         }
 
         return value;
+    }
+
+    /**
+     * Gets the json form fields
+     * @param stepName
+     * @param context
+     * @return formFields {JSONArray}
+     * @author dubdabasoduba
+     */
+    public JSONArray getFormFields(String stepName, Context context) {
+        Activity activity = (Activity) context;
+        JsonApi jsonApi = (JsonApi) activity;
+        JSONArray fields = new JSONArray();
+        JSONObject mJSONObject = jsonApi.getmJSONObject();
+        if (mJSONObject != null) {
+            JSONObject parentJson = jsonApi.getStep(stepName);
+            try {
+                if (parentJson.has(JsonFormConstants.SECTIONS) && parentJson.get(JsonFormConstants.SECTIONS) instanceof JSONArray) {
+                    JSONArray sections = parentJson.getJSONArray(JsonFormConstants.SECTIONS);
+                    for (int i = 0; i < sections.length(); i++) {
+                        JSONObject sectionJson = sections.getJSONObject(i);
+                        if (sectionJson.has(JsonFormConstants.FIELDS)) {
+                            fields = concatArray(fields, sectionJson.getJSONArray(JsonFormConstants.FIELDS));
+                        }
+                    }
+                } else if (parentJson.has(JsonFormConstants.FIELDS) && parentJson.get(JsonFormConstants.FIELDS) instanceof JSONArray) {
+                    fields = parentJson.getJSONArray(JsonFormConstants.FIELDS);
+
+                }
+            } catch (JSONException e) {
+                Log.i(TAG, Log.getStackTraceString(e));
+            }
+        }
+        return fields;
     }
 }

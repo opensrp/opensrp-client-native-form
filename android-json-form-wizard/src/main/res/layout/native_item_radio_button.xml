@@ -6,18 +6,26 @@
     android:layout_marginEnd="5dp">
 
     <LinearLayout
-        android:id="@+id/radioContentLinearLayout"
-        android:orientation="horizontal"
+        android:id="@+id/main_radio_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/radioContentLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
         <RadioButton
             android:id="@+id/mainRadioButton"
             style="@style/Material.Drawable.RadioButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
+            android:gravity="center_horizontal|start"
             android:paddingStart="@dimen/native_radio_button_padding"
             android:paddingLeft="@dimen/native_radio_button_padding"
+            android:text="Abnormal"
             android:textSize="20sp" />
 
         <com.vijay.jsonwizard.views.CustomTextView
@@ -25,30 +33,42 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
-            android:layout_marginLeft="4dp"
             android:layout_marginEnd="4dp"
-            android:layout_toEndOf="@+id/mainRadioButton"
-            android:layout_toRightOf="@+id/mainRadioButton"
             android:ellipsize="end"
             android:textStyle="italic"
-            android:text="Awesome text"
+            android:text="(tap  to change)"
             android:visibility="gone" />
     </LinearLayout>
 
 
-
     <com.vijay.jsonwizard.views.CustomTextView
-        android:id="@+id/extraInfoTextView"
+        android:id="@+id/reasonsTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/radioContentLinearLayout"
         android:layout_marginStart="@dimen/native_radio_button_text_view_initial_left_margin"
         android:layout_marginLeft="@dimen/native_radio_button_text_view_initial_left_margin"
-        android:layout_marginTop="2dp"
+        android:layout_marginEnd="4dp"
         android:ellipsize="end"
+        android:textStyle="italic"
+        android:text="(Abnormal reasons include this, and the rest)"
         android:gravity="center_vertical|start"
-        android:paddingTop="2dp"
         android:visibility="gone" />
+        <com.vijay.jsonwizard.views.CustomTextView
+            android:id="@+id/extraInfoTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/main_radio_layout"
+            android:layout_marginStart="@dimen/native_radio_button_text_view_initial_left_margin"
+            android:layout_marginLeft="@dimen/native_radio_button_text_view_initial_left_margin"
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:gravity="center_vertical|start"
+            android:layout_marginBottom="16dp"
+            android:text="GA: {lmp_gest_age}\nEDD: {lmp_edd}"
+            android:visibility="gone" />
+    </LinearLayout>
+
+
 
     <ImageView
         android:id="@+id/info_icon"

@@ -106,8 +106,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                 return validationStatus;
             }
         } else if (childAt instanceof ImageView) {
-            ValidationStatus validationStatus = ImagePickerFactory.validate(formFragmentView,
-                    (ImageView) childAt);
+            ValidationStatus validationStatus = ImagePickerFactory.validate(formFragmentView, (ImageView) childAt);
             if (!validationStatus.isValid()) {
                 if (requestFocus) validationStatus.requestAttention();
                 return validationStatus;
@@ -126,10 +125,10 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             ValidationStatus validationStatus = SpinnerFactory.validate(formFragmentView, spinner);
             if (!validationStatus.isValid()) {
                 if (requestFocus) validationStatus.requestAttention();
-                spinner.setError(validationStatus.getErrorMessage());
+                setSpinnerError(spinner, validationStatus.getErrorMessage());
                 return validationStatus;
             } else {
-                spinner.setError(null);
+                setSpinnerError(spinner, null);
             }
         } else if (childAt instanceof CustomTextView) {
             CustomTextView customTextView = (CustomTextView) childAt;
@@ -157,8 +156,8 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         } catch (JSONException e) {
             Log.e(TAG, e.getMessage(), e);
         }
-        List<View> views = mJsonFormInteractor.fetchFormElements(mStepName, formFragment, mStepDetails,
-                getView().getCommonListener(), false);
+        List<View> views = mJsonFormInteractor.fetchFormElements(mStepName, formFragment, mStepDetails, getView().getCommonListener(),
+                false);
         getView().addFormElements(views);
 
     }
@@ -221,8 +220,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                     rawValue = editText.getText().toString();
                 }
 
-                getView().writeValue(mStepName, key, rawValue,
-                        openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
+                getView().writeValue(mStepName, key, rawValue, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
             } else if (childAt instanceof NativeEditText) {
                 NativeEditText editText = (NativeEditText) childAt;
 
@@ -231,26 +229,22 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                     rawValue = editText.getText().toString();
                 }
 
-                getView().writeValue(mStepName, key, rawValue,
-                        openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
+                getView().writeValue(mStepName, key, rawValue, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
             } else if (childAt instanceof ImageView) {
                 Object path = childAt.getTag(R.id.imagePath);
                 if (path instanceof String) {
-                    getView().writeValue(mStepName, key, (String) path, openMrsEntityParent,
-                            openMrsEntity, openMrsEntityId, popup);
+                    getView().writeValue(mStepName, key, (String) path, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
                 }
             } else if (childAt instanceof CheckBox) {
                 String parentKey = (String) childAt.getTag(R.id.key);
                 String childKey = (String) childAt.getTag(R.id.childKey);
-                getView().writeValue(mStepName, parentKey, JsonFormConstants.OPTIONS_FIELD_NAME, childKey,
-                        String.valueOf(((CheckBox) childAt).isChecked()), openMrsEntityParent,
-                        openMrsEntity, openMrsEntityId, popup);
+                getView().writeValue(mStepName, parentKey, JsonFormConstants.OPTIONS_FIELD_NAME, childKey, String.valueOf(((CheckBox)
+                        childAt).isChecked()), openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
             } else if (childAt instanceof RadioButton) {
                 String parentKey = (String) childAt.getTag(R.id.key);
                 String childKey = (String) childAt.getTag(R.id.childKey);
                 if (((RadioButton) childAt).isChecked()) {
-                    getView().writeValue(mStepName, parentKey, childKey, openMrsEntityParent,
-                            openMrsEntity, openMrsEntityId, popup);
+                    getView().writeValue(mStepName, parentKey, childKey, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
                 }
             } else if (childAt instanceof Button) {
                 Button button = (Button) childAt;
@@ -283,14 +277,13 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == RESULT_LOAD_IMG && resultCode == Activity.RESULT_OK) {
             String imagePath = mCurrentPhotoPath;
-            getView().updateRelevantImageView(ImageUtils.loadBitmapFromFile(getView().getContext(), imagePath, ImageUtils.getDeviceWidth(getView()
-                    .getContext()), dpToPixels(getView().getContext(), 200)), imagePath, mCurrentKey);
+            getView().updateRelevantImageView(ImageUtils.loadBitmapFromFile(getView().getContext(), imagePath, ImageUtils.getDeviceWidth
+                    (getView().getContext()), dpToPixels(getView().getContext(), 200)), imagePath, mCurrentKey);
             //cursor.close();
         }
     }
 
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         Log.d(TAG, "Permission callback called-------");
 
         if (grantResults.length == 0) {
@@ -353,7 +346,12 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                 }
                 break;
             case JsonFormConstants.EDIT_TEXT:
-                setViewEditable(v);
+                String infoIcon = (String) v.getTag(R.id.label_dialog_info);
+                if (!TextUtils.isEmpty(infoIcon)) {
+                    showInformationDialog(v);
+                } else {
+                    setViewEditable(v);
+                }
                 break;
             case JsonFormConstants.NORMAL_EDIT_TEXT:
                 setViewEditable(v);
@@ -368,11 +366,9 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         String type = (String) view.getTag(R.id.specify_type);
         String specifyWidget = (String) view.getTag(R.id.specify_widget);
         Log.i(TAG, "The dialog content widget is this: " + specifyWidget);
-        if (JsonFormConstants.CONTENT_INFO.equals(type) &&
-                specifyWidget.equals(JsonFormConstants.DATE_PICKER)) {
+        if (JsonFormConstants.CONTENT_INFO.equals(type) && specifyWidget.equals(JsonFormConstants.DATE_PICKER)) {
             NativeRadioButtonFactory.showDateDialog(view);
-        } else if (JsonFormConstants.CONTENT_INFO.equals(type) &&
-                !specifyWidget.equals(JsonFormConstants.DATE_PICKER)) {
+        } else if (JsonFormConstants.CONTENT_INFO.equals(type) && !specifyWidget.equals(JsonFormConstants.DATE_PICKER)) {
             FormUtils formUtils = new FormUtils();
             formUtils.showGenericDialog(view);
         } else if (view.getId() == R.id.label_edit_button) {
@@ -425,7 +421,8 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         builderSingle.setMessage((String) view.getTag(R.id.label_dialog_info));
         builderSingle.setIcon(R.drawable.ic_icon_info_filled);
 
-        builderSingle.setNegativeButton(getView().getContext().getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
+        builderSingle.setNegativeButton(getView().getContext().getResources().getString(R.string.ok), new DialogInterface.OnClickListener
+                () {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -436,8 +433,8 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
     }
 
     private void dispatchTakePictureIntent(String key, String type) {
-        if (PermissionUtils.isPermissionGranted(formFragment, new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE}, PermissionUtils.CAMERA_PERMISSION_REQUEST_CODE)) {
+        if (PermissionUtils.isPermissionGranted(formFragment, new String[]{Manifest.permission.CAMERA, Manifest.permission
+                .READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PermissionUtils.CAMERA_PERMISSION_REQUEST_CODE)) {
 
             if (JsonFormConstants.CHOOSE_IMAGE.equals(type)) {
                 getView().hideKeyBoard();
@@ -452,25 +449,18 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                     }
 
                     if (imageFile != null) {
-                        Uri photoURI = FileProvider.getUriForFile(getView().getContext(),
-                                getView().getContext().getPackageName() + ".fileprovider",
-                                imageFile);
+                        Uri photoURI = FileProvider.getUriForFile(getView().getContext(), getView().getContext().getPackageName() + "" +
+                                ".fileprovider", imageFile);
 
                         // Grant permission to the default camera app
                         PackageManager packageManager = getView().getContext().getPackageManager();
                         Context applicationContext = getView().getContext().getApplicationContext();
 
-                        applicationContext.grantUriPermission(
-                                takePictureIntent.resolveActivity(packageManager).getPackageName(),
-                                photoURI,
-                                Intent.FLAG_GRANT_READ_URI_PERMISSION
-                                        | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                        applicationContext.grantUriPermission(takePictureIntent.resolveActivity(packageManager).getPackageName(),
+                                photoURI, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
-                        applicationContext.grantUriPermission(
-                                "com.vijay.jsonwizard",
-                                photoURI,
-                                Intent.FLAG_GRANT_READ_URI_PERMISSION
-                                        | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                        applicationContext.grantUriPermission("com.vijay.jsonwizard", photoURI, Intent.FLAG_GRANT_READ_URI_PERMISSION |
+                                Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
                         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                         getView().startActivityForResult(takePictureIntent, RESULT_LOAD_IMG);
@@ -485,11 +475,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = getView().getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,
-                ".jpg",
-                storageDir
-        );
+        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
 
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = image.getAbsolutePath();
@@ -536,7 +522,8 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             }
 
 
-            getView().writeValue(mStepName, parentKey, JsonFormConstants.OPTIONS_FIELD_NAME, childKey, String.valueOf(compoundButton.isChecked()), openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
+            getView().writeValue(mStepName, parentKey, JsonFormConstants.OPTIONS_FIELD_NAME, childKey, String.valueOf(compoundButton
+                    .isChecked()), openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
         } else if ((compoundButton instanceof AppCompatRadioButton || compoundButton instanceof RadioButton) && isChecked) {
             String parentKey = (String) compoundButton.getTag(R.id.key);
             String openMrsEntityParent = (String) compoundButton.getTag(R.id.openmrs_entity_parent);
@@ -549,10 +536,18 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             }
 
             getView().unCheckAllExcept(parentKey, childKey, compoundButton);
-
-            getView().writeValue(mStepName, parentKey, childKey, openMrsEntityParent,
-                    openMrsEntity, openMrsEntityId, popup);
+            String specifyWidget = (String) compoundButton.getTag(R.id.specify_widget);
+            if (!TextUtils.isEmpty(specifyWidget)) {
+                String type = (String) compoundButton.getTag(R.id.specify_type);
+                if (JsonFormConstants.CONTENT_INFO.equals(type) && specifyWidget.equals(JsonFormConstants.DATE_PICKER)) {
+                    NativeRadioButtonFactory.showDateDialog(compoundButton);
+                }
+            }
+            getView().writeValue(mStepName, parentKey, childKey, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
         }
+    }
+
+    public void onFocusChange(View v, boolean hasFocus) {
     }
 
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -568,8 +563,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         }
         if (position >= 0) {
             String value = (String) parent.getItemAtPosition(position);
-            getView().writeValue(mStepName, parentKey, value, openMrsEntityParent, openMrsEntity,
-                    openMrsEntityId, popup);
+            getView().writeValue(mStepName, parentKey, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
         }
 
         if (JsonFormConstants.NUMBERS_SELECTOR.equals(type)) {
@@ -613,5 +607,13 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             Log.d(TAG, e.getMessage());
         }
         return null;
+    }
+
+    private static void setSpinnerError(MaterialSpinner spinner, String spinnerError) {
+        try {
+            spinner.setError(spinnerError);
+        } catch (IllegalArgumentException e) {
+            Log.e(TAG, e.getMessage(), e);
+        }
     }
 }
