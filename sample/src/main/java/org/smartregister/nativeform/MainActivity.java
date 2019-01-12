@@ -116,6 +116,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 form.setNextLabel(getString(R.string.next));
                 form.setPreviousLabel(getString(R.string.previous));
                 form.setSaveLabel(getString(R.string.save));
+                form.setBackIcon(R.drawable.ic_icon_positive);
                 intent.putExtra(JsonFormConstants.JSON_FORM_KEY.FORM, form);
 
                 startActivityForResult(intent, jsonFormActivityRequestCode);

@@ -79,7 +79,8 @@ public class JsonWizardFormFragment extends JsonFormFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        //menu.add(Menu.NONE, MENU_NAVIGATION, 1, "Menu").setIcon(R.drawable.ic_action_menu).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        //menu.add(Menu.NONE, MENU_NAVIGATION, 1, "Menu").setIcon(R.drawable.ic_action_menu).setShowAsAction(MenuItem
+        // .SHOW_AS_ACTION_ALWAYS);
     }
 
     @Override
@@ -213,6 +214,10 @@ public class JsonWizardFormFragment extends JsonFormFragment {
                     previousButton.setText(form.getPreviousLabel());
                 }
 
+                if (form.getBackIcon() > 0) {
+                    getSupportActionBar().setHomeAsUpIndicator(form.getBackIcon());
+                }
+
             }
         } catch (Resources.NotFoundException e) {
             Log.e(TAG, e.getMessage(), e);
@@ -222,7 +227,8 @@ public class JsonWizardFormFragment extends JsonFormFragment {
 
     protected void save() {
         try {
-            Boolean skipValidation = ((JsonFormActivity) mMainView.getContext()).getIntent().getBooleanExtra(JsonFormConstants.SKIP_VALIDATION, false);
+            Boolean skipValidation = ((JsonFormActivity) mMainView.getContext()).getIntent().getBooleanExtra(JsonFormConstants
+                    .SKIP_VALIDATION, false);
             save(skipValidation);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());

@@ -1,5 +1,7 @@
 package com.vijay.jsonwizard.domain;
 
+import android.graphics.drawable.Drawable;
+
 import java.io.Serializable;
 
 public class Form implements Serializable {
@@ -10,6 +12,8 @@ public class Form implements Serializable {
 
     private int actionBarBackground;
     private int navigationBackground;
+
+    private int backIcon;
 
     private String nextLabel;
     private String previousLabel;
@@ -88,5 +92,13 @@ public class Form implements Serializable {
 
     public void setHideSaveLabel(boolean hideSaveLabel) {
         this.hideSaveLabel = hideSaveLabel;
+    }
+
+    public int getBackIcon() {
+        return backIcon;
+    }
+
+    public void setBackIcon(int backIcon) {
+        this.backIcon = backIcon;
     }
 }
