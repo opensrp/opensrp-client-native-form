@@ -133,6 +133,8 @@ public class JsonFormConstants {
     public static final String LEFT_PADDING = "left_padding";
     public static final String RIGHT_PADDING = "right_padding";
     public static final String SPECIFY_DATE_HIDDEN_FIELD_SUFFIX = "_date";
+    public static final String SECONDARY_SUFFIX = "secondary_suffix";
+    public static final String SECONDARY_PREFIX = "Specified: ";
 
     public static class JSON_FORM_KEY {
         public static final String EX_RULES = "ex-rules";

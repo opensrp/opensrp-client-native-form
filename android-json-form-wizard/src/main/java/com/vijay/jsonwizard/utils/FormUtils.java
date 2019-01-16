@@ -636,7 +636,7 @@ public class FormUtils {
         return specifyText.toString().replaceAll(", $", "");
     }
 
-    public JSONArray getSecondaryValues(JSONObject jsonObject, String type) throws JSONException {
+    public JSONArray getSecondaryValues(JSONObject jsonObject, String type) {
         JSONArray value = null;
         String secondaryValues = type.equals(JsonFormConstants.EXPANSION_PANEL) ? JsonFormConstants.VALUE : JsonFormConstants.SECONDARY_VALUE;
 
