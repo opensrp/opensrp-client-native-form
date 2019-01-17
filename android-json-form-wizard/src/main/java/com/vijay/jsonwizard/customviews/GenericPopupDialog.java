@@ -59,6 +59,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
     private CustomTextView popupReasonsTextView;
     private Map<String, SecondaryValueModel> popAssignedValue = new HashMap<>();
     private Map<String, SecondaryValueModel> secondaryValuesMap = new HashMap<>();
+    private String suffix = "";
 
     private JSONArray specifyContent;
     private String TAG = this.getClass().getSimpleName();
@@ -131,13 +132,11 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         if (fields != null && fields.length() > 0) {
             for (int i = 0; i < fields.length(); i++) {
                 JSONObject item = fields.getJSONObject(i);
-                if (item.has(JsonFormConstants.KEY) && item.getString(JsonFormConstants.KEY).equals(parentKey) && item.has
-                        (JsonFormConstants.OPTIONS_FIELD_NAME)) {
+                if (item.has(JsonFormConstants.KEY) && item.getString(JsonFormConstants.KEY).equals(parentKey) && item.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
                     JSONArray options = item.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
                     for (int k = 0; k < options.length(); k++) {
                         JSONObject option = options.getJSONObject(k);
-                        if (option != null && option.has(JsonFormConstants.KEY) && option.getString(JsonFormConstants.KEY).equals
-                                (childKey) && option.has(JsonFormConstants.SECONDARY_VALUE)) {
+                        if (option != null && option.has(JsonFormConstants.KEY) && option.getString(JsonFormConstants.KEY).equals(childKey) && option.has(JsonFormConstants.SECONDARY_VALUE)) {
                             setSecondaryValues(option.getJSONArray(JsonFormConstants.SECONDARY_VALUE));
                         }
                     }
@@ -188,6 +187,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                jsonApi.invokeRefreshLogic(null, true, null, null);
                 passData();
                 jsonApi.updateGenericPopupSecondaryValues(null);
                 GenericPopupDialog.this.dismiss();
@@ -395,6 +395,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
                 String[] currentValues = currentValue.split(":");
                 if (splitValues.length == 3 && currentValues.length == 3 && splitValues[0].equals(currentValues[0]) && splitValues[1]
                         .equals(currentValues[1]) && currentValues[2].equals("false")) {
+
                     list.remove(k);
                 }
             }
@@ -446,204 +447,209 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
      */
     public void onGenericDataPass(Map<String, SecondaryValueModel> selectedValues, String parentKey, String stepName, String childKey) {
 
-        JSONObject mJSONObject = jsonApi.getmJSONObject();
-        if (mJSONObject != null) {
-            JSONArray fields = formUtils.getFormFields(stepName, context);
-            try {
-                if (fields.length() > 0) {
-                    for (int i = 0; i < fields.length(); i++) {
-                        JSONObject item = fields.getJSONObject(i);
-                        if (item != null && item.getString(JsonFormConstants.KEY).equals(parentKey)) {
-                            addSecondaryValues(getJsonObjectToUpdate(item, childKey), selectedValues);
-                        }
-                    }
-                }
-
-                if (newSelectedValues.length() > 0 && customTextView != null && popupReasonsTextView != null) {
-                    customTextView.setText("(" + getString(R.string.radio_button_tap_to_change) + ")");
-                    popupReasonsTextView.setVisibility(View.VISIBLE);
-                    popupReasonsTextView.setText("(" + formUtils.getSpecifyText(newSelectedValues) + ")");
-                }
-                jsonApi.setmJSONObject(mJSONObject);
-
-            } catch (JSONException e) {
-                Log.i(TAG, Log.getStackTraceString(e));
-            }
-        }
-    }
-
-
-    /**
-     * Finds the actual widget to be updated and secondary values added on
-     *
-     * @param jsonObject
-     * @param childKey
-     * @return
-     */
-    protected JSONObject getJsonObjectToUpdate(JSONObject jsonObject, String childKey) {
-        JSONObject item = new JSONObject();
-        try {
-            if (jsonObject != null && jsonObject.has(JsonFormConstants.TYPE)) {
-                if ((jsonObject.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.NATIVE_RADIO_BUTTON) || jsonObject.getString
-                        (JsonFormConstants.TYPE).equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) && childKey != null) {
-                    JSONArray options = jsonObject.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
-                    if (options != null) {
-                        for (int i = 0; i < options.length(); i++) {
-                            JSONObject childItem = options.getJSONObject(i);
-                            if (childItem != null && childItem.has(JsonFormConstants.KEY) && childKey.equals(childItem.getString
-                                    (JsonFormConstants.KEY))) {
-                                item = childItem;
+            JSONObject mJSONObject = jsonApi.getmJSONObject();
+            if (mJSONObject != null) {
+                JSONArray fields = formUtils.getFormFields(stepName, context);
+                JSONObject item = null;
+                try {
+                    if (fields.length() > 0) {
+                        for (int i = 0; i < fields.length(); i++) {
+                            item = fields.getJSONObject(i);
+                            if (item != null && item.getString(JsonFormConstants.KEY).equals(parentKey)) {
+                                addSecondaryValues(getJsonObjectToUpdate(item, childKey), selectedValues);
                             }
                         }
                     }
-                } else {
-                    item = jsonObject;
+
+                    if (newSelectedValues.length() > 0 && customTextView != null && popupReasonsTextView != null) {
+                        customTextView.setText("(" + getString(R.string.radio_button_tap_to_change) + ")");
+                        popupReasonsTextView.setVisibility(View.VISIBLE);
+                        popupReasonsTextView.setText(JsonFormConstants.SECONDARY_PREFIX + formUtils.getSpecifyText(newSelectedValues) + " " + suffix);
+                    }
+                    jsonApi.setmJSONObject(mJSONObject);
+
+                } catch (JSONException e) {
+                    Log.i(TAG, Log.getStackTraceString(e));
                 }
-            } else {
-                item = jsonObject;
             }
-        } catch (Exception e) {
-            Log.i(TAG, Log.getStackTraceString(e));
         }
 
-        return item;
-    }
 
-    /**
-     * Adding the secondary values on to the specific json widget
-     *
-     * @param item
-     * @param secondaryValueModel
-     */
-    protected void addSecondaryValues(JSONObject item, Map<String, SecondaryValueModel> secondaryValueModel) {
-        JSONObject valueObject;
-        JSONArray secondaryValuesArray = new JSONArray();
-        SecondaryValueModel secondaryValue;
-        for (Object object : secondaryValueModel.entrySet()) {
-            Map.Entry pair = (Map.Entry) object;
-            secondaryValue = (SecondaryValueModel) pair.getValue();
-            valueObject = createSecondaryValueObject(secondaryValue);
-            secondaryValuesArray.put(valueObject);
+        /**
+         * Finds the actual widget to be updated and secondary values added on
+         *
+         * @param jsonObject
+         * @param childKey
+         * @return
+         */
+        protected JSONObject getJsonObjectToUpdate (JSONObject jsonObject, String childKey){
+            JSONObject item = new JSONObject();
+            try {
+                if (jsonObject != null && jsonObject.has(JsonFormConstants.TYPE)) {
+                    if ((jsonObject.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.NATIVE_RADIO_BUTTON) ||  jsonObject.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) && childKey != null) {
+                            JSONArray options = jsonObject.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
+                            if (options != null) {
+                                for (int i = 0; i < options.length(); i++) {
+                                    JSONObject childItem = options.getJSONObject(i);
+                                    if (childItem != null && childItem.has(JsonFormConstants.KEY) && childKey.equals(childItem.getString(JsonFormConstants.KEY))) {
+                                        item = childItem;
+                                    }
+                                }
+                            }
+                        } else {
+                            item = jsonObject;
+                        }
+                    } else {
+                        item = jsonObject;
+                    }
+                } catch(Exception e){
+                    Log.i(TAG, Log.getStackTraceString(e));
+                }
+
+                return item;
+            }
+
+            /**
+             * Adding the secondary values on to the specific json widget
+             *
+             * @param item
+             * @param secondaryValueModel
+             */
+            protected void addSecondaryValues (JSONObject
+            item, Map < String, SecondaryValueModel > secondaryValueModel){
+                JSONObject valueObject;
+                JSONArray secondaryValuesArray = new JSONArray();
+                SecondaryValueModel secondaryValue;
+                for (Object object : secondaryValueModel.entrySet()) {
+                    Map.Entry pair = (Map.Entry) object;
+                    secondaryValue = (SecondaryValueModel) pair.getValue();
+                    valueObject = createSecondaryValueObject(secondaryValue);
+                    secondaryValuesArray.put(valueObject);
+                }
+                try {
+                    item.put(JsonFormConstants.SECONDARY_VALUE, secondaryValuesArray);
+
+                    if (item.has(JsonFormConstants.SECONDARY_SUFFIX)) {
+                        suffix = item.getString(JsonFormConstants.SECONDARY_SUFFIX);
+                    }
+                            newSelectedValues = secondaryValuesArray;
+                } catch (Exception e) {
+                    Log.i(TAG, Log.getStackTraceString(e));
+                }
+            }
+
+            /**
+             * Creates the secondary values objects
+             *
+             * @param value
+             * @return
+             */
+            protected JSONObject createSecondaryValueObject (SecondaryValueModel value){
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    String key = value.getKey();
+                    String type = value.getType();
+                    JSONArray values = value.getValues();
+
+                    jsonObject.put(JsonFormConstants.KEY, key);
+                    jsonObject.put(JsonFormConstants.TYPE, type);
+                    jsonObject.put(JsonFormConstants.VALUES, values);
+                } catch (Exception e) {
+                    Log.i(TAG, Log.getStackTraceString(e));
+
+                }
+                return jsonObject;
+            }
+
+            public String getWidgetType () {
+                return widgetType;
+            }
+
+            public void setWidgetType (String widgetType){
+                this.widgetType = widgetType;
+            }
+
+            public JSONArray getNewSelectedValues () {
+                return newSelectedValues;
+            }
+
+            public void setNewSelectedValues (JSONArray newSelectedValues){
+                this.newSelectedValues = newSelectedValues;
+            }
+
+            public Map<String, SecondaryValueModel> getPopAssignedValue () {
+                return popAssignedValue;
+            }
+
+            public void setPopAssignedValue (Map < String, SecondaryValueModel > popAssignedValue){
+                this.popAssignedValue = popAssignedValue;
+            }
+
+            public Map<String, SecondaryValueModel> getSecondaryValuesMap () {
+                return secondaryValuesMap;
+            }
+
+            public void setSecondaryValuesMap
+            (Map < String, SecondaryValueModel > secondaryValuesMap){
+                this.secondaryValuesMap = secondaryValuesMap;
+            }
+
+            public JsonApi getJsonApi () {
+                return jsonApi;
+            }
+
+            public void setJsonApi (JsonApi jsonApi){
+                this.jsonApi = jsonApi;
+            }
+
+            public String getStepName () {
+                return stepName;
+            }
+
+            public void setStepName (String stepName){
+                this.stepName = stepName;
+            }
+
+            public CommonListener getCommonListener () {
+                return commonListener;
+            }
+
+            public void setCommonListener (CommonListener commonListener){
+                this.commonListener = commonListener;
+            }
+
+            public JsonFormFragment getFormFragment () {
+                return formFragment;
+            }
+
+            public void setFormFragment (JsonFormFragment formFragment){
+                this.formFragment = formFragment;
+            }
+
+            public JSONArray getSpecifyContent () {
+                return specifyContent;
+            }
+
+            public void setSpecifyContent (JSONArray specifyContent){
+                this.specifyContent = specifyContent;
+            }
+
+            public String getFormIdentity () {
+                return formIdentity;
+            }
+
+            @Override
+            public void setFormIdentity (String formIdentity){
+                this.formIdentity = formIdentity;
+            }
+
+            public String getFormLocation () {
+                return formLocation;
+            }
+
+            @Override
+            public void setFormLocation (String formLocation){
+                this.formLocation = formLocation;
+            }
+
         }
-        try {
-            item.put(JsonFormConstants.SECONDARY_VALUE, secondaryValuesArray);
-            newSelectedValues = secondaryValuesArray;
-        } catch (Exception e) {
-            Log.i(TAG, Log.getStackTraceString(e));
-        }
-    }
-
-    /**
-     * Creates the secondary values objects
-     *
-     * @param value
-     * @return
-     */
-    protected JSONObject createSecondaryValueObject(SecondaryValueModel value) {
-        JSONObject jsonObject = new JSONObject();
-        try {
-            String key = value.getKey();
-            String type = value.getType();
-            JSONArray values = value.getValues();
-
-            jsonObject.put(JsonFormConstants.KEY, key);
-            jsonObject.put(JsonFormConstants.TYPE, type);
-            jsonObject.put(JsonFormConstants.VALUES, values);
-        } catch (Exception e) {
-            Log.i(TAG, Log.getStackTraceString(e));
-
-        }
-        return jsonObject;
-    }
-
-    public String getWidgetType() {
-        return widgetType;
-    }
-
-    public void setWidgetType(String widgetType) {
-        this.widgetType = widgetType;
-    }
-
-    public JSONArray getNewSelectedValues() {
-        return newSelectedValues;
-    }
-
-    public void setNewSelectedValues(JSONArray newSelectedValues) {
-        this.newSelectedValues = newSelectedValues;
-    }
-
-    public Map<String, SecondaryValueModel> getPopAssignedValue() {
-        return popAssignedValue;
-    }
-
-    public void setPopAssignedValue(Map<String, SecondaryValueModel> popAssignedValue) {
-        this.popAssignedValue = popAssignedValue;
-    }
-
-    public Map<String, SecondaryValueModel> getSecondaryValuesMap() {
-        return secondaryValuesMap;
-    }
-
-    public void setSecondaryValuesMap(Map<String, SecondaryValueModel> secondaryValuesMap) {
-        this.secondaryValuesMap = secondaryValuesMap;
-    }
-
-    public JsonApi getJsonApi() {
-        return jsonApi;
-    }
-
-    public void setJsonApi(JsonApi jsonApi) {
-        this.jsonApi = jsonApi;
-    }
-
-    public String getStepName() {
-        return stepName;
-    }
-
-    public void setStepName(String stepName) {
-        this.stepName = stepName;
-    }
-
-    public CommonListener getCommonListener() {
-        return commonListener;
-    }
-
-    public void setCommonListener(CommonListener commonListener) {
-        this.commonListener = commonListener;
-    }
-
-    public JsonFormFragment getFormFragment() {
-        return formFragment;
-    }
-
-    public void setFormFragment(JsonFormFragment formFragment) {
-        this.formFragment = formFragment;
-    }
-
-    public JSONArray getSpecifyContent() {
-        return specifyContent;
-    }
-
-    public void setSpecifyContent(JSONArray specifyContent) {
-        this.specifyContent = specifyContent;
-    }
-
-    public String getFormIdentity() {
-        return formIdentity;
-    }
-
-    @Override
-    public void setFormIdentity(String formIdentity) {
-        this.formIdentity = formIdentity;
-    }
-
-    public String getFormLocation() {
-        return formLocation;
-    }
-
-    @Override
-    public void setFormLocation(String formLocation) {
-        this.formLocation = formLocation;
-    }
-
-}

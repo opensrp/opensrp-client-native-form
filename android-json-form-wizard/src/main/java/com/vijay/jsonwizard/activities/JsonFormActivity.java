@@ -651,6 +651,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
      * This method checks if all views being watched for constraints enforce those constraints This library currently only supports
      * constraints on views that store the value in {@link MaterialEditText} (ie TreeViews, DatePickers, and EditTexts), and {@link
      * CheckBox}
+     *
+     * @param parentKey
+     * @param childKey
      */
     @Override
     public void refreshConstraints(String parentKey, String childKey) {
@@ -722,7 +725,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     }
 
                 } else {
-//Rules Engine
+                    //Rules Engine
                     JSONObject constraint = new JSONObject(constraintTag);
                     Iterator<String> keys = constraint.keys();
                     while (keys.hasNext()) {

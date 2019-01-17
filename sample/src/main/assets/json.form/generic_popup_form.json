@@ -85,6 +85,7 @@
             "specify_widget": "check_box",
             "content_form": "child_enrollment_sub_form",
             "content_form_location": "",
+            "secondary_suffix": "test",
             "secondary_value": [
               {
                 "key": "respiratory_exam_abnormal",
@@ -139,6 +140,7 @@
             "specify_widget": "check_box",
             "content_form": "child_enrollment_two_sub_form",
             "content_form_location": "",
+            "secondary_suffix": "bpm",
             "secondary_value": [
               {
                 "key": "respiratory_exam_radio_button",
@@ -191,6 +193,7 @@
             "specify_info_color": "#b5b5b5",
             "specify_widget": "check_box",
             "content_form": "child_enrollment_third_sub_form",
+            "secondary_suffix": "bpm",
             "content_form_location": ""
           }
         ],
@@ -228,6 +231,7 @@
             "specify_info_color": "#b5b5b5",
             "specify_widget": "check_box",
             "content_form": "child_enrollment_third_sub_form",
+            "secondary_suffix": "bpm",
             "content_form_location": ""
           }
         ]
