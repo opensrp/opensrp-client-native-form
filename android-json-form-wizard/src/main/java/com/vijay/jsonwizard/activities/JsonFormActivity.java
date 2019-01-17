@@ -144,7 +144,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             if (mJSONObject.has(JsonFormConstants.JSON_FORM_KEY.GLOBAL)) {
                 globalValues = new Gson().fromJson(mJSONObject.getJSONObject(JsonFormConstants.JSON_FORM_KEY.GLOBAL).toString(), new
                         TypeToken<HashMap<String, String>>() {
-                }.getType());
+                        }.getType());
             } else {
                 globalValues = new HashMap<>();
             }
@@ -1082,7 +1082,6 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
      *
      * @param value      The value to be checked
      * @param constraint The constraint expression to use
-     *
      * @return An error message if constraint has not been enfored or NULL if constraint enforced
      * @throws Exception
      */
@@ -1159,7 +1158,6 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
      *
      * @param sectionJson
      * @param popup
-     *
      * @return
      * @throws JSONException
      * @author dubdabasoduba
@@ -1194,7 +1192,6 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
      *
      * @param parentJson
      * @param popup
-     *
      * @return fields
      * @throws JSONException
      * @author dubdabasoduba
