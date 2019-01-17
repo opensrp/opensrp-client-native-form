@@ -477,7 +477,6 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
      *
      * @param jsonObject
      * @param childKey
-     *
      * @return
      */
     protected JSONObject getJsonObjectToUpdate(JSONObject jsonObject, String childKey) {
@@ -539,7 +538,6 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
      * Creates the secondary values objects
      *
      * @param value
-     *
      * @return
      */
     protected JSONObject createSecondaryValueObject(SecondaryValueModel value) {
