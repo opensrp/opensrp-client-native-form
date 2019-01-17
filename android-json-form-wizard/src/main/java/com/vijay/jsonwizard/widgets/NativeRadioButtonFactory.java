@@ -498,7 +498,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
      * @author dubdabasoduba
      */
     private String getOptionTextWithSecondaryValue(JSONObject item) throws JSONException {
-        String optionText = "";
+        String optionText = item.getString(JsonFormConstants.TEXT);
         JSONArray secondaryValueArray = item.getJSONArray(JsonFormConstants.SECONDARY_VALUE);
         if (secondaryValueArray != null && secondaryValueArray.length() > 0) {
             JSONObject secondaryValue = secondaryValueArray.getJSONObject(0);
@@ -525,6 +525,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         view.setTag(R.id.specify_textview, getSpecifyTextView());
         view.setTag(R.id.native_radio_button, getRadioButton());
         view.setTag(R.id.popup_reasons_textview, getReasonsTextView());
+        view.setTag(R.id.specify_extra_info_textview, getExtraInfoTextView());
         view.setTag(R.id.specify_type, JsonFormConstants.CONTENT_INFO);
         view.setTag(R.id.specify_context, context);
         view.setTag(R.id.specify_widget, specifyWidget);

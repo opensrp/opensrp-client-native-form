@@ -544,9 +544,6 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         }
     }
 
-    public void onFocusChange(View v, boolean hasFocus) {
-    }
-
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         String parentKey = (String) parent.getTag(R.id.key);
         String type = (String) parent.getTag(R.id.type);

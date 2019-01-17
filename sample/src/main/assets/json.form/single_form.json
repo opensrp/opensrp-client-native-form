@@ -58,7 +58,7 @@
     "display_back_button": "true",
     "title": "Birth Registration",
     "fields": [
-     /* {
+      {
         "key": "Child_Photo",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -352,7 +352,7 @@
         "openmrs_entity_id": "NRC_Number",
         "entity_id": "mother",
         "type": "edit_text",
-        "hint": "Mother/guardian NRC number",
+        "hint": "Mother/guardian NRC number Mother\n/guardian NRC number Mother/\nguardian NRC number",
         "v_regex": {
           "value": "([0-9]{6}/[0-9]{2}/[0-9])|\s*",
           "err": "Number must take the format of ######/##/#"
@@ -929,7 +929,7 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": ""
-      },*/
+      },
       {
         "key": "site_ipv_assess",
         "openmrs_entity_parent": "",
@@ -978,7 +978,7 @@
           "value": true,
           "err": "Please select where stock was issued"
         }
-      }/*,
+      },
       {
         "key": "spacer",
         "openmrs_entity_parent": "",
@@ -1592,7 +1592,7 @@
             "specify_widget": "check_box"
           }
         ]
-    }*/
+      }
     ]
   }
 }

@@ -344,19 +344,57 @@ public class FormUtils {
      */
     public static void setRadioExclusiveClick(ViewGroup parent) {
         final List<RadioButton> radioButtonList = getRadioButtons(parent);
-        for (RadioButton radioButton : radioButtonList) {
+        for (final RadioButton radioButton : radioButtonList) {
             radioButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     RadioButton radioButtonView = (RadioButton) view;
+                    Context context = (Context) radioButtonView.getTag(R.id.specify_context);
+                    String stepName = (String) radioButtonView.getTag(R.id.specify_step_name);
+                    JSONArray mainJson = new FormUtils().getFormFields(stepName, context);
+
                     radioButtonView.setChecked(true);
                     for (RadioButton button : radioButtonList) {
                         if (button.getId() != radioButtonView.getId()) {
                             button.setChecked(false);
+                            CustomTextView specifyText = (CustomTextView) button.getTag(R.id.specify_textview);
+                            CustomTextView reasonsText = (CustomTextView) button.getTag(R.id.popup_reasons_textview);
+                            CustomTextView extraInfoTextView = (CustomTextView) button.getTag(R.id.specify_extra_info_textview);
+
+                            JSONObject optionsJson = (JSONObject) button.getTag(R.id.option_json_object);
+                            JSONObject radioButtonJson = (JSONObject) button.getTag(R.id.json_object);
+
+                            String radioButtonText = optionsJson.optString(JsonFormConstants.TEXT);
+                            button.setText(radioButtonText);
+
+                            handleRadioGroupViews(optionsJson, specifyText, reasonsText, extraInfoTextView);
+                            try {
+                                resetSecondaryValues(mainJson,radioButtonJson);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
                         }
                     }
 
                 }
+
+                private void handleRadioGroupViews(JSONObject optionsJson, CustomTextView specifyText, CustomTextView reasonsText, CustomTextView extraInfoTextView) {
+                    if (specifyText != null && optionsJson.has(JsonFormConstants.CONTENT_INFO)) {
+                        String specifyInfo = optionsJson.optString(JsonFormConstants.CONTENT_INFO);
+                        String currentText = (String) specifyText.getText();
+                        String newText = "(" + specifyInfo + ")";
+                        specifyText.setText(newText);
+                    }
+                    if (reasonsText != null) {
+                        reasonsText.setVisibility(View.GONE);
+                    }
+                    if (extraInfoTextView != null) {
+                        extraInfoTextView.setVisibility(View.VISIBLE);
+                    }
+
+                }
+
             });
         }
     }
@@ -546,6 +584,29 @@ public class FormUtils {
 
     }
 
+    private static void resetSecondaryValues(JSONArray mainJson, JSONObject radioJsonObject) throws JSONException {
+
+        String radioKey = radioJsonObject.getString(JsonFormConstants.KEY);
+        JSONObject newRadioJson = getJsonObjectFromArray(mainJson,radioKey);
+        JSONArray options = newRadioJson != null ? newRadioJson.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME) : null;
+        if (options!=null){
+            for (int n = 0; n<options.length(); n++){
+                options.getJSONObject(n).remove(JsonFormConstants.SECONDARY_VALUE);
+            }
+        }
+
+    }
+    private static JSONObject getJsonObjectFromArray(JSONArray jsonArray, String key) throws JSONException {
+        for(int n = 0; n < jsonArray.length(); n++)
+        {
+            JSONObject object = jsonArray.getJSONObject(n);
+            String currentKey = object.getString(JsonFormConstants.KEY);
+            if (currentKey.equals(key))
+                return object;
+        }
+        return null;
+    }
+
     public String getValueFromSecondaryValues(String type, String itemString) {
         String newString;
         String[] strings = itemString.split(":");
@@ -636,7 +697,7 @@ public class FormUtils {
         return specifyText.toString().replaceAll(", $", "");
     }
 
-    public JSONArray getSecondaryValues(JSONObject jsonObject, String type) throws JSONException {
+    public JSONArray getSecondaryValues(JSONObject jsonObject, String type) {
         JSONArray value = null;
         String secondaryValues = type.equals(JsonFormConstants.EXPANSION_PANEL) ? JsonFormConstants.VALUE : JsonFormConstants.SECONDARY_VALUE;
 
@@ -653,6 +714,7 @@ public class FormUtils {
 
     /**
      * Gets the json form fields
+     *
      * @param stepName
      * @param context
      * @return formFields {JSONArray}
