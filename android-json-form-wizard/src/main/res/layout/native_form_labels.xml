@@ -4,6 +4,7 @@
     android:weightSum="2"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/label_bottom_padding"
     android:baselineAligned="false">
 
     <LinearLayout
@@ -41,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:background="@null"
-            android:contentDescription="@string/info_label"
+            android:contentDescription="@string/edit_button_label"
             android:visibility="gone"
             app:srcCompat="@drawable/edit_button_bg" />
 

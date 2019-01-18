@@ -50,4 +50,5 @@
     <dimen name="form_container_navigation_elevation">3dp</dimen>
     <dimen name="form_container_drawable_padding">10dp</dimen>
     <dimen name="form_container_small_padding">5dp</dimen>
+    <dimen name="label_bottom_padding">14dp</dimen>
 </resources>

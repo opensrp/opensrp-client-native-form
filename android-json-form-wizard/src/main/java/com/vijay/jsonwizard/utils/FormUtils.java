@@ -349,10 +349,6 @@ public class FormUtils {
                 @Override
                 public void onClick(View view) {
                     RadioButton radioButtonView = (RadioButton) view;
-                    Context context = (Context) radioButtonView.getTag(R.id.specify_context);
-                    String stepName = (String) radioButtonView.getTag(R.id.specify_step_name);
-                    JSONArray mainJson = new FormUtils().getFormFields(stepName, context);
-
                     radioButtonView.setChecked(true);
                     for (RadioButton button : radioButtonList) {
                         if (button.getId() != radioButtonView.getId()) {
@@ -360,41 +356,12 @@ public class FormUtils {
                             CustomTextView specifyText = (CustomTextView) button.getTag(R.id.specify_textview);
                             CustomTextView reasonsText = (CustomTextView) button.getTag(R.id.popup_reasons_textview);
                             CustomTextView extraInfoTextView = (CustomTextView) button.getTag(R.id.specify_extra_info_textview);
-
                             JSONObject optionsJson = (JSONObject) button.getTag(R.id.option_json_object);
-                            JSONObject radioButtonJson = (JSONObject) button.getTag(R.id.json_object);
 
-                            String radioButtonText = optionsJson.optString(JsonFormConstants.TEXT);
-                            button.setText(radioButtonText);
-
-                            handleRadioGroupViews(optionsJson, specifyText, reasonsText, extraInfoTextView);
-                            try {
-                                resetSecondaryValues(mainJson,radioButtonJson);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-
+                            handleRadioGroupViews(optionsJson, button, specifyText, reasonsText, extraInfoTextView);
                         }
                     }
-
                 }
-
-                private void handleRadioGroupViews(JSONObject optionsJson, CustomTextView specifyText, CustomTextView reasonsText, CustomTextView extraInfoTextView) {
-                    if (specifyText != null && optionsJson.has(JsonFormConstants.CONTENT_INFO)) {
-                        String specifyInfo = optionsJson.optString(JsonFormConstants.CONTENT_INFO);
-                        String currentText = (String) specifyText.getText();
-                        String newText = "(" + specifyInfo + ")";
-                        specifyText.setText(newText);
-                    }
-                    if (reasonsText != null) {
-                        reasonsText.setVisibility(View.GONE);
-                    }
-                    if (extraInfoTextView != null) {
-                        extraInfoTextView.setVisibility(View.VISIBLE);
-                    }
-
-                }
-
             });
         }
     }
@@ -583,7 +550,22 @@ public class FormUtils {
 
 
     }
+    private static  void handleRadioGroupViews(JSONObject optionsJson, RadioButton button, CustomTextView specifyText, CustomTextView reasonsText, CustomTextView extraInfoTextView) {
+        String radioButtonText = optionsJson.optString(JsonFormConstants.TEXT);
+        button.setText(radioButtonText);
+        if (specifyText != null && optionsJson.has(JsonFormConstants.CONTENT_INFO)) {
+            String specifyInfo = optionsJson.optString(JsonFormConstants.CONTENT_INFO);
+            String newText = "(" + specifyInfo + ")";
+            specifyText.setText(newText);
+        }
+        if (reasonsText != null) {
+            reasonsText.setVisibility(View.GONE);
+        }
+        if (extraInfoTextView != null) {
+            extraInfoTextView.setVisibility(View.VISIBLE);
+        }
 
+    }
     private static void resetSecondaryValues(JSONArray mainJson, JSONObject radioJsonObject) throws JSONException {
 
         String radioKey = radioJsonObject.getString(JsonFormConstants.KEY);
