@@ -29,6 +29,7 @@ public class JsonFormConstants {
     public static final String GPS = "gps";
     public static final String SECTIONS = "sections";
     public static final String FIELDS = "fields";
+    public static final String STEP1 = "step1";
     public static final String NAME = "name";
     public static final String TYPE = "type";
     public static final String READ_ONLY = "read_only";
