@@ -9,7 +9,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewParent;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 
@@ -17,6 +16,7 @@ import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.NumberSelectorAdapter;
+import com.vijay.jsonwizard.customviews.NumberSelectorSpinner;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
@@ -40,10 +40,8 @@ public class NumberSelectorFactory implements FormWidgetFactory {
     private static CustomTextView selectedTextView;
     private static int selectedItem = -1;
     private static HashMap<ViewParent, CustomTextView> selectedTextViews = new HashMap<>();
-    private static ArrayAdapter<String> dataAdapter;
     private static NumberSelectorFactoryReceiver receiver;
     private SelectedNumberClickListener selectedNumberClickListener = new SelectedNumberClickListener();
-    private Spinner spinner;
     private Context context;
     private CommonListener listener;
     private Map<String, JSONObject> jsonObjectMap = new HashMap<>();
@@ -145,17 +143,12 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         
         int maxValue = jsonObject.optInt(JsonFormConstants.MAX_SELECTION_VALUE, 20);
 
-        final Spinner spinner = new Spinner(context, Spinner.MODE_DROPDOWN);
-
+        final NumberSelectorSpinner spinner = new NumberSelectorSpinner(context,Spinner.MODE_DROPDOWN);
         List<String> numbers = new ArrayList<>();
         for (int i = spinnerStartNumber; i <= maxValue; i++) {
             numbers.add(String.valueOf(i));
         }
 
-       // numbers.add(0, context.getResources().getString(R.string.select_one)); //This is to enable the first item in the spinner selection.
-
-//        dataAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, numbers);
-//        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         NumberSelectorAdapter numbersAdapter = new NumberSelectorAdapter(context, numbers);
         spinner.setAdapter(numbersAdapter);
         spinner.setId(ViewUtil.generateViewId());
@@ -168,7 +161,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         spinner.post(new Runnable() {
             @Override
             public void run() {
-                spinner.setOnItemSelectedListener(listener);
+                spinner.setListener(listener);
             }
         });
         return spinner;
@@ -292,7 +285,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
 
                 customTextView.setTag(R.id.toolbar_parent_layout, linearLayout);
                 customTextView.setOnClickListener(selectedNumberClickListener);
-                spinner = createDialogSpinner(context, jsonObject, (startSelectionNumber + (numberOfSelectors - 1)), listener, stepName);
+                Spinner spinner = createDialogSpinner(context, jsonObject, (startSelectionNumber + (numberOfSelectors - 1)), listener, stepName);
                 customTextView.setTag(R.id.number_selector_spinner, spinner);
                 spinner.setTag(R.id.number_selector_textview, customTextView);
                 spinner.setTag(R.id.extraPopup, popup);
