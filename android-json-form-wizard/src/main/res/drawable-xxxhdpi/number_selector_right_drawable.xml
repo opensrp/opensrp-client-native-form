@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:background="@drawable/number_selector_left_rounded_background_selected" android:state_pressed="true" />
-    <item android:background="@drawable/number_selector_left_rounded_background" android:state_pressed="false" />
-</selector>

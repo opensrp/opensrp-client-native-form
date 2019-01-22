@@ -11,38 +11,56 @@ import com.vijay.jsonwizard.R;
 
 import java.util.List;
 
+/**
+ * NumberSelectorAdapter {@link NumberSelectorAdapter} The NumberSelectorSpinner {@link NumberSelectorSpinner} Adapter
+ *
+ * @author kitoto
+ */
 public class NumberSelectorAdapter extends BaseAdapter {
     private LayoutInflater inflater;
     private List<String> numbers;
-    private Context context;
-
+    
     public NumberSelectorAdapter(Context context, List<String> numbers) {
         inflater = LayoutInflater.from(context);
         this.numbers = numbers;
-        this.context =context;
     }
-
+    
     @Override
     public int getCount() {
         return numbers.size();
     }
-
+    
     @Override
     public Object getItem(int position) {
         return numbers.get(position);
     }
-
+    
     @Override
     public long getItemId(int position) {
         return Long.parseLong(numbers.get(position));
     }
-
+    
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        convertView = inflater.inflate(R.layout.native_form_number_selector_spinner, parent, false);
-        TextView selectedNumber = convertView.findViewById(R.id.selected_number);
-        selectedNumber.setText(String.valueOf(getItem(position)));
-
+        ViewHolder holder;
+        if (convertView == null) {
+            convertView = inflater.inflate(R.layout.native_form_number_selector_spinner, parent, false);
+            holder = new ViewHolder(convertView);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+        }
+        
+        holder.selectedNumber.setText(String.valueOf(getItem(position)));
+        
         return convertView;
+    }
+    
+    private static class ViewHolder {
+        TextView selectedNumber;
+        
+        ViewHolder(View view) {
+            selectedNumber = view.findViewById(R.id.selected_number);
+        }
     }
 }
