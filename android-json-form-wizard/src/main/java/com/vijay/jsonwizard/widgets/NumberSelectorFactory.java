@@ -48,20 +48,20 @@ public class NumberSelectorFactory implements FormWidgetFactory {
     private CommonListener listener;
     private Map<String, JSONObject> jsonObjectMap = new HashMap<>();
     private Map<String, LinearLayout> rootLayoutMap = new HashMap<>();
-
+    
     public NumberSelectorFactory() {
-
+        
         receiver = new NumberSelectorFactoryReceiver();
     }
-
-    @SuppressLint("NewApi")
+    
+    @SuppressLint ("NewApi")
     private static void setSelectedColor(Context context, CustomTextView customTextView, int item, int numberOfSelectors, String
             textColor) {
         if (customTextView != null && item > -1) {
             if (item == 0) {
                 customTextView.setBackground(context.getResources().getDrawable(R.drawable
                         .number_selector_left_rounded_background_selected));
-            } else if (item == numberOfSelectors - 1 ) {
+            } else if (item == numberOfSelectors - 1) {
                 customTextView.setBackground(context.getResources().getDrawable(R.drawable
                         .number_selector_right_rounded_background_selected));
             } else if (item == 0 && numberOfSelectors == 1) {
@@ -69,12 +69,12 @@ public class NumberSelectorFactory implements FormWidgetFactory {
             } else {
                 customTextView.setBackground(context.getResources().getDrawable(R.drawable.number_selector_normal_background_selected));
             }
-
+            
             customTextView.setTextColor(Color.parseColor(textColor));
         }
     }
-
-    @SuppressLint("NewApi")
+    
+    @SuppressLint ("NewApi")
     private static void setDefaultColor(Context context, CustomTextView customTextView, int item, int numberOfSelectors, String textColor) {
         if (customTextView != null && item > -1) {
             if (item == 0) {
@@ -89,7 +89,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
             customTextView.setTextColor(Color.parseColor(textColor));
         }
     }
-
+    
     /**
      * Sets backgrounds according to the selected textviews
      *
@@ -101,7 +101,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         int item = (int) textView.getTag(R.id.number_selector_item);
         int numberOfSelectors = (int) textView.getTag(R.id.number_selector_number_of_selectors);
         ViewParent textViewParent = textView.getParent();
-
+        
         if (!textView.equals(selectedTextView)) {
             if (selectedTextViews.size() == 0) {
                 setSelectedColor(textView.getContext(), textView, item, numberOfSelectors, selectedColor);
@@ -118,19 +118,19 @@ public class NumberSelectorFactory implements FormWidgetFactory {
                             setSelectedColor(textView.getContext(), textView, item, numberOfSelectors, selectedColor);
                         }
                     }
-
+                    
                 }
             }
             selectedTextViews.put(textViewParent, textView);
         }
     }
-
+    
     public static void setSelectedTextViews(CustomTextView customTextView) {
         int item = (int) customTextView.getTag(R.id.number_selector_item);
         selectedTextView = customTextView;
         selectedItem = item;
     }
-
+    
     /**
      * Create the spinner with the numbers starting from the last number in hte selectors
      *
@@ -142,17 +142,17 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
-
+        
         int maxValue = jsonObject.optInt(JsonFormConstants.MAX_SELECTION_VALUE, 20);
         LinearLayout.LayoutParams layoutParams = FormUtils.getLinearLayoutParams(10, FormUtils.WRAP_CONTENT, 0, 0, 0, 0);
         final Spinner spinner = new Spinner(context, Spinner.MODE_DIALOG);
-
+        
         List<String> numbers = new ArrayList<>();
         for (int i = spinnerStartNumber; i <= maxValue; i++) {
             numbers.add(String.valueOf(i));
         }
         numbers.add(0, context.getResources().getString(R.string.select_one)); //This is to enable the first item in the spinner selection.
-
+        
         dataAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, numbers);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(dataAdapter);
@@ -173,14 +173,14 @@ public class NumberSelectorFactory implements FormWidgetFactory {
                 spinner.setOnItemSelectedListener(listener);
             }
         });
-
+        
         return spinner;
     }
-
+    
     public static void setSelectedTextViewText(String viewText) {
         selectedTextView.setText(viewText);
     }
-
+    
     public static ValidationStatus validate(JsonFormFragmentView formFragmentView, CustomTextView customTextView) {
         if (!(customTextView.getTag(R.id.v_required) instanceof String) || !(customTextView.getTag(R.id.error) instanceof String)) {
             return new ValidationStatus(true, null, formFragmentView, customTextView);
@@ -196,42 +196,44 @@ public class NumberSelectorFactory implements FormWidgetFactory {
             return new ValidationStatus(false, (String) customTextView.getTag(R.id.error), formFragmentView, customTextView);
         }
     }
-
+    
     public static NumberSelectorFactoryReceiver getNumberSelectorsReceiver() {
         return receiver;
     }
-
+    
     private void createNumberSelector(CustomTextView textView) {
         final Spinner spinner = (Spinner) textView.getTag(R.id.number_selector_spinner);
-
+        
         LinearLayout parent = ((LinearLayout) textView.getTag(R.id.toolbar_parent_layout));
-
+        
         if (spinner != null && parent.findViewById(spinner.getId()) == null) {
             parent.addView(spinner);
         }
-        spinner.performClick();
-
+        if (spinner != null) {
+            spinner.performClick();
+        }
+        
     }
-
+    
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject,
                                        CommonListener listener, boolean popup) throws Exception {
         return attachJson(stepName, context, jsonObject, listener, popup);
     }
-
+    
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject,
                                        CommonListener listener) throws Exception {
         return attachJson(stepName, context, jsonObject, listener, false);
     }
-
+    
     private List<View> attachJson(String stepName, Context context, JSONObject jsonObject, CommonListener listener, boolean popup) throws
-                                                                                                                                   JSONException {
+            JSONException {
         this.context = context;
         this.listener = listener;
-
+        
         jsonObjectMap.put(jsonObject.getString(JsonFormConstants.KEY), jsonObject);
-
+        
         List<View> views = new ArrayList<>(1);
         JSONArray canvasIds = new JSONArray();
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
@@ -239,11 +241,11 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
         String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
-
+        
         LinearLayout rootLayout = new LinearLayout(context);
         LinearLayout.LayoutParams layoutParams = FormUtils.getLinearLayoutParams(FormUtils.MATCH_PARENT, FormUtils.WRAP_CONTENT, 1, 2, 1,
                 2);
-
+        
         rootLayout.setLayoutParams(layoutParams);
         rootLayout.setOrientation(LinearLayout.HORIZONTAL);
         rootLayout.setId(ViewUtil.generateViewId());
@@ -260,31 +262,31 @@ public class NumberSelectorFactory implements FormWidgetFactory {
             rootLayout.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(rootLayout);
         }
-
+        
         if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
             rootLayout.setTag(R.id.constraints, constraints);
             ((JsonApi) context).addConstrainedView(rootLayout);
         }
-
+        
         views.add(rootLayout);
         createTextViews(context, jsonObject, rootLayout, listener, stepName, popup);
-
+        
         rootLayoutMap.put(jsonObject.getString(JsonFormConstants.KEY), rootLayout);
-
+        
         return views;
     }
-
-    @SuppressLint("NewApi")
+    
+    @SuppressLint ("NewApi")
     private void createTextViews(Context context, JSONObject jsonObject, LinearLayout linearLayout, CommonListener listener, String
             stepName, boolean popup) throws JSONException {
         int startSelectionNumber = jsonObject.optInt(JsonFormConstants.START_SELECTION_NUMBER, 1);
         int width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.83);
         int numberOfSelectors = jsonObject.optInt(JsonFormConstants.NUMBER_OF_SELECTORS, 5);
-
+        
         if (linearLayout.getTag(R.id.is_automatic) == null) {
             jsonObject.put(JsonFormConstants.NUMBER_OF_SELECTORS_ORIGINAL, numberOfSelectors);
         }
-
+        
         int maxValue = jsonObject.optInt(JsonFormConstants.MAX_SELECTION_VALUE, 20);
         for (int i = 0; i < numberOfSelectors; i++) {
             CustomTextView customTextView = createCustomView(context, jsonObject, width, numberOfSelectors, listener, linearLayout, i,
@@ -303,7 +305,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
             showSelectedTextView(jsonObject, customTextView);
         }
     }
-
+    
     public String getText(int item, int startSelectionNumber, int numberOfSelectors, int maxValue) {
         String text = startSelectionNumber == 0 ? String.valueOf(item) : startSelectionNumber == 1 ? String.valueOf(item + 1) : String
                 .valueOf(startSelectionNumber + item);
@@ -312,8 +314,8 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         }
         return text;
     }
-
-    @SuppressLint("NewApi")
+    
+    @SuppressLint ("NewApi")
     private CustomTextView createCustomView(Context context, JSONObject jsonObject, int width, int numberOfSelectors, CommonListener
             listener, LinearLayout linearLayout, int item, boolean popup) throws JSONException {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
@@ -329,12 +331,12 @@ public class NumberSelectorFactory implements FormWidgetFactory {
                 .valueOf(FormUtils.getValueFromSpOrDpOrPx(textSize, context));
         LinearLayout.LayoutParams layoutParams = FormUtils.getLinearLayoutParams(width / numberOfSelectors, FormUtils.WRAP_CONTENT, 1, 2,
                 1, 2);
-
+        
         CustomTextView customTextView = FormUtils.getTextViewWith(context, Integer.parseInt(textSize), getText(item,
                 startSelectionNumber, numberOfSelectors, maxValue), jsonObject.getString(JsonFormConstants.KEY) + JsonFormConstants
-                .SUFFIX.TEXT_VIEW, jsonObject.getString(JsonFormConstants.TYPE), openMrsEntityParent, openMrsEntity, openMrsEntityId, "",
+                        .SUFFIX.TEXT_VIEW, jsonObject.getString(JsonFormConstants.TYPE), openMrsEntityParent, openMrsEntity, openMrsEntityId, "",
                 layoutParams, FormUtils.FONT_BOLD_PATH, 0, textColor);
-
+        
         customTextView.setId(ViewUtil.generateViewId());
         customTextView.setPadding(0, 15, 0, 15);
         setDefaultColor(context, customTextView, item, numberOfSelectors, textColor);
@@ -353,33 +355,33 @@ public class NumberSelectorFactory implements FormWidgetFactory {
             customTextView.setTag(R.id.number_selector_layout, linearLayout);
         }
         customTextView.setTag(R.id.json_object, jsonObject);
-
+        
         return customTextView;
     }
-
+    
     private void showSelectedTextView(JSONObject jsonObject, CustomTextView customTextView) {
         String text = customTextView.getText().toString();
         String numberValue = jsonObject.optString(JsonFormConstants.VALUE);
         if (text.contains("+")) {
             text = text.replace("+", "");
         }
-
+        
         if (!TextUtils.isEmpty(text) && !TextUtils.isEmpty(numberValue)) {
             if (customTextView.getText().toString().contains("+") && (Integer.valueOf(numberValue) > Integer.valueOf(text))) {
                 customTextView.setText(jsonObject.optString(JsonFormConstants.VALUE));
                 setBackgrounds(customTextView);
                 setSelectedTextViews(customTextView);
             }
-
+            
             if (!TextUtils.isEmpty(jsonObject.optString(JsonFormConstants.VALUE)) && text.equals(jsonObject.optString(JsonFormConstants
                     .VALUE))) {
                 customTextView.callOnClick();
-
+                
             }
-
+            
         }
     }
-
+    
     private String addRequiredTag(JSONObject jsonObject) throws JSONException {
         String required = "false";
         JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
@@ -389,27 +391,27 @@ public class NumberSelectorFactory implements FormWidgetFactory {
                 required = "true";
             }
         }
-
+        
         return required;
     }
-
+    
     private class SelectedNumberClickListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {
             createNumberSelector((CustomTextView) view);
         }
     }
-
+    
     public class NumberSelectorFactoryReceiver extends BroadcastReceiver {
-
+        
         @Override
         public void onReceive(Context contextInner, Intent intent) {
             try {
                 int maxValue = intent.getIntExtra(JsonFormConstants.MAX_SELECTION_VALUE, 0);
-
+                
                 JSONObject jsonObject = jsonObjectMap.get(intent.getStringExtra(JsonFormConstants.JSON_OBJECT_KEY));
                 boolean isPopUp = intent.getBooleanExtra(JsonFormConstants.IS_POPUP, false);
-
+                
                 jsonObject.put(JsonFormConstants.MAX_SELECTION_VALUE, maxValue);
                 if (jsonObject.has(JsonFormConstants.NUMBER_OF_SELECTORS_ORIGINAL)) {
                     jsonObject.put(JsonFormConstants.NUMBER_OF_SELECTORS, maxValue < jsonObject.getInt(JsonFormConstants
@@ -417,15 +419,15 @@ public class NumberSelectorFactory implements FormWidgetFactory {
                 } else {
                     jsonObject.put(JsonFormConstants.NUMBER_OF_SELECTORS, maxValue < jsonObject.getInt(JsonFormConstants
                             .NUMBER_OF_SELECTORS) ? maxValue : jsonObject.getInt(JsonFormConstants.NUMBER_OF_SELECTORS));
-
+                    
                 }
-
+                
                 LinearLayout rootLayout = rootLayoutMap.get(intent.getStringExtra(JsonFormConstants.JSON_OBJECT_KEY));
                 rootLayout.removeAllViews();
                 rootLayout.setTag(R.id.is_automatic, true);
                 createTextViews(context, jsonObject, rootLayout, listener, intent.getStringExtra(JsonFormConstants.STEPNAME), isPopUp);
                 rootLayout.setTag(R.id.is_automatic, null);
-
+                
             } catch (JSONException e) {
                 Log.e(TAG, e.getMessage(), e);
             }

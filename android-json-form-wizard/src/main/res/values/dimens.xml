@@ -32,7 +32,8 @@
     <dimen name="extra_info_default_text_size">7sp</dimen>
     <dimen name="options_extra_info_text_size">18px</dimen>
     <dimen name="native_radio_button_padding">20dp</dimen>
-    <dimen name="native_radio_button_text_view_initial_left_margin">55dp</dimen>
+    <dimen name="native_radio_button_label_bottom">5dp</dimen>
+    <dimen name="native_radio_button_text_view_initial_left_margin">53dp</dimen>
     <dimen name="native_radio_button_text_view_height">32dp</dimen>
     <dimen name="native_selector_total_screen_size_padding">70dp</dimen>
     <dimen name="native_selector_button_max_padding">5sp</dimen>
@@ -50,5 +51,5 @@
     <dimen name="form_container_navigation_elevation">3dp</dimen>
     <dimen name="form_container_drawable_padding">10dp</dimen>
     <dimen name="form_container_small_padding">5dp</dimen>
-    <dimen name="label_bottom_padding">14dp</dimen>
+    <dimen name="label_bottom_padding">12dp</dimen>
 </resources>
