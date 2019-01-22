@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -17,6 +16,7 @@ import android.widget.Spinner;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.customviews.NumberSelectorAdapter;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
@@ -144,22 +144,20 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
         
         int maxValue = jsonObject.optInt(JsonFormConstants.MAX_SELECTION_VALUE, 20);
-        LinearLayout.LayoutParams layoutParams = FormUtils.getLinearLayoutParams(10, FormUtils.WRAP_CONTENT, 0, 0, 0, 0);
-        final Spinner spinner = new Spinner(context, Spinner.MODE_DIALOG);
-        
+
+        final Spinner spinner = new Spinner(context, Spinner.MODE_DROPDOWN);
+
         List<String> numbers = new ArrayList<>();
         for (int i = spinnerStartNumber; i <= maxValue; i++) {
             numbers.add(String.valueOf(i));
         }
-        numbers.add(0, context.getResources().getString(R.string.select_one)); //This is to enable the first item in the spinner selection.
-        
-        dataAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, numbers);
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(dataAdapter);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            spinner.setDropDownWidth(100);
-        }
-        spinner.setLayoutParams(layoutParams);
+
+       // numbers.add(0, context.getResources().getString(R.string.select_one)); //This is to enable the first item in the spinner selection.
+
+//        dataAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, numbers);
+//        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        NumberSelectorAdapter numbersAdapter = new NumberSelectorAdapter(context, numbers);
+        spinner.setAdapter(numbersAdapter);
         spinner.setId(ViewUtil.generateViewId());
         spinner.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY) + JsonFormConstants.SUFFIX.SPINNER);
         spinner.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
@@ -173,7 +171,6 @@ public class NumberSelectorFactory implements FormWidgetFactory {
                 spinner.setOnItemSelectedListener(listener);
             }
         });
-        
         return spinner;
     }
     
@@ -292,12 +289,14 @@ public class NumberSelectorFactory implements FormWidgetFactory {
             CustomTextView customTextView = createCustomView(context, jsonObject, width, numberOfSelectors, listener, linearLayout, i,
                     popup);
             if (i == (numberOfSelectors - 1) && (numberOfSelectors < maxValue)) {
-                spinner = createDialogSpinner(context, jsonObject, (startSelectionNumber + (numberOfSelectors - 1)), listener, stepName);
-                spinner.setTag(R.id.number_selector_textview, customTextView);
-                spinner.setTag(R.id.extraPopup, popup);
-                customTextView.setTag(R.id.number_selector_spinner, spinner);
+
                 customTextView.setTag(R.id.toolbar_parent_layout, linearLayout);
                 customTextView.setOnClickListener(selectedNumberClickListener);
+                spinner = createDialogSpinner(context, jsonObject, (startSelectionNumber + (numberOfSelectors - 1)), listener, stepName);
+                customTextView.setTag(R.id.number_selector_spinner, spinner);
+                spinner.setTag(R.id.number_selector_textview, customTextView);
+                spinner.setTag(R.id.extraPopup, popup);
+
             } else {
                 customTextView.setOnClickListener(listener);
             }

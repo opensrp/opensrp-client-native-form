@@ -555,10 +555,10 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         if (popup == null) {
             popup = false;
         }
-        if (position >= 0) {
-            String value = (String) parent.getItemAtPosition(position);
-            getView().writeValue(mStepName, parentKey, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
-        }
+//        if (position >= 0) {
+        String value = (String) parent.getItemAtPosition(position);
+        getView().writeValue(mStepName, parentKey, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
+//        }
 
         if (JsonFormConstants.NUMBERS_SELECTOR.equals(type)) {
             NumberSelectorFactory.setBackgrounds(customTextView);

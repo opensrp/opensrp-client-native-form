@@ -64,7 +64,7 @@
         "hint": "First name *",
         "edit_type": "name",
         "v_required": {
-          "value": "true",
+          "value": "false",
           "err": "Please enter the first name"
         },
         "v_regex": {
@@ -81,7 +81,7 @@
         "hint": "Last name *",
         "edit_type": "name",
         "v_required": {
-          "value": "true",
+          "value": "false",
           "err": "Please enter the last name"
         },
         "v_regex": {
@@ -95,6 +95,83 @@
     "title": "Test 2",
     "next": "step3",
     "fields": [
+      {
+        "key": "numbers_selector",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "numbers_selector",
+        "number_of_selectors": "5",
+        "start_number": "1",
+        "max_value": "20",
+        "text_size": "18px",
+        "text_color": "#000000",
+        "selected_text_color": "#ffffff",
+        "v_required": {
+          "value": true
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "15sp"
+      },
+      {
+        "key": "numbers_selector_two",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "numbers_selector",
+        "number_of_selectors": "5",
+        "start_number": "0",
+        "max_value": "20",
+        "text_size": "18px",
+        "text_color": "#000000",
+        "selected_text_color": "#ffffff",
+        "v_required": {
+          "value": true
+        },
+        "constraints": [
+          {
+            "type": "numbers_selector",
+            "ex": "lessThanEqualTo(., step1:numbers_selector)"
+          }
+        ]
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "15sp"
+      },
+      {
+        "key": "numbers_selector_three",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "numbers_selector",
+        "number_of_selectors": "6",
+        "start_number": "0",
+        "max_value": "20",
+        "text_size": "20px",
+        "text_color": "#000000",
+        "selected_text_color": "#ffffff",
+        "v_required": {
+          "value": true
+        },
+        "constraints": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-constraint-rules.yml"
+            }
+          }
+        }
+      },
       {
         "key": "sfh_edd",
         "openmrs_entity_parent": "",
