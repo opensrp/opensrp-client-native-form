@@ -470,8 +470,4 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         return view instanceof LinearLayout && view.getTag(R.id.type).equals(JsonFormConstants.CHECK_BOX + "_parent");
     }
 
-    @Override
-    public void onFocusChange(View v, boolean hasFocus) {
-        presenter.onFocusChange(v,hasFocus);
-    }
 }

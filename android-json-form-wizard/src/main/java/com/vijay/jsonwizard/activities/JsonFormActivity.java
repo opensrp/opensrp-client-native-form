@@ -298,7 +298,6 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     }
     
     protected boolean isSpecialWidget(String itemType) {
-        
         if (isNumberSelector(itemType)) {
             return true;
         } else {
