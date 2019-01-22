@@ -419,7 +419,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(getView().getContext(), R.style.AppThemeAlertDialog);
         builderSingle.setTitle((String) view.getTag(R.id.label_dialog_title));
         builderSingle.setMessage((String) view.getTag(R.id.label_dialog_info));
-        builderSingle.setIcon(R.drawable.ic_icon_info_filled);
+        builderSingle.setIcon(R.drawable.dialog_info_filled);
 
         builderSingle.setNegativeButton(getView().getContext().getResources().getString(R.string.ok), new DialogInterface.OnClickListener
                 () {

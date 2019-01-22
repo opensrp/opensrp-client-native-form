@@ -33,6 +33,7 @@
      android:layout_weight="0.2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
         android:orientation="horizontal">
         <ImageView
             android:layout_marginTop="4dp"
@@ -47,10 +48,13 @@
 
         <ImageView
             android:id="@+id/label_info"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/default_info_icon_size"
+            android:layout_height="@dimen/default_info_icon_size"
             android:contentDescription="@string/info_label"
             android:gravity="center_horizontal|start"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="5dp"
             android:src="@drawable/ic_icon_info_filled"
             android:visibility="gone" />
 

@@ -32,7 +32,7 @@
     <ImageView
         android:id="@+id/checkbox_info_icon"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/default_info_icon_size"
         android:layout_weight="0.4"
         android:src="@drawable/ic_icon_info_filled"
         android:visibility="invisible" />
