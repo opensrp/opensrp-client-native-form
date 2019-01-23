@@ -287,12 +287,12 @@ public class EditTextFactory implements FormWidgetFactory {
         JSONObject relativeMaxValidationJSONObject = editTextJSONObject.optJSONObject(V_RELATIVE_MAX);
         if (relativeMaxValidationJSONObject != null) {
             // validate that the relative max field exists
-            String relativeMaxValidationKey = relativeMaxValidationJSONObject.optString(JsonFormConstants.VALUE);
+            String relativeMaxValidationKey = relativeMaxValidationJSONObject.optString(JsonFormConstants.VALUE, null);
             JSONObject formJSONObject = new JSONObject(formFragment.getCurrentJsonState());
             JSONArray formFields = fields(formJSONObject, STEP1);
             JSONObject relativeMaxFieldJSONObject = getFieldJSONObject(formFields, relativeMaxValidationKey);
             if (relativeMaxFieldJSONObject != null) {
-                String relativeMaxValidationErrorMsg = relativeMaxValidationJSONObject.optString(JsonFormConstants.ERR);
+                String relativeMaxValidationErrorMsg = relativeMaxValidationJSONObject.optString(JsonFormConstants.ERR, null);
                 String defaultErrMsg = String.format(DEFAULT_RELATIVE_MAX_VALIDATION_ERR, relativeMaxValidationKey);
                 // add validator
                 editText.addValidator(new RelativeMaxNumericValidator(
