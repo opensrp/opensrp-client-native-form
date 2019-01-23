@@ -6,6 +6,7 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.Html;
 import android.text.TextUtils;
@@ -65,13 +66,15 @@ public class FormUtils {
     private static final String TODAY_JAVAROSA_PROPERTY = "today";
     private final String TAG = this.getClass().getSimpleName();
     
-    public static LinearLayout.LayoutParams getLinearLayoutParams(int width, int height, int left, int top, int right, int bottom) {
+    public static LinearLayout.LayoutParams getLinearLayoutParams(int width, int height, int left, int top, int right,
+                                                                  int bottom) {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(width, height);
         layoutParams.setMargins(left, top, right, bottom);
         return layoutParams;
     }
     
-    public static RelativeLayout.LayoutParams getRelativeLayoutParams(int width, int height, int left, int top, int right, int bottom) {
+    public static RelativeLayout.LayoutParams getRelativeLayoutParams(int width, int height, int left, int top, int right,
+                                                                      int bottom) {
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, height);
         layoutParams.setMargins(left, top, right, bottom);
         return layoutParams;
@@ -81,7 +84,8 @@ public class FormUtils {
                                                  String key, String type, String openMrsEntityParent,
                                                  String openMrsEntity, String openMrsEntityId,
                                                  String relevance,
-                                                 LinearLayout.LayoutParams layoutParams, String fontPath, int bgColor, String textColor) {
+                                                 LinearLayout.LayoutParams layoutParams, String fontPath, int bgColor,
+                                                 String textColor) {
         CustomTextView textView = new CustomTextView(context);
         textView.setText(text);
         textView.setTag(R.id.key, key);
@@ -113,7 +117,8 @@ public class FormUtils {
                                                  String openMrsEntity, String openMrsEntityId,
                                                  String relevance,
                                                  LinearLayout.LayoutParams layoutParams, String fontPath) {
-        return getTextViewWith(context, textSizeInSp, text, key, type, openMrsEntityParent, openMrsEntity, openMrsEntityId, relevance,
+        return getTextViewWith(context, textSizeInSp, text, key, type, openMrsEntityParent, openMrsEntity, openMrsEntityId,
+                relevance,
                 layoutParams, fontPath, 0, null);
     }
     
@@ -134,7 +139,8 @@ public class FormUtils {
             }
             
             if (form.getJSONObject(METADATA_PROPERTY).has(PropertyManager.DEVICE_ID_PROPERTY)) {
-                JSONObject deviceId = form.getJSONObject(METADATA_PROPERTY).getJSONObject(PropertyManager.DEVICE_ID_PROPERTY);
+                JSONObject deviceId = form.getJSONObject(METADATA_PROPERTY)
+                        .getJSONObject(PropertyManager.DEVICE_ID_PROPERTY);
                 String value = propertyManager.getSingularProperty(
                         PropertyManager.DEVICE_ID_PROPERTY);
                 if (value == null) value = "";
@@ -142,7 +148,8 @@ public class FormUtils {
             }
             
             if (form.getJSONObject(METADATA_PROPERTY).has(PropertyManager.SUBSCRIBER_ID_PROPERTY)) {
-                JSONObject subscriberId = form.getJSONObject(METADATA_PROPERTY).getJSONObject(PropertyManager.SUBSCRIBER_ID_PROPERTY);
+                JSONObject subscriberId = form.getJSONObject(METADATA_PROPERTY)
+                        .getJSONObject(PropertyManager.SUBSCRIBER_ID_PROPERTY);
                 String value = propertyManager.getSingularProperty(
                         PropertyManager.SUBSCRIBER_ID_PROPERTY);
                 if (value == null) value = "";
@@ -150,7 +157,8 @@ public class FormUtils {
             }
             
             if (form.getJSONObject(METADATA_PROPERTY).has(PropertyManager.SIM_SERIAL_PROPERTY)) {
-                JSONObject simSerial = form.getJSONObject(METADATA_PROPERTY).getJSONObject(PropertyManager.SIM_SERIAL_PROPERTY);
+                JSONObject simSerial = form.getJSONObject(METADATA_PROPERTY)
+                        .getJSONObject(PropertyManager.SIM_SERIAL_PROPERTY);
                 String value = propertyManager.getSingularProperty(
                         PropertyManager.SIM_SERIAL_PROPERTY);
                 if (value == null) value = "";
@@ -158,7 +166,8 @@ public class FormUtils {
             }
             
             if (form.getJSONObject(METADATA_PROPERTY).has(PropertyManager.PHONE_NUMBER_PROPERTY)) {
-                JSONObject simSerial = form.getJSONObject(METADATA_PROPERTY).getJSONObject(PropertyManager.PHONE_NUMBER_PROPERTY);
+                JSONObject simSerial = form.getJSONObject(METADATA_PROPERTY)
+                        .getJSONObject(PropertyManager.PHONE_NUMBER_PROPERTY);
                 String value = propertyManager.getSingularProperty(
                         PropertyManager.PHONE_NUMBER_PROPERTY);
                 if (value == null) value = "";
@@ -187,7 +196,8 @@ public class FormUtils {
             }
             
             if (form.getJSONObject(METADATA_PROPERTY).has(PropertyManager.DEVICE_ID_PROPERTY)) {
-                JSONObject deviceId = form.getJSONObject(METADATA_PROPERTY).getJSONObject(PropertyManager.DEVICE_ID_PROPERTY);
+                JSONObject deviceId = form.getJSONObject(METADATA_PROPERTY)
+                        .getJSONObject(PropertyManager.DEVICE_ID_PROPERTY);
                 String value = propertyManager.getSingularProperty(
                         PropertyManager.DEVICE_ID_PROPERTY);
                 if (value == null) value = "";
@@ -195,7 +205,8 @@ public class FormUtils {
             }
             
             if (form.getJSONObject(METADATA_PROPERTY).has(PropertyManager.SUBSCRIBER_ID_PROPERTY)) {
-                JSONObject subscriberId = form.getJSONObject(METADATA_PROPERTY).getJSONObject(PropertyManager.SUBSCRIBER_ID_PROPERTY);
+                JSONObject subscriberId = form.getJSONObject(METADATA_PROPERTY)
+                        .getJSONObject(PropertyManager.SUBSCRIBER_ID_PROPERTY);
                 String value = propertyManager.getSingularProperty(
                         PropertyManager.SUBSCRIBER_ID_PROPERTY);
                 if (value == null) value = "";
@@ -203,7 +214,8 @@ public class FormUtils {
             }
             
             if (form.getJSONObject(METADATA_PROPERTY).has(PropertyManager.SIM_SERIAL_PROPERTY)) {
-                JSONObject simSerial = form.getJSONObject(METADATA_PROPERTY).getJSONObject(PropertyManager.SIM_SERIAL_PROPERTY);
+                JSONObject simSerial = form.getJSONObject(METADATA_PROPERTY)
+                        .getJSONObject(PropertyManager.SIM_SERIAL_PROPERTY);
                 String value = propertyManager.getSingularProperty(
                         PropertyManager.SIM_SERIAL_PROPERTY);
                 if (value == null) value = "";
@@ -211,7 +223,8 @@ public class FormUtils {
             }
             
             if (form.getJSONObject(METADATA_PROPERTY).has(PropertyManager.PHONE_NUMBER_PROPERTY)) {
-                JSONObject simSerial = form.getJSONObject(METADATA_PROPERTY).getJSONObject(PropertyManager.PHONE_NUMBER_PROPERTY);
+                JSONObject simSerial = form.getJSONObject(METADATA_PROPERTY)
+                        .getJSONObject(PropertyManager.PHONE_NUMBER_PROPERTY);
                 String value = propertyManager.getSingularProperty(
                         PropertyManager.PHONE_NUMBER_PROPERTY);
                 if (value == null) value = "";
@@ -243,20 +256,25 @@ public class FormUtils {
         return px;
     }
     
-    public static Map<String, View> createRadioButtonAndCheckBoxLabel(String stepName, LinearLayout linearLayout, JSONObject jsonObject, Context context,
-                                                                      JSONArray canvasIds, Boolean readOnly, CommonListener listener) throws JSONException {
+    public static Map<String, View> createRadioButtonAndCheckBoxLabel(String stepName, LinearLayout linearLayout,
+                                                                      JSONObject jsonObject, Context context,
+                                                                      JSONArray canvasIds, Boolean readOnly,
+                                                                      CommonListener listener) throws JSONException {
         Map<String, View> createdViewsMap = new HashMap<>();
         String label = jsonObject.optString(JsonFormConstants.LABEL, "");
         if (!TextUtils.isEmpty(label)) {
             String asterisks = "";
-            int labelTextSize = FormUtils.getValueFromSpOrDpOrPx(jsonObject.optString(JsonFormConstants.LABEL_TEXT_SIZE, String.valueOf(context
-                    .getResources().getDimension(R.dimen.default_label_text_size))), context);
-            String labelTextColor = jsonObject.optString(JsonFormConstants.LABEL_TEXT_COLOR, JsonFormConstants.DEFAULT_TEXT_COLOR);
+            int labelTextSize = FormUtils
+                    .getValueFromSpOrDpOrPx(jsonObject.optString(JsonFormConstants.LABEL_TEXT_SIZE, String.valueOf(context
+                            .getResources().getDimension(R.dimen.default_label_text_size))), context);
+            String labelTextColor = jsonObject
+                    .optString(JsonFormConstants.LABEL_TEXT_COLOR, JsonFormConstants.DEFAULT_TEXT_COLOR);
             JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
-            LinearLayout labelLinearLayout = createLabelLinearLayout(stepName, canvasIds, jsonObject, context, listener);
+            ConstraintLayout labelConstraintLayout = createLabelLinearLayout(stepName, canvasIds, jsonObject, context,
+                    listener);
             
-            CustomTextView labelText = labelLinearLayout.findViewById(R.id.label_text);
-            ImageView editButton = labelLinearLayout.findViewById(R.id.label_edit_button);
+            CustomTextView labelText = labelConstraintLayout.findViewById(R.id.label_text);
+            ImageView editButton = labelConstraintLayout.findViewById(R.id.label_edit_button);
             if (requiredObject != null) {
                 String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
                 if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
@@ -272,19 +290,21 @@ public class FormUtils {
             labelText.setText(Html.fromHtml(combinedLabelText));
             labelText.setTag(R.id.original_text, Html.fromHtml(combinedLabelText));
             labelText.setTextSize(labelTextSize);
-            canvasIds.put(labelLinearLayout.getId());
+            canvasIds.put(labelConstraintLayout.getId());
             if (readOnly) {
                 editButton.setVisibility(View.VISIBLE);
             }
-            labelLinearLayout.setEnabled(!readOnly);
-            linearLayout.addView(labelLinearLayout);
+            labelConstraintLayout.setEnabled(!readOnly);
+            linearLayout.addView(labelConstraintLayout);
             createdViewsMap.put(JsonFormConstants.EDIT_BUTTON, editButton);
             createdViewsMap.put(JsonFormConstants.CUSTOM_TEXT, labelText);
         }
         return createdViewsMap;
     }
     
-    public static LinearLayout createLabelLinearLayout(String stepName, JSONArray canvasIds, JSONObject jsonObject, Context context, CommonListener listener) throws JSONException {
+    public static ConstraintLayout createLabelLinearLayout(String stepName, JSONArray canvasIds, JSONObject jsonObject,
+                                                           Context context,
+                                                           CommonListener listener) throws JSONException {
         String openMrsEntityParent = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT, null);
         String openMrsEntity = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY, null);
         String openMrsEntityId = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_ID, null);
@@ -292,30 +312,32 @@ public class FormUtils {
         String labelInfoText = jsonObject.optString(JsonFormConstants.LABEL_INFO_TEXT, "");
         String labelInfoTitle = jsonObject.optString(JsonFormConstants.LABEL_INFO_TITLE, "");
         
-        LinearLayout linearLayout = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.native_form_labels, null);
-        linearLayout.setId(ViewUtil.generateViewId());
-        canvasIds.put(linearLayout.getId());
-        linearLayout.setTag(R.id.canvas_ids, canvasIds.toString());
-        linearLayout.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
-        linearLayout.setTag(R.id.type, jsonObject.getString("type"));
-        linearLayout.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
-        linearLayout.setTag(R.id.openmrs_entity, openMrsEntity);
-        linearLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-        linearLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
-        linearLayout.setId(ViewUtil.generateViewId());
+        ConstraintLayout constraintLayout = (ConstraintLayout) LayoutInflater.from(context)
+                .inflate(R.layout.native_form_labels, null);
+        constraintLayout.setId(ViewUtil.generateViewId());
+        canvasIds.put(constraintLayout.getId());
+        constraintLayout.setTag(R.id.canvas_ids, canvasIds.toString());
+        constraintLayout.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+        constraintLayout.setTag(R.id.type, jsonObject.getString("type"));
+        constraintLayout.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
+        constraintLayout.setTag(R.id.openmrs_entity, openMrsEntity);
+        constraintLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
+        constraintLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+        constraintLayout.setId(ViewUtil.generateViewId());
         if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
-            linearLayout.setTag(R.id.relevance, relevance);
-            ((JsonApi) context).addSkipLogicView(linearLayout);
+            constraintLayout.setTag(R.id.relevance, relevance);
+            ((JsonApi) context).addSkipLogicView(constraintLayout);
         }
         
-        ImageView imageView = linearLayout.findViewById(R.id.label_info);
+        ImageView imageView = constraintLayout.findViewById(R.id.label_info);
         
         showInfoIcon(stepName, jsonObject, listener, labelInfoText, labelInfoTitle, imageView, canvasIds);
         
-        return linearLayout;
+        return constraintLayout;
     }
     
-    public static void showInfoIcon(String stepName, JSONObject jsonObject, CommonListener listener, String labelInfoText, String labelInfoTitle, ImageView imageView, JSONArray canvasIds) throws JSONException {
+    public static void showInfoIcon(String stepName, JSONObject jsonObject, CommonListener listener, String labelInfoText,
+                                    String labelInfoTitle, ImageView imageView, JSONArray canvasIds) throws JSONException {
         if (!TextUtils.isEmpty(labelInfoText)) {
             imageView.setVisibility(View.VISIBLE);
             imageView.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
@@ -328,7 +350,8 @@ public class FormUtils {
         }
     }
     
-    public static void showEditButton(JSONObject jsonObject, View editableView, ImageView editButton, CommonListener listener) throws JSONException {
+    public static void showEditButton(JSONObject jsonObject, View editableView, ImageView editButton,
+                                      CommonListener listener) throws JSONException {
         editButton.setTag(R.id.editable_view, editableView);
         editButton.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
         editButton.setTag(R.id.type, jsonObject.getString("type"));
@@ -355,7 +378,8 @@ public class FormUtils {
                             button.setChecked(false);
                             CustomTextView specifyText = (CustomTextView) button.getTag(R.id.specify_textview);
                             CustomTextView reasonsText = (CustomTextView) button.getTag(R.id.popup_reasons_textview);
-                            CustomTextView extraInfoTextView = (CustomTextView) button.getTag(R.id.specify_extra_info_textview);
+                            CustomTextView extraInfoTextView = (CustomTextView) button
+                                    .getTag(R.id.specify_extra_info_textview);
                             JSONObject optionsJson = (JSONObject) button.getTag(R.id.option_json_object);
                             
                             handleRadioGroupViews(optionsJson, button, specifyText, reasonsText, extraInfoTextView);
@@ -487,7 +511,8 @@ public class FormUtils {
         return new JSONObject(loadSubForm(formIdentity, defaultSubFormLocation, context));
     }
     
-    public static String loadSubForm(String formIdentity, String defaultSubFormLocation, Context context) throws IOException {
+    public static String loadSubForm(String formIdentity, String defaultSubFormLocation, Context context)
+            throws IOException {
         StringBuilder stringBuilder = new StringBuilder();
         InputStream inputStream = context.getAssets().open(defaultSubFormLocation + "/" + formIdentity + ".json");
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
@@ -502,7 +527,8 @@ public class FormUtils {
         return stringBuilder.toString();
     }
     
-    private static void handleRadioGroupViews(JSONObject optionsJson, RadioButton button, CustomTextView specifyText, CustomTextView reasonsText, CustomTextView extraInfoTextView) {
+    private static void handleRadioGroupViews(JSONObject optionsJson, RadioButton button, CustomTextView specifyText,
+                                              CustomTextView reasonsText, CustomTextView extraInfoTextView) {
         String radioButtonText = optionsJson.optString(JsonFormConstants.TEXT);
         button.setText(radioButtonText);
         if (specifyText != null && optionsJson.has(JsonFormConstants.CONTENT_INFO)) {
@@ -618,7 +644,8 @@ public class FormUtils {
         return result;
     }
     
-    public Map<String, String> addAssignedValue(String itemKey, String optionKey, String keyValue, String itemType, String itemText) {
+    public Map<String, String> addAssignedValue(String itemKey, String optionKey, String keyValue, String itemType,
+                                                String itemText) {
         Map<String, String> value = new HashMap<>();
         switch (itemType) {
             case JsonFormConstants.CHECK_BOX:
@@ -683,7 +710,8 @@ public class FormUtils {
     
     public JSONArray getSecondaryValues(JSONObject jsonObject, String type) {
         JSONArray value = null;
-        String secondaryValues = type.equals(JsonFormConstants.EXPANSION_PANEL) ? JsonFormConstants.VALUE : JsonFormConstants.SECONDARY_VALUE;
+        String secondaryValues = type
+                .equals(JsonFormConstants.EXPANSION_PANEL) ? JsonFormConstants.VALUE : JsonFormConstants.SECONDARY_VALUE;
         
         if (jsonObject != null && jsonObject.has(secondaryValues)) {
             try {
@@ -712,7 +740,8 @@ public class FormUtils {
         if (mJSONObject != null) {
             JSONObject parentJson = jsonApi.getStep(stepName);
             try {
-                if (parentJson.has(JsonFormConstants.SECTIONS) && parentJson.get(JsonFormConstants.SECTIONS) instanceof JSONArray) {
+                if (parentJson.has(JsonFormConstants.SECTIONS) && parentJson
+                        .get(JsonFormConstants.SECTIONS) instanceof JSONArray) {
                     JSONArray sections = parentJson.getJSONArray(JsonFormConstants.SECTIONS);
                     for (int i = 0; i < sections.length(); i++) {
                         JSONObject sectionJson = sections.getJSONObject(i);
@@ -720,7 +749,8 @@ public class FormUtils {
                             fields = concatArray(fields, sectionJson.getJSONArray(JsonFormConstants.FIELDS));
                         }
                     }
-                } else if (parentJson.has(JsonFormConstants.FIELDS) && parentJson.get(JsonFormConstants.FIELDS) instanceof JSONArray) {
+                } else if (parentJson.has(JsonFormConstants.FIELDS) && parentJson
+                        .get(JsonFormConstants.FIELDS) instanceof JSONArray) {
                     fields = parentJson.getJSONArray(JsonFormConstants.FIELDS);
                     
                 }
