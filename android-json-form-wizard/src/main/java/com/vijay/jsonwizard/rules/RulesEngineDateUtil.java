@@ -53,6 +53,10 @@ public class RulesEngineDateUtil {
 
     }
 
+    public String getDOBFromAge(Integer age) {
+        return (new LocalDate()).withMonthOfYear(1).withDayOfMonth(1).minusYears(age).toString(FormUtils.NATIIVE_FORM_DATE_FORMAT_PATTERN);
+    }
+
     /**
      * @param dateString
      * @param durationString
