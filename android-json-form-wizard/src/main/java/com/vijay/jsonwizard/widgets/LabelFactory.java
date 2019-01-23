@@ -7,6 +7,7 @@ import android.support.constraint.ConstraintLayout;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 
@@ -30,59 +31,64 @@ import java.util.List;
  * Created by vijay on 24-05-2015.
  */
 public class LabelFactory implements FormWidgetFactory {
+    private final String TAG = this.getClass().getSimpleName();
     private CustomTextView numberText;
-    
+
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
                                        JSONObject jsonObject, CommonListener
                                                listener, boolean popup) throws Exception {
         return attachJson(stepName, context, jsonObject, listener, popup);
     }
-    
+
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
                                        JSONObject jsonObject, CommonListener listener) throws Exception {
         return attachJson(stepName, context, jsonObject, listener, false);
     }
-    
+
     private List<View> attachJson(String stepName, Context context, JSONObject jsonObject, CommonListener
             listener, boolean popup) throws JSONException {
         List<View> views = new ArrayList<>(1);
-        JSONArray canvasIds = new JSONArray();
-        ConstraintLayout constraintLayout = FormUtils
-                .createLabelLinearLayout(stepName, canvasIds, jsonObject, context, listener);
-        
-        constraintLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
-        
-        boolean hasBg = jsonObject.optBoolean("has_bg", false);
-        String topMargin = jsonObject.optString("top_margin", "0dp");
-        String bottomMargin = null;
-        if (hasBg) {
-            bottomMargin = jsonObject.optString("bottom_margin", "0dp");
+        if (jsonObject.has(JsonFormConstants.TEXT)) {
+            JSONArray canvasIds = new JSONArray();
+            ConstraintLayout constraintLayout = FormUtils
+                    .createLabelLinearLayout(stepName, canvasIds, jsonObject, context, listener);
+
+            constraintLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+
+            boolean hasBg = jsonObject.optBoolean("has_bg", false);
+            String topMargin = jsonObject.optString("top_margin", "0dp");
+            String bottomMargin = null;
+            if (hasBg) {
+                bottomMargin = jsonObject.optString("bottom_margin", "0dp");
+            }
+
+            int topMarginInt = FormUtils.getValueFromSpOrDpOrPx(topMargin, context);
+            int bottomMarginInt = (int) context.getResources().getDimension(R.dimen.default_bottom_margin);
+            if (hasBg) {
+                bottomMarginInt = FormUtils.getValueFromSpOrDpOrPx(bottomMargin, context);
+            }
+
+            RelativeLayout.LayoutParams layoutParams = FormUtils
+                    .getRelativeLayoutParams(FormUtils.MATCH_PARENT, FormUtils.WRAP_CONTENT, 0,
+                            topMarginInt, 0, bottomMarginInt);
+            constraintLayout.setLayoutParams(layoutParams);
+
+            createLabelTextView(jsonObject, context, constraintLayout);
+
+            // Set the id for the view
+            constraintLayout.setId(ViewUtil.generateViewId());
+            canvasIds.put(constraintLayout.getId());
+            constraintLayout.setTag(R.id.canvas_ids, canvasIds.toString());
+            constraintLayout.setTag(R.id.extraPopup, popup);
+            views.add(constraintLayout);
+        } else {
+            Log.e(TAG, "A label requires a text. You cannot have a label with blank text");
         }
-        
-        int topMarginInt = FormUtils.getValueFromSpOrDpOrPx(topMargin, context);
-        int bottomMarginInt = (int) context.getResources().getDimension(R.dimen.default_bottom_margin);
-        if (hasBg) {
-            bottomMarginInt = FormUtils.getValueFromSpOrDpOrPx(bottomMargin, context);
-        }
-        
-        RelativeLayout.LayoutParams layoutParams = FormUtils
-                .getRelativeLayoutParams(FormUtils.MATCH_PARENT, FormUtils.WRAP_CONTENT, 0,
-                        topMarginInt, 0, bottomMarginInt);
-        constraintLayout.setLayoutParams(layoutParams);
-        
-        createLabelTextView(jsonObject, context, constraintLayout);
-        
-        // Set the id for the view
-        constraintLayout.setId(ViewUtil.generateViewId());
-        canvasIds.put(constraintLayout.getId());
-        constraintLayout.setTag(R.id.canvas_ids, canvasIds.toString());
-        constraintLayout.setTag(R.id.extraPopup, popup);
-        views.add(constraintLayout);
         return views;
     }
-    
+
     /**
      * Instantiates the label Custom TextView and adds in its attributes
      *
@@ -96,7 +102,7 @@ public class LabelFactory implements FormWidgetFactory {
         boolean hintOnText = jsonObject.optBoolean(JsonFormConstants.HINT_ON_TEXT, false);
         boolean hasBg = jsonObject.optBoolean(JsonFormConstants.HAS_BG, false);
         String labelNumber = jsonObject.optString(JsonFormConstants.LABEL_NUMBER, null);
-        
+
         String bgColor = null;
         String topPadding = null;
         String bottomPadding = null;
@@ -109,12 +115,12 @@ public class LabelFactory implements FormWidgetFactory {
             leftPadding = jsonObject.optString(JsonFormConstants.LEFT_PADDING, "5dp");
             rightPadding = jsonObject.optString(JsonFormConstants.RIGHT_PADDING, "5dp");
         }
-        
+
         int bgColorInt = 0;
         if (hasBg) {
             bgColorInt = Color.parseColor(bgColor);
         }
-        
+
         CustomTextView labelText = constraintLayout.findViewById(R.id.label_text);
         if (bgColorInt != 0) {
             labelText.setBackgroundColor(bgColorInt);
@@ -122,7 +128,7 @@ public class LabelFactory implements FormWidgetFactory {
                 numberText.setBackgroundColor(bgColorInt);
             }
         }
-        
+
         if (hasBg) {
             labelText.setPadding(
                     FormUtils.getValueFromSpOrDpOrPx(leftPadding, context),
@@ -141,16 +147,16 @@ public class LabelFactory implements FormWidgetFactory {
                 .optBoolean(JsonFormConstants.READ_ONLY, false));//Gotcha: Should be set before createLabelText is used
         labelText.setHintOnText(hintOnText);//Gotcha: Should be set before createLabelText is used
         labelText.setText(createLabelText(jsonObject));
-        
+
         createNumberLabel(constraintLayout, labelNumber, jsonObject, labelTextSize, textStyle, context);
     }
-    
+
     private void createNumberLabel(ConstraintLayout constraintLayout, String labelNumber, JSONObject jsonObject,
                                    int labelTextSize,
                                    String textStyle, Context context) {
         if (!TextUtils.isEmpty(labelNumber)) {
             boolean hasBg = jsonObject.optBoolean(JsonFormConstants.HAS_BG, false);
-            
+
             String topPadding = null;
             String bottomPadding = null;
             String leftPadding = null;
@@ -161,8 +167,8 @@ public class LabelFactory implements FormWidgetFactory {
                 leftPadding = jsonObject.optString(JsonFormConstants.LEFT_PADDING, "5dp");
                 rightPadding = jsonObject.optString(JsonFormConstants.RIGHT_PADDING, "5dp");
             }
-            
-            
+
+
             numberText = constraintLayout.findViewById(R.id.label_text_number);
             numberText.setVisibility(View.VISIBLE);
             Boolean readOnly = jsonObject.optBoolean(JsonFormConstants.READ_ONLY);
@@ -182,7 +188,7 @@ public class LabelFactory implements FormWidgetFactory {
                     FormUtils.getValueFromSpOrDpOrPx(bottomPadding, context));
         }
     }
-    
+
     /**
      * Generates the spanned text to be passed to the label Custom TextView
      *
@@ -196,12 +202,12 @@ public class LabelFactory implements FormWidgetFactory {
         String asterisks = getAsterisk(jsonObject);
         String labelTextColor = readOnly ? "#737373" : jsonObject.optString(JsonFormConstants.TEXT_COLOR, null);
         String combinedLabelText = getCombinedLabel(text, asterisks, labelTextColor);
-        
+
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html
                 .fromHtml(combinedLabelText, Html.FROM_HTML_MODE_LEGACY) : Html
                 .fromHtml(combinedLabelText);
     }
-    
+
     private String getAsterisk(JSONObject jsonObject) throws JSONException {
         JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
         String asterisks = "";
@@ -213,12 +219,12 @@ public class LabelFactory implements FormWidgetFactory {
         }
         return asterisks;
     }
-    
+
     private String getCombinedLabel(String text, String asterisks, String labelTextColor) {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN ? "<font color=" + labelTextColor + ">" + Html
                 .escapeHtml(text) + "</font>" + asterisks : "<font color=" + labelTextColor + ">" + TextUtils
                 .htmlEncode(text) + "</font>" +
                 asterisks;
     }
-    
+
 }

@@ -1,0 +1,39 @@
+{
+  "content_form": [
+    {
+      "key": "fetal_heart_rate_label",
+      "type": "label",
+      "label_text_style": "bold",
+      "text": "Fetal heart rate (bpm)",
+      "text_color": "#000000",
+      "v_required": {
+        "value": false
+      }
+    },
+    {
+      "key": "fetal_heart_rate",
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "Fetal heart rate",
+      "openmrs_entity_id": "1440",
+      "type": "normal_edit_text",
+      "edit_text_style": "bordered",
+      "edit_type": "number",
+      "v_required": {
+        "value": "false",
+        "err": "Please enter the fetal heart rate"
+      },
+      "v_min": {
+        "value": "80",
+        "err": "Fetal heartbeat must be equal or greater than 80"
+      },
+      "v_max": {
+        "value": "200",
+        "err": "Fetal heartbeat must be less than or equal to 200"
+      },
+      "v_numeric_integer": {
+        "value": "true",
+        "err": "Enter a valid sfh"
+      }
+    }
+  ]
+}

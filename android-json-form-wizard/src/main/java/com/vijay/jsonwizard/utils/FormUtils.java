@@ -65,21 +65,21 @@ public class FormUtils {
     private static final String END_JAVAROSA_PROPERTY = "end";
     private static final String TODAY_JAVAROSA_PROPERTY = "today";
     private final String TAG = this.getClass().getSimpleName();
-    
+
     public static LinearLayout.LayoutParams getLinearLayoutParams(int width, int height, int left, int top, int right,
                                                                   int bottom) {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(width, height);
         layoutParams.setMargins(left, top, right, bottom);
         return layoutParams;
     }
-    
+
     public static RelativeLayout.LayoutParams getRelativeLayoutParams(int width, int height, int left, int top, int right,
                                                                       int bottom) {
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, height);
         layoutParams.setMargins(left, top, right, bottom);
         return layoutParams;
     }
-    
+
     public static CustomTextView getTextViewWith(Context context, int textSizeInSp, String text,
                                                  String key, String type, String openMrsEntityParent,
                                                  String openMrsEntity, String openMrsEntityId,
@@ -96,22 +96,22 @@ public class FormUtils {
         textView.setId(ViewUtil.generateViewId());
         textView.setTextSize(textSizeInSp);
         textView.setLayoutParams(layoutParams);
-        
+
         if (bgColor != 0) {
             textView.setBackgroundColor(bgColor);
         }
-        
+
         if (textColor != null) {
             textView.setTextColor(Color.parseColor(textColor));
         }
-        
+
         if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             textView.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(textView);
         }
         return textView;
     }
-    
+
     public static CustomTextView getTextViewWith(Context context, int textSizeInSp, String text,
                                                  String key, String type, String openMrsEntityParent,
                                                  String openMrsEntity, String openMrsEntityId,
@@ -121,12 +121,12 @@ public class FormUtils {
                 relevance,
                 layoutParams, fontPath, 0, null);
     }
-    
+
     public static int dpToPixels(Context context, float dps) {
         float scale = context.getResources().getDisplayMetrics().density;
         return (int) (dps * scale + 0.5f);
     }
-    
+
     public static void updateStartProperties(PropertyManager propertyManager, JSONObject form)
             throws Exception {
         if (form.has(METADATA_PROPERTY)) {
@@ -137,7 +137,7 @@ public class FormUtils {
                 if (value == null) value = "";
                 start.put(JsonFormConstants.VALUE, value);
             }
-            
+
             if (form.getJSONObject(METADATA_PROPERTY).has(PropertyManager.DEVICE_ID_PROPERTY)) {
                 JSONObject deviceId = form.getJSONObject(METADATA_PROPERTY)
                         .getJSONObject(PropertyManager.DEVICE_ID_PROPERTY);
@@ -146,7 +146,7 @@ public class FormUtils {
                 if (value == null) value = "";
                 deviceId.put(JsonFormConstants.VALUE, value);
             }
-            
+
             if (form.getJSONObject(METADATA_PROPERTY).has(PropertyManager.SUBSCRIBER_ID_PROPERTY)) {
                 JSONObject subscriberId = form.getJSONObject(METADATA_PROPERTY)
                         .getJSONObject(PropertyManager.SUBSCRIBER_ID_PROPERTY);
@@ -155,7 +155,7 @@ public class FormUtils {
                 if (value == null) value = "";
                 subscriberId.put(JsonFormConstants.VALUE, value);
             }
-            
+
             if (form.getJSONObject(METADATA_PROPERTY).has(PropertyManager.SIM_SERIAL_PROPERTY)) {
                 JSONObject simSerial = form.getJSONObject(METADATA_PROPERTY)
                         .getJSONObject(PropertyManager.SIM_SERIAL_PROPERTY);
@@ -164,7 +164,7 @@ public class FormUtils {
                 if (value == null) value = "";
                 simSerial.put(JsonFormConstants.VALUE, value);
             }
-            
+
             if (form.getJSONObject(METADATA_PROPERTY).has(PropertyManager.PHONE_NUMBER_PROPERTY)) {
                 JSONObject simSerial = form.getJSONObject(METADATA_PROPERTY)
                         .getJSONObject(PropertyManager.PHONE_NUMBER_PROPERTY);
@@ -175,7 +175,7 @@ public class FormUtils {
             }
         }
     }
-    
+
     public static void updateEndProperties(PropertyManager propertyManager, JSONObject form)
             throws Exception {
         if (form.has(METADATA_PROPERTY)) {
@@ -186,7 +186,7 @@ public class FormUtils {
                 if (value == null) value = "";
                 end.put(JsonFormConstants.VALUE, value);
             }
-            
+
             if (form.getJSONObject(METADATA_PROPERTY).has(TODAY_JAVAROSA_PROPERTY)) {
                 Calendar calendar = Calendar.getInstance();
                 JSONObject today = form.getJSONObject(METADATA_PROPERTY).getJSONObject(TODAY_JAVAROSA_PROPERTY);
@@ -194,7 +194,7 @@ public class FormUtils {
                 if (value == null) value = "";
                 today.put(JsonFormConstants.VALUE, value);
             }
-            
+
             if (form.getJSONObject(METADATA_PROPERTY).has(PropertyManager.DEVICE_ID_PROPERTY)) {
                 JSONObject deviceId = form.getJSONObject(METADATA_PROPERTY)
                         .getJSONObject(PropertyManager.DEVICE_ID_PROPERTY);
@@ -203,7 +203,7 @@ public class FormUtils {
                 if (value == null) value = "";
                 deviceId.put(JsonFormConstants.VALUE, value);
             }
-            
+
             if (form.getJSONObject(METADATA_PROPERTY).has(PropertyManager.SUBSCRIBER_ID_PROPERTY)) {
                 JSONObject subscriberId = form.getJSONObject(METADATA_PROPERTY)
                         .getJSONObject(PropertyManager.SUBSCRIBER_ID_PROPERTY);
@@ -212,7 +212,7 @@ public class FormUtils {
                 if (value == null) value = "";
                 subscriberId.put(JsonFormConstants.VALUE, value);
             }
-            
+
             if (form.getJSONObject(METADATA_PROPERTY).has(PropertyManager.SIM_SERIAL_PROPERTY)) {
                 JSONObject simSerial = form.getJSONObject(METADATA_PROPERTY)
                         .getJSONObject(PropertyManager.SIM_SERIAL_PROPERTY);
@@ -221,7 +221,7 @@ public class FormUtils {
                 if (value == null) value = "";
                 simSerial.put(JsonFormConstants.VALUE, value);
             }
-            
+
             if (form.getJSONObject(METADATA_PROPERTY).has(PropertyManager.PHONE_NUMBER_PROPERTY)) {
                 JSONObject simSerial = form.getJSONObject(METADATA_PROPERTY)
                         .getJSONObject(PropertyManager.PHONE_NUMBER_PROPERTY);
@@ -232,11 +232,11 @@ public class FormUtils {
             }
         }
     }
-    
+
     public static int spToPx(Context context, float sp) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, context.getResources().getDisplayMetrics());
     }
-    
+
     public static int getValueFromSpOrDpOrPx(String spOrDpOrPx, Context context) {
         int px = 0;
         if (!TextUtils.isEmpty(spOrDpOrPx)) {
@@ -252,10 +252,10 @@ public class FormUtils {
                 px = (int) context.getResources().getDimension(R.dimen.default_label_text_size);
             }
         }
-        
+
         return px;
     }
-    
+
     public static Map<String, View> createRadioButtonAndCheckBoxLabel(String stepName, LinearLayout linearLayout,
                                                                       JSONObject jsonObject, Context context,
                                                                       JSONArray canvasIds, Boolean readOnly,
@@ -272,7 +272,7 @@ public class FormUtils {
             JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
             ConstraintLayout labelConstraintLayout = createLabelLinearLayout(stepName, canvasIds, jsonObject, context,
                     listener);
-            
+
             CustomTextView labelText = labelConstraintLayout.findViewById(R.id.label_text);
             ImageView editButton = labelConstraintLayout.findViewById(R.id.label_edit_button);
             if (requiredObject != null) {
@@ -281,9 +281,9 @@ public class FormUtils {
                     asterisks = "<font color=#CF0800> *</font>";
                 }
             }
-            
+
             String combinedLabelText = "<font color=" + labelTextColor + ">" + label + "</font>" + asterisks;
-            
+
             //Applying textStyle to the text;
             String textStyle = jsonObject.optString(JsonFormConstants.TEXT_STYLE, JsonFormConstants.NORMAL);
             setTextStyle(textStyle, labelText);
@@ -301,7 +301,7 @@ public class FormUtils {
         }
         return createdViewsMap;
     }
-    
+
     public static ConstraintLayout createLabelLinearLayout(String stepName, JSONArray canvasIds, JSONObject jsonObject,
                                                            Context context,
                                                            CommonListener listener) throws JSONException {
@@ -309,9 +309,10 @@ public class FormUtils {
         String openMrsEntity = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY, null);
         String openMrsEntityId = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_ID, null);
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
+        String calculation = jsonObject.optString(JsonFormConstants.CALCULATION);
         String labelInfoText = jsonObject.optString(JsonFormConstants.LABEL_INFO_TEXT, "");
         String labelInfoTitle = jsonObject.optString(JsonFormConstants.LABEL_INFO_TITLE, "");
-        
+
         ConstraintLayout constraintLayout = (ConstraintLayout) LayoutInflater.from(context)
                 .inflate(R.layout.native_form_labels, null);
         constraintLayout.setId(ViewUtil.generateViewId());
@@ -328,14 +329,19 @@ public class FormUtils {
             constraintLayout.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(constraintLayout);
         }
-        
+        if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
+            constraintLayout.setTag(R.id.calculation, calculation);
+            ((JsonApi) context).addCalculationLogicView(constraintLayout);
+        }
+
+
         ImageView imageView = constraintLayout.findViewById(R.id.label_info);
-        
+
         showInfoIcon(stepName, jsonObject, listener, labelInfoText, labelInfoTitle, imageView, canvasIds);
-        
+
         return constraintLayout;
     }
-    
+
     public static void showInfoIcon(String stepName, JSONObject jsonObject, CommonListener listener, String labelInfoText,
                                     String labelInfoTitle, ImageView imageView, JSONArray canvasIds) throws JSONException {
         if (!TextUtils.isEmpty(labelInfoText)) {
@@ -349,7 +355,7 @@ public class FormUtils {
             imageView.setOnClickListener(listener);
         }
     }
-    
+
     public static void showEditButton(JSONObject jsonObject, View editableView, ImageView editButton,
                                       CommonListener listener) throws JSONException {
         editButton.setTag(R.id.editable_view, editableView);
@@ -357,8 +363,8 @@ public class FormUtils {
         editButton.setTag(R.id.type, jsonObject.getString("type"));
         editButton.setOnClickListener(listener);
     }
-    
-    
+
+
     /**
      * Checks and uncheck the radio buttons in a linear layout view
      * follows this fix https://stackoverflow.com/a/26961458/5784584
@@ -381,7 +387,7 @@ public class FormUtils {
                             CustomTextView extraInfoTextView = (CustomTextView) button
                                     .getTag(R.id.specify_extra_info_textview);
                             JSONObject optionsJson = (JSONObject) button.getTag(R.id.option_json_object);
-                            
+
                             handleRadioGroupViews(optionsJson, button, specifyText, reasonsText, extraInfoTextView);
                         }
                     }
@@ -389,7 +395,7 @@ public class FormUtils {
             });
         }
     }
-    
+
     /**
      * Get the actual radio buttons on the parent view given
      *
@@ -409,7 +415,7 @@ public class FormUtils {
         }
         return radioButtonList;
     }
-    
+
     /**
      * This method returns a {@link Calendar} object at mid-day corresponding to a date matching
      * the format specified in {@code DATE_FORMAT} or a day in reference to today e.g today,
@@ -421,7 +427,7 @@ public class FormUtils {
      */
     public static Calendar getDate(String dayString_) {
         Calendar calendarDate = Calendar.getInstance();
-        
+
         if (dayString_ != null && dayString_.trim().length() > 0) {
             String dayString = dayString_.trim().toLowerCase();
             if (!"today".equals(dayString)) {
@@ -432,14 +438,14 @@ public class FormUtils {
                     if ("-".equals(matcher.group(1))) {
                         timeValue = timeValue * -1;
                     }
-                    
+
                     int field = Calendar.DATE;
                     if (matcher.group(3).equalsIgnoreCase("y")) {
                         field = Calendar.YEAR;
                     } else if (matcher.group(3).equalsIgnoreCase("m")) {
                         field = Calendar.MONTH;
                     }
-                    
+
                     calendarDate.add(field, timeValue);
                 } else {
                     try {
@@ -450,16 +456,16 @@ public class FormUtils {
                 }
             }
         }
-        
+
         //set time to mid-day
         calendarDate.set(Calendar.HOUR_OF_DAY, 12);
         calendarDate.set(Calendar.MINUTE, 0);
         calendarDate.set(Calendar.SECOND, 0);
         calendarDate.set(Calendar.MILLISECOND, 0);
-        
+
         return calendarDate;
     }
-    
+
     /**
      * @param textStyle
      * @param view
@@ -483,7 +489,7 @@ public class FormUtils {
                 break;
         }
     }
-    
+
     public static void setEditMode(JSONObject jsonObject, View editableView, ImageView editButton) throws JSONException {
         if (jsonObject.has(JsonFormConstants.EDITABLE)) {
             boolean editable = jsonObject.getBoolean(JsonFormConstants.EDITABLE);
@@ -502,7 +508,7 @@ public class FormUtils {
             editableView.setEnabled(false);
         }
     }
-    
+
     public static JSONObject getSubFormJson(String formIdentity, String subFormsLocation, Context context) throws Exception {
         String defaultSubFormLocation = JsonFormConstants.DEFAULT_SUB_FORM_LOCATION;
         if (!TextUtils.isEmpty(subFormsLocation)) {
@@ -510,23 +516,23 @@ public class FormUtils {
         }
         return new JSONObject(loadSubForm(formIdentity, defaultSubFormLocation, context));
     }
-    
+
     public static String loadSubForm(String formIdentity, String defaultSubFormLocation, Context context)
             throws IOException {
         StringBuilder stringBuilder = new StringBuilder();
         InputStream inputStream = context.getAssets().open(defaultSubFormLocation + "/" + formIdentity + ".json");
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-        
+
         String jsonString;
         while ((jsonString = reader.readLine()) != null) {
             stringBuilder.append(jsonString);
         }
         inputStream.close();
-        
-        
+
+
         return stringBuilder.toString();
     }
-    
+
     private static void handleRadioGroupViews(JSONObject optionsJson, RadioButton button, CustomTextView specifyText,
                                               CustomTextView reasonsText, CustomTextView extraInfoTextView) {
         String radioButtonText = optionsJson.optString(JsonFormConstants.TEXT);
@@ -542,11 +548,11 @@ public class FormUtils {
         if (extraInfoTextView != null) {
             extraInfoTextView.setVisibility(View.VISIBLE);
         }
-        
+
     }
-    
+
     private static void resetSecondaryValues(JSONArray mainJson, JSONObject radioJsonObject) throws JSONException {
-        
+
         String radioKey = radioJsonObject.getString(JsonFormConstants.KEY);
         JSONObject newRadioJson = getJsonObjectFromArray(mainJson, radioKey);
         JSONArray options = newRadioJson != null ? newRadioJson.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME) : null;
@@ -555,9 +561,9 @@ public class FormUtils {
                 options.getJSONObject(n).remove(JsonFormConstants.SECONDARY_VALUE);
             }
         }
-        
+
     }
-    
+
     private static JSONObject getJsonObjectFromArray(JSONArray jsonArray, String key) throws JSONException {
         for (int n = 0; n < jsonArray.length(); n++) {
             JSONObject object = jsonArray.getJSONObject(n);
@@ -567,7 +573,7 @@ public class FormUtils {
         }
         return null;
     }
-    
+
     public void showGenericDialog(View view) {
         Context context = (Context) view.getTag(R.id.specify_context);
         String specifyContent = (String) view.getTag(R.id.specify_content);
@@ -581,7 +587,7 @@ public class FormUtils {
         CustomTextView customTextView = (CustomTextView) view.getTag(R.id.specify_textview);
         CustomTextView reasonsTextView = (CustomTextView) view.getTag(R.id.popup_reasons_textview);
         String childKey;
-        
+
         if (specifyContent != null) {
             GenericPopupDialog genericPopupDialog = new GenericPopupDialog();
             genericPopupDialog.setCommonListener(listener);
@@ -600,23 +606,23 @@ public class FormUtils {
                 childKey = (String) view.getTag(R.id.childKey);
                 genericPopupDialog.setChildKey(childKey);
             }
-            
+
             Activity activity = (Activity) context;
             FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
             Fragment prev = activity.getFragmentManager().findFragmentByTag("GenericPopup");
             if (prev != null) {
                 ft.remove(prev);
             }
-            
+
             ft.addToBackStack(null);
             genericPopupDialog.show(ft, "GenericPopup");
         } else {
             Toast.makeText(context, "Please specify the sub form to display ", Toast.LENGTH_LONG).show();
         }
-        
-        
+
+
     }
-    
+
     public String getValueFromSecondaryValues(String type, String itemString) {
         String newString;
         String[] strings = itemString.split(":");
@@ -629,10 +635,10 @@ public class FormUtils {
                 newString = strings[0];
             }
         }
-        
+
         return newString;
     }
-    
+
     public JSONArray concatArray(JSONArray... arrs)
             throws JSONException {
         JSONArray result = new JSONArray();
@@ -643,7 +649,7 @@ public class FormUtils {
         }
         return result;
     }
-    
+
     public Map<String, String> addAssignedValue(String itemKey, String optionKey, String keyValue, String itemType,
                                                 String itemText) {
         Map<String, String> value = new HashMap<>();
@@ -658,10 +664,10 @@ public class FormUtils {
                 value.put(itemKey, keyValue + ";" + itemType);
                 break;
         }
-        
+
         return value;
     }
-    
+
     public String getRadioButtonText(JSONObject item, String value) {
         String text = "";
         if (item != null && item.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
@@ -679,11 +685,11 @@ public class FormUtils {
             } catch (Exception e) {
                 Log.i(TAG, Log.getStackTraceString(e));
             }
-            
+
         }
         return text;
     }
-    
+
     public String getSpecifyText(JSONArray jsonArray) {
         FormUtils formUtils = new FormUtils();
         StringBuilder specifyText = new StringBuilder();
@@ -698,7 +704,7 @@ public class FormUtils {
                         if (!TextUtils.isEmpty(s)) {
                             specifyText.append(s).append(",").append(" ");
                         }
-                        
+
                     }
                 }
             } catch (JSONException e) {
@@ -707,12 +713,12 @@ public class FormUtils {
         }
         return specifyText.toString().replaceAll(", $", "");
     }
-    
+
     public JSONArray getSecondaryValues(JSONObject jsonObject, String type) {
         JSONArray value = null;
         String secondaryValues = type
                 .equals(JsonFormConstants.EXPANSION_PANEL) ? JsonFormConstants.VALUE : JsonFormConstants.SECONDARY_VALUE;
-        
+
         if (jsonObject != null && jsonObject.has(secondaryValues)) {
             try {
                 value = jsonObject.getJSONArray(secondaryValues);
@@ -720,10 +726,10 @@ public class FormUtils {
                 Log.i(TAG, Log.getStackTraceString(e));
             }
         }
-        
+
         return value;
     }
-    
+
     /**
      * Gets the fields from a specific step in the json form
      *
@@ -752,7 +758,7 @@ public class FormUtils {
                 } else if (parentJson.has(JsonFormConstants.FIELDS) && parentJson
                         .get(JsonFormConstants.FIELDS) instanceof JSONArray) {
                     fields = parentJson.getJSONArray(JsonFormConstants.FIELDS);
-                    
+
                 }
             } catch (JSONException e) {
                 Log.i(TAG, Log.getStackTraceString(e));

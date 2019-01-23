@@ -96,193 +96,90 @@
     "next": "step3",
     "fields": [
       {
-        "key": "numbers_selector",
+        "key": "fetal_heartbeat",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "type": "numbers_selector",
-        "number_of_selectors": "1",
-        "start_number": "1",
-        "max_value": "1",
-        "text_size": "18px",
+        "type": "native_radio",
+        "label": "Fetal heartbeat present?",
+        "label_text_style": "bold",
         "text_color": "#000000",
-        "selected_text_color": "#ffffff",
+        "extra_rel": true,
+        "has_extra_rel": "yes",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "specify_info": "specify fetal heart rate (bpm)...",
+            "specify_widget": "normal_edit_text",
+            "specify_info_color": "#8C8C8C",
+            "secondary_suffix": "bpm",
+            "content_form": "fetal_heartbeat_sub_form"
+          },
+          {
+            "key": "no",
+            "text": "No",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          }
+        ],
         "v_required": {
-          "value": true
+          "value": true,
+          "err": "Please specify if fetal heartbeat is present."
+        }
+      },
+      {
+        "key": "fetal_heart_beat_rate_value",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-calculation-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "toaster27",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "No fetal heartbeat observed. Refer to hospital.",
+        "toaster_info_text": "Procedure:\n- Inform the woman that you cannot find the heartbeat and need to refer her to check if there's a problem.\n- Refer to hospital.",
+        "text_color": "#E20000",
+        "toaster_type": "problem",
+        "relevance": {
+          "step2:fetal_heartbeat": {
+            "type": "string",
+            "ex": "equalTo(., \"no\")"
+          }
+        }
+      },
+      {
+        "key": "toaster28",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Fetal heart rate out of normal range (110-160). Please have the woman lay on her left side for 15 minutes and check again.",
+        "text_color": "#D56900",
+        "toaster_type": "warning",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-relevance-rules.yml"
+            }
+          }
         }
       }
-      /*,
-            {
-              "key": "spacer",
-              "openmrs_entity_parent": "",
-              "openmrs_entity": "",
-              "openmrs_entity_id": "spacer",
-              "type": "spacer",
-              "spacer_height": "15sp"
-            },
-            {
-              "key": "numbers_selector_two",
-              "openmrs_entity_parent": "",
-              "openmrs_entity": "",
-              "openmrs_entity_id": "",
-              "type": "numbers_selector",
-              "number_of_selectors": "5",
-              "start_number": "0",
-              "max_value": "20",
-              "text_size": "18px",
-              "text_color": "#000000",
-              "selected_text_color": "#ffffff",
-              "v_required": {
-                "value": true
-              },
-              "constraints": [
-                {
-                  "type": "numbers_selector",
-                  "ex": "lessThanEqualTo(., step1:numbers_selector)"
-                }
-              ]
-            },
-            {
-              "key": "spacer",
-              "openmrs_entity_parent": "",
-              "openmrs_entity": "",
-              "openmrs_entity_id": "spacer",
-              "type": "spacer",
-              "spacer_height": "15sp"
-            },
-            {
-              "key": "numbers_selector_three",
-              "openmrs_entity_parent": "",
-              "openmrs_entity": "",
-              "openmrs_entity_id": "",
-              "type": "numbers_selector",
-              "number_of_selectors": "6",
-              "start_number": "0",
-              "max_value": "20",
-              "text_size": "20px",
-              "text_color": "#000000",
-              "selected_text_color": "#ffffff",
-              "v_required": {
-                "value": true
-              },
-              "constraints": {
-                "rules-engine": {
-                  "ex-rules": {
-                    "rules-file": "sample-constraint-rules.yml"
-                  }
-                }
-              }
-            },
-            {
-              "key": "sfh_edd",
-              "openmrs_entity_parent": "",
-              "openmrs_entity": "",
-              "openmrs_entity_id": "",
-              "type": "native_radio",
-              "read_only": false,
-              "label": "Highest Level of School.",
-              "label_info_text": "Checking out the display oof the info icon needed to display this information",
-              "label_info_title": "Highest Level of School",
-              "min_date": "today-5y",
-              "max_date": "today",
-              "options": [
-                {
-                  "key": "primary_school",
-                  "text": "Primary school",
-                  "specify_info": "Specify",
-                  "specify_widget": "date_picker",
-                  "label_info_text": "Checking out the display oof the info icon needed to display this information",
-                  "label_info_title": "Highest Level of School",
-                  "min_date": "today-5y",
-                  "max_date": "today"
-                },
-                {
-                  "key": "higher_education",
-                  "text": "College/University"
-                }
-              ],
-              "v_required": {
-                "value": true
-              }
-            },
-            {
-              "key": "sfh_edd2",
-              "openmrs_entity_parent": "",
-              "openmrs_entity": "",
-              "openmrs_entity_id": "",
-              "type": "native_radio",
-              "read_only": false,
-              "label": "Highest Level of School.",
-              "label_info_text": "Checking out the display oof the info icon needed to display this information",
-              "label_info_title": "Highest Level of School",
-              "min_date": "today-5y",
-              "max_date": "today",
-              "options": [
-                {
-                  "key": "high_school",
-                  "text": "High School",
-                  "specify_info": "Specify date joined",
-                  "specify_widget": "date_picker",
-                  "min_date": "today-20y",
-                  "max_date": "today+5y"
-                },
-                {
-                  "key": "baby_school",
-                  "text": "Baby School",
-                  "specify_info": "Specify date joined",
-                  "specify_widget": "date_picker",
-                  "min_date": "today-20y",
-                  "max_date": "today+5y"
-                },
-                {
-                  "key": "higher_education",
-                  "text": "College/University"
-                }
-              ],
-              "v_required": {
-                "value": true
-              }
-            },
-            {
-              "key": "select_gest_age_edd",
-              "openmrs_entity_parent": "",
-              "openmrs_entity": "",
-              "openmrs_entity_id": "",
-              "type": "native_radio",
-              "label": "Select preferred gestational age",
-              "label_info_text": "If the difference between GA from LMP and early ultrasound is one week or less, then use GA from LMP. If the difference is more than 7 days, use the early ultrasound GA. If ultrasound was done late, use GA from LMP. Between late ultrasound and SFH or abdominal palpation, use your best judgment to select GA.",
-              "label_text_style": "bold",
-              "options": [
-                {
-                  "key": "lmp",
-                  "openmrs_entity_parent": "",
-                  "openmrs_entity": "",
-                  "openmrs_entity_id": "",
-                  "text": "Using LMP",
-                  "extra_info": "GA: {lmp_gest_age}\nEDD: {lmp_edd}"
-                },
-                {
-                  "key": "ultrasound",
-                  "text": "Using ultrasound",
-                  "openmrs_entity_parent": "",
-                  "openmrs_entity": "",
-                  "openmrs_entity_id": "",
-                  "extra_info": "GA: {ultrasound_gest_age}\nEDD: {ultrasound_edd}"
-                },
-                {
-                  "key": "sfh",
-                  "text": "Using SFH or abdominal palpation",
-                  "openmrs_entity_parent": "",
-                  "openmrs_entity": "",
-                  "openmrs_entity_id": "",
-                  "extra_info": "GA: {sfh_gest_age} weeks\nEDD: {sfh_edd}"
-                }
-              ],
-              "value": "none",
-              "v_required": {
-                "value": true
-              }
-            }*/
     ]
   },
   "step3": {
