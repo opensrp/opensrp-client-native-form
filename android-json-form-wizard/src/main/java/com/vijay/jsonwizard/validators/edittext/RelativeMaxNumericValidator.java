@@ -22,14 +22,16 @@ public class RelativeMaxNumericValidator extends METValidator {
         private JsonFormFragment formFragment;
         private String bindMaxValTo;
         private String step;
+        private int exception;
 
         private final String TAG = RelativeMaxNumericValidator.class.getName();
 
-        public RelativeMaxNumericValidator(@NonNull String errorMessage, @NonNull  JsonFormFragment formFragment, @NonNull String bindMaxValTo, String step) {
+        public RelativeMaxNumericValidator(@NonNull String errorMessage, @NonNull  JsonFormFragment formFragment, @NonNull String bindMaxValTo, int exception, String step) {
             super(errorMessage);
             this.formFragment = formFragment;
             this.bindMaxValTo = bindMaxValTo;
             this.step = step == null ? STEP1 : step;
+            this.exception = exception;
         }
 
         public boolean isValid(@NonNull CharSequence text, boolean isEmpty) {
@@ -38,7 +40,8 @@ public class RelativeMaxNumericValidator extends METValidator {
                     JSONObject formJSONObject = new JSONObject(formFragment.getCurrentJsonState());
                     JSONArray formFields = fields(formJSONObject, step);
                     int relativeMaxFieldValue = getFieldJSONObject(formFields, bindMaxValTo).optInt(JsonFormConstants.VALUE);
-                    if (Integer.parseInt(text.toString()) > relativeMaxFieldValue) {
+                    int currentTextValue = Integer.parseInt(text.toString());
+                    if (currentTextValue > relativeMaxFieldValue && (currentTextValue != exception || exception == Integer.MIN_VALUE)) {
                         return false;
                     }
                 } catch (Exception e) {

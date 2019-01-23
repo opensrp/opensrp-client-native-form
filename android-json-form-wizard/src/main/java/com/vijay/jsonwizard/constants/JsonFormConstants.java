@@ -60,6 +60,7 @@ public class JsonFormConstants {
     public static final String V_MIN = "v_min";
     public static final String V_MAX = "v_max";
     public static final String V_RELATIVE_MAX = "v_relative_max";
+    public static final String RELATIVE_MAX_VALIDATION_EXCEPTION = "exception";
     public static final String DEFAULT_RELATIVE_MAX_VALIDATION_ERR = "Value cannot be higher than %s";
     public static final String NUMBERS_SELECTOR = "numbers_selector";
     public static final String START_SELECTION_NUMBER = "start_number";
