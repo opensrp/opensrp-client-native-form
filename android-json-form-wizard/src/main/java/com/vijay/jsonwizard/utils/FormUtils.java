@@ -49,7 +49,6 @@ import java.util.regex.Pattern;
 
 import static com.vijay.jsonwizard.constants.JsonFormConstants.FIELDS;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP1;
 
 /**
  * Created by vijay on 24-05-2015.
@@ -653,16 +652,14 @@ public class FormUtils {
         return value;
     }
 
-    public static JSONArray fields(JSONObject jsonForm) {
+    public static JSONArray fields(JSONObject jsonForm, String step) {
         try {
-
-            JSONObject step1 = jsonForm.has(STEP1) ? jsonForm.getJSONObject(STEP1) : null;
-            if (step1 == null) {
+            JSONObject stepJSONObject = jsonForm.has(step) ? jsonForm.getJSONObject(step) : null;
+            if (stepJSONObject == null) {
                 return null;
             }
 
-            return step1.has(FIELDS) ? step1.getJSONArray(FIELDS) : null;
-
+            return stepJSONObject.has(FIELDS) ? stepJSONObject.getJSONArray(FIELDS) : null;
         } catch (JSONException e) {
             Log.e(TAG, "", e);
         }
@@ -670,7 +667,7 @@ public class FormUtils {
     }
 
     public static JSONObject getFieldJSONObject(JSONArray jsonArray, String key) {
-        if (jsonArray == null || jsonArray.length() == 0) {
+        if (jsonArray == null || jsonArray.length() == 0 || key == null) {
             return null;
         }
 

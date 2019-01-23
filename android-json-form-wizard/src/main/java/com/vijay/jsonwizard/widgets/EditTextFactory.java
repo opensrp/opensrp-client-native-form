@@ -37,7 +37,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_RELATIVE_MAX_VALIDATION_ERR;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP1;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.V_RELATIVE_MAX;
+import static com.vijay.jsonwizard.utils.FormUtils.fields;
+import static com.vijay.jsonwizard.utils.FormUtils.getFieldJSONObject;
 
 public class EditTextFactory implements FormWidgetFactory {
     public static final int MIN_LENGTH = 0;
@@ -281,21 +284,22 @@ public class EditTextFactory implements FormWidgetFactory {
     }
 
     private void addRelativeNumericIntegerValidator(JSONObject editTextJSONObject, JsonFormFragment formFragment, MaterialEditText editText) throws JSONException {
-        JSONObject numericIntegerObject = editTextJSONObject.optJSONObject(JsonFormConstants.V_NUMERIC_INTEGER);
-        if (numericIntegerObject != null) {
-            String numericValue = numericIntegerObject.optString(JsonFormConstants.VALUE);
-            if (!TextUtils.isEmpty(numericValue) && Boolean.TRUE.toString().equalsIgnoreCase(numericValue)
-                    && editTextJSONObject.has(V_RELATIVE_MAX)) {
-                // extract values
-                JSONObject relativeMaxValidationJSONObject = editTextJSONObject.getJSONObject(V_RELATIVE_MAX);
-                String relativeMaxValidationKey = relativeMaxValidationJSONObject.optString(JsonFormConstants.VALUE);
+        JSONObject relativeMaxValidationJSONObject = editTextJSONObject.optJSONObject(V_RELATIVE_MAX);
+        if (relativeMaxValidationJSONObject != null) {
+            // validate that the relative max field exists
+            String relativeMaxValidationKey = relativeMaxValidationJSONObject.optString(JsonFormConstants.VALUE);
+            JSONObject formJSONObject = new JSONObject(formFragment.getCurrentJsonState());
+            JSONArray formFields = fields(formJSONObject, STEP1);
+            JSONObject relativeMaxFieldJSONObject = getFieldJSONObject(formFields, relativeMaxValidationKey);
+            if (relativeMaxFieldJSONObject != null) {
                 String relativeMaxValidationErrorMsg = relativeMaxValidationJSONObject.optString(JsonFormConstants.ERR);
                 String defaultErrMsg = String.format(DEFAULT_RELATIVE_MAX_VALIDATION_ERR, relativeMaxValidationKey);
                 // add validator
                 editText.addValidator(new RelativeMaxNumericValidator(
                         relativeMaxValidationErrorMsg == null ? defaultErrMsg : relativeMaxValidationErrorMsg,
                         formFragment,
-                        relativeMaxValidationKey));
+                        relativeMaxValidationKey,
+                        STEP1));
             }
         }
     }
