@@ -91,7 +91,7 @@ public class RulesEngineFactory implements RuleListener {
             String key = entry.getKey();
             String value = entry.getValue();
 
-            calculationFact.put(key, value.isEmpty() ? "0" : value);
+            calculationFact.put(key, value.isEmpty() ? "" : value);
         }
 
         Facts facts = initializeFacts(calculationFact);

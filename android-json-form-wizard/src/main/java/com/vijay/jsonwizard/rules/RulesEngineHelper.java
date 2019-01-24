@@ -64,6 +64,11 @@ public class RulesEngineHelper {
         return rulesEngineDateUtil.maxDate(maximumDate);
     }
 
+    public String getDOBFromAge(Integer age) {
+
+        return rulesEngineDateUtil.getDOBFromAge(age);
+    }
+
     //A secondary value has the format key:name e.g. ultrasound_done:yes
     public String getSecondaryValue(String value) {
 
