@@ -183,40 +183,452 @@
     ]
   },
   "step3": {
-    "title": "Test 3",
+    "title": "Maternal Exam",
     "fields": [
       {
-        "key": "first_name",
+        "key": "respiratory_exam",
         "openmrs_entity_parent": "",
-        "openmrs_entity": "person",
-        "openmrs_entity_id": "first_name",
-        "type": "edit_text",
-        "hint": "First name *",
-        "edit_type": "name",
-        "v_required": {
-          "value": "false",
-          "err": "Please enter the first name"
-        },
-        "v_regex": {
-          "value": "[A-Za-z\\s\.\-]*",
-          "err": "Please enter a valid name"
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Respiratory exam",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "extra_rel": true,
+        "has_extra_rel": "3",
+        "options": [
+          {
+            "key": "1",
+            "text": "Not done"
+          },
+          {
+            "key": "2",
+            "text": "Normal"
+          },
+          {
+            "key": "3",
+            "text": "Abnormal",
+            "specify_info": "specify...",
+            "specify_widget": "date_picker",
+            "specify_info_color": "#8C8C8C",
+            "content_form": "respiratory_exam_sub_form"
+          }
+        ]
+      },
+      {
+        "key": "toaster20",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Woman has respiratory distress. Refer urgently to the hospital!",
+        "text_color": "#E20000",
+        "toaster_type": "problem",
+        "relevance": {
+          "step3:respiratory_exam": {
+            "type": "string",
+            "ex": "equalTo(., \"3\")"
+          }
         }
       },
       {
-        "key": "last_name",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "person",
-        "openmrs_entity_id": "last_name",
-        "type": "edit_text",
-        "hint": "Last name *",
-        "edit_type": "name",
+        "key": "oximetry_label",
+        "type": "label",
+        "label_text_style": "bold",
+        "text": "Oximetry (%)",
+        "text_color": "#000000",
         "v_required": {
-          "value": "false",
-          "err": "Please enter the last name"
+          "value": false
         },
-        "v_regex": {
-          "value": "[A-Za-z\\s\.\-]*",
-          "err": "Please enter a valid name"
+        "relevance": {
+          "step3:respiratory_exam": {
+            "type": "string",
+            "ex": "equalTo(., \"3\")"
+          }
+        }
+      },
+      {
+        "key": "oximetry",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "normal_edit_text",
+        "edit_text_style": "bordered",
+        "edit_type": "number",
+        "relevance": {
+          "step3:respiratory_exam": {
+            "type": "string",
+            "ex": "equalTo(., \"3\")"
+          }
+        }
+      },
+      {
+        "key": "toaster21",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Woman has low oximetry. Refer urgently to the hospital!",
+        "toaster_info_text": "Procedure:\n- Give oxygen\n- Refer urgently to hospital!",
+        "text_color": "#E20000",
+        "toaster_type": "problem",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "10sp"
+      },
+      {
+        "key": "cardiac_exam",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Cardiac exam",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "extra_rel": true,
+        "has_extra_rel": "3",
+        "options": [
+          {
+            "key": "1",
+            "text": "Not done"
+          },
+          {
+            "key": "2",
+            "text": "Normal"
+          },
+          {
+            "key": "3",
+            "text": "Abnormal",
+            "specify_info": "specify...",
+            "specify_widget": "check_box",
+            "specify_info_color": "#8C8C8C",
+            "content_form": "cardiac_exam_sub_form"
+          }
+        ]
+      },
+      {
+        "key": "toaster22",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Abnormal cardiac exam. Refer urgently to the hospital!",
+        "text_color": "#E20000",
+        "toaster_type": "problem",
+        "relevance": {
+          "step3:cardiac_exam": {
+            "type": "string",
+            "ex": "equalTo(., \"3\")"
+          }
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "10sp"
+      },
+      {
+        "key": "breast_exam",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "Breast examination (text) ",
+        "openmrs_entity_id": "162825",
+        "type": "native_radio",
+        "label": "Breast exam",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "extra_rel": true,
+        "has_extra_rel": "3",
+        "options": [
+          {
+            "key": "1",
+            "text": "Not done"
+          },
+          {
+            "key": "2",
+            "text": "Normal"
+          },
+          {
+            "key": "3",
+            "text": "Abnormal",
+            "specify_info": "specify...",
+            "specify_widget": "check_box",
+            "specify_info_color": "#8C8C8C",
+            "content_form": "breast_exam_sub_form"
+          }
+        ]
+      },
+      {
+        "key": "toaster23",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Abnormal breast exam. Refer for further investigation.",
+        "text_color": "#D56900",
+        "toaster_type": "warning",
+        "relevance": {
+          "step3:breast_exam": {
+            "type": "string",
+            "ex": "equalTo(., \"3\")"
+          }
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "10sp"
+      },
+      {
+        "key": "abdominal_exam",
+        "openmrs_entity_parent": "Abdominal Examination",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "160947",
+        "type": "native_radio",
+        "label": "Abdominal exam",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "extra_rel": true,
+        "has_extra_rel": "3",
+        "options": [
+          {
+            "key": "1",
+            "text": "Not done"
+          },
+          {
+            "key": "2",
+            "text": "Normal"
+          },
+          {
+            "key": "3",
+            "text": "Abnormal",
+            "specify_info": "specify...",
+            "specify_widget": "check_box",
+            "specify_info_color": "#8C8C8C",
+            "content_form": "abdominal_exam_sub_form"
+          }
+        ]
+      },
+      {
+        "key": "toaster24",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Abnormal abdominal exam. Refer for further investigation.",
+        "text_color": "#E20000",
+        "toaster_type": "problem",
+        "relevance": {
+          "step3:abdominal_exam": {
+            "type": "string",
+            "ex": "equalTo(., \"3\")"
+          }
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "10sp"
+      },
+      {
+        "key": "pelvic_exam",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Pelvic exam (visual)",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "extra_rel": true,
+        "has_extra_rel": "3",
+        "options": [
+          {
+            "key": "1",
+            "text": "Not done"
+          },
+          {
+            "key": "2",
+            "text": "Normal"
+          },
+          {
+            "key": "3",
+            "text": "Abnormal",
+            "specify_info": "specify...",
+            "specify_widget": "check_box",
+            "specify_info_color": "#8C8C8C",
+            "content_form": "pelvic_exam_sub_form"
+          }
+        ]
+      },
+      {
+        "key": "toaster25",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Abnormal pelvic exam. Refer for further investigation.",
+        "text_color": "#E20000",
+        "toaster_type": "problem",
+        "relevance": {
+          "step3:pelvic_exam": {
+            "type": "string",
+            "ex": "equalTo(., \"3\")"
+          }
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "10sp"
+      },
+      {
+        "key": "cervical_exam",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "Uterine cervix examination (text) ",
+        "openmrs_entity_id": "160968",
+        "type": "native_radio",
+        "label": "Cervical exam done?",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "extra_rel": true,
+        "has_extra_rel": "1",
+        "options": [
+          {
+            "key": "1",
+            "text": "Done",
+            "specify_info": "specify cm cervix dilated...",
+            "specify_widget": "normal_edit_text",
+            "specify_info_color": "#8C8C8C",
+            "secondary_suffix": "cm",
+            "content_form": "cervical_exam_sub_form"
+          },
+          {
+            "key": "2",
+            "text": "Not done"
+          }
+        ]
+      },
+      {
+        "key": "toaster26",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Cervix is more than 2 cm dilated. Please check for other signs and symptoms of labour (if GA is 37 weeks or later) or pre-term labour and other related complications (if GA is less than 37 weeks).",
+        "text_color": "#E20000",
+        "toaster_type": "problem",
+        "relevance": {
+          "step3:dilation_cm": {
+            "type": "numeric",
+            "ex": "greaterThan(., \"2\")"
+          }
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "10sp"
+      },
+      {
+        "key": "oedema",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "460",
+        "type": "native_radio",
+        "label": "Oedema present?",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "extra_rel": true,
+        "has_extra_rel": "yes",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes",
+            "specify_info": "specify type...",
+            "specify_widget": "radio_button",
+            "specify_info_color": "#8C8C8C",
+            "content_form": "oedema_present_sub_form"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ]
+      },
+      {
+        "key": "oedema_severity",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "URINE PROTEIN (DIP STICK)",
+        "openmrs_entity_id": "1875",
+        "type": "native_radio",
+        "label": "Oedema severity",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "options": [
+          {
+            "key": "one_plus",
+            "text": "+",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "two_plus",
+            "text": "++",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "three_plus",
+            "text": "+++",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "four_plus",
+            "text": "++++",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          }
+        ],
+        "v_required": {
+          "value": false,
+          "err": "Please enter the result for the dipstick test."
+        },
+        "relevance": {
+          "step3:oedema": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
         }
       }
     ]

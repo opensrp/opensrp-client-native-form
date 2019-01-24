@@ -59,7 +59,6 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
     private CustomTextViewClickListener customTextViewClickListener = new CustomTextViewClickListener();
 
     public static void showDateDialog(View view) {
-
         Context context = (Context) view.getTag(R.id.specify_context);
         CustomTextView customTextView = (CustomTextView) view.getTag(R.id.specify_textview);
         RadioButton radioButton = (RadioButton) view.getTag(R.id.native_radio_button);
@@ -200,11 +199,10 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
      * @param jsonObject
      * @param childKey
      * @param calendarDate
-     *
      * @throws JSONException
      */
     private static void radioButtonOptionAssignSecondaryValue(JSONObject jsonObject, String childKey, Calendar calendarDate)
-    throws JSONException {
+            throws JSONException {
         if (jsonObject.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
             JSONArray jsonArray = jsonObject.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -221,7 +219,6 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
      *
      * @param item
      * @param calendarDate
-     *
      * @throws JSONException
      */
     private static void addSecondaryValue(JSONObject item, Calendar calendarDate) throws JSONException {
@@ -292,20 +289,20 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
     /**
      * Creates the Radio Button options from the JSON definitions
      *
-     * @param jsonObject
-     * @param context
-     * @param readOnly
-     * @param canvasIds
-     * @param stepName
-     * @param linearLayout
-     * @param listener
-     *
-     * @throws JSONException
+     * @param jsonObject   {@link JSONObject}
+     * @param context      {@link Context}
+     * @param readOnly     {@link Boolean}
+     * @param canvasIds    {@link JSONArray}
+     * @param stepName     {@link String}
+     * @param linearLayout {@link LinearLayout}
+     * @param listener     {@link CommonListener}
+     * @throws JSONException {@link JSONException}
+     * @author dubdabasoduba
      */
     protected View addRadioButtonOptionsElements(JSONObject jsonObject, Context context, Boolean readOnly,
                                                  JSONArray canvasIds, String stepName, LinearLayout linearLayout,
                                                  CommonListener listener, JsonFormFragment formFragment, boolean popup)
-    throws JSONException {
+            throws JSONException {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
@@ -413,9 +410,8 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         radioButton.setTag(R.id.childKey, item.getString(JsonFormConstants.KEY));
         radioButton.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
         radioButton.setTag(R.id.relevance, relevance);
-
-        radioButton.setTag(jsonObject.getString(JsonFormConstants.TYPE));
         radioButton.setOnCheckedChangeListener(listener);
+        radioButton.setTag(jsonObject.getString(JsonFormConstants.TYPE));
 
         if (!TextUtils.isEmpty(jsonObject.optString(JsonFormConstants.VALUE)) &&
                 jsonObject.optString(JsonFormConstants.VALUE).equals(item.getString(JsonFormConstants.KEY))) {
@@ -464,14 +460,13 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
      * @param popup        {@link Boolean}
      * @param formFragment {@link JsonFormFragment}
      * @param stepName     {@link String}
-     *
      * @throws JSONException {@link JSONException}
      * @author dubdabasoduba
      */
     private void createSpecifyTextView(RelativeLayout rootLayout, final CommonListener listener, JSONObject jsonObject,
                                        Context context, Boolean readOnly, JSONObject item, Boolean popup,
                                        JsonFormFragment formFragment, String stepName, final RadioButton radioButton)
-    throws JSONException {
+            throws JSONException {
         String specifyText = item.has(JsonFormConstants.SECONDARY_VALUE) ?
                 context.getResources().getString(R.string.radio_button_tap_to_change) :
                 item.getString(JsonFormConstants.CONTENT_INFO);
@@ -494,7 +489,6 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
      * Returns the radio button option text after concatenating with the secondary value in the case of a date picker popup.
      *
      * @param item {@link JSONObject}
-     *
      * @return optionText {@link String}
      * @throws JSONException {@link JSONException}
      * @author dubdabasoduba
@@ -518,7 +512,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
     private void addPopupRelevantTags(View view, JSONObject jsonObject, boolean popup, JSONObject item, Context context,
                                       JsonFormFragment formFragment, String stepName, CommonListener listener)
-    throws JSONException {
+            throws JSONException {
         String specifyWidget = item.optString(JsonFormConstants.CONTENT_WIDGET, "");
         String specifyContent = item.optString(JsonFormConstants.CONTENT_FORM, null);
         String specifyContentForm = item.optString(JsonFormConstants.CONTENT_FORM_LOCATION, null);
@@ -543,7 +537,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
     private void createExtraInfoDisplayTextView(RelativeLayout rootLayout, JSONObject jsonObject, Boolean readOnly,
                                                 JSONObject item, String stepName, Context context, String text_color)
-    throws JSONException {
+            throws JSONException {
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
         String text = item.getString(JsonFormConstants.NATIVE_RADIO_EXTRA_INFO);
 
@@ -565,7 +559,6 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
      * @param item
      * @param stepName
      * @param text_color
-     *
      * @throws JSONException
      * @author kitoto
      */
@@ -599,7 +592,6 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
      * Returns the date from the secondary values incase of a date picker pop up
      *
      * @param values {@link JSONArray}
-     *
      * @return date {@link String}
      * @throws JSONException
      * @author dubdabasoduba

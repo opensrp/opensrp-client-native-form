@@ -76,3 +76,38 @@ priority: 1
 condition: "(step2_fetal_heart_beat_rate_value > 0 && (step2_fetal_heart_beat_rate_value < 110 || step2_fetal_heart_beat_rate_value > 160))"
 actions:
 - "isRelevant = true"
+---
+name: step3_toaster17
+description: Hypertension diagnosis
+priority: 1
+condition: "step3_pulse_rate > 0 && (step3_pulse_rate < 60 || step3_pulse_rate > 100)"
+actions:
+- "isRelevant = true"
+---
+name: step3_pulse_rate_repeat
+description: Pulse rate measurement
+priority: 1
+condition: "step3_pulse_rate > 0 && (step3_pulse_rate < 60 || step3_pulse_rate > 100)"
+actions:
+- "isRelevant = true"
+---
+name: step3_pulse_rate_repeat_label
+description: Pulse rate measurement
+priority: 1
+condition: "step3_pulse_rate > 0 && (step3_pulse_rate < 60 || step3_pulse_rate > 100) "
+actions:
+- "isRelevant = true"
+---
+name: step3_toaster18
+description: Pulse rate measurement
+priority: 1
+condition: "step3_pulse_rate_repeat > 0 && (step3_pulse_rate_repeat < 60 || step3_pulse_rate_repeat > 100) "
+actions:
+- "isRelevant = true"
+---
+name: step3_toaster21
+description: Oxymetry Entry
+priority: 1
+condition: "step3_oximetry > 0 && step3_oximetry < 92"
+actions:
+- "isRelevant = true"

@@ -50,7 +50,8 @@ public class DatePickerDialog extends DialogFragment {
         super.onCreate(savedInstanceState);
 
         if (context == null) {
-            throw new IllegalStateException("The Context is not set. Did you forget to set context with DatePickerDialog.setContext method?");
+            throw new IllegalStateException(
+                    "The Context is not set. Did you forget to set context with DatePickerDialog.setContext method?");
         }
         setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Light_Dialog);
     }
@@ -70,9 +71,10 @@ public class DatePickerDialog extends DialogFragment {
         setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
-                InputMethodManager inputManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputManager.hideSoftInputFromWindow(((Activity) context).getCurrentFocus().getWindowToken(),
-                        HIDE_NOT_ALWAYS);
+                InputMethodManager inputManager = (InputMethodManager) context
+                        .getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputManager
+                        .hideSoftInputFromWindow(((Activity) context).getCurrentFocus().getWindowToken(), HIDE_NOT_ALWAYS);
             }
         });
 
@@ -135,8 +137,7 @@ public class DatePickerDialog extends DialogFragment {
 
     private void setDate(Calendar calendar) {
         if (this.datePicker != null) {
-            datePicker.updateDate(calendar.get(Calendar.YEAR),
-                    calendar.get(Calendar.MONTH),
+            datePicker.updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
                     calendar.get(Calendar.DAY_OF_MONTH));
         }
     }

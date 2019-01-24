@@ -41,7 +41,8 @@ import java.util.Map;
 import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 
 public class GenericPopupDialog extends DialogFragment implements GenericDialogInterface {
-    private static JsonFormInteractor jsonFormInteractor = JsonFormInteractor.getInstance();
+    private final String TAG = this.getClass().getSimpleName();
+    private JsonFormInteractor jsonFormInteractor = JsonFormInteractor.getInstance();
     private FormUtils formUtils = new FormUtils();
     private JsonApi jsonApi;
     private Context context;
@@ -60,14 +61,14 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
     private Map<String, SecondaryValueModel> popAssignedValue = new HashMap<>();
     private Map<String, SecondaryValueModel> secondaryValuesMap = new HashMap<>();
     private String suffix = "";
-
+    private Activity activity;
     private JSONArray specifyContent;
-    private String TAG = this.getClass().getSimpleName();
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        context = activity;
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
+        activity = (Activity) context;
         jsonApi = (JsonApi) activity;
         jsonApi.invokeRefreshLogic(null, true, null, null);
         jsonApi.setGenericPopup(this);
@@ -91,7 +92,9 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
             throw new IllegalStateException(
                     "The Context is not set. Did you forget to set context with Generic Dialog setContext method?");
         }
-        jsonApi = (JsonApi) context;
+
+        activity = (Activity) context;
+        jsonApi = (JsonApi) activity;
 
         try {
             loadPartialSecondaryValues();
@@ -193,7 +196,6 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                jsonApi.invokeRefreshLogic(null, true, null, null);
                 passData();
                 jsonApi.updateGenericPopupSecondaryValues(null);
                 GenericPopupDialog.this.dismiss();
@@ -458,7 +460,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         JSONObject mJSONObject = jsonApi.getmJSONObject();
         if (mJSONObject != null) {
             JSONArray fields = formUtils.getFormFields(stepName, context);
-            JSONObject item = null;
+            JSONObject item;
             try {
                 if (fields.length() > 0) {
                     for (int i = 0; i < fields.length(); i++) {
@@ -664,4 +666,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         this.formLocation = formLocation;
     }
 
+    public void setContext(Context context) throws IllegalStateException {
+        this.context = context;
+    }
 }

@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.customviews.CompoundButton;
 import com.vijay.jsonwizard.customviews.GenericPopupDialog;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
@@ -369,37 +370,31 @@ public class FormUtils {
      * Checks and uncheck the radio buttons in a linear layout view
      * follows this fix https://stackoverflow.com/a/26961458/5784584
      *
-     * @param parent
+     * @param parent {@link ViewGroup}
      */
     public static void setRadioExclusiveClick(ViewGroup parent) {
         final List<RadioButton> radioButtonList = getRadioButtons(parent);
-        for (final RadioButton radioButton : radioButtonList) {
+        for (RadioButton radioButton : radioButtonList) {
             radioButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     RadioButton radioButtonView = (RadioButton) view;
-                    radioButtonView.setChecked(true);
                     for (RadioButton button : radioButtonList) {
                         if (button.getId() != radioButtonView.getId()) {
                             button.setChecked(false);
-                            CustomTextView specifyText = (CustomTextView) button.getTag(R.id.specify_textview);
-                            CustomTextView reasonsText = (CustomTextView) button.getTag(R.id.popup_reasons_textview);
-                            CustomTextView extraInfoTextView = (CustomTextView) button
-                                    .getTag(R.id.specify_extra_info_textview);
-                            JSONObject optionsJson = (JSONObject) button.getTag(R.id.option_json_object);
-
-                            handleRadioGroupViews(optionsJson, button, specifyText, reasonsText, extraInfoTextView);
+                            resetRadioButtonsSpecifyText(button);
                         }
                     }
                 }
             });
         }
+
     }
 
     /**
      * Get the actual radio buttons on the parent view given
      *
-     * @param parent
+     * @param parent {@link ViewGroup}
      * @return radioButtonList
      */
     private static List<RadioButton> getRadioButtons(ViewGroup parent) {
@@ -414,6 +409,35 @@ public class FormUtils {
             }
         }
         return radioButtonList;
+    }
+
+    /**
+     * Resets the radio buttons specify text in another option is selected
+     *
+     * @param button {@link CompoundButton}
+     * @author kitoto
+     */
+    private static void resetRadioButtonsSpecifyText(RadioButton button) {
+        CustomTextView specifyText = (CustomTextView) button.getTag(R.id.specify_textview);
+        CustomTextView reasonsText = (CustomTextView) button.getTag(R.id.popup_reasons_textview);
+        CustomTextView extraInfoTextView = (CustomTextView) button
+                .getTag(R.id.specify_extra_info_textview);
+        JSONObject optionsJson = (JSONObject) button.getTag(R.id.option_json_object);
+        String radioButtonText = optionsJson.optString(JsonFormConstants.TEXT);
+        button.setText(radioButtonText);
+
+        if (specifyText != null && optionsJson.has(JsonFormConstants.CONTENT_INFO)) {
+            String specifyInfo = optionsJson.optString(JsonFormConstants.CONTENT_INFO);
+            String newText = "(" + specifyInfo + ")";
+            specifyText.setText(newText);
+        }
+        if (reasonsText != null) {
+            reasonsText.setVisibility(View.GONE);
+        }
+        if (extraInfoTextView != null) {
+            extraInfoTextView.setVisibility(View.VISIBLE);
+        }
+
     }
 
     /**
@@ -533,24 +557,6 @@ public class FormUtils {
         return stringBuilder.toString();
     }
 
-    private static void handleRadioGroupViews(JSONObject optionsJson, RadioButton button, CustomTextView specifyText,
-                                              CustomTextView reasonsText, CustomTextView extraInfoTextView) {
-        String radioButtonText = optionsJson.optString(JsonFormConstants.TEXT);
-        button.setText(radioButtonText);
-        if (specifyText != null && optionsJson.has(JsonFormConstants.CONTENT_INFO)) {
-            String specifyInfo = optionsJson.optString(JsonFormConstants.CONTENT_INFO);
-            String newText = "(" + specifyInfo + ")";
-            specifyText.setText(newText);
-        }
-        if (reasonsText != null) {
-            reasonsText.setVisibility(View.GONE);
-        }
-        if (extraInfoTextView != null) {
-            extraInfoTextView.setVisibility(View.VISIBLE);
-        }
-
-    }
-
     private static void resetSecondaryValues(JSONArray mainJson, JSONObject radioJsonObject) throws JSONException {
 
         String radioKey = radioJsonObject.getString(JsonFormConstants.KEY);
@@ -574,7 +580,7 @@ public class FormUtils {
         return null;
     }
 
-    public void showGenericDialog(View view) {
+    public static void showGenericDialog(View view) {
         Context context = (Context) view.getTag(R.id.specify_context);
         String specifyContent = (String) view.getTag(R.id.specify_content);
         String specifyContentForm = (String) view.getTag(R.id.specify_content_form);
@@ -598,6 +604,7 @@ public class FormUtils {
             genericPopupDialog.setSecondaryValues(jsonArray);
             genericPopupDialog.setParentKey(parentKey);
             genericPopupDialog.setWidgetType(type);
+            genericPopupDialog.setContext(context);
             if (customTextView != null && reasonsTextView != null) {
                 genericPopupDialog.setCustomTextView(customTextView);
                 genericPopupDialog.setPopupReasonsTextView(reasonsTextView);
