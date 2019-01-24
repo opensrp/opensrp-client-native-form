@@ -29,6 +29,7 @@ public class JsonFormConstants {
     public static final String GPS = "gps";
     public static final String SECTIONS = "sections";
     public static final String FIELDS = "fields";
+    public static final String STEP1 = "step1";
     public static final String NAME = "name";
     public static final String TYPE = "type";
     public static final String READ_ONLY = "read_only";
@@ -58,6 +59,9 @@ public class JsonFormConstants {
     public static final String V_NUMERIC_INTEGER = "v_numeric_integer";
     public static final String V_MIN = "v_min";
     public static final String V_MAX = "v_max";
+    public static final String V_RELATIVE_MAX = "v_relative_max";
+    public static final String RELATIVE_MAX_VALIDATION_EXCEPTION = "exception";
+    public static final String DEFAULT_RELATIVE_MAX_VALIDATION_ERR = "Value cannot be higher than %s";
     public static final String NUMBERS_SELECTOR = "numbers_selector";
     public static final String START_SELECTION_NUMBER = "start_number";
     public static final String NUMBER_OF_SELECTORS = "number_of_selectors";

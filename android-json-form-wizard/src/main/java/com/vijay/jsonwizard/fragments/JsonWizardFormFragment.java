@@ -147,7 +147,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
     @Override
     public void setActionBarTitle(String title) {
         Form form = getForm();
-        if (form != null) {
+        if (form != null && !TextUtils.isEmpty(form.getName())) {
             super.setActionBarTitle(form.getName());
             if (stepName != null) {
                 stepName.setText(title);
