@@ -1,0 +1,74 @@
+{
+  "content_form": [
+    {
+      "key": "abdominal_exam_abnormal",
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "",
+      "openmrs_entity_id": "",
+      "type": "check_box",
+      "label": "Abdominal exam: abnormal",
+      "label_text_style": "bold",
+      "text_color": "#000000",
+      "options": [
+        {
+          "key": "mass_tumour",
+          "text": "Mass/tumour",
+          "value": false,
+          "openmrs_entity": "NEOPLASM",
+          "openmrs_entity_id": "115327"
+        },
+        {
+          "key": "superficial_palpation_pain",
+          "text": "Pain on superficial palpation",
+          "value": false,
+          "openmrs_entity": "Discharge from Nipple",
+          "openmrs_entity_id": "142248"
+        },
+        {
+          "key": "deep_palpation_pain",
+          "text": "Pain on deep palpation",
+          "value": false,
+          "openmrs_entity": "",
+          "openmrs_entity_id": ""
+        },
+        {
+          "key": "painful_decompression",
+          "text": "Painful decompression",
+          "value": false,
+          "openmrs_entity": "",
+          "openmrs_entity_id": ""
+        },
+        {
+          "key": "other",
+          "text": "Other (specify)",
+          "value": false,
+          "openmrs_entity": "",
+          "openmrs_entity_id": ""
+        }
+      ]
+    },
+    {
+      "key": "abdominal_exam_abnormal_other",
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "",
+      "openmrs_entity_id": "",
+      "type": "edit_text",
+      "hint": "Specify",
+      "v_regex": {
+        "value": "[A-Za-z\\\\s\\\\.\\\\-]*",
+        "err": "Please enter valid content"
+      },
+      "relevance": {
+        "step3:abdominal_exam_abnormal": {
+          "ex-checkbox": [
+            {
+              "or": [
+                "other"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
