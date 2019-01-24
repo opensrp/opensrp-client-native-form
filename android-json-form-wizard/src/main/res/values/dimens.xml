@@ -5,7 +5,7 @@
     <integer name="navigationAnimTime">300</integer>
 
     <dimen name="default_text_size">20sp</dimen>
-    <dimen name="default_info_icon_size">21dp</dimen>
+    <dimen name="default_info_icon_size">22dp</dimen>
     <dimen name="button_text_size">16sp</dimen>
     <dimen name="button_padding">7dp</dimen>
     <dimen name="label_text_size">18dp</dimen>
