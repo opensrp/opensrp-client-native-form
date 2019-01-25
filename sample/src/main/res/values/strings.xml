@@ -8,4 +8,5 @@
     <string name="next">Endelea</string>
     <string name="previous">Rudi</string>
     <string name="submit">Tuma</string>
+    <string name="title_activity_embedded_view">Embedded View</string>
 </resources>

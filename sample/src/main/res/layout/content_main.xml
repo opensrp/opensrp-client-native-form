@@ -59,5 +59,13 @@
             android:text="GENERIC POPUP"
             android:textColor="@android:color/white" />
 
+        <Button
+            android:id="@+id/embedded_view_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="EMBEDDED VIEW"
+            android:textColor="@android:color/white" />
+
     </LinearLayout>
 </RelativeLayout>
