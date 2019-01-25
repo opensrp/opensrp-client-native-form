@@ -384,7 +384,8 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         if (JsonFormConstants.CONTENT_INFO.equals(type) && specifyWidget.equals(JsonFormConstants.DATE_PICKER)) {
             NativeRadioButtonFactory.showDateDialog(view);
         } else if (JsonFormConstants.CONTENT_INFO.equals(type) && !specifyWidget.equals(JsonFormConstants.DATE_PICKER)) {
-            FormUtils.showGenericDialog(view);
+            FormUtils formUtils = new FormUtils();
+            formUtils.showGenericDialog(view);
         } else if (view.getId() == R.id.label_edit_button) {
             setRadioViewsEditable(view);
         } else {

@@ -81,11 +81,13 @@ public class JsonFormInteractor {
         List<View> viewsFromJson = new ArrayList<>(5);
         try {
 
-            if (parentJson.has(JsonFormConstants.SECTIONS) && parentJson.get(JsonFormConstants.SECTIONS) instanceof JSONArray) {
+            if (parentJson.has(JsonFormConstants.SECTIONS) && parentJson
+                    .get(JsonFormConstants.SECTIONS) instanceof JSONArray) {
                 JSONArray sections = parentJson.getJSONArray(JsonFormConstants.SECTIONS);
                 fetchSections(viewsFromJson, stepName, formFragment, sections, listener, popup);
 
-            } else if (parentJson.has(JsonFormConstants.FIELDS) && parentJson.get(JsonFormConstants.FIELDS) instanceof JSONArray) {
+            } else if (parentJson.has(JsonFormConstants.FIELDS) && parentJson
+                    .get(JsonFormConstants.FIELDS) instanceof JSONArray) {
                 JSONArray fields = parentJson.getJSONArray(JsonFormConstants.FIELDS);
                 fetchFields(viewsFromJson, stepName, formFragment, fields, listener, popup);
             }
@@ -109,7 +111,8 @@ public class JsonFormInteractor {
                 JSONObject sectionJson = sections.getJSONObject(i);
 
                 if (sectionJson.has(JsonFormConstants.NAME)) {
-                    fetchViews(viewsFromJson, stepName, formFragment, JsonFormConstants.SECTION_LABEL, sectionJson, listener, popup);
+                    fetchViews(viewsFromJson, stepName, formFragment, JsonFormConstants.SECTION_LABEL, sectionJson, listener,
+                            popup);
                 }
 
                 if (sectionJson.has(JsonFormConstants.FIELDS)) {
@@ -135,7 +138,8 @@ public class JsonFormInteractor {
 
             for (int i = 0; i < fields.length(); i++) {
                 JSONObject childJson = fields.getJSONObject(i);
-                fetchViews(viewsFromJson, stepName, formFragment, childJson.getString(JsonFormConstants.TYPE), childJson, listener, popup);
+                fetchViews(viewsFromJson, stepName, formFragment, childJson.getString(JsonFormConstants.TYPE), childJson,
+                        listener, popup);
             }
         } catch (JSONException e) {
             Log.d(TAG, "Json exception occurred : " + e.getMessage());
@@ -147,7 +151,9 @@ public class JsonFormInteractor {
                             String type, JSONObject jsonObject, CommonListener listener, Boolean popup) {
 
         try {
-            List<View> views = map.get(type).getViewsFromJson(stepName, formFragment.getActivity(), formFragment, jsonObject, listener, popup);
+            List<View> views = map
+                    .get(type)
+                    .getViewsFromJson(stepName, formFragment.getActivity(), formFragment, jsonObject, listener, popup);
             if (views.size() > 0) {
                 viewsFromJson.addAll(views);
             }

@@ -53,7 +53,6 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
     private static FormUtils formUtils = new FormUtils();
     private RadioButton radioButton;
     private CustomTextView extraInfoTextView;
-    private String secondaryValueDate;
     private CustomTextView specifyTextView;
     private CustomTextView reasonsTextView;
     private CustomTextViewClickListener customTextViewClickListener = new CustomTextViewClickListener();
@@ -502,7 +501,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             String secondValueType = secondaryValue.getString(JsonFormConstants.TYPE);
             if (item.getString(JsonFormConstants.KEY).equals(secondValueKey) &&
                     secondValueType.equals(JsonFormConstants.DATE_PICKER)) {
-                secondaryValueDate = getSecondaryDateValue(secondaryValue.getJSONArray(JsonFormConstants.VALUES));
+                String secondaryValueDate = getSecondaryDateValue(secondaryValue.getJSONArray(JsonFormConstants.VALUES));
                 optionText = item.getString(JsonFormConstants.TEXT) + ":" + secondaryValueDate;
             }
         }
@@ -593,7 +592,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
      *
      * @param values {@link JSONArray}
      * @return date {@link String}
-     * @throws JSONException
+     * @throws JSONException {@link JSONException}
      * @author dubdabasoduba
      */
     private String getSecondaryDateValue(JSONArray values) throws JSONException {

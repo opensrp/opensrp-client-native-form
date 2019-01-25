@@ -87,6 +87,25 @@
         "v_regex": {
           "value": "[A-Za-z\\s\.\-]*",
           "err": "Please enter a valid name"
+        },
+        "value": "Kuku"
+      },
+      {
+        "key": "test_stuff",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Specify",
+        "v_regex": {
+          "value": "[A-Za-z\\\\s\\\\.\\\\-]*",
+          "err": "Please enter valid content"
+        },
+        "relevance": {
+          "step1:last_name": {
+            "type": "string",
+            "ex": "equalTo(., \"Health facility\")"
+          }
         }
       }
     ]

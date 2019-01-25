@@ -70,7 +70,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         this.context = context;
         activity = (Activity) context;
         jsonApi = (JsonApi) activity;
-        jsonApi.invokeRefreshLogic(null, true, null, null);
+        jsonApi.invokeRefreshLogic(null, false, null, null);
         jsonApi.setGenericPopup(this);
     }
 
@@ -155,7 +155,6 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
     @Override
     public void onResume() {
         super.onResume();
-        jsonApi.invokeRefreshLogic(null, true, null, null);
         ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
         params.width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.90);
         params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
@@ -204,6 +203,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         if (getDialog().getWindow() != null) {
             getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         }
+        jsonApi.invokeRefreshLogic(null, true, null, null);
         return dialogView;
     }
 
@@ -491,7 +491,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
      *
      * @param jsonObject
      * @param childKey
-     * @return
+     * @return item {@link JSONObject}
      */
     protected JSONObject getJsonObjectToUpdate(JSONObject jsonObject, String childKey) {
         JSONObject item = new JSONObject();

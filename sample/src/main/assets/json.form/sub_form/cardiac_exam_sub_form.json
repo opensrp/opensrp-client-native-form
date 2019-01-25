@@ -89,6 +89,25 @@
             }
           ]
         }
+      },
+      "value": "Kuku"
+    },
+    {
+      "key": "test_stuff",
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "",
+      "openmrs_entity_id": "",
+      "type": "edit_text",
+      "hint": "Specify",
+      "v_regex": {
+        "value": "[A-Za-z\\\\s\\\\.\\\\-]*",
+        "err": "Please enter valid content"
+      },
+      "relevance": {
+        "step3:cardiac_exam_abnormal_other": {
+          "type": "string",
+          "ex": "equalTo(., \"Health facility\")"
+        }
       }
     }
   ]

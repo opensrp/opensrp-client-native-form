@@ -227,8 +227,9 @@ public class JsonWizardFormFragment extends JsonFormFragment {
 
     protected void save() {
         try {
-            Boolean skipValidation = ((JsonFormActivity) mMainView.getContext()).getIntent().getBooleanExtra(JsonFormConstants
-                    .SKIP_VALIDATION, false);
+            Boolean skipValidation = ((JsonFormActivity) mMainView.getContext()).getIntent()
+                    .getBooleanExtra(JsonFormConstants
+                            .SKIP_VALIDATION, false);
             save(skipValidation);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
@@ -246,11 +247,11 @@ public class JsonWizardFormFragment extends JsonFormFragment {
     public TextView getStepName() {
         return stepName;
     }
-////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////
     // Inner classes
     ////////////////////////////////////////////////////////////////
 
-    private class BottomNavigationListener implements View.OnClickListener {
+    protected class BottomNavigationListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.next || v.getId() == R.id.next_icon) {
