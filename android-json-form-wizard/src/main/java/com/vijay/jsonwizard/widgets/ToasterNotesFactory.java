@@ -18,6 +18,7 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.interfaces.NativeViewer;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,13 +29,13 @@ import java.util.List;
 
 public class ToasterNotesFactory implements FormWidgetFactory {
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener
+    public List<View> getViewsFromJson(String stepName, Context context, NativeViewer formFragment, JSONObject jsonObject, CommonListener
             listener, boolean popup) throws JSONException {
         return attachJson(stepName, context, jsonObject, listener, popup);
     }
 
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+    public List<View> getViewsFromJson(String stepName, Context context, NativeViewer formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
         return attachJson(stepName, context, jsonObject, listener, false);
     }
 

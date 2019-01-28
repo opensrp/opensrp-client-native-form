@@ -24,6 +24,7 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.interfaces.NativeViewer;
 import com.vijay.jsonwizard.interfaces.OnActivityResultListener;
 import com.vijay.jsonwizard.utils.PermissionUtils;
 import com.vijay.jsonwizard.utils.Utils;
@@ -48,18 +49,18 @@ public class BarcodeFactory implements FormWidgetFactory {
 
 
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+    public List<View> getViewsFromJson(String stepName, Context context, NativeViewer formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
         return attachJson(stepName, context, formFragment, jsonObject, true);
     }
 
     @Override
     public List<View> getViewsFromJson(String stepName, final Context context,
-                                       JsonFormFragment formFragment, final JSONObject jsonObject,
+                                       NativeViewer formFragment, final JSONObject jsonObject,
                                        CommonListener listener, boolean popup) {
         return attachJson(stepName, context, formFragment, jsonObject, popup);
     }
 
-    private List<View> attachJson(String stepName, final Context context, JsonFormFragment formFragment, final JSONObject jsonObject, boolean popup) {
+    private List<View> attachJson(String stepName, final Context context, NativeViewer formFragment, final JSONObject jsonObject, boolean popup) {
         List<View> views = new ArrayList<>(1);
         try {
             String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);

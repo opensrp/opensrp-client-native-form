@@ -19,7 +19,7 @@ public class EmbeddedView extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         NativeForm nativeForm = findViewById(R.id.native_form);
-        nativeForm.setJsonFrom("single_form");
+        nativeForm.setJsonFrom("constraints_demo");
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

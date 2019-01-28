@@ -21,6 +21,7 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.interfaces.NativeViewer;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
 
 import org.json.JSONArray;
@@ -66,17 +67,17 @@ public class TreeViewFactory implements FormWidgetFactory {
     }
 
     @Override
-    public List<View> getViewsFromJson(String stepName, final Context context, JsonFormFragment formFragment, JSONObject
+    public List<View> getViewsFromJson(String stepName, final Context context, NativeViewer formFragment, JSONObject
             jsonObject, CommonListener listener, boolean popup) throws JSONException {
         return attachJson(stepName, context, formFragment, jsonObject, popup);
     }
 
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+    public List<View> getViewsFromJson(String stepName, Context context, NativeViewer formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
         return attachJson(stepName, context, formFragment, jsonObject, false);
     }
 
-    private List<View> attachJson(String stepName, final Context context, JsonFormFragment formFragment, JSONObject
+    private List<View> attachJson(String stepName, final Context context, NativeViewer formFragment, JSONObject
             jsonObject, boolean popup) throws JSONException {
         List<View> views = new ArrayList<>(1);
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);

@@ -18,6 +18,7 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.interfaces.NativeViewer;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ImageUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
@@ -41,7 +42,7 @@ public class ImagePickerFactory implements FormWidgetFactory {
         return Math.round(px);
     }
 
-    public static ValidationStatus validate(JsonFormFragmentView formFragmentView,
+    public static ValidationStatus validate(NativeViewer formFragmentView,
                                             ImageView imageView) {
         if (!(imageView.getTag(R.id.v_required) instanceof String) || !(imageView.getTag(R.id.error) instanceof String)) {
             return new ValidationStatus(true, null, formFragmentView, imageView);
@@ -58,12 +59,12 @@ public class ImagePickerFactory implements FormWidgetFactory {
     }
 
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
+    public List<View> getViewsFromJson(String stepName, Context context, NativeViewer formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
         return attachJson(stepName, context, jsonObject, listener, popup);
     }
 
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+    public List<View> getViewsFromJson(String stepName, Context context, NativeViewer formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
         return attachJson(stepName, context, jsonObject, listener, false);
     }
 

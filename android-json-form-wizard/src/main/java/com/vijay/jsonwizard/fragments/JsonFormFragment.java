@@ -32,6 +32,7 @@ import com.vijay.jsonwizard.customviews.CheckBox;
 import com.vijay.jsonwizard.customviews.RadioButton;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.interfaces.NativeViewer;
 import com.vijay.jsonwizard.mvp.MvpFragment;
 import com.vijay.jsonwizard.presenters.JsonFormFragmentPresenter;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
@@ -48,7 +49,7 @@ import java.util.Map;
  * Created by vijay on 5/7/15.
  */
 public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, JsonFormFragmentViewState> implements
-        CommonListener, JsonFormFragmentView<JsonFormFragmentViewState> {
+        CommonListener, JsonFormFragmentView<JsonFormFragmentViewState> , NativeViewer {
     private static final String TAG = "JsonFormFragment";
     private static String CONST_REAL_TIME_VALIDATION = "RealtimeValidation";
     private static String CONST_FRAGMENT_WRITEVALUE_CALLED = "Fragment write value called";

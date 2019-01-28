@@ -27,6 +27,7 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.interfaces.NativeViewer;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.views.CustomTextView;
 
@@ -248,17 +249,17 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
     }
 
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener
+    public List<View> getViewsFromJson(String stepName, Context context, NativeViewer formFragment, JSONObject jsonObject, CommonListener
             listener, boolean popup) throws Exception {
         return attachJson(stepName, context, formFragment, jsonObject, listener, popup);
     }
 
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+    public List<View> getViewsFromJson(String stepName, Context context, NativeViewer formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
         return attachJson(stepName, context, formFragment, jsonObject, listener, false);
     }
 
-    protected List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws JSONException {
+    protected List<View> attachJson(String stepName, Context context, NativeViewer formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws JSONException {
 
         boolean readOnly = false;
         if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
@@ -306,7 +307,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
      */
 
     protected View addRadioButtonOptionsElements(JSONObject jsonObject, Context context, Boolean readOnly, JSONArray canvasIds,
-                                                 String stepName, LinearLayout linearLayout, CommonListener listener, JsonFormFragment
+                                                 String stepName, LinearLayout linearLayout, CommonListener listener, NativeViewer
                                                          formFragment, boolean popup) throws JSONException {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
@@ -437,7 +438,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
     }
 
     private void createSpecifyTextView(Context context, RelativeLayout rootLayout, JSONObject jsonObject, CommonListener listener,
-                                       JSONObject item, String stepName, JsonFormFragment formFragment, Boolean readOnly) throws JSONException {
+                                       JSONObject item, String stepName, NativeViewer formFragment, Boolean readOnly) throws JSONException {
         String text;
         if (item.has(JsonFormConstants.SECONDARY_VALUE)) {
             text = formUtils.getSpecifyText(item.getJSONArray(JsonFormConstants.SECONDARY_VALUE));

@@ -23,6 +23,7 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.interfaces.NativeViewer;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
@@ -76,17 +77,17 @@ public class DatePickerFactory implements FormWidgetFactory {
     }
 
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject,
+    public List<View> getViewsFromJson(String stepName, Context context, NativeViewer formFragment, JSONObject jsonObject,
                                        CommonListener listener, boolean popup) {
         return attachJson(stepName, context, formFragment, jsonObject, popup);
     }
 
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+    public List<View> getViewsFromJson(String stepName, Context context, NativeViewer formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
         return attachJson(stepName, context, formFragment, jsonObject, false);
     }
 
-    private List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject,
+    private List<View> attachJson(String stepName, Context context, NativeViewer formFragment, JSONObject jsonObject,
                                   boolean popup) {
         List<View> views = new ArrayList<>(1);
         try {
@@ -116,7 +117,7 @@ public class DatePickerFactory implements FormWidgetFactory {
         return views;
     }
 
-    protected void attachLayout(String stepName, final Context context, JsonFormFragment formFragment, JSONObject jsonObject, final MaterialEditText editText, final TextView duration) {
+    protected void attachLayout(String stepName, final Context context, NativeViewer formFragment, JSONObject jsonObject, final MaterialEditText editText, final TextView duration) {
 
         try {
             String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);

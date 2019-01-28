@@ -23,6 +23,7 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.interfaces.NativeViewer;
 import com.vijay.jsonwizard.interfaces.OnActivityRequestPermissionResultListener;
 import com.vijay.jsonwizard.utils.PermissionUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
@@ -45,7 +46,7 @@ public class GpsFactory implements FormWidgetFactory {
 
     private GpsDialog gpsDialog;
 
-    public static ValidationStatus validate(JsonFormFragmentView formFragmentView,
+    public static ValidationStatus validate(NativeViewer formFragmentView,
                                             Button recordButton) {
         if (!(recordButton.getTag(R.id.v_required) instanceof String) || !(recordButton.getTag(R.id.error) instanceof String)) {
             return new ValidationStatus(true, null, formFragmentView, recordButton);
@@ -72,13 +73,13 @@ public class GpsFactory implements FormWidgetFactory {
 
     @Override
     public List<View> getViewsFromJson(String stepName, final Context context,
-                                       JsonFormFragment formFragment, JSONObject jsonObject,
+                                       NativeViewer formFragment, JSONObject jsonObject,
                                        CommonListener listener, boolean popup) throws Exception {
         return attachJson(stepName, context, jsonObject, popup);
     }
 
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+    public List<View> getViewsFromJson(String stepName, Context context, NativeViewer formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
         return attachJson(stepName, context, jsonObject, false);
     }
 

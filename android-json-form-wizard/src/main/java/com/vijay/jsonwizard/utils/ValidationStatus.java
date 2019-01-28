@@ -2,6 +2,7 @@ package com.vijay.jsonwizard.utils;
 
 import android.view.View;
 
+import com.vijay.jsonwizard.interfaces.NativeViewer;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
 /**
@@ -10,11 +11,11 @@ import com.vijay.jsonwizard.views.JsonFormFragmentView;
 public class ValidationStatus {
     protected boolean isValid;
     protected String errorMessage;
-    protected JsonFormFragmentView formFragmentView;
+    protected NativeViewer formFragmentView;
     protected View view;
 
     public ValidationStatus(boolean isValid, String errorMessage,
-                            JsonFormFragmentView formFragmentView, View view) {
+                            NativeViewer formFragmentView, View view) {
         this.isValid = isValid;
         this.errorMessage = errorMessage;
         this.formFragmentView = formFragmentView;

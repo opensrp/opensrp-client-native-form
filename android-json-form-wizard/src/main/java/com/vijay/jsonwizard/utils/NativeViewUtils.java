@@ -18,7 +18,7 @@ public class NativeViewUtils {
     public static JSONObject getFormJson(Context context, String formIdentity) {
 
         try {
-            String url = String.format("json.form/%s/.json", formIdentity);
+            String url = String.format("json.form/%s.json", formIdentity);
             InputStream inputStream = context.getAssets().open(url);
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream,
                     "UTF-8"));
@@ -29,7 +29,8 @@ public class NativeViewUtils {
             }
             inputStream.close();
 
-            return new JSONObject(stringBuilder.toString());
+            String content = stringBuilder.toString();
+            return new JSONObject(content);
         } catch (IOException e) {
             Log.e(TAG, e.getMessage(), e);
             ;

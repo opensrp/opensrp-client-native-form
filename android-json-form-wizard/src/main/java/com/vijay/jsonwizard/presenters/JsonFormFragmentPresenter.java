@@ -34,6 +34,7 @@ import com.vijay.jsonwizard.customviews.NativeEditText;
 import com.vijay.jsonwizard.customviews.RadioButton;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
+import com.vijay.jsonwizard.interfaces.NativeViewer;
 import com.vijay.jsonwizard.mvp.MvpBasePresenter;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ImageUtils;
@@ -90,7 +91,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         mJsonFormInteractor = jsonFormInteractor;
     }
 
-    public static ValidationStatus validate(JsonFormFragmentView formFragmentView, View childAt, boolean requestFocus) {
+    public static ValidationStatus validate(NativeViewer formFragmentView, View childAt, boolean requestFocus) {
         if (childAt instanceof NativeEditText) {
             NativeEditText editText = (NativeEditText) childAt;
             ValidationStatus validationStatus = NativeEditTextFactory.validate(formFragmentView, editText);
@@ -199,6 +200,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         }
     }
 
+
     public ValidationStatus writeValuesAndValidate(LinearLayout mainView) {
         ValidationStatus firstError = null;
         for (View childAt : formFragment.getJsonApi().getFormDataViews()) {
@@ -208,7 +210,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             String openMrsEntityId = (String) childAt.getTag(R.id.openmrs_entity_id);
             Boolean popup = (Boolean) childAt.getTag(R.id.extraPopup);
 
-            ValidationStatus validationStatus = validate(getView(), childAt, firstError == null);
+            ValidationStatus validationStatus = validate((NativeViewer)getView(), childAt, firstError == null);
             if (firstError == null && !validationStatus.isValid()) {
                 firstError = validationStatus;
             }

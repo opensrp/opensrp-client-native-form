@@ -15,6 +15,7 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.interfaces.NativeViewer;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -25,7 +26,7 @@ import java.util.List;
 public class HiddenTextFactory implements FormWidgetFactory {
 
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener
+    public List<View> getViewsFromJson(String stepName, Context context, NativeViewer formFragment, JSONObject jsonObject, CommonListener
             listener, boolean popup) throws Exception {
         List<View> views = new ArrayList<>(1);
 
@@ -47,11 +48,11 @@ public class HiddenTextFactory implements FormWidgetFactory {
     }
 
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+    public List<View> getViewsFromJson(String stepName, Context context, NativeViewer formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
         return getViewsFromJson(stepName, context, formFragment, jsonObject, listener, false);
     }
 
-    protected void attachJson(String stepName, Context context, JsonFormFragment formFragment,
+    protected void attachJson(String stepName, Context context, NativeViewer formFragment,
                               JSONObject jsonObject, MaterialEditText hiddenText)
             throws Exception {
 

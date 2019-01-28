@@ -19,6 +19,7 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.interfaces.NativeViewer;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.validators.edittext.MaxLengthValidator;
@@ -39,7 +40,7 @@ public class EditTextFactory implements FormWidgetFactory {
     public static final int MIN_LENGTH = 0;
     public static final int MAX_LENGTH = 100;
 
-    public static ValidationStatus validate(JsonFormFragmentView formFragmentView,
+    public static ValidationStatus validate(NativeViewer formFragmentView,
                                             MaterialEditText editText) {
         if (editText.isEnabled()) {
             boolean validate = editText.validate();
@@ -51,17 +52,17 @@ public class EditTextFactory implements FormWidgetFactory {
     }
 
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener
+    public List<View> getViewsFromJson(String stepName, Context context, NativeViewer formFragment, JSONObject jsonObject, CommonListener
             listener, boolean popup) throws Exception {
         return attachJson(stepName, context, formFragment, jsonObject, listener, popup);
     }
 
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+    public List<View> getViewsFromJson(String stepName, Context context, NativeViewer formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
         return attachJson(stepName, context, formFragment, jsonObject, listener, false);
     }
 
-    private List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener
+    private List<View> attachJson(String stepName, Context context, NativeViewer formFragment, JSONObject jsonObject, CommonListener
             listener, boolean popup) throws Exception {
         List<View> views = new ArrayList<>(1);
 
@@ -85,7 +86,7 @@ public class EditTextFactory implements FormWidgetFactory {
         return views;
     }
 
-    protected void attachLayout(String stepName, Context context, JsonFormFragment formFragment,
+    protected void attachLayout(String stepName, Context context, NativeViewer formFragment,
                                 JSONObject jsonObject, MaterialEditText editText, ImageView editButton)
             throws Exception {
 

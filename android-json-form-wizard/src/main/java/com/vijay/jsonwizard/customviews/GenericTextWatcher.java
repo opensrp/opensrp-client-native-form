@@ -10,6 +10,7 @@ import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.exceptions.JsonFormRuntimeException;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.interfaces.NativeViewer;
 import com.vijay.jsonwizard.presenters.JsonFormFragmentPresenter;
 
 import org.json.JSONException;
@@ -21,10 +22,10 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
     private View mView;
     private String mStepName;
     private ArrayList<View.OnFocusChangeListener> onFocusChangeListeners;
-    private JsonFormFragment formFragment;
+    private NativeViewer formFragment;
     private static String TAG = GenericTextWatcher.class.getCanonicalName();
 
-    public GenericTextWatcher(String stepName, JsonFormFragment formFragment, View view) {
+    public GenericTextWatcher(String stepName, NativeViewer formFragment, View view) {
         this.formFragment = formFragment;
         mView = view;
         mStepName = stepName;
