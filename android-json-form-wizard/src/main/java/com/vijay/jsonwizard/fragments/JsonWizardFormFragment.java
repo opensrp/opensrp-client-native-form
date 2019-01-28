@@ -121,6 +121,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
 
             if (form != null && !TextUtils.isEmpty(form.getNextLabel())) {
                 nextButton.setText(form.getNextLabel());
+                getMenu().findItem(com.vijay.jsonwizard.R.id.action_next).setTitle(form.getNextLabel());
             }
 
             nextIcon.setVisibility(View.VISIBLE);
@@ -130,8 +131,9 @@ public class JsonWizardFormFragment extends JsonFormFragment {
             nextButton.setTag(R.id.NEXT_STATE, false);
             nextButton.setText(getString(R.string.submit));
 
-            if (form != null && !TextUtils.isEmpty(form.getPreviousLabel())) {
-                nextButton.setText(form.getPreviousLabel());
+            if (form != null && !TextUtils.isEmpty(form.getSaveLabel())) {
+                nextButton.setText(form.getSaveLabel());
+                getMenu().findItem(com.vijay.jsonwizard.R.id.action_save).setTitle(form.getSaveLabel());
             }
 
 
@@ -145,6 +147,10 @@ public class JsonWizardFormFragment extends JsonFormFragment {
             } else {
                 previousButton.setVisibility(View.VISIBLE);
                 previousIcon.setVisibility(View.VISIBLE);
+
+                if (form != null && !TextUtils.isEmpty(form.getPreviousLabel())) {
+                    previousButton.setText(form.getPreviousLabel());
+                }
             }
         }
     }
