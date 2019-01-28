@@ -14,7 +14,9 @@
         android:layout_height="match_parent"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:visibility="gone"
+        android:text="1."
+        android:textStyle="bold"
+        android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -26,6 +28,8 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:gravity="start"
+        android:text="function so as to use a dynamic date. Change this to use a dynamic setting from the gradle file. function so as to use a dynamic date. Change this to use a dynamic setting from the gradle file."
+        android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/button_layout"
         app:layout_constraintStart_toEndOf="@+id/label_text_number"
         app:layout_constraintTop_toTopOf="parent" />
@@ -44,7 +48,7 @@
             android:id="@+id/label_edit_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="5dp"
             android:background="@null"
             android:contentDescription="@string/edit_button_label"
             android:src="@drawable/edit_button_bg"
@@ -55,12 +59,13 @@
             android:layout_width="@dimen/default_info_icon_size"
             android:layout_height="@dimen/default_info_icon_size"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="5dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginBottom="5dp"
             android:contentDescription="@string/info_label"
             android:gravity="center_horizontal|start"
             android:src="@drawable/ic_icon_info_filled"
-            android:visibility="gone" />
+            android:visibility="visible" />
 
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

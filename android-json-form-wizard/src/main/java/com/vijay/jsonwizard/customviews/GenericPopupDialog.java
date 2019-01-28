@@ -180,7 +180,11 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
             }
         };
 
-        initiateViews(dialogView);
+        List<View> viewList = initiateViews();
+        LinearLayout genericDialogContent = dialogView.findViewById(R.id.generic_dialog_content);
+        for (View view : viewList) {
+            genericDialogContent.addView(view);
+        }
 
         cancelButton = dialogView.findViewById(R.id.generic_dialog_cancel_button);
         cancelButton.setOnClickListener(new View.OnClickListener() {
@@ -207,14 +211,11 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         return dialogView;
     }
 
-    protected void initiateViews(ViewGroup dialogView) {
+    protected List<View> initiateViews() {
+        jsonApi.clearSkipLogicViews();
         List<View> listOfViews = new ArrayList<>();
         jsonFormInteractor.fetchFields(listOfViews, stepName, formFragment, specifyContent, commonListener, true);
-
-        LinearLayout genericDialogContent = dialogView.findViewById(R.id.generic_dialog_content);
-        for (View view : listOfViews) {
-            genericDialogContent.addView(view);
-        }
+        return listOfViews;
     }
 
 

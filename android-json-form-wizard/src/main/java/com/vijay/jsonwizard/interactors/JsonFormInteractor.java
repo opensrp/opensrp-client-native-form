@@ -101,7 +101,6 @@ public class JsonFormInteractor {
 
     private void fetchSections(List<View> viewsFromJson, String stepName, JsonFormFragment formFragment,
                                JSONArray sections, CommonListener listener, Boolean popup) {
-
         try {
             if (sections == null || sections.length() == 0) {
                 return;
