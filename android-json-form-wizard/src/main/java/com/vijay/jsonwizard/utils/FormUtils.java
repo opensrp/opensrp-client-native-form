@@ -422,7 +422,7 @@ public class FormUtils {
      */
     private static void resetRadioButtonsSpecifyText(RadioButton button) {
         CustomTextView specifyText = (CustomTextView) button.getTag(R.id.specify_textview);
-        CustomTextView reasonsText = (CustomTextView) button.getTag(R.id.popup_reasons_textview);
+        CustomTextView reasonsText = (CustomTextView) button.getTag(R.id.specify_reasons_textview);
         CustomTextView extraInfoTextView = (CustomTextView) button
                 .getTag(R.id.specify_extra_info_textview);
         JSONObject optionsJson = (JSONObject) button.getTag(R.id.option_json_object);
@@ -434,8 +434,13 @@ public class FormUtils {
             String newText = "(" + specifyInfo + ")";
             specifyText.setText(newText);
         }
+
         if (reasonsText != null) {
-            reasonsText.setVisibility(View.GONE);
+            LinearLayout reasonTextViewParent = (LinearLayout) reasonsText.getParent();
+            LinearLayout radioButtonParent = (LinearLayout) button.getParent().getParent();
+            if (reasonTextViewParent == radioButtonParent) {
+                reasonsText.setVisibility(View.GONE);
+            }
         }
         if (extraInfoTextView != null) {
             extraInfoTextView.setVisibility(View.VISIBLE);
@@ -649,7 +654,7 @@ public class FormUtils {
         String parentKey = (String) view.getTag(R.id.key);
         String type = (String) view.getTag(R.id.type);
         CustomTextView customTextView = (CustomTextView) view.getTag(R.id.specify_textview);
-        CustomTextView reasonsTextView = (CustomTextView) view.getTag(R.id.popup_reasons_textview);
+        CustomTextView reasonsTextView = (CustomTextView) view.getTag(R.id.specify_reasons_textview);
         String childKey;
 
         if (specifyContent != null) {
