@@ -47,6 +47,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.vijay.jsonwizard.constants.JsonFormConstants.FIELDS;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
+
 /**
  * Created by vijay on 24-05-2015.
  */
@@ -63,7 +66,7 @@ public class FormUtils {
     private static final String START_JAVAROSA_PROPERTY = "start";
     private static final String END_JAVAROSA_PROPERTY = "end";
     private static final String TODAY_JAVAROSA_PROPERTY = "today";
-    private final String TAG = this.getClass().getSimpleName();
+    private static final String TAG = FormUtils.class.getSimpleName();
 
     public static LinearLayout.LayoutParams getLinearLayoutParams(int width, int height, int left, int top, int right, int bottom) {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(width, height);
@@ -647,5 +650,60 @@ public class FormUtils {
         }
 
         return value;
+    }
+
+    public static JSONArray fields(JSONObject jsonForm, String step) {
+        try {
+            JSONObject stepJSONObject = jsonForm.has(step) ? jsonForm.getJSONObject(step) : null;
+            if (stepJSONObject == null) {
+                return null;
+            }
+
+            return stepJSONObject.has(FIELDS) ? stepJSONObject.getJSONArray(FIELDS) : null;
+        } catch (JSONException e) {
+            Log.e(TAG, "", e);
+        }
+        return null;
+    }
+
+    public static JSONObject getFieldJSONObject(JSONArray jsonArray, String key) {
+        if (jsonArray == null || jsonArray.length() == 0 || key == null) {
+            return null;
+        }
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = getJSONObject(jsonArray, i);
+            String keyVal = getString(jsonObject, KEY);
+            if (keyVal != null && keyVal.equals(key)) {
+                return jsonObject;
+            }
+        }
+        return null;
+    }
+
+    public static JSONObject getJSONObject(JSONArray jsonArray, int index) {
+        if (jsonArray == null || jsonArray.length() == 0) {
+            return null;
+        }
+
+        try {
+            return jsonArray.getJSONObject(index);
+        } catch (JSONException e) {
+            return null;
+
+        }
+    }
+
+    public static String getString(JSONObject jsonObject, String field) {
+        if (jsonObject == null) {
+            return null;
+        }
+
+        try {
+            return jsonObject.has(field) ? jsonObject.getString(field) : null;
+        } catch (JSONException e) {
+            return null;
+
+        }
     }
 }

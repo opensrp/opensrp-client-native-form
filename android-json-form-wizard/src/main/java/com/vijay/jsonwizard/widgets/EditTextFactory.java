@@ -25,6 +25,7 @@ import com.vijay.jsonwizard.validators.edittext.MaxLengthValidator;
 import com.vijay.jsonwizard.validators.edittext.MaxNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.MinLengthValidator;
 import com.vijay.jsonwizard.validators.edittext.MinNumericValidator;
+import com.vijay.jsonwizard.validators.edittext.RelativeMaxNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
@@ -34,6 +35,13 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_RELATIVE_MAX_VALIDATION_ERR;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.RELATIVE_MAX_VALIDATION_EXCEPTION;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP1;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.V_RELATIVE_MAX;
+import static com.vijay.jsonwizard.utils.FormUtils.fields;
+import static com.vijay.jsonwizard.utils.FormUtils.getFieldJSONObject;
 
 public class EditTextFactory implements FormWidgetFactory {
     public static final int MIN_LENGTH = 0;
@@ -117,6 +125,7 @@ public class EditTextFactory implements FormWidgetFactory {
         addUrlValidator(jsonObject, editText);
         addNumericValidator(jsonObject, editText);
         addNumericIntegerValidator(jsonObject, editText);
+        addRelativeNumericIntegerValidator(jsonObject, formFragment, editText);
 
         // edit type check
         String editType = jsonObject.optString(JsonFormConstants.EDIT_TYPE);
@@ -270,6 +279,33 @@ public class EditTextFactory implements FormWidgetFactory {
                     JSONObject minValidation = jsonObject.getJSONObject(JsonFormConstants.V_MAX);
                     editText.addValidator(new MaxNumericValidator(minValidation.getString(JsonFormConstants.ERR),
                             Double.parseDouble(minValidation.getString(JsonFormConstants.VALUE))));
+                }
+            }
+        }
+    }
+
+    private void addRelativeNumericIntegerValidator(JSONObject editTextJSONObject, JsonFormFragment formFragment, MaterialEditText editText) throws JSONException {
+        JSONObject relativeMaxValidationJSONObject = editTextJSONObject.optJSONObject(V_RELATIVE_MAX);
+        if (relativeMaxValidationJSONObject != null) {
+            // validate that the relative max field exists
+            String relativeMaxValidationKey = relativeMaxValidationJSONObject.optString(JsonFormConstants.VALUE, null);
+            JSONObject formJSONObject = new JSONObject(formFragment.getCurrentJsonState());
+            JSONArray formFields = fields(formJSONObject, STEP1);
+            JSONObject relativeMaxFieldJSONObject = getFieldJSONObject(formFields, relativeMaxValidationKey);
+            if (relativeMaxFieldJSONObject != null) {
+                // RELATIVE_MAX_VALIDATION_EXCEPTION, should never be set to Integer.MIN_VALUE in the native form json
+                int relativeMaxValidationException = relativeMaxValidationJSONObject.optInt(RELATIVE_MAX_VALIDATION_EXCEPTION, 0);
+                if (relativeMaxValidationException != Integer.MIN_VALUE) {
+                    // add validator
+                    String relativeMaxValidationErrorMsg = relativeMaxValidationJSONObject.optString(JsonFormConstants.ERR, null);
+                    String defaultErrMsg = String.format(DEFAULT_RELATIVE_MAX_VALIDATION_ERR, relativeMaxValidationKey);
+                    relativeMaxValidationException = relativeMaxValidationJSONObject.optInt(RELATIVE_MAX_VALIDATION_EXCEPTION, Integer.MIN_VALUE);
+                    editText.addValidator(new RelativeMaxNumericValidator(
+                            relativeMaxValidationErrorMsg == null ? defaultErrMsg : relativeMaxValidationErrorMsg,
+                            formFragment,
+                            relativeMaxValidationKey,
+                            relativeMaxValidationException,
+                            STEP1));
                 }
             }
         }
