@@ -28,15 +28,15 @@ public class ComponentSpacerFactory implements FormWidgetFactory {
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, NativeViewer formFragment, JSONObject jsonObject, CommonListener
             listener, boolean popup) throws Exception {
-        return attachJson(stepName, context, jsonObject, popup);
+        return attachJson(stepName, context, formFragment, jsonObject, popup);
     }
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, NativeViewer formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
-        return attachJson(stepName, context, jsonObject, false);
+        return attachJson(stepName, context, formFragment, jsonObject, false);
     }
 
-    private List<View> attachJson(String stepName, Context context, JSONObject jsonObject, boolean popup) throws JSONException {
+    private List<View> attachJson(String stepName, Context context, NativeViewer formFragment, JSONObject jsonObject, boolean popup) throws JSONException {
         String openMrsEntityParent = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_ID);
@@ -57,9 +57,9 @@ public class ComponentSpacerFactory implements FormWidgetFactory {
         linearLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
         linearLayout.setTag(R.id.extraPopup, popup);
 
-        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+        if (!TextUtils.isEmpty(relevance)) {
             linearLayout.setTag(R.id.relevance, relevance);
-            ((JsonApi) context).addSkipLogicView(linearLayout);
+            formFragment.getJsonApi().addSkipLogicView(linearLayout);
         }
 
         attachLayout(views, context, jsonObject, linearLayout);

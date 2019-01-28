@@ -20,7 +20,6 @@ import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.activities.JsonFormBarcodeScanActivity;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.GenericTextWatcher;
-import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
@@ -125,16 +124,16 @@ public class BarcodeFactory implements FormWidgetFactory {
             addScanButton(context, jsonObject, editText, rootLayout);
 
             editText.addTextChangedListener(textWatcher);
-            if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+            if (!TextUtils.isEmpty(relevance)) {
                 editText.setTag(R.id.relevance, relevance);
-                ((JsonApi) context).addSkipLogicView(editText);
+                formFragment.getJsonApi().addSkipLogicView(editText);
             }
             if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
                 editText.setTag(R.id.constraints, constraints);
-                ((JsonApi) context).addConstrainedView(editText);
+                formFragment.getJsonApi().addConstrainedView(editText);
             }
 
-            ((JsonApi) context).addFormDataView(editText);
+            formFragment.getJsonApi().addFormDataView(editText);
 
             views.add(rootLayout);
         } catch (Exception e) {

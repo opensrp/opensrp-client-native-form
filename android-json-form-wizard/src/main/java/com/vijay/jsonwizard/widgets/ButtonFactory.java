@@ -11,7 +11,6 @@ import com.rey.material.util.ViewUtil;
 import com.rey.material.widget.Button;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
-import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
@@ -96,7 +95,7 @@ public class ButtonFactory implements FormWidgetFactory {
                         String addressString = (String) v.getTag(R.id.address);
                         if (!TextUtils.isEmpty(addressString)) {
                             String[] address = addressString.split(":");
-                            JSONObject jsonObject = ((JsonApi) context)
+                            JSONObject jsonObject = formFragment.getJsonApi()
                                     .getObjectUsingAddress(address, false);
                             jsonObject.put(JsonFormConstants.VALUE, Boolean.TRUE.toString());
 
@@ -121,12 +120,12 @@ public class ButtonFactory implements FormWidgetFactory {
             });
         }
 
-        ((JsonApi) context).addFormDataView(button);
+        formFragment.getJsonApi().addFormDataView(button);
         views.add(button);
         button.setTag(R.id.canvas_ids, canvasIds.toString());
-        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+        if (!TextUtils.isEmpty(relevance)) {
             button.setTag(R.id.relevance, relevance);
-            ((JsonApi) context).addSkipLogicView(button);
+            formFragment.getJsonApi().addSkipLogicView(button);
         }
 
         return views;

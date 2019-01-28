@@ -10,7 +10,6 @@ import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.RadioButton;
-import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
@@ -43,7 +42,7 @@ public class RadioButtonFactory implements FormWidgetFactory {
         List<View> views = new ArrayList<>(1);
 
         JSONArray canvasIds = new JSONArray();
-        CustomTextView textView = getTextViewWith(context, 27, jsonObject.getString(JsonFormConstants.LABEL), jsonObject.getString(JsonFormConstants.KEY),
+        CustomTextView textView = getTextViewWith(context, formFragment, 27, jsonObject.getString(JsonFormConstants.LABEL), jsonObject.getString(JsonFormConstants.KEY),
                 jsonObject.getString(JsonFormConstants.TYPE), openMrsEntityParent, openMrsEntity, openMrsEntityId,
                 relevance,
                 getLinearLayoutParams(MATCH_PARENT, WRAP_CONTENT, 0, 0, 0, 0), FONT_BOLD_PATH);
@@ -85,15 +84,15 @@ public class RadioButtonFactory implements FormWidgetFactory {
                 radioButton.setLayoutParams(getLinearLayoutParams(MATCH_PARENT, WRAP_CONTENT, 0, 0, 0, (int) context
                         .getResources().getDimension(R.dimen.extra_bottom_margin)));
             }
-            ((JsonApi) context).addFormDataView(radioButton);
+            formFragment.getJsonApi().addFormDataView(radioButton);
 
             canvasIds.put(radioButton.getId());
             radioButtons.add(radioButton);
 
             views.add(radioButton);
-            if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+            if (!TextUtils.isEmpty(relevance)) {
                 radioButton.setTag(R.id.relevance, relevance);
-                ((JsonApi) context).addSkipLogicView(radioButton);
+                formFragment.getJsonApi().addSkipLogicView(radioButton);
             }
         }
 

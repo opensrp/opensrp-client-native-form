@@ -17,7 +17,6 @@ import android.widget.Spinner;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
-import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
@@ -25,7 +24,6 @@ import com.vijay.jsonwizard.interfaces.NativeViewer;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.CustomTextView;
-import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,6 +42,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
     private SelectedNumberClickListener selectedNumberClickListener = new SelectedNumberClickListener();
     private Spinner spinner;
     private Context context;
+    private NativeViewer formFragment;
     private CommonListener listener;
     public static final String TAG = NumberSelectorFactory.class.getCanonicalName();
     private static NumberSelectorFactoryReceiver receiver;
@@ -202,18 +201,19 @@ public class NumberSelectorFactory implements FormWidgetFactory {
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, NativeViewer formFragment, JSONObject jsonObject, CommonListener
             listener, boolean popup) throws Exception {
-        return attachJson(stepName, context, jsonObject, listener, popup);
+        return attachJson(stepName, context, formFragment, jsonObject, listener, popup);
     }
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, NativeViewer formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
-        return attachJson(stepName, context, jsonObject, listener, false);
+        return attachJson(stepName, context, formFragment, jsonObject, listener, false);
     }
 
-    private List<View> attachJson(String stepName, Context context, JSONObject jsonObject, CommonListener
+    private List<View> attachJson(String stepName, Context context, NativeViewer formFragment, JSONObject jsonObject, CommonListener
             listener, boolean popup) throws JSONException {
         this.context = context;
         this.listener = listener;
+        this.formFragment = formFragment;
 
         jsonObjectMap.put(jsonObject.getString(JsonFormConstants.KEY), jsonObject);
 
@@ -240,18 +240,18 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         rootLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
         canvasIds.put(rootLayout.getId());
         rootLayout.setTag(R.id.canvas_ids, canvasIds.toString());
-        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+        if (!TextUtils.isEmpty(relevance)) {
             rootLayout.setTag(R.id.relevance, relevance);
-            ((JsonApi) context).addSkipLogicView(rootLayout);
+            formFragment.getJsonApi().addSkipLogicView(rootLayout);
         }
 
         if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
             rootLayout.setTag(R.id.constraints, constraints);
-            ((JsonApi) context).addConstrainedView(rootLayout);
+            formFragment.getJsonApi().addConstrainedView(rootLayout);
         }
 
         views.add(rootLayout);
-        createTextViews(context, jsonObject, rootLayout, listener, stepName, popup);
+        createTextViews(context, formFragment, jsonObject, rootLayout, listener, stepName, popup);
 
         rootLayoutMap.put(jsonObject.getString(JsonFormConstants.KEY), rootLayout);
 
@@ -261,7 +261,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
     }
 
     @SuppressLint("NewApi")
-    private void createTextViews(Context context, JSONObject jsonObject, LinearLayout linearLayout, CommonListener listener, String stepName, boolean popup) throws JSONException {
+    private void createTextViews(Context context, NativeViewer formFragment, JSONObject jsonObject, LinearLayout linearLayout, CommonListener listener, String stepName, boolean popup) throws JSONException {
         int startSelectionNumber = jsonObject.optInt(JsonFormConstants.START_SELECTION_NUMBER, 1);
         int width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.85);
         int numberOfSelectors = jsonObject.optInt(JsonFormConstants.NUMBER_OF_SELECTORS, 5);
@@ -272,7 +272,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
 
         int maxValue = jsonObject.optInt(JsonFormConstants.MAX_SELECTION_VALUE, 20);
         for (int i = 0; i < numberOfSelectors; i++) {
-            CustomTextView customTextView = createCustomView(context, jsonObject, width, numberOfSelectors, listener, linearLayout, i, popup);
+            CustomTextView customTextView = createCustomView(context, formFragment, jsonObject, width, numberOfSelectors, listener, linearLayout, i, popup);
             if (i == (numberOfSelectors - 1) && (numberOfSelectors < maxValue)) {
                 spinner = createDialogSpinner(context, jsonObject, (startSelectionNumber + (numberOfSelectors - 1)), listener, stepName);
                 spinner.setTag(R.id.number_selector_textview, customTextView);
@@ -297,7 +297,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
     }
 
     @SuppressLint("NewApi")
-    private CustomTextView createCustomView(Context context, JSONObject jsonObject, int width, int numberOfSelectors, CommonListener listener, LinearLayout linearLayout, int item, boolean popup) throws JSONException {
+    private CustomTextView createCustomView(Context context, NativeViewer formFragment, JSONObject jsonObject, int width, int numberOfSelectors, CommonListener listener, LinearLayout linearLayout, int item, boolean popup) throws JSONException {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
@@ -309,7 +309,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         textSize = textSize == null ? String.valueOf(context.getResources().getDimension(R.dimen.default_label_text_size)) : String.valueOf(FormUtils.getValueFromSpOrDpOrPx(textSize, context));
         LinearLayout.LayoutParams layoutParams = FormUtils.getLinearLayoutParams(width / numberOfSelectors, FormUtils.WRAP_CONTENT, 1, 2, 1, 2);
 
-        CustomTextView customTextView = FormUtils.getTextViewWith(context, Integer.parseInt(textSize), getText(item, startSelectionNumber,
+        CustomTextView customTextView = FormUtils.getTextViewWith(context, formFragment, Integer.parseInt(textSize), getText(item, startSelectionNumber,
                 numberOfSelectors, maxValue), jsonObject.getString(JsonFormConstants.KEY) + JsonFormConstants.SUFFIX.TEXT_VIEW,
                 jsonObject.getString(JsonFormConstants.TYPE), openMrsEntityParent, openMrsEntity, openMrsEntityId,
                 "", layoutParams, FormUtils.FONT_BOLD_PATH, 0, textColor);
@@ -404,7 +404,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
                 LinearLayout rootLayout = rootLayoutMap.get(intent.getStringExtra(JsonFormConstants.JSON_OBJECT_KEY));
                 rootLayout.removeAllViews();
                 rootLayout.setTag(R.id.is_automatic, true);
-                createTextViews(context, jsonObject, rootLayout, listener, intent.getStringExtra(JsonFormConstants.STEPNAME), isPopUp);
+                createTextViews(context, formFragment, jsonObject, rootLayout, listener, intent.getStringExtra(JsonFormConstants.STEPNAME), isPopUp);
                 rootLayout.setTag(R.id.is_automatic, null);
 
             } catch (JSONException e) {

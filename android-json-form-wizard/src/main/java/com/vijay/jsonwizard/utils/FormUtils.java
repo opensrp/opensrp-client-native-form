@@ -27,6 +27,7 @@ import com.vijay.jsonwizard.customviews.GenericPopupDialog;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.interfaces.NativeViewer;
 import com.vijay.jsonwizard.views.CustomTextView;
 
 import org.json.JSONArray;
@@ -77,7 +78,7 @@ public class FormUtils {
         return layoutParams;
     }
 
-    public static CustomTextView getTextViewWith(Context context, int textSizeInSp, String text,
+    public static CustomTextView getTextViewWith(Context context, NativeViewer formFragment, int textSizeInSp, String text,
                                                  String key, String type, String openMrsEntityParent,
                                                  String openMrsEntity, String openMrsEntityId,
                                                  String relevance,
@@ -101,19 +102,19 @@ public class FormUtils {
             textView.setTextColor(Color.parseColor(textColor));
         }
 
-        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+        if (!TextUtils.isEmpty(relevance)) {
             textView.setTag(R.id.relevance, relevance);
-            ((JsonApi) context).addSkipLogicView(textView);
+            formFragment.getJsonApi().addSkipLogicView(textView);
         }
         return textView;
     }
 
-    public static CustomTextView getTextViewWith(Context context, int textSizeInSp, String text,
+    public static CustomTextView getTextViewWith(Context context, NativeViewer formFragment, int textSizeInSp, String text,
                                                  String key, String type, String openMrsEntityParent,
                                                  String openMrsEntity, String openMrsEntityId,
                                                  String relevance,
                                                  LinearLayout.LayoutParams layoutParams, String fontPath) {
-        return getTextViewWith(context, textSizeInSp, text, key, type, openMrsEntityParent, openMrsEntity, openMrsEntityId, relevance,
+        return getTextViewWith(context, formFragment, textSizeInSp, text, key, type, openMrsEntityParent, openMrsEntity, openMrsEntityId, relevance,
                 layoutParams, fontPath, 0, null);
     }
 
@@ -243,7 +244,7 @@ public class FormUtils {
         return px;
     }
 
-    public static Map<String, View> createRadioButtonAndCheckBoxLabel(String stepName, LinearLayout linearLayout, JSONObject jsonObject, Context context,
+    public static Map<String, View> createRadioButtonAndCheckBoxLabel(String stepName, LinearLayout linearLayout, JSONObject jsonObject, Context context, NativeViewer formFragment,
                                                                       JSONArray canvasIds, Boolean readOnly, CommonListener listener) throws JSONException {
         Map<String, View> createdViewsMap = new HashMap<>();
         String label = jsonObject.optString(JsonFormConstants.LABEL, "");
@@ -253,7 +254,7 @@ public class FormUtils {
                     .getResources().getDimension(R.dimen.default_label_text_size))), context);
             String labelTextColor = jsonObject.optString(JsonFormConstants.LABEL_TEXT_COLOR, JsonFormConstants.DEFAULT_TEXT_COLOR);
             JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
-            RelativeLayout relativeLayout = createLabelRelativeLayout(stepName, canvasIds, jsonObject, context, listener);
+            RelativeLayout relativeLayout = createLabelRelativeLayout(stepName, canvasIds, jsonObject, context, formFragment, listener);
 
             CustomTextView labelText = relativeLayout.findViewById(R.id.label_text);
             ImageView editButton = relativeLayout.findViewById(R.id.label_edit_button);
@@ -284,7 +285,7 @@ public class FormUtils {
         return createdViewsMap;
     }
 
-    public static RelativeLayout createLabelRelativeLayout(String stepName, JSONArray canvasIds, JSONObject jsonObject, Context context, CommonListener listener) throws JSONException {
+    public static RelativeLayout createLabelRelativeLayout(String stepName, JSONArray canvasIds, JSONObject jsonObject, Context context, NativeViewer formFragment, CommonListener listener) throws JSONException {
         String openMrsEntityParent = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT, null);
         String openMrsEntity = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY, null);
         String openMrsEntityId = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_ID, null);
@@ -303,9 +304,9 @@ public class FormUtils {
         relativeLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         relativeLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
         relativeLayout.setId(ViewUtil.generateViewId());
-        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+        if (!TextUtils.isEmpty(relevance)) {
             relativeLayout.setTag(R.id.relevance, relevance);
-            ((JsonApi) context).addSkipLogicView(relativeLayout);
+            formFragment.getJsonApi().addSkipLogicView(relativeLayout);
         }
 
         ImageView imageView = relativeLayout.findViewById(R.id.label_info);
@@ -503,7 +504,7 @@ public class FormUtils {
         String specifyContentForm = (String) view.getTag(R.id.specify_content_form);
         String stepName = (String) view.getTag(R.id.specify_step_name);
         CommonListener listener = (CommonListener) view.getTag(R.id.specify_listener);
-        JsonFormFragment formFragment = (JsonFormFragment) view.getTag(R.id.specify_fragment);
+        NativeViewer formFragment = (NativeViewer) view.getTag(R.id.specify_fragment);
         JSONArray jsonArray = (JSONArray) view.getTag(R.id.secondaryValues);
         String parentKey = (String) view.getTag(R.id.key);
         String type = (String) view.getTag(R.id.type);
@@ -513,7 +514,7 @@ public class FormUtils {
         if (specifyContent != null) {
             GenericPopupDialog genericPopupDialog = new GenericPopupDialog();
             genericPopupDialog.setCommonListener(listener);
-            genericPopupDialog.setFormFragment(formFragment);
+            // genericPopupDialog.setFormFragment(formFragment);
             genericPopupDialog.setFormIdentity(specifyContent);
             genericPopupDialog.setFormLocation(specifyContentForm);
             genericPopupDialog.setStepName(stepName);

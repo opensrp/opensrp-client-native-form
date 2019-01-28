@@ -18,10 +18,11 @@ import android.widget.LinearLayout;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
-import com.vijay.jsonwizard.interactors.JsonFormInteractor;
+import com.vijay.jsonwizard.interactors.NativeViewInteractor;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.GenericDialogInterface;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.interfaces.NativeViewer;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.SecondaryValueModel;
 import com.vijay.jsonwizard.utils.Utils;
@@ -40,12 +41,12 @@ import java.util.Map;
 import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 
 public class GenericPopupDialog extends DialogFragment implements GenericDialogInterface {
-    private static JsonFormInteractor jsonFormInteractor = JsonFormInteractor.getInstance();
+    private static NativeViewInteractor jsonFormInteractor = NativeViewInteractor.getInstance();
     private FormUtils formUtils = new FormUtils();
     private JsonApi jsonApi;
     private Context context;
     private CommonListener commonListener;
-    private JsonFormFragment formFragment;
+    private NativeViewer formFragment;
     private String formIdentity;
     private String formLocation;
     private String parentKey;
@@ -582,7 +583,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         this.commonListener = commonListener;
     }
 
-    public JsonFormFragment getFormFragment() {
+    public NativeViewer getFormFragment() {
         return formFragment;
     }
 

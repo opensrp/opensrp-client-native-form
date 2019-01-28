@@ -41,7 +41,7 @@ public class HiddenTextFactory implements FormWidgetFactory {
         hiddenText.setTag(R.id.canvas_ids, canvasIds.toString());
         hiddenText.setTag(R.id.extraPopup, popup);
 
-        ((JsonApi) context).addFormDataView(hiddenText);
+        formFragment.getJsonApi().addFormDataView(hiddenText);
         rootLayout.setVisibility(View.GONE);
         views.add(rootLayout);
         return views;
@@ -75,19 +75,19 @@ public class HiddenTextFactory implements FormWidgetFactory {
         hiddenText.setVisibility(View.GONE);
 
         hiddenText.addTextChangedListener(new GenericTextWatcher(stepName, formFragment, hiddenText));
-        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+        if (!TextUtils.isEmpty(relevance)) {
             hiddenText.setTag(R.id.relevance, relevance);
-            ((JsonApi) context).addSkipLogicView(hiddenText);
+            formFragment.getJsonApi().addSkipLogicView(hiddenText);
         }
 
         if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
             hiddenText.setTag(R.id.constraints, constraints);
-            ((JsonApi) context).addConstrainedView(hiddenText);
+            formFragment.getJsonApi().addConstrainedView(hiddenText);
         }
 
         if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
             hiddenText.setTag(R.id.calculation, calculation);
-            ((JsonApi) context).addCalculationLogicView(hiddenText);
+            formFragment.getJsonApi().addCalculationLogicView(hiddenText);
         }
 
     }

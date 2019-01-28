@@ -1,6 +1,7 @@
 package com.vijay.jsonwizard.utils;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -55,6 +56,25 @@ public class PermissionUtils {
         }
 
         fragment.requestPermissions(notGranted.toArray(new String[notGranted.size()]), requestCode);
+        return false;
+    }
+
+    public static boolean isPermissionGranted(Context context, String[] permissions, int requestCode) {
+        if (permissions == null || permissions.length == 0) {
+            return false;
+        }
+
+        List<String> notGranted = new ArrayList<>();
+        for (String permission : permissions) {
+            if (ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                notGranted.add(permission);
+            }
+        }
+
+        if (notGranted.isEmpty()) {
+            return true;
+        }
+
         return false;
     }
 

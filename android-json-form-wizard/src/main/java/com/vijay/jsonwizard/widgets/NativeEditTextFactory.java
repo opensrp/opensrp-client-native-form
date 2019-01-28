@@ -16,7 +16,6 @@ import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.GenericTextWatcher;
 import com.vijay.jsonwizard.customviews.NativeEditText;
-import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
@@ -26,7 +25,6 @@ import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.validators.edittext.MaxNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.MinNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
-import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -85,7 +83,7 @@ public class NativeEditTextFactory implements FormWidgetFactory {
         editText.setTag(R.id.canvas_ids, canvasIds.toString());
         editText.setTag(R.id.extraPopup, popup);
 
-        ((JsonApi) context).addFormDataView(editText);
+        formFragment.getJsonApi().addFormDataView(editText);
         views.add(rootLayout);
         return views;
     }
@@ -138,19 +136,19 @@ public class NativeEditTextFactory implements FormWidgetFactory {
         }
 
         editText.addTextChangedListener(new GenericTextWatcher(stepName, formFragment, editText));
-        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+        if (!TextUtils.isEmpty(relevance)) {
             editText.setTag(R.id.relevance, relevance);
-            ((JsonApi) context).addSkipLogicView(editText);
+            formFragment.getJsonApi().addSkipLogicView(editText);
         }
 
         if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
             editText.setTag(R.id.constraints, constraints);
-            ((JsonApi) context).addConstrainedView(editText);
+            formFragment.getJsonApi().addConstrainedView(editText);
         }
 
         if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
             editText.setTag(R.id.calculation, calculation);
-            ((JsonApi) context).addCalculationLogicView(editText);
+            formFragment.getJsonApi().addCalculationLogicView(editText);
         }
 
     }

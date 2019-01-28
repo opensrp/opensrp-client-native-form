@@ -15,4 +15,8 @@ public interface NativeViewer {
     boolean next();
 
     boolean save(boolean res);
+
+    void backClick();
+
+    JsonApi getJsonApi();
 }

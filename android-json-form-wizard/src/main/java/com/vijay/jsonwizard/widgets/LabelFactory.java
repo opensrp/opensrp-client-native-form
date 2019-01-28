@@ -35,19 +35,19 @@ public class LabelFactory implements FormWidgetFactory {
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, NativeViewer formFragment, JSONObject jsonObject, CommonListener
             listener, boolean popup) throws Exception {
-        return attachJson(stepName, context, jsonObject, listener, popup);
+        return attachJson(stepName, context, formFragment, jsonObject, listener, popup);
     }
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, NativeViewer formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
-        return attachJson(stepName, context, jsonObject, listener, false);
+        return attachJson(stepName, context, formFragment, jsonObject, listener, false);
     }
 
-    private List<View> attachJson(String stepName, Context context, JSONObject jsonObject, CommonListener
+    private List<View> attachJson(String stepName, Context context, NativeViewer formFragment, JSONObject jsonObject, CommonListener
             listener, boolean popup) throws JSONException {
         List<View> views = new ArrayList<>(1);
         JSONArray canvasIds = new JSONArray();
-        RelativeLayout relativeLayout = FormUtils.createLabelRelativeLayout(stepName, canvasIds, jsonObject, context, listener);
+        RelativeLayout relativeLayout = FormUtils.createLabelRelativeLayout(stepName, canvasIds, jsonObject, context, formFragment, listener);
 
         relativeLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
 

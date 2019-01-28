@@ -31,15 +31,15 @@ public class ToasterNotesFactory implements FormWidgetFactory {
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, NativeViewer formFragment, JSONObject jsonObject, CommonListener
             listener, boolean popup) throws JSONException {
-        return attachJson(stepName, context, jsonObject, listener, popup);
+        return attachJson(stepName, context, formFragment, jsonObject, listener, popup);
     }
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, NativeViewer formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
-        return attachJson(stepName, context, jsonObject, listener, false);
+        return attachJson(stepName, context, formFragment, jsonObject, listener, false);
     }
 
-    private List<View> attachJson(String stepName, Context context, JSONObject jsonObject, CommonListener
+    private List<View> attachJson(String stepName, Context context, NativeViewer formFragment, JSONObject jsonObject, CommonListener
             listener, boolean popup) throws JSONException {
         String openMrsEntityParent = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY);
@@ -62,13 +62,13 @@ public class ToasterNotesFactory implements FormWidgetFactory {
         linearLayout.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
         linearLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
 
-        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+        if (!TextUtils.isEmpty(relevance)) {
             linearLayout.setTag(R.id.relevance, relevance);
-            ((JsonApi) context).addSkipLogicView(linearLayout);
+            formFragment.getJsonApi().addSkipLogicView(linearLayout);
         }
         if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
             linearLayout.setTag(R.id.calculation, calculation);
-            ((JsonApi) context).addCalculationLogicView(linearLayout);
+            formFragment.getJsonApi().addCalculationLogicView(linearLayout);
         }
 
         attachLayout(views, context, jsonObject, linearLayout, listener);

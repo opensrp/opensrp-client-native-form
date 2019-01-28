@@ -10,7 +10,7 @@ import org.json.JSONObject;
 import java.util.List;
 
 /**
- * Created by vijay on 24-05-2015.
+ * ViewFactory to convert JSONObjects to a view list
  */
 public interface FormWidgetFactory {
     List<View> getViewsFromJson(String stepName, Context context, NativeViewer formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception;

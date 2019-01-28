@@ -270,7 +270,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         ImageView editButton;
 
         LinearLayout rootLayout = (LinearLayout) LayoutInflater.from(context).inflate(getLayout(), null);
-        Map<String, View> labelViews = FormUtils.createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds,
+        Map<String, View> labelViews = FormUtils.createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, formFragment, canvasIds,
                 readOnly, listener);
         View radioGroup = addRadioButtonOptionsElements(jsonObject, context, readOnly, canvasIds, stepName, rootLayout, listener,
                 formFragment, popup);
@@ -369,23 +369,23 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
                 createExtraInfo(context, radioGroupLayout, item, jsonObject, stepName, readOnly);
             }
 
-            ((JsonApi) context).addFormDataView(radioGroupLayout);
+            formFragment.getJsonApi().addFormDataView(radioGroupLayout);
             radioGroup.addView(radioGroupLayout);
         }
 
-        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+        if (!TextUtils.isEmpty(relevance)) {
             radioGroup.setTag(R.id.relevance, relevance);
-            ((JsonApi) context).addSkipLogicView(radioGroup);
+            formFragment.getJsonApi().addSkipLogicView(radioGroup);
         }
 
         if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
             radioGroup.setTag(R.id.constraints, constraints);
-            ((JsonApi) context).addConstrainedView(radioGroup);
+            formFragment.getJsonApi().addConstrainedView(radioGroup);
         }
 
         if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
             radioGroup.setTag(R.id.calculation, calculation);
-            ((JsonApi) context).addCalculationLogicView(radioGroup);
+            formFragment.getJsonApi().addCalculationLogicView(radioGroup);
         }
 
         FormUtils.setRadioExclusiveClick(radioGroup);

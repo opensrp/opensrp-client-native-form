@@ -75,16 +75,16 @@ public class GpsFactory implements FormWidgetFactory {
     public List<View> getViewsFromJson(String stepName, final Context context,
                                        NativeViewer formFragment, JSONObject jsonObject,
                                        CommonListener listener, boolean popup) throws Exception {
-        return attachJson(stepName, context, jsonObject, popup);
+        return attachJson(stepName, context, formFragment, jsonObject, popup);
     }
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, NativeViewer formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
-        return attachJson(stepName, context, jsonObject, false);
+        return attachJson(stepName, context, formFragment, jsonObject, false);
     }
 
     private List<View> attachJson(String stepName, final Context context,
-                                  JSONObject jsonObject,
+                                  NativeViewer formFragment,  JSONObject jsonObject,
                                   boolean popup) throws JSONException {
         List<View> views = new ArrayList<>();
 
@@ -115,9 +115,9 @@ public class GpsFactory implements FormWidgetFactory {
         recordButton.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         recordButton.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
         recordButton.setTag(R.id.extraPopup, popup);
-        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+        if (!TextUtils.isEmpty(relevance)) {
             recordButton.setTag(R.id.relevance, relevance);
-            ((JsonApi) context).addSkipLogicView(recordButton);
+            formFragment.getJsonApi().addSkipLogicView(recordButton);
         }
 
         JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
@@ -158,7 +158,7 @@ public class GpsFactory implements FormWidgetFactory {
             }
         });
 
-        ((JsonApi) context).addFormDataView(recordButton);
+        formFragment.getJsonApi().addFormDataView(recordButton);
         views.add(rootLayout);
 
         return views;

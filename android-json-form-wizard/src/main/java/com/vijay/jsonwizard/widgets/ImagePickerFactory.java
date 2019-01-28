@@ -14,7 +14,6 @@ import android.widget.LinearLayout;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
-import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
@@ -22,7 +21,6 @@ import com.vijay.jsonwizard.interfaces.NativeViewer;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ImageUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
-import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -60,15 +58,15 @@ public class ImagePickerFactory implements FormWidgetFactory {
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, NativeViewer formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
-        return attachJson(stepName, context, jsonObject, listener, popup);
+        return attachJson(stepName, context, formFragment, jsonObject, listener, popup);
     }
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, NativeViewer formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
-        return attachJson(stepName, context, jsonObject, listener, false);
+        return attachJson(stepName, context, formFragment, jsonObject, listener, false);
     }
 
-    private List<View> attachJson(String stepName, Context context, JSONObject jsonObject, CommonListener listener, boolean popup) throws JSONException {
+    private List<View> attachJson(String stepName, Context context, NativeViewer formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws JSONException {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
@@ -76,7 +74,7 @@ public class ImagePickerFactory implements FormWidgetFactory {
         JSONArray canvasIds = new JSONArray();
 
         List<View> views = new ArrayList<>(1);
-        createImageView(context, canvasIds, jsonObject, popup, stepName, listener, views);
+        createImageView(context, formFragment, canvasIds, jsonObject, popup, stepName, listener, views);
         Button uploadButton = new Button(context);
         uploadButton.setText(jsonObject.getString(JsonFormConstants.UPLOAD_BUTTON_TEXT));
         uploadButton.setBackgroundColor(context.getResources().getColor(R.color.primary));
@@ -119,14 +117,14 @@ public class ImagePickerFactory implements FormWidgetFactory {
             uploadButton.setFocusable(!readOnly);
         }
 
-        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+        if (!TextUtils.isEmpty(relevance)) {
             uploadButton.setTag(R.id.relevance, relevance);
-            ((JsonApi) context).addSkipLogicView(uploadButton);
+            formFragment.getJsonApi().addSkipLogicView(uploadButton);
         }
         return views;
     }
 
-    private void createImageView(Context context, JSONArray canvasIds, JSONObject jsonObject, boolean popup, String stepName, CommonListener listener, List<View> views) throws JSONException {
+    private void createImageView(Context context, NativeViewer formFragment, JSONArray canvasIds, JSONObject jsonObject, boolean popup, String stepName, CommonListener listener, List<View> views) throws JSONException {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
@@ -142,9 +140,9 @@ public class ImagePickerFactory implements FormWidgetFactory {
         imageView.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         imageView.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
         imageView.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
-        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+        if (!TextUtils.isEmpty(relevance)) {
             imageView.setTag(R.id.relevance, relevance);
-            ((JsonApi) context).addSkipLogicView(imageView);
+            formFragment.getJsonApi().addSkipLogicView(imageView);
         }
 
         JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
@@ -168,7 +166,7 @@ public class ImagePickerFactory implements FormWidgetFactory {
         }
 
 
-        ((JsonApi) context).addFormDataView(imageView);
+        formFragment.getJsonApi().addFormDataView(imageView);
         imageView.setOnClickListener(listener);
         views.add(imageView);
     }
