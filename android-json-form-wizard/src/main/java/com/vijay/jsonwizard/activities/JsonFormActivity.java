@@ -281,7 +281,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                             }
                             genericDialogInterface.addSelectedValues(
                                     formUtils.addAssignedValue(keyAtIndex, "", value, itemType, itemText));
-                            extraFieldsWithValues = fields;
+                            //extraFieldsWithValues = fields;
                         }
                         item.put(JsonFormConstants.VALUE,
                                 itemType.equals(JsonFormConstants.HIDDEN) && TextUtils.isEmpty(value) ? item
@@ -298,6 +298,33 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 }
             }
         }
+    }
+
+    private boolean checkPopUpValidity(String[] curKey, boolean popup) throws JSONException {
+        boolean validity = false;
+        if (popup) {
+            String parentKey = "";
+            if (curKey.length == 2) {
+                parentKey = curKey[1];
+            } else if (curKey.length == 3) {
+                String curKeys[] = curKey[2].split("_");
+                if (curKeys.length == 2) {
+                    parentKey = curKeys[1];
+                }
+            }
+
+            if (extraFieldsWithValues != null && extraFieldsWithValues.length() > 0) {
+                for (int i = 0; i < extraFieldsWithValues.length(); i++) {
+                    JSONObject jsonObject = extraFieldsWithValues.getJSONObject(i);
+                    if (jsonObject.has(JsonFormConstants.KEY) && jsonObject.getString(JsonFormConstants.KEY)
+                            .equals(parentKey)) {
+                        validity = true;
+                        break;
+                    }
+                }
+            }
+        }
+        return validity;
     }
 
     @Override
@@ -548,6 +575,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     JSONObject curRelevance = relevance.has(curKey) ? relevance.getJSONObject(curKey) : null;
 
                     String[] address = getAddress(view, curKey, curRelevance);
+                    popup = checkPopUpValidity(address, popup);
                     if (address.length > 1) {
                         Map<String, String> curValueMap = getValueFromAddress(address, popup);
                         try {
@@ -570,9 +598,8 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
     private String[] getAddress(View view, String curKey, JSONObject curRelevance) throws JSONException {
         return curKey.contains(":") ? curKey.split(":") : new String[]{curKey, curRelevance
-                .getJSONObject(JsonFormConstants.JSON_FORM_KEY
-                        .EX_RULES).getString(RuleConstant.RULES_FILE), view.getTag(R.id.address).toString().replace(':',
-                '_')};
+                .getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getString(RuleConstant.RULES_FILE), view
+                .getTag(R.id.address).toString().replace(':', '_')};
     }
 
     @Override
@@ -1233,8 +1260,8 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             for (int k = 0; k < jsonArray.length(); k++) {
                 JSONObject item = jsonArray.getJSONObject(k);
                 if (genericDialogInterface != null && item.getString(JsonFormConstants.KEY)
-                        .equals(genericDialogInterface.getParentKey())
-                        && item.has(JsonFormConstants.EXTRA_REL) && item.has(JsonFormConstants.HAS_EXTRA_REL)) {
+                        .equals(genericDialogInterface.getParentKey()) && item.has(JsonFormConstants.EXTRA_REL) && item
+                        .has(JsonFormConstants.HAS_EXTRA_REL)) {
                     fields = specifyFields(item);
                 }
             }

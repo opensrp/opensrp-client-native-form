@@ -72,8 +72,7 @@ public class EditTextFactory implements FormWidgetFactory {
     }
 
     private List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject,
-                                  CommonListener
-                                          listener, boolean popup) throws Exception {
+                                  CommonListener listener, boolean popup) throws Exception {
         List<View> views = new ArrayList<>(1);
 
         RelativeLayout rootLayout = (RelativeLayout) LayoutInflater.from(context).inflate(
@@ -84,7 +83,7 @@ public class EditTextFactory implements FormWidgetFactory {
 
         FormUtils.showEditButton(jsonObject, editText, editButton, listener);
 
-        attachLayout(stepName, context, formFragment, jsonObject, editText, editButton);
+        attachLayout(stepName, context, formFragment, jsonObject, editText, editButton, popup);
 
         JSONArray canvasIds = new JSONArray();
         rootLayout.setId(ViewUtil.generateViewId());
@@ -112,7 +111,7 @@ public class EditTextFactory implements FormWidgetFactory {
     }
 
     protected void attachLayout(String stepName, Context context, JsonFormFragment formFragment,
-                                JSONObject jsonObject, MaterialEditText editText, ImageView editButton)
+                                JSONObject jsonObject, MaterialEditText editText, ImageView editButton, boolean popup)
             throws Exception {
 
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
@@ -156,10 +155,10 @@ public class EditTextFactory implements FormWidgetFactory {
         }
 
         editText.addTextChangedListener(new GenericTextWatcher(stepName, formFragment, editText));
-        initSpecialViewsRefs(context, jsonObject, editText);
+        initSpecialViewsRefs(context, jsonObject, editText, popup);
     }
 
-    private void initSpecialViewsRefs(Context context, JSONObject jsonObject, MaterialEditText editText) {
+    private void initSpecialViewsRefs(Context context, JSONObject jsonObject, MaterialEditText editText, boolean popup) {
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
         String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
         String calculation = jsonObject.optString(JsonFormConstants.CALCULATION);

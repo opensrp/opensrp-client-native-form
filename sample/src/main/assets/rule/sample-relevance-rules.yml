@@ -111,3 +111,10 @@ priority: 1
 condition: "step3_oximetry > 0 && step3_oximetry < 92"
 actions:
 - "isRelevant = true"
+---
+name: step3_toaster20
+description: toaster20
+priority: 1
+condition: "step3_respiratory_exam == 3"
+actions:
+- "isRelevant = true"

@@ -26,6 +26,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:gravity="start"
+        android:singleLine="false"
         app:layout_constraintEnd_toStartOf="@+id/button_layout"
         app:layout_constraintStart_toEndOf="@+id/label_text_number"
         app:layout_constraintTop_toTopOf="parent" />

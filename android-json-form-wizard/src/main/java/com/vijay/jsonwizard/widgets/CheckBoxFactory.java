@@ -41,16 +41,19 @@ public class CheckBoxFactory implements FormWidgetFactory {
     }
 
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
+                                       JSONObject jsonObject, CommonListener listener) throws Exception {
         return attachJson(stepName, context, jsonObject, listener, false);
     }
 
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
+                                       JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
         return attachJson(stepName, context, jsonObject, listener, popup);
     }
 
-    private List<View> attachJson(String stepName, Context context, JSONObject jsonObject, CommonListener listener, boolean popup) throws JSONException {
+    private List<View> attachJson(String stepName, Context context, JSONObject jsonObject, CommonListener listener,
+                                  boolean popup) throws JSONException {
 
         boolean readOnly = false;
         if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
@@ -63,9 +66,11 @@ public class CheckBoxFactory implements FormWidgetFactory {
         LinearLayout rootLayout = (LinearLayout) LayoutInflater.from(context).inflate(getLayout(), null);
         rootLayout.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
 
-        Map<String, View> labelViews = FormUtils.createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly, listener);
+        Map<String, View> labelViews = FormUtils
+                .createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly, listener);
 
-        ArrayList<View> editableCheckBoxes = addCheckBoxOptionsElements(jsonObject, context, readOnly, canvasIds, stepName, rootLayout, listener, popup);
+        ArrayList<View> editableCheckBoxes = addCheckBoxOptionsElements(jsonObject, context, readOnly, canvasIds, stepName,
+                rootLayout, listener, popup);
 
         if (labelViews != null && labelViews.size() > 0) {
             editButton = (ImageView) labelViews.get(JsonFormConstants.EDIT_BUTTON);
@@ -86,7 +91,8 @@ public class CheckBoxFactory implements FormWidgetFactory {
 
     private ArrayList<View> addCheckBoxOptionsElements(JSONObject jsonObject, Context context, Boolean readOnly,
                                                        JSONArray canvasIds,
-                                                       String stepName, LinearLayout linearLayout, CommonListener listener, boolean popup) throws JSONException {
+                                                       String stepName, LinearLayout linearLayout, CommonListener listener,
+                                                       boolean popup) throws JSONException {
 
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
@@ -103,7 +109,8 @@ public class CheckBoxFactory implements FormWidgetFactory {
             String labelInfoText = item.optString(JsonFormConstants.LABEL_INFO_TEXT, "");
             String labelInfoTitle = item.optString(JsonFormConstants.LABEL_INFO_TITLE, "");
 
-            LinearLayout checkboxLayout = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.native_form_item_checkbox, null);
+            LinearLayout checkboxLayout = (LinearLayout) LayoutInflater.from(context)
+                    .inflate(R.layout.native_form_item_checkbox, null);
             createCheckBoxText(checkboxLayout, item, context, readOnly);
 
             final CheckBox checkBox = checkboxLayout.findViewById(R.id.checkbox);

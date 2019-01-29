@@ -191,7 +191,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
             @Override
             public void onClick(View v) {
                 jsonApi.updateGenericPopupSecondaryValues(null);
-                GenericPopupDialog.this.dismiss();
+                dismiss();
             }
         });
 
@@ -201,7 +201,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
             public void onClick(View v) {
                 passData();
                 jsonApi.updateGenericPopupSecondaryValues(null);
-                GenericPopupDialog.this.dismiss();
+                dismiss();
             }
         });
         if (getDialog().getWindow() != null) {
@@ -212,7 +212,6 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
     }
 
     protected List<View> initiateViews() {
-        jsonApi.clearSkipLogicViews();
         List<View> listOfViews = new ArrayList<>();
         jsonFormInteractor.fetchFields(listOfViews, stepName, formFragment, specifyContent, commonListener, true);
         return listOfViews;

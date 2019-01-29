@@ -120,7 +120,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Fetal heartbeat present?",
+        "label": "Which medications is she still taking ? Which medications is she still taking ?",
         "label_text_style": "bold",
         "text_color": "#000000",
         "extra_rel": true,
@@ -228,7 +228,7 @@
             "key": "3",
             "text": "Abnormal",
             "specify_info": "specify...",
-            "specify_widget": "date_picker",
+            "specify_widget": "check_box",
             "specify_info_color": "#8C8C8C",
             "content_form": "respiratory_exam_sub_form"
           }
@@ -244,9 +244,10 @@
         "text_color": "#E20000",
         "toaster_type": "problem",
         "relevance": {
-          "step3:respiratory_exam": {
-            "type": "string",
-            "ex": "equalTo(., \"3\")"
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-relevance-rules.yml"
+            }
           }
         }
       },
