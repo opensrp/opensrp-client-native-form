@@ -69,6 +69,10 @@ public class RulesEngineHelper {
         return rulesEngineDateUtil.getDOBFromAge(age);
     }
 
+    public String getDateToday() {
+        return rulesEngineDateUtil.getDateToday();
+    }
+
     //A secondary value has the format key:name e.g. ultrasound_done:yes
     public String getSecondaryValue(String value) {
 

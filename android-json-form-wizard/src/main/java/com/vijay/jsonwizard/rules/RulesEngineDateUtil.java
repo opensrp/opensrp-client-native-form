@@ -54,7 +54,12 @@ public class RulesEngineDateUtil {
     }
 
     public String getDOBFromAge(Integer age) {
-        return (new LocalDate()).withMonthOfYear(1).withDayOfMonth(1).minusYears(age).toString(FormUtils.NATIIVE_FORM_DATE_FORMAT_PATTERN);
+        return (new LocalDate()).withMonthOfYear(1).withDayOfMonth(1).minusYears(age)
+                .toString(FormUtils.NATIIVE_FORM_DATE_FORMAT_PATTERN);
+    }
+
+    public String getDateToday() {
+        return (new LocalDate()).toString(FormUtils.NATIIVE_FORM_DATE_FORMAT_PATTERN);
     }
 
     /**
@@ -191,7 +196,8 @@ public class RulesEngineDateUtil {
             }
         }
 
-        return "wd".equals(cleanDuration) ? getDuration(dateString).replace("w", " weeks").replace("d", " days") : String.valueOf(Math.abs(result));
+        return "wd".equals(cleanDuration) ? getDuration(dateString).replace("w", " weeks").replace("d", " days") : String
+                .valueOf(Math.abs(result));
 
     }
 

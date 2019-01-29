@@ -70,7 +70,6 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         this.context = context;
         activity = (Activity) context;
         jsonApi = (JsonApi) activity;
-        jsonApi.invokeRefreshLogic(null, false, null, null);
         jsonApi.setGenericPopup(this);
     }
 
@@ -100,6 +99,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
             loadPartialSecondaryValues();
             createSecondaryValuesMap();
             loadSubForms();
+            jsonApi.updateGenericPopupSecondaryValues(specifyContent);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -191,7 +191,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
             @Override
             public void onClick(View v) {
                 jsonApi.updateGenericPopupSecondaryValues(null);
-                dismiss();
+                GenericPopupDialog.this.dismiss();
             }
         });
 
@@ -201,7 +201,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
             public void onClick(View v) {
                 passData();
                 jsonApi.updateGenericPopupSecondaryValues(null);
-                dismiss();
+                GenericPopupDialog.this.dismiss();
             }
         });
         if (getDialog().getWindow() != null) {

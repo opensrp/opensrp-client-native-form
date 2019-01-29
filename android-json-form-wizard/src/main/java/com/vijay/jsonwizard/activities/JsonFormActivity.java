@@ -307,10 +307,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             if (curKey.length == 2) {
                 parentKey = curKey[1];
             } else if (curKey.length == 3) {
-                String curKeys[] = curKey[2].split("_");
-                if (curKeys.length == 2) {
-                    parentKey = curKeys[1];
-                }
+                parentKey = curKey[2].substring(curKey[2].indexOf("_") + 1);
             }
 
             if (extraFieldsWithValues != null && extraFieldsWithValues.length() > 0) {
@@ -385,7 +382,6 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                                 genericDialogInterface
                                         .addSelectedValues(
                                                 formUtils.addAssignedValue(keyAtIndex, childKey, value, itemType, itemText));
-                                extraFieldsWithValues = fields;
                             }
 
                             invokeRefreshLogic(value, popup, parentKey, childKey);

@@ -275,10 +275,11 @@
         "type": "normal_edit_text",
         "edit_text_style": "bordered",
         "edit_type": "number",
-        "relevance": {
-          "step3:respiratory_exam": {
-            "type": "string",
-            "ex": "equalTo(., \"3\")"
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-calculation-rules.yml"
+            }
           }
         }
       },

@@ -27,3 +27,10 @@ priority: 1
 condition: "(global_hb_result < 11 && (global_gest_age <= 12 || global_gest_age >= 28)) || (global_hb_result < 10.5 && (global_gest_age > 12 && global_gest_age < 28)) || (global_hb_result == 0 && step3_pallor == 'yes')"
 actions:
 - "calculation = 1"
+---
+name: step3_oximetry
+description: oximetry
+priority: 1
+condition: "step3_respiratory_exam ==2"
+actions:
+- "calculation = helper.getDateToday()"
