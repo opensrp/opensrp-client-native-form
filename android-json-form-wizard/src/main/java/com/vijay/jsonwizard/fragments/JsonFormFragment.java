@@ -48,7 +48,8 @@ import java.util.Map;
 /**
  * Created by vijay on 5/7/15.
  */
-public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, JsonFormFragmentViewState> implements
+public class
+JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, JsonFormFragmentViewState> implements
         CommonListener, JsonFormFragmentView<JsonFormFragmentViewState> , NativeViewer {
     private static final String TAG = "JsonFormFragment";
     private static String CONST_REAL_TIME_VALIDATION = "RealtimeValidation";

@@ -285,12 +285,12 @@ public class EditTextFactory implements FormWidgetFactory {
         }
     }
 
-    private void addRelativeNumericIntegerValidator(JSONObject editTextJSONObject, JsonFormFragment formFragment, MaterialEditText editText) throws JSONException {
+    private void addRelativeNumericIntegerValidator(JSONObject editTextJSONObject, NativeViewer formFragment, MaterialEditText editText) throws JSONException {
         JSONObject relativeMaxValidationJSONObject = editTextJSONObject.optJSONObject(V_RELATIVE_MAX);
         if (relativeMaxValidationJSONObject != null) {
             // validate that the relative max field exists
             String relativeMaxValidationKey = relativeMaxValidationJSONObject.optString(JsonFormConstants.VALUE, null);
-            JSONObject formJSONObject = new JSONObject(formFragment.getCurrentJsonState());
+            JSONObject formJSONObject = new JSONObject(formFragment.getJsonApi().currentJsonState());
             JSONArray formFields = fields(formJSONObject, STEP1);
             JSONObject relativeMaxFieldJSONObject = getFieldJSONObject(formFields, relativeMaxValidationKey);
             if (relativeMaxFieldJSONObject != null) {
