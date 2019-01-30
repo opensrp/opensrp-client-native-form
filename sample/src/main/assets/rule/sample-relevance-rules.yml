@@ -52,7 +52,7 @@ actions:
 name: step2_toaster28
 description: Fetal heart beat rate
 priority: 1
-condition: "step2_fetal_heart_rate > 0"
+condition: "(step2_fetal_heart_beat_rate_value > 0 && (step2_fetal_heart_beat_rate_value < 110 || step2_fetal_heart_beat_rate_value > 160))step2_fetal_heart_beat_rate_value > 0"
 actions:
 - "isRelevant = true"
 ---
@@ -116,5 +116,26 @@ name: step3_toaster20
 description: toaster20
 priority: 1
 condition: "step3_respiratory_exam == 3"
+actions:
+- "isRelevant = true"
+---
+name: step3_toaster28
+description: Fetal heart beat rate
+priority: 1
+condition: "(step3_fetal_heart_rate > 0 && (step3_fetal_heart_rate < 110 || step3_fetal_heart_rate > 160))"
+actions:
+- "isRelevant = true"
+---
+name: step3_fetal_heart_rate_repeat_label
+description: Fetal heart beat rate
+priority: 1
+condition: "(step3_fetal_heart_rate > 0 && (step3_fetal_heart_rate < 110 || step3_fetal_heart_rate > 160))"
+actions:
+- "isRelevant = true"
+---
+name: step3_fetal_heart_rate_repeat
+description: Fetal heart beat rate
+priority: 1
+condition: "(step3_fetal_heart_rate > 0 && (step3_fetal_heart_rate < 110 || step3_fetal_heart_rate > 160))"
 actions:
 - "isRelevant = true"

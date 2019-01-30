@@ -156,7 +156,9 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "type": "hidden",
+        "type": "normal_edit_text",
+        "edit_text_style": "bordered",
+        "edit_type": "number",
         "calculation": {
           "rules-engine": {
             "ex-rules": {
@@ -204,6 +206,122 @@
   "step3": {
     "title": "Maternal Exam",
     "fields": [
+      {
+        "key": "fetal_heartbeat",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Fetal heartbeat present?",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "extra_rel": true,
+        "has_extra_rel": "yes",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "specify_info": "specify fetal heart rate (bpm)...",
+            "specify_widget": "normal_edit_text",
+            "specify_info_color": "#8C8C8C",
+            "secondary_suffix": "bpm",
+            "content_form": "fetal_heartbeat_sub_form"
+          },
+          {
+            "key": "no",
+            "text": "No",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Please specify if fetal heartbeat is present."
+        }
+      },
+      {
+        "key": "toaster27",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "No fetal heartbeat observed. Refer to hospital.",
+        "toaster_info_text": "Procedure:\n- Inform the woman that you cannot find the heartbeat and need to refer her to check if there's a problem.\n- Refer to hospital.",
+        "text_color": "#E20000",
+        "toaster_type": "problem",
+        "relevance": {
+          "step3:fetal_heartbeat": {
+            "type": "string",
+            "ex": "equalTo(., \"no\")"
+          }
+        }
+      },
+      {
+        "key": "toaster28",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Fetal heart rate out of normal range (110-160). Please have the woman lay on her left side for 15 minutes and check again.",
+        "text_color": "#D56900",
+        "toaster_type": "warning",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "10sp"
+      },
+      {
+        "key": "fetal_heart_rate_repeat_label",
+        "type": "label",
+        "label_text_style": "bold",
+        "text": "Second fetal heart rate (bpm)",
+        "text_color": "#000000",
+        "v_required": {
+          "value": true
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "fetal_heart_rate_repeat",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "normal_edit_text",
+        "edit_text_style": "bordered",
+        "edit_type": "number",
+        "v_required": {
+          "value": "false",
+          "err": "Please enter result for the second fetal heart rate"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-relevance-rules.yml"
+            }
+          }
+        }
+      },
       {
         "key": "respiratory_exam",
         "openmrs_entity_parent": "",
@@ -275,11 +393,10 @@
         "type": "normal_edit_text",
         "edit_text_style": "bordered",
         "edit_type": "number",
-        "calculation": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "sample-calculation-rules.yml"
-            }
+        "relevance": {
+          "step3:respiratory_exam": {
+            "type": "string",
+            "ex": "equalTo(., \"3\")"
           }
         }
       },

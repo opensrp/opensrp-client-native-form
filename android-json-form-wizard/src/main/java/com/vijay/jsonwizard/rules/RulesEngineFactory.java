@@ -51,7 +51,8 @@ public class RulesEngineFactory implements RuleListener {
         try {
             if (!ruleMap.containsKey(fileName)) {
 
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(context.getAssets().open(fileName)));
+                BufferedReader bufferedReader = new BufferedReader(
+                        new InputStreamReader(context.getAssets().open(fileName)));
                 ruleMap.put(fileName, MVELRuleFactory.createRulesFrom(bufferedReader));
             }
             return ruleMap.get(fileName);
@@ -145,7 +146,8 @@ public class RulesEngineFactory implements RuleListener {
     }
 
     private String getKey(String key) {
-        return !key.startsWith(RuleConstant.STEP) && !key.startsWith(RuleConstant.SELECTED_RULE) ? RuleConstant.PREFIX.GLOBAL + key : key;
+        return !key.startsWith(RuleConstant.STEP) && !key
+                .startsWith(RuleConstant.SELECTED_RULE) ? RuleConstant.PREFIX.GLOBAL + key : key;
     }
 
     private Object getValue(String value) {
@@ -211,12 +213,12 @@ public class RulesEngineFactory implements RuleListener {
         //Overriden
     }
 
-    public void setRulesFolderPath(String path) {
-        RULE_FOLDER_PATH = path;
-    }
-
     public String getRulesFolderPath() {
         return RULE_FOLDER_PATH;
+    }
+
+    public void setRulesFolderPath(String path) {
+        RULE_FOLDER_PATH = path;
     }
 
     private String formatCalculationReturnValue(Object rawValue) {

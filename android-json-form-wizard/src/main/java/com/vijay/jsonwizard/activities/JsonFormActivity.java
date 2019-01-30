@@ -232,8 +232,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
     @Override
     public void writeValue(String stepName, String key, String value, String openMrsEntityParent, String openMrsEntity,
-                           String
-                                   openMrsEntityId, boolean popup) throws JSONException {
+                           String openMrsEntityId, boolean popup) throws JSONException {
         widgetsWriteValue(stepName, key, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
     }
 
@@ -245,8 +244,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
     @Override
     public void writeValue(String stepName, String key, String value, String openMrsEntityParent, String openMrsEntity,
-                           String
-                                   openMrsEntityId) throws JSONException {
+                           String openMrsEntityId) throws JSONException {
         widgetsWriteValue(stepName, key, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, false);
     }
 

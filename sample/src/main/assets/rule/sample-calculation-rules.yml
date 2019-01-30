@@ -34,3 +34,10 @@ priority: 1
 condition: "step3_respiratory_exam ==2"
 actions:
 - "calculation = helper.getDateToday()"
+---
+name: step3_oximetry
+description: oximetry
+priority: 1
+condition: "step3_respiratory_exam ==2"
+actions:
+- "calculation = helper.getDateToday()"
