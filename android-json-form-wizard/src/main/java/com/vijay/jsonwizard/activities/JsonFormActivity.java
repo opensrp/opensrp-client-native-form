@@ -113,6 +113,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     private Map<String, String> globalValues = null;
     private RulesEngineFactory rulesEngineFactory = null;
     private LocalBroadcastManager localBroadcastManager;
+    private Map<String, String> formValuesCacheMap = new HashMap<>();
     private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -234,26 +235,47 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     public void writeValue(String stepName, String key, String value, String openMrsEntityParent, String openMrsEntity,
                            String
                                    openMrsEntityId, boolean popup) throws JSONException {
-        widgetsWriteValue(stepName, key, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
+
+        if (invokeRefreshLogic(stepName, null, key, value)) {
+
+            widgetsWriteValue(stepName, key, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
+            cacheFormMapValues(stepName, null, key, value);
+
+        }
     }
 
     @Override
     public void writeValue(String stepName, String parentKey, String childObjectKey, String childKey, String value, String
             openMrsEntityParent, String openMrsEntity, String openMrsEntityId, boolean popup) throws JSONException {
-        checkBoxWriteValue(stepName, parentKey, childObjectKey, childKey, value, popup);
+        if (invokeRefreshLogic(stepName, parentKey, childKey, value)) {
+
+            checkBoxWriteValue(stepName, parentKey, childObjectKey, childKey, value, popup);
+            cacheFormMapValues(stepName, parentKey, childKey, value);
+
+        }
     }
 
     @Override
     public void writeValue(String stepName, String key, String value, String openMrsEntityParent, String openMrsEntity,
                            String
                                    openMrsEntityId) throws JSONException {
-        widgetsWriteValue(stepName, key, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, false);
+
+        if (invokeRefreshLogic(stepName, null, key, value)) {
+
+            widgetsWriteValue(stepName, key, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, false);
+            cacheFormMapValues(stepName, null, key, value);
+        }
     }
 
     @Override
     public void writeValue(String stepName, String parentKey, String childObjectKey, String childKey, String value, String
             openMrsEntityParent, String openMrsEntity, String openMrsEntityId) throws JSONException {
-        checkBoxWriteValue(stepName, parentKey, childObjectKey, childKey, value, false);
+        if (invokeRefreshLogic(stepName, parentKey, childKey, value)) {
+
+            checkBoxWriteValue(stepName, parentKey, childObjectKey, childKey, value, false);
+            cacheFormMapValues(stepName, parentKey, childKey, value);
+
+        }
     }
 
     protected void widgetsWriteValue(String stepName, String key, String value, String openMrsEntityParent,
@@ -805,13 +827,15 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                             .getTag(R.id.previous).equals
                                     (errorMessage))) {
 
-                        Intent localIntent = new Intent(JsonFormConstants.INTENT_ACTION.NUMBER_SELECTOR_FACTORY);
-                        localIntent.putExtra(JsonFormConstants.MAX_SELECTION_VALUE, Integer.valueOf(errorMessage));
-                        localIntent.putExtra(JsonFormConstants.JSON_OBJECT_KEY, curView.getTag(R.id.key).toString());
-                        localIntent.putExtra(JsonFormConstants.STEPNAME, address[0]);
-                        localIntent.putExtra(JsonFormConstants.IS_POPUP, popup);
-                        localBroadcastManager.sendBroadcast(localIntent);
-                        curView.setTag(R.id.previous, errorMessage); //Store value to avoid re-fires
+                        if (!"false".equals(errorMessage)) {
+                            Intent localIntent = new Intent(JsonFormConstants.INTENT_ACTION.NUMBER_SELECTOR_FACTORY);
+                            localIntent.putExtra(JsonFormConstants.MAX_SELECTION_VALUE, Integer.valueOf(errorMessage));
+                            localIntent.putExtra(JsonFormConstants.JSON_OBJECT_KEY, curView.getTag(R.id.key).toString());
+                            localIntent.putExtra(JsonFormConstants.STEPNAME, address[0]);
+                            localIntent.putExtra(JsonFormConstants.IS_POPUP, popup);
+                            localBroadcastManager.sendBroadcast(localIntent);
+                            curView.setTag(R.id.previous, errorMessage); //Store value to avoid re-fires
+                        }
 
 
                     } else if (curView instanceof RadioGroup && curView.getTag(R.id.type).toString().equals(JsonFormConstants
@@ -887,9 +911,6 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                                         options.getJSONObject(j).getString
                                                 (JsonFormConstants.VALUE));
                             }
-                        } else {
-                            Log.e(TAG, "option for Key " + options.getJSONObject(j)
-                                    .getString(JsonFormConstants.KEY) + " has NO value");
                         }
 
                         //Backward compatibility Fix
@@ -921,10 +942,6 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                                                 String.valueOf(false));
                                     }
                                 }
-                            } else {
-                                Log.e(TAG, "option for Key " + jsonArray.getJSONObject(j)
-                                        .getString(JsonFormConstants.KEY) + " has NO " +
-                                        "value");
                             }
                         }
                     } else {
@@ -1174,11 +1191,11 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     }
 
     private boolean isNumberSelectorConstraint(View view) {
-        return view.getTag(R.id.type).equals(JsonFormConstants.NUMBERS_SELECTOR);
+        return JsonFormConstants.NUMBERS_SELECTOR.equals(view.getTag(R.id.type));
     }
 
     private boolean isDatePickerNativeRadio(View view) {
-        return view.getTag(R.id.type).toString().equals(JsonFormConstants.NATIVE_RADIO_BUTTON);
+        return JsonFormConstants.NATIVE_RADIO_BUTTON.equals(view.getTag(R.id.type));
     }
 
     protected JSONArray fetchFields(JSONObject parentJson, boolean popup) {
@@ -1409,9 +1426,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
         List<String> rules = ruleKeys.get(filename + ":" + fieldKey);
 
-        try {
 
-            if (rules == null) {
+        if (rules == null) {
+            try {
 
                 Yaml yaml = new Yaml();
                 InputStreamReader inputStreamReader = new InputStreamReader(
@@ -1451,13 +1468,17 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     }
 
                 }
+
+            } catch (Exception e) {
+                Log.e(TAG, e.getMessage(), e);
             }
 
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
-        }
 
-        return ruleKeys.get(filename + ":" + fieldKey);
+            return ruleKeys.get(filename + ":" + fieldKey);
+        } else {
+
+            return rules;
+        }
     }
 
     @Override
@@ -1786,5 +1807,18 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
     public LocalBroadcastManager getLocalBroadcastManager() {
         return localBroadcastManager;
+    }
+
+    private void cacheFormMapValues(String stepName, String parentKey, String childKey, String value) {
+
+        formValuesCacheMap.put(stepName + "_" + (parentKey != null ? parentKey + "_" : "") + childKey, value);
+
+    }
+
+    private boolean invokeRefreshLogic(String stepName, String parentKey, String childKey, String value) {
+        String oldValue = formValuesCacheMap.get(stepName + "_" + (parentKey != null ? parentKey + "_" : "") + childKey);
+
+        return !value.equals(oldValue);
+
     }
 }
