@@ -238,9 +238,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
         if (invokeRefreshLogic(stepName, null, key, value)) {
 
-            widgetsWriteValue(stepName, key, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
             cacheFormMapValues(stepName, null, key, value);
 
+            widgetsWriteValue(stepName, key, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
         }
     }
 
@@ -249,8 +249,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             openMrsEntityParent, String openMrsEntity, String openMrsEntityId, boolean popup) throws JSONException {
         if (invokeRefreshLogic(stepName, parentKey, childKey, value)) {
 
-            checkBoxWriteValue(stepName, parentKey, childObjectKey, childKey, value, popup);
             cacheFormMapValues(stepName, parentKey, childKey, value);
+
+            checkBoxWriteValue(stepName, parentKey, childObjectKey, childKey, value, popup);
 
         }
     }
@@ -262,8 +263,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
         if (invokeRefreshLogic(stepName, null, key, value)) {
 
-            widgetsWriteValue(stepName, key, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, false);
             cacheFormMapValues(stepName, null, key, value);
+
+            widgetsWriteValue(stepName, key, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, false);
         }
     }
 
@@ -272,8 +274,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             openMrsEntityParent, String openMrsEntity, String openMrsEntityId) throws JSONException {
         if (invokeRefreshLogic(stepName, parentKey, childKey, value)) {
 
-            checkBoxWriteValue(stepName, parentKey, childObjectKey, childKey, value, false);
             cacheFormMapValues(stepName, parentKey, childKey, value);
+
+            checkBoxWriteValue(stepName, parentKey, childObjectKey, childKey, value, false);
 
         }
     }
@@ -635,14 +638,20 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
                         JSONObject curRelevance = calculation.getJSONObject(curKey);
 
-                        String[] address = new String[]{curKey, curRelevance
-                                .getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES)
-                                .getString(RuleConstant.RULES_FILE), curView.getTag(R.id.address).toString().replace(':',
-                                '_')};
+                        String[] address = new String[]{curKey, curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getString(RuleConstant.RULES_FILE), curView.getTag(R.id.address)
+                                .toString().replace(':', '_')};
 
                         Map<String, String> curValueMap = getValueFromAddress(address, popup);
 
-                        updateCalculation(curValueMap, curView, address[1]);
+                        if (address.length > 2 && RuleConstant.RULES_ENGINE.equals(address[0]) && !JsonFormConstants.TOASTER_NOTES.equals(curView.getTag(R.id.type))) {
+
+                            if (curValueMap.size() > 1) {//check for integrity of values
+
+                                updateCalculation(curValueMap, curView, address[1]);
+                            }
+                        } else {
+                            updateCalculation(curValueMap, curView, address[1]);
+                        }
                     }
 
                 } catch (Exception e) {
@@ -1447,20 +1456,21 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
                     List<String> actions = new ArrayList<>();
 
-                    String conditionString = map.get(RuleConstant.CONDITION).toString();
+                    StringBuilder conditionString = new StringBuilder();
+                    conditionString.append(map.get(RuleConstant.CONDITION).toString());
 
                     List<String> fields = (List<String>) map.get(RuleConstant.ACTIONS);
                     if (fields != null) {
                         for (String field : fields) {
                             if (field.trim().startsWith(RuleConstant.CALCULATION) || field.trim()
                                     .startsWith(RuleConstant.CONSTRAINT)) {
-                                conditionString += " " + field;
+                                conditionString.append(" " + field);
                             }
                         }
 
                     }
 
-                    actions.addAll(getConditionKeys(conditionString));
+                    actions.addAll(getConditionKeys(conditionString.toString()));
                     ruleKeys.put(filename + ":" + name, actions);
 
                     if (name.equals(fieldKey)) {
@@ -1787,22 +1797,20 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     }
 
     private String getTemplateValue(Object object) {
-        String result = "";
+        StringBuilder result = new StringBuilder();
         if (object instanceof List) {
             List<String> valueList = (List<String>) object;
             for (int i = 0; i < valueList.size(); i++) {
-                result += valueList.get(i);
+                result.append(valueList.get(i));
                 if (i != (valueList.size() - 1)) {
-                    result += ", ";
+                    result.append(", ");
                 }
             }
         } else {
-            result = object.toString();
-            result = result.contains(".0") ? result
-                    .substring(0, result.indexOf(".0")) : result;//Fix automatic conversion float bug
+            result.append(object.toString().contains(".0") ? object.toString().substring(0, object.toString().indexOf(".0")) : object.toString()); //Fix automatic conversion float bug
         }
 
-        return result;
+        return result.toString();
     }
 
     public LocalBroadcastManager getLocalBroadcastManager() {

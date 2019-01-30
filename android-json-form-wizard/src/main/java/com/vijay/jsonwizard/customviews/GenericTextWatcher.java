@@ -59,7 +59,7 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
             text = editable.toString();
         }
 
-        mView.setTag(R.id.previous, text);
+        mView.setTag(R.id.previous, editable.toString());
 
         Log.d("RealtimeValidation", "afterTextChanged called");
         JsonApi api = null;
