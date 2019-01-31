@@ -59,6 +59,7 @@ import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.PropertyManager;
 import com.vijay.jsonwizard.widgets.NumberSelectorFactory;
 
+import org.jeasy.rules.api.Facts;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -598,7 +599,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     String[] address = getAddress(view, curKey, curRelevance);
                     popup = checkPopUpValidity(address, popup);
                     if (address.length > 1) {
-                        Map<String, String> curValueMap = getValueFromAddress(address, popup);
+                        Facts curValueMap = getValueFromAddress(address, popup);
                         try {
                             boolean comparison = isRelevant(curValueMap, curRelevance);
 
@@ -641,11 +642,11 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                         String[] address = new String[]{curKey, curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getString(RuleConstant.RULES_FILE), curView.getTag(R.id.address)
                                 .toString().replace(':', '_')};
 
-                        Map<String, String> curValueMap = getValueFromAddress(address, popup);
+                        Facts curValueMap = getValueFromAddress(address, popup);
 
                         if (address.length > 2 && RuleConstant.RULES_ENGINE.equals(address[0]) && !JsonFormConstants.TOASTER_NOTES.equals(curView.getTag(R.id.type))) {
 
-                            if (curValueMap.size() > 1) {//check for integrity of values
+                            if (curValueMap.asMap().size() > 1) {//check for integrity of values
 
                                 updateCalculation(curValueMap, curView, address[1]);
                             }
@@ -803,7 +804,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
                         address = getAddress(curView, curKey, curConstraint);
 
-                        Map<String, String> curValueMap = getValueFromAddress(address, popup);
+                        Facts curValueMap = getValueFromAddress(address, popup);
 
                         errorMessage = enforceConstraint(curValueMap, curConstraint);
 
@@ -830,11 +831,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                                 break;
                             }
                         }
-                    } else if (curView.getTag(R.id.type).toString().equals(JsonFormConstants.NUMBERS_SELECTOR) && !TextUtils
-                            .isEmpty
-                                    (errorMessage) && (curView.getTag(R.id.previous) == null || !curView
-                            .getTag(R.id.previous).equals
-                                    (errorMessage))) {
+                    } else if (curView.getTag(R.id.type).toString().equals(JsonFormConstants.NUMBERS_SELECTOR) &&
+                            !TextUtils.isEmpty(errorMessage) && (curView.getTag(R.id.previous) == null
+                            || !curView.getTag(R.id.previous).equals(errorMessage))) {
 
                         if (!"false".equals(errorMessage)) {
                             Intent localIntent = new Intent(JsonFormConstants.INTENT_ACTION.NUMBER_SELECTOR_FACTORY);
@@ -869,8 +868,8 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         }
     }
 
-    private Map<String, String> getValueFromAddress(String[] address, boolean popup) throws Exception {
-        Map<String, String> result = new HashMap<>();
+    private Facts getValueFromAddress(String[] address, boolean popup) throws Exception {
+        Facts result = new Facts();
 
         JSONObject object = getObjectUsingAddress(address, popup);
 
@@ -886,7 +885,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     formObject.put(RuleConstant.IS_RULE_CHECK, true);
                     formObject.put(RuleConstant.STEP, formObject.getString(RuleConstant.STEP));
 
-                    result.putAll(getValueFromAddressCore(formObject));
+                    result.asMap().putAll(getValueFromAddressCore(formObject).asMap());
                 }
 
                 result.put(RuleConstant.SELECTED_RULE, address[2]);
@@ -898,8 +897,8 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         return result;
     }
 
-    protected Map<String, String> getValueFromAddressCore(JSONObject object) throws JSONException {
-        Map<String, String> result = new HashMap<>();
+    protected Facts getValueFromAddressCore(JSONObject object) throws JSONException {
+        Facts result = new Facts();
 
         if (object != null) {
             switch (object.getString(JsonFormConstants.TYPE)) {
@@ -967,8 +966,8 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     (JsonFormConstants.TYPE).equals(JsonFormConstants.CHECK_BOX) || (object.getString(JsonFormConstants.TYPE)
                     .equals(JsonFormConstants.NATIVE_RADIO_BUTTON) && object
                     .optBoolean(JsonFormConstants.NATIVE_RADIO_BUTTON_MULTI_RELEVANCE, false)))) {
-                List<String> selectedValues = new ArrayList<>(result.keySet());
-                result.clear();
+                List<String> selectedValues = new ArrayList<>(result.asMap().keySet());
+                result = new Facts();
                 result.put(getKey(object), selectedValues.toString());
             }
         }
@@ -1193,8 +1192,8 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         return errorMessage;
     }
 
-    private String enforceConstraint(Map<String, String> curValueMap, JSONObject constraint) throws Exception {
-        return curValueMap.size() == 0 ? "0" : rulesEngineFactory
+    private String enforceConstraint(Facts curValueMap, JSONObject constraint) throws Exception {
+        return curValueMap.asMap().size() == 0 ? "0" : rulesEngineFactory
                 .getConstraint(curValueMap, constraint.getJSONObject(JsonFormConstants
                         .JSON_FORM_KEY.EX_RULES).getString(RuleConstant.RULES_FILE));
     }
@@ -1366,10 +1365,10 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         return form;
     }
 
-    private boolean isRelevant(Map<String, String> curValueMap, JSONObject curRelevance) throws Exception {
+    private boolean isRelevant(Facts curValueMap, JSONObject curRelevance) throws Exception {
         if (curRelevance != null) {
             if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_RULES)) {
-                return curValueMap.size() != 0 && rulesEngineFactory.getRelevance(curValueMap, curRelevance.getJSONObject
+                return curValueMap.asMap().size() != 0 && rulesEngineFactory.getRelevance(curValueMap, curRelevance.getJSONObject
                         (JsonFormConstants.JSON_FORM_KEY.EX_RULES).getString(RuleConstant.RULES_FILE));
             } else if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_CHECKBOX)) {
                 JSONArray exArray = curRelevance.getJSONArray(JsonFormConstants.JSON_FORM_KEY.EX_CHECKBOX);
@@ -1385,18 +1384,22 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 }
                 return false;
             } else {
-                return doComparison(curValueMap.get(JsonFormConstants.VALUE), curRelevance);
+                String curValue = curValueMap.get(JsonFormConstants.VALUE);
+                return doComparison(curValue != null ? curValue : "", curRelevance);
             }
         }
         return false;
     }
 
-    private ExObjectResult isExObjectRelevant(Map<String, String> curValueMap, JSONObject object) throws Exception {
+    private ExObjectResult isExObjectRelevant(Facts curValueMap, JSONObject object) throws Exception {
         if (object.has(JsonFormConstants.JSON_FORM_KEY.NOT)) {
             JSONArray orArray = object.getJSONArray(JsonFormConstants.JSON_FORM_KEY.NOT);
 
             for (int i = 0; i < orArray.length(); i++) {
-                if (!Boolean.valueOf(curValueMap.get(orArray.getString(i)))) {
+
+                String curValue = curValueMap.get(orArray.getString(i));
+
+                if (curValue != null && !Boolean.valueOf(curValueMap.get(curValue).toString())) {
                     return new ExObjectResult(true, false);
                 } else {
                     return new ExObjectResult(false, true);
@@ -1408,7 +1411,8 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             JSONArray orArray = object.getJSONArray(JsonFormConstants.JSON_FORM_KEY.OR);
 
             for (int i = 0; i < orArray.length(); i++) {
-                if (Boolean.valueOf(curValueMap.get(orArray.getString(i)))) {
+                String curValue = curValueMap.get(orArray.getString(i));
+                if (curValue != null && Boolean.valueOf(curValue)) {
                     return new ExObjectResult(true, true);
                 }
 
@@ -1420,7 +1424,8 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             JSONArray andArray = object.getJSONArray(JsonFormConstants.JSON_FORM_KEY.AND);
 
             for (int i = 0; i < andArray.length(); i++) {
-                if (!Boolean.valueOf(curValueMap.get(andArray.getString(i)))) {
+                String curValue = curValueMap.get(andArray.getString(i));
+                if (curValue != null && !Boolean.valueOf(curValueMap.get(curValue).toString())) {
                     return new ExObjectResult(false, false);
                 }
             }
@@ -1553,7 +1558,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         return conditionToken;
     }
 
-    private void updateCalculation(Map<String, String> valueMap, View view, String rulesFile) {
+    private void updateCalculation(Facts valueMap, View view, String rulesFile) {
 
         try {
 
