@@ -644,7 +644,10 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
                         Facts curValueMap = getValueFromAddress(address, popup);
 
-                        if (address.length > 2 && RuleConstant.RULES_ENGINE.equals(address[0]) && !JsonFormConstants.TOASTER_NOTES.equals(curView.getTag(R.id.type))) {
+                        if (address.length > 2
+                                && RuleConstant.RULES_ENGINE.equals(address[0])
+                                && (!JsonFormConstants.TOASTER_NOTES.equals(curView.getTag(R.id.type))
+                                && !JsonFormConstants.NATIVE_RADIO_BUTTON.equals(curView.getTag(R.id.type)))) {
 
                             if (curValueMap.asMap().size() > 1) {//check for integrity of values
 
@@ -1649,7 +1652,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
                 value = TextUtils.isEmpty(object.optString(JsonFormConstants.VALUE)) ? 0 : processNumberValues(object.optString(JsonFormConstants.VALUE));
 
-            } else if (value != null && canHaveNumber(object)) {
+            } else if (value != null && !TextUtils.isEmpty(object.getString(JsonFormConstants.VALUE)) && canHaveNumber(object)) {
 
                 value = processNumberValues(value);
 
