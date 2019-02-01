@@ -133,7 +133,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         } else if (childAt instanceof CustomTextView) {
             CustomTextView customTextView = (CustomTextView) childAt;
             String type = (String) childAt.getTag(R.id.type);
-            if (!TextUtils.isEmpty(type) && type.equals(JsonFormConstants.NUMBERS_SELECTOR)) {
+            if (!TextUtils.isEmpty(type) && type.equals(JsonFormConstants.NUMBER_SELECTOR)) {
                 ValidationStatus validationStatus = NumberSelectorFactory.validate(formFragmentView, customTextView);
                 if (!validationStatus.isValid()) {
                     if (requestFocus) validationStatus.requestAttention();
@@ -351,7 +351,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                     showInformationDialog(v);
                 }
                 break;
-            case JsonFormConstants.NUMBERS_SELECTOR:
+            case JsonFormConstants.NUMBER_SELECTOR:
                 createNumberSelector(v);
                 break;
             case JsonFormConstants.SPINNER:
@@ -369,7 +369,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                     setViewEditable(v);
                 }
                 break;
-            case JsonFormConstants.NORMAL_EDIT_TEXT:
+            case JsonFormConstants.NATIVE_EDIT_TEXT:
                 setViewEditable(v);
                 break;
             default:
@@ -581,7 +581,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         String value = (String) parent.getItemAtPosition(position);
         getView().writeValue(mStepName, parentKey, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
 
-        if (JsonFormConstants.NUMBERS_SELECTOR.equals(type)) {
+        if (JsonFormConstants.NUMBER_SELECTOR.equals(type)) {
             NumberSelectorFactory.setBackgrounds(customTextView);
             NumberSelectorFactory.setSelectedTextViews(customTextView);
             NumberSelectorFactory.setSelectedTextViewText((String) parent.getItemAtPosition(position));

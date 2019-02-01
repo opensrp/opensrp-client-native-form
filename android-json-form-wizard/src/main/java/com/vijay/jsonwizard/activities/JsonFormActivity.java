@@ -377,7 +377,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     }
 
     private boolean isNumberSelector(String itemType) {
-        return itemType.equals(JsonFormConstants.NUMBERS_SELECTOR);
+        return itemType.equals(JsonFormConstants.NUMBER_SELECTOR);
     }
 
     protected void checkBoxWriteValue(String stepName, String parentKey, String childObjectKey, String childKey,
@@ -831,7 +831,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                                 break;
                             }
                         }
-                    } else if (curView.getTag(R.id.type).toString().equals(JsonFormConstants.NUMBERS_SELECTOR) &&
+                    } else if (curView.getTag(R.id.type).toString().equals(JsonFormConstants.NUMBER_SELECTOR) &&
                             !TextUtils.isEmpty(errorMessage) && (curView.getTag(R.id.previous) == null
                             || !curView.getTag(R.id.previous).equals(errorMessage))) {
 
@@ -1162,7 +1162,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
         String type = constraint.getString("type").toLowerCase();
         String ex = constraint.getString("ex");
-        String errorMessage = type.equals(JsonFormConstants.NUMBERS_SELECTOR) ? constraint
+        String errorMessage = type.equals(JsonFormConstants.NUMBER_SELECTOR) ? constraint
                 .optString(JsonFormConstants.ERR) : constraint
                 .getString(JsonFormConstants.ERR);
         Pattern pattern = Pattern.compile("(" + functionRegex + ")\\((.*)\\)");
@@ -1199,7 +1199,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     }
 
     private boolean isNumberSelectorConstraint(View view) {
-        return JsonFormConstants.NUMBERS_SELECTOR.equals(view.getTag(R.id.type));
+        return JsonFormConstants.NUMBER_SELECTOR.equals(view.getTag(R.id.type));
     }
 
     private boolean isDatePickerNativeRadio(View view) {
@@ -1649,7 +1649,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
                 value = 0;
 
-            } else if (value != null) {
+            } else if (value != null && canHaveNumber(object)) {
 
                 try {
 
@@ -1858,5 +1858,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
         return !value.equals(oldValue);
 
+    }
+
+    private boolean canHaveNumber(JSONObject object) throws JSONException {
+        return object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.EDIT_TEXT) || object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.NATIVE_EDIT_TEXT) || object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.NUMBER_SELECTOR) || object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.HIDDEN) || object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.SPINNER);
     }
 }
