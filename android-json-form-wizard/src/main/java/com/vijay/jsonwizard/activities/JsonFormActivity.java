@@ -968,7 +968,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     .optBoolean(JsonFormConstants.NATIVE_RADIO_BUTTON_MULTI_RELEVANCE, false)))) {
                 List<String> selectedValues = new ArrayList<>(result.asMap().keySet());
                 result = new Facts();
-                result.put(getKey(object), selectedValues.toString());
+                result.put(getKey(object), selectedValues);
             }
         }
         return result;
@@ -1399,7 +1399,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
                 String curValue = curValueMap.get(orArray.getString(i));
 
-                if (curValue != null && !Boolean.valueOf(curValueMap.get(curValue).toString())) {
+                if (curValue != null && !Boolean.valueOf(curValue)) {
                     return new ExObjectResult(true, false);
                 } else {
                     return new ExObjectResult(false, true);
@@ -1425,7 +1425,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
             for (int i = 0; i < andArray.length(); i++) {
                 String curValue = curValueMap.get(andArray.getString(i));
-                if (curValue != null && !Boolean.valueOf(curValueMap.get(curValue).toString())) {
+                if (curValue != null && !Boolean.valueOf(curValue)) {
                     return new ExObjectResult(false, false);
                 }
             }
@@ -1638,12 +1638,37 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         return resString;
     }
 
-    protected String getValue(JSONObject object) throws JSONException {
-        String value = object.optString(JsonFormConstants.VALUE);
+    protected Object getValue(JSONObject object) throws JSONException {
+        Object value;
 
-        if (object.has(JsonFormConstants.EDIT_TYPE) && object.getString(JsonFormConstants.EDIT_TYPE).equals(JsonFormConstants
-                .EDIT_TEXT_TYPE.NUMBER) && TextUtils.isEmpty(object.optString(JsonFormConstants.VALUE))) {
-            value = "0";
+        if (object.has(JsonFormConstants.VALUE)) {
+
+            value = object.opt(JsonFormConstants.VALUE);
+
+            if (object.has(JsonFormConstants.EDIT_TYPE) && object.getString(JsonFormConstants.EDIT_TYPE).equals(JsonFormConstants.EDIT_TEXT_TYPE.NUMBER) && TextUtils.isEmpty(object.optString(JsonFormConstants.VALUE))) {
+
+                value = 0;
+
+            } else if (value != null) {
+
+                try {
+
+                    if (value.toString().contains(".")) {
+
+                        value = String.valueOf((float) Math.round(Float.valueOf(value.toString()) * 100) / 100);
+
+                    } else {
+                        value = Integer.valueOf(value.toString());
+                    }
+
+                } catch (NumberFormatException e) {
+                    Log.e(TAG, "Error trying to convert " + value + " to a number ", e);
+                }
+
+            }
+
+        } else {
+            value = "";
         }
 
         return value;
