@@ -1384,7 +1384,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 }
                 return false;
             } else {
-                String curValue = curValueMap.get(JsonFormConstants.VALUE);
+                String curValue = String.valueOf(curValueMap.get(JsonFormConstants.VALUE));
                 return doComparison(curValue != null ? curValue : "", curRelevance);
             }
         }
@@ -1645,33 +1645,39 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
             value = object.opt(JsonFormConstants.VALUE);
 
-            if (object.has(JsonFormConstants.EDIT_TYPE) && object.getString(JsonFormConstants.EDIT_TYPE).equals(JsonFormConstants.EDIT_TEXT_TYPE.NUMBER) && TextUtils.isEmpty(object.optString(JsonFormConstants.VALUE))) {
+            if (isNumberWidget(object)) {
 
-                value = 0;
+                value = TextUtils.isEmpty(object.optString(JsonFormConstants.VALUE)) ? 0 : processNumberValues(object.optString(JsonFormConstants.VALUE));
 
             } else if (value != null && canHaveNumber(object)) {
 
-                try {
-
-                    if (value.toString().contains(".")) {
-
-                        value = String.valueOf((float) Math.round(Float.valueOf(value.toString()) * 100) / 100);
-
-                    } else {
-                        value = Integer.valueOf(value.toString());
-                    }
-
-                } catch (NumberFormatException e) {
-                    Log.d(TAG, "Error trying to convert " + value + " to a number ", e);
-                }
+                value = processNumberValues(value);
 
             }
 
         } else {
-            value = "";
+            value = isNumberWidget(object) ? 0 : "";
         }
 
         return value;
+    }
+
+    protected Object processNumberValues(Object object) {
+
+        try {
+
+            if (object.toString().contains(".")) {
+
+                object = String.valueOf((float) Math.round(Float.valueOf(object.toString()) * 100) / 100);
+
+            } else {
+                object = Integer.valueOf(object.toString());
+            }
+
+        } catch (NumberFormatException e) {
+            Log.d(TAG, "Error trying to convert " + object + " to a number ", e);
+        }
+        return object;
     }
 
     protected String getKey(JSONObject object) throws JSONException {
@@ -1860,7 +1866,11 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
     }
 
-    private boolean canHaveNumber(JSONObject object) throws JSONException {
-        return object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.EDIT_TEXT) || object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.NATIVE_EDIT_TEXT) || object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.NUMBER_SELECTOR) || object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.HIDDEN) || object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.SPINNER);
+    protected boolean canHaveNumber(JSONObject object) throws JSONException {
+        return isNumberWidget(object) || object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.HIDDEN) || object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.SPINNER);
+    }
+
+    protected boolean isNumberWidget(JSONObject object) throws JSONException {
+        return object.has(JsonFormConstants.EDIT_TYPE) && object.getString(JsonFormConstants.EDIT_TYPE).equals(JsonFormConstants.EDIT_TEXT_TYPE.NUMBER) || object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.NUMBER_SELECTOR);
     }
 }
