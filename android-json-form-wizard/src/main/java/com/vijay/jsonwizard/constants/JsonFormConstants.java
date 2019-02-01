@@ -172,6 +172,7 @@ public class JsonFormConstants {
     public static class SUFFIX {
         public static final String SPINNER = "_spinner";
         public static final String TEXT_VIEW = "_textview";
+        public static final String PARENT = "_parent";
     }
 
     public static class INTENT_KEY {

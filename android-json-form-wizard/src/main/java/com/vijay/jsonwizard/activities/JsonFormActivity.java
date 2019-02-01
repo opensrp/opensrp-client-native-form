@@ -1662,7 +1662,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     }
 
                 } catch (NumberFormatException e) {
-                    Log.e(TAG, "Error trying to convert " + value + " to a number ", e);
+                    Log.d(TAG, "Error trying to convert " + value + " to a number ", e);
                 }
 
             }

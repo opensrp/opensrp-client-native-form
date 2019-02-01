@@ -196,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     startForm(REQUEST_CODE_GET_JSON, "constraints_demo", null);
                     break;
                 case R.id.generic_dialog_button:
-                    startForm(REQUEST_CODE_GET_JSON, "generic_popup_form", null);
+                    startForm(REQUEST_CODE_GET_JSON, "anc_counselling_treatment", null);
                     break;
                 default:
                     break;
