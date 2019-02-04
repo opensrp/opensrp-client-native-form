@@ -168,6 +168,22 @@
         }
       },
       {
+        "key": "test_date",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "normal_edit_text",
+        "edit_text_style": "bordered",
+        "edit_type": "number",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-calculation-rules.yml"
+            }
+          }
+        }
+      },
+      {
         "key": "toaster27",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -397,6 +413,13 @@
           "step3:respiratory_exam": {
             "type": "string",
             "ex": "equalTo(., \"3\")"
+          }
+        },
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-calculation-rules.yml"
+            }
           }
         }
       },

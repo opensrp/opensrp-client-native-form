@@ -647,10 +647,8 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                                 && (!JsonFormConstants.TOASTER_NOTES.equals(curView.getTag(R.id.type))
                                 && !JsonFormConstants.NATIVE_RADIO_BUTTON.equals(curView.getTag(R.id.type)))) {
 
-                            if (curValueMap.asMap().size() > 1) {//check for integrity of values
-
-                                updateCalculation(curValueMap, curView, address[1]);
-                            }
+                            //check for integrity of values
+                            updateCalculation(curValueMap, curView, address[1]);
                         } else {
                             updateCalculation(curValueMap, curView, address[1]);
                         }
@@ -1679,7 +1677,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             }
 
         } catch (NumberFormatException e) {
-            Log.d(TAG, "Error trying to convert " + object + " to a number ", e);
+            //Log.d(TAG, "Error trying to convert " + object + " to a number ", e);
         }
         return object;
     }

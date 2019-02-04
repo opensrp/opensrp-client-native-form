@@ -18,11 +18,11 @@ import java.util.ArrayList;
 
 public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListener {
 
+    private static String TAG = GenericTextWatcher.class.getCanonicalName();
     private View mView;
     private String mStepName;
     private ArrayList<View.OnFocusChangeListener> onFocusChangeListeners;
     private JsonFormFragment formFragment;
-    private static String TAG = GenericTextWatcher.class.getCanonicalName();
 
     public GenericTextWatcher(String stepName, JsonFormFragment formFragment, View view) {
         this.formFragment = formFragment;
@@ -74,6 +74,7 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
         String openMrsEntity = (String) mView.getTag(R.id.openmrs_entity);
         String openMrsEntityId = (String) mView.getTag(R.id.openmrs_entity_id);
         Boolean popup = (Boolean) mView.getTag(R.id.extraPopup);
+        mView.setTag(R.id.raw_value, text);
         try {
             api.writeValue(mStepName, key, text, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
         } catch (JSONException e) {

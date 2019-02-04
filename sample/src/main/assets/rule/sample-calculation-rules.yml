@@ -31,12 +31,19 @@ actions:
 name: step3_oximetry
 description: oximetry
 priority: 1
-condition: "step3_respiratory_exam ==2"
+condition: "step3_respiratory_exam == 3"
 actions:
 - "calculation = helper.getDateToday()"
 ---
-name: step3_fetal_heart_rate
+name: step2_fetal_heart_rate
 description: fetal_heart_rate
+priority: 1
+condition: "true"
+actions:
+- "calculation = helper.getDateToday()"
+---
+name: step2_test_date
+description: test_date
 priority: 1
 condition: "true"
 actions:

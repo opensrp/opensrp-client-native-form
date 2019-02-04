@@ -33,6 +33,13 @@
       "v_numeric_integer": {
         "value": "true",
         "err": "Enter a valid sfh"
+      },
+      "calculation": {
+        "rules-engine": {
+          "ex-rules": {
+            "rules-file": "sample-calculation-rules.yml"
+          }
+        }
       }
     }
   ]
