@@ -77,7 +77,6 @@ public class JsonFormInteractor {
 
     public List<View> fetchFormElements(String stepName, JsonFormFragment formFragment,
                                         JSONObject parentJson, CommonListener listener, Boolean popup) {
-        Log.d(TAG, "fetchFormElements called");
         List<View> viewsFromJson = new ArrayList<>(5);
         try {
 
@@ -94,7 +93,6 @@ public class JsonFormInteractor {
 
         } catch (JSONException e) {
             Log.e(TAG, "Json exception occurred : " + e.getMessage());
-            e.printStackTrace();
         }
         return viewsFromJson;
     }
@@ -122,8 +120,7 @@ public class JsonFormInteractor {
 
             }
         } catch (JSONException e) {
-            Log.d(TAG, "Json exception occurred : " + e.getMessage());
-            e.printStackTrace();
+            Log.e(TAG, "Json exception occurred : " + e.getMessage());
         }
     }
 
@@ -141,8 +138,7 @@ public class JsonFormInteractor {
                         listener, popup);
             }
         } catch (JSONException e) {
-            Log.d(TAG, "Json exception occurred : " + e.getMessage());
-            e.printStackTrace();
+            Log.e(TAG, "Json exception occurred : " + e.getMessage());
         }
     }
 
@@ -157,10 +153,9 @@ public class JsonFormInteractor {
                 viewsFromJson.addAll(views);
             }
         } catch (Exception e) {
-            Log.d(TAG,
+            Log.e(TAG,
                     "Exception occurred in making view : Exception is : "
                             + e.getMessage());
-            e.printStackTrace();
         }
 
     }

@@ -122,12 +122,6 @@ public class RulesEngineFactory implements RuleListener {
 
         selectedRuleName = facts.get(RuleConstant.SELECTED_RULE);
 
-        if (selectedRuleName != null) {
-            Log.d("Selected Rule", selectedRuleName);
-        } else {
-            Log.e("Selected Rule", "NO SELECTED RULE, We must be in calculation mode");
-        }
-
         facts.put("helper", rulesEngineHelper);
         return facts;
     }
