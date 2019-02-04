@@ -36,16 +36,17 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
         onFocusChangeListeners.add(onFocusChangeListener);
     }
 
+    @Override
     public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
         //any code here should check if correct view has current focus , see afterTextChanged
-        Log.d("GenericTextWatcher", "beforeTextChanged called");
     }
 
+    @Override
     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
         //any code here should check if correct view has current focus, see afterTextChanged
-        Log.d("GenericTextWatcher", "beforeTextChanged called");
     }
 
+    @Override
     public synchronized void afterTextChanged(Editable editable) {
 
         if (editable != null && isRedundantRepetition(editable.toString())) {
@@ -61,7 +62,6 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
 
         mView.setTag(R.id.previous, editable.toString());
 
-        Log.d("RealtimeValidation", "afterTextChanged called");
         JsonApi api = null;
         if (formFragment.getContext() instanceof JsonApi) {
             api = (JsonApi) formFragment.getContext();

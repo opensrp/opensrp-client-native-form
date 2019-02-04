@@ -133,7 +133,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     break;
 
             }
-            Log.d(TAG, "Received Broadcast Message Type " + messageType);
+            // Log.d(TAG, "Received Broadcast Message Type " + messageType);
         }
     };
 
@@ -162,7 +162,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             localBroadcastManager = LocalBroadcastManager.getInstance(this);
 
         } catch (JSONException e) {
-            Log.d(TAG, "Initialization error. Json passed is invalid : " + e.getMessage(), e);
+            Log.e(TAG, "Initialization error. Json passed is invalid : " + e.getMessage(), e);
         }
     }
 
@@ -1619,8 +1619,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             }
 
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
-            Log.d(TAG, "calling updateCalculation on Non TextView or Text View decendant");
+            Log.e(TAG, "calling updateCalculation on Non TextView or Text View decendant", e);
         }
 
     }
@@ -1678,7 +1677,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             }
 
         } catch (NumberFormatException e) {
-            Log.d(TAG, "Error trying to convert " + object + " to a number ", e);
+            Log.e(TAG, "Error trying to convert " + object + " to a number ", e);
         }
         return object;
     }

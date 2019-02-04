@@ -171,7 +171,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
 
     }
 
-    @SuppressLint ("ResourceAsColor")
+    @SuppressLint("ResourceAsColor")
     public void setUpToolBar() {
         getView().setActionBarTitle(mStepDetails.optString("title"));
         getView().setToolbarTitleColor(R.color.white);
@@ -401,7 +401,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         editableView.requestFocusFromTouch();
     }
 
-    @SuppressWarnings ({"unchecked"})
+    @SuppressWarnings({"unchecked"})
     private void setCheckboxesEditable(View editButton) {
         List<View> checkboxLayouts = (ArrayList<View>) editButton.getTag(R.id.editable_view);
         for (View checkboxLayout : checkboxLayouts) {
@@ -504,8 +504,6 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
     }
 
     public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-        Log.d(TAG, "onCheckedChanged called");
-
         if (compoundButton instanceof CheckBox) {
             String parentKey = (String) compoundButton.getTag(R.id.key);
             String openMrsEntityParent = (String) compoundButton.getTag(R.id.openmrs_entity_parent);
@@ -537,7 +535,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                     }
 
                 } catch (Exception e) {
-                    Log.d(TAG, e.getMessage());
+                    Log.e(TAG, e.getMessage(), e);
                 }
             }
 
@@ -619,7 +617,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             }
 
         } catch (JSONException e) {
-            Log.d(TAG, e.getMessage());
+            Log.e(TAG, e.getMessage(), e);
         }
         return null;
     }
