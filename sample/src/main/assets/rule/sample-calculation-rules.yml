@@ -35,9 +35,9 @@ condition: "step3_respiratory_exam ==2"
 actions:
 - "calculation = helper.getDateToday()"
 ---
-name: step3_oximetry
-description: oximetry
+name: step3_fetal_heart_rate
+description: fetal_heart_rate
 priority: 1
-condition: "step3_respiratory_exam ==2"
+condition: "true"
 actions:
 - "calculation = helper.getDateToday()"
