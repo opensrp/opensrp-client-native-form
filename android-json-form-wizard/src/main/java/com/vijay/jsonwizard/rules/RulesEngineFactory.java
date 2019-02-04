@@ -21,7 +21,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class RulesEngineFactory implements RuleListener {
     public final String TAG = RulesEngineFactory.class.getCanonicalName();
@@ -67,7 +66,7 @@ public class RulesEngineFactory implements RuleListener {
         defaultRulesEngine.fire(rules, facts);
     }
 
-    public boolean getRelevance(Map<String, String> relevanceFact, String ruleFilename) {
+    public boolean getRelevance(Facts relevanceFact, String ruleFilename) {
 
         Facts facts = initializeFacts(relevanceFact);
 
@@ -80,20 +79,9 @@ public class RulesEngineFactory implements RuleListener {
         return facts.get(RuleConstant.IS_RELEVANT);
     }
 
-    public String getCalculation(Map<String, String> calculationFact_, String ruleFilename) {
+    public String getCalculation(Facts calculationFact, String ruleFilename) {
 
         //need to clean curValue map as constraint depend on valid values, empties wont do
-
-        Map<String, String> calculationFact = new HashMap<>();
-
-        Set<Map.Entry<String, String>> entries = calculationFact_.entrySet();
-
-        for (Map.Entry<String, String> entry : entries) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-
-            calculationFact.put(key, value.isEmpty() ? "" : value);
-        }
 
         Facts facts = initializeFacts(calculationFact);
 
@@ -106,7 +94,7 @@ public class RulesEngineFactory implements RuleListener {
         return formatCalculationReturnValue(facts.get(RuleConstant.CALCULATION));
     }
 
-    public String getConstraint(Map<String, String> constraintFact, String ruleFilename) {
+    public String getConstraint(Facts constraintFact, String ruleFilename) {
 
         Facts facts = initializeFacts(constraintFact);
 
@@ -119,13 +107,20 @@ public class RulesEngineFactory implements RuleListener {
         return formatCalculationReturnValue(facts.get(RuleConstant.CONSTRAINT));
     }
 
-    private Facts initializeFacts(Map<String, String> factMap) {
+    private Facts initializeFacts(Facts facts) {
 
         if (globalValues != null) {
-            factMap.putAll(globalValues);
+
+            for (Map.Entry<String, String> entry : globalValues.entrySet()) {
+
+                facts.put(RuleConstant.PREFIX.GLOBAL + entry.getKey(), getValue(entry.getValue()));
+            }
+
+
+            facts.asMap().putAll(globalValues);
         }
 
-        selectedRuleName = factMap.get(RuleConstant.SELECTED_RULE);
+        selectedRuleName = facts.get(RuleConstant.SELECTED_RULE);
 
         if (selectedRuleName != null) {
             Log.d("Selected Rule", selectedRuleName);
@@ -133,15 +128,7 @@ public class RulesEngineFactory implements RuleListener {
             Log.e("Selected Rule", "NO SELECTED RULE, We must be in calculation mode");
         }
 
-        Facts facts = new Facts();
         facts.put("helper", rulesEngineHelper);
-
-        for (Map.Entry<String, String> entry : factMap.entrySet()) {
-
-
-            facts.put(getKey(entry.getKey()), getValue(entry.getValue()));
-        }
-
         return facts;
     }
 

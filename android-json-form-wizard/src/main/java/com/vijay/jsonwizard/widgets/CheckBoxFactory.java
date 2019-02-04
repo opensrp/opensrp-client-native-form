@@ -55,6 +55,11 @@ public class CheckBoxFactory implements FormWidgetFactory {
     private List<View> attachJson(String stepName, Context context, JSONObject jsonObject, CommonListener listener,
                                   boolean popup) throws JSONException {
 
+
+        String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
+        String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
+        String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
+
         boolean readOnly = false;
         if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
             readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
@@ -64,10 +69,20 @@ public class CheckBoxFactory implements FormWidgetFactory {
         JSONArray canvasIds = new JSONArray();
         ImageView editButton;
         LinearLayout rootLayout = (LinearLayout) LayoutInflater.from(context).inflate(getLayout(), null);
-        rootLayout.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
 
-        Map<String, View> labelViews = FormUtils
-                .createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly, listener);
+        rootLayout.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+        rootLayout.setId(ViewUtil.generateViewId());
+        rootLayout.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
+        rootLayout.setTag(R.id.openmrs_entity, openMrsEntity);
+        rootLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
+        rootLayout.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
+        rootLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+        rootLayout.setTag(R.id.extraPopup, popup);
+
+        canvasIds.put(rootLayout.getId());
+        rootLayout.setTag(R.id.canvas_ids, canvasIds.toString());
+
+        Map<String, View> labelViews = FormUtils.createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly, listener);
 
         ArrayList<View> editableCheckBoxes = addCheckBoxOptionsElements(jsonObject, context, readOnly, canvasIds, stepName,
                 rootLayout, listener, popup);
@@ -78,8 +93,30 @@ public class CheckBoxFactory implements FormWidgetFactory {
                 showEditButton(jsonObject, editableCheckBoxes, editButton, listener);
             }
 
-
         }
+
+        String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
+        String calculation = jsonObject.optString(JsonFormConstants.CALCULATION);
+        String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
+
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+            rootLayout.setTag(R.id.relevance, relevance);
+            ((JsonApi) context).addSkipLogicView(rootLayout);
+        }
+
+        if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
+            rootLayout.setTag(R.id.constraints, constraints);
+            ((JsonApi) context).addConstrainedView(rootLayout);
+        }
+
+        if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
+            rootLayout.setTag(R.id.calculation, calculation);
+            ((JsonApi) context).addCalculationLogicView(rootLayout);
+        }
+
+
+        ((JsonApi) context).addFormDataView(rootLayout);
+
         views.add(rootLayout);
         return views;
     }
@@ -94,11 +131,6 @@ public class CheckBoxFactory implements FormWidgetFactory {
                                                        String stepName, LinearLayout linearLayout, CommonListener listener,
                                                        boolean popup) throws JSONException {
 
-        String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
-        String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
-        String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
-        String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
-        String calculation = jsonObject.optString(JsonFormConstants.CALCULATION);
 
         JSONArray options = jsonObject.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
         ArrayList<CheckBox> checkBoxes = new ArrayList<>();
@@ -106,8 +138,11 @@ public class CheckBoxFactory implements FormWidgetFactory {
         for (int i = 0; i < options.length(); i++) {
             JSONObject item = options.getJSONObject(i);
             //Get options for alert dialog
-            String labelInfoText = item.optString(JsonFormConstants.LABEL_INFO_TEXT, "");
-            String labelInfoTitle = item.optString(JsonFormConstants.LABEL_INFO_TITLE, "");
+            String labelInfoText = item.optString(JsonFormConstants.LABEL_INFO_TEXT);
+            String labelInfoTitle = item.optString(JsonFormConstants.LABEL_INFO_TITLE);
+            String openMrsEntityParent = item.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
+            String openMrsEntity = item.optString(JsonFormConstants.OPENMRS_ENTITY);
+            String openMrsEntityId = item.optString(JsonFormConstants.OPENMRS_ENTITY_ID);
 
             LinearLayout checkboxLayout = (LinearLayout) LayoutInflater.from(context)
                     .inflate(R.layout.native_form_item_checkbox, null);
@@ -116,19 +151,19 @@ public class CheckBoxFactory implements FormWidgetFactory {
             final CheckBox checkBox = checkboxLayout.findViewById(R.id.checkbox);
             checkBoxes.add(checkBox);
             checkBox.setTag(jsonObject.getString(JsonFormConstants.TYPE));
-            checkBox.setTag(R.id.raw_value, item.getString(JsonFormConstants.TEXT));
-            checkBox.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
-            checkBox.setTag(R.id.extraPopup, popup);
-            checkBox.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
             checkBox.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
             checkBox.setTag(R.id.openmrs_entity, openMrsEntity);
             checkBox.setTag(R.id.openmrs_entity_id, openMrsEntityId);
+            checkBox.setTag(R.id.raw_value, item.getString(JsonFormConstants.TEXT));
+            checkBox.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+            checkBox.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
             checkBox.setTag(R.id.childKey, item.getString(JsonFormConstants.KEY));
-            checkBox.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+            checkBox.setTag(R.id.extraPopup, popup);
+
             checkBox.setOnCheckedChangeListener(listener);
             checkBox.setId(ViewUtil.generateViewId());
             checkboxLayout.setId(ViewUtil.generateViewId());
-            checkboxLayout.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE) + "_parent");
+            checkboxLayout.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE) + JsonFormConstants.SUFFIX.PARENT);
             canvasIds.put(checkboxLayout.getId());
 
             if (!TextUtils.isEmpty(item.optString(JsonFormConstants.VALUE))) {
@@ -145,32 +180,9 @@ public class CheckBoxFactory implements FormWidgetFactory {
             ImageView imageView = checkboxLayout.findViewById(R.id.checkbox_info_icon);
             FormUtils.showInfoIcon(stepName, jsonObject, listener, labelInfoText, labelInfoTitle, imageView, canvasIds);
 
-            ((JsonApi) context).addFormDataView(checkBox);
-
-            if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
-                checkBox.setTag(R.id.relevance, relevance);
-                ((JsonApi) context).addSkipLogicView(checkBox);
-            }
-
-            String constraints = item.optString(JsonFormConstants.CONSTRAINTS);
-            if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
-                checkBox.setTag(R.id.constraints, constraints);
-                ((JsonApi) context).addConstrainedView(checkBox);
-            }
-
-            if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
-                checkBox.setTag(R.id.calculation, calculation);
-                ((JsonApi) context).addCalculationLogicView(checkBox);
-            }
-
             checkboxLayouts.add(checkboxLayout);
             linearLayout.addView(checkboxLayout);
         }
-
-        for (CheckBox checkBox : checkBoxes) {
-            checkBox.setTag(R.id.canvas_ids, canvasIds.toString());
-        }
-
 
         return checkboxLayouts;
     }
