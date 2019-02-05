@@ -96,7 +96,6 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     private JSONObject mJSONObject;
     private PropertyManager propertyManager;
     private Map<String, View> skipLogicViews;
-    private Map<String, View> popUpSkipLogicViews;
     private Map<String, View> calculationLogicViews;
     private Map<String, View> constrainedViews;
     private ArrayList<View> formDataViews;
@@ -173,7 +172,6 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         mToolbar = findViewById(R.id.tb_top);
         setSupportActionBar(mToolbar);
         skipLogicViews = new LinkedHashMap<>();
-        popUpSkipLogicViews = new LinkedHashMap<>();
         calculationLogicViews = new LinkedHashMap<>();
         onActivityResultListeners = new HashMap<>();
         onActivityRequestPermissionResultListeners = new HashMap<>();
@@ -288,37 +286,48 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 String keyAtIndex = item.getString(JsonFormConstants.KEY);
                 String itemType = item.has(JsonFormConstants.TYPE) ? item.getString(JsonFormConstants.TYPE) : "";
                 boolean isSpecialWidget = isSpecialWidget(itemType);
-
                 String cleanKey = isSpecialWidget ? cleanWidgetKey(key, itemType) : key;
 
                 if (cleanKey.equals(keyAtIndex)) {
-
                     if (item.has(JsonFormConstants.TEXT)) {
                         item.put(JsonFormConstants.TEXT, value);
                     } else {
-                        if (popup) {
-                            String itemText = "";
-                            if (itemType.equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
-                                itemText = formUtils.getRadioButtonText(item, value);
-                            }
-                            genericDialogInterface.addSelectedValues(
-                                    formUtils.addAssignedValue(keyAtIndex, "", value, itemType, itemText));
-                            //extraFieldsWithValues = fields;
-                        }
-                        item.put(JsonFormConstants.VALUE,
-                                itemType.equals(JsonFormConstants.HIDDEN) && TextUtils.isEmpty(value) ? item
-                                        .has(JsonFormConstants.VALUE) && !TextUtils
-                                        .isEmpty(item.getString(JsonFormConstants.VALUE)) ? item
-                                        .getString(JsonFormConstants.VALUE) : value : value);
+                        performPopupOperations(value, popup, item, keyAtIndex, itemType);
+                        widgetWriteItemValue(value, item, itemType);
                     }
-                    item.put(JsonFormConstants.OPENMRS_ENTITY_PARENT, openMrsEntityParent);
-                    item.put(JsonFormConstants.OPENMRS_ENTITY, openMrsEntity);
-                    item.put(JsonFormConstants.OPENMRS_ENTITY_ID, openMrsEntityId);
+                    addOpenMrsAttributes(openMrsEntityParent, openMrsEntity, openMrsEntityId, item);
 
                     invokeRefreshLogic(value, popup, cleanKey, null);
                     return;
                 }
             }
+        }
+    }
+
+    private void addOpenMrsAttributes(String openMrsEntityParent, String openMrsEntity, String openMrsEntityId,
+                                      JSONObject item) throws JSONException {
+        item.put(JsonFormConstants.OPENMRS_ENTITY_PARENT, openMrsEntityParent);
+        item.put(JsonFormConstants.OPENMRS_ENTITY, openMrsEntity);
+        item.put(JsonFormConstants.OPENMRS_ENTITY_ID, openMrsEntityId);
+    }
+
+    private void widgetWriteItemValue(String value, JSONObject item, String itemType) throws JSONException {
+        item.put(JsonFormConstants.VALUE,
+                itemType.equals(JsonFormConstants.HIDDEN) && TextUtils.isEmpty(value) ? item
+                        .has(JsonFormConstants.VALUE) && !TextUtils
+                        .isEmpty(item.getString(JsonFormConstants.VALUE)) ? item
+                        .getString(JsonFormConstants.VALUE) : value : value);
+    }
+
+    private void performPopupOperations(String value, boolean popup, JSONObject item, String keyAtIndex, String itemType) {
+        if (popup) {
+            String itemText = "";
+            if (itemType.equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
+                itemText = formUtils.getRadioButtonText(item, value);
+            }
+            genericDialogInterface.addSelectedValues(
+                    formUtils.addAssignedValue(keyAtIndex, "", value, itemType, itemText));
+            //extraFieldsWithValues = fields;
         }
     }
 
@@ -361,12 +370,11 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     protected String cleanWidgetKey(String itemKey, String itemType) {
         String key = itemKey;
 
-        if (isNumberSelector(itemType)) {
-            if (itemKey.endsWith(JsonFormConstants.SUFFIX.TEXT_VIEW) || itemKey.endsWith(JsonFormConstants.SUFFIX.SPINNER)) {
-                key = itemKey.endsWith(JsonFormConstants.SUFFIX.TEXT_VIEW) ? itemKey
-                        .substring(0, itemKey.indexOf(JsonFormConstants.SUFFIX.TEXT_VIEW)) : itemKey
-                        .substring(0, itemKey.indexOf(JsonFormConstants.SUFFIX.SPINNER));
-            }
+        if (isNumberSelector(itemType) && itemKey.endsWith(JsonFormConstants.SUFFIX.TEXT_VIEW) || itemKey
+                .endsWith(JsonFormConstants.SUFFIX.SPINNER)) {
+            key = itemKey.endsWith(JsonFormConstants.SUFFIX.TEXT_VIEW) ? itemKey
+                    .substring(0, itemKey.indexOf(JsonFormConstants.SUFFIX.TEXT_VIEW)) : itemKey
+                    .substring(0, itemKey.indexOf(JsonFormConstants.SUFFIX.SPINNER));
         }
 
         return key;
@@ -585,6 +593,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         String relevanceTag = (String) view.getTag(R.id.relevance);
         if (relevanceTag != null && relevanceTag.length() > 0) {
             try {
+                boolean isPopup = popup;
                 JSONObject relevance = new JSONObject(relevanceTag);
                 Iterator<String> keys = relevance.keys();
                 boolean ok = true;
@@ -593,9 +602,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     JSONObject curRelevance = relevance.has(curKey) ? relevance.getJSONObject(curKey) : null;
 
                     String[] address = getAddress(view, curKey, curRelevance);
-                    popup = checkPopUpValidity(address, popup);
+                    isPopup = checkPopUpValidity(address, popup);
                     if (address.length > 1) {
-                        Facts curValueMap = getValueFromAddress(address, popup);
+                        Facts curValueMap = getValueFromAddress(address, isPopup);
                         try {
                             boolean comparison = isRelevant(curValueMap, curRelevance);
 
@@ -607,7 +616,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
                     }
                 }
-                toggleViewVisibility(view, ok, popup);
+                toggleViewVisibility(view, ok, isPopup);
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage(), e);
             }
@@ -1664,21 +1673,17 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     }
 
     protected Object processNumberValues(Object object) {
-
+        Object jsonObject = object;
         try {
-
-            if (object.toString().contains(".")) {
-
-                object = String.valueOf((float) Math.round(Float.valueOf(object.toString()) * 100) / 100);
-
+            if (jsonObject.toString().contains(".")) {
+                jsonObject = String.valueOf((float) Math.round(Float.valueOf(jsonObject.toString()) * 100) / 100);
             } else {
-                object = Integer.valueOf(object.toString());
+                jsonObject = Integer.valueOf(jsonObject.toString());
             }
-
         } catch (NumberFormatException e) {
             Log.e(TAG, "Error trying to convert " + object + " to a number ", e);
         }
-        return object;
+        return jsonObject;
     }
 
     protected String getKey(JSONObject object) throws JSONException {

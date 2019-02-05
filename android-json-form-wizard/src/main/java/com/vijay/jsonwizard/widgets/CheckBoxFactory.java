@@ -78,11 +78,10 @@ public class CheckBoxFactory implements FormWidgetFactory {
         rootLayout.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
         rootLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
         rootLayout.setTag(R.id.extraPopup, popup);
-
         canvasIds.put(rootLayout.getId());
-        rootLayout.setTag(R.id.canvas_ids, canvasIds.toString());
 
-        Map<String, View> labelViews = FormUtils.createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly, listener);
+        Map<String, View> labelViews = FormUtils
+                .createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly, listener);
 
         ArrayList<View> editableCheckBoxes = addCheckBoxOptionsElements(jsonObject, context, readOnly, canvasIds, stepName,
                 rootLayout, listener, popup);
@@ -94,7 +93,13 @@ public class CheckBoxFactory implements FormWidgetFactory {
             }
 
         }
+        attachRefreshLogic(jsonObject, context, rootLayout);
 
+        views.add(rootLayout);
+        return views;
+    }
+
+    private void attachRefreshLogic(JSONObject jsonObject, Context context, LinearLayout rootLayout) {
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
         String calculation = jsonObject.optString(JsonFormConstants.CALCULATION);
         String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
@@ -114,11 +119,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
             ((JsonApi) context).addCalculationLogicView(rootLayout);
         }
 
-
         ((JsonApi) context).addFormDataView(rootLayout);
-
-        views.add(rootLayout);
-        return views;
     }
 
 

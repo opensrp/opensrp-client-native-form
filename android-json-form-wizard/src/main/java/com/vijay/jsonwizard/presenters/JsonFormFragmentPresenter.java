@@ -171,7 +171,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
 
     }
 
-    @SuppressLint("ResourceAsColor")
+    @SuppressLint ("ResourceAsColor")
     public void setUpToolBar() {
         getView().setActionBarTitle(mStepDetails.optString("title"));
         getView().setToolbarTitleColor(R.color.white);
@@ -314,10 +314,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                 break;
 
             case PermissionUtils.PHONE_STATE_PERMISSION_REQUEST_CODE:
-                if (PermissionUtils
-                        .verifyPermissionGranted(permissions, grantResults, Manifest.permission.READ_PHONE_STATE)) {
-                    //TODO Find out functionality which uses Read Phone State permission
-                }
+                //TODO Find out functionality which uses Read Phone State permission
                 break;
             default:
                 break;
@@ -401,7 +398,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         editableView.requestFocusFromTouch();
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings ({"unchecked"})
     private void setCheckboxesEditable(View editButton) {
         List<View> checkboxLayouts = (ArrayList<View>) editButton.getTag(R.id.editable_view);
         for (View checkboxLayout : checkboxLayouts) {

@@ -76,13 +76,15 @@ public class DatePickerFactory implements FormWidgetFactory {
     }
 
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject,
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
+                                       JSONObject jsonObject,
                                        CommonListener listener, boolean popup) {
         return attachJson(stepName, context, formFragment, jsonObject, popup);
     }
 
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
+                                       JSONObject jsonObject, CommonListener listener) throws Exception {
         return attachJson(stepName, context, formFragment, jsonObject, false);
     }
 
@@ -116,7 +118,8 @@ public class DatePickerFactory implements FormWidgetFactory {
         return views;
     }
 
-    protected void attachLayout(String stepName, final Context context, JsonFormFragment formFragment, JSONObject jsonObject, final MaterialEditText editText, final TextView duration) {
+    protected void attachLayout(String stepName, final Context context, JsonFormFragment formFragment, JSONObject jsonObject,
+                                final MaterialEditText editText, final TextView duration) {
 
         try {
             String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
@@ -124,6 +127,7 @@ public class DatePickerFactory implements FormWidgetFactory {
             String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
             String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
             String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
+            String calculations = jsonObject.optString(JsonFormConstants.CALCULATION);
 
             duration.setTag(R.id.key, jsonObject.getString(KEY.KEY));
             duration.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
@@ -181,6 +185,11 @@ public class DatePickerFactory implements FormWidgetFactory {
                 editText.setTag(R.id.constraints, constraints);
                 ((JsonApi) context).addConstrainedView(editText);
             }
+
+            if (!TextUtils.isEmpty(calculations) && context instanceof JsonApi) {
+                editText.setTag(R.id.calculation, calculations);
+                ((JsonApi) context).addCalculationLogicView(editText);
+            }
             editText.setFocusable(false);
         } catch (Exception e) {
             e.printStackTrace();
@@ -188,7 +197,8 @@ public class DatePickerFactory implements FormWidgetFactory {
 
     }
 
-    private void updateEditText(MaterialEditText editText, JSONObject jsonObject, String stepName, Context context, TextView duration) throws JSONException {
+    private void updateEditText(MaterialEditText editText, JSONObject jsonObject, String stepName, Context context,
+                                TextView duration) throws JSONException {
 
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
@@ -228,7 +238,8 @@ public class DatePickerFactory implements FormWidgetFactory {
                 DATE_FORMAT_REGEX));
     }
 
-    private DatePickerDialog createDateDialog(Context context, final TextView duration, final MaterialEditText editText, JSONObject jsonObject) throws JSONException {
+    private DatePickerDialog createDateDialog(Context context, final TextView duration, final MaterialEditText editText,
+                                              JSONObject jsonObject) throws JSONException {
         final DatePickerDialog datePickerDialog = new DatePickerDialog();
         datePickerDialog.setContext(context);
 

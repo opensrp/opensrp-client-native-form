@@ -83,7 +83,7 @@ public class EditTextFactory implements FormWidgetFactory {
 
         FormUtils.showEditButton(jsonObject, editText, editButton, listener);
 
-        attachLayout(stepName, context, formFragment, jsonObject, editText, editButton, popup);
+        attachLayout(stepName, context, formFragment, jsonObject, editText, editButton);
 
         JSONArray canvasIds = new JSONArray();
         rootLayout.setId(ViewUtil.generateViewId());
@@ -111,7 +111,7 @@ public class EditTextFactory implements FormWidgetFactory {
     }
 
     protected void attachLayout(String stepName, Context context, JsonFormFragment formFragment,
-                                JSONObject jsonObject, MaterialEditText editText, ImageView editButton, boolean popup)
+                                JSONObject jsonObject, MaterialEditText editText, ImageView editButton)
             throws Exception {
 
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
@@ -155,10 +155,10 @@ public class EditTextFactory implements FormWidgetFactory {
         }
 
         editText.addTextChangedListener(new GenericTextWatcher(stepName, formFragment, editText));
-        initSpecialViewsRefs(context, jsonObject, editText, popup);
+        initSpecialViewsRefs(context, jsonObject, editText);
     }
 
-    private void initSpecialViewsRefs(Context context, JSONObject jsonObject, MaterialEditText editText, boolean popup) {
+    private void initSpecialViewsRefs(Context context, JSONObject jsonObject, MaterialEditText editText) {
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
         String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
         String calculation = jsonObject.optString(JsonFormConstants.CALCULATION);

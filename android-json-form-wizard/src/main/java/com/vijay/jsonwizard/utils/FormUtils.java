@@ -49,9 +49,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.vijay.jsonwizard.constants.JsonFormConstants.FIELDS;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
-
 /**
  * Created by vijay on 24-05-2015.
  */
@@ -438,7 +435,7 @@ public class FormUtils {
         if (reasonsText != null) {
             LinearLayout reasonTextViewParent = (LinearLayout) reasonsText.getParent();
             LinearLayout radioButtonParent = (LinearLayout) button.getParent().getParent();
-            if (reasonTextViewParent == radioButtonParent) {
+            if (reasonTextViewParent.equals(radioButtonParent)) {
                 reasonsText.setVisibility(View.GONE);
             }
         }
@@ -565,29 +562,6 @@ public class FormUtils {
         return stringBuilder.toString();
     }
 
-    private static void resetSecondaryValues(JSONArray mainJson, JSONObject radioJsonObject) throws JSONException {
-
-        String radioKey = radioJsonObject.getString(JsonFormConstants.KEY);
-        JSONObject newRadioJson = getJsonObjectFromArray(mainJson, radioKey);
-        JSONArray options = newRadioJson != null ? newRadioJson.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME) : null;
-        if (options != null) {
-            for (int n = 0; n < options.length(); n++) {
-                options.getJSONObject(n).remove(JsonFormConstants.SECONDARY_VALUE);
-            }
-        }
-
-    }
-
-    private static JSONObject getJsonObjectFromArray(JSONArray jsonArray, String key) throws JSONException {
-        for (int n = 0; n < jsonArray.length(); n++) {
-            JSONObject object = jsonArray.getJSONObject(n);
-            String currentKey = object.getString(JsonFormConstants.KEY);
-            if (currentKey.equals(key))
-                return object;
-        }
-        return null;
-    }
-
     public static JSONArray fields(JSONObject jsonForm, String step) {
         try {
             JSONObject stepJSONObject = jsonForm.has(step) ? jsonForm.getJSONObject(step) : null;
@@ -595,7 +569,8 @@ public class FormUtils {
                 return null;
             }
 
-            return stepJSONObject.has(FIELDS) ? stepJSONObject.getJSONArray(FIELDS) : null;
+            return stepJSONObject.has(JsonFormConstants.FIELDS) ? stepJSONObject
+                    .getJSONArray(JsonFormConstants.FIELDS) : null;
         } catch (JSONException e) {
             Log.e(TAG, "", e);
         }
@@ -609,7 +584,7 @@ public class FormUtils {
 
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = getJSONObject(jsonArray, i);
-            String keyVal = getString(jsonObject, KEY);
+            String keyVal = getString(jsonObject, JsonFormConstants.KEY);
             if (keyVal != null && keyVal.equals(key)) {
                 return jsonObject;
             }
