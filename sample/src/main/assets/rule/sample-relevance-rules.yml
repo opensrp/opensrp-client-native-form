@@ -139,3 +139,46 @@ priority: 1
 condition: "(step3_fetal_heart_rate > 0 && (step3_fetal_heart_rate < 110 || step3_fetal_heart_rate > 160))"
 actions:
 - "isRelevant = true"
+---
+name: step3_miscarriages_abortions_label
+description: Miscarrige abortions label
+priority: 1
+condition: "step3_previous_pregnancies > 0 "
+actions:
+- "isRelevant = true"
+---
+name: step3_miscarriages_abortions
+description: Miscarrige abortions
+priority: 1
+condition: "step3_previous_pregnancies > 0 "
+actions:
+- "isRelevant = true"
+---
+name: step3_live_births_label
+description: Live births label
+priority: 1
+condition: "((step3_previous_pregnancies - step3_miscarriages_abortions) > 0)"
+actions:
+- "isRelevant = true"
+---
+name: step3_live_births
+description: Live births
+priority: 1
+condition: "((step3_previous_pregnancies - step3_miscarriages_abortions) > 0)"
+actions:
+- "isRelevant = true"
+
+---
+name: step3_stillbirths_label
+description: Still births label
+priority: 1
+condition: "((step3_previous_pregnancies - step3_miscarriages_abortions - step3_live_births) > 0)"
+actions:
+- "isRelevant = true"
+---
+name: step3_stillbirths
+description: Slill births
+priority: 1
+condition: "((step3_previous_pregnancies - step3_miscarriages_abortions - step3_live_births) > 0) "
+actions:
+- "isRelevant = true"

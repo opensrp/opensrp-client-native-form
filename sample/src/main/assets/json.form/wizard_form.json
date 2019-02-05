@@ -222,7 +222,7 @@
   "step3": {
     "title": "Maternal Exam",
     "fields": [
-      {
+      /*{
         "key": "fetal_heartbeat",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -789,6 +789,298 @@
           "step3:oedema": {
             "type": "string",
             "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },*/
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "20dp"
+      },
+      {
+        "key": "gravida_label",
+        "type": "label",
+        "label_text_style": "bold",
+        "text": "No. of pregnancies (including this pregnancy)",
+        "text_color": "#000000",
+        "v_required": {
+          "value": true
+        }
+      },
+      {
+        "key": "gravida",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "Gravida",
+        "openmrs_entity_id": "5624",
+        "type": "numbers_selector",
+        "number_of_selectors": "5",
+        "start_number": "1",
+        "max_value": "15",
+        "text_size": "16px",
+        "text_color": "#000000",
+        "selected_text_color": "#ffffff",
+        "v_required": {
+          "value": true
+        }
+      },
+      {
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "key": "previous_pregnancies",
+        "type": "hidden",
+        "label_text_style": "bold",
+        "text_color": "#FF0000",
+        "v_required": {
+          "value": false
+        },
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-calculation-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "24dp"
+      },
+      {
+        "key": "miscarriages_abortions_label",
+        "type": "label",
+        "label_text_style": "bold",
+        "text": "No. of pregnancies lost/ended (before 22 weeks / 5 months)",
+        "text_color": "#000000",
+        "v_required": {
+          "value": true
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "miscarriages_abortions",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "Number of abortions/miscarriages",
+        "openmrs_entity_id": "1823",
+        "type": "numbers_selector",
+        "number_of_selectors": "5",
+        "start_number": "0",
+        "max_value": "15",
+        "text_size": "16px",
+        "text_color": "#000000",
+        "selected_text_color": "#ffffff",
+        "v_required": {
+          "value": true
+        },
+        "constraints": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-constraint-rules.yml"
+            }
+          }
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "24dp"
+      },
+      {
+        "key": "live_births_label",
+        "type": "label",
+        "label_text_style": "bold",
+        "text": "No. of live births (after 22 weeks)",
+        "text_color": "#000000",
+        "v_required": {
+          "value": true
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "live_births",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "Number of live deliveries",
+        "openmrs_entity_id": "160601 ",
+        "type": "numbers_selector",
+        "number_of_selectors": "5",
+        "start_number": "0",
+        "max_value": "15",
+        "text_size": "16px",
+        "text_color": "#000000",
+        "selected_text_color": "#ffffff",
+        "v_required": {
+          "value": true
+        },
+        "constraints": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-constraint-rules.yml"
+            }
+          }
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "24dp"
+      },
+      {
+        "key": "stillbirths_label",
+        "type": "label",
+        "label_text_style": "bold",
+        "text": "No. of stillbirths (after 22 weeks)",
+        "text_color": "#000000",
+        "v_required": {
+          "value": true
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "stillbirths",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "Number of prior stillbirths ",
+        "openmrs_entity_id": "160077 ",
+        "type": "numbers_selector",
+        "number_of_selectors": "5",
+        "start_number": "0",
+        "max_value": "15",
+        "text_size": "16px",
+        "text_color": "#000000",
+        "selected_text_color": "#ffffff",
+        "v_required": {
+          "value": true
+        },
+        "constraints": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-constraint-rules.yml"
+            }
+          }
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "key": "parity",
+        "type": "hidden",
+        "label_text_style": "bold",
+        "text_color": "#FF0000",
+        "v_required": {
+          "value": false
+        },
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-calculation-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "24dp"
+      },
+      {
+        "key": "c_sections_label",
+        "type": "label",
+        "label_text_style": "bold",
+        "text": "No. of C-sections",
+        "text_color": "#000000",
+        "v_required": {
+          "value": true
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "c_sections",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "Number of live deliveries",
+        "openmrs_entity_id": "160601 ",
+        "type": "numbers_selector",
+        "number_of_selectors": "5",
+        "start_number": "0",
+        "max_value": "15",
+        "text_size": "16px",
+        "text_color": "#000000",
+        "selected_text_color": "#ffffff",
+        "v_required": {
+          "value": true
+        },
+        "constraints": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-constraint-rules.yml"
+            }
+          }
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-relevance-rules.yml"
+            }
           }
         }
       }

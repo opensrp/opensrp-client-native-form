@@ -39,7 +39,7 @@ import java.util.Map;
 public class NumberSelectorFactory implements FormWidgetFactory {
     public static final String TAG = NumberSelectorFactory.class.getCanonicalName();
     private static CustomTextView selectedTextView;
-    private static NumberSelectorFactoryReceiver receiver = null;
+    private static NumberSelectorFactoryReceiver receiver;
     private SelectedNumberClickListener selectedNumberClickListener = new SelectedNumberClickListener();
     private Context context;
     private CommonListener listener;
@@ -427,24 +427,26 @@ public class NumberSelectorFactory implements FormWidgetFactory {
                 JSONObject jsonObject = jsonObjectMap.get(intent.getStringExtra(JsonFormConstants.JSON_OBJECT_KEY));
                 boolean isPopUp = intent.getBooleanExtra(JsonFormConstants.IS_POPUP, false);
 
-                jsonObject.put(JsonFormConstants.MAX_SELECTION_VALUE, maxValue);
-                if (jsonObject.has(JsonFormConstants.NUMBER_OF_SELECTORS_ORIGINAL)) {
-                    jsonObject.put(JsonFormConstants.NUMBER_OF_SELECTORS, maxValue < jsonObject.getInt(JsonFormConstants
-                            .NUMBER_OF_SELECTORS_ORIGINAL) ? maxValue : jsonObject
-                            .getInt(JsonFormConstants.NUMBER_OF_SELECTORS_ORIGINAL));
-                } else {
-                    jsonObject.put(JsonFormConstants.NUMBER_OF_SELECTORS, maxValue < jsonObject.getInt(JsonFormConstants
-                            .NUMBER_OF_SELECTORS) ? maxValue : jsonObject.getInt(JsonFormConstants.NUMBER_OF_SELECTORS));
+                if (jsonObject != null) {
+                    jsonObject.put(JsonFormConstants.MAX_SELECTION_VALUE, maxValue);
 
+                    if (jsonObject.has(JsonFormConstants.NUMBER_OF_SELECTORS_ORIGINAL)) {
+                        jsonObject.put(JsonFormConstants.NUMBER_OF_SELECTORS, maxValue < jsonObject.getInt(JsonFormConstants
+                                .NUMBER_OF_SELECTORS_ORIGINAL) ? maxValue : jsonObject
+                                .getInt(JsonFormConstants.NUMBER_OF_SELECTORS_ORIGINAL));
+                    } else {
+                        jsonObject.put(JsonFormConstants.NUMBER_OF_SELECTORS, maxValue < jsonObject.getInt(JsonFormConstants
+                                .NUMBER_OF_SELECTORS) ? maxValue : jsonObject.getInt(JsonFormConstants.NUMBER_OF_SELECTORS));
+
+                    }
+                    LinearLayout rootLayout = rootLayoutMap.get(intent.getStringExtra(JsonFormConstants.JSON_OBJECT_KEY));
+                    rootLayout.removeAllViews();
+                    rootLayout.setTag(R.id.is_automatic, true);
+                    createTextViews(context, jsonObject, rootLayout, listener,
+                            intent.getStringExtra(JsonFormConstants.STEPNAME), isPopUp);
+                    rootLayout.setTag(R.id.is_automatic, null);
                 }
 
-                LinearLayout rootLayout = rootLayoutMap.get(intent.getStringExtra(JsonFormConstants.JSON_OBJECT_KEY));
-                rootLayout.removeAllViews();
-                rootLayout.setTag(R.id.is_automatic, true);
-                createTextViews(context, jsonObject, rootLayout, listener,
-                        intent.getStringExtra(JsonFormConstants.STEPNAME),
-                        isPopUp);
-                rootLayout.setTag(R.id.is_automatic, null);
 
             } catch (JSONException e) {
                 Log.e(TAG, e.getMessage(), e);

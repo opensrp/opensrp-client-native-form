@@ -48,3 +48,31 @@ priority: 1
 condition: "true"
 actions:
 - "calculation = helper.getDateToday()"
+---
+name: step3_previous_pregnancies
+description: Previous pregnancies
+priority: 1
+condition: "step3_gravida > 0"
+actions:
+- "calculation = step3_gravida - 1 "
+---
+name: step3_parity
+description: Parity calculation
+priority: 1
+condition: "true"
+actions:
+- "calculation = step3_live_births + step3_stillbirths"
+---
+name: step3_preeclampsia_risk
+description: preeclampsia_risk
+priority: 1
+condition: "(!global_no_of_fetuses.isEmpty() && global_no_of_fetuses >= 2) || step3_prev_preg_comps.contains('pre_eclampsia') || step3_prev_preg_comps.contains('eclampsia') || step3_prev_preg_comps.contains('convulsions') || step4_health_conditions.contains('autoimmune_disease') || step4_health_conditions.contains('diabetes') || step4_health_conditions.contains('hypertension') || step4_health_conditions.contains('kidney_disease')"
+actions:
+- "calculation = 1"
+---
+name: step3_gdm_risk
+description: gdm_risk
+priority: 1
+condition: "(!global_bmi.isEmpty() && global_bmi >= 30) || step3_prev_preg_comps.contains('gestational_diabetes') || step3_prev_preg_comps.contains('macrosomia') || (!global_urine_glucose.isEmpty() && (global_urine_glucose == '++' || global_urine_glucose == '+++' || global_urine_glucose == '++++'))"
+actions:
+- "calculation = 1"

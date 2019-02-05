@@ -212,7 +212,6 @@ public class RulesEngineFactory implements RuleListener {
 
         } else if (value.contains(".")) {
             try {
-
                 value = String.valueOf((float) Math.round(Float.valueOf(value) * 100) / 100);
             } catch (NumberFormatException e) {
 

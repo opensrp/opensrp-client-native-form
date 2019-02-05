@@ -1161,9 +1161,10 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
      * This method checks whether a constraint has been enforced and returns an error message if not The error message should be displayable
      * to the user
      *
-     * @param value      The value to be checked
-     * @param constraint The constraint expression to use
-     * @return An error message if constraint has not been enfored or NULL if constraint enforced
+     * @param value      {@link String} The value to be checked
+     * @param view       {@link View} The value to be checked
+     * @param constraint {@link JSONObject} The constraint expression to use
+     * @return An error message if constraint has not been enforced or NULL if constraint enforced
      * @throws Exception
      */
     private String enforceConstraint(String value, View view, JSONObject constraint) throws Exception {
@@ -1180,24 +1181,25 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             String b = matcher.group(2);
             String[] args = getFunctionArgs(b, value);
 
-            boolean viewDoesntHaveValue = TextUtils.isEmpty(value);
+            boolean viewDoesNotHaveValue = TextUtils.isEmpty(value);
             if (view instanceof CheckBox) {
-                viewDoesntHaveValue = !((CheckBox) view).isChecked();
+                viewDoesNotHaveValue = !((CheckBox) view).isChecked();
             } else if (isNumberSelectorConstraint(view) || isDatePickerNativeRadio(view)) {
                 return args.length > 1 ? args[1] : "";//clever fix to pass back the max value for number selectors
 
             }
 
-            if (viewDoesntHaveValue || TextUtils.isEmpty(args[0]) || TextUtils.isEmpty(args[1]) || comparisons
-                    .get(functionName).compare
-                            (args[0], type, args[1])) {
-                return null;
-            }
+            if (checkViewValues(type, functionName, args, viewDoesNotHaveValue)) return null;
         } else {
             Log.d(TAG, "Matcher didn't work with function");
         }
 
         return errorMessage;
+    }
+
+    private boolean checkViewValues(String type, String functionName, String[] args, boolean viewDoesNotHaveValue) {
+        return viewDoesNotHaveValue || TextUtils.isEmpty(args[0]) || TextUtils.isEmpty(args[1]) || comparisons
+                .get(functionName).compare(args[0], type, args[1]);
     }
 
     private String enforceConstraint(Facts curValueMap, JSONObject constraint) throws Exception {
@@ -1654,15 +1656,11 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             value = object.opt(JsonFormConstants.VALUE);
 
             if (isNumberWidget(object)) {
-
                 value = TextUtils.isEmpty(object.optString(JsonFormConstants.VALUE)) ? 0 : processNumberValues(
                         object.optString(JsonFormConstants.VALUE));
-
             } else if (value != null && !TextUtils.isEmpty(object.getString(JsonFormConstants.VALUE)) && canHaveNumber(
                     object)) {
-
                 value = processNumberValues(value);
-
             }
 
         } else {
