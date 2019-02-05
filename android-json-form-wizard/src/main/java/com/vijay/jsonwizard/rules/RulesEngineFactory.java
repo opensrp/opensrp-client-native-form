@@ -126,11 +126,6 @@ public class RulesEngineFactory implements RuleListener {
         return facts;
     }
 
-    private String getKey(String key) {
-        return !key.startsWith(RuleConstant.STEP) && !key
-                .startsWith(RuleConstant.SELECTED_RULE) ? RuleConstant.PREFIX.GLOBAL + key : key;
-    }
-
     private Object getValue(String value) {
 
         String rawValue = value.trim();

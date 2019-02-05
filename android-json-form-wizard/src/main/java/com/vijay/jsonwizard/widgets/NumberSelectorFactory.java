@@ -38,8 +38,8 @@ import java.util.Map;
 
 public class NumberSelectorFactory implements FormWidgetFactory {
     public static final String TAG = NumberSelectorFactory.class.getCanonicalName();
+    public static NumberSelectorFactoryReceiver receiver;
     private static CustomTextView selectedTextView;
-    private static NumberSelectorFactoryReceiver receiver;
     private SelectedNumberClickListener selectedNumberClickListener = new SelectedNumberClickListener();
     private Context context;
     private CommonListener listener;
@@ -47,7 +47,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
     private Map<String, LinearLayout> rootLayoutMap = new HashMap<>();
 
     public NumberSelectorFactory() {
-        receiver = new NumberSelectorFactoryReceiver();
+        NumberSelectorFactory.receiver = new NumberSelectorFactoryReceiver();
     }
 
     @SuppressLint ("NewApi")
@@ -214,11 +214,9 @@ public class NumberSelectorFactory implements FormWidgetFactory {
     }
 
     private List<View> attachJson(String stepName, Context context, JSONObject jsonObject, CommonListener listener,
-                                  boolean popup) throws
-            JSONException {
+                                  boolean popup) throws JSONException {
         this.context = context;
         this.listener = listener;
-
         jsonObjectMap.put(jsonObject.getString(JsonFormConstants.KEY), jsonObject);
 
         List<View> views = new ArrayList<>(1);
