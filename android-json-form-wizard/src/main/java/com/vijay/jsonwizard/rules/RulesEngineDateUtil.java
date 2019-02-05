@@ -142,9 +142,23 @@ public class RulesEngineDateUtil {
         return date.toString(FormUtils.NATIIVE_FORM_DATE_FORMAT_PATTERN);
     }
 
+    /**
+     * Returns a formatted age string from given date till today
+     * @param date
+     * @return String date
+     */
     public String getDuration(String date) {
         return Utils.getDuration(date);
+    }
 
+    /**
+     * Returns a formatted age string from startdate to provided end date
+     * @param date
+     * @param endDate
+     * @return String
+     */
+    public String getDuration(String date, String endDate) {
+        return Utils.getDuration(date, endDate);
     }
 
     public String getWeeksAndDaysFromDays(Integer days) {

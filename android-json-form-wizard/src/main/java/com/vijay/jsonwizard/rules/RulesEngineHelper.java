@@ -35,6 +35,10 @@ public class RulesEngineHelper {
 
     }
 
+    public String getDuration(String date, String endDate) {
+        return rulesEngineDateUtil.getDuration(date, endDate);
+    }
+
     public String getWeeksAndDaysFromDays(Integer days) {
 
         return rulesEngineDateUtil.getWeeksAndDaysFromDays(days);
