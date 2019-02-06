@@ -2,6 +2,8 @@ package com.vijay.jsonwizard.interfaces;
 
 import android.view.View;
 
+import com.vijay.jsonwizard.customviews.GenericPopupDialog;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -62,6 +64,8 @@ public interface JsonApi {
 
     void refreshCalculationLogic(String parentKey, String childKey, boolean popup);
 
+    void invokeRefreshLogic(String value, boolean popup, String parentKey, String childKey);
+
     void addFormDataView(View view);
 
     ArrayList<View> getFormDataViews();
@@ -72,7 +76,8 @@ public interface JsonApi {
 
     void addOnActivityResultListener(Integer requestCode, OnActivityResultListener onActivityResultListener);
 
-    void addOnActivityRequestPermissionResultListener(Integer requestCode, OnActivityRequestPermissionResultListener onActivityRequestPermissionResultListener);
+    void addOnActivityRequestPermissionResultListener(Integer requestCode,
+                                                      OnActivityRequestPermissionResultListener onActivityRequestPermissionResultListener);
 
     void removeOnActivityRequestPermissionResultListener(Integer requestCode);
 
@@ -87,4 +92,6 @@ public interface JsonApi {
     void registerLifecycleListener(LifeCycleListener lifeCycleListener);
 
     void unregisterLifecycleListener(LifeCycleListener lifeCycleListener);
+
+    void setGenericPopup(GenericPopupDialog context);
 }

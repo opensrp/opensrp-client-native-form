@@ -85,6 +85,7 @@
             "specify_widget": "check_box",
             "content_form": "child_enrollment_sub_form",
             "content_form_location": "",
+            "secondary_suffix": "test",
             "secondary_value": [
               {
                 "key": "respiratory_exam_abnormal",
@@ -139,6 +140,7 @@
             "specify_widget": "check_box",
             "content_form": "child_enrollment_two_sub_form",
             "content_form_location": "",
+            "secondary_suffix": "bpm",
             "secondary_value": [
               {
                 "key": "respiratory_exam_radio_button",
@@ -156,7 +158,13 @@
               }
             ]
           }
-        ]
+        ],
+        "relevance": {
+          "step1:repiratory_exam": {
+            "type": "string",
+            "ex": "equalTo(., \"1\")"
+          }
+        }
       },
       {
         "key": "repiratory_exam_three",
@@ -183,7 +191,48 @@
             "text": "Abnormal",
             "specify_info": "Specify",
             "specify_info_color": "#b5b5b5",
-            "specify_widget": "check_box"
+            "specify_widget": "check_box",
+            "content_form": "child_enrollment_third_sub_form",
+            "secondary_suffix": "bpm",
+            "content_form_location": ""
+          }
+        ],
+        "relevance": {
+          "step1:repiratory_exam_two": {
+            "type": "string",
+            "ex": "equalTo(., \"2\")"
+          }
+        }
+      },
+      {
+        "key": "repiratory_exam_four",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Respiratory exam four",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "extra_rel": true,
+        "has_extra_rel": "3",
+        "options": [
+          {
+            "key": "1",
+            "text": "Not done"
+          },
+          {
+            "key": "2",
+            "text": "Normal"
+          },
+          {
+            "key": "3",
+            "text": "Abnormal",
+            "specify_info": "Specify",
+            "specify_info_color": "#b5b5b5",
+            "specify_widget": "check_box",
+            "content_form": "child_enrollment_third_sub_form",
+            "secondary_suffix": "bpm",
+            "content_form_location": ""
           }
         ]
       }

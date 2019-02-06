@@ -1,55 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/linearLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    >
+    android:baselineAligned="true"
+    android:paddingBottom="@dimen/label_bottom_padding">
+
 
     <com.vijay.jsonwizard.views.CustomTextView
         android:id="@+id/label_text_number"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:textAlignment="center"
-        android:visibility="gone" />
+        android:layout_height="match_parent"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.vijay.jsonwizard.views.CustomTextView
         android:id="@+id/label_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_toStartOf="@+id/label_edit_button"
-        android:layout_toLeftOf="@+id/label_edit_button"
-        android:layout_toEndOf="@+id/label_text_number"
-        android:layout_toRightOf="@+id/label_text_number"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp" />
-    <ImageView
-        android:background="@null"
-        android:id="@+id/label_edit_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toStartOf="@+id/label_info"
-        android:layout_toLeftOf="@+id/label_info"
-        android:layout_marginLeft="4dp"
-        android:layout_marginStart="4dp"
-        android:paddingBottom="4dp"
-        android:paddingTop="4dp"
-        android:layout_gravity="center_vertical"
-        android:contentDescription="@string/info_label"
-        app:srcCompat="@drawable/edit_button_bg"
-        android:visibility="gone" />
-    <ImageView
-        android:id="@+id/label_info"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_gravity="center_vertical"
-        android:contentDescription="@string/info_label"
-        android:src="@drawable/ic_icon_info_filled"
-        android:visibility="invisible" />
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:gravity="start"
+        android:singleLine="false"
+        app:layout_constraintEnd_toStartOf="@+id/button_layout"
+        app:layout_constraintStart_toEndOf="@+id/label_text_number"
+        app:layout_constraintTop_toTopOf="parent" />
 
-</RelativeLayout>
+    <LinearLayout
+        android:id="@+id/button_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/label_edit_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:background="@null"
+            android:contentDescription="@string/edit_button_label"
+            android:src="@drawable/edit_button_bg"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/label_info"
+            android:layout_width="@dimen/default_info_icon_size"
+            android:layout_height="@dimen/default_info_icon_size"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="5dp"
+            android:contentDescription="@string/info_label"
+            android:gravity="center_horizontal|start"
+            android:src="@drawable/ic_icon_info_filled"
+            android:visibility="gone" />
+
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>

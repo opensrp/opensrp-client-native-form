@@ -10,7 +10,7 @@ public class JsonFormConstants {
     public static final String SECTION_LABEL = "section_label";
     public static final String SECTION_BACKGROUND = "section_background";
     public static final String EDIT_TEXT = "edit_text";
-    public static final String NORMAL_EDIT_TEXT = "normal_edit_text";
+    public static final String NATIVE_EDIT_TEXT = "normal_edit_text";
     public static final String CHECK_BOX = "check_box";
     public static final String RADIO_BUTTON = "radio";
     public static final String LABEL = "label";
@@ -29,10 +29,11 @@ public class JsonFormConstants {
     public static final String GPS = "gps";
     public static final String SECTIONS = "sections";
     public static final String FIELDS = "fields";
+    public static final String STEP1 = "step1";
     public static final String NAME = "name";
     public static final String TYPE = "type";
     public static final String READ_ONLY = "read_only";
-    public static final String DISABLED = "disabled";
+    public static final String EDITABLE = "editable";
     public static final String BEHAVIOUR_FINISH_FORM = "finish_form";
     public static final String BEHAVIOUR_NEXT_STEP = "next_step";
     public static final String HINT = "hint";
@@ -58,7 +59,10 @@ public class JsonFormConstants {
     public static final String V_NUMERIC_INTEGER = "v_numeric_integer";
     public static final String V_MIN = "v_min";
     public static final String V_MAX = "v_max";
-    public static final String NUMBERS_SELECTOR = "numbers_selector";
+    public static final String V_RELATIVE_MAX = "v_relative_max";
+    public static final String RELATIVE_MAX_VALIDATION_EXCEPTION = "exception";
+    public static final String DEFAULT_RELATIVE_MAX_VALIDATION_ERR = "Value cannot be higher than %s";
+    public static final String NUMBER_SELECTOR = "numbers_selector";
     public static final String START_SELECTION_NUMBER = "start_number";
     public static final String NUMBER_OF_SELECTORS = "number_of_selectors";
     public static final String NUMBER_OF_SELECTORS_ORIGINAL = "number_of_selectors_original";
@@ -122,9 +126,19 @@ public class JsonFormConstants {
     public static final String BOTTOM_MARGIN = "bottom_margin";
     public static final String LEFT_MARGIN = "left_margin";
     public static final String UPLOAD_BUTTON_TEXT = "uploadButtonText";
-    public static final String NATIVE_ACCORDION = "native_accordion";
+    public static final String EXPANSION_PANEL = "expansion_panel";
     public static final String JSON_OBJECT_KEY = "json_object_key";
     public static final String IS_POPUP = "is_popup";
+    public static final String HINT_ON_TEXT = "hint_on_text";
+    public static final String HAS_BG = "has_bg";
+    public static final String BG_COLOR = "bg_color";
+    public static final String TOP_PADDING = "top_padding";
+    public static final String BOTTOM_PADDING = "bottom_padding";
+    public static final String LEFT_PADDING = "left_padding";
+    public static final String RIGHT_PADDING = "right_padding";
+    public static final String SPECIFY_DATE_HIDDEN_FIELD_SUFFIX = "_date";
+    public static final String SECONDARY_SUFFIX = "secondary_suffix";
+    public static final String SECONDARY_PREFIX = "Specified: ";
 
     public static class JSON_FORM_KEY {
         public static final String EX_RULES = "ex-rules";
@@ -151,13 +165,22 @@ public class JsonFormConstants {
     }
 
     public static class INTENT_ACTION {
-        public static final String NUMBER_SELECTOR_FACTORY = "NumberSelectorFactoryAction";
+        public static final String NUMBER_SELECTOR_FACTORY = "number_selector_factory";
+        public static final String JSON_FORM_ACTIVITY = "json_form_activity";
     }
 
     public static class SUFFIX {
         public static final String SPINNER = "_spinner";
         public static final String TEXT_VIEW = "_textview";
+        public static final String PARENT = "_parent";
     }
 
+    public static class INTENT_KEY {
+        public static final String MESSAGE = "message";
+        public static final String MESSAGE_TYPE = "message_type";
+    }
 
+    public static class MESSAGE_TYPE {
+        public static final String GLOBAL_VALUES = "global_values";
+    }
 }

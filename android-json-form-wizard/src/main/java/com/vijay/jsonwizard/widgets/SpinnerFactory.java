@@ -131,10 +131,7 @@ public class SpinnerFactory implements FormWidgetFactory {
             valueToSelect = jsonObject.optString(JsonFormConstants.VALUE);
         }
 
-        if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
-            spinner.setEnabled(!jsonObject.getBoolean(JsonFormConstants.READ_ONLY));
-            editButton.setVisibility(View.VISIBLE);
-        }
+        FormUtils.setEditMode(jsonObject,spinner,editButton);
 
         JSONArray valuesJson = jsonObject.optJSONArray(JsonFormConstants.VALUES);
         String[] values = null;
@@ -158,7 +155,7 @@ public class SpinnerFactory implements FormWidgetFactory {
         }
         ((JsonApi) context).addFormDataView(spinner);
         // views.add(spinner);
-        FormUtils.showInfoIcon(jsonObject, listener, labelInfoText, labelInfoTitle, spinnerInfoIconImageView);
+        FormUtils.showInfoIcon(stepName, jsonObject, listener, labelInfoText, labelInfoTitle, spinnerInfoIconImageView, canvasIds);
         spinner.setTag(R.id.canvas_ids, canvasIds.toString());
     }
 }

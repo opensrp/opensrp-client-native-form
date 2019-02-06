@@ -32,8 +32,8 @@
     <string name="the_toaster_icon">The toaster icon</string>
     <string name="asterisks">*</string>
     <string name="save">Save</string>
-    <string name="radio_button_date_change">tap to change</string>
-    <string name="select_one">Select a Number</string>
+    <string name="radio_button_tap_to_change">tap to change</string>
+    <string name="select_one">Select a number</string>
     <string name="done">Done</string>
 
     <string-array name="spinnerItems">
@@ -62,4 +62,7 @@
     <string name="previous">Previous</string>
     <string name="next">Next</string>
     <string name="submit">Submit</string>
+    <string name="the_extra_info_icon">The extra info Icon</string>
+    <string name="edit_button_label">edit button</string>
+    <string name="info_icon">Info Icon</string>
 </resources>

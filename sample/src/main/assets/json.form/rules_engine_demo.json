@@ -5,7 +5,8 @@
   "relational_id": "",
   "global": {
     "has_cat_scan": true,
-    "stock_count": 100
+    "stock_count": 100,
+    "heroes" : "['flash','the hulk','wonder woman']"
   },
   "metadata": {
     "start": {
@@ -97,7 +98,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Elly has {kid_count} kids and {grand_children} grand children!",
+        "text": "Elly has {kid_count} kids and {grand_children} grand children! Favorite super heroes are {heros}",
         "text_color": "#000000",
         "toaster_info_text": "Healthcare providers should routinely offer advice and psycho-social interventions for tobacco cessation to all pregnant women who are either current tobacco users or recent tobacco quitters.",
         "toaster_info_title": "Elly's Family!",

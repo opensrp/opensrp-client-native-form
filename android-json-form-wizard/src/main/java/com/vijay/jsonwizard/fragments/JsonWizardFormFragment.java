@@ -5,6 +5,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -32,20 +33,15 @@ import com.vijay.jsonwizard.viewstates.JsonFormFragmentViewState;
 public class JsonWizardFormFragment extends JsonFormFragment {
 
     public static final String TAG = JsonWizardFormFragment.class.getName();
-
+    private static final int MENU_NAVIGATION = 100001;
     private BottomNavigationListener navigationListener = new BottomNavigationListener();
-
     private Button previousButton;
     private Button nextButton;
-
     private ImageView previousIcon;
     private ImageView nextIcon;
-
     private TextView stepName;
-
     private Toolbar navigationToolbar;
-
-    private static final int MENU_NAVIGATION = 100001;
+    private View bottomNavLayout;
 
     public static JsonWizardFormFragment getFormFragment(String stepName) {
         JsonWizardFormFragment jsonFormFragment = new JsonWizardFormFragment();
@@ -64,7 +60,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
 
         setupNavigation(rootView);
 
-        setupCustomToolbar();
+        setupCustomUI();
 
         return rootView;
     }
@@ -83,7 +79,8 @@ public class JsonWizardFormFragment extends JsonFormFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        //menu.add(Menu.NONE, MENU_NAVIGATION, 1, "Menu").setIcon(R.drawable.ic_action_menu).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        //menu.add(Menu.NONE, MENU_NAVIGATION, 1, "Menu").setIcon(R.drawable.ic_action_menu).setShowAsAction(MenuItem
+        // .SHOW_AS_ACTION_ALWAYS);
     }
 
     @Override
@@ -104,12 +101,23 @@ public class JsonWizardFormFragment extends JsonFormFragment {
 
     @Override
     public void updateVisibilityOfNextAndSave(boolean next, boolean save) {
-        getMenu().findItem(com.vijay.jsonwizard.R.id.action_next).setVisible(false);
-        getMenu().findItem(com.vijay.jsonwizard.R.id.action_save).setVisible(false);
+        Form form = getForm();
+        if (form != null && form.isWizard()) {
+            getMenu().findItem(com.vijay.jsonwizard.R.id.action_next).setVisible(false);
+            getMenu().findItem(com.vijay.jsonwizard.R.id.action_save).setVisible(false);
+        } else {
+            getMenu().findItem(com.vijay.jsonwizard.R.id.action_next).setVisible(next);
+            getMenu().findItem(com.vijay.jsonwizard.R.id.action_save).setVisible(save);
+        }
 
         if (next || !save) {
             nextButton.setTag(R.id.NEXT_STATE, true);
             nextButton.setText(getString(R.string.next));
+
+            if (form != null && !TextUtils.isEmpty(form.getNextLabel())) {
+                nextButton.setText(form.getNextLabel());
+                getMenu().findItem(com.vijay.jsonwizard.R.id.action_next).setTitle(form.getNextLabel());
+            }
 
             nextIcon.setVisibility(View.VISIBLE);
         }
@@ -117,6 +125,12 @@ public class JsonWizardFormFragment extends JsonFormFragment {
         if (save || !next) {
             nextButton.setTag(R.id.NEXT_STATE, false);
             nextButton.setText(getString(R.string.submit));
+
+            if (form != null && !TextUtils.isEmpty(form.getSaveLabel())) {
+                nextButton.setText(form.getSaveLabel());
+                getMenu().findItem(com.vijay.jsonwizard.R.id.action_save).setTitle(form.getSaveLabel());
+            }
+
 
             nextIcon.setVisibility(View.INVISIBLE);
         }
@@ -128,6 +142,10 @@ public class JsonWizardFormFragment extends JsonFormFragment {
             } else {
                 previousButton.setVisibility(View.VISIBLE);
                 previousIcon.setVisibility(View.VISIBLE);
+
+                if (form != null && !TextUtils.isEmpty(form.getPreviousLabel())) {
+                    previousButton.setText(form.getPreviousLabel());
+                }
             }
         }
     }
@@ -135,7 +153,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
     @Override
     public void setActionBarTitle(String title) {
         Form form = getForm();
-        if (form != null) {
+        if (form != null && !TextUtils.isEmpty(form.getName())) {
             super.setActionBarTitle(form.getName());
             if (stepName != null) {
                 stepName.setText(title);
@@ -145,7 +163,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
         }
     }
 
-    private void setupNavigation(View rootView) {
+    protected void setupNavigation(View rootView) {
         previousButton = rootView.findViewById(R.id.previous);
         previousIcon = rootView.findViewById(R.id.previous_icon);
 
@@ -164,22 +182,48 @@ public class JsonWizardFormFragment extends JsonFormFragment {
         stepName = rootView.findViewById(R.id.step_title);
 
         navigationToolbar = rootView.findViewById(R.id.navigation_toolbar);
+
+        bottomNavLayout = rootView.findViewById(R.id.bottom_navigation_layout);
     }
 
-    private void setupCustomToolbar() {
+    protected void setupCustomUI() {
         setUpBackButton();
 
         try {
             Form form = getForm();
             if (form != null) {
-                getSupportActionBar().setHomeAsUpIndicator(form.getHomeAsUpIndicator());
-                int actionBarColor = getResources().getColor(form.getActionBarBackground());
-                getSupportActionBar().setBackgroundDrawable(new ColorDrawable(actionBarColor));
-
-                int navigationColor = getResources().getColor(form.getNavigationBackground());
-                if (navigationToolbar != null) {
-                    navigationToolbar.setBackgroundColor(navigationColor);
+                if (form.getHomeAsUpIndicator() != 0) {
+                    getSupportActionBar().setHomeAsUpIndicator(form.getHomeAsUpIndicator());
                 }
+
+                if (form.getActionBarBackground() != 0) {
+                    int actionBarColor = getResources().getColor(form.getActionBarBackground());
+                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(actionBarColor));
+                }
+
+                if (form.getNavigationBackground() != 0) {
+                    int navigationColor = getResources().getColor(form.getNavigationBackground());
+                    if (navigationToolbar != null) {
+                        navigationToolbar.setBackgroundColor(navigationColor);
+                    }
+                }
+
+                if (form.isWizard()) {
+                    bottomNavLayout.setVisibility(View.VISIBLE);
+                    navigationToolbar.setVisibility(View.VISIBLE);
+                } else {
+                    bottomNavLayout.setVisibility(View.GONE);
+                    navigationToolbar.setVisibility(View.GONE);
+                }
+
+                if (!TextUtils.isEmpty(form.getPreviousLabel())) {
+                    previousButton.setText(form.getPreviousLabel());
+                }
+
+                if (form.getBackIcon() > 0) {
+                    getSupportActionBar().setHomeAsUpIndicator(form.getBackIcon());
+                }
+
             }
         } catch (Resources.NotFoundException e) {
             Log.e(TAG, e.getMessage(), e);
@@ -187,9 +231,11 @@ public class JsonWizardFormFragment extends JsonFormFragment {
 
     }
 
-    private void save() {
+    protected void save() {
         try {
-            Boolean skipValidation = ((JsonFormActivity) mMainView.getContext()).getIntent().getBooleanExtra(JsonFormConstants.SKIP_VALIDATION, false);
+            Boolean skipValidation = ((JsonFormActivity) mMainView.getContext()).getIntent()
+                    .getBooleanExtra(JsonFormConstants
+                            .SKIP_VALIDATION, false);
             save(skipValidation);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
@@ -204,11 +250,14 @@ public class JsonWizardFormFragment extends JsonFormFragment {
         return null;
     }
 
+    public TextView getStepName() {
+        return stepName;
+    }
     ////////////////////////////////////////////////////////////////
     // Inner classes
     ////////////////////////////////////////////////////////////////
 
-    private class BottomNavigationListener implements View.OnClickListener {
+    protected class BottomNavigationListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.next || v.getId() == R.id.next_icon) {

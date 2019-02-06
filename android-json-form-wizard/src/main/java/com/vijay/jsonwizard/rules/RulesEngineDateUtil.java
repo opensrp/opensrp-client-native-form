@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by ndegwamartin on 17/12/2018.
  */
-public class RulesEngineUtil {
+public class RulesEngineDateUtil {
 
     public long getDifferenceDays(String dateString) {
 
@@ -51,6 +51,15 @@ public class RulesEngineUtil {
             return 0;
         }
 
+    }
+
+    public String getDOBFromAge(Integer age) {
+        return (new LocalDate()).withMonthOfYear(1).withDayOfMonth(1).minusYears(age)
+                .toString(FormUtils.NATIIVE_FORM_DATE_FORMAT_PATTERN);
+    }
+
+    public String getDateToday() {
+        return (new LocalDate()).toString(FormUtils.NATIIVE_FORM_DATE_FORMAT_PATTERN);
     }
 
     /**
@@ -142,9 +151,31 @@ public class RulesEngineUtil {
         return date.toString(FormUtils.NATIIVE_FORM_DATE_FORMAT_PATTERN);
     }
 
+    /**
+     * Returns a formatted age string from given date till today
+     * @param date
+     * @return String date
+     */
     public String getDuration(String date) {
         return Utils.getDuration(date);
+    }
 
+    /**
+     * Returns a formatted age string from startdate to provided end date
+     * @param date
+     * @param endDate
+     * @return String
+     */
+    public String getDuration(String date, String endDate) {
+        return Utils.getDuration(date, endDate);
+    }
+
+    public String getWeeksAndDaysFromDays(Integer days) {
+
+        double weeks = Math.round(Math.floor(days / 7));
+        Integer dayz = days % 7;
+
+        return String.format("%.0f weeks %d days", weeks, dayz);
     }
 
     public String formatDate(String dateString, String duration) {
@@ -179,7 +210,8 @@ public class RulesEngineUtil {
             }
         }
 
-        return "wd".equals(cleanDuration) ? getDuration(dateString).replace("w", " weeks").replace("d", " days") : String.valueOf(Math.abs(result));
+        return "wd".equals(cleanDuration) ? getDuration(dateString).replace("w", " weeks").replace("d", " days") : String
+                .valueOf(Math.abs(result));
 
     }
 
@@ -229,6 +261,17 @@ public class RulesEngineUtil {
         } else {
             return "";
         }
+    }
+
+    public String getSecondaryValue(String value) {
+
+        if (value.contains(":")) {
+            String[] valArray = value.split(":");
+            return valArray[1];
+        } else {
+            return value;
+        }
+
     }
 
 }

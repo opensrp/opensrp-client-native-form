@@ -5,4 +5,7 @@
     <string name="action_wizard">Json Form Wizard</string>
 
     <string name="profile">Profile</string>
+    <string name="next">Endelea</string>
+    <string name="previous">Rudi</string>
+    <string name="save">Tuma</string>
 </resources>
