@@ -4,31 +4,52 @@
     android:layout_height="wrap_content"
     android:minHeight="60dp">
 
-    <com.rengwuxian.materialedittext.MaterialEditText
-        app:met_textColorHint="@color/text_hint_color"
-        android:layout_toStartOf="@+id/material_edit_text_edit_button"
-        android:id="@+id/edit_text"
+    <RelativeLayout
+        android:id="@+id/edit_text_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginEnd="12dp"
-        android:layout_marginRight="12dp"
-        android:textSize="@dimen/default_text_size"
-        app:met_floatingLabel="highlight"
-        app:met_floatingLabelText=""
-        app:met_floatingLabelTextSize="@dimen/default_text_size"
-        app:met_primaryColor="?colorAccent"
-        app:met_singleLineEllipsis="true"
-        android:layout_toLeftOf="@+id/material_edit_text_edit_button" />
+        android:layout_toStartOf="@+id/info_icon"
+        android:layout_toLeftOf="@+id/info_icon">
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_toStartOf="@+id/material_edit_text_edit_button"
+            android:layout_toLeftOf="@+id/material_edit_text_edit_button"
+            android:textSize="@dimen/default_text_size"
+            app:met_floatingLabel="highlight"
+            app:met_floatingLabelText=""
+            app:met_floatingLabelTextSize="@dimen/default_text_size"
+            app:met_primaryColor="?colorAccent"
+            app:met_singleLineEllipsis="true"
+            app:met_textColorHint="@color/text_hint_color" />
+
+        <ImageView
+            android:id="@+id/material_edit_text_edit_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="center_vertical"
+            android:background="@null"
+            android:contentDescription="@string/info_label"
+            android:visibility="gone"
+            app:srcCompat="@drawable/edit_button_bg" />
+    </RelativeLayout>
+
     <ImageView
-        android:background="@null"
-        android:id="@+id/material_edit_text_edit_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/info_icon"
+        android:layout_width="@dimen/default_info_icon_size"
+        android:layout_height="@dimen/default_info_icon_size"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_gravity="center_vertical"
-        android:contentDescription="@string/info_label"
-        app:srcCompat="@drawable/edit_button_bg"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:contentDescription="@string/the_extra_info_icon"
+        android:src="@drawable/ic_icon_info_filled"
         android:visibility="gone" />
 </RelativeLayout>

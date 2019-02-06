@@ -10,7 +10,7 @@ public class JsonFormConstants {
     public static final String SECTION_LABEL = "section_label";
     public static final String SECTION_BACKGROUND = "section_background";
     public static final String EDIT_TEXT = "edit_text";
-    public static final String NORMAL_EDIT_TEXT = "normal_edit_text";
+    public static final String NATIVE_EDIT_TEXT = "normal_edit_text";
     public static final String CHECK_BOX = "check_box";
     public static final String RADIO_BUTTON = "radio";
     public static final String LABEL = "label";
@@ -62,7 +62,7 @@ public class JsonFormConstants {
     public static final String V_RELATIVE_MAX = "v_relative_max";
     public static final String RELATIVE_MAX_VALIDATION_EXCEPTION = "exception";
     public static final String DEFAULT_RELATIVE_MAX_VALIDATION_ERR = "Value cannot be higher than %s";
-    public static final String NUMBERS_SELECTOR = "numbers_selector";
+    public static final String NUMBER_SELECTOR = "numbers_selector";
     public static final String START_SELECTION_NUMBER = "start_number";
     public static final String NUMBER_OF_SELECTORS = "number_of_selectors";
     public static final String NUMBER_OF_SELECTORS_ORIGINAL = "number_of_selectors_original";
@@ -136,6 +136,9 @@ public class JsonFormConstants {
     public static final String BOTTOM_PADDING = "bottom_padding";
     public static final String LEFT_PADDING = "left_padding";
     public static final String RIGHT_PADDING = "right_padding";
+    public static final String SPECIFY_DATE_HIDDEN_FIELD_SUFFIX = "_date";
+    public static final String SECONDARY_SUFFIX = "secondary_suffix";
+    public static final String SECONDARY_PREFIX = "Specified: ";
 
     public static class JSON_FORM_KEY {
         public static final String EX_RULES = "ex-rules";
@@ -169,6 +172,7 @@ public class JsonFormConstants {
     public static class SUFFIX {
         public static final String SPINNER = "_spinner";
         public static final String TEXT_VIEW = "_textview";
+        public static final String PARENT = "_parent";
     }
 
     public static class INTENT_KEY {
