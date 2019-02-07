@@ -1575,58 +1575,63 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
 
             String calculation = rulesEngineFactory.getCalculation(valueMap, rulesFile);
 
-            if (view instanceof CheckBox) {
-
-                //For now were only handling checkbox titles only
-
-                TextView checkboxLabel = ((View) view.getParent().getParent()).findViewById(R.id.label_text);
-                if (checkboxLabel != null) {
-                    checkboxLabel.setText(getRenderText(calculation, checkboxLabel.getTag(R.id.original_text).toString()));
-                }
-
-            } else if (view instanceof TextableView) {
-                TextableView textView = ((TextableView) view);
-                textView.setText(calculation.charAt(0) == '{' ? getRenderText(calculation,
-                        textView.getTag(R.id.original_text).toString()
-                ) : (textView.getTag(R.id.original_text) != null && "0".equals(calculation)) ? textView
-                        .getTag(R.id.original_text)
-                        .toString() : calculation);
-            } else if (view instanceof EditText) {
-
-                ((EditText) view).setText(calculation);
-
-            } else if (view instanceof RadioGroup) {
-                RadioGroup radioButton = (RadioGroup) view;
-                int count = radioButton.getChildCount();
-                for (int i = 0; i < count; i++) {
-                    TextView renderView = radioButton.getChildAt(i).findViewById(R.id.extraInfoTextView);
-
-                    // if (((AppCompatRadioButton) ((ViewGroup) radioButton.getChildAt(i).findViewById(R.id.radioContentLinearLayout))
-                    // .getChildAt(0)).isChecked()) {
-
-                    if (renderView.getTag(R.id.original_text) == null) {
-                        renderView.setTag(R.id.original_text, renderView.getText());
+            if (calculation != null) {
+                if (view instanceof CheckBox) {
+                    //For now were only handling checkbox titles only
+                    TextView checkboxLabel = ((View) view.getParent().getParent()).findViewById(R.id.label_text);
+                    if (checkboxLabel != null) {
+                        checkboxLabel
+                                .setText(getRenderText(calculation, checkboxLabel.getTag(R.id.original_text).toString()));
                     }
-                    renderView.setText(
-                            calculation.charAt(0) == '{' ? getRenderText(calculation, renderView.getTag(R.id.original_text)
-                                    .toString()) : calculation);
 
-                    renderView.setVisibility(
-                            renderView.getText().toString().contains("{") || renderView.getText().toString().equals("0")
-                                    ? View.GONE : View.VISIBLE);
-                    // break;
-                    //} else {
-                    //  renderView.setVisibility(renderView.getText().toString().contains("{") ? View.GONE : View.VISIBLE);
-                    //}
+                } else if (view instanceof TextableView) {
+                    TextableView textView = ((TextableView) view);
+                    if (!TextUtils.isEmpty(calculation)) {
+                        calculation = "0";
+                    }
+                    textView.setText(calculation.charAt(0) == '{' ? getRenderText(calculation,
+                            textView.getTag(R.id.original_text).toString()
+                    ) : (textView.getTag(R.id.original_text) != null && "0".equals(calculation)) ? textView
+                            .getTag(R.id.original_text)
+                            .toString() : calculation);
+                } else if (view instanceof EditText) {
 
+                    ((EditText) view).setText(calculation);
+
+                } else if (view instanceof RadioGroup) {
+                    RadioGroup radioButton = (RadioGroup) view;
+                    int count = radioButton.getChildCount();
+                    for (int i = 0; i < count; i++) {
+                        TextView renderView = radioButton.getChildAt(i).findViewById(R.id.extraInfoTextView);
+
+                        // if (((AppCompatRadioButton) ((ViewGroup) radioButton.getChildAt(i).findViewById(R.id.radioContentLinearLayout))
+                        // .getChildAt(0)).isChecked()) {
+
+                        if (renderView.getTag(R.id.original_text) == null) {
+                            renderView.setTag(R.id.original_text, renderView.getText());
+                        }
+                        renderView.setText(
+                                calculation.charAt(0) == '{' ? getRenderText(calculation,
+                                        renderView.getTag(R.id.original_text)
+                                                .toString()) : calculation);
+
+                        renderView.setVisibility(
+                                renderView.getText().toString().contains("{") || renderView.getText().toString().equals("0")
+                                        ? View.GONE : View.VISIBLE);
+                        // break;
+                        //} else {
+                        //  renderView.setVisibility(renderView.getText().toString().contains("{") ? View.GONE : View.VISIBLE);
+                        //}
+
+                    }
+
+                } else {
+
+                    ((TextView) view).setText(calculation);
                 }
-
-            } else {
-
-                ((TextView) view).setText(calculation);
             }
-
-        } catch (Exception e) {
+        } catch (
+                Exception e) {
             Log.e(TAG, "calling updateCalculation on Non TextView or Text View decendant", e);
         }
 

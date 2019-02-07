@@ -2,13 +2,11 @@ package com.vijay.jsonwizard.customviews;
 
 import android.app.Activity;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 
 import com.vijay.jsonwizard.R;
-import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.exceptions.JsonFormRuntimeException;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.JsonApi;
@@ -76,9 +74,6 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
         String openMrsEntity = (String) mView.getTag(R.id.openmrs_entity);
         String openMrsEntityId = (String) mView.getTag(R.id.openmrs_entity_id);
         Boolean popup = (Boolean) mView.getTag(R.id.extraPopup);
-        if (!TextUtils.isEmpty(type) && !type.equals(JsonFormConstants.HIDDEN)) {
-            mView.setTag(R.id.raw_value, editable.toString());
-        }
         try {
             api.writeValue(mStepName, key, text, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
         } catch (JSONException e) {
