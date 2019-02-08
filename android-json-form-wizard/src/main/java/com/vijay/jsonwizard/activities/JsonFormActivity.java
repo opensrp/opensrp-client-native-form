@@ -1587,15 +1587,17 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 } else if (view instanceof TextableView) {
                     TextableView textView = ((TextableView) view);
                     if (!TextUtils.isEmpty(calculation)) {
+                        textView.setText(calculation.charAt(0) == '{' ? getRenderText(calculation,
+                                textView.getTag(R.id.original_text).toString()
+                        ) : (textView.getTag(R.id.original_text) != null && "0".equals(calculation)) ? textView
+                                .getTag(R.id.original_text)
+                                .toString() : calculation);
+                    }
+                } else if (view instanceof EditText) {
+                    String type = (String) view.getTag(R.id.type);
+                    if (type.equals(JsonFormConstants.HIDDEN) && calculation.equals("")) {
                         calculation = "0";
                     }
-                    textView.setText(calculation.charAt(0) == '{' ? getRenderText(calculation,
-                            textView.getTag(R.id.original_text).toString()
-                    ) : (textView.getTag(R.id.original_text) != null && "0".equals(calculation)) ? textView
-                            .getTag(R.id.original_text)
-                            .toString() : calculation);
-                } else if (view instanceof EditText) {
-
                     ((EditText) view).setText(calculation);
 
                 } else if (view instanceof RadioGroup) {
@@ -1684,7 +1686,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 jsonObject = Integer.valueOf(jsonObject.toString());
             }
         } catch (NumberFormatException e) {
-            Log.e(TAG, "Error trying to convert " + object + " to a number ", e);
+            //Log.e(TAG, "Error trying to convert " + object + " to a number ", e);
         }
         return jsonObject;
     }
