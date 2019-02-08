@@ -69,7 +69,6 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
         }
 
         String key = (String) mView.getTag(R.id.key);
-        String type = (String) mView.getTag(R.id.type);
         String openMrsEntityParent = (String) mView.getTag(R.id.openmrs_entity_parent);
         String openMrsEntity = (String) mView.getTag(R.id.openmrs_entity);
         String openMrsEntityId = (String) mView.getTag(R.id.openmrs_entity_id);

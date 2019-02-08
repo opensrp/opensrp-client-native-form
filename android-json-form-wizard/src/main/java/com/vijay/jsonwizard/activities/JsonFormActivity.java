@@ -1595,7 +1595,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     }
                 } else if (view instanceof EditText) {
                     String type = (String) view.getTag(R.id.type);
-                    if (type.equals(JsonFormConstants.HIDDEN) && calculation.equals("")) {
+                    if (JsonFormConstants.HIDDEN.equals(type) && calculation.equals("")) {
                         calculation = "0";
                     }
                     ((EditText) view).setText(calculation);
