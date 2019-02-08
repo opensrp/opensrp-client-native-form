@@ -85,7 +85,7 @@ public class RulesEngineFactory implements RuleListener {
 
         Facts facts = initializeFacts(calculationFact);
 
-        facts.put(RuleConstant.CALCULATION, "0");
+        facts.put(RuleConstant.CALCULATION, "");
 
         rules = getRulesFromAsset(RULE_FOLDER_PATH + ruleFilename);
 
@@ -200,7 +200,7 @@ public class RulesEngineFactory implements RuleListener {
     private String formatCalculationReturnValue(Object rawValue) {
         String value = String.valueOf(rawValue).trim();
         if (value.isEmpty()) {
-            return "0";
+            return "";
         } else if (rawValue instanceof Map) {
 
             return new JSONObject((Map<String, String>) rawValue).toString();
@@ -212,9 +212,8 @@ public class RulesEngineFactory implements RuleListener {
 
             }
         } else if (value.startsWith("-")) {
-            value = "0";
+            value = "";
         }
-
         return value;
     }
 
