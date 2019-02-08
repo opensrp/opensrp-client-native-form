@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -76,13 +77,15 @@ public class DatePickerFactory implements FormWidgetFactory {
     }
 
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject,
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
+                                       JSONObject jsonObject,
                                        CommonListener listener, boolean popup) {
         return attachJson(stepName, context, formFragment, jsonObject, popup);
     }
 
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
+                                       JSONObject jsonObject, CommonListener listener) throws Exception {
         return attachJson(stepName, context, formFragment, jsonObject, false);
     }
 
@@ -116,7 +119,8 @@ public class DatePickerFactory implements FormWidgetFactory {
         return views;
     }
 
-    protected void attachLayout(String stepName, final Context context, JsonFormFragment formFragment, JSONObject jsonObject, final MaterialEditText editText, final TextView duration) {
+    protected void attachLayout(String stepName, final Context context, JsonFormFragment formFragment, JSONObject jsonObject,
+                                final MaterialEditText editText, final TextView duration) {
 
         try {
             String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
@@ -124,8 +128,10 @@ public class DatePickerFactory implements FormWidgetFactory {
             String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
             String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
             String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
+            String calculations = jsonObject.optString(JsonFormConstants.CALCULATION);
 
             duration.setTag(R.id.key, jsonObject.getString(KEY.KEY));
+            duration.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
             duration.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
             duration.setTag(R.id.openmrs_entity, openMrsEntity);
             duration.setTag(R.id.openmrs_entity_id, openMrsEntityId);
@@ -134,7 +140,6 @@ public class DatePickerFactory implements FormWidgetFactory {
             }
 
             updateEditText(editText, jsonObject, stepName, context, duration);
-
             editText.setTag(R.id.json_object, jsonObject);
 
             final DatePickerDialog datePickerDialog = createDateDialog(context, duration, editText, jsonObject);
@@ -161,26 +166,10 @@ public class DatePickerFactory implements FormWidgetFactory {
                 }
             });
 
-            GenericTextWatcher genericTextWatcher = new GenericTextWatcher(stepName, formFragment, editText);
-            genericTextWatcher.addOnFocusChangeListener(new View.OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if (hasFocus) {
-                        showDatePickerDialog((Activity) context, datePickerDialog, editText);
-                    }
-                }
-            });
+            GenericTextWatcher genericTextWatcher = getGenericTextWatcher(stepName, (Activity) context, formFragment,
+                    editText, datePickerDialog);
             editText.addTextChangedListener(genericTextWatcher);
-
-            if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
-                editText.setTag(R.id.relevance, relevance);
-                ((JsonApi) context).addSkipLogicView(editText);
-            }
-
-            if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
-                editText.setTag(R.id.constraints, constraints);
-                ((JsonApi) context).addConstrainedView(editText);
-            }
+            addRefreshLogicView(context, editText, relevance, constraints, calculations);
             editText.setFocusable(false);
         } catch (Exception e) {
             e.printStackTrace();
@@ -188,7 +177,42 @@ public class DatePickerFactory implements FormWidgetFactory {
 
     }
 
-    private void updateEditText(MaterialEditText editText, JSONObject jsonObject, String stepName, Context context, TextView duration) throws JSONException {
+    @NonNull
+    private GenericTextWatcher getGenericTextWatcher(String stepName, final Activity context, JsonFormFragment formFragment,
+                                                     final MaterialEditText editText,
+                                                     final DatePickerDialog datePickerDialog) {
+        GenericTextWatcher genericTextWatcher = new GenericTextWatcher(stepName, formFragment, editText);
+        genericTextWatcher.addOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    showDatePickerDialog(context, datePickerDialog, editText);
+                }
+            }
+        });
+        return genericTextWatcher;
+    }
+
+    private void addRefreshLogicView(Context context, MaterialEditText editText, String relevance, String constraints,
+                                     String calculations) {
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+            editText.setTag(R.id.relevance, relevance);
+            ((JsonApi) context).addSkipLogicView(editText);
+        }
+
+        if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
+            editText.setTag(R.id.constraints, constraints);
+            ((JsonApi) context).addConstrainedView(editText);
+        }
+
+        if (!TextUtils.isEmpty(calculations) && context instanceof JsonApi) {
+            editText.setTag(R.id.calculation, calculations);
+            ((JsonApi) context).addCalculationLogicView(editText);
+        }
+    }
+
+    private void updateEditText(MaterialEditText editText, JSONObject jsonObject, String stepName, Context context,
+                                TextView duration) throws JSONException {
 
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
@@ -198,6 +222,7 @@ public class DatePickerFactory implements FormWidgetFactory {
         editText.setFloatingLabelText(jsonObject.getString(KEY.HINT));
         editText.setId(ViewUtil.generateViewId());
         editText.setTag(R.id.key, jsonObject.getString(KEY.KEY));
+        editText.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
         editText.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
         editText.setTag(R.id.openmrs_entity, openMrsEntity);
         editText.setTag(R.id.openmrs_entity_id, openMrsEntityId);
@@ -228,7 +253,8 @@ public class DatePickerFactory implements FormWidgetFactory {
                 DATE_FORMAT_REGEX));
     }
 
-    private DatePickerDialog createDateDialog(Context context, final TextView duration, final MaterialEditText editText, JSONObject jsonObject) throws JSONException {
+    private DatePickerDialog createDateDialog(Context context, final TextView duration, final MaterialEditText editText,
+                                              JSONObject jsonObject) throws JSONException {
         final DatePickerDialog datePickerDialog = new DatePickerDialog();
         datePickerDialog.setContext(context);
 

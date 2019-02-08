@@ -18,11 +18,11 @@ import java.util.ArrayList;
 
 public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListener {
 
+    private static String TAG = GenericTextWatcher.class.getCanonicalName();
     private View mView;
     private String mStepName;
     private ArrayList<View.OnFocusChangeListener> onFocusChangeListeners;
     private JsonFormFragment formFragment;
-    private static String TAG = GenericTextWatcher.class.getCanonicalName();
 
     public GenericTextWatcher(String stepName, JsonFormFragment formFragment, View view) {
         this.formFragment = formFragment;
@@ -36,20 +36,20 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
         onFocusChangeListeners.add(onFocusChangeListener);
     }
 
+    @Override
     public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
         //any code here should check if correct view has current focus , see afterTextChanged
-        Log.d("GenericTextWatcher", "beforeTextChanged called");
     }
 
+    @Override
     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
         //any code here should check if correct view has current focus, see afterTextChanged
-        Log.d("GenericTextWatcher", "beforeTextChanged called");
     }
 
+    @Override
     public synchronized void afterTextChanged(Editable editable) {
 
         if (editable != null && isRedundantRepetition(editable.toString())) {
-
             return;
         }
 
@@ -59,10 +59,9 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
             text = editable.toString();
         }
 
-        mView.setTag(R.id.previous, text);
+        mView.setTag(R.id.previous, editable.toString());
 
-        Log.d("RealtimeValidation", "afterTextChanged called");
-        JsonApi api = null;
+        JsonApi api;
         if (formFragment.getContext() instanceof JsonApi) {
             api = (JsonApi) formFragment.getContext();
         } else {

@@ -42,8 +42,8 @@
         android:visibility="gone" />
     <ImageView
         android:id="@+id/spinner_info_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/default_info_icon_size"
+        android:layout_height="@dimen/default_info_icon_size"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_gravity="center_vertical"

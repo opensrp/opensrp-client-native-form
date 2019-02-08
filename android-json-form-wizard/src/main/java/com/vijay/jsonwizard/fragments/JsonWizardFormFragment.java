@@ -79,7 +79,8 @@ public class JsonWizardFormFragment extends JsonFormFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        //menu.add(Menu.NONE, MENU_NAVIGATION, 1, "Menu").setIcon(R.drawable.ic_action_menu).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        //menu.add(Menu.NONE, MENU_NAVIGATION, 1, "Menu").setIcon(R.drawable.ic_action_menu).setShowAsAction(MenuItem
+        // .SHOW_AS_ACTION_ALWAYS);
     }
 
     @Override
@@ -115,6 +116,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
 
             if (form != null && !TextUtils.isEmpty(form.getNextLabel())) {
                 nextButton.setText(form.getNextLabel());
+                getMenu().findItem(com.vijay.jsonwizard.R.id.action_next).setTitle(form.getNextLabel());
             }
 
             nextIcon.setVisibility(View.VISIBLE);
@@ -124,8 +126,9 @@ public class JsonWizardFormFragment extends JsonFormFragment {
             nextButton.setTag(R.id.NEXT_STATE, false);
             nextButton.setText(getString(R.string.submit));
 
-            if (form != null && !TextUtils.isEmpty(form.getPreviousLabel())) {
-                nextButton.setText(form.getPreviousLabel());
+            if (form != null && !TextUtils.isEmpty(form.getSaveLabel())) {
+                nextButton.setText(form.getSaveLabel());
+                getMenu().findItem(com.vijay.jsonwizard.R.id.action_save).setTitle(form.getSaveLabel());
             }
 
 
@@ -139,6 +142,10 @@ public class JsonWizardFormFragment extends JsonFormFragment {
             } else {
                 previousButton.setVisibility(View.VISIBLE);
                 previousIcon.setVisibility(View.VISIBLE);
+
+                if (form != null && !TextUtils.isEmpty(form.getPreviousLabel())) {
+                    previousButton.setText(form.getPreviousLabel());
+                }
             }
         }
     }
@@ -146,7 +153,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
     @Override
     public void setActionBarTitle(String title) {
         Form form = getForm();
-        if (form != null) {
+        if (form != null && !TextUtils.isEmpty(form.getName())) {
             super.setActionBarTitle(form.getName());
             if (stepName != null) {
                 stepName.setText(title);
@@ -213,6 +220,10 @@ public class JsonWizardFormFragment extends JsonFormFragment {
                     previousButton.setText(form.getPreviousLabel());
                 }
 
+                if (form.getBackIcon() > 0) {
+                    getSupportActionBar().setHomeAsUpIndicator(form.getBackIcon());
+                }
+
             }
         } catch (Resources.NotFoundException e) {
             Log.e(TAG, e.getMessage(), e);
@@ -222,7 +233,9 @@ public class JsonWizardFormFragment extends JsonFormFragment {
 
     protected void save() {
         try {
-            Boolean skipValidation = ((JsonFormActivity) mMainView.getContext()).getIntent().getBooleanExtra(JsonFormConstants.SKIP_VALIDATION, false);
+            Boolean skipValidation = ((JsonFormActivity) mMainView.getContext()).getIntent()
+                    .getBooleanExtra(JsonFormConstants
+                            .SKIP_VALIDATION, false);
             save(skipValidation);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
@@ -240,11 +253,11 @@ public class JsonWizardFormFragment extends JsonFormFragment {
     public TextView getStepName() {
         return stepName;
     }
-////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////
     // Inner classes
     ////////////////////////////////////////////////////////////////
 
-    private class BottomNavigationListener implements View.OnClickListener {
+    protected class BottomNavigationListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.next || v.getId() == R.id.next_icon) {

@@ -11,6 +11,8 @@ public class Form implements Serializable {
     private int actionBarBackground;
     private int navigationBackground;
 
+    private int backIcon;
+
     private String nextLabel;
     private String previousLabel;
     private String saveLabel;
@@ -88,5 +90,13 @@ public class Form implements Serializable {
 
     public void setHideSaveLabel(boolean hideSaveLabel) {
         this.hideSaveLabel = hideSaveLabel;
+    }
+
+    public int getBackIcon() {
+        return backIcon;
+    }
+
+    public void setBackIcon(int backIcon) {
+        this.backIcon = backIcon;
     }
 }
