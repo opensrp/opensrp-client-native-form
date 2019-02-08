@@ -1595,11 +1595,12 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     }
                 } else if (view instanceof EditText) {
                     String type = (String) view.getTag(R.id.type);
-                    if (JsonFormConstants.HIDDEN.equals(type) && calculation.equals("")) {
+                    if (JsonFormConstants.HIDDEN.equals(type) && "".equals(calculation)) {
                         calculation = "0";
                     }
-                    ((EditText) view).setText(calculation);
-
+                    if (!"".equals(calculation)) {
+                        ((EditText) view).setText(calculation);
+                    }
                 } else if (view instanceof RadioGroup) {
                     RadioGroup radioButton = (RadioGroup) view;
                     int count = radioButton.getChildCount();
