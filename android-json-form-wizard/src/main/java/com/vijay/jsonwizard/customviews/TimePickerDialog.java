@@ -1,6 +1,6 @@
 package com.vijay.jsonwizard.customviews;
 
-import android.annotation.SuppressLint;
+
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
@@ -13,12 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.DatePicker;
-
 import android.widget.TimePicker;
 import com.vijay.jsonwizard.R;
-import com.vijay.jsonwizard.utils.DatePickerUtils;
-
 import java.util.Calendar;
 import java.util.Date;
 
@@ -27,17 +23,13 @@ import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 public class TimePickerDialog extends DialogFragment {
     private TimePicker timePicker;
     private android.app.TimePickerDialog.OnTimeSetListener onTimeSetListener;
-    private DialogInterface.OnShowListener onShowListener;
+
     private Date date;
-    private long minDate;
-    private long maxDate;
-    private boolean calendarViewShown;
+    private DialogInterface.OnShowListener onShowListener;
     private Context context;
 
     public TimePickerDialog() {
-        this.minDate = -1;
-        this.maxDate = -1;
-        this.calendarViewShown = true;
+
     }
 
     public void setContext(Context context) throws IllegalStateException {
@@ -56,7 +48,7 @@ public class TimePickerDialog extends DialogFragment {
     }
 
     public void setOnShowListener(DialogInterface.OnShowListener onShowListener_) {
-        onShowListener = onShowListener_;
+        this.onShowListener = onShowListener_;
     }
 
     @Nullable
@@ -120,18 +112,6 @@ public class TimePickerDialog extends DialogFragment {
         return dialogView;
     }
 
-    public void setMinDate(long minDate) {
-        this.minDate = minDate;
-    }
-
-    public void setMaxDate(long maxDate) {
-        this.maxDate = maxDate;
-    }
-
-    public void setCalendarViewShown(boolean calendarViewShown) {
-        this.calendarViewShown = calendarViewShown;
-    }
-
     public void setDate(Date date) {
         this.date = date;
         Calendar calendar = Calendar.getInstance();
@@ -141,7 +121,8 @@ public class TimePickerDialog extends DialogFragment {
 
     private void setDate(Calendar calendar) {
         if (this.timePicker != null) {
-            Date today = new Date();
+
+            Date today = calendar.getTime();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 timePicker.setHour(today.getHours());
                 timePicker.setMinute(today.getMinutes());

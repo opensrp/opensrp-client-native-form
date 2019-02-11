@@ -5,7 +5,6 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import com.vijay.jsonwizard.customviews.TimePickerDialog;
 import android.content.Context;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -13,27 +12,21 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
-
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rengwuxian.materialedittext.validation.RegexpValidator;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
-
-import com.vijay.jsonwizard.customviews.DatePickerDialog;
 import com.vijay.jsonwizard.customviews.GenericTextWatcher;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
-import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -102,10 +95,10 @@ public class TimePickerFactory implements FormWidgetFactory {
                 duration.setTag(R.id.label, jsonObject.getJSONObject(TimePickerFactory.KEY.DURATION).getString(JsonFormConstants.LABEL));
             }
 
-            updateEditText(editText, jsonObject, stepName, context, duration);
+            updateEditText(editText, jsonObject, stepName, context);
             editText.setTag(R.id.json_object, jsonObject);
 
-            final TimePickerDialog timePickerDialog = createTimeDialog(context, editText, jsonObject);
+            final TimePickerDialog timePickerDialog = createTimeDialog(context, editText);
 
 
 
@@ -181,11 +174,8 @@ public class TimePickerFactory implements FormWidgetFactory {
 
         timePickerDialog.show(ft,TAG);
 
-        Calendar date = FormUtils.getDate(editText.getText().toString());
-
-
     }
-    private TimePickerDialog createTimeDialog(Context context, final MaterialEditText editText, JSONObject jsonObject) {
+    private TimePickerDialog createTimeDialog(Context context, final MaterialEditText editText) {
         final TimePickerDialog mTimePicker = new TimePickerDialog();
         mTimePicker.setContext(context);
         mTimePicker.setOnTimeSetListener(new android.app.TimePickerDialog.OnTimeSetListener() {
@@ -197,8 +187,8 @@ public class TimePickerFactory implements FormWidgetFactory {
         return mTimePicker;
     }
 
-    private void updateEditText(MaterialEditText editText, JSONObject jsonObject, String stepName, Context context,
-                                TextView duration) throws JSONException {
+    private void updateEditText(MaterialEditText editText, JSONObject jsonObject, String stepName, Context context
+                                ) throws JSONException {
 
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
