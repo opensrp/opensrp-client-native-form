@@ -1651,19 +1651,11 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             value = object.opt(JsonFormConstants.VALUE);
 
             if (isNumberWidget(object)) {
-<<<<<<<HEAD
-                        value = TextUtils.isEmpty(object.optString(JsonFormConstants.VALUE)) ? 0 : processNumberValues(
-                        object.optString(JsonFormConstants.VALUE));
-            } else if (value != null && !TextUtils
-                    .isEmpty(object.getString(JsonFormConstants.VALUE)) && canHaveNumber(
-                    object)) {
-=======
                 value = TextUtils.isEmpty(object.optString(JsonFormConstants.VALUE)) ? 0 :
                         processNumberValues(object.optString(JsonFormConstants.VALUE));
             } else if (value != null && !TextUtils.isEmpty(object.getString(JsonFormConstants.VALUE)) &&
                     canHaveNumber(object)) {
->>>>>>>531 c45384971eb917431e705d87476278c42b144
-                        value = processNumberValues(value);
+                value = processNumberValues(value);
             }
 
         } else {
@@ -1797,18 +1789,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     protected void onResume() {
         super.onResume();
         localBroadcastManager
-                <<<<<<<HEAD
-                .registerReceiver(messageReceiver,
-                        new IntentFilter(JsonFormConstants.INTENT_ACTION.JSON_FORM_ACTIVITY));
-        localBroadcastManager
-                .registerReceiver(NumberSelectorFactory.getNumberSelectorsReceiver(),
-                        new IntentFilter(JsonFormConstants
-                                .INTENT_ACTION.NUMBER_SELECTOR_FACTORY));
-=======
                 .registerReceiver(messageReceiver, new IntentFilter(JsonFormConstants.INTENT_ACTION.JSON_FORM_ACTIVITY));
         localBroadcastManager.registerReceiver(NumberSelectorFactory.getNumberSelectorsReceiver(),
                 new IntentFilter(JsonFormConstants.INTENT_ACTION.NUMBER_SELECTOR_FACTORY));
->>>>>>>531 c45384971eb917431e705d87476278c42b144
 
         for (LifeCycleListener lifeCycleListener : lifeCycleListeners) {
             lifeCycleListener.onResume();
@@ -1860,15 +1843,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 }
             }
         } else {
-<<<<<<<HEAD
-            result.append(object.toString().contains(".0") ? object.toString()
-                    .substring(0, object.toString().indexOf(".0")) : object
-                    .toString()); //Fix automatic conversion float bug
-=======
             result.append(
                     object.toString().contains(".0") ? object.toString().substring(0, object.toString().indexOf(".0")) :
                             object.toString()); //Fix automatic conversion float bug
->>>>>>>531 c45384971eb917431e705d87476278c42b144
         }
 
         return result.toString();
@@ -1893,14 +1870,8 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     }
 
     protected boolean canHaveNumber(JSONObject object) throws JSONException {
-<<<<<<<HEAD
-        return isNumberWidget(object) || object.getString(JsonFormConstants.TYPE)
-                .equals(JsonFormConstants.HIDDEN) || object
-                .getString(JsonFormConstants.TYPE).equals(JsonFormConstants.SPINNER);
-=======
         return isNumberWidget(object) || object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.HIDDEN) ||
                 object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.SPINNER);
->>>>>>>531 c45384971eb917431e705d87476278c42b144
     }
 
     protected boolean isNumberWidget(JSONObject object) throws JSONException {
