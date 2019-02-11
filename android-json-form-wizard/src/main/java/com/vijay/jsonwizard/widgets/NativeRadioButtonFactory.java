@@ -40,7 +40,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.vijay.jsonwizard.utils.FormUtils.showEditButton;
 import static com.vijay.jsonwizard.widgets.DatePickerFactory.DATE_FORMAT;
 
 
@@ -272,7 +271,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         if (labelViews != null && labelViews.size() > 0) {
             editButton = (ImageView) labelViews.get(JsonFormConstants.EDIT_BUTTON);
             if (editButton != null) {
-                showEditButton(jsonObject, radioGroup, editButton, listener);
+                FormUtils.setEditButtonAttributes(jsonObject, radioGroup, editButton, listener);
             }
 
         }

@@ -357,8 +357,8 @@ public class FormUtils {
         }
     }
 
-    public static void showEditButton(JSONObject jsonObject, View editableView, ImageView editButton,
-                                      CommonListener listener) throws JSONException {
+    public static void setEditButtonAttributes(JSONObject jsonObject, View editableView, ImageView editButton,
+                                               CommonListener listener) throws JSONException {
         editButton.setTag(R.id.editable_view, editableView);
         editButton.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
         editButton.setTag(R.id.type, jsonObject.getString("type"));

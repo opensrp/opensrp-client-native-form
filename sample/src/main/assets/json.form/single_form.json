@@ -727,7 +727,7 @@
         "label": "Any symptoms of severe pre-eclampsia?",
         "label_text_style": "bold",
         "text_color": "#000000",
-        "read_only": true,
+        "editable": true,
         "exclusive": [
           "none"
         ],
@@ -1307,7 +1307,7 @@
           "err": "Please enter the last name"
         },
         "v_regex": {
-          "value": "[A-Za-z\\s\.\-]*",
+          "value": "[0-9]*",
           "err": "Please enter a valid name"
         }
       },
@@ -1320,6 +1320,7 @@
         "hint": "Guardians name *",
         "edit_type": "name",
         "read_only": true,
+        "editable": true,
         "edit_text_style": "bordered",
         "v_required": {
           "value": "true",
