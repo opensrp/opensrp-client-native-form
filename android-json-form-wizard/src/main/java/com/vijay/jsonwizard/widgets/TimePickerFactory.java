@@ -22,14 +22,12 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
-import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 public class TimePickerFactory implements FormWidgetFactory {
@@ -105,7 +103,7 @@ public class TimePickerFactory implements FormWidgetFactory {
             editText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    showTimePickerDialog((Activity) context, timePickerDialog, editText);
+                    showTimePickerDialog((Activity) context, timePickerDialog);
                 }
             });
 
@@ -155,15 +153,15 @@ public class TimePickerFactory implements FormWidgetFactory {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
-                    showTimePickerDialog(context, timePickerDialog, editText);
+                    showTimePickerDialog(context, timePickerDialog);
                 }
             }
         });
         return genericTextWatcher;
     }
     private static void showTimePickerDialog(Activity context,
-                                             TimePickerDialog timePickerDialog,
-                                             MaterialEditText editText) {
+                                             TimePickerDialog timePickerDialog
+                                             ) {
         FragmentTransaction ft = context.getFragmentManager().beginTransaction();
         Fragment prev = context.getFragmentManager().findFragmentByTag(TAG);
         if (prev != null) {

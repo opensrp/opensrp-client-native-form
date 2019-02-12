@@ -26,11 +26,8 @@ public class TimePickerDialog extends DialogFragment {
 
     private Date date;
     private DialogInterface.OnShowListener onShowListener;
+
     private Context context;
-
-    public TimePickerDialog() {
-
-    }
 
     public void setContext(Context context) throws IllegalStateException {
         this.context = context;
@@ -48,7 +45,12 @@ public class TimePickerDialog extends DialogFragment {
     }
 
     public void setOnShowListener(DialogInterface.OnShowListener onShowListener_) {
-        this.onShowListener = onShowListener_;
+
+        onShowListener = onShowListener_;
+    }
+
+    public DialogInterface.OnShowListener getOnShowListener(){
+        return onShowListener;
     }
 
     @Nullable
@@ -58,16 +60,18 @@ public class TimePickerDialog extends DialogFragment {
 
         Button cancelButton;
         Button okButton;
+        if(getOnShowListener()==null){
+            setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialog) {
+                    InputMethodManager inputManager = (InputMethodManager) context
+                            .getSystemService(Context.INPUT_METHOD_SERVICE);
+                    inputManager
+                            .hideSoftInputFromWindow(((Activity) context).getCurrentFocus().getWindowToken(), HIDE_NOT_ALWAYS);
+                }
+            });
+        }
 
-        setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
-                InputMethodManager inputManager = (InputMethodManager) context
-                        .getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputManager
-                        .hideSoftInputFromWindow(((Activity) context).getCurrentFocus().getWindowToken(), HIDE_NOT_ALWAYS);
-            }
-        });
 
         timePicker = dialogView.findViewById(R.id.time_picker);
         timePicker.setIs24HourView(true);
@@ -134,7 +138,5 @@ public class TimePickerDialog extends DialogFragment {
         this.onTimeSetListener = onTimeSetListener;
     }
 
-    public TimePicker getDatePicker() {
-        return this.timePicker;
-    }
+
 }
