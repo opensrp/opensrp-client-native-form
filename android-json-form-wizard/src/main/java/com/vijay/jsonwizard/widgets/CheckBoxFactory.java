@@ -61,8 +61,13 @@ public class CheckBoxFactory implements FormWidgetFactory {
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
 
         boolean readOnly = false;
+        boolean editable = false;
+
         if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
             readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
+        }
+        if (jsonObject.has(JsonFormConstants.EDITABLE)) {
+            editable = jsonObject.getBoolean(JsonFormConstants.EDITABLE);
         }
 
         List<View> views = new ArrayList<>(1);
@@ -90,6 +95,9 @@ public class CheckBoxFactory implements FormWidgetFactory {
             editButton = (ImageView) labelViews.get(JsonFormConstants.EDIT_BUTTON);
             if (editButton != null) {
                 showEditButton(jsonObject, editableCheckBoxes, editButton, listener);
+                if(editable){
+                    editButton.setVisibility(View.VISIBLE);
+                }
             }
 
         }

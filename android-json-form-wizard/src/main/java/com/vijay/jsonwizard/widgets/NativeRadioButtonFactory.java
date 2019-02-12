@@ -252,8 +252,12 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
     protected List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject,
                                     CommonListener listener, boolean popup) throws JSONException {
         boolean readOnly = false;
+        boolean editable = false;
         if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
             readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
+        }
+        if (jsonObject.has(JsonFormConstants.EDITABLE)) {
+            editable = jsonObject.getBoolean(JsonFormConstants.EDITABLE);
         }
         List<View> views = new ArrayList<>(1);
         JSONArray canvasIds = new JSONArray();
@@ -272,8 +276,10 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             editButton = (ImageView) labelViews.get(JsonFormConstants.EDIT_BUTTON);
             if (editButton != null) {
                 FormUtils.setEditButtonAttributes(jsonObject, radioGroup, editButton, listener);
+                if(editable){
+                    editButton.setVisibility(View.VISIBLE);
+                }
             }
-
         }
         rootLayout.setTag(R.id.extraPopup, popup);
         views.add(rootLayout);
