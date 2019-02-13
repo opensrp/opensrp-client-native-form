@@ -50,7 +50,6 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
     public synchronized void afterTextChanged(Editable editable) {
 
         if (editable != null && isRedundantRepetition(editable.toString())) {
-
             return;
         }
 
@@ -62,7 +61,7 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
 
         mView.setTag(R.id.previous, editable.toString());
 
-        JsonApi api = null;
+        JsonApi api;
         if (formFragment.getContext() instanceof JsonApi) {
             api = (JsonApi) formFragment.getContext();
         } else {
@@ -74,7 +73,6 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
         String openMrsEntity = (String) mView.getTag(R.id.openmrs_entity);
         String openMrsEntityId = (String) mView.getTag(R.id.openmrs_entity_id);
         Boolean popup = (Boolean) mView.getTag(R.id.extraPopup);
-        mView.setTag(R.id.raw_value, text);
         try {
             api.writeValue(mStepName, key, text, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
         } catch (JSONException e) {

@@ -57,7 +57,7 @@
   "step1": {
     "title": "Birth Registration",
     "fields": [
-     {
+      {
         "key": "repiratory_exam",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",

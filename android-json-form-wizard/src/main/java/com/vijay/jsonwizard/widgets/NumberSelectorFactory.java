@@ -38,8 +38,8 @@ import java.util.Map;
 
 public class NumberSelectorFactory implements FormWidgetFactory {
     public static final String TAG = NumberSelectorFactory.class.getCanonicalName();
+    public static NumberSelectorFactoryReceiver receiver;
     private static CustomTextView selectedTextView;
-    private static NumberSelectorFactoryReceiver receiver = null;
     private SelectedNumberClickListener selectedNumberClickListener = new SelectedNumberClickListener();
     private Context context;
     private CommonListener listener;
@@ -47,7 +47,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
     private Map<String, LinearLayout> rootLayoutMap = new HashMap<>();
 
     public NumberSelectorFactory() {
-        receiver = new NumberSelectorFactoryReceiver();
+        NumberSelectorFactory.receiver = new NumberSelectorFactoryReceiver();
     }
 
     @SuppressLint ("NewApi")
@@ -214,11 +214,9 @@ public class NumberSelectorFactory implements FormWidgetFactory {
     }
 
     private List<View> attachJson(String stepName, Context context, JSONObject jsonObject, CommonListener listener,
-                                  boolean popup) throws
-            JSONException {
+                                  boolean popup) throws JSONException {
         this.context = context;
         this.listener = listener;
-
         jsonObjectMap.put(jsonObject.getString(JsonFormConstants.KEY), jsonObject);
 
         List<View> views = new ArrayList<>(1);
@@ -427,24 +425,26 @@ public class NumberSelectorFactory implements FormWidgetFactory {
                 JSONObject jsonObject = jsonObjectMap.get(intent.getStringExtra(JsonFormConstants.JSON_OBJECT_KEY));
                 boolean isPopUp = intent.getBooleanExtra(JsonFormConstants.IS_POPUP, false);
 
-                jsonObject.put(JsonFormConstants.MAX_SELECTION_VALUE, maxValue);
-                if (jsonObject.has(JsonFormConstants.NUMBER_OF_SELECTORS_ORIGINAL)) {
-                    jsonObject.put(JsonFormConstants.NUMBER_OF_SELECTORS, maxValue < jsonObject.getInt(JsonFormConstants
-                            .NUMBER_OF_SELECTORS_ORIGINAL) ? maxValue : jsonObject
-                            .getInt(JsonFormConstants.NUMBER_OF_SELECTORS_ORIGINAL));
-                } else {
-                    jsonObject.put(JsonFormConstants.NUMBER_OF_SELECTORS, maxValue < jsonObject.getInt(JsonFormConstants
-                            .NUMBER_OF_SELECTORS) ? maxValue : jsonObject.getInt(JsonFormConstants.NUMBER_OF_SELECTORS));
+                if (jsonObject != null) {
+                    jsonObject.put(JsonFormConstants.MAX_SELECTION_VALUE, maxValue);
 
+                    if (jsonObject.has(JsonFormConstants.NUMBER_OF_SELECTORS_ORIGINAL)) {
+                        jsonObject.put(JsonFormConstants.NUMBER_OF_SELECTORS, maxValue < jsonObject.getInt(JsonFormConstants
+                                .NUMBER_OF_SELECTORS_ORIGINAL) ? maxValue : jsonObject
+                                .getInt(JsonFormConstants.NUMBER_OF_SELECTORS_ORIGINAL));
+                    } else {
+                        jsonObject.put(JsonFormConstants.NUMBER_OF_SELECTORS, maxValue < jsonObject.getInt(JsonFormConstants
+                                .NUMBER_OF_SELECTORS) ? maxValue : jsonObject.getInt(JsonFormConstants.NUMBER_OF_SELECTORS));
+
+                    }
+                    LinearLayout rootLayout = rootLayoutMap.get(intent.getStringExtra(JsonFormConstants.JSON_OBJECT_KEY));
+                    rootLayout.removeAllViews();
+                    rootLayout.setTag(R.id.is_automatic, true);
+                    createTextViews(context, jsonObject, rootLayout, listener,
+                            intent.getStringExtra(JsonFormConstants.STEPNAME), isPopUp);
+                    rootLayout.setTag(R.id.is_automatic, null);
                 }
 
-                LinearLayout rootLayout = rootLayoutMap.get(intent.getStringExtra(JsonFormConstants.JSON_OBJECT_KEY));
-                rootLayout.removeAllViews();
-                rootLayout.setTag(R.id.is_automatic, true);
-                createTextViews(context, jsonObject, rootLayout, listener,
-                        intent.getStringExtra(JsonFormConstants.STEPNAME),
-                        isPopUp);
-                rootLayout.setTag(R.id.is_automatic, null);
 
             } catch (JSONException e) {
                 Log.e(TAG, e.getMessage(), e);

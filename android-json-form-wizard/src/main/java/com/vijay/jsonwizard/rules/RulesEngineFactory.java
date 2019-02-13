@@ -85,7 +85,7 @@ public class RulesEngineFactory implements RuleListener {
 
         Facts facts = initializeFacts(calculationFact);
 
-        facts.put(RuleConstant.CALCULATION, "0");
+        facts.put(RuleConstant.CALCULATION, "");
 
         rules = getRulesFromAsset(RULE_FOLDER_PATH + ruleFilename);
 
@@ -124,11 +124,6 @@ public class RulesEngineFactory implements RuleListener {
 
         facts.put("helper", rulesEngineHelper);
         return facts;
-    }
-
-    private String getKey(String key) {
-        return !key.startsWith(RuleConstant.STEP) && !key
-                .startsWith(RuleConstant.SELECTED_RULE) ? RuleConstant.PREFIX.GLOBAL + key : key;
     }
 
     private Object getValue(String value) {
@@ -205,22 +200,20 @@ public class RulesEngineFactory implements RuleListener {
     private String formatCalculationReturnValue(Object rawValue) {
         String value = String.valueOf(rawValue).trim();
         if (value.isEmpty()) {
-            return "0";
+            return "";
         } else if (rawValue instanceof Map) {
 
             return new JSONObject((Map<String, String>) rawValue).toString();
 
         } else if (value.contains(".")) {
             try {
-
                 value = String.valueOf((float) Math.round(Float.valueOf(value) * 100) / 100);
             } catch (NumberFormatException e) {
 
             }
         } else if (value.startsWith("-")) {
-            value = "0";
+            value = "";
         }
-
         return value;
     }
 

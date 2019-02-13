@@ -308,6 +308,7 @@ public class FormUtils {
         String openMrsEntityId = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_ID, null);
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
         String calculation = jsonObject.optString(JsonFormConstants.CALCULATION);
+        String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
         String labelInfoText = jsonObject.optString(JsonFormConstants.LABEL_INFO_TEXT, "");
         String labelInfoTitle = jsonObject.optString(JsonFormConstants.LABEL_INFO_TITLE, "");
 
@@ -317,7 +318,7 @@ public class FormUtils {
         canvasIds.put(constraintLayout.getId());
         constraintLayout.setTag(R.id.canvas_ids, canvasIds.toString());
         constraintLayout.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
-        constraintLayout.setTag(R.id.type, jsonObject.getString("type"));
+        constraintLayout.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
         constraintLayout.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
         constraintLayout.setTag(R.id.openmrs_entity, openMrsEntity);
         constraintLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
@@ -327,11 +328,16 @@ public class FormUtils {
             constraintLayout.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(constraintLayout);
         }
+
         if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
             constraintLayout.setTag(R.id.calculation, calculation);
             ((JsonApi) context).addCalculationLogicView(constraintLayout);
         }
 
+        if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
+            constraintLayout.setTag(R.id.constraints, constraints);
+            ((JsonApi) context).addCalculationLogicView(constraintLayout);
+        }
 
         ImageView imageView = constraintLayout.findViewById(R.id.label_info);
 

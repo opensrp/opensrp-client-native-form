@@ -243,6 +243,23 @@
         }
       },
       {
+        "key": "Time_Birth",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person",
+        "openmrs_entity_id": "birthtime",
+        "type": "time_picker",
+        "hint": "Birth Time *",
+        "expanded": false,
+        "duration": {
+          "label": "Birth Time"
+        },
+
+        "v_required": {
+          "value": "true",
+          "err": "Please enter the time of birth"
+        }
+      },
+      {
         "key": "First_Health_Facility_Contact",
         "openmrs_entity_parent": "",
         "openmrs_entity": "concept",

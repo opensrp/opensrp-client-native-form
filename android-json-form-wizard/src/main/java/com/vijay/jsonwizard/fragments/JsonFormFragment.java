@@ -50,8 +50,6 @@ import java.util.Map;
 public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, JsonFormFragmentViewState> implements
         CommonListener, JsonFormFragmentView<JsonFormFragmentViewState> {
     private static final String TAG = "JsonFormFragment";
-    private static String CONST_REAL_TIME_VALIDATION = "RealtimeValidation";
-    private static String CONST_FRAGMENT_WRITEVALUE_CALLED = "Fragment write value called";
     protected LinearLayout mMainView;
     protected ScrollView mScrollView;
     private Menu mMenu;

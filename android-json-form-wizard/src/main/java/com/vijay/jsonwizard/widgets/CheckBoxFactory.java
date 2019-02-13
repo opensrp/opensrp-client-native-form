@@ -102,7 +102,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
 
         }
         attachRefreshLogic(jsonObject, context, rootLayout);
-
+        rootLayout.setTag(R.id.canvas_ids, canvasIds.toString());
         views.add(rootLayout);
         return views;
     }
@@ -189,6 +189,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
             ImageView imageView = checkboxLayout.findViewById(R.id.checkbox_info_icon);
             FormUtils.showInfoIcon(stepName, jsonObject, listener, labelInfoText, labelInfoTitle, imageView, canvasIds);
 
+            checkboxLayout.setTag(R.id.canvas_ids, canvasIds.toString());
             checkboxLayouts.add(checkboxLayout);
             linearLayout.addView(checkboxLayout);
         }
