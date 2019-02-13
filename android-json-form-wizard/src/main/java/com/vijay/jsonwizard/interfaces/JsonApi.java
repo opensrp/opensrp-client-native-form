@@ -72,11 +72,12 @@ public interface JsonApi {
 
     JSONObject getObjectUsingAddress(String[] address, boolean popup) throws JSONException;
 
-    void refreshConstraints(String parentKey, String childKey);
+    void refreshConstraints(String parentKey, String childKey, boolean popup);
 
     void addOnActivityResultListener(Integer requestCode, OnActivityResultListener onActivityResultListener);
 
-    void addOnActivityRequestPermissionResultListener(Integer requestCode, OnActivityRequestPermissionResultListener onActivityRequestPermissionResultListener);
+    void addOnActivityRequestPermissionResultListener(Integer requestCode,
+                                                      OnActivityRequestPermissionResultListener onActivityRequestPermissionResultListener);
 
     void removeOnActivityRequestPermissionResultListener(Integer requestCode);
 

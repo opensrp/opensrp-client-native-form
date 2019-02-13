@@ -110,9 +110,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         super.onViewCreated(view, savedInstanceState);
         mJsonApi.clearFormDataViews();
         presenter.addFormElements();
-        mJsonApi.refreshCalculationLogic(null, null, false);
-        mJsonApi.refreshSkipLogic(null, null, false);
-        mJsonApi.refreshConstraints(null, null);
+        mJsonApi.invokeRefreshLogic(null, false, null, null);
     }
 
     @Override
@@ -143,8 +141,9 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
             return next();
         } else if (item.getItemId() == R.id.action_save) {
             try {
-                Boolean skipValidation = ((JsonFormActivity) mMainView.getContext()).getIntent().getBooleanExtra(JsonFormConstants.SKIP_VALIDATION,
-                        false);
+                Boolean skipValidation = ((JsonFormActivity) mMainView.getContext()).getIntent()
+                        .getBooleanExtra(JsonFormConstants.SKIP_VALIDATION,
+                                false);
                 return save(skipValidation);
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
@@ -357,13 +356,15 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     @Override
     public void unCheck(String parentKey, String exclusiveKey, CompoundButton compoundButton) {
 
-        ViewGroup mMainView = compoundButton instanceof CheckBox ? (ViewGroup) compoundButton.getParent().getParent() : (ViewGroup) compoundButton.getParent().getParent().getParent();
+        ViewGroup mMainView = compoundButton instanceof CheckBox ? (ViewGroup) compoundButton.getParent()
+                .getParent() : (ViewGroup) compoundButton.getParent().getParent().getParent();
         int childCount = mMainView.getChildCount();
         for (int i = 0; i < childCount; i++) {
             View view = mMainView.getChildAt(i);
 
             if (view instanceof RadioButton) {
-                AppCompatRadioButton radio = (((ViewGroup) view).getChildAt(0)).findViewWithTag(JsonFormConstants.NATIVE_RADIO_BUTTON);
+                AppCompatRadioButton radio = (((ViewGroup) view).getChildAt(0))
+                        .findViewWithTag(JsonFormConstants.NATIVE_RADIO_BUTTON);
                 String parentKeyAtIndex = (String) radio.getTag(R.id.key);
                 String childKeyAtIndex = (String) radio.getTag(R.id.childKey);
                 if (radio.isChecked() && parentKeyAtIndex.equals(parentKey) && childKeyAtIndex.equals(exclusiveKey)) {
@@ -472,6 +473,6 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
-        presenter.onFocusChange(v,hasFocus);
+        presenter.onFocusChange(v, hasFocus);
     }
 }
