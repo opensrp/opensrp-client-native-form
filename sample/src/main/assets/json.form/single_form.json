@@ -58,7 +58,7 @@
     "display_back_button": "true",
     "title": "Birth Registration",
     "fields": [
-     /* {
+      {
         "key": "Child_Photo",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -244,6 +244,23 @@
         }
       },
       {
+        "key": "Time_Birth",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person",
+        "openmrs_entity_id": "birthtime",
+        "type": "time_picker",
+        "hint": "Birth Time *",
+        "expanded": false,
+        "duration": {
+          "label": "Birth Time"
+        },
+
+        "v_required": {
+          "value": "true",
+          "err": "Please enter the time of birth"
+        }
+      },
+      {
         "key": "First_Health_Facility_Contact",
         "openmrs_entity_parent": "",
         "openmrs_entity": "concept",
@@ -352,7 +369,7 @@
         "openmrs_entity_id": "NRC_Number",
         "entity_id": "mother",
         "type": "edit_text",
-        "hint": "Mother/guardian NRC number",
+        "hint": "Mother/guardian NRC number Mother\n/guardian NRC number Mother/\nguardian NRC number",
         "v_regex": {
           "value": "([0-9]{6}/[0-9]{2}/[0-9])|\s*",
           "err": "Number must take the format of ######/##/#"
@@ -929,7 +946,7 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": ""
-      },*/
+      },
       {
         "key": "site_ipv_assess",
         "openmrs_entity_parent": "",
@@ -978,7 +995,7 @@
           "value": true,
           "err": "Please select where stock was issued"
         }
-      }/*,
+      },
       {
         "key": "spacer",
         "openmrs_entity_parent": "",
@@ -1109,8 +1126,40 @@
         "openmrs_entity_id": "toaster_notes",
         "type": "toaster_notes",
         "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-        "text_color": "#1199F9",
         "toaster_type": "info",
+        "toaster_info_text": "This is an information note, This is an information note, This is an information note, This is an information note,This is an information note, This is an information note",
+        "toaster_info_title": "Information Toaster Info Title"
+      },
+      {
+        "key": "toaster_notes",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person_attribute",
+        "openmrs_entity_id": "toaster_notes",
+        "type": "toaster_notes",
+        "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+        "toaster_type": "positive",
+        "toaster_info_text": "This is an information note, This is an information note, This is an information note, This is an information note,This is an information note, This is an information note",
+        "toaster_info_title": "Information Toaster Info Title"
+      },
+      {
+        "key": "toaster_notes",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person_attribute",
+        "openmrs_entity_id": "toaster_notes",
+        "type": "toaster_notes",
+        "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+        "toaster_type": "warning",
+        "toaster_info_text": "This is an information note, This is an information note, This is an information note, This is an information note,This is an information note, This is an information note",
+        "toaster_info_title": "Information Toaster Info Title"
+      },
+      {
+        "key": "toaster_notes",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person_attribute",
+        "openmrs_entity_id": "toaster_notes",
+        "type": "toaster_notes",
+        "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+        "toaster_type": "problem",
         "toaster_info_text": "This is an information note, This is an information note, This is an information note, This is an information note,This is an information note, This is an information note",
         "toaster_info_title": "Information Toaster Info Title"
       },
@@ -1592,7 +1641,7 @@
             "specify_widget": "check_box"
           }
         ]
-    }*/
+      }
     ]
   }
 }

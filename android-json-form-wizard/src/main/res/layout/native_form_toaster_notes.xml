@@ -45,12 +45,13 @@
 
         <ImageView
             android:id="@+id/toaster_notes_info"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
+            android:layout_width="@dimen/default_info_icon_size"
+            android:layout_height="@dimen/default_info_icon_size"
             android:layout_alignTop="@+id/toaster_notes_image"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
+            android:layout_margin="8dp"
             android:clickable="true"
             android:contentDescription="@string/info_label"
             android:focusable="true"

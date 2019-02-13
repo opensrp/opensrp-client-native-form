@@ -1,7 +1,5 @@
 package com.vijay.jsonwizard.domain;
 
-import android.graphics.drawable.Drawable;
-
 import java.io.Serializable;
 
 public class Form implements Serializable {

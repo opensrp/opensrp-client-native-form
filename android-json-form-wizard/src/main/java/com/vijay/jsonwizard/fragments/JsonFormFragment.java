@@ -50,8 +50,6 @@ import java.util.Map;
 public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, JsonFormFragmentViewState> implements
         CommonListener, JsonFormFragmentView<JsonFormFragmentViewState> {
     private static final String TAG = "JsonFormFragment";
-    private static String CONST_REAL_TIME_VALIDATION = "RealtimeValidation";
-    private static String CONST_FRAGMENT_WRITEVALUE_CALLED = "Fragment write value called";
     protected LinearLayout mMainView;
     protected ScrollView mScrollView;
     private Menu mMenu;
@@ -141,9 +139,8 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
             return next();
         } else if (item.getItemId() == R.id.action_save) {
             try {
-                Boolean skipValidation = ((JsonFormActivity) mMainView.getContext()).getIntent()
-                        .getBooleanExtra(JsonFormConstants.SKIP_VALIDATION,
-                                false);
+                boolean skipValidation = ((JsonFormActivity) mMainView.getContext()).getIntent()
+                        .getBooleanExtra(JsonFormConstants.SKIP_VALIDATION, false);
                 return save(skipValidation);
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
@@ -235,7 +232,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     public void writeValue(String stepName, String prentKey, String childObjectKey, String childKey,
                            String value, String openMrsEntityParent, String openMrsEntity,
                            String openMrsEntityId, boolean popup) {
-        Log.d(CONST_REAL_TIME_VALIDATION, CONST_FRAGMENT_WRITEVALUE_CALLED);
+        // Log.d(CONST_REAL_TIME_VALIDATION, CONST_FRAGMENT_WRITEVALUE_CALLED);
         try {
             mJsonApi.writeValue(stepName, prentKey, childObjectKey, childKey, value,
                     openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
@@ -247,7 +244,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     @Override
     public void writeMetaDataValue(String metaDataKey, Map<String, String> values) {
-        Log.d(CONST_REAL_TIME_VALIDATION, CONST_FRAGMENT_WRITEVALUE_CALLED);
+        // Log.d(CONST_REAL_TIME_VALIDATION, CONST_FRAGMENT_WRITEVALUE_CALLED);
         try {
             mJsonApi.writeMetaDataValue(metaDataKey, values);
         } catch (JSONException e) {
@@ -471,8 +468,4 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         return view instanceof LinearLayout && view.getTag(R.id.type).equals(JsonFormConstants.CHECK_BOX + "_parent");
     }
 
-    @Override
-    public void onFocusChange(View v, boolean hasFocus) {
-        presenter.onFocusChange(v, hasFocus);
-    }
 }
