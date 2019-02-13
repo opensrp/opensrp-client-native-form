@@ -32,6 +32,8 @@ import com.vijay.jsonwizard.R;
 
 public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.AnimatorUpdateListener {
 
+    private static String TAG = MaterialSpinner.class.getCanonicalName();
+
     public static final int DEFAULT_ARROW_WIDTH_DP = 12;
 
     private Context context;
@@ -365,12 +367,25 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
     private int prepareBottomPadding() {
 
         int targetNbLines = minNbErrorLines;
-        if (error != null) {
-            staticLayout = new StaticLayout(error, textPaint, getWidth() - getPaddingRight() - getPaddingLeft(), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
+        if (error != null && this.getVisibility() == VISIBLE) {
+            int width = (getWidth() - getPaddingRight() - getPaddingLeft()) < 0 ? convertDpToPx(getContext(), 300) : (getWidth() - getPaddingRight() - getPaddingLeft());
+            staticLayout = new StaticLayout(error, textPaint, width,
+                    Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
             int nbErrorLines = staticLayout.getLineCount();
             targetNbLines = Math.max(minNbErrorLines, nbErrorLines);
         }
         return targetNbLines;
+    }
+
+    /**
+     * Calculate dp to px
+     *
+     * @param context
+     * @param dp
+     * @return
+     */
+    private int convertDpToPx(Context context, float dp) {
+        return (int) (dp * context.getResources().getDisplayMetrics().density);
     }
 
     public boolean isSpinnerEmpty() {
@@ -406,7 +421,9 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
             if (multiline) {
                 canvas.save();
                 canvas.translate(startX + errorLeftMargin + rightLeftSpinnerPadding, startYErrorLabel - errorLabelSpacing);
-                staticLayout.draw(canvas);
+                if (staticLayout != null) {
+                    staticLayout.draw(canvas);
+                }
                 canvas.restore();
 
             } else {
