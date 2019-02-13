@@ -1,0 +1,39 @@
+{
+  "content_form": [
+    {
+      "key": "dilation_cm_label",
+      "type": "label",
+      "label_text_style": "bold",
+      "text": "How many centimetres (cm) dilated? ",
+      "text_color": "#000000",
+      "v_required": {
+        "value": false
+      }
+    },
+    {
+      "key": "dilation_cm",
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "Amount of cervical dilation ",
+      "openmrs_entity_id": "162261",
+      "type": "normal_edit_text",
+      "edit_text_style": "bordered",
+      "edit_type": "number",
+      "v_numeric_integer": {
+        "value": "true",
+        "err": "Enter valid cervical dilation in cm"
+      },
+      "v_min": {
+        "value": "0.1",
+        "err": "Cervical dilation must be greater than 0"
+      },
+      "v_max": {
+        "value": "10",
+        "err": "Cervical dilation must be equal or less than 10"
+      },
+      "v_required": {
+        "value": "false",
+        "err": "Field cervical dilation is required"
+      }
+    }
+  ]
+}

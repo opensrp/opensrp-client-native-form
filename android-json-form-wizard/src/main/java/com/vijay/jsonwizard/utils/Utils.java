@@ -46,6 +46,10 @@ public class Utils {
     }
 
     public static String getDuration(String date) {
+        return getDuration(date, null);
+    }
+
+    public static String getDuration(String date, String endDate) {
         if (!TextUtils.isEmpty(date)) {
             Calendar calendar = FormUtils.getDate(date);
             calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -54,6 +58,13 @@ public class Utils {
             calendar.set(Calendar.MILLISECOND, 0);
 
             Calendar now = Calendar.getInstance();
+            if(endDate != null){
+                try{
+                    now = FormUtils.getDate(endDate);
+                }catch (Exception e) {
+                    Log.e(TAG, e.getMessage(), e);
+                }
+            }
             now.set(Calendar.HOUR_OF_DAY, 0);
             now.set(Calendar.MINUTE, 0);
             now.set(Calendar.SECOND, 0);
