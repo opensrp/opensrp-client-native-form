@@ -244,9 +244,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                            String openMrsEntityParent, String openMrsEntity, String openMrsEntityId, boolean popup)
             throws JSONException {
         if (invokeRefreshLogic(stepName, parentKey, childKey, value)) {
-
             cacheFormMapValues(stepName, parentKey, childKey, value);
-
             checkBoxWriteValue(stepName, parentKey, childObjectKey, childKey, value, popup);
 
         }
@@ -257,9 +255,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                            String openMrsEntityId) throws JSONException {
 
         if (invokeRefreshLogic(stepName, null, key, value)) {
-
             cacheFormMapValues(stepName, null, key, value);
-
             widgetsWriteValue(stepName, key, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, false);
         }
     }
@@ -268,9 +264,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     public void writeValue(String stepName, String parentKey, String childObjectKey, String childKey, String value,
                            String openMrsEntityParent, String openMrsEntity, String openMrsEntityId) throws JSONException {
         if (invokeRefreshLogic(stepName, parentKey, childKey, value)) {
-
             cacheFormMapValues(stepName, parentKey, childKey, value);
-
             checkBoxWriteValue(stepName, parentKey, childObjectKey, childKey, value, false);
 
         }
