@@ -97,7 +97,7 @@ public class SpinnerFactory implements FormWidgetFactory {
         MaterialSpinner spinner = spinnerRelativeLayout.findViewById(R.id.material_spinner);
         ImageView spinnerInfoIconImageView = spinnerRelativeLayout.findViewById(R.id.spinner_info_icon);
         ImageView editButton = spinnerRelativeLayout.findViewById(R.id.spinner_edit_button);
-        FormUtils.showEditButton(jsonObject, spinner, editButton, listener);
+        FormUtils.setEditButtonAttributes(jsonObject, spinner, editButton, listener);
         String hint = jsonObject.optString(JsonFormConstants.HINT);
         if (!TextUtils.isEmpty(hint)) {
             spinner.setHint(jsonObject.getString(JsonFormConstants.HINT));
