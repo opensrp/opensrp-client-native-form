@@ -157,8 +157,7 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "person_attribute",
         "openmrs_entity_id": "Child_Register_Card_Number",
-        "editable": true,
-        "read_only": false,
+        "read_only": true,
         "value": "1891389133",
         "type": "edit_text",
         "hint": "Child's register card number"
@@ -635,6 +634,7 @@
         "label_text_color": "#FF9800",
         "hint": "Any delivery complications?",
         "read_only": true,
+        "editable": true,
         "exclusive": [
           "none"
         ],
@@ -744,7 +744,7 @@
         "label": "Any symptoms of severe pre-eclampsia?",
         "label_text_style": "bold",
         "text_color": "#000000",
-        "read_only": true,
+        "editable": true,
         "exclusive": [
           "none"
         ],
@@ -971,7 +971,8 @@
           "value": true,
           "err": "Please select where stock was issued"
         }
-      },{
+      },
+      {
         "key": "site_ipv_assess",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -1319,12 +1320,13 @@
         "edit_type": "name",
         "edit_text_style": "bordered",
         "value": "1909319333",
+        "editable": true,
         "v_required": {
           "value": "true",
           "err": "Please enter the last name"
         },
         "v_regex": {
-          "value": "[A-Za-z\\s\.\-]*",
+          "value": "[0-9]*",
           "err": "Please enter a valid name"
         }
       },
@@ -1337,13 +1339,14 @@
         "hint": "Guardians name *",
         "edit_type": "name",
         "read_only": true,
+        "editable": true,
         "edit_text_style": "bordered",
         "v_required": {
           "value": "true",
           "err": "Please enter the guardians name"
         },
         "v_regex": {
-          "value": "[A-Za-z\\s\.\-]*",
+          "value": "[A-Za-z\\s\\.\\-]*",
           "err": "Please enter a valid name"
         }
       },

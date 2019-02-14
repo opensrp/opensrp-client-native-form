@@ -245,9 +245,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                            String openMrsEntityParent, String openMrsEntity, String openMrsEntityId, boolean popup)
             throws JSONException {
         if (invokeRefreshLogic(stepName, parentKey, childKey, value)) {
-
             cacheFormMapValues(stepName, parentKey, childKey, value);
-
             checkBoxWriteValue(stepName, parentKey, childObjectKey, childKey, value, popup);
 
         }
@@ -258,9 +256,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                            String openMrsEntityId) throws JSONException {
 
         if (invokeRefreshLogic(stepName, null, key, value)) {
-
             cacheFormMapValues(stepName, null, key, value);
-
             widgetsWriteValue(stepName, key, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, false);
         }
     }
@@ -269,9 +265,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     public void writeValue(String stepName, String parentKey, String childObjectKey, String childKey, String value,
                            String openMrsEntityParent, String openMrsEntity, String openMrsEntityId) throws JSONException {
         if (invokeRefreshLogic(stepName, parentKey, childKey, value)) {
-
             cacheFormMapValues(stepName, parentKey, childKey, value);
-
             checkBoxWriteValue(stepName, parentKey, childObjectKey, childKey, value, false);
 
         }
@@ -357,7 +351,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     public void invokeRefreshLogic(String value, boolean popup, String parentKey, String childKey) {
         refreshCalculationLogic(parentKey, childKey, popup);
         refreshSkipLogic(parentKey, childKey, popup);
-        refreshConstraints(parentKey, childKey);
+        refreshConstraints(parentKey, childKey, popup);
         refreshMediaLogic(parentKey, value);
     }
 
@@ -725,7 +719,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
      * @param childKey
      */
     @Override
-    public void refreshConstraints(String parentKey, String childKey) {
+    public void refreshConstraints(String parentKey, String childKey, boolean popup) {
         initComparisons();
 
         // Priorities constraints on the view that has just been changed
@@ -735,13 +729,13 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         }
 
         if (changedViewKey != null && (constrainedViews != null && constrainedViews.containsKey(changedViewKey))) {
-            checkViewConstraints(constrainedViews.get(changedViewKey), false);
+            checkViewConstraints(constrainedViews.get(changedViewKey), popup);
         }
 
         for (View curView : constrainedViews.values()) {
             String viewKey = getViewKey(curView);
             if (changedViewKey == null || (!TextUtils.isEmpty(viewKey) && !viewKey.equals(changedViewKey))) {
-                checkViewConstraints(curView, false);
+                checkViewConstraints(curView, popup);
             }
         }
     }
