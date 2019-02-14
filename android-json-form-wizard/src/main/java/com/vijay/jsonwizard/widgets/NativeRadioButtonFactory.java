@@ -40,7 +40,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.vijay.jsonwizard.utils.FormUtils.showEditButton;
 import static com.vijay.jsonwizard.widgets.DatePickerFactory.DATE_FORMAT;
 
 
@@ -264,8 +263,12 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         this.canvasIds = canvasIds;
 
         boolean readOnly = false;
+        boolean editable = false;
         if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
             readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
+        }
+        if (jsonObject.has(JsonFormConstants.EDITABLE)) {
+            editable = jsonObject.getBoolean(JsonFormConstants.EDITABLE);
         }
         List<View> views = new ArrayList<>(1);
         ImageView editButton;
@@ -282,9 +285,11 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         if (labelViews != null && labelViews.size() > 0) {
             editButton = (ImageView) labelViews.get(JsonFormConstants.EDIT_BUTTON);
             if (editButton != null) {
-                showEditButton(jsonObject, radioGroup, editButton, listener);
+                FormUtils.setEditButtonAttributes(jsonObject, radioGroup, editButton, listener);
+                if(editable){
+                    editButton.setVisibility(View.VISIBLE);
+                }
             }
-
         }
         rootLayout.setTag(R.id.extraPopup, popup);
         views.add(rootLayout);

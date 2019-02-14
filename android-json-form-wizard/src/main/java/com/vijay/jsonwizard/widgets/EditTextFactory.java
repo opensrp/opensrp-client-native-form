@@ -81,7 +81,7 @@ public class EditTextFactory implements FormWidgetFactory {
         MaterialEditText editText = editTextLayout.findViewById(R.id.edit_text);
         ImageView editButton = editTextLayout.findViewById(R.id.material_edit_text_edit_button);
 
-        FormUtils.showEditButton(jsonObject, editText, editButton, listener);
+        FormUtils.setEditButtonAttributes(jsonObject, editText, editButton, listener);
 
         attachLayout(stepName, context, formFragment, jsonObject, editText, editButton);
 

@@ -292,9 +292,6 @@ public class FormUtils {
             labelText.setTag(R.id.original_text, Html.fromHtml(combinedLabelText));
             labelText.setTextSize(labelTextSize);
             canvasIds.put(labelConstraintLayout.getId());
-            if (readOnly) {
-                editButton.setVisibility(View.VISIBLE);
-            }
             labelConstraintLayout.setEnabled(!readOnly);
             linearLayout.addView(labelConstraintLayout);
             createdViewsMap.put(JsonFormConstants.EDIT_BUTTON, editButton);
@@ -363,8 +360,8 @@ public class FormUtils {
         }
     }
 
-    public static void showEditButton(JSONObject jsonObject, View editableView, ImageView editButton,
-                                      CommonListener listener) throws JSONException {
+    public static void setEditButtonAttributes(JSONObject jsonObject, View editableView, ImageView editButton,
+                                               CommonListener listener) throws JSONException {
         editButton.setTag(R.id.editable_view, editableView);
         editButton.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
         editButton.setTag(R.id.type, jsonObject.getString("type"));
