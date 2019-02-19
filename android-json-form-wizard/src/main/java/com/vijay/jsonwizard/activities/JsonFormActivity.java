@@ -1722,6 +1722,11 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 } else if (child instanceof MaterialSpinner) {
                     MaterialSpinner spinner = (MaterialSpinner) child;
                     spinner.setSelected(false);
+                } else if(child instanceof TextView){
+                    // clear duration for custom date picker
+                    if(child.getId() == R.id.duration){
+                        ((TextView) child).setText("");
+                    }
                 }
                 refreshViews(group.getChildAt(id));
             }
