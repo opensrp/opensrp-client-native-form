@@ -677,7 +677,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 }
             }
 
-            updateCanvas(view, visible, canvasViewIds);
+            updateCanvas(view, visible, canvasViewIds,addressString,object);
             setReadOnlyAndFocus(view, visible, popup);
         } catch (Exception e) {
             Log.e(TAG, view.toString());
@@ -1676,7 +1676,18 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 object.get(RuleConstant.STEP) + "_" + object.get(JsonFormConstants.KEY) : JsonFormConstants.VALUE;
     }
 
-    private void updateCanvas(View view, boolean visible, JSONArray canvasViewIds) throws JSONException {
+    private void clearHiddenViewsValues(JSONObject object, String addressString) {
+        if (object != null) {
+            String objectKey = addressString.replace(":", "_");
+            formValuesCacheMap.remove(objectKey);
+            formValuesCacheMap.put(objectKey, "");
+            if (object.has(JsonFormConstants.VALUE)) {
+                object.remove(JsonFormConstants.VALUE);
+            }
+        }
+    }
+
+    private void updateCanvas(View view, boolean visible, JSONArray canvasViewIds, String addressString, JSONObject object) throws JSONException {
         for (int i = 0; i < canvasViewIds.length(); i++) {
             int curId = canvasViewIds.getInt(i);
 
@@ -1697,6 +1708,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     view.setFocusable(true);
                 }
             } else {
+                clearHiddenViewsValues(object,addressString);
                 curCanvasView.setEnabled(false);
                 curCanvasView.setVisibility(View.GONE);
                 refreshViews(curCanvasView);
