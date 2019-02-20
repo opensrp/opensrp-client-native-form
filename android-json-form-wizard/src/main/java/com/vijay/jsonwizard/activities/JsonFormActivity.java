@@ -1740,6 +1740,10 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     spinner.setSelected(false);
                 } else if (child instanceof CustomTextView) {
                     resetSelectedNumberBackground(child);
+
+                } else if(child instanceof TextView && child.getId() == R.id.duration){
+                    // clear duration for custom date picker
+                    ((TextView) child).setText("");
                 }
                 refreshViews(group.getChildAt(id));
             }
