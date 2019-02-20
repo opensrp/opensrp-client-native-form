@@ -6,6 +6,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
@@ -57,6 +60,7 @@ import com.vijay.jsonwizard.rules.RulesEngineFactory;
 import com.vijay.jsonwizard.utils.ExObjectResult;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.PropertyManager;
+import com.vijay.jsonwizard.views.CustomTextView;
 import com.vijay.jsonwizard.widgets.NumberSelectorFactory;
 
 import org.jeasy.rules.api.Facts;
@@ -677,7 +681,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 }
             }
 
-            updateCanvas(view, visible, canvasViewIds,addressString,object);
+            updateCanvas(view, visible, canvasViewIds, addressString, object);
             setReadOnlyAndFocus(view, visible, popup);
         } catch (Exception e) {
             Log.e(TAG, view.toString());
@@ -1708,7 +1712,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     view.setFocusable(true);
                 }
             } else {
-                clearHiddenViewsValues(object,addressString);
+                clearHiddenViewsValues(object, addressString);
                 curCanvasView.setEnabled(false);
                 curCanvasView.setVisibility(View.GONE);
                 refreshViews(curCanvasView);
@@ -1734,10 +1738,34 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 } else if (child instanceof MaterialSpinner) {
                     MaterialSpinner spinner = (MaterialSpinner) child;
                     spinner.setSelected(false);
+                } else if (child instanceof CustomTextView) {
+                    resetSelectedNumberBackground(child);
                 }
                 refreshViews(group.getChildAt(id));
             }
         }
+    }
+
+    /**
+     * Resets the background of the selected text in number selector
+     *
+     * @param child Selected textview
+     */
+    private void resetSelectedNumberBackground(View child) {
+        Drawable background = child.getBackground();
+        if (background instanceof ColorDrawable) {
+            int color = ((ColorDrawable) background).getColor();
+            if (color == child.getContext().getResources().getColor(R.color.native_number_selector_selected)) {
+                child.setBackgroundColor(child.getContext().getResources()
+                        .getColor(R.color.native_number_selector));
+            }
+        } else if (background instanceof GradientDrawable) {
+            ((GradientDrawable) background).setColor(child.getContext().getResources()
+                    .getColor(R.color.native_number_selector));
+            child.setBackground(background);
+        }
+        ((CustomTextView) child).setTextColor(child.getContext().getResources()
+                .getColor(R.color.primary_text));
     }
 
     @Override

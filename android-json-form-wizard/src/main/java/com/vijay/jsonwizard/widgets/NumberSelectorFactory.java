@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -65,6 +66,11 @@ public class NumberSelectorFactory implements FormWidgetFactory {
             } else if (item == (numberOfSelectors - 1)) {
                 customTextView.setBackgroundResource(R.drawable.number_selector_right_rounded_background_selected);
             }
+        }
+        //Change background color (for first and last drawables) after it was reset by skip logic
+        if(customTextView != null && customTextView.getBackground() instanceof GradientDrawable){
+            ((GradientDrawable)customTextView.getBackground()).setColor(context.getResources()
+                    .getColor(R.color.native_number_selector_selected));
         }
     }
 

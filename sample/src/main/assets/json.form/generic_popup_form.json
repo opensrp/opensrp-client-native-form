@@ -241,6 +241,74 @@
             "ex": "equalTo(., \"resThree3\")"
           }
         }
+      },
+      {
+        "key": "no_of_fetuses",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "numbers_selector",
+        "number_of_selectors": "5",
+        "start_number": "1",
+        "max_value": "8",
+        "text_size": "16px",
+        "text_color": "#000000",
+        "selected_text_color": "#ffffff",
+        "v_required": {
+          "value": false
+        },
+        "relevance": {
+          "step1:no_of_fetuses_unknown": {
+            "ex-checkbox": [
+              {
+                "not": [
+                  "no_of_fetuses_unknown"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "10sp",
+        "relevance": {
+          "step1:no_of_fetuses_unknown": {
+            "ex-checkbox": [
+              {
+                "not": [
+                  "no_of_fetuses_unknown"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "10sp"
+      },
+      {
+        "key": "no_of_fetuses_unknown",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "check_box",
+        "options": [
+          {
+            "key": "no_of_fetuses_unknown",
+            "text": "No. of fetuses unknown",
+            "value": "false"
+          }
+        ]
       }
     ]
   }
