@@ -1712,10 +1712,15 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     view.setFocusable(true);
                 }
             } else {
+
                 clearHiddenViewsValues(object, addressString);
                 curCanvasView.setEnabled(false);
                 curCanvasView.setVisibility(View.GONE);
                 refreshViews(curCanvasView);
+            }
+
+            if (object != null) {
+                object.put(JsonFormConstants.IS_VISIBLE, visible);
             }
         }
     }
@@ -1741,7 +1746,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 } else if (child instanceof CustomTextView) {
                     resetSelectedNumberBackground(child);
 
-                } else if(child instanceof TextView && child.getId() == R.id.duration){
+                } else if (child instanceof TextView && child.getId() == R.id.duration) {
                     // clear duration for custom date picker
                     ((TextView) child).setText("");
                 }
