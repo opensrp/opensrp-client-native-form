@@ -55,11 +55,13 @@ import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.interfaces.LifeCycleListener;
 import com.vijay.jsonwizard.interfaces.OnActivityRequestPermissionResultListener;
 import com.vijay.jsonwizard.interfaces.OnActivityResultListener;
+import com.vijay.jsonwizard.interfaces.OnFieldsInvalid;
 import com.vijay.jsonwizard.rules.RuleConstant;
 import com.vijay.jsonwizard.rules.RulesEngineFactory;
 import com.vijay.jsonwizard.utils.ExObjectResult;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.PropertyManager;
+import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.CustomTextView;
 import com.vijay.jsonwizard.widgets.NumberSelectorFactory;
 
@@ -86,7 +88,7 @@ import java.util.regex.Pattern;
 
 import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 
-public class JsonFormActivity extends AppCompatActivity implements JsonApi {
+public class JsonFormActivity extends AppCompatActivity implements JsonApi, OnFieldsInvalid {
 
     private static final String TAG = JsonFormActivity.class.getSimpleName();
     private static final String JSON_STATE = "jsonState";
@@ -118,6 +120,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     private RulesEngineFactory rulesEngineFactory = null;
     private LocalBroadcastManager localBroadcastManager;
     private Map<String, String> formValuesCacheMap = new HashMap<>();
+    private Map<String, ValidationStatus> invalidFields = new HashMap<>();
     private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -1817,6 +1820,11 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
     }
 
     @Override
+    public Map<String, ValidationStatus> getInvalidFields() {
+        return invalidFields;
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         for (LifeCycleListener lifeCycleListener : lifeCycleListeners) {
@@ -1916,5 +1924,10 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         return object.has(JsonFormConstants.EDIT_TYPE) &&
                 object.getString(JsonFormConstants.EDIT_TYPE).equals(JsonFormConstants.EDIT_TEXT_TYPE.NUMBER) ||
                 object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.NUMBER_SELECTOR);
+    }
+
+    @Override
+    public void passInvalidFields(Map<String, ValidationStatus> invalidFields) {
+        this.invalidFields = invalidFields;
     }
 }

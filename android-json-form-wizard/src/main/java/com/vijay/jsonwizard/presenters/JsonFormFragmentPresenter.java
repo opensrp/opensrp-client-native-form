@@ -22,7 +22,6 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
-import android.widget.Toast;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rey.material.widget.Button;
@@ -61,6 +60,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static com.vijay.jsonwizard.utils.FormUtils.dpToPixels;
@@ -79,10 +79,12 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
     private String mCurrentKey;
     private String mCurrentPhotoPath;
     private JsonFormInteractor mJsonFormInteractor;
+    private static Map<String, ValidationStatus> invalidFields;
 
     public JsonFormFragmentPresenter(JsonFormFragment formFragment) {
         this.formFragment = formFragment;
         mJsonFormInteractor = JsonFormInteractor.getInstance();
+        invalidFields = this.formFragment.getJsonApi().getInvalidFields();
     }
 
     public JsonFormFragmentPresenter(JsonFormFragment formFragment, JsonFormInteractor jsonFormInteractor) {
@@ -171,7 +173,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
 
     }
 
-    @SuppressLint ("ResourceAsColor")
+    @SuppressLint("ResourceAsColor")
     public void setUpToolBar() {
         getView().setActionBarTitle(mStepDetails.optString("title"));
         getView().setToolbarTitleColor(R.color.white);
@@ -195,31 +197,51 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         getView().backClick();
     }
 
+    public static Map<String, ValidationStatus> getInvalidFields() {
+        return invalidFields;
+    }
+
+    /**
+     * Check if form is valid
+     *
+     * @return true if invalidFields is empty otherwise false
+     */
+    public boolean isFormValid() {
+        return getInvalidFields().size() == 0;
+    }
+
+    public boolean validateOnSubmit() {
+        JSONObject entireJsonForm = formFragment.getJsonApi().getmJSONObject();
+        return entireJsonForm.optBoolean(JsonFormConstants.VALIDATE_ON_SUBMIT, false);
+    }
+
+    private void moveToNextStep() {
+        JsonFormFragment next = JsonFormFragment.getFormFragment(mStepDetails.optString(JsonFormConstants.NEXT));
+        getView().hideKeyBoard();
+        getView().transactThis(next);
+    }
+
     public void onNextClick(LinearLayout mainView) {
-        ValidationStatus validationStatus = writeValuesAndValidate(mainView);
-        if (validationStatus.isValid()) {
-            JsonFormFragment next = JsonFormFragment.getFormFragment(mStepDetails.optString("next"));
-            getView().hideKeyBoard();
-            getView().transactThis(next);
+        validateAndWriteValues();
+        boolean validateOnSubmit = validateOnSubmit();
+        if (validateOnSubmit) {
+            moveToNextStep();
+        } else if (isFormValid()) {
+            moveToNextStep();
         } else {
-            validationStatus.requestAttention();
-            getView().showToast(validationStatus.getErrorMessage());
+            getView().showToast("You have " + invalidFields.size() + " invalid field(s). Please correct them to proceed");
         }
     }
 
-    public ValidationStatus writeValuesAndValidate(LinearLayout mainView) {
-        ValidationStatus firstError = null;
+    public void validateAndWriteValues() {
         for (View childAt : formFragment.getJsonApi().getFormDataViews()) {
             String key = (String) childAt.getTag(R.id.key);
             String openMrsEntityParent = (String) childAt.getTag(R.id.openmrs_entity_parent);
             String openMrsEntity = (String) childAt.getTag(R.id.openmrs_entity);
             String openMrsEntityId = (String) childAt.getTag(R.id.openmrs_entity_id);
             Boolean popup = (Boolean) childAt.getTag(R.id.extraPopup);
-
-            ValidationStatus validationStatus = validate(getView(), childAt, firstError == null);
-            if (firstError == null && !validationStatus.isValid()) {
-                firstError = validationStatus;
-            }
+            ValidationStatus validationStatus = validateView(childAt);
+            String fieldKey = mStepName + ":" + key;
 
             if (childAt instanceof MaterialEditText) {
                 MaterialEditText editText = (MaterialEditText) childAt;
@@ -263,18 +285,33 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                 String rawValue = (String) button.getTag(R.id.raw_value);
                 getView().writeValue(mStepName, key, rawValue, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
             }
-        }
 
-        if (firstError == null) {
-            return new ValidationStatus(true, null, null, null);
-        } else {
-            return firstError;
+            if (!validationStatus.isValid()) {
+                invalidFields.put(fieldKey, validationStatus);
+            } else {
+                if (invalidFields.size() > 0) {
+                    invalidFields.remove(fieldKey);
+                }
+            }
+
         }
+        formFragment.onFieldsInvalid.passInvalidFields(invalidFields);
+    }
+
+    /**
+     * Validates the passed view
+     *
+     * @param childAt view to be validated
+     * @return ValidationStatus for the view
+     */
+    private ValidationStatus validateView(View childAt) {
+        return validate(getView(), childAt, true);
     }
 
     public void onSaveClick(LinearLayout mainView) {
-        ValidationStatus validationStatus = writeValuesAndValidate(mainView);
-        if (validationStatus.isValid() || Boolean.valueOf(mainView.getTag(R.id.skip_validation).toString())) {
+        validateAndWriteValues();
+        boolean isFormValid = isFormValid();
+        if (isFormValid || Boolean.valueOf(mainView.getTag(R.id.skip_validation).toString())) {
             Intent returnIntent = new Intent();
             getView().onFormFinish();
             returnIntent.putExtra("json", getView().getCurrentJsonState());
@@ -282,8 +319,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                     Boolean.valueOf(mainView.getTag(R.id.skip_validation).toString()));
             getView().finishWithResult(returnIntent);
         } else {
-            Toast.makeText(getView().getContext(), validationStatus.getErrorMessage(), Toast.LENGTH_LONG).show();
-            validationStatus.requestAttention();
+            getView().showToast("You have " + invalidFields.size() + " invalid field(s). Please correct them to proceed");
         }
     }
 
@@ -398,7 +434,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         editableView.requestFocusFromTouch();
     }
 
-    @SuppressWarnings ({"unchecked"})
+    @SuppressWarnings({"unchecked"})
     private void setCheckboxesEditable(View editButton) {
         List<View> checkboxLayouts = (ArrayList<View>) editButton.getTag(R.id.editable_view);
         for (View checkboxLayout : checkboxLayouts) {
