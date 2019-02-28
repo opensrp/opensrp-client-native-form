@@ -814,4 +814,17 @@ public class FormUtils {
         }
         return fields;
     }
+
+    public JSONObject getOpenMRSAttributes(JSONObject jsonObject) throws JSONException {
+        String openmrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
+        String openmrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
+        String openmrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
+
+        JSONObject openmrsAttributes = new JSONObject();
+        openmrsAttributes.put(JsonFormConstants.OPENMRS_ENTITY_PARENT, openmrsEntityParent);
+        openmrsAttributes.put(JsonFormConstants.OPENMRS_ENTITY, openmrsEntity);
+        openmrsAttributes.put(JsonFormConstants.OPENMRS_ENTITY_ID, openmrsEntityId);
+
+        return openmrsAttributes;
+    }
 }

@@ -311,14 +311,84 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                         item.getString(JsonFormConstants.VALUE) : value : value);
     }
 
-    private void performPopupOperations(String value, boolean popup, JSONObject item, String keyAtIndex, String itemType) {
+    private void performPopupOperations(String value, boolean popup, JSONObject item, String keyAtIndex, String itemType)
+            throws JSONException {
         if (popup) {
             String itemText = "";
             if (itemType.equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
                 itemText = formUtils.getRadioButtonText(item, value);
             }
-            genericDialogInterface.addSelectedValues(formUtils.addAssignedValue(keyAtIndex, "", value, itemType, itemText));
+
+            JSONArray valueOpenMRSAttributes = new JSONArray();
+            if (itemType.equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
+                getOptionsOpenMRSAttributes(value, item, valueOpenMRSAttributes);
+            }
+
+            if (itemType.equals(JsonFormConstants.SPINNER) && item.has(JsonFormConstants.OPENMRS_CHOICE_IDS)) {
+                JSONObject openmrsChoiceIds = item.getJSONObject(JsonFormConstants.OPENMRS_CHOICE_IDS);
+                Iterator<String> keys = openmrsChoiceIds.keys();
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    if (value.equals(key)) {
+                        JSONObject jsonObject = new JSONObject();
+                        String optionOpenMRSConceptId = openmrsChoiceIds.get(key).toString();
+                        jsonObject.put(JsonFormConstants.KEY, value);
+                        jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_PARENT,
+                                item.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT));
+                        jsonObject.put(JsonFormConstants.OPENMRS_ENTITY, item.getString(JsonFormConstants.OPENMRS_ENTITY));
+                        jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_ID, optionOpenMRSConceptId);
+
+                        valueOpenMRSAttributes.put(jsonObject);
+                    }
+
+                }
+            }
+
+            JSONObject openmrsAttributes = formUtils.getOpenMRSAttributes(item);
+
+            genericDialogInterface
+                    .addSelectedValues(openmrsAttributes, valueOpenMRSAttributes,
+                            formUtils.addAssignedValue(keyAtIndex, "", value, itemType,
+                                    itemText));
             //extraFieldsWithValues = fields;
+        }
+    }
+
+    private void getOptionsOpenMRSAttributes(String value, JSONObject item, JSONArray valueOpenMRSAttributes)
+            throws JSONException {
+        JSONArray options = item.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
+        if (options.length() > 0) {
+            for (int i = 0; i < options.length(); i++) {
+                JSONObject itemOption = options.getJSONObject(i);
+                if (JsonFormConstants.NATIVE_RADIO_BUTTON.equals(item.getString(JsonFormConstants.TYPE))) {
+                    if (itemOption.has(JsonFormConstants.KEY) && value.equals(itemOption.getString(JsonFormConstants.KEY))) {
+                        extractOptionOpenMRSAttributes(valueOpenMRSAttributes, itemOption);
+                    }
+                } else if (JsonFormConstants.CHECK_BOX.equals(item.getString(JsonFormConstants.TYPE))) {
+                    if (itemOption.has(JsonFormConstants.VALUE) && "true"
+                            .equals(itemOption.getString(JsonFormConstants.VALUE))) {
+                        extractOptionOpenMRSAttributes(valueOpenMRSAttributes, itemOption);
+                    }
+                }
+            }
+        }
+    }
+
+    private void extractOptionOpenMRSAttributes(JSONArray valueOpenMRSAttributes, JSONObject itemOption)
+            throws JSONException {
+        if (itemOption.has(JsonFormConstants.OPENMRS_ENTITY_PARENT) && itemOption
+                .has(JsonFormConstants.OPENMRS_ENTITY) && itemOption.has(JsonFormConstants.OPENMRS_ENTITY_ID)) {
+            String openmrsEntityParent = itemOption.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
+            String openmrsEntity = itemOption.getString(JsonFormConstants.OPENMRS_ENTITY);
+            String openmrsEntityId = itemOption.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
+
+            JSONObject valueOpenMRSObject = new JSONObject();
+            valueOpenMRSObject.put(JsonFormConstants.KEY, itemOption.getString(JsonFormConstants.KEY));
+            valueOpenMRSObject.put(JsonFormConstants.OPENMRS_ENTITY_PARENT, openmrsEntityParent);
+            valueOpenMRSObject.put(JsonFormConstants.OPENMRS_ENTITY, openmrsEntity);
+            valueOpenMRSObject.put(JsonFormConstants.OPENMRS_ENTITY_ID, openmrsEntityId);
+
+            valueOpenMRSAttributes.put(valueOpenMRSObject);
         }
     }
 
@@ -399,7 +469,14 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                         if (childKey.equals(anotherKeyAtIndex)) {
                             innerItem.put(JsonFormConstants.VALUE, value);
                             if (popup) {
-                                genericDialogInterface.addSelectedValues(
+                                JSONArray valueOpenMRSAttributes = new JSONArray();
+                                if (innerItem.has(JsonFormConstants.VALUE_OPENMRS_ATTRIBUTES)) {
+                                    valueOpenMRSAttributes =
+                                            innerItem.getJSONArray(JsonFormConstants.VALUE_OPENMRS_ATTRIBUTES);
+                                }
+                                getOptionsOpenMRSAttributes(value, item, valueOpenMRSAttributes);
+                                JSONObject openMRSAttributes = formUtils.getOpenMRSAttributes(item);
+                                genericDialogInterface.addSelectedValues(openMRSAttributes, valueOpenMRSAttributes,
                                         formUtils.addAssignedValue(keyAtIndex, childKey, value, itemType, itemText));
                             }
 

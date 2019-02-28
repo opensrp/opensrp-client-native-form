@@ -140,6 +140,9 @@ public class JsonFormConstants {
     public static final String SPECIFY_DATE_HIDDEN_FIELD_SUFFIX = "_date";
     public static final String SECONDARY_SUFFIX = "secondary_suffix";
     public static final String SECONDARY_PREFIX = "Specified: ";
+    public static final String OPENMRS_ATTRIBUTES = "openmrs_attributes";
+    public static final String VALUE_OPENMRS_ATTRIBUTES = "value_openmrs_attributes";
+    public static final String OPENMRS_CHOICE_IDS = "openmrs_choice_ids";
 
     public static class JSON_FORM_KEY {
         public static final String EX_RULES = "ex-rules";
