@@ -358,13 +358,15 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         }
     }
 
-    private void getOptionsOpenMRSAttributes(String value, JSONObject item, JSONArray valueOpenMRSAttributes)
+    protected void getOptionsOpenMRSAttributes(String value, JSONObject item, JSONArray valueOpenMRSAttributes)
             throws JSONException {
         JSONArray options = item.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
         if (options.length() > 0) {
             for (int i = 0; i < options.length(); i++) {
                 JSONObject itemOption = options.getJSONObject(i);
-                if (JsonFormConstants.NATIVE_RADIO_BUTTON.equals(item.getString(JsonFormConstants.TYPE))) {
+                if (JsonFormConstants.NATIVE_RADIO_BUTTON
+                        .equals(item.getString(JsonFormConstants.TYPE)) || JsonFormConstants.ANC_RADIO_BUTTON
+                        .equals(item.getString(JsonFormConstants.TYPE))) {
                     if (itemOption.has(JsonFormConstants.KEY) && value.equals(itemOption.getString(JsonFormConstants.KEY))) {
                         extractOptionOpenMRSAttributes(valueOpenMRSAttributes, itemOption);
                     }
@@ -378,7 +380,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         }
     }
 
-    private void extractOptionOpenMRSAttributes(JSONArray valueOpenMRSAttributes, JSONObject itemOption)
+    protected void extractOptionOpenMRSAttributes(JSONArray valueOpenMRSAttributes, JSONObject itemOption)
             throws JSONException {
         if (itemOption.has(JsonFormConstants.OPENMRS_ENTITY_PARENT) && itemOption
                 .has(JsonFormConstants.OPENMRS_ENTITY) && itemOption.has(JsonFormConstants.OPENMRS_ENTITY_ID)) {
@@ -1768,7 +1770,8 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         }
     }
 
-    private void updateCanvas(View view, boolean visible, JSONArray canvasViewIds, String addressString, JSONObject object) throws JSONException {
+    private void updateCanvas(View view, boolean visible, JSONArray canvasViewIds, String addressString, JSONObject object)
+            throws JSONException {
         for (int i = 0; i < canvasViewIds.length(); i++) {
             int curId = canvasViewIds.getInt(i);
 
@@ -1818,7 +1821,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 } else if (child instanceof CustomTextView) {
                     resetSelectedNumberBackground(child);
 
-                } else if(child instanceof TextView && child.getId() == R.id.duration){
+                } else if (child instanceof TextView && child.getId() == R.id.duration) {
                     // clear duration for custom date picker
                     ((TextView) child).setText("");
                 }
