@@ -143,6 +143,7 @@ public class JsonFormConstants {
     public static final String IS_VISIBLE = "is_visible";
     public static final String VALIDATE_ON_SUBMIT = "validate_on_submit";
     public static final String NEXT = "next";
+    public static final String STEP_TITLE = "title";
 
     public static class JSON_FORM_KEY {
         public static final String EX_RULES = "ex-rules";

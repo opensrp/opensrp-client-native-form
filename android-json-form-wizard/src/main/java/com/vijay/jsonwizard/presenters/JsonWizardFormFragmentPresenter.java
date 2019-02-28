@@ -2,6 +2,7 @@ package com.vijay.jsonwizard.presenters;
 
 import android.widget.LinearLayout;
 
+import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.fragments.JsonWizardFormFragment;
@@ -27,12 +28,14 @@ public class JsonWizardFormFragmentPresenter extends JsonFormFragmentPresenter {
     public void onNextClick(LinearLayout mainView) {
         validateAndWriteValues();
         boolean validateOnSubmit = validateOnSubmit();
-        if (validateOnSubmit) {
+        if (validateOnSubmit && getIncorrectlyFormattedFields().isEmpty()) {
+            getIncorrectlyFormattedFields().clear();
             moveToNextWizardStep();
         } else if (isFormValid()) {
             moveToNextWizardStep();
         } else {
-            getView().showToast("You have " + getInvalidFields().size() + " invalid field(s). Please correct them to proceed");
+            getView().showSnackBar(getView().getContext().getResources()
+                    .getString(R.string.json_form_error_msg, getInvalidFields().size()));
         }
     }
     private void moveToNextWizardStep() {

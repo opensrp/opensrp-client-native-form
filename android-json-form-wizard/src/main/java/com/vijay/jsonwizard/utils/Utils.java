@@ -1,9 +1,11 @@
 package com.vijay.jsonwizard.utils;
 
 import android.content.Context;
+import android.support.design.widget.Snackbar;
 import android.support.v4.util.TimeUtils;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.vijay.jsonwizard.widgets.DatePickerFactory;
@@ -19,6 +21,10 @@ public class Utils {
 
     public static void showToast(Context context, String message) {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+    }
+
+    public static void showSnackBar(View view, String message) {
+        Snackbar.make(view, message, Snackbar.LENGTH_LONG).show();
     }
 
     public static Date getDateFromString(String dtStart) {
@@ -58,10 +64,10 @@ public class Utils {
             calendar.set(Calendar.MILLISECOND, 0);
 
             Calendar now = Calendar.getInstance();
-            if(endDate != null){
-                try{
+            if (endDate != null) {
+                try {
                     now = FormUtils.getDate(endDate);
-                }catch (Exception e) {
+                } catch (Exception e) {
                     Log.e(TAG, e.getMessage(), e);
                 }
             }

@@ -1930,4 +1930,9 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi, OnFi
     public void passInvalidFields(Map<String, ValidationStatus> invalidFields) {
         this.invalidFields = invalidFields;
     }
+
+    @Override
+    public Map<String, ValidationStatus> getPassedInvalidFields() {
+        return getInvalidFields();
+    }
 }
