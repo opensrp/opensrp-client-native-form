@@ -364,17 +364,15 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         if (options.length() > 0) {
             for (int i = 0; i < options.length(); i++) {
                 JSONObject itemOption = options.getJSONObject(i);
-                if (JsonFormConstants.NATIVE_RADIO_BUTTON
+                if ((JsonFormConstants.NATIVE_RADIO_BUTTON
                         .equals(item.getString(JsonFormConstants.TYPE)) || JsonFormConstants.ANC_RADIO_BUTTON
-                        .equals(item.getString(JsonFormConstants.TYPE))) {
-                    if (itemOption.has(JsonFormConstants.KEY) && value.equals(itemOption.getString(JsonFormConstants.KEY))) {
-                        extractOptionOpenMRSAttributes(valueOpenMRSAttributes, itemOption);
-                    }
-                } else if (JsonFormConstants.CHECK_BOX.equals(item.getString(JsonFormConstants.TYPE))) {
-                    if (itemOption.has(JsonFormConstants.VALUE) && "true"
-                            .equals(itemOption.getString(JsonFormConstants.VALUE))) {
-                        extractOptionOpenMRSAttributes(valueOpenMRSAttributes, itemOption);
-                    }
+                        .equals(item.getString(JsonFormConstants.TYPE))) && (itemOption.has(JsonFormConstants.KEY) && value
+                        .equals(itemOption.getString(JsonFormConstants.KEY)))) {
+                    extractOptionOpenMRSAttributes(valueOpenMRSAttributes, itemOption);
+                } else if (JsonFormConstants.CHECK_BOX.equals(item.getString(JsonFormConstants.TYPE)) && itemOption
+                        .has(JsonFormConstants.VALUE) && JsonFormConstants.TRUE
+                        .equals(itemOption.getString(JsonFormConstants.VALUE))) {
+                    extractOptionOpenMRSAttributes(valueOpenMRSAttributes, itemOption);
                 }
             }
         }

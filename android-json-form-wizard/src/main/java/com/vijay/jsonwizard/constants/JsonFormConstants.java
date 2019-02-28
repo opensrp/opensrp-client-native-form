@@ -144,6 +144,7 @@ public class JsonFormConstants {
     public static final String VALUE_OPENMRS_ATTRIBUTES = "value_openmrs_attributes";
     public static final String OPENMRS_CHOICE_IDS = "openmrs_choice_ids";
     public static final String ANC_RADIO_BUTTON = "anc_radio_button";
+    public static final String TRUE = "true";
 
     public static class JSON_FORM_KEY {
         public static final String EX_RULES = "ex-rules";
