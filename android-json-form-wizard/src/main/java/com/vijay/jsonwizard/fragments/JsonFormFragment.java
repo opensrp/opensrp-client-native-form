@@ -1,6 +1,7 @@
 package com.vijay.jsonwizard.fragments;
 
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -48,12 +49,9 @@ import java.util.Map;
 /**
  * Created by vijay on 5/7/15.
  */
-public class
-JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, JsonFormFragmentViewState> implements
+public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, JsonFormFragmentViewState> implements
         CommonListener, JsonFormFragmentView<JsonFormFragmentViewState> , NativeViewer {
     private static final String TAG = "JsonFormFragment";
-    private static String CONST_REAL_TIME_VALIDATION = "RealtimeValidation";
-    private static String CONST_FRAGMENT_WRITEVALUE_CALLED = "Fragment write value called";
     protected LinearLayout mMainView;
     protected ScrollView mScrollView;
     private Menu mMenu;
@@ -112,9 +110,7 @@ JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, JsonFormFragment
         super.onViewCreated(view, savedInstanceState);
         mJsonApi.clearFormDataViews();
         presenter.addFormElements();
-        mJsonApi.refreshCalculationLogic(null, null, false);
-        mJsonApi.refreshSkipLogic(null, null, false);
-        mJsonApi.refreshConstraints(null, null);
+        mJsonApi.invokeRefreshLogic(null, false, null, null);
     }
 
     @Override
@@ -145,8 +141,8 @@ JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, JsonFormFragment
             return next();
         } else if (item.getItemId() == R.id.action_save) {
             try {
-                Boolean skipValidation = ((JsonFormActivity) mMainView.getContext()).getIntent().getBooleanExtra(JsonFormConstants.SKIP_VALIDATION,
-                        false);
+                boolean skipValidation = ((JsonFormActivity) mMainView.getContext()).getIntent()
+                        .getBooleanExtra(JsonFormConstants.SKIP_VALIDATION, false);
                 return save(skipValidation);
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
@@ -238,7 +234,7 @@ JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, JsonFormFragment
     public void writeValue(String stepName, String prentKey, String childObjectKey, String childKey,
                            String value, String openMrsEntityParent, String openMrsEntity,
                            String openMrsEntityId, boolean popup) {
-        Log.d(CONST_REAL_TIME_VALIDATION, CONST_FRAGMENT_WRITEVALUE_CALLED);
+        // Log.d(CONST_REAL_TIME_VALIDATION, CONST_FRAGMENT_WRITEVALUE_CALLED);
         try {
             mJsonApi.writeValue(stepName, prentKey, childObjectKey, childKey, value,
                     openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
@@ -250,7 +246,7 @@ JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, JsonFormFragment
 
     @Override
     public void writeMetaDataValue(String metaDataKey, Map<String, String> values) {
-        Log.d(CONST_REAL_TIME_VALIDATION, CONST_FRAGMENT_WRITEVALUE_CALLED);
+        // Log.d(CONST_REAL_TIME_VALIDATION, CONST_FRAGMENT_WRITEVALUE_CALLED);
         try {
             mJsonApi.writeMetaDataValue(metaDataKey, values);
         } catch (JSONException e) {
@@ -359,13 +355,15 @@ JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, JsonFormFragment
     @Override
     public void unCheck(String parentKey, String exclusiveKey, CompoundButton compoundButton) {
 
-        ViewGroup mMainView = compoundButton instanceof CheckBox ? (ViewGroup) compoundButton.getParent().getParent() : (ViewGroup) compoundButton.getParent().getParent().getParent();
+        ViewGroup mMainView = compoundButton instanceof CheckBox ? (ViewGroup) compoundButton.getParent()
+                .getParent() : (ViewGroup) compoundButton.getParent().getParent().getParent();
         int childCount = mMainView.getChildCount();
         for (int i = 0; i < childCount; i++) {
             View view = mMainView.getChildAt(i);
 
             if (view instanceof RadioButton) {
-                AppCompatRadioButton radio = (((ViewGroup) view).getChildAt(0)).findViewWithTag(JsonFormConstants.NATIVE_RADIO_BUTTON);
+                AppCompatRadioButton radio = (((ViewGroup) view).getChildAt(0))
+                        .findViewWithTag(JsonFormConstants.NATIVE_RADIO_BUTTON);
                 String parentKeyAtIndex = (String) radio.getTag(R.id.key);
                 String childKeyAtIndex = (String) radio.getTag(R.id.childKey);
                 if (radio.isChecked() && parentKeyAtIndex.equals(parentKey) && childKeyAtIndex.equals(exclusiveKey)) {
@@ -443,6 +441,11 @@ JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, JsonFormFragment
 
     public JsonApi getJsonApi() {
         return mJsonApi;
+    }
+
+    @Override
+    public FragmentManager getActivityFragmentManager() {
+        return getActivity().getFragmentManager();
     }
 
     @Override

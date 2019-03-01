@@ -8,7 +8,6 @@ import android.view.View;
 
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.exceptions.JsonFormRuntimeException;
-import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.interfaces.NativeViewer;
 import com.vijay.jsonwizard.presenters.JsonFormFragmentPresenter;
@@ -19,11 +18,11 @@ import java.util.ArrayList;
 
 public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListener {
 
+    private static String TAG = GenericTextWatcher.class.getCanonicalName();
     private View mView;
     private String mStepName;
     private ArrayList<View.OnFocusChangeListener> onFocusChangeListeners;
     private NativeViewer formFragment;
-    private static String TAG = GenericTextWatcher.class.getCanonicalName();
 
     public GenericTextWatcher(String stepName, NativeViewer formFragment, View view) {
         this.formFragment = formFragment;
@@ -37,20 +36,20 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
         onFocusChangeListeners.add(onFocusChangeListener);
     }
 
+    @Override
     public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
         //any code here should check if correct view has current focus , see afterTextChanged
-        Log.d("GenericTextWatcher", "beforeTextChanged called");
     }
 
+    @Override
     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
         //any code here should check if correct view has current focus, see afterTextChanged
-        Log.d("GenericTextWatcher", "beforeTextChanged called");
     }
 
+    @Override
     public synchronized void afterTextChanged(Editable editable) {
 
         if (editable != null && isRedundantRepetition(editable.toString())) {
-
             return;
         }
 
@@ -60,7 +59,7 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
             text = editable.toString();
         }
 
-        mView.setTag(R.id.previous, text);
+        mView.setTag(R.id.previous, editable.toString());
 
         Log.d("RealtimeValidation", "afterTextChanged called");
         JsonApi api = null;
@@ -100,7 +99,7 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
         String prev = mView.getTag(R.id.previous) != null ? mView.getTag(R.id.previous).toString() : null;
 
         //Check if trigger is Automatic and that text hasn't changed
-        return ((currentFocus != null || !currentFocus.equals(mView)) && (prev != null && prev.equals(text)));
+        return ((currentFocus == null || !currentFocus.equals(mView)) && (prev != null && prev.equals(text)));
 
 
     }

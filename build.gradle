@@ -8,7 +8,6 @@ buildscript {
         classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.11.0"
     }
 }
-
 configure(allprojects) { project ->
     buildscript {
 
@@ -23,9 +22,7 @@ configure(allprojects) { project ->
         }
     }
 }
-
 project.ext.preDexLibs = !project.hasProperty('disablePreDex')
-
 subprojects {
 
     group = 'org.smartregister'
@@ -61,19 +58,18 @@ subprojects {
         }
     }
 }
-
 apply plugin: 'java'
 apply plugin: 'build-dashboard'
 apply plugin: 'io.codearte.nexus-staging'
-
 buildDashboard {
     reports.html.setDestination(file("build/"))
 }
-
 test.reports.html.enabled = false
 test.reports.junitXml.enabled = false
 
-
 def isReleaseBuild() {
     return version.contains("SNAPSHOT") == false
+}
+
+dependencies {
 }

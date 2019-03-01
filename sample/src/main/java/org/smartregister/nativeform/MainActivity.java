@@ -113,9 +113,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 form.setWizard(true);
                 form.setActionBarBackground(R.color.profile_actionbar);
                 form.setNavigationBackground(R.color.profile_navigation);
+                form.setHideSaveLabel(true);
                 form.setNextLabel(getString(R.string.next));
                 form.setPreviousLabel(getString(R.string.previous));
                 form.setSaveLabel(getString(R.string.save));
+                form.setBackIcon(R.drawable.ic_icon_positive);
                 intent.putExtra(JsonFormConstants.JSON_FORM_KEY.FORM, form);
 
                 startActivityForResult(intent, jsonFormActivityRequestCode);

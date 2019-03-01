@@ -14,7 +14,6 @@ import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.ToasterLinearLayout;
-import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
@@ -50,7 +49,8 @@ public class ToasterNotesFactory implements FormWidgetFactory {
         List<View> views = new ArrayList<>(1);
         JSONArray canvasIds = new JSONArray();
 
-        ToasterLinearLayout linearLayout = (ToasterLinearLayout) LayoutInflater.from(context).inflate(R.layout.native_form_toaster_notes, null);
+        ToasterLinearLayout linearLayout = (ToasterLinearLayout) LayoutInflater.from(context)
+                .inflate(R.layout.native_form_toaster_notes, null);
         linearLayout.setId(ViewUtil.generateViewId());
         canvasIds.put(linearLayout.getId());
         linearLayout.setTag(R.id.canvas_ids, canvasIds.toString());
@@ -75,7 +75,8 @@ public class ToasterNotesFactory implements FormWidgetFactory {
         return views;
     }
 
-    private void attachLayout(List<View> views, Context context, JSONObject jsonObject, LinearLayout linearLayout, CommonListener listener)
+    private void attachLayout(List<View> views, Context context, JSONObject jsonObject, LinearLayout linearLayout,
+                              CommonListener listener)
             throws JSONException {
         String type = jsonObject.optString(JsonFormConstants.TOASTER_TYPE, JsonFormConstants.TOASTER_INFO);
         String text = jsonObject.optString(JsonFormConstants.TEXT, "");
@@ -122,7 +123,8 @@ public class ToasterNotesFactory implements FormWidgetFactory {
         }
     }
 
-    private void addToasterInfo(List<View> views, JSONObject jsonObject, LinearLayout linearLayout, CommonListener listener) throws
+    private void addToasterInfo(List<View> views, JSONObject jsonObject, LinearLayout linearLayout, CommonListener listener)
+            throws
             JSONException {
         String infoTitle = jsonObject.optString(JsonFormConstants.TOASTER_INFO_TITLE, "");
         String infoText = jsonObject.optString(JsonFormConstants.TOASTER_INFO_TEXT, "");

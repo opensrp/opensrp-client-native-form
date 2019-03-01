@@ -196,7 +196,7 @@ public class JsonApiEngine implements JsonApi {
                 JSONObject item = fields.getJSONObject(i);
                 String keyAtIndex = item.getString(JsonFormConstants.KEY);
                 String itemType = item.has(JsonFormConstants.TYPE) ? item.getString(JsonFormConstants.TYPE) : "";
-                keyAtIndex = itemType.equals(JsonFormConstants.NUMBERS_SELECTOR) ? keyAtIndex + JsonFormConstants.SUFFIX.SPINNER : keyAtIndex;
+                keyAtIndex = itemType.equals(JsonFormConstants.NUMBER_SELECTOR) ? keyAtIndex + JsonFormConstants.SUFFIX.SPINNER : keyAtIndex;
                 if (key.equals(keyAtIndex) || isNumberSelector(key, keyAtIndex)) {
                     if (item.has(JsonFormConstants.TEXT)) {
                         item.put(JsonFormConstants.TEXT, value);
@@ -225,7 +225,7 @@ public class JsonApiEngine implements JsonApi {
     }
 
     private boolean isNumberSelector(String itemKey, String selectedKey) {
-        return selectedKey.startsWith(JsonFormConstants.NUMBERS_SELECTOR) && ((itemKey.substring(0, itemKey.lastIndexOf('_')).equals(selectedKey.substring(0, selectedKey.lastIndexOf('_'))) || selectedKey.equals(itemKey + JsonFormConstants.SUFFIX.SPINNER)));
+        return selectedKey.startsWith(JsonFormConstants.NUMBER_SELECTOR) && ((itemKey.substring(0, itemKey.lastIndexOf('_')).equals(selectedKey.substring(0, selectedKey.lastIndexOf('_'))) || selectedKey.equals(itemKey + JsonFormConstants.SUFFIX.SPINNER)));
     }
 
     protected void refreshMediaLogic(String key, String value) {
@@ -462,6 +462,14 @@ public class JsonApiEngine implements JsonApi {
         }
     }
 
+    @Override
+    public void invokeRefreshLogic(String value, boolean popup, String parentKey, String childKey) {
+        refreshCalculationLogic(parentKey, childKey, popup);
+        refreshSkipLogic(parentKey, childKey, popup);
+        refreshConstraints(parentKey, childKey, popup);
+        refreshMediaLogic(parentKey, value);
+    }
+
     private String getRenderText(String calculation, String textTemplate) {
         Map<String, Object> valueMap = new Gson().fromJson(calculation, new TypeToken<HashMap<String, Object>>() {
         }.getType());
@@ -500,7 +508,7 @@ public class JsonApiEngine implements JsonApi {
 
         try {
 
-            String calculation = rulesEngineFactory.getCalculation(valueMap, rulesFile);
+            String calculation = null;//rulesEngineFactory.getCalculation(valueMap, rulesFile);
 
             if (view instanceof CheckBox) {
 
@@ -606,6 +614,11 @@ public class JsonApiEngine implements JsonApi {
         }
 
         return null;
+    }
+
+    @Override
+    public void refreshConstraints(String parentKey, String childKey, boolean popup) {
+
     }
 
     protected JSONArray fetchFields(JSONObject parentJson, Boolean popup) {
@@ -810,7 +823,6 @@ public class JsonApiEngine implements JsonApi {
         return conditionString.replaceAll("  ", " ");
     }
 
-    @Override
     public void refreshConstraints(String parentKey, String childKey) {
         initComparisons();
 
@@ -1024,10 +1036,10 @@ public class JsonApiEngine implements JsonApi {
         String errorMessage = "";
         if (isNumberSelectorConstraint(view)) {
 
-            errorMessage = curValueMap.size() == 0 ? "" : rulesEngineFactory.getConstraint(curValueMap, constraint.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getString(RuleConstant.RULES_FILE));
+            // errorMessage = curValueMap.size() == 0 ? "" : rulesEngineFactory.getConstraint(curValueMap, constraint.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getString(RuleConstant.RULES_FILE));
         } else if (isDatePickerNativeRadio(view)) {
 
-            errorMessage = curValueMap.size() == 0 ? "" : rulesEngineFactory.getConstraint(curValueMap, constraint.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getString(RuleConstant.RULES_FILE));
+            // errorMessage = curValueMap.size() == 0 ? "" : rulesEngineFactory.getConstraint(curValueMap, constraint.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getString(RuleConstant.RULES_FILE));
         }
         return errorMessage;
     }
@@ -1093,7 +1105,7 @@ public class JsonApiEngine implements JsonApi {
                                 break;
                             }
                         }
-                    } else if (curView instanceof LinearLayout && curView.getTag(R.id.key).toString().startsWith(JsonFormConstants.NUMBERS_SELECTOR) && !TextUtils.isEmpty(errorMessage) && (curView.getTag(R.id.previous) == null || !curView.getTag(R.id.previous).equals(errorMessage))) {
+                    } else if (curView instanceof LinearLayout && curView.getTag(R.id.key).toString().startsWith(JsonFormConstants.NUMBER_SELECTOR) && !TextUtils.isEmpty(errorMessage) && (curView.getTag(R.id.previous) == null || !curView.getTag(R.id.previous).equals(errorMessage))) {
 
                         if (!"false".equals(errorMessage)) {
                             Intent localIntent = new Intent(JsonFormConstants.INTENT_ACTION.NUMBER_SELECTOR_FACTORY);
@@ -1125,7 +1137,7 @@ public class JsonApiEngine implements JsonApi {
     }
 
     private boolean isNumberSelectorConstraint(View view) {
-        return view instanceof LinearLayout && view.getTag(R.id.key).toString().startsWith(JsonFormConstants.NUMBERS_SELECTOR);
+        return view instanceof LinearLayout && view.getTag(R.id.key).toString().startsWith(JsonFormConstants.NUMBER_SELECTOR);
     }
 
     private String enforceConstraint(String value, View view, JSONObject constraint) throws
@@ -1133,7 +1145,7 @@ public class JsonApiEngine implements JsonApi {
 
         String type = constraint.getString("type").toLowerCase();
         String ex = constraint.getString("ex");
-        String errorMessage = type.equals(JsonFormConstants.NUMBERS_SELECTOR) ? constraint.optString(JsonFormConstants.ERR) : constraint.getString(JsonFormConstants.ERR);
+        String errorMessage = type.equals(JsonFormConstants.NUMBER_SELECTOR) ? constraint.optString(JsonFormConstants.ERR) : constraint.getString(JsonFormConstants.ERR);
         Pattern pattern = Pattern.compile("(" + functionRegex + ")\\((.*)\\)");
         Matcher matcher = pattern.matcher(ex);
         if (matcher.find()) {
@@ -1285,7 +1297,7 @@ public class JsonApiEngine implements JsonApi {
             Exception {
 
         if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_RULES)) {
-            return curValueMap.size() == 0 ? false : rulesEngineFactory.getRelevance(curValueMap, curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getString(RuleConstant.RULES_FILE));
+            return false;//curValueMap.size() == 0 ? false : rulesEngineFactory.getRelevance(curValueMap, curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getString(RuleConstant.RULES_FILE));
         } else if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_CHECKBOX)) {
             JSONArray exArray = curRelevance.getJSONArray(JsonFormConstants.JSON_FORM_KEY.EX_CHECKBOX);
 

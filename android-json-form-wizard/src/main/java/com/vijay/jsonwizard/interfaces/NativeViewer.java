@@ -1,5 +1,6 @@
 package com.vijay.jsonwizard.interfaces;
 
+import android.app.FragmentManager;
 import android.content.Context;
 import android.view.View;
 
@@ -19,4 +20,6 @@ public interface NativeViewer {
     void backClick();
 
     JsonApi getJsonApi();
+
+    FragmentManager getActivityFragmentManager();
 }

@@ -64,17 +64,20 @@ public interface JsonApi {
 
     void refreshCalculationLogic(String parentKey, String childKey, boolean popup);
 
+    void invokeRefreshLogic(String value, boolean popup, String parentKey, String childKey);
+
     void addFormDataView(View view);
 
     ArrayList<View> getFormDataViews();
 
     JSONObject getObjectUsingAddress(String[] address, boolean popup) throws JSONException;
 
-    void refreshConstraints(String parentKey, String childKey);
+    void refreshConstraints(String parentKey, String childKey, boolean popup);
 
     void addOnActivityResultListener(Integer requestCode, OnActivityResultListener onActivityResultListener);
 
-    void addOnActivityRequestPermissionResultListener(Integer requestCode, OnActivityRequestPermissionResultListener onActivityRequestPermissionResultListener);
+    void addOnActivityRequestPermissionResultListener(Integer requestCode,
+                                                      OnActivityRequestPermissionResultListener onActivityRequestPermissionResultListener);
 
     void removeOnActivityRequestPermissionResultListener(Integer requestCode);
 

@@ -33,21 +33,15 @@ import com.vijay.jsonwizard.viewstates.JsonFormFragmentViewState;
 public class JsonWizardFormFragment extends JsonFormFragment {
 
     public static final String TAG = JsonWizardFormFragment.class.getName();
-
+    private static final int MENU_NAVIGATION = 100001;
     private BottomNavigationListener navigationListener = new BottomNavigationListener();
-
     private Button previousButton;
     private Button nextButton;
-
     private ImageView previousIcon;
     private ImageView nextIcon;
-
     private TextView stepName;
-
     private Toolbar navigationToolbar;
     private View bottomNavLayout;
-
-    private static final int MENU_NAVIGATION = 100001;
 
     public static JsonWizardFormFragment getFormFragment(String stepName) {
         JsonWizardFormFragment jsonFormFragment = new JsonWizardFormFragment();
@@ -85,7 +79,8 @@ public class JsonWizardFormFragment extends JsonFormFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        //menu.add(Menu.NONE, MENU_NAVIGATION, 1, "Menu").setIcon(R.drawable.ic_action_menu).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        //menu.add(Menu.NONE, MENU_NAVIGATION, 1, "Menu").setIcon(R.drawable.ic_action_menu).setShowAsAction(MenuItem
+        // .SHOW_AS_ACTION_ALWAYS);
     }
 
     @Override
@@ -168,7 +163,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
         }
     }
 
-    private void setupNavigation(View rootView) {
+    protected void setupNavigation(View rootView) {
         previousButton = rootView.findViewById(R.id.previous);
         previousIcon = rootView.findViewById(R.id.previous_icon);
 
@@ -225,6 +220,10 @@ public class JsonWizardFormFragment extends JsonFormFragment {
                     previousButton.setText(form.getPreviousLabel());
                 }
 
+                if (form.getBackIcon() > 0) {
+                    getSupportActionBar().setHomeAsUpIndicator(form.getBackIcon());
+                }
+
             }
         } catch (Resources.NotFoundException e) {
             Log.e(TAG, e.getMessage(), e);
@@ -232,9 +231,11 @@ public class JsonWizardFormFragment extends JsonFormFragment {
 
     }
 
-    private void save() {
+    protected void save() {
         try {
-            Boolean skipValidation = ((JsonFormActivity) mMainView.getContext()).getIntent().getBooleanExtra(JsonFormConstants.SKIP_VALIDATION, false);
+            Boolean skipValidation = ((JsonFormActivity) mMainView.getContext()).getIntent()
+                    .getBooleanExtra(JsonFormConstants
+                            .SKIP_VALIDATION, false);
             save(skipValidation);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
@@ -252,11 +253,11 @@ public class JsonWizardFormFragment extends JsonFormFragment {
     public TextView getStepName() {
         return stepName;
     }
-////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////
     // Inner classes
     ////////////////////////////////////////////////////////////////
 
-    private class BottomNavigationListener implements View.OnClickListener {
+    protected class BottomNavigationListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.next || v.getId() == R.id.next_icon) {

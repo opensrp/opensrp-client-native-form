@@ -50,7 +50,8 @@ public class RulesEngineFactory implements RuleListener {
         try {
             if (!ruleMap.containsKey(fileName)) {
 
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(context.getAssets().open(fileName)));
+                BufferedReader bufferedReader = new BufferedReader(
+                        new InputStreamReader(context.getAssets().open(fileName)));
                 ruleMap.put(fileName, MVELRuleFactory.createRulesFrom(bufferedReader));
             }
             return ruleMap.get(fileName);
@@ -65,7 +66,7 @@ public class RulesEngineFactory implements RuleListener {
         defaultRulesEngine.fire(rules, facts);
     }
 
-    public boolean getRelevance(Map<String, String> relevanceFact, String ruleFilename) {
+    public boolean getRelevance(Facts relevanceFact, String ruleFilename) {
 
         Facts facts = initializeFacts(relevanceFact);
 
@@ -78,11 +79,13 @@ public class RulesEngineFactory implements RuleListener {
         return facts.get(RuleConstant.IS_RELEVANT);
     }
 
-    public String getCalculation(Map<String, String> calculationFact, String ruleFilename) {
+    public String getCalculation(Facts calculationFact, String ruleFilename) {
+
+        //need to clean curValue map as constraint depend on valid values, empties wont do
 
         Facts facts = initializeFacts(calculationFact);
 
-        facts.put(RuleConstant.CALCULATION, "0");
+        facts.put(RuleConstant.CALCULATION, "");
 
         rules = getRulesFromAsset(RULE_FOLDER_PATH + ruleFilename);
 
@@ -91,7 +94,7 @@ public class RulesEngineFactory implements RuleListener {
         return formatCalculationReturnValue(facts.get(RuleConstant.CALCULATION));
     }
 
-    public String getConstraint(Map<String, String> constraintFact, String ruleFilename) {
+    public String getConstraint(Facts constraintFact, String ruleFilename) {
 
         Facts facts = initializeFacts(constraintFact);
 
@@ -104,34 +107,23 @@ public class RulesEngineFactory implements RuleListener {
         return formatCalculationReturnValue(facts.get(RuleConstant.CONSTRAINT));
     }
 
-    private Facts initializeFacts(Map<String, String> factMap) {
+    private Facts initializeFacts(Facts facts) {
 
         if (globalValues != null) {
-            factMap.putAll(globalValues);
+
+            for (Map.Entry<String, String> entry : globalValues.entrySet()) {
+
+                facts.put(RuleConstant.PREFIX.GLOBAL + entry.getKey(), getValue(entry.getValue()));
+            }
+
+
+            facts.asMap().putAll(globalValues);
         }
 
-        selectedRuleName = factMap.get(RuleConstant.SELECTED_RULE);
+        selectedRuleName = facts.get(RuleConstant.SELECTED_RULE);
 
-        if (selectedRuleName != null) {
-            Log.d("Selected Rule", selectedRuleName);
-        } else {
-            Log.e("Selected Rule", "NO SELECTED RULE, We must be in calculation mode");
-        }
-
-        Facts facts = new Facts();
         facts.put("helper", rulesEngineHelper);
-
-        for (Map.Entry<String, String> entry : factMap.entrySet()) {
-
-
-            facts.put(getKey(entry.getKey()), getValue(entry.getValue()));
-        }
-
         return facts;
-    }
-
-    private String getKey(String key) {
-        return !key.startsWith(RuleConstant.STEP) && !key.startsWith(RuleConstant.SELECTED_RULE) ? RuleConstant.PREFIX.GLOBAL + key : key;
     }
 
     private Object getValue(String value) {
@@ -197,29 +189,31 @@ public class RulesEngineFactory implements RuleListener {
         //Overriden
     }
 
-    public void setRulesFolderPath(String path) {
-        RULE_FOLDER_PATH = path;
-    }
-
     public String getRulesFolderPath() {
         return RULE_FOLDER_PATH;
     }
 
+    public void setRulesFolderPath(String path) {
+        RULE_FOLDER_PATH = path;
+    }
+
     private String formatCalculationReturnValue(Object rawValue) {
         String value = String.valueOf(rawValue).trim();
-        if (rawValue instanceof Map) {
+        if (value.isEmpty()) {
+            return "";
+        } else if (rawValue instanceof Map) {
 
             return new JSONObject((Map<String, String>) rawValue).toString();
 
         } else if (value.contains(".")) {
             try {
-
                 value = String.valueOf((float) Math.round(Float.valueOf(value) * 100) / 100);
             } catch (NumberFormatException e) {
 
             }
+        } else if (value.startsWith("-")) {
+            value = "";
         }
-
         return value;
     }
 

@@ -3,6 +3,7 @@ package com.vijay.jsonwizard.views;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -93,6 +94,7 @@ public class NativeForm extends RelativeLayout implements NativeViewer, CommonLi
     private String mStepName = "step1";
     private String mPrevStep;
     private JSONObject mStepDetails;
+    private FragmentManager fragmentManager;
     private View rootView;
     private NativeViewInteractor nativeViewInteractor = NativeViewInteractor.getInstance();
 
@@ -272,7 +274,7 @@ public class NativeForm extends RelativeLayout implements NativeViewer, CommonLi
                     showInformationDialog(v);
                 }
                 break;
-            case JsonFormConstants.NUMBERS_SELECTOR:
+            case JsonFormConstants.NUMBER_SELECTOR:
                 createNumberSelector(v);
                 break;
             case JsonFormConstants.SPINNER:
@@ -285,9 +287,9 @@ public class NativeForm extends RelativeLayout implements NativeViewer, CommonLi
             case JsonFormConstants.EDIT_TEXT:
                 setViewEditable(v);
                 break;
-            case JsonFormConstants.NORMAL_EDIT_TEXT:
-                setViewEditable(v);
-                break;
+            //case JsonFormConstants.NORMAL_EDIT_TEXT:
+                //setViewEditable(v);
+                //break;
             default:
                 break;
         }
@@ -474,7 +476,7 @@ public class NativeForm extends RelativeLayout implements NativeViewer, CommonLi
             }
         }
 
-        if (JsonFormConstants.NUMBERS_SELECTOR.equals(type)) {
+        if (JsonFormConstants.NUMBER_SELECTOR.equals(type)) {
             NumberSelectorFactory.setBackgrounds(customTextView);
             NumberSelectorFactory.setSelectedTextViews(customTextView);
             NumberSelectorFactory.setSelectedTextViewText((String) parent.getItemAtPosition(position));
@@ -658,7 +660,7 @@ public class NativeForm extends RelativeLayout implements NativeViewer, CommonLi
                 loadForm();
                 getJsonApi().refreshCalculationLogic(null, null, false);
                 getJsonApi().refreshSkipLogic(null, null, false);
-                getJsonApi().refreshConstraints(null, null);
+                //getJsonApi().refreshConstraints(null, null);
 
             } else {
                 validationStatus.requestAttention();
@@ -795,7 +797,7 @@ public class NativeForm extends RelativeLayout implements NativeViewer, CommonLi
         } else if (childAt instanceof CustomTextView) {
             CustomTextView customTextView = (CustomTextView) childAt;
             String type = (String) childAt.getTag(R.id.type);
-            if (!TextUtils.isEmpty(type) && type.equals(JsonFormConstants.NUMBERS_SELECTOR)) {
+            if (!TextUtils.isEmpty(type) && type.equals(JsonFormConstants.NUMBER_SELECTOR)) {
                 ValidationStatus validationStatus = NumberSelectorFactory.validate(formFragmentView, customTextView);
                 if (!validationStatus.isValid()) {
                     if (requestFocus) validationStatus.requestAttention();
@@ -851,7 +853,7 @@ public class NativeForm extends RelativeLayout implements NativeViewer, CommonLi
                 loadForm();
                 getJsonApi().refreshCalculationLogic(null, null, false);
                 getJsonApi().refreshSkipLogic(null, null, false);
-                getJsonApi().refreshConstraints(null, null);
+                //getJsonApi().refreshConstraints(null, null);
 
             } else {
                 validationStatus.requestAttention();
@@ -865,5 +867,14 @@ public class NativeForm extends RelativeLayout implements NativeViewer, CommonLi
     @Override
     public JsonApi getJsonApi() {
         return jsonApiEngine;
+    }
+
+    @Override
+    public FragmentManager getActivityFragmentManager() {
+        return fragmentManager;
+    }
+
+    public void setFragmentManager(FragmentManager fragmentManager) {
+        this.fragmentManager = fragmentManager;
     }
 }

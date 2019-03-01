@@ -85,6 +85,31 @@
       }
     },
     {
+      "key": "Birth_Weight",
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_entity_id": "5916AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "openmrs_data_type": "text",
+      "type": "edit_text",
+      "hint": "Birth weight (kg) *",
+      "v_min": {
+        "value": "0.1",
+        "err": "Weight must be greater than 0"
+      },
+      "v_max": {
+        "value": "200",
+        "err": "Weight must be less than 200"
+      },
+      "v_numeric_integer": {
+        "value": "true",
+        "err": "Enter a valid weight"
+      },
+      "v_required": {
+        "value": "true",
+        "err": "Enter the child's birth weight"
+      }
+    },
+    {
       "key": "respiratory_exam_radio_button",
       "openmrs_entity_parent": "",
       "openmrs_entity": "",

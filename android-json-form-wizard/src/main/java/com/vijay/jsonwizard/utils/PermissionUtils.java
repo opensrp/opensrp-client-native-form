@@ -89,8 +89,8 @@ public class PermissionUtils {
             perms.put(permissions[i], grantResults[i]);
         }
 
-        for(String permission:permissionsToVerify){
-            if (perms.get(permission) != PackageManager.PERMISSION_GRANTED){
+        for (String permission : permissionsToVerify) {
+            if (perms.get(permission) != PackageManager.PERMISSION_GRANTED) {
                 return false;
             }
         }
