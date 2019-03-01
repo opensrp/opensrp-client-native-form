@@ -64,13 +64,18 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
     private String suffix = "";
     private Activity activity;
     private JSONArray specifyContent;
+    private NativeViewer nativeViewer;
+
+    public void setNativeViewer(NativeViewer nativeViewer) {
+        this.nativeViewer = nativeViewer;
+    }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
         activity = (Activity) context;
-        jsonApi = (JsonApi) activity;
+        jsonApi = nativeViewer.getJsonApi();
         jsonApi.setGenericPopup(this);
     }
 
@@ -94,7 +99,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         }
 
         activity = (Activity) context;
-        jsonApi = (JsonApi) activity;
+        jsonApi =  nativeViewer.getJsonApi();
 
         try {
             loadPartialSecondaryValues();
@@ -134,7 +139,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
     }
 
     protected void loadPartialSecondaryValues() throws JSONException {
-        JSONArray fields = formUtils.getFormFields(getStepName(), context);
+        JSONArray fields = formUtils.getFormFields(getStepName(), context, formFragment);
         if (fields != null && fields.length() > 0) {
             for (int i = 0; i < fields.length(); i++) {
                 JSONObject item = fields.getJSONObject(i);
@@ -460,7 +465,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
 
         JSONObject mJSONObject = jsonApi.getmJSONObject();
         if (mJSONObject != null) {
-            JSONArray fields = formUtils.getFormFields(stepName, context);
+            JSONArray fields = formUtils.getFormFields(stepName, context, formFragment);
             JSONObject item;
             try {
                 if (fields.length() > 0) {

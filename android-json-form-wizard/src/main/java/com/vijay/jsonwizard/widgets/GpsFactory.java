@@ -84,7 +84,7 @@ public class GpsFactory implements FormWidgetFactory {
     }
 
     private List<View> attachJson(String stepName, final Context context,
-                                  NativeViewer formFragment,  JSONObject jsonObject,
+                                  final NativeViewer formFragment, JSONObject jsonObject,
                                   boolean popup) throws JSONException {
         List<View> views = new ArrayList<>();
 
@@ -147,7 +147,7 @@ public class GpsFactory implements FormWidgetFactory {
         recordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                requestPermissionsForLocation(context);
+                requestPermissionsForLocation(context, formFragment);
             }
         });
 
@@ -187,14 +187,14 @@ public class GpsFactory implements FormWidgetFactory {
         dataView.setTag(R.id.raw_value, constructString(latitude, longitude));
     }
 
-    private void requestPermissionsForLocation(Context context) {
+    private void requestPermissionsForLocation(Context context, NativeViewer formFragment) {
         if (context instanceof Activity) {
             Activity activity = (Activity) context;
 
             if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // Register the RequestPermissionResult listener
                 if (activity instanceof JsonApi) {
-                    final JsonApi jsonApi = (JsonApi) activity;
+                    final JsonApi jsonApi = formFragment.getJsonApi();
                     jsonApi.addOnActivityRequestPermissionResultListener(PermissionUtils.FINE_LOCATION_PERMISSION_REQUEST_CODE, new OnActivityRequestPermissionResultListener() {
                         @Override
                         public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) {

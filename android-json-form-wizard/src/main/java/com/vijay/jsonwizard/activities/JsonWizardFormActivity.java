@@ -15,22 +15,20 @@ public class JsonWizardFormActivity extends JsonFormActivity {
         initializeFormFragmentCore();
     }
 
-    @Override
     public void writeValue(String stepName, String key, String value, String openMrsEntityParent, String openMrsEntity, String openMrsEntityId) throws JSONException {
         callSuperWriteValue(stepName, key, value, openMrsEntityParent, openMrsEntity, openMrsEntityId);
     }
 
-    @Override
     public void onFormFinish() {
         callSuperFinish();
     }
 
     protected void callSuperFinish() {
-        super.onFormFinish();
+        super.getJsonApiEngine().onFormFinish();
     }
 
     protected void callSuperWriteValue(String stepName, String key, String value, String openMrsEntityParent, String openMrsEntity, String openMrsEntityId) throws JSONException {
-        super.writeValue(stepName, key, value, openMrsEntityParent, openMrsEntity, openMrsEntityId);
+        super.getJsonApiEngine().writeValue(stepName, key, value, openMrsEntityParent, openMrsEntity, openMrsEntityId);
     }
 
     protected void initializeFormFragmentCore() {

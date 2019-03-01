@@ -629,7 +629,7 @@ public class FormUtils {
         String specifyContentForm = (String) view.getTag(R.id.specify_content_form);
         String stepName = (String) view.getTag(R.id.specify_step_name);
         CommonListener listener = (CommonListener) view.getTag(R.id.specify_listener);
-        NativeViewer formFragment = (NativeViewer) view.getTag(R.id.specify_fragment);
+        //NativeViewer formFragment = (NativeViewer) view.getTag(R.id.specify_fragment);
         JSONArray jsonArray = (JSONArray) view.getTag(R.id.secondaryValues);
         String parentKey = (String) view.getTag(R.id.key);
         String type = (String) view.getTag(R.id.type);
@@ -788,9 +788,8 @@ public class FormUtils {
      * @return formFields {JSONArray}
      * @author dubdabasoduba
      */
-    public JSONArray getFormFields(String stepName, Context context) {
-        Activity activity = (Activity) context;
-        JsonApi jsonApi = (JsonApi) activity;
+    public JSONArray getFormFields(String stepName, Context context, NativeViewer formFragment) {
+        JsonApi jsonApi = formFragment.getJsonApi();
         JSONArray fields = new JSONArray();
         JSONObject mJSONObject = jsonApi.getmJSONObject();
         if (mJSONObject != null) {

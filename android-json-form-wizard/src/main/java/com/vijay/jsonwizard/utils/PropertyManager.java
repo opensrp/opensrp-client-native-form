@@ -29,6 +29,7 @@ import android.support.v7.app.AlertDialog;
 import android.telephony.TelephonyManager;
 
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.interfaces.NativeViewer;
 import com.vijay.jsonwizard.interfaces.OnActivityRequestPermissionResultListener;
 
 import java.util.HashMap;
@@ -54,14 +55,14 @@ public class PropertyManager {
     public static final String ANDROID6_FAKE_MAC = "02:00:00:00:00:00";
 
 
-    public PropertyManager(Context context) {
+    public PropertyManager(Context context, JsonApi jsonApi) {
         mContext = context;
         mProperties = new HashMap<>();
         grantPhoneStatePermission();
-        handleOnRequestPermissionResults();
+        handleOnRequestPermissionResults(jsonApi);
         if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.READ_PHONE_STATE)
                 == PackageManager.PERMISSION_GRANTED) {
-           addPhoneProperties();
+            addPhoneProperties();
         }
     }
 
@@ -98,44 +99,41 @@ public class PropertyManager {
         return mProperties.get(propertyName.toLowerCase(Locale.ENGLISH));
     }
 
-    private void handleOnRequestPermissionResults() {
-        if (mContext instanceof Activity) {
-            Activity activity = (Activity) mContext;
-            if (activity instanceof JsonApi) {
-                final JsonApi jsonApi = (JsonApi) activity;
-                jsonApi.addOnActivityRequestPermissionResultListener(PermissionUtils.PHONE_STATE_PERMISSION,
-                        new OnActivityRequestPermissionResultListener() {
-                            @SuppressLint("MissingPermission")
-                            @Override
-                            public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) {
-                                if (PermissionUtils.verifyPermissionGranted(permissions, grantResults, Manifest.permission.READ_PHONE_STATE)) {
-                                    addPhoneProperties();
-                                } else {
-                                    boolean isUserInformed = ActivityCompat.shouldShowRequestPermissionRationale((Activity) mContext,
-                                            Manifest.permission.READ_PHONE_STATE);
-                                    if (isUserInformed) {
-                                        new AlertDialog.Builder(mContext)
-                                                .setTitle("Permission Denied")
-                                                .setMessage("The app needs this permission to capture the device information required when submitting forms. " +
-                                                        "Without this permission the app will not function properly. " +
-                                                        "Are you sure you want to deny this permission?")
-                                                .setPositiveButton("NO", new DialogInterface.OnClickListener() {
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        ActivityCompat.requestPermissions((Activity) mContext, new String[]{
-                                                                Manifest.permission.READ_PHONE_STATE}, PermissionUtils.PHONE_STATE_PERMISSION);
-                                                    }
-                                                })
-                                                .setNegativeButton("YES", new DialogInterface.OnClickListener() {
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        dialog.dismiss();
-                                                    }
-                                                })
-                                                .show();
-                                    }
+    private void handleOnRequestPermissionResults(JsonApi jsonApi) {
+        Activity activity = (Activity) mContext;
+        if (activity instanceof JsonApi) {
+            jsonApi.addOnActivityRequestPermissionResultListener(PermissionUtils.PHONE_STATE_PERMISSION,
+                    new OnActivityRequestPermissionResultListener() {
+                        @SuppressLint("MissingPermission")
+                        @Override
+                        public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) {
+                            if (PermissionUtils.verifyPermissionGranted(permissions, grantResults, Manifest.permission.READ_PHONE_STATE)) {
+                                addPhoneProperties();
+                            } else {
+                                boolean isUserInformed = ActivityCompat.shouldShowRequestPermissionRationale((Activity) mContext,
+                                        Manifest.permission.READ_PHONE_STATE);
+                                if (isUserInformed) {
+                                    new AlertDialog.Builder(mContext)
+                                            .setTitle("Permission Denied")
+                                            .setMessage("The app needs this permission to capture the device information required when submitting forms. " +
+                                                    "Without this permission the app will not function properly. " +
+                                                    "Are you sure you want to deny this permission?")
+                                            .setPositiveButton("NO", new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    ActivityCompat.requestPermissions((Activity) mContext, new String[]{
+                                                            Manifest.permission.READ_PHONE_STATE}, PermissionUtils.PHONE_STATE_PERMISSION);
+                                                }
+                                            })
+                                            .setNegativeButton("YES", new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    dialog.dismiss();
+                                                }
+                                            })
+                                            .show();
                                 }
                             }
-                        });
-            }
+                        }
+                    });
         }
     }
 

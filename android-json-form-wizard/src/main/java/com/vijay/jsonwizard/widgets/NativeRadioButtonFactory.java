@@ -61,7 +61,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
     private JSONArray canvasIds;
     private CustomTextViewClickListener customTextViewClickListener = new CustomTextViewClickListener();
 
-    public static void showDateDialog(View view) {
+    public static void showDateDialog(View view, NativeViewer formFragment) {
         Context context = (Context) view.getTag(R.id.specify_context);
         CustomTextView customTextView = (CustomTextView) view.getTag(R.id.specify_textview);
         RadioButton radioButton = (RadioButton) view.getTag(R.id.native_radio_button);
@@ -101,7 +101,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         }
 
         datePickerDialog.setContext(context);
-        setDate(datePickerDialog, radioButton, customTextView, context);
+        setDate(datePickerDialog, radioButton, customTextView, context, formFragment);
         showDatePickerDialog((Activity) context, datePickerDialog, radioButton);
     }
 
@@ -130,7 +130,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
 
     private static void setDate(DatePickerDialog datePickerDialog, final RadioButton radioButton,
-                                final CustomTextView customTextView, final Context context) {
+                                final CustomTextView customTextView, final Context context, final NativeViewer formFragment) {
         final String[] arrayString = radioButton.getText().toString().split(":");
         datePickerDialog.setOnDateSetListener(new android.app.DatePickerDialog.OnDateSetListener() {
             @Override
@@ -155,14 +155,14 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
                         intent.putExtra(JsonFormConstants.INTENT_KEY.MESSAGE_TYPE,
                                 JsonFormConstants.MESSAGE_TYPE.GLOBAL_VALUES);
 
-                        ((JsonFormActivity) context).getLocalBroadcastManager().sendBroadcast(intent);
+                        ((JsonFormActivity) context).getJsonApiEngine().getLocalBroadcastManager().sendBroadcast(intent);
                     }
                     String key = (String) customTextView.getTag(R.id.key);
                     String childKey = (String) customTextView.getTag(R.id.childKey);
                     String stepName = (String) customTextView.getTag(R.id.specify_step_name);
                     Context context = (Context) customTextView.getTag(R.id.specify_context);
 
-                    JSONArray fields = formUtils.getFormFields(stepName, context);
+                    JSONArray fields = formUtils.getFormFields(stepName, context, formFragment);
                     if (fields.length() > 0) {
                         for (int i = 0; i < fields.length(); i++) {
                             try {

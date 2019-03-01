@@ -162,29 +162,6 @@ public class NativeForm extends RelativeLayout implements NativeViewer, CommonLi
         jsonApiEngine = new JsonApiEngine(context, rootView);
     }
 
-    public void init(String json) {
-        try {
-            jsonApiEngine.setmJSONObject(new JSONObject(json));
-            if (!jsonApiEngine.getmJSONObject().has("encounter_type")) {
-                jsonApiEngine.setmJSONObject(new JSONObject());
-                throw new JSONException("Form encounter_type not set");
-            }
-
-            //populate them global values
-            if (jsonApiEngine.getmJSONObject().has(JsonFormConstants.JSON_FORM_KEY.GLOBAL)) {
-                globalValues = new Gson().fromJson(jsonApiEngine.getmJSONObject().getJSONObject(JsonFormConstants.JSON_FORM_KEY.GLOBAL).toString(), new TypeToken<HashMap<String, String>>() {
-                }.getType());
-            } else {
-                globalValues = new HashMap<>();
-            }
-
-            rulesEngineFactory = new RulesEngineFactory(context, globalValues);
-
-        } catch (JSONException e) {
-            Log.d(TAG, "Initialization error. Json passed is invalid : " + e.getMessage(), e);
-        }
-    }
-
     public String getJsonFrom() {
         return jsonFrom;
     }
@@ -208,20 +185,7 @@ public class NativeForm extends RelativeLayout implements NativeViewer, CommonLi
         if (jsonApiEngine.getmJSONObject() == null || rootView == null) {
             throw new RuntimeException("Error processing file");
         } else {
-            init(jsonApiEngine.getmJSONObject().toString());
-        }
-
-        try {
-            //populate them global values
-            if (jsonApiEngine.getmJSONObject().has(JsonFormConstants.JSON_FORM_KEY.GLOBAL)) {
-                globalValues = new Gson().fromJson(jsonApiEngine.getmJSONObject().getJSONObject(JsonFormConstants.JSON_FORM_KEY.GLOBAL).toString(), new TypeToken<HashMap<String, String>>() {
-                }.getType());
-            } else {
-                globalValues = new HashMap<>();
-            }
-            rulesEngineFactory = new RulesEngineFactory(getContext(), globalValues);
-        } catch (Exception e) {
-
+            jsonApiEngine.init(jsonApiEngine.getmJSONObject().toString());
         }
 
         // add views
@@ -237,6 +201,8 @@ public class NativeForm extends RelativeLayout implements NativeViewer, CommonLi
         } catch (JSONException e) {
             Log.e(TAG, e.getMessage(), e);
         }
+
+        jsonApiEngine.getFormDataViews().addAll(nativeViewInteractor.fetchFormElements(mStepName, this, mStepDetails, this, false));
 
         List<View> views = nativeViewInteractor.fetchFormElements(mStepName, this, mStepDetails, this, false);
 
@@ -366,7 +332,7 @@ public class NativeForm extends RelativeLayout implements NativeViewer, CommonLi
         Log.i(TAG, "The dialog content widget is this: " + specifyWidget);
         if (JsonFormConstants.CONTENT_INFO.equals(type) &&
                 specifyWidget.equals(JsonFormConstants.DATE_PICKER)) {
-            NativeRadioButtonFactory.showDateDialog(view);
+            NativeRadioButtonFactory.showDateDialog(view,  this);
         } else if (JsonFormConstants.CONTENT_INFO.equals(type) &&
                 !specifyWidget.equals(JsonFormConstants.DATE_PICKER)) {
             FormUtils formUtils = new FormUtils();
