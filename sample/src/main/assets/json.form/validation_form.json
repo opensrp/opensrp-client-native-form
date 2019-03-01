@@ -4,6 +4,7 @@
   "entity_id": "",
   "relational_id": "",
   "validate_on_submit": true,
+  "show_errors_on_submit": true,
   "metadata": {
     "start": {
       "openmrs_entity_parent": "",

@@ -85,6 +85,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
     private JsonFormInteractor mJsonFormInteractor;
     private static Map<String, ValidationStatus> invalidFields;
     private Stack<String> incorrectlyFormattedFields;
+    private JsonFormErrorFragment errorFragment;
 
     public JsonFormFragmentPresenter(JsonFormFragment formFragment) {
         this.formFragment = formFragment;
@@ -181,7 +182,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
 
     @SuppressLint("ResourceAsColor")
     public void setUpToolBar() {
-        getView().setActionBarTitle(mStepDetails.optString("title"));
+        getView().setActionBarTitle(mStepDetails.optString(JsonFormConstants.STEP_TITLE));
         getView().setToolbarTitleColor(R.color.white);
         if (mStepDetails.has("bottom_navigation")) {
             getView().updateVisibilityOfNextAndSave(false, false);
@@ -225,12 +226,27 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         return entireJsonForm.optBoolean(JsonFormConstants.VALIDATE_ON_SUBMIT, false);
     }
 
+    public boolean showErrorsOnSubmit() {
+        JSONObject entireJsonForm = formFragment.getJsonApi().getmJSONObject();
+        return entireJsonForm.optBoolean(JsonFormConstants.SHOW_ERRORS_ON_SUBMIT, false);
+    }
+
     private String getStepTitle() {
         return mStepDetails.optString(JsonFormConstants.STEP_TITLE);
     }
 
-    public void launchErrorDialog() {
-        JsonFormErrorFragment errorFragment = new JsonFormErrorFragment();
+    public JsonFormErrorFragment getErrorFragment() {
+        return errorFragment;
+    }
+
+    public void setErrorFragment(JsonFormErrorFragment errorFragment) {
+        this.errorFragment = errorFragment;
+    }
+
+    protected void launchErrorDialog() {
+        if (errorFragment == null) {
+            errorFragment = new JsonFormErrorFragment();
+        }
         FragmentManager fm = ((JsonFormFragment) getView()).getChildFragmentManager();
         @SuppressLint("CommitTransaction") FragmentTransaction ft = fm.beginTransaction();
         errorFragment.show(ft, JsonFormErrorFragment.TAG);
@@ -359,9 +375,15 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                     Boolean.valueOf(mainView.getTag(R.id.skip_validation).toString()));
             getView().finishWithResult(returnIntent);
         } else {
-            launchErrorDialog();
-            getView().showToast(getView().getContext().getResources()
-                    .getString(R.string.json_form_error_msg, getInvalidFields().size()));
+            if (showErrorsOnSubmit()) {
+                launchErrorDialog();
+                getView().showToast(getView().getContext().getResources()
+                        .getString(R.string.json_form_error_msg, getInvalidFields().size()));
+            } else {
+                getView().showSnackBar(getView().getContext().getResources()
+                        .getString(R.string.json_form_error_msg, getInvalidFields().size()));
+
+            }
         }
     }
 

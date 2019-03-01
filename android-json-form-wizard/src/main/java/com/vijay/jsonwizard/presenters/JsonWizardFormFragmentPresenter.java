@@ -43,4 +43,5 @@ public class JsonWizardFormFragmentPresenter extends JsonFormFragmentPresenter {
         getView().hideKeyBoard();
         getView().transactThis(next);
     }
+
 }

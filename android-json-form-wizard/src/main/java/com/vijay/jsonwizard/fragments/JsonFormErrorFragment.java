@@ -23,6 +23,7 @@ public class JsonFormErrorFragment extends DialogFragment implements View.OnClic
     public static String TAG = JsonFormErrorFragment.class.getSimpleName();
     public OnFieldsInvalid onFieldsInvalid;
     private CustomFormError formError;
+    private Toolbar dialogToolbar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,15 +36,13 @@ public class JsonFormErrorFragment extends DialogFragment implements View.OnClic
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.native_form_error_fragment, container, false);
-        Toolbar dialogToolbar = view.findViewById(R.id.error_fragment_toolbar);
+        dialogToolbar = view.findViewById(R.id.error_fragment_toolbar);
+        setupErrorFragmentToolBar();
         FrameLayout frameLayout = view.findViewById(R.id.error_fragment_frame_layout);
         formError = new CustomFormError(getContext());
         handleFormErrors();
         frameLayout.addView(formError);
-        dialogToolbar.setNavigationIcon(R.drawable.ic_action_close);
-        dialogToolbar.setNavigationOnClickListener(this);
-        dialogToolbar.setTitle(R.string.attention);
-        dialogToolbar.setTitleTextColor(getContext().getResources().getColor(R.color.white));
+
         return view;
     }
 
@@ -77,6 +76,14 @@ public class JsonFormErrorFragment extends DialogFragment implements View.OnClic
     protected void handleFormErrors() {
         Map<String, ValidationStatus> invalidFields = onFieldsInvalid.getPassedInvalidFields();
         formError.setInvalidFields(invalidFields);
+    }
+
+    protected void setupErrorFragmentToolBar(){
+        dialogToolbar.setNavigationIcon(R.drawable.ic_action_close);
+        dialogToolbar.setNavigationOnClickListener(this);
+        dialogToolbar.setTitle(R.string.attention);
+        dialogToolbar.setTitleTextColor(getContext().getResources().getColor(R.color.white));
+        dialogToolbar.setBackgroundColor(getContext().getResources().getColor(R.color.error_color));
     }
 
 }
