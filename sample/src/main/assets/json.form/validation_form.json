@@ -118,7 +118,7 @@
           "value": true,
           "err": "Please specify the medication(s) that the woman is still taking"
         }
-      },
+      }/*,
       {
         "key": "medications_other",
         "openmrs_entity_parent": " 159367AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
@@ -302,7 +302,7 @@
           "value": "200",
           "err": "Height must be equal or less than 200"
         }
-      }
+      }*/
     ]
   },
   "step2": {

@@ -56,4 +56,5 @@
     <item name="secondaryValues" type="id" />
     <item name="is_automatic" type="id" />
     <item name="option_json_object" type="id" />
+    <item name="checkbox_linear_layout" type="id" />
 </resources>

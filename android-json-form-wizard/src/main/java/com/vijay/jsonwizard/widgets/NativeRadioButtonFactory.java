@@ -410,7 +410,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
     public static ValidationStatus validate(JsonFormFragmentView formFragmentView, RadioGroup radioGroup) {
         String error = (String) radioGroup.getTag(R.id.error);
         if (radioGroup.isEnabled() && error != null) {
-            boolean isValid = validate(radioGroup);
+            boolean isValid = performValidation(radioGroup);
             if (!isValid) {
                 return new ValidationStatus(false, error, formFragmentView, radioGroup);
             }
@@ -418,7 +418,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         return new ValidationStatus(true, null, formFragmentView, radioGroup);
     }
 
-    private static boolean validate(RadioGroup radioGroup) {
+    private static boolean performValidation(RadioGroup radioGroup) {
         boolean isChecked = false;
         for (int i = 0; i < radioGroup.getChildCount(); i++) {
             isChecked = getCheckedRadio(radioGroup.getChildAt(i));

@@ -19,7 +19,7 @@ import java.util.Set;
 public class CustomFormError extends LinearLayoutCompat {
 
     private Map<String, ValidationStatus> invalidFields;
-    HashMap<String, ArrayList<ValidationStatus>> errorsPerStep;
+    private HashMap<String, ArrayList<ValidationStatus>> errorsPerStep;
 
     public CustomFormError(Context context) {
         super(context);

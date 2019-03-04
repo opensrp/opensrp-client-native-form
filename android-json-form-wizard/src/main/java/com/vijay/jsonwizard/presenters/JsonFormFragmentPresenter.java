@@ -44,6 +44,7 @@ import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.CustomTextView;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 import com.vijay.jsonwizard.viewstates.JsonFormFragmentViewState;
+import com.vijay.jsonwizard.widgets.CheckBoxFactory;
 import com.vijay.jsonwizard.widgets.EditTextFactory;
 import com.vijay.jsonwizard.widgets.GpsFactory;
 import com.vijay.jsonwizard.widgets.ImagePickerFactory;
@@ -83,7 +84,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
     private String mCurrentKey;
     private String mCurrentPhotoPath;
     private JsonFormInteractor mJsonFormInteractor;
-    private static Map<String, ValidationStatus> invalidFields;
+    private Map<String, ValidationStatus> invalidFields;
     private Stack<String> incorrectlyFormattedFields;
     private JsonFormErrorFragment errorFragment;
 
@@ -159,6 +160,15 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                     customTextView.setError(null);
                 }
             }
+        } else if (childAt instanceof ViewGroup && childAt.getTag(R.id.checkbox_linear_layout) != null
+                && Boolean.TRUE.equals(childAt.getTag(R.id.checkbox_linear_layout))) {
+            LinearLayout checkboxLinearLayout = (LinearLayout) childAt;
+            ValidationStatus validationStatus = CheckBoxFactory.validate(formFragmentView, checkboxLinearLayout);
+            if (!validationStatus.isValid()) {
+                if (requestFocus) validationStatus.requestAttention();
+                return validationStatus;
+            }
+
         }
 
         return new ValidationStatus(true, null, null, null);
@@ -211,7 +221,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         getView().backClick();
     }
 
-    public static Map<String, ValidationStatus> getInvalidFields() {
+    public Map<String, ValidationStatus> getInvalidFields() {
         return invalidFields;
     }
 
