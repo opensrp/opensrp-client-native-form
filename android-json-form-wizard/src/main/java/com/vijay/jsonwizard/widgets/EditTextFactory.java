@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import com.google.gson.JsonArray;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rengwuxian.materialedittext.validation.RegexpValidator;
 import com.rey.material.util.ViewUtil;
@@ -22,7 +21,7 @@ import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
-import com.vijay.jsonwizard.validators.edittext.CumativeTotalValidator;
+import com.vijay.jsonwizard.validators.edittext.CumulativeTotalValidator;
 import com.vijay.jsonwizard.validators.edittext.MaxLengthValidator;
 import com.vijay.jsonwizard.validators.edittext.MaxNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.MinLengthValidator;
@@ -357,7 +356,7 @@ public class EditTextFactory implements FormWidgetFactory {
                 JSONArray relatedFields = validationJSONObject.optJSONArray(RELATED_FIELDS);
                 if (relatedFields != null) {
                     String errorMessage = String.format(DEFAULT_CUMULATIVE_VALIDATION_ERR, editTextJSONObject.get(KEY), relatedFields.join(", "), totalValueKey);
-                    editText.addValidator(new CumativeTotalValidator(
+                    editText.addValidator(new CumulativeTotalValidator(
                             validationErrorMsg == null ? errorMessage : validationErrorMsg,
                             formFragment,
                             stepName,

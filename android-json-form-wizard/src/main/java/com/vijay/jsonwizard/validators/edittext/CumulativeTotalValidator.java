@@ -16,21 +16,18 @@ import static com.vijay.jsonwizard.utils.FormUtils.getFieldJSONObject;
 /**
  * Created by samuelgithengi on 3/4/19.
  */
-public class CumativeTotalValidator extends METValidator {
+public class CumulativeTotalValidator extends METValidator {
 
 
-    private final String TAG = CumativeTotalValidator.class.getName();
+    private final String TAG = CumulativeTotalValidator.class.getName();
 
-    private final String RELATED_FIELDS = "RELATED_FIELDS";
     private String relatedFieldsKey;
-
-
     private JsonFormFragment formFragment;
     private String step;
     private String totalValueFieldKey;
 
-    public CumativeTotalValidator(@NonNull String errorMessage, @NonNull JsonFormFragment formFragment,
-                                  String step, String totalValueField, String relatedFieldsKey) {
+    public CumulativeTotalValidator(@NonNull String errorMessage, @NonNull JsonFormFragment formFragment,
+                                    String step, String totalValueField, String relatedFieldsKey) {
         super(errorMessage);
         this.formFragment = formFragment;
         this.step = step;
