@@ -29,15 +29,15 @@ public class JsonWizardFormFragmentPresenter extends JsonFormFragmentPresenter {
         validateAndWriteValues();
         boolean validateOnSubmit = validateOnSubmit();
         if (validateOnSubmit && getIncorrectlyFormattedFields().isEmpty()) {
-            getIncorrectlyFormattedFields().clear();
             moveToNextWizardStep();
         } else if (isFormValid()) {
             moveToNextWizardStep();
         } else {
             getView().showSnackBar(getView().getContext().getResources()
-                    .getString(R.string.json_form_error_msg, getInvalidFields().size()));
+                    .getString(R.string.json_form_on_next_error_msg));
         }
     }
+
     private void moveToNextWizardStep() {
         JsonFormFragment next = JsonWizardFormFragment.getFormFragment(mStepDetails.optString(JsonFormConstants.NEXT));
         getView().hideKeyBoard();

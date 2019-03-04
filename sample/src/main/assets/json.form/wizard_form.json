@@ -4,6 +4,7 @@
   "entity_id": "",
   "relational_id": "",
   "validate_on_submit": true,
+  "show_errors_on_submit": true,
   "metadata": {
     "start": {
       "openmrs_entity_parent": "",
@@ -159,14 +160,7 @@
         "openmrs_entity_id": "",
         "type": "normal_edit_text",
         "edit_text_style": "bordered",
-        "edit_type": "number",
-        "calculation": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "sample-calculation-rules.yml"
-            }
-          }
-        }
+        "edit_type": "number"
       },
       {
         "key": "test_date",

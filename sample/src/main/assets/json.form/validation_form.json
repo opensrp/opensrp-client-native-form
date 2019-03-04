@@ -131,7 +131,7 @@
           "err": "Please enter valid content"
         },
         "v_required": {
-          "value": true,
+          "value": "true",
           "err": "Previous persisting behaviour is required"
         },
         "relevance": {
@@ -158,7 +158,7 @@
           "err": "Please enter valid content"
         },
         "v_required": {
-          "value": true,
+          "value": "true",
           "err": "Previous persisting behaviour is required"
         },
         "relevance": {
@@ -197,7 +197,67 @@
             "openmrs_entity": "concept",
             "openmrs_entity_id": "1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
           }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "First calcium comply is required"
+        }
+      },
+      {
+        "key": "calcium_comply2",
+        "openmrs_entity_parent": " 72650AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "openmrs_entity": "concept",
+        "openmrs_entity_id": "165272AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "type": "native_radio",
+        "label": "Is she taking her calcium supplements?",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "options": [
+          {
+            "key": "1",
+            "text": "Yes",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          },
+          {
+            "key": "0",
+            "text": "No",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          }
         ]
+      },
+      {
+        "key": "calcium_comply3",
+        "openmrs_entity_parent": " 72650AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "openmrs_entity": "concept",
+        "openmrs_entity_id": "165272AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "type": "native_radio",
+        "label": "Is she taking her calcium supplements?",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "options": [
+          {
+            "key": "1",
+            "text": "Yes",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          },
+          {
+            "key": "0",
+            "text": "No",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Third calcium comply is required"
+        }
       },
       {
         "key": "spacer",
@@ -214,7 +274,8 @@
         "text": "Height (cm)",
         "text_color": "#000000",
         "v_required": {
-          "value": true
+          "value": "true",
+          "err": "Height is required"
         }
       },
       {
@@ -242,7 +303,6 @@
           "err": "Height must be equal or less than 200"
         }
       }
-
     ]
   },
   "step2": {
@@ -290,7 +350,7 @@
           }
         ],
         "v_required": {
-          "value": true,
+          "value": "true",
           "err": "Previous persisting behaviour is required"
         }
       },
@@ -309,7 +369,8 @@
         "text": "Current weight (kg)",
         "text_color": "#000000",
         "v_required": {
-          "value": true
+          "value": "true",
+          "err": "Please enter current weight"
         }
       },
       {
@@ -337,7 +398,6 @@
           "err": "Please enter the current weight"
         }
       }
-
     ]
   },
   "step3": {
@@ -398,7 +458,7 @@
           }
         ],
         "v_required": {
-          "value": true,
+          "value": "true",
           "err": "Please specify any other physiological symptoms or select none"
         }
       },
@@ -461,7 +521,7 @@
           }
         ],
         "v_required": {
-          "value": true,
+          "value": "true",
           "err": "Field has the woman felt the baby move is required"
         }
       },
@@ -480,7 +540,8 @@
         "text": "Symphysis-fundal height (SFH) in centimetres (cm)",
         "text_color": "#000000",
         "v_required": {
-          "value": false
+          "value": false,
+          "err": "Sfh needed"
         }
       },
       {

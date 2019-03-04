@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -28,7 +29,9 @@ import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
+import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.CustomTextView;
+import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -286,7 +289,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             editButton = (ImageView) labelViews.get(JsonFormConstants.EDIT_BUTTON);
             if (editButton != null) {
                 FormUtils.setEditButtonAttributes(jsonObject, radioGroup, editButton, listener);
-                if(editable){
+                if (editable) {
                     editButton.setVisibility(View.VISIBLE);
                 }
             }
@@ -340,7 +343,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         radioGroup.setTag(R.id.extraPopup, popup);
         radioGroup.setId(ViewUtil.generateViewId());
         canvasIds.put(radioGroup.getId());
-
+        addRequiredValidator(radioGroup, jsonObject);
         for (int i = 0; i < options.length(); i++) {
             JSONObject item = options.getJSONObject(i);
             String labelInfoText = item.optString(JsonFormConstants.LABEL_INFO_TEXT, "");
@@ -366,8 +369,8 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
             createRadioButton(radioGroupLayout, jsonObject, item, listener, popup);
 
-            ((JsonApi) context).addFormDataView(radioGroupLayout);
             radioGroup.addView(radioGroupLayout);
+            ((JsonApi) context).addFormDataView(radioGroup);
         }
 
         if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
@@ -393,6 +396,56 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         linearLayout.addView(radioGroup);
         return radioGroup;
     }
+
+    private void addRequiredValidator(RadioGroup radioGroup, JSONObject jsonObject) throws JSONException {
+        JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
+        if (requiredObject != null) {
+            String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
+            if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
+                radioGroup.setTag(R.id.error, requiredObject.optString(JsonFormConstants.ERR, null));
+            }
+        }
+    }
+
+    public static ValidationStatus validate(JsonFormFragmentView formFragmentView, RadioGroup radioGroup) {
+        String error = (String) radioGroup.getTag(R.id.error);
+        if (radioGroup.isEnabled() && error != null) {
+            boolean isValid = validate(radioGroup);
+            if (!isValid) {
+                return new ValidationStatus(false, error, formFragmentView, radioGroup);
+            }
+        }
+        return new ValidationStatus(true, null, formFragmentView, radioGroup);
+    }
+
+    private static boolean validate(RadioGroup radioGroup) {
+        boolean isChecked = false;
+        for (int i = 0; i < radioGroup.getChildCount(); i++) {
+            isChecked = getCheckedRadio(radioGroup.getChildAt(i));
+            if (isChecked) {
+                break;
+            }
+        }
+        return isChecked;
+    }
+
+    /**
+     * @param item radiogroup nested layout
+     * @return true if any of the radio buttons is selected.
+     */
+    private static boolean getCheckedRadio(View item) {
+        if (item instanceof ViewGroup) {
+            ViewGroup outerRelativeLayout = (ViewGroup) item;
+            //Get radio button on the fourth hierarchy of the nested radio group layout
+            ViewGroup mainRadioLayout = (ViewGroup) outerRelativeLayout.getChildAt(0);
+            ViewGroup radioContentLinearLayout = (ViewGroup) mainRadioLayout.getChildAt(0);
+            RadioButton radioButton = (RadioButton) radioContentLinearLayout.getChildAt(0);
+
+            return radioButton.isChecked();
+        }
+        return false;
+    }
+
 
     private void createRadioButton(RelativeLayout rootLayout, JSONObject jsonObject, JSONObject item,
                                    final CommonListener listener, boolean popup) throws JSONException {

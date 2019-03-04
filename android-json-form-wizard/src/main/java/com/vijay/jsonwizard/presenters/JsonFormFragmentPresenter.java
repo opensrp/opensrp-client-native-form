@@ -100,7 +100,14 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
     }
 
     public static ValidationStatus validate(JsonFormFragmentView formFragmentView, View childAt, boolean requestFocus) {
-        if (childAt instanceof NativeEditText) {
+        if (childAt instanceof RadioGroup) {
+            RadioGroup radioGroup = (RadioGroup) childAt;
+            ValidationStatus validationStatus = NativeRadioButtonFactory.validate(formFragmentView, radioGroup);
+            if (!validationStatus.isValid()) {
+                if (requestFocus) validationStatus.requestAttention();
+                return validationStatus;
+            }
+        } else if (childAt instanceof NativeEditText) {
             NativeEditText editText = (NativeEditText) childAt;
             ValidationStatus validationStatus = NativeEditTextFactory.validate(formFragmentView, editText);
             if (!validationStatus.isValid()) {
@@ -262,25 +269,24 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         validateAndWriteValues();
         boolean validateOnSubmit = validateOnSubmit();
         if (validateOnSubmit && incorrectlyFormattedFields.isEmpty()) {
-            incorrectlyFormattedFields.clear();
             moveToNextStep();
         } else if (isFormValid()) {
             moveToNextStep();
         } else {
             getView().showSnackBar(getView().getContext().getResources()
-                    .getString(R.string.json_form_error_msg, getInvalidFields().size()));
+                    .getString(R.string.json_form_on_next_error_msg));
         }
     }
 
 
     public void validateAndWriteValues() {
         for (View childAt : formFragment.getJsonApi().getFormDataViews()) {
+            ValidationStatus validationStatus = validateView(childAt);
             String key = (String) childAt.getTag(R.id.key);
             String openMrsEntityParent = (String) childAt.getTag(R.id.openmrs_entity_parent);
             String openMrsEntity = (String) childAt.getTag(R.id.openmrs_entity);
             String openMrsEntityId = (String) childAt.getTag(R.id.openmrs_entity_id);
             Boolean popup = (Boolean) childAt.getTag(R.id.extraPopup);
-            ValidationStatus validationStatus = validateView(childAt);
             String fieldKey = mStepName + " (" + getStepTitle() + ") " + ":" + key;
 
             if (childAt instanceof MaterialEditText) {
