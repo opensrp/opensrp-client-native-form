@@ -104,7 +104,7 @@ public class ButtonFactory implements FormWidgetFactory {
                                     formFragment.save(confirmationBtnSkipValidation);
                                     break;
                                 case JsonFormConstants.BEHAVIOUR_NEXT_STEP:
-                                    formFragment.next();
+                                    formFragment.nextClick();
                                     break;
                                 default:
                                     jsonObject.getJSONObject(JsonFormConstants.ACTION)

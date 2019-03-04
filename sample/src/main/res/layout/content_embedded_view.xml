@@ -9,8 +9,34 @@
     tools:showIn="@layout/activity_embedded_view">
 
 
+
+    <RelativeLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tvPrev"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="Prev"
+            android:textSize="30sp" />
+
+        <TextView
+            android:id="@+id/tvNext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:padding="10dp"
+            android:text="Next"
+            android:textSize="30sp" />
+
+    </RelativeLayout>
+
     <com.vijay.jsonwizard.views.NativeForm
         android:id="@+id/native_form"
+        android:layout_below="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintLeft_toLeftOf="parent"

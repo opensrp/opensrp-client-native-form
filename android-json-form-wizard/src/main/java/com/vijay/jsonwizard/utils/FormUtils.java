@@ -623,7 +623,7 @@ public class FormUtils {
         }
     }
 
-    public void showGenericDialog(View view) {
+    public void showGenericDialog(View view, NativeViewer formFragment) {
         Context context = (Context) view.getTag(R.id.specify_context);
         String specifyContent = (String) view.getTag(R.id.specify_content);
         String specifyContentForm = (String) view.getTag(R.id.specify_content_form);
@@ -640,7 +640,7 @@ public class FormUtils {
         if (specifyContent != null) {
             GenericPopupDialog genericPopupDialog = new GenericPopupDialog();
             genericPopupDialog.setCommonListener(listener);
-            // genericPopupDialog.setFormFragment(formFragment);
+            genericPopupDialog.setNativeViewer(formFragment);
             genericPopupDialog.setFormIdentity(specifyContent);
             genericPopupDialog.setFormLocation(specifyContentForm);
             genericPopupDialog.setStepName(stepName);

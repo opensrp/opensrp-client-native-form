@@ -13,7 +13,7 @@ public interface NativeViewer {
 
     void scrollToView(View view);
 
-    boolean next();
+    boolean nextClick();
 
     boolean save(boolean res);
 

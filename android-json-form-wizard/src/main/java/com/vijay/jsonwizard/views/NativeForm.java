@@ -31,8 +31,6 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rey.material.widget.Button;
 import com.vijay.jsonwizard.R;
@@ -46,8 +44,6 @@ import com.vijay.jsonwizard.interactors.NativeViewInteractor;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.interfaces.NativeViewer;
-import com.vijay.jsonwizard.rules.RuleConstant;
-import com.vijay.jsonwizard.rules.RulesEngineFactory;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.NativeViewUtils;
 import com.vijay.jsonwizard.utils.PermissionUtils;
@@ -68,12 +64,10 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -96,6 +90,7 @@ public class NativeForm extends RelativeLayout implements NativeViewer, CommonLi
     private JSONObject mStepDetails;
     private FragmentManager fragmentManager;
     private View rootView;
+    private List<String> formList = new ArrayList<>();
     private NativeViewInteractor nativeViewInteractor = NativeViewInteractor.getInstance();
 
     // presenter
@@ -105,15 +100,6 @@ public class NativeForm extends RelativeLayout implements NativeViewer, CommonLi
     private String mCurrentPhotoPath;
 
     private static final int RESULT_LOAD_IMG = 1;
-
-    // activity
-    private static final String JSON_STATE = "jsonState";
-    private static final String FORM_STATE = "formState";
-    private final Set<Character> JAVA_OPERATORS = new HashSet<>(Arrays.asList('(', '!', ',', '?', '+', '-', '*', '/', '%', '+', '-', '.', '^', ')', '<', '>', '=', '{', '}', ':', ';'));
-    private final List<String> PREFICES_OF_INTEREST = Arrays.asList(RuleConstant.PREFIX.GLOBAL, RuleConstant.STEP);
-    private FormUtils formUtils = new FormUtils();
-    private Map<String, String> globalValues = null;
-    private RulesEngineFactory rulesEngineFactory = null;
 
     public NativeForm(Context context) {
         super(context);
@@ -143,21 +129,6 @@ public class NativeForm extends RelativeLayout implements NativeViewer, CommonLi
     public void init() {
         // View v = LayoutInflater.from(context).inflate(R.layout.native_form, null);
         rootView = LayoutInflater.from(context).inflate(R.layout.native_form_view, this, true);
-
-        rootView.findViewById(R.id.tvNext).setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                next();
-            }
-        });
-
-        rootView.findViewById(R.id.tvPrev).setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                backClick();
-            }
-        });
-
 
         jsonApiEngine = new JsonApiEngine(context, rootView);
     }
@@ -189,7 +160,12 @@ public class NativeForm extends RelativeLayout implements NativeViewer, CommonLi
         }
 
         // add views
+
+
+        jsonApiEngine.clearFormDataViews();
         renderViews();
+        jsonApiEngine.invokeRefreshLogic(null, false, null, null);
+
     }
 
     // render/re-render view
@@ -254,8 +230,8 @@ public class NativeForm extends RelativeLayout implements NativeViewer, CommonLi
                 setViewEditable(v);
                 break;
             //case JsonFormConstants.NORMAL_EDIT_TEXT:
-                //setViewEditable(v);
-                //break;
+            //setViewEditable(v);
+            //break;
             default:
                 break;
         }
@@ -332,11 +308,11 @@ public class NativeForm extends RelativeLayout implements NativeViewer, CommonLi
         Log.i(TAG, "The dialog content widget is this: " + specifyWidget);
         if (JsonFormConstants.CONTENT_INFO.equals(type) &&
                 specifyWidget.equals(JsonFormConstants.DATE_PICKER)) {
-            NativeRadioButtonFactory.showDateDialog(view,  this);
+            NativeRadioButtonFactory.showDateDialog(view, this);
         } else if (JsonFormConstants.CONTENT_INFO.equals(type) &&
                 !specifyWidget.equals(JsonFormConstants.DATE_PICKER)) {
             FormUtils formUtils = new FormUtils();
-            formUtils.showGenericDialog(view);
+            formUtils.showGenericDialog(view, this);
         } else if (view.getId() == R.id.label_edit_button) {
             setRadioViewsEditable(view);
         } else {
@@ -612,7 +588,7 @@ public class NativeForm extends RelativeLayout implements NativeViewer, CommonLi
     }
 
     @Override
-    public boolean next() {
+    public boolean nextClick() {
         LinearLayout mainView = rootView.findViewById(R.id.main_layout);
         ValidationStatus validationStatus = null;
         try {
@@ -620,13 +596,14 @@ public class NativeForm extends RelativeLayout implements NativeViewer, CommonLi
             if (validationStatus.isValid()) {
 
                 mStepName = mStepDetails.optString("next");
+                formList.add(mStepName);
                 hideKeyBoard();
 
                 getJsonApi().clearFormDataViews();
                 loadForm();
                 getJsonApi().refreshCalculationLogic(null, null, false);
                 getJsonApi().refreshSkipLogic(null, null, false);
-                //getJsonApi().refreshConstraints(null, null);
+                getJsonApi().refreshConstraints(null, null, false);
 
             } else {
                 validationStatus.requestAttention();
@@ -812,14 +789,21 @@ public class NativeForm extends RelativeLayout implements NativeViewer, CommonLi
             validationStatus = writeValuesAndValidate(mainView);
             if (validationStatus.isValid()) {
 
-                mStepName = "step1";
+                int pos = (formList.indexOf(mStepName)) - 1;
+
+                if(pos > 0){
+                    mStepName = formList.get(pos);
+                }else{
+                    mStepName = "step1";
+                }
+
                 hideKeyBoard();
 
                 getJsonApi().clearFormDataViews();
                 loadForm();
                 getJsonApi().refreshCalculationLogic(null, null, false);
                 getJsonApi().refreshSkipLogic(null, null, false);
-                //getJsonApi().refreshConstraints(null, null);
+                getJsonApi().refreshCalculationLogic(null,null, false);
 
             } else {
                 validationStatus.requestAttention();

@@ -415,6 +415,11 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     }
 
     @Override
+    public boolean nextClick() {
+        return this.next();
+    }
+
+    @Override
     public void finishWithResult(Intent returnIntent) {
         getActivity().setResult(Activity.RESULT_OK, returnIntent);
         getActivity().finish();

@@ -21,6 +21,8 @@ public class JsonFormActivity extends AppCompatActivity {
     private static final String TAG = JsonFormActivity.class.getSimpleName();
     private static final String JSON_STATE = "jsonState";
     private static final String FORM_STATE = "formState";
+    private String confirmCloseMessage;
+    private String confirmCloseTitle;
     private Toolbar mToolbar;
     private Form form;
 
@@ -43,7 +45,17 @@ public class JsonFormActivity extends AppCompatActivity {
             this.form = jsonApiEngine.extractForm(savedInstanceState.getSerializable(FORM_STATE));
         }
 
+        confirmCloseTitle = getString(R.string.confirm_form_close);
+        confirmCloseMessage = getString(R.string.confirm_form_close_explanation);
         jsonApiEngine.onCreate(savedInstanceState);
+    }
+
+    public String getConfirmCloseTitle() {
+        return confirmCloseTitle;
+    }
+
+    public void setConfirmCloseTitle(String confirmCloseTitle) {
+        this.confirmCloseTitle = confirmCloseTitle;
     }
 
     public JsonApiEngine getJsonApiEngine() {
@@ -89,10 +101,18 @@ public class JsonFormActivity extends AppCompatActivity {
         jsonApiEngine.onSaveInstanceState(outState);
     }
 
+    public String getConfirmCloseMessage() {
+        return confirmCloseMessage;
+    }
+
+    public void setConfirmCloseMessage(String confirmCloseMessage) {
+        this.confirmCloseMessage = confirmCloseMessage;
+    }
+
     @Override
     public void onBackPressed() {
-        AlertDialog dialog = new AlertDialog.Builder(this, R.style.AppThemeAlertDialog).setTitle(jsonApiEngine.getConfirmCloseTitle())
-                .setMessage(jsonApiEngine.getConfirmCloseMessage()).setNegativeButton(R.string.yes, new DialogInterface.OnClickListener() {
+        AlertDialog dialog = new AlertDialog.Builder(this, R.style.AppThemeAlertDialog).setTitle(getConfirmCloseTitle())
+                .setMessage(getConfirmCloseMessage()).setNegativeButton(R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         JsonFormActivity.this.finish();

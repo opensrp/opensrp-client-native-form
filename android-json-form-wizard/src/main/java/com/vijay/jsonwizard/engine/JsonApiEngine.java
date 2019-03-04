@@ -102,8 +102,6 @@ public class JsonApiEngine implements JsonApi {
     private HashMap<Integer, OnActivityResultListener> onActivityResultListeners;
     private HashMap<Integer, OnActivityRequestPermissionResultListener> onActivityRequestPermissionResultListeners;
     private List<LifeCycleListener> lifeCycleListeners;
-    private String confirmCloseTitle;
-    private String confirmCloseMessage;
     private Map<String, List<String>> ruleKeys = new HashMap<>();
     private GenericDialogInterface genericDialogInterface;
     private JSONArray extraFieldsWithValues;
@@ -164,8 +162,6 @@ public class JsonApiEngine implements JsonApi {
 
             rulesEngineFactory = new RulesEngineFactory(context, globalValues);
 
-            confirmCloseTitle = context.getString(R.string.confirm_form_close);
-            confirmCloseMessage = context.getString(R.string.confirm_form_close_explanation);
             localBroadcastManager = LocalBroadcastManager.getInstance(context);
 
         } catch (JSONException e) {
@@ -1261,22 +1257,6 @@ public class JsonApiEngine implements JsonApi {
         }
 
         return fieldArray;
-    }
-
-    public String getConfirmCloseTitle() {
-        return confirmCloseTitle;
-    }
-
-    public void setConfirmCloseTitle(String confirmCloseTitle) {
-        this.confirmCloseTitle = confirmCloseTitle;
-    }
-
-    public String getConfirmCloseMessage() {
-        return confirmCloseMessage;
-    }
-
-    public void setConfirmCloseMessage(String confirmCloseMessage) {
-        this.confirmCloseMessage = confirmCloseMessage;
     }
 
     private boolean isRelevant(Facts curValueMap, JSONObject curRelevance) throws Exception {

@@ -18,7 +18,7 @@ public class EmbeddedView extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        NativeForm nativeForm = findViewById(R.id.native_form);
+        final NativeForm nativeForm = findViewById(R.id.native_form);
         nativeForm.setJsonFrom("sample_form");
 
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -27,6 +27,22 @@ public class EmbeddedView extends AppCompatActivity {
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+            }
+        });
+
+
+
+        findViewById(R.id.tvNext).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                nativeForm.nextClick();
+            }
+        });
+
+        findViewById(R.id.tvPrev).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                nativeForm.backClick();
             }
         });
     }

@@ -48,7 +48,6 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
     private JsonApi jsonApi;
     private Context context;
     private CommonListener commonListener;
-    private NativeViewer formFragment;
     private String formIdentity;
     private String formLocation;
     private String parentKey;
@@ -68,6 +67,10 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
 
     public void setNativeViewer(NativeViewer nativeViewer) {
         this.nativeViewer = nativeViewer;
+    }
+
+    public NativeViewer getNativeViewer() {
+        return nativeViewer;
     }
 
     @Override
@@ -98,7 +101,6 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
                     "The Context is not set. Did you forget to set context with Generic Dialog setContext method?");
         }
 
-        activity = (Activity) context;
         jsonApi =  nativeViewer.getJsonApi();
 
         try {
@@ -139,7 +141,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
     }
 
     protected void loadPartialSecondaryValues() throws JSONException {
-        JSONArray fields = formUtils.getFormFields(getStepName(), context, formFragment);
+        JSONArray fields = formUtils.getFormFields(getStepName(), context, nativeViewer);
         if (fields != null && fields.length() > 0) {
             for (int i = 0; i < fields.length(); i++) {
                 JSONObject item = fields.getJSONObject(i);
@@ -219,13 +221,13 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
 
     protected List<View> initiateViews() {
         List<View> listOfViews = new ArrayList<>();
-        jsonFormInteractor.fetchFields(listOfViews, stepName, formFragment, specifyContent, commonListener, true);
+        jsonFormInteractor.fetchFields(listOfViews, stepName, nativeViewer, specifyContent, commonListener, true);
         return listOfViews;
     }
 
 
     protected void passData() {
-        onGenericDataPass(popAssignedValue, parentKey, stepName, childKey);
+        onGenericDataPass(popAssignedValue, parentKey, stepName, childKey, nativeViewer);
     }
 
     /**
@@ -461,7 +463,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
      * @param childKey
      */
     public void onGenericDataPass(Map<String, SecondaryValueModel> selectedValues, String parentKey, String stepName,
-                                  String childKey) {
+                                  String childKey, NativeViewer formFragment) {
 
         JSONObject mJSONObject = jsonApi.getmJSONObject();
         if (mJSONObject != null) {
@@ -636,14 +638,6 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
 
     public void setCommonListener(CommonListener commonListener) {
         this.commonListener = commonListener;
-    }
-
-    public NativeViewer getFormFragment() {
-        return formFragment;
-    }
-
-    public void setFormFragment(JsonFormFragment formFragment) {
-        this.formFragment = formFragment;
     }
 
     public JSONArray getSpecifyContent() {

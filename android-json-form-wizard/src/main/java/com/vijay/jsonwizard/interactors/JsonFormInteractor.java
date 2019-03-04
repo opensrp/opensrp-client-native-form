@@ -4,9 +4,9 @@ import android.util.Log;
 import android.view.View;
 
 import com.vijay.jsonwizard.constants.JsonFormConstants;
-import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
+import com.vijay.jsonwizard.interfaces.NativeViewer;
 import com.vijay.jsonwizard.widgets.BarcodeFactory;
 import com.vijay.jsonwizard.widgets.ButtonFactory;
 import com.vijay.jsonwizard.widgets.CheckBoxFactory;
@@ -77,7 +77,7 @@ public class JsonFormInteractor {
         map.put(JsonFormConstants.TIME_PICKER, new TimePickerFactory());
     }
 
-    public List<View> fetchFormElements(String stepName, JsonFormFragment formFragment,
+    public List<View> fetchFormElements(String stepName, NativeViewer formFragment,
                                         JSONObject parentJson, CommonListener listener, Boolean popup) {
         List<View> viewsFromJson = new ArrayList<>(5);
         try {
@@ -99,7 +99,7 @@ public class JsonFormInteractor {
         return viewsFromJson;
     }
 
-    private void fetchSections(List<View> viewsFromJson, String stepName, JsonFormFragment formFragment,
+    private void fetchSections(List<View> viewsFromJson, String stepName, NativeViewer formFragment,
                                JSONArray sections, CommonListener listener, Boolean popup) {
         try {
             if (sections == null || sections.length() == 0) {
@@ -126,7 +126,7 @@ public class JsonFormInteractor {
         }
     }
 
-    public void fetchFields(List<View> viewsFromJson, String stepName, JsonFormFragment formFragment,
+    public void fetchFields(List<View> viewsFromJson, String stepName, NativeViewer formFragment,
                             JSONArray fields, CommonListener listener, Boolean popup) {
 
         try {
@@ -144,13 +144,13 @@ public class JsonFormInteractor {
         }
     }
 
-    private void fetchViews(List<View> viewsFromJson, String stepName, JsonFormFragment formFragment,
+    private void fetchViews(List<View> viewsFromJson, String stepName, NativeViewer formFragment,
                             String type, JSONObject jsonObject, CommonListener listener, Boolean popup) {
 
         try {
             List<View> views = map
                     .get(type)
-                    .getViewsFromJson(stepName, formFragment.getActivity(), formFragment, jsonObject, listener, popup);
+                    .getViewsFromJson(stepName, formFragment.getContext(), formFragment, jsonObject, listener, popup);
             if (views.size() > 0) {
                 viewsFromJson.addAll(views);
             }
