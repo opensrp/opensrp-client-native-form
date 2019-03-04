@@ -354,6 +354,7 @@ public class EditTextFactory implements FormWidgetFactory {
                 String validationErrorMsg = validationJSONObject
                         .optString(JsonFormConstants.ERR, null);
                 JSONArray relatedFields = validationJSONObject.optJSONArray(RELATED_FIELDS);
+
                 if (relatedFields != null) {
                     String errorMessage = String.format(DEFAULT_CUMULATIVE_VALIDATION_ERR, editTextJSONObject.get(KEY), relatedFields.join(", "), totalValueKey);
                     editText.addValidator(new CumulativeTotalValidator(
@@ -361,7 +362,7 @@ public class EditTextFactory implements FormWidgetFactory {
                             formFragment,
                             stepName,
                             totalValueKey,
-                            RELATED_FIELDS));
+                            relatedFields));
                 }
             }
         }

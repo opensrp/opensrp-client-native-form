@@ -21,18 +21,18 @@ public class CumulativeTotalValidator extends METValidator {
 
     private final String TAG = CumulativeTotalValidator.class.getName();
 
-    private String relatedFieldsKey;
+    private JSONArray relatedFields;
     private JsonFormFragment formFragment;
     private String step;
     private String totalValueFieldKey;
 
     public CumulativeTotalValidator(@NonNull String errorMessage, @NonNull JsonFormFragment formFragment,
-                                    String step, String totalValueField, String relatedFieldsKey) {
+                                    String step, String totalValueField, JSONArray relatedFields) {
         super(errorMessage);
         this.formFragment = formFragment;
         this.step = step;
         this.totalValueFieldKey = totalValueField;
-        this.relatedFieldsKey = relatedFieldsKey;
+        this.relatedFields = relatedFields;
     }
 
     @Override
@@ -44,10 +44,9 @@ public class CumulativeTotalValidator extends METValidator {
                 int cumulativeTotal = Integer.parseInt(text.toString());
 
                 int totalMaxFieldValue = getFieldJSONObject(formFields, totalValueFieldKey).optInt(JsonFormConstants.VALUE);
-                JSONArray relatedFields = getFieldJSONObject(formFields, relatedFieldsKey).names();
 
                 for (int i = 0; i < relatedFields.length(); i++) {
-                    cumulativeTotal += relatedFields.getJSONObject(i).optInt(JsonFormConstants.VALUE);
+                    cumulativeTotal += getFieldJSONObject(formFields, relatedFields.getString(i)).optInt(JsonFormConstants.VALUE);
                 }
 
                 if (cumulativeTotal != totalMaxFieldValue) {
