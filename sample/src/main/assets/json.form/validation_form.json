@@ -82,6 +82,14 @@
             "openmrs_entity": "concept"
           },
           {
+            "key": "dont_know",
+            "text": "Don't know",
+            "value": false,
+            "openmrs_entity_id": "1107AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "concept"
+          },
+          {
             "key": "magnesium",
             "text": "Magnesium",
             "value": false,
@@ -115,7 +123,7 @@
           }
         ],
         "v_required": {
-          "value": true,
+          "value": "false",
           "err": "Please specify the medication(s) that the woman is still taking"
         }
       }/*,
