@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.vijay.jsonwizard.R;
-import com.vijay.jsonwizard.customviews.CustomFormError;
+import com.vijay.jsonwizard.customviews.FormErrorView;
 import com.vijay.jsonwizard.interfaces.OnFieldsInvalid;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 
@@ -22,7 +22,7 @@ public class JsonFormErrorFragment extends DialogFragment implements View.OnClic
 
     public static String TAG = JsonFormErrorFragment.class.getSimpleName();
     public OnFieldsInvalid onFieldsInvalid;
-    private CustomFormError formError;
+    private FormErrorView formError;
     private Toolbar dialogToolbar;
 
     @Override
@@ -39,7 +39,7 @@ public class JsonFormErrorFragment extends DialogFragment implements View.OnClic
         dialogToolbar = view.findViewById(R.id.error_fragment_toolbar);
         setupErrorFragmentToolBar();
         FrameLayout frameLayout = view.findViewById(R.id.error_fragment_frame_layout);
-        formError = new CustomFormError(getContext());
+        formError = new FormErrorView(getContext());
         handleFormErrors();
         frameLayout.addView(formError);
 
@@ -78,7 +78,7 @@ public class JsonFormErrorFragment extends DialogFragment implements View.OnClic
         formError.setInvalidFields(invalidFields);
     }
 
-    protected void setupErrorFragmentToolBar(){
+    protected void setupErrorFragmentToolBar() {
         dialogToolbar.setNavigationIcon(R.drawable.ic_action_close);
         dialogToolbar.setNavigationOnClickListener(this);
         dialogToolbar.setTitle(R.string.attention);

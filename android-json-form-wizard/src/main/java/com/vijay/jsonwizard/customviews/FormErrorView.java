@@ -16,12 +16,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class CustomFormError extends LinearLayoutCompat {
+public class FormErrorView extends LinearLayoutCompat {
 
     private Map<String, ValidationStatus> invalidFields;
     private HashMap<String, ArrayList<ValidationStatus>> errorsPerStep;
 
-    public CustomFormError(Context context) {
+    public FormErrorView(Context context) {
         super(context);
         invalidFields = new HashMap<>();
         errorsPerStep = new HashMap<>();
@@ -40,14 +40,18 @@ public class CustomFormError extends LinearLayoutCompat {
             String key = entry.getKey();
             ValidationStatus value = entry.getValue();
             String[] splitKey = key.split(":");
+            String[] splitKeyAndStepName = splitKey[0].split("#");
+
             ArrayList<ValidationStatus> statusArrayList;
-            if (errorsPerStep.containsKey(splitKey[0])) {
-                statusArrayList = errorsPerStep.get(splitKey[0]);
+            String errorPerStepKey = splitKeyAndStepName[0] + ": " + splitKeyAndStepName[1];
+            if (errorsPerStep.containsKey(errorPerStepKey)) {
+                statusArrayList = errorsPerStep.get(errorPerStepKey);
             } else {
                 statusArrayList = new ArrayList<>();
             }
             statusArrayList.add(value);
-            errorsPerStep.put(splitKey[0], statusArrayList);
+
+            errorsPerStep.put(errorPerStepKey, statusArrayList);
         }
         addCustomViews();
     }
@@ -67,7 +71,7 @@ public class CustomFormError extends LinearLayoutCompat {
                 sb.append(i + 1).append(". ").append(validationStatus.getErrorMessage()).append(spacing);
             }
             errors = sb.toString();
-            String stepName = key.replaceAll("(\\d)([^\\d\\s%])","$1 $2").toUpperCase();
+            String stepName = key.toUpperCase();
             formErrorViewHolder.bindViews(stepName, errors);
             this.addView(formErrorViewHolder.getItemView());
         }
