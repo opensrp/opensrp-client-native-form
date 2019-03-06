@@ -278,8 +278,8 @@ public class FormUtils {
             ImageView editButton = labelConstraintLayout.findViewById(R.id.label_edit_button);
             if (requiredObject != null) {
                 String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
-                if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue) && Boolean
-                        .valueOf(requiredValue)) {
+                if (!TextUtils.isEmpty(requiredValue) && (Boolean.TRUE.toString().equalsIgnoreCase(requiredValue) || Boolean
+                        .valueOf(requiredValue))) {
                     asterisks = "<font color=#CF0800> *</font>";
                 }
             }
