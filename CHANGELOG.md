@@ -19,18 +19,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Checkbox widget all options select/deselect on moving to the next step and back caused by same view Id assignment
 - Improved optimization during json form render for special views (constrained, calculated and relevance views)
 
-#### Added
+##### Added
 - The specify extra information popup. This enables you to define multiple widgets on the specify extra info popup. Examples of how to add it are in the sample json file
-
-
-#### Added
- 
- - Add support for setting custom title in form exit alert dialog confirmation
- - Add support for setting custom message in form exit alert dialog confirmation
-    - By overriding the `JsonFormActivity` class in your installation you get access to these methods e.g. `setConfirmCloseTitle(message)` and `getConfirmCloseTitle()`
+- Add support for setting custom title in form exit alert dialog confirmation
+- Add support for setting custom message in form exit alert dialog confirmation
+ - By overriding the `JsonFormActivity` class in your installation you get access to these methods e.g. `setConfirmCloseTitle(message)` and `getConfirmCloseTitle()`
  
 - Add checkbox multi select Skip Logic
-  - It is now possible to implement complex skip logic using the relevance attribute for a multi select checkbox. Check out the README document for more details on usage
+ - It is now possible to implement complex skip logic using the relevance attribute for a multi select checkbox. Check out the README document for more details on usage
 
 - Add checkbox multi select Skip Logic
 - Add checkbox multi select exclusive selector logic 
@@ -40,10 +36,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add helper class for use in rules engine - added method to get difference in days for 2 dates to be used in condition or action , example syntax `calculation = (1 + helper.getDifferenceDays('2018-12-18'))` 
 - Add skip logic based on date duration
 
-
-
 [1.5.0] - 02-29-2019
 --------------------
-#### Added
- - Added the support for saving the widget OpenMRS attributes and the value options for widgets with options e.g the native radio button, the anc radio button, the spinner and the check boxes. 
- 
+##### Added
+- Added the support for saving the widget OpenMRS attributes and the value options for widgets with options e.g the native radio button, the anc radio button, the spinner and the check boxes. 
