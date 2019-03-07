@@ -33,7 +33,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-abstract class BaseJsonFormActivity extends AppCompatActivity implements OnFieldsInvalid {
+abstract class JsonFormBaseActivity extends AppCompatActivity implements OnFieldsInvalid {
     protected static final String TAG = JsonFormActivity.class.getSimpleName();
     protected static final String JSON_STATE = "jsonState";
     protected static final String FORM_STATE = "formState";
@@ -148,7 +148,7 @@ abstract class BaseJsonFormActivity extends AppCompatActivity implements OnField
     }
 
     private Form extractForm(Serializable serializable) {
-        if (serializable != null && serializable instanceof Form) {
+        if (serializable instanceof Form) {
             return (Form) serializable;
         } else {
             return null;
