@@ -93,7 +93,7 @@ public class ValidationStatusTest extends BaseTest {
     public void testRequestAttentionWhenViewAndFromFragmentAreNull() {
         ValidationStatus validationStatus = new ValidationStatus(true, DEFAULT_ERROR_MSG, formFragmentView, view);
         validationStatus.requestAttention();
-        /*formFragmentView = Mockito.mock(JsonFormFragment.class);
+        /*formFragmentView = Mockito.mock(OnFieldsInvalid.class);
         view = null;*/
         Mockito.verify(formFragmentView, Mockito.times(0)).scrollToView(null);
     }

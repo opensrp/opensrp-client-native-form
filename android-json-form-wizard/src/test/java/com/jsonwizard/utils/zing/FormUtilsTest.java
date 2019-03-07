@@ -6,9 +6,11 @@ import android.content.res.Resources;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+
 import com.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.utils.FormUtils;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +23,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
-@RunWith(PowerMockRunner.class)
+@RunWith (PowerMockRunner.class)
 public class FormUtilsTest extends BaseTest {
 
     @Mock
@@ -38,7 +40,7 @@ public class FormUtilsTest extends BaseTest {
         MockitoAnnotations.initMocks(this);
     }
 
-    @PrepareForTest({TypedValue.class})
+    @PrepareForTest ({TypedValue.class})
     @Test
     public void testSpToPx() {
         Application application = Mockito.spy(Application.class);
@@ -56,7 +58,7 @@ public class FormUtilsTest extends BaseTest {
         Assert.assertEquals(expected, px);
     }
 
-    @PrepareForTest({TypedValue.class})
+    @PrepareForTest ({TypedValue.class})
     @Test
     public void testDpToPx() {
         Application application = Mockito.spy(Application.class);
@@ -73,7 +75,7 @@ public class FormUtilsTest extends BaseTest {
         Assert.assertEquals(expected, px);
     }
 
-    @PrepareForTest({TextUtils.class, TypedValue.class})
+    @PrepareForTest ({TextUtils.class, TypedValue.class})
     @Test
     public void testGetValueFromSpOrDpOrPxWithAnSpInput() {
         Application application = Mockito.spy(Application.class);
@@ -93,7 +95,7 @@ public class FormUtilsTest extends BaseTest {
         Assert.assertEquals(expected, px);
     }
 
-    @PrepareForTest({TextUtils.class, TypedValue.class, FormUtils.class})
+    @PrepareForTest ({TextUtils.class, TypedValue.class, FormUtils.class})
     @Test
     public void testGetValueFromSpOrDpOrPxWithADpInput() {
         Application application = Mockito.spy(Application.class);
@@ -112,7 +114,7 @@ public class FormUtilsTest extends BaseTest {
         Assert.assertEquals(expected, px);
     }
 
-    @PrepareForTest({TextUtils.class})
+    @PrepareForTest ({TextUtils.class})
     @Test
     public void testGetValueFromSpOrDpOrPxWithAPxInput() {
         Application application = Mockito.spy(Application.class);
@@ -129,7 +131,7 @@ public class FormUtilsTest extends BaseTest {
         Assert.assertEquals(expected, px);
     }
 
-    @PrepareForTest({TextUtils.class})
+    @PrepareForTest ({TextUtils.class})
     @Test
     public void testGetValueFromSpOrDpOrPxWithAnyString() {
         Application application = Mockito.spy(Application.class);
@@ -146,7 +148,7 @@ public class FormUtilsTest extends BaseTest {
         Assert.assertEquals(expected, px);
     }
 
-    @PrepareForTest({TextUtils.class})
+    @PrepareForTest ({TextUtils.class})
     @Test
     public void testGetValueFromSpOrDpOrPxWithEmptyString() {
         Application application = Mockito.spy(Application.class);
@@ -161,7 +163,7 @@ public class FormUtilsTest extends BaseTest {
         Assert.assertEquals(expected, px);
     }
 
-    @PrepareForTest({TextUtils.class})
+    @PrepareForTest ({TextUtils.class})
     @Test
     public void testGetValueFromSpOrDPOrPxwithNull() {
         Application application = Mockito.spy(Application.class);
@@ -173,6 +175,14 @@ public class FormUtilsTest extends BaseTest {
 
         int px = FormUtils.getValueFromSpOrDpOrPx(null, context);
         Assert.assertEquals(expected, px);
+
+    }
+
+    @Test
+    public void testCreateRadioButtonAndCheckBoxLabel() {
+        Application application = Mockito.spy(Application.class);
+        Mockito.doReturn(context).when(application).getApplicationContext();
+
 
     }
 }
