@@ -49,24 +49,30 @@ public class SpinnerFactory implements FormWidgetFactory {
     }
 
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
+                                       JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
         return attachJson(stepName, context, jsonObject, listener, popup);
     }
 
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
+                                       JSONObject jsonObject, CommonListener listener) throws Exception {
         return attachJson(stepName, context, jsonObject, listener, false);
     }
 
-    private List<View> attachJson(String stepName, Context context, JSONObject jsonObject, CommonListener listener, boolean popup) throws JSONException {
+    private List<View> attachJson(String stepName, Context context, JSONObject jsonObject, CommonListener listener,
+                                  boolean popup) throws JSONException {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
+        String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
+        String calculations = jsonObject.optString(JsonFormConstants.CALCULATION);
 
         List<View> views = new ArrayList<>(1);
         JSONArray canvasIds = new JSONArray();
-        RelativeLayout spinnerRelativeLayout = (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.native_form_item_spinner, null);
+        RelativeLayout spinnerRelativeLayout = (RelativeLayout) LayoutInflater.from(context)
+                .inflate(R.layout.native_form_item_spinner, null);
         spinnerRelativeLayout.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
         spinnerRelativeLayout.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
         spinnerRelativeLayout.setTag(R.id.openmrs_entity, openMrsEntity);
@@ -78,21 +84,21 @@ public class SpinnerFactory implements FormWidgetFactory {
         canvasIds.put(spinnerRelativeLayout.getId());
         spinnerRelativeLayout.setTag(R.id.canvas_ids, canvasIds.toString());
 
-        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
-            spinnerRelativeLayout.setTag(R.id.relevance, relevance);
-            ((JsonApi) context).addSkipLogicView(spinnerRelativeLayout);
-        }
         addSpinner(jsonObject, spinnerRelativeLayout, listener, canvasIds, stepName, popup, context);
         views.add(spinnerRelativeLayout);
         return views;
     }
 
-    private void addSpinner(JSONObject jsonObject, RelativeLayout spinnerRelativeLayout, CommonListener listener, JSONArray canvasIds, String stepName, boolean popup, Context context) throws JSONException {
+    private void addSpinner(JSONObject jsonObject, RelativeLayout spinnerRelativeLayout, CommonListener listener,
+                            JSONArray canvasIds, String stepName, boolean popup, Context context) throws JSONException {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
         String labelInfoText = jsonObject.optString(JsonFormConstants.LABEL_INFO_TEXT, "");
         String labelInfoTitle = jsonObject.optString(JsonFormConstants.LABEL_INFO_TITLE, "");
+        String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
+        String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
+        String calculations = jsonObject.optString(JsonFormConstants.CALCULATION);
 
         MaterialSpinner spinner = spinnerRelativeLayout.findViewById(R.id.material_spinner);
         ImageView spinnerInfoIconImageView = spinnerRelativeLayout.findViewById(R.id.spinner_info_icon);
@@ -114,6 +120,19 @@ public class SpinnerFactory implements FormWidgetFactory {
         spinner.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
         spinner.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
         spinner.setTag(R.id.extraPopup, popup);
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+            spinner.setTag(R.id.relevance, relevance);
+            ((JsonApi) context).addSkipLogicView(spinner);
+        }
+        if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
+            spinner.setTag(R.id.constraints, constraints);
+            ((JsonApi) context).addConstrainedView(spinner);
+        }
+
+        if (!TextUtils.isEmpty(calculations) && context instanceof JsonApi) {
+            spinner.setTag(R.id.calculation, calculations);
+            ((JsonApi) context).addCalculationLogicView(spinner);
+        }
         spinner.setId(ViewUtil.generateViewId());
 
         JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
@@ -131,7 +150,7 @@ public class SpinnerFactory implements FormWidgetFactory {
             valueToSelect = jsonObject.optString(JsonFormConstants.VALUE);
         }
 
-        FormUtils.setEditMode(jsonObject,spinner,editButton);
+        FormUtils.setEditMode(jsonObject, spinner, editButton);
 
         JSONArray valuesJson = jsonObject.optJSONArray(JsonFormConstants.VALUES);
         String[] values = null;
@@ -155,7 +174,8 @@ public class SpinnerFactory implements FormWidgetFactory {
         }
         ((JsonApi) context).addFormDataView(spinner);
         // views.add(spinner);
-        FormUtils.showInfoIcon(stepName, jsonObject, listener, labelInfoText, labelInfoTitle, spinnerInfoIconImageView, canvasIds);
+        FormUtils.showInfoIcon(stepName, jsonObject, listener, labelInfoText, labelInfoTitle, spinnerInfoIconImageView,
+                canvasIds);
         spinner.setTag(R.id.canvas_ids, canvasIds.toString());
     }
 }

@@ -151,6 +151,10 @@ public class DatePickerFactory implements FormWidgetFactory {
                 datePickerDialog.setCalendarViewShown(false);
             }
 
+            GenericTextWatcher genericTextWatcher = getGenericTextWatcher(stepName, (Activity) context, formFragment,
+                    editText, datePickerDialog);
+            editText.addTextChangedListener(genericTextWatcher);
+            addRefreshLogicView(context, editText, relevance, constraints, calculations);
             editText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -165,11 +169,6 @@ public class DatePickerFactory implements FormWidgetFactory {
                     return true;
                 }
             });
-
-            GenericTextWatcher genericTextWatcher = getGenericTextWatcher(stepName, (Activity) context, formFragment,
-                    editText, datePickerDialog);
-            editText.addTextChangedListener(genericTextWatcher);
-            addRefreshLogicView(context, editText, relevance, constraints, calculations);
             editText.setFocusable(false);
         } catch (Exception e) {
             e.printStackTrace();
