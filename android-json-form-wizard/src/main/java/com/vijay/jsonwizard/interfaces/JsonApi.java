@@ -3,6 +3,7 @@ package com.vijay.jsonwizard.interfaces;
 import android.view.View;
 
 import com.vijay.jsonwizard.customviews.GenericPopupDialog;
+import com.vijay.jsonwizard.utils.ValidationStatus;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -94,4 +95,6 @@ public interface JsonApi {
     void unregisterLifecycleListener(LifeCycleListener lifeCycleListener);
 
     void setGenericPopup(GenericPopupDialog context);
+
+    Map<String, ValidationStatus> getInvalidFields();
 }

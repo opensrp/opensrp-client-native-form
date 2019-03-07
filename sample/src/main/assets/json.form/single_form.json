@@ -253,7 +253,6 @@
         "duration": {
           "label": "Birth Time"
         },
-
         "v_required": {
           "value": "true",
           "err": "Please enter the time of birth"
@@ -745,6 +744,7 @@
         "label_text_style": "bold",
         "text_color": "#000000",
         "editable": true,
+        "read_only": true,
         "exclusive": [
           "none"
         ],
