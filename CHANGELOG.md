@@ -11,15 +11,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
      
 [1.3.0] - 11-29-2018
 --------------------
-# Changed
+### Changed
 - The checkbox UI XML to use Linear layouts with layout widths instead of Relative layouts
 - New way to demo notable features in native form sample App - Multiple buttons with mnemonic feature name titles
 
-# Fixed
+### Fixed
 - Checkbox widget all options select/deselect on moving to the next step and back caused by same view Id assignment
 - Improved optimization during json form render for special views (constrained, calculated and relevance views)
 
-# Added
+### Added
 - The specify extra information popup. This enables you to define multiple widgets on the specify extra info popup. Examples of how to add it are in the sample json file
 - Add support for setting custom title in form exit alert dialog confirmation
 - Add support for setting custom message in form exit alert dialog confirmation
@@ -38,5 +38,5 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 [1.5.0] - 02-29-2019
 --------------------
-# Added
+### Added
 - Added the support for saving the widget OpenMRS attributes and the value options for widgets with options e.g the native radio button, the anc radio button, the spinner and the check boxes. 
