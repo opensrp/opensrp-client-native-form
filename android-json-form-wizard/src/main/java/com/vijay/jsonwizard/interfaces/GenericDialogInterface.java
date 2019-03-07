@@ -1,9 +1,12 @@
 package com.vijay.jsonwizard.interfaces;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.Map;
 
 public interface GenericDialogInterface {
-    void addSelectedValues(Map<String, String> newValue);
+    void addSelectedValues(JSONObject openMRSAttributes, JSONArray valueOpenMRSAttributes, Map<String, String> newValue);
 
     String getParentKey();
 
