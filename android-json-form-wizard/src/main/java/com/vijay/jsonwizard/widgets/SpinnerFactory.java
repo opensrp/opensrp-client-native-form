@@ -65,23 +65,14 @@ public class SpinnerFactory implements FormWidgetFactory {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
-        String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
-        String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
-        String calculations = jsonObject.optString(JsonFormConstants.CALCULATION);
 
         List<View> views = new ArrayList<>(1);
         JSONArray canvasIds = new JSONArray();
         RelativeLayout spinnerRelativeLayout = (RelativeLayout) LayoutInflater.from(context)
                 .inflate(R.layout.native_form_item_spinner, null);
-        spinnerRelativeLayout.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
-        spinnerRelativeLayout.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
-        spinnerRelativeLayout.setTag(R.id.openmrs_entity, openMrsEntity);
-        spinnerRelativeLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-        spinnerRelativeLayout.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
-        spinnerRelativeLayout.setTag(R.id.extraPopup, popup);
-        spinnerRelativeLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
-        spinnerRelativeLayout.setId(ViewUtil.generateViewId());
-        canvasIds.put(spinnerRelativeLayout.getId());
+
+        setViewTags(jsonObject, canvasIds, stepName, popup, openMrsEntityParent, openMrsEntity, openMrsEntityId,
+                spinnerRelativeLayout);
         spinnerRelativeLayout.setTag(R.id.canvas_ids, canvasIds.toString());
 
         addSpinner(jsonObject, spinnerRelativeLayout, listener, canvasIds, stepName, popup, context);
@@ -110,30 +101,9 @@ public class SpinnerFactory implements FormWidgetFactory {
             spinner.setFloatingLabelText(jsonObject.getString(JsonFormConstants.HINT));
         }
 
-        // spinner.setId(ViewUtil.generateViewId());
-        canvasIds.put(spinner.getId());
+        setViewTags(jsonObject, canvasIds, stepName, popup, openMrsEntityParent, openMrsEntity, openMrsEntityId, spinner);
 
-        spinner.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
-        spinner.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
-        spinner.setTag(R.id.openmrs_entity, openMrsEntity);
-        spinner.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-        spinner.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
-        spinner.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
-        spinner.setTag(R.id.extraPopup, popup);
-        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
-            spinner.setTag(R.id.relevance, relevance);
-            ((JsonApi) context).addSkipLogicView(spinner);
-        }
-        if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
-            spinner.setTag(R.id.constraints, constraints);
-            ((JsonApi) context).addConstrainedView(spinner);
-        }
-
-        if (!TextUtils.isEmpty(calculations) && context instanceof JsonApi) {
-            spinner.setTag(R.id.calculation, calculations);
-            ((JsonApi) context).addCalculationLogicView(spinner);
-        }
-        spinner.setId(ViewUtil.generateViewId());
+        addSkipLogicTags(context, relevance, constraints, calculations, spinner);
 
         JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
         if (requiredObject != null) {
@@ -166,16 +136,45 @@ public class SpinnerFactory implements FormWidgetFactory {
 
         if (values != null) {
             ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.native_form_simple_list_item_1, values);
-
             spinner.setAdapter(adapter);
-
             spinner.setSelection(indexToSelect + 1, true);
             spinner.setOnItemSelectedListener(listener);
         }
         ((JsonApi) context).addFormDataView(spinner);
-        // views.add(spinner);
+
         FormUtils.showInfoIcon(stepName, jsonObject, listener, labelInfoText, labelInfoTitle, spinnerInfoIconImageView,
                 canvasIds);
         spinner.setTag(R.id.canvas_ids, canvasIds.toString());
+    }
+
+    private void setViewTags(JSONObject jsonObject, JSONArray canvasIds, String stepName, boolean popup,
+                             String openMrsEntityParent, String openMrsEntity, String openMrsEntityId,
+                             View view) throws JSONException {
+        view.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+        view.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
+        view.setTag(R.id.openmrs_entity, openMrsEntity);
+        view.setTag(R.id.openmrs_entity_id, openMrsEntityId);
+        view.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
+        view.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+        view.setTag(R.id.extraPopup, popup);
+        view.setId(ViewUtil.generateViewId());
+        canvasIds.put(view.getId());
+    }
+
+    private void addSkipLogicTags(Context context, String relevance, String constraints, String calculations,
+                                  MaterialSpinner spinner) {
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+            spinner.setTag(R.id.relevance, relevance);
+            ((JsonApi) context).addSkipLogicView(spinner);
+        }
+        if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
+            spinner.setTag(R.id.constraints, constraints);
+            ((JsonApi) context).addConstrainedView(spinner);
+        }
+
+        if (!TextUtils.isEmpty(calculations) && context instanceof JsonApi) {
+            spinner.setTag(R.id.calculation, calculations);
+            ((JsonApi) context).addCalculationLogicView(spinner);
+        }
     }
 }
