@@ -6,11 +6,9 @@ import android.content.res.Resources;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
-import android.widget.LinearLayout;
 
 import com.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.R;
-import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.utils.FormUtils;
 
 import org.junit.Assert;
@@ -38,11 +36,9 @@ public class FormUtilsTest extends BaseTest {
 
     @Mock
     private Context context;
-    @Mock
-    private LinearLayout linearLayout;
+
     private FormUtils formUtils;
-    @Mock
-    private CommonListener commonListener;
+
     @Mock
     private Resources resources;
     @Mock
