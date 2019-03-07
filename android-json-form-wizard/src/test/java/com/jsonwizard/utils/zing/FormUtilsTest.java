@@ -6,9 +6,11 @@ import android.content.res.Resources;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.widget.LinearLayout;
 
 import com.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.R;
+import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.utils.FormUtils;
 
 import org.junit.Assert;
@@ -23,21 +25,33 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RunWith (PowerMockRunner.class)
 public class FormUtilsTest extends BaseTest {
 
+    private String optionKey = "";
+    private String keyValue = "Tests";
+    private String itemText = "Tim Apple";
+    private String itemKey = "my_test";
+
     @Mock
     private Context context;
-
+    @Mock
+    private LinearLayout linearLayout;
+    private FormUtils formUtils;
+    @Mock
+    private CommonListener commonListener;
     @Mock
     private Resources resources;
-
     @Mock
     private DisplayMetrics displayMetrics;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+        formUtils = new FormUtils();
     }
 
     @PrepareForTest ({TypedValue.class})
@@ -179,10 +193,41 @@ public class FormUtilsTest extends BaseTest {
     }
 
     @Test
-    public void testCreateRadioButtonAndCheckBoxLabel() {
-        Application application = Mockito.spy(Application.class);
-        Mockito.doReturn(context).when(application).getApplicationContext();
+    public void testAddAssignedValueForCheckBox() {
+        String itemType = "check_box";
+        Map<String, String> value = formUtils.addAssignedValue(itemKey, optionKey, keyValue, itemType, itemText);
+        Assert.assertNotNull(value);
 
+        Map<String, String> expectedValue = new HashMap<>();
+        expectedValue.put(itemKey, optionKey + ":" + itemText + ":" + keyValue + ";" + itemType);
+
+        Assert.assertEquals(expectedValue, value);
+
+    }
+
+    @Test
+    public void testAddAssignedValueForNativeRadio() {
+        String itemType = "native_radio";
+        Map<String, String> value = formUtils.addAssignedValue(itemKey, optionKey, keyValue, itemType, itemText);
+        Assert.assertNotNull(value);
+
+        Map<String, String> expectedValue = new HashMap<>();
+        expectedValue.put(itemKey, keyValue + ":" + itemText + ";" + itemType);
+
+        Assert.assertEquals(expectedValue, value);
+
+    }
+
+    @Test
+    public void testAddAssignedValueForOtherWidget() {
+        String itemType = "date_picker";
+        Map<String, String> value = formUtils.addAssignedValue(itemKey, optionKey, keyValue, itemType, itemText);
+        Assert.assertNotNull(value);
+
+        Map<String, String> expectedValue = new HashMap<>();
+        expectedValue.put(itemKey, keyValue + ";" + itemType);
+
+        Assert.assertEquals(expectedValue, value);
 
     }
 }
