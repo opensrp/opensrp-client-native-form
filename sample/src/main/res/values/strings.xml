@@ -3,8 +3,10 @@
     <string name="action_settings">Settings</string>
     <string name="action_single">Json Form (Single)</string>
     <string name="action_wizard">Json Form Wizard</string>
+    <string name="action_validation">Json Form Validation</string>
 
     <string name="profile">Profile</string>
+    <string name="validation_test">Working with validation</string>
     <string name="next">Endelea</string>
     <string name="previous">Rudi</string>
     <string name="save">Tuma</string>

@@ -65,4 +65,8 @@
     <string name="the_extra_info_icon">The extra info Icon</string>
     <string name="edit_button_label">edit button</string>
     <string name="info_icon">Info Icon</string>
+    <string name="attention">Attention</string>
+    <string name="json_form_error_msg" >Found %d error(s) in the form. Please correct them to submit</string>
+    <string name="json_form_on_next_error_msg" >Please correct the error(s) in the form to proceed</string>
+    <string name="go_to_step">Go to step</string>
 </resources>

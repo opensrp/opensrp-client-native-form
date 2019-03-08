@@ -4,7 +4,7 @@
     <color name="primary">#673AB7</color>
     <color name="primary_dark">#512DA8</color>
     <color name="primary_light">#D1C4E9</color>
-    <color name="accent">#FF9800</color>
+    <color name="accent">#C15F26</color>
     <color name="primary_text">#212121</color>
     <color name="secondary_text">#727272</color>
     <color name="icons">#FFFFFF</color>
@@ -29,6 +29,8 @@
     <color name="toaster_note_yellow">#F7F6C3</color>
     <color name="toaster_note_yellow_icon">#FFC100</color>
     <color name="dialog_button_blue_color">#4118D0</color>
+    <color name="form_error_color">#FF004C</color>
+    <color name="form_error_stepname">#3E404F</color>
     <color name="customAppThemeBlue">#218CC5</color>
 
     <color name="button_navy_blue">#2539BC</color>

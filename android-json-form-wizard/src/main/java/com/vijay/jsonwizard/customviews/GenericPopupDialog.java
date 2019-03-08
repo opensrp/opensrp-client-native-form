@@ -233,7 +233,19 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
                     String key = jsonObject.getString(JsonFormConstants.KEY);
                     String type = jsonObject.getString(JsonFormConstants.TYPE);
                     JSONArray values = jsonObject.getJSONArray(JsonFormConstants.VALUES);
-                    secondaryValuesMap.put(key, new SecondaryValueModel(key, type, values));
+                    JSONObject openmrsAttributes = new JSONObject();
+                    if (jsonObject.has(JsonFormConstants.OPENMRS_ATTRIBUTES)) {
+                        openmrsAttributes =
+                                jsonObject.getJSONObject(JsonFormConstants.OPENMRS_ATTRIBUTES);
+                    }
+                    JSONArray valueOpenMRSAttributes = new JSONArray();
+                    if (jsonObject.has(JsonFormConstants.VALUE_OPENMRS_ATTRIBUTES)) {
+                        valueOpenMRSAttributes = jsonObject
+                                .getJSONArray(JsonFormConstants.VALUE_OPENMRS_ATTRIBUTES);
+                    }
+
+                    secondaryValuesMap
+                            .put(key, new SecondaryValueModel(key, type, values, openmrsAttributes, valueOpenMRSAttributes));
                     popAssignedValue = secondaryValuesMap;
                 } catch (JSONException e) {
                     Log.i(TAG, Log.getStackTraceString(e));
@@ -324,7 +336,8 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
     }
 
     @Override
-    public void addSelectedValues(Map<String, String> newValue) {
+    public void addSelectedValues(JSONObject openMRSAttributes,
+                                  JSONArray valueOpenMRSAttributes, Map<String, String> newValue) {
         if (newValue != null) {
             Iterator newValueIterator = newValue.entrySet().iterator();
             String key = "";
@@ -343,11 +356,12 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
                 value = widgetValues[0];
             }
 
-            createSecondaryValues(key, type, value);
+            createSecondaryValues(key, type, value, openMRSAttributes, valueOpenMRSAttributes);
         }
     }
 
-    protected void createSecondaryValues(String key, String type, String value) {
+    protected void createSecondaryValues(String key, String type, String value, JSONObject openMRSAttributes,
+                                         JSONArray valueOpenMRSAttributes) {
         JSONArray values = new JSONArray();
         values.put(value);
         if (type != null && type.equals(JsonFormConstants.CHECK_BOX)) {
@@ -360,14 +374,17 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
                     }
 
                     valueModel.setValues(removeUnselectedItems(jsonArray, value));
+                    valueModel.setValuesOpenMRSAttributes(valueOpenMRSAttributes);
+                    valueModel.setOpenmrsAttributes(openMRSAttributes);
                 }
             } else {
                 if (popAssignedValue != null) {
-                    popAssignedValue.put(key, new SecondaryValueModel(key, type, values));
+                    popAssignedValue
+                            .put(key, new SecondaryValueModel(key, type, values, openMRSAttributes, valueOpenMRSAttributes));
                 }
             }
         } else {
-            popAssignedValue.put(key, new SecondaryValueModel(key, type, values));
+            popAssignedValue.put(key, new SecondaryValueModel(key, type, values, openMRSAttributes, valueOpenMRSAttributes));
         }
     }
 
@@ -528,8 +545,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
      * @param item
      * @param secondaryValueModel
      */
-    protected void addSecondaryValues(JSONObject
-                                              item, Map<String, SecondaryValueModel> secondaryValueModel) {
+    protected void addSecondaryValues(JSONObject item, Map<String, SecondaryValueModel> secondaryValueModel) {
         JSONObject valueObject;
         JSONArray secondaryValuesArray = new JSONArray();
         SecondaryValueModel secondaryValue;
@@ -563,10 +579,16 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
             String key = value.getKey();
             String type = value.getType();
             JSONArray values = value.getValues();
+            JSONObject openMRSAttributes = value.getOpenmrsAttributes();
+            JSONArray valueOpenMRSAttributes = value.getValuesOpenMRSAttributes();
 
             jsonObject.put(JsonFormConstants.KEY, key);
             jsonObject.put(JsonFormConstants.TYPE, type);
             jsonObject.put(JsonFormConstants.VALUES, values);
+            jsonObject.put(JsonFormConstants.OPENMRS_ATTRIBUTES, openMRSAttributes);
+            if (valueOpenMRSAttributes.length() > 0) {
+                jsonObject.put(JsonFormConstants.VALUE_OPENMRS_ATTRIBUTES, valueOpenMRSAttributes);
+            }
         } catch (Exception e) {
             Log.i(TAG, Log.getStackTraceString(e));
 

@@ -58,6 +58,13 @@
             android:layout_gravity="center"
             android:text="GENERIC POPUP"
             android:textColor="@android:color/white" />
+        <Button
+            android:id="@+id/validation_form_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="FORM VALIDATION"
+            android:textColor="@android:color/white" />
 
     </LinearLayout>
 </RelativeLayout>

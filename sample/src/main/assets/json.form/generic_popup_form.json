@@ -4,6 +4,8 @@
   "mother": {
     "encounter_type": "New Woman Registration"
   },
+  "validate_on_submit": true,
+  "show_errors_on_submit": true,
   "entity_id": "",
   "relational_id": "",
   "metadata": {
@@ -58,6 +60,10 @@
     "title": "Birth Registration",
     "fields": [
       {
+        "v_required": {
+          "value": "true",
+          "err": "Please select first Respiratory Exam"
+        },
         "key": "repiratory_exam",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -111,7 +117,8 @@
             ]
           }
         ]
-      },
+      }
+    ,
       {
         "key": "repiratory_exam_two",
         "openmrs_entity_parent": "",

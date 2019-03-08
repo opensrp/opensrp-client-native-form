@@ -13,8 +13,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -49,14 +47,12 @@ import com.vijay.jsonwizard.customviews.GenericPopupDialog;
 import com.vijay.jsonwizard.customviews.MaterialSpinner;
 import com.vijay.jsonwizard.customviews.TextableView;
 import com.vijay.jsonwizard.domain.Form;
-import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.GenericDialogInterface;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.interfaces.LifeCycleListener;
 import com.vijay.jsonwizard.interfaces.OnActivityRequestPermissionResultListener;
 import com.vijay.jsonwizard.interfaces.OnActivityResultListener;
 import com.vijay.jsonwizard.rules.RuleConstant;
-import com.vijay.jsonwizard.rules.RulesEngineFactory;
 import com.vijay.jsonwizard.utils.ExObjectResult;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.PropertyManager;
@@ -70,7 +66,6 @@ import org.json.JSONObject;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.InputStreamReader;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -86,8 +81,7 @@ import java.util.regex.Pattern;
 
 import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 
-public class JsonFormActivity extends AppCompatActivity implements JsonApi {
-
+public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private static final String TAG = JsonFormActivity.class.getSimpleName();
     private static final String JSON_STATE = "jsonState";
     private static final String FORM_STATE = "formState";
@@ -97,28 +91,15 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     ';', '[', ']'));
     private final List<String> PREFICES_OF_INTEREST = Arrays.asList(RuleConstant.PREFIX.GLOBAL, RuleConstant.STEP);
     private FormUtils formUtils = new FormUtils();
-    private Toolbar mToolbar;
-    private JSONObject mJSONObject;
-    private PropertyManager propertyManager;
-    private Map<String, View> skipLogicViews;
-    private Map<String, View> calculationLogicViews;
     private Map<String, View> constrainedViews;
     private ArrayList<View> formDataViews;
     private String functionRegex;
     private HashMap<String, Comparison> comparisons;
-    private HashMap<Integer, OnActivityResultListener> onActivityResultListeners;
-    private HashMap<Integer, OnActivityRequestPermissionResultListener> onActivityRequestPermissionResultListeners;
-    private List<LifeCycleListener> lifeCycleListeners;
-    private String confirmCloseTitle;
-    private String confirmCloseMessage;
     private Map<String, List<String>> ruleKeys = new HashMap<>();
     private GenericDialogInterface genericDialogInterface;
     private JSONArray extraFieldsWithValues;
-    private Form form;
-    private Map<String, String> globalValues = null;
-    private RulesEngineFactory rulesEngineFactory = null;
-    private LocalBroadcastManager localBroadcastManager;
     private Map<String, String> formValuesCacheMap = new HashMap<>();
+
     private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -140,88 +121,6 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
             // Log.d(TAG, "Received Broadcast Message Type " + messageType);
         }
     };
-
-    public void init(String json) {
-        try {
-            mJSONObject = new JSONObject(json);
-            if (!mJSONObject.has("encounter_type")) {
-                mJSONObject = new JSONObject();
-                throw new JSONException("Form encounter_type not set");
-            }
-
-            //populate them global values
-            if (mJSONObject.has(JsonFormConstants.JSON_FORM_KEY.GLOBAL)) {
-                globalValues = new Gson()
-                        .fromJson(mJSONObject.getJSONObject(JsonFormConstants.JSON_FORM_KEY.GLOBAL).toString(),
-                                new TypeToken<HashMap<String, String>>() {
-                                }.getType());
-            } else {
-                globalValues = new HashMap<>();
-            }
-
-            rulesEngineFactory = new RulesEngineFactory(this, globalValues);
-
-            confirmCloseTitle = getString(R.string.confirm_form_close);
-            confirmCloseMessage = getString(R.string.confirm_form_close_explanation);
-            localBroadcastManager = LocalBroadcastManager.getInstance(this);
-
-        } catch (JSONException e) {
-            Log.e(TAG, "Initialization error. Json passed is invalid : " + e.getMessage(), e);
-        }
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.native_form_activity_json_form);
-        mToolbar = findViewById(R.id.tb_top);
-        setSupportActionBar(mToolbar);
-        skipLogicViews = new LinkedHashMap<>();
-        calculationLogicViews = new LinkedHashMap<>();
-        onActivityResultListeners = new HashMap<>();
-        onActivityRequestPermissionResultListeners = new HashMap<>();
-        lifeCycleListeners = new ArrayList<>();
-        if (savedInstanceState == null) {
-            init(getIntent().getStringExtra(JsonFormConstants.JSON_FORM_KEY.JSON));
-            initializeFormFragment();
-            onFormStart();
-            this.form = extractForm(getIntent().getSerializableExtra(JsonFormConstants.JSON_FORM_KEY.FORM));
-        } else {
-            init(savedInstanceState.getString(JSON_STATE));
-            this.form = extractForm(savedInstanceState.getSerializable(FORM_STATE));
-        }
-        for (LifeCycleListener lifeCycleListener : lifeCycleListeners) {
-            lifeCycleListener.onCreate(savedInstanceState);
-        }
-    }
-
-    public void initializeFormFragment() {
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.container, JsonFormFragment.getFormFragment(JsonFormConstants.FIRST_STEP_NAME)).commit();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (onActivityResultListeners.containsKey(requestCode)) {
-            onActivityResultListeners.get(requestCode).onActivityResult(requestCode, resultCode, data);
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        if (onActivityRequestPermissionResultListeners.containsKey(requestCode)) {
-            onActivityRequestPermissionResultListeners.get(requestCode)
-                    .onRequestPermissionResult(requestCode, permissions, grantResults);
-        } else {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
-
-    public Toolbar getToolbar() {
-        return mToolbar;
-    }
 
     @Override
     public synchronized JSONObject getStep(String name) {
@@ -316,14 +215,84 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                         item.getString(JsonFormConstants.VALUE) : value : value);
     }
 
-    private void performPopupOperations(String value, boolean popup, JSONObject item, String keyAtIndex, String itemType) {
+    private void performPopupOperations(String value, boolean popup, JSONObject item, String keyAtIndex, String itemType)
+            throws JSONException {
         if (popup) {
             String itemText = "";
             if (itemType.equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
                 itemText = formUtils.getRadioButtonText(item, value);
             }
-            genericDialogInterface.addSelectedValues(formUtils.addAssignedValue(keyAtIndex, "", value, itemType, itemText));
+
+            JSONArray valueOpenMRSAttributes = new JSONArray();
+            if (itemType.equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
+                getOptionsOpenMRSAttributes(value, item, valueOpenMRSAttributes);
+            }
+
+            if (itemType.equals(JsonFormConstants.SPINNER) && item.has(JsonFormConstants.OPENMRS_CHOICE_IDS)) {
+                JSONObject openmrsChoiceIds = item.getJSONObject(JsonFormConstants.OPENMRS_CHOICE_IDS);
+                Iterator<String> keys = openmrsChoiceIds.keys();
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    if (value.equals(key)) {
+                        JSONObject jsonObject = new JSONObject();
+                        String optionOpenMRSConceptId = openmrsChoiceIds.get(key).toString();
+                        jsonObject.put(JsonFormConstants.KEY, value);
+                        jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_PARENT,
+                                item.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT));
+                        jsonObject.put(JsonFormConstants.OPENMRS_ENTITY, item.getString(JsonFormConstants.OPENMRS_ENTITY));
+                        jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_ID, optionOpenMRSConceptId);
+
+                        valueOpenMRSAttributes.put(jsonObject);
+                    }
+
+                }
+            }
+
+            JSONObject openmrsAttributes = formUtils.getOpenMRSAttributes(item);
+
+            genericDialogInterface
+                    .addSelectedValues(openmrsAttributes, valueOpenMRSAttributes,
+                            formUtils.addAssignedValue(keyAtIndex, "", value, itemType,
+                                    itemText));
             //extraFieldsWithValues = fields;
+        }
+    }
+
+    protected void getOptionsOpenMRSAttributes(String value, JSONObject item, JSONArray valueOpenMRSAttributes)
+            throws JSONException {
+        JSONArray options = item.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
+        if (options.length() > 0) {
+            for (int i = 0; i < options.length(); i++) {
+                JSONObject itemOption = options.getJSONObject(i);
+                if ((JsonFormConstants.NATIVE_RADIO_BUTTON
+                        .equals(item.getString(JsonFormConstants.TYPE)) || JsonFormConstants.ANC_RADIO_BUTTON
+                        .equals(item.getString(JsonFormConstants.TYPE))) && (itemOption.has(JsonFormConstants.KEY) && value
+                        .equals(itemOption.getString(JsonFormConstants.KEY)))) {
+                    extractOptionOpenMRSAttributes(valueOpenMRSAttributes, itemOption);
+                } else if (JsonFormConstants.CHECK_BOX.equals(item.getString(JsonFormConstants.TYPE)) && itemOption
+                        .has(JsonFormConstants.VALUE) && JsonFormConstants.TRUE
+                        .equals(itemOption.getString(JsonFormConstants.VALUE))) {
+                    extractOptionOpenMRSAttributes(valueOpenMRSAttributes, itemOption);
+                }
+            }
+        }
+    }
+
+    protected void extractOptionOpenMRSAttributes(JSONArray valueOpenMRSAttributes, JSONObject itemOption)
+            throws JSONException {
+        if (itemOption.has(JsonFormConstants.OPENMRS_ENTITY_PARENT) && itemOption
+                .has(JsonFormConstants.OPENMRS_ENTITY) && itemOption.has(JsonFormConstants.OPENMRS_ENTITY_ID)) {
+            String openmrsEntityParent = itemOption.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
+            String openmrsEntity = itemOption.getString(JsonFormConstants.OPENMRS_ENTITY);
+            String openmrsEntityId = itemOption.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
+
+            JSONObject valueOpenMRSObject = new JSONObject();
+            valueOpenMRSObject.put(JsonFormConstants.KEY, itemOption.getString(JsonFormConstants.KEY));
+            valueOpenMRSObject.put(JsonFormConstants.OPENMRS_ENTITY_PARENT, openmrsEntityParent);
+            valueOpenMRSObject.put(JsonFormConstants.OPENMRS_ENTITY, openmrsEntity);
+            valueOpenMRSObject.put(JsonFormConstants.OPENMRS_ENTITY_ID, openmrsEntityId);
+
+            valueOpenMRSAttributes.put(valueOpenMRSObject);
         }
     }
 
@@ -404,7 +373,14 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                         if (childKey.equals(anotherKeyAtIndex)) {
                             innerItem.put(JsonFormConstants.VALUE, value);
                             if (popup) {
-                                genericDialogInterface.addSelectedValues(
+                                JSONArray valueOpenMRSAttributes = new JSONArray();
+                                if (innerItem.has(JsonFormConstants.VALUE_OPENMRS_ATTRIBUTES)) {
+                                    valueOpenMRSAttributes =
+                                            innerItem.getJSONArray(JsonFormConstants.VALUE_OPENMRS_ATTRIBUTES);
+                                }
+                                getOptionsOpenMRSAttributes(value, item, valueOpenMRSAttributes);
+                                JSONObject openMRSAttributes = formUtils.getOpenMRSAttributes(item);
+                                genericDialogInterface.addSelectedValues(openMRSAttributes, valueOpenMRSAttributes,
                                         formUtils.addAssignedValue(keyAtIndex, childKey, value, itemType, itemText));
                             }
 
@@ -456,18 +432,6 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         outState.putSerializable(FORM_STATE, form);
         for (LifeCycleListener lifeCycleListener : lifeCycleListeners) {
             lifeCycleListener.onSaveInstanceState(outState);
-        }
-    }
-
-    @Override
-    public void onFormStart() {
-        try {
-            if (propertyManager == null) {
-                propertyManager = new PropertyManager(this);
-            }
-            FormUtils.updateStartProperties(propertyManager, mJSONObject);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -1502,14 +1466,6 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         this.mJSONObject = mJSONObject;
     }
 
-    private Form extractForm(Serializable serializable) {
-        if (serializable != null && serializable instanceof Form) {
-            return (Form) serializable;
-        } else {
-            return null;
-        }
-    }
-
     private List<String> getConditionKeys(String condition) {
         String cleanString = cleanConditionString(condition);
         String[] conditionTokens = cleanString.split(" ");
@@ -1695,7 +1651,8 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
         }
     }
 
-    private void updateCanvas(View view, boolean visible, JSONArray canvasViewIds, String addressString, JSONObject object) throws JSONException {
+    private void updateCanvas(View view, boolean visible, JSONArray canvasViewIds, String addressString, JSONObject object)
+            throws JSONException {
         for (int i = 0; i < canvasViewIds.length(); i++) {
             int curId = canvasViewIds.getInt(i);
 
@@ -1716,10 +1673,15 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                     view.setFocusable(true);
                 }
             } else {
+
                 clearHiddenViewsValues(object, addressString);
                 curCanvasView.setEnabled(false);
                 curCanvasView.setVisibility(View.GONE);
                 refreshViews(curCanvasView);
+            }
+
+            if (object != null) {
+                object.put(JsonFormConstants.IS_VISIBLE, visible);
             }
         }
     }
@@ -1745,7 +1707,7 @@ public class JsonFormActivity extends AppCompatActivity implements JsonApi {
                 } else if (child instanceof CustomTextView) {
                     resetSelectedNumberBackground(child);
 
-                } else if(child instanceof TextView && child.getId() == R.id.duration){
+                } else if (child instanceof TextView && child.getId() == R.id.duration) {
                     // clear duration for custom date picker
                     ((TextView) child).setText("");
                 }
