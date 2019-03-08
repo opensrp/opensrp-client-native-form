@@ -689,7 +689,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             popup = false;
         }
 
-        String value = (String) parent.getItemAtPosition(position);
+        String value =  parent.getItemAtPosition(position).toString();
         getView().writeValue(mStepName, parentKey, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
 
         if (JsonFormConstants.NUMBER_SELECTOR.equals(type)) {

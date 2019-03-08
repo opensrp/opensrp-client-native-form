@@ -51,7 +51,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         NumberSelectorFactory.receiver = new NumberSelectorFactoryReceiver();
     }
 
-    @SuppressLint ("NewApi")
+    @SuppressLint("NewApi")
     private static void setSelectedColor(Context context, CustomTextView customTextView, int item, int numberOfSelectors,
                                          String textColor) {
         if (customTextView != null && item > -1) {
@@ -68,13 +68,13 @@ public class NumberSelectorFactory implements FormWidgetFactory {
             }
         }
         //Change background color (for first and last drawables) after it was reset by skip logic
-        if(customTextView != null && customTextView.getBackground() instanceof GradientDrawable){
-            ((GradientDrawable)customTextView.getBackground()).setColor(context.getResources()
+        if (customTextView != null && customTextView.getBackground() instanceof GradientDrawable) {
+            ((GradientDrawable) customTextView.getBackground()).setColor(context.getResources()
                     .getColor(R.color.native_number_selector_selected));
         }
     }
 
-    @SuppressLint ("NewApi")
+    @SuppressLint("NewApi")
     private static void setDefaultColor(Context context, CustomTextView customTextView, int item, int numberOfSelectors,
                                         String textColor) {
         if (customTextView != null && item > -1) {
@@ -268,7 +268,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         return views;
     }
 
-    @SuppressLint ("NewApi")
+    @SuppressLint("NewApi")
     private void createTextViews(Context context, JSONObject jsonObject, LinearLayout linearLayout, CommonListener
             listener, String stepName, boolean popup) throws JSONException {
         int startSelectionNumber = jsonObject.optInt(JsonFormConstants.START_SELECTION_NUMBER, 1);
@@ -319,7 +319,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         return text;
     }
 
-    @SuppressLint ("NewApi")
+    @SuppressLint("NewApi")
     private CustomTextView createCustomView(Context context, JSONObject jsonObject, int width, int numberOfSelectors,
                                             CommonListener listener, LinearLayout linearLayout, int item, boolean popup)
             throws JSONException {
@@ -405,8 +405,8 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         String required = "false";
         JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
         if (requiredObject != null) {
-            String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
-            if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
+            boolean requiredValue = requiredObject.getBoolean(JsonFormConstants.VALUE);
+            if (Boolean.TRUE.equals(requiredValue)) {
                 required = "true";
             }
         }

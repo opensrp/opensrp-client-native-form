@@ -63,7 +63,7 @@
         "openmrs_entity": "person",
         "openmrs_entity_id": "first_name",
         "type": "edit_text",
-        "hint": "First name *",
+        "hint": "First name",
         "edit_type": "name",
         "v_required": {
           "value": "true",
@@ -80,7 +80,7 @@
         "openmrs_entity": "person",
         "openmrs_entity_id": "last_name",
         "type": "edit_text",
-        "hint": "Last name *",
+        "hint": "Last name",
         "edit_type": "name",
         "v_required": {
           "value": "true",

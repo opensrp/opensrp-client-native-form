@@ -170,8 +170,8 @@ public class CheckBoxFactory implements FormWidgetFactory {
     private void addRequiredValidator(LinearLayout rootLayout, JSONObject jsonObject) throws JSONException {
         JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
         if (requiredObject != null) {
-            String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
-            if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
+            boolean requiredValue = requiredObject.getBoolean(JsonFormConstants.VALUE);
+            if (Boolean.TRUE.equals(requiredValue)) {
                 rootLayout.setTag(R.id.error, requiredObject.optString(JsonFormConstants.ERR, null));
             }
         }

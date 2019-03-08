@@ -25,6 +25,7 @@ import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.interfaces.OnActivityResultListener;
+import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.PermissionUtils;
 import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
@@ -162,10 +163,11 @@ public class BarcodeFactory implements FormWidgetFactory {
         editText.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         if (jsonObject.has(JsonFormConstants.V_REQUIRED)) {
             JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
-            String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
-            if (!TextUtils.isEmpty(requiredValue) && (Boolean.TRUE.toString().equalsIgnoreCase(requiredValue))) {
+            boolean requiredValue = requiredObject.getBoolean(JsonFormConstants.VALUE);
+            if (Boolean.TRUE.equals(requiredValue)) {
                 editText.addValidator(
                         new RequiredValidator(requiredObject.getString(JsonFormConstants.ERR)));
+                FormUtils.setRequiredOnHint(editText);
             }
         }
 
