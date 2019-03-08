@@ -3,34 +3,19 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:paddingStart="0dp"
-    android:paddingLeft="0dp"
     android:paddingTop="5dp"
     android:paddingEnd="10dp"
-    android:paddingRight="10dp"
     android:paddingBottom="5dp"
-    android:weightSum="3.4">
+    android:weightSum="2">
 
-    <com.vijay.jsonwizard.customviews.CheckBox
+    <CheckBox
         android:id="@+id/checkbox"
         style="@style/CheckBoxStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0.4"
+        android:layout_weight="1.8"
         android:gravity="start|center_vertical"
         android:theme="@style/CheckBoxStyle.color" />
-
-    <TextView
-        android:id="@+id/text1"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_weight="3"
-        android:gravity="start|center_vertical"
-        android:paddingTop="2dp"
-        android:text="Test" />
 
     <ImageView
         android:id="@+id/checkbox_info_icon"
@@ -38,7 +23,7 @@
         android:layout_height="@dimen/default_info_icon_size"
         android:layout_gravity="center_vertical"
         android:layout_marginEnd="8dp"
-        android:layout_weight="0.4"
+        android:layout_weight="0.2"
         android:src="@drawable/ic_icon_info_filled"
-        android:visibility="invisible" />
+        android:visibility="gone" />
 </LinearLayout>
