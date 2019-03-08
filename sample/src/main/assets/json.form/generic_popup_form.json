@@ -4,6 +4,8 @@
   "mother": {
     "encounter_type": "New Woman Registration"
   },
+  "validate_on_submit": true,
+  "show_errors_on_submit": true,
   "entity_id": "",
   "relational_id": "",
   "metadata": {
@@ -58,6 +60,10 @@
     "title": "Birth Registration",
     "fields": [
       {
+        "v_required": {
+          "value": "true",
+          "err": "Please select first Respiratory Exam"
+        },
         "key": "repiratory_exam",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -67,18 +73,18 @@
         "label_text_style": "bold",
         "text_color": "#000000",
         "extra_rel": true,
-        "has_extra_rel": "3",
+        "has_extra_rel": "resOne3",
         "options": [
           {
-            "key": "1",
+            "key": "resOne1",
             "text": "Not done"
           },
           {
-            "key": "2",
+            "key": "resOne2",
             "text": "Normal"
           },
           {
-            "key": "3",
+            "key": "resOne3",
             "text": "Abnormal",
             "specify_info": "Specify",
             "specify_info_color": "#b5b5b5",
@@ -111,7 +117,8 @@
             ]
           }
         ]
-      },
+      }
+    ,
       {
         "key": "repiratory_exam_two",
         "openmrs_entity_parent": "",
@@ -122,18 +129,18 @@
         "label_text_style": "bold",
         "text_color": "#000000",
         "extra_rel": true,
-        "has_extra_rel": "3",
+        "has_extra_rel": "resTwo3",
         "options": [
           {
-            "key": "1",
+            "key": "resTwo1",
             "text": "Not done"
           },
           {
-            "key": "2",
+            "key": "resTwo2",
             "text": "Normal"
           },
           {
-            "key": "3",
+            "key": "resTwo3",
             "text": "Abnormal",
             "specify_info": "Specify",
             "specify_info_color": "#b5b5b5",
@@ -162,7 +169,7 @@
         "relevance": {
           "step1:repiratory_exam": {
             "type": "string",
-            "ex": "equalTo(., \"1\")"
+            "ex": "equalTo(., \"resOne1\")"
           }
         }
       },
@@ -176,18 +183,18 @@
         "label_text_style": "bold",
         "text_color": "#000000",
         "extra_rel": true,
-        "has_extra_rel": "3",
+        "has_extra_rel": "resThree3",
         "options": [
           {
-            "key": "1",
+            "key": "resThree1",
             "text": "Not done"
           },
           {
-            "key": "2",
+            "key": "resThree2",
             "text": "Normal"
           },
           {
-            "key": "3",
+            "key": "resThree3",
             "text": "Abnormal",
             "specify_info": "Specify",
             "specify_info_color": "#b5b5b5",
@@ -200,7 +207,7 @@
         "relevance": {
           "step1:repiratory_exam_two": {
             "type": "string",
-            "ex": "equalTo(., \"2\")"
+            "ex": "equalTo(., \"resTwo2\")"
           }
         }
       },
@@ -214,18 +221,18 @@
         "label_text_style": "bold",
         "text_color": "#000000",
         "extra_rel": true,
-        "has_extra_rel": "3",
+        "has_extra_rel": "resFour3",
         "options": [
           {
-            "key": "1",
+            "key": "resFour1",
             "text": "Not done"
           },
           {
-            "key": "2",
+            "key": "resFour2",
             "text": "Normal"
           },
           {
-            "key": "3",
+            "key": "resFour3",
             "text": "Abnormal",
             "specify_info": "Specify",
             "specify_info_color": "#b5b5b5",
@@ -233,6 +240,80 @@
             "content_form": "child_enrollment_third_sub_form",
             "secondary_suffix": "bpm",
             "content_form_location": ""
+          }
+        ],
+        "relevance": {
+          "step1:repiratory_exam_three": {
+            "type": "string",
+            "ex": "equalTo(., \"resThree3\")"
+          }
+        }
+      },
+      {
+        "key": "no_of_fetuses",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "numbers_selector",
+        "number_of_selectors": "5",
+        "start_number": "1",
+        "max_value": "8",
+        "text_size": "16px",
+        "text_color": "#000000",
+        "selected_text_color": "#ffffff",
+        "v_required": {
+          "value": false
+        },
+        "relevance": {
+          "step1:no_of_fetuses_unknown": {
+            "ex-checkbox": [
+              {
+                "not": [
+                  "no_of_fetuses_unknown"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "10sp",
+        "relevance": {
+          "step1:no_of_fetuses_unknown": {
+            "ex-checkbox": [
+              {
+                "not": [
+                  "no_of_fetuses_unknown"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "10sp"
+      },
+      {
+        "key": "no_of_fetuses_unknown",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "check_box",
+        "options": [
+          {
+            "key": "no_of_fetuses_unknown",
+            "text": "No. of fetuses unknown",
+            "value": "false"
           }
         ]
       }
