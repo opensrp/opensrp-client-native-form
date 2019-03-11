@@ -113,7 +113,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
         rootLayout.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
         rootLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
         rootLayout.setTag(R.id.extraPopup, popup);
-        rootLayout.setTag(R.id.checkbox_linear_layout, true);
+        rootLayout.setTag(R.id.is_checkbox_linear_layout, true);
         canvasIds.put(rootLayout.getId());
         addRequiredValidator(rootLayout, jsonObject);
 
