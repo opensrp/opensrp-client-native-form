@@ -21,6 +21,7 @@ import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
+import com.vijay.jsonwizard.validators.edittext.CumulativeTotalValidator;
 import com.vijay.jsonwizard.validators.edittext.MaxLengthValidator;
 import com.vijay.jsonwizard.validators.edittext.MaxNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.MinLengthValidator;
@@ -36,9 +37,13 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_CUMULATIVE_VALIDATION_ERR;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_RELATIVE_MAX_VALIDATION_ERR;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.RELATED_FIELDS;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.RELATIVE_MAX_VALIDATION_EXCEPTION;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP1;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.V_CUMULATIVE_TOTAL;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.V_RELATIVE_MAX;
 import static com.vijay.jsonwizard.utils.FormUtils.fields;
 import static com.vijay.jsonwizard.utils.FormUtils.getFieldJSONObject;
@@ -73,6 +78,7 @@ public class EditTextFactory implements FormWidgetFactory {
 
     private List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject,
                                   CommonListener listener, boolean popup) throws Exception {
+
         List<View> views = new ArrayList<>(1);
 
         RelativeLayout rootLayout = (RelativeLayout) LayoutInflater.from(context).inflate(
@@ -144,6 +150,7 @@ public class EditTextFactory implements FormWidgetFactory {
         addNumericValidator(jsonObject, editText);
         addNumericIntegerValidator(jsonObject, editText);
         addRelativeNumericIntegerValidator(jsonObject, formFragment, editText);
+        addCumulativeTotalValidator(jsonObject, formFragment, editText, stepName);
         // edit type check
         String editType = jsonObject.optString(JsonFormConstants.EDIT_TYPE);
         if (!TextUtils.isEmpty(editType)) {
@@ -334,5 +341,31 @@ public class EditTextFactory implements FormWidgetFactory {
                 }
             }
         }
+    }
+
+    private void addCumulativeTotalValidator(JSONObject editTextJSONObject, JsonFormFragment formFragment,
+                                             MaterialEditText editText, String stepName) throws JSONException {
+        JSONObject validationJSONObject = editTextJSONObject.optJSONObject(V_CUMULATIVE_TOTAL);
+        if (validationJSONObject != null) {
+            String totalValueKey = validationJSONObject.optString(JsonFormConstants.VALUE, null);
+            JSONArray formFields = fields(new JSONObject(formFragment.getCurrentJsonState()), stepName);
+            JSONObject totalFieldJSONObject = getFieldJSONObject(formFields, totalValueKey);
+            if (totalFieldJSONObject != null) {
+                String validationErrorMsg = validationJSONObject
+                        .optString(JsonFormConstants.ERR, null);
+                JSONArray relatedFields = validationJSONObject.optJSONArray(RELATED_FIELDS);
+
+                if (relatedFields != null) {
+                    String errorMessage = String.format(DEFAULT_CUMULATIVE_VALIDATION_ERR, editTextJSONObject.get(KEY), relatedFields.join(", "), totalValueKey);
+                    editText.addValidator(new CumulativeTotalValidator(
+                            validationErrorMsg == null ? errorMessage : validationErrorMsg,
+                            formFragment,
+                            stepName,
+                            totalValueKey,
+                            relatedFields));
+                }
+            }
+        }
+
     }
 }
