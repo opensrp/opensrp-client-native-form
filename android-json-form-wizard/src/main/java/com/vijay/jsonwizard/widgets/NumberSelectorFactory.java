@@ -46,7 +46,6 @@ public class NumberSelectorFactory implements FormWidgetFactory {
     private CommonListener listener;
     private Map<String, JSONObject> jsonObjectMap = new HashMap<>();
     private Map<String, LinearLayout> rootLayoutMap = new HashMap<>();
-    private static String currentValue;
 
     public NumberSelectorFactory() {
         NumberSelectorFactory.receiver = new NumberSelectorFactoryReceiver();
