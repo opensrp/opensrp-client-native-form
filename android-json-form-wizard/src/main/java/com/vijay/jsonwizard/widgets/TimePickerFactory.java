@@ -3,7 +3,6 @@ package com.vijay.jsonwizard.widgets;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import com.vijay.jsonwizard.customviews.TimePickerDialog;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
@@ -12,20 +11,25 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
+
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rengwuxian.materialedittext.validation.RegexpValidator;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.GenericTextWatcher;
+import com.vijay.jsonwizard.customviews.TimePickerDialog;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -203,9 +207,10 @@ public class TimePickerFactory implements FormWidgetFactory {
         editText.setTag(R.id.address, stepName + ":" + jsonObject.getString(TimePickerFactory.KEY.KEY));
         if (jsonObject.has(JsonFormConstants.V_REQUIRED)) {
             JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
-            String requiredValue = requiredObject.getString(TimePickerFactory.KEY.VALUE);
-            if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
+            boolean requiredValue = requiredObject.getBoolean(TimePickerFactory.KEY.VALUE);
+            if (Boolean.TRUE.equals(requiredValue)) {
                 editText.addValidator(new RequiredValidator(requiredObject.getString(JsonFormConstants.ERR)));
+                FormUtils.setRequiredOnHint(editText);
             }
         }
 

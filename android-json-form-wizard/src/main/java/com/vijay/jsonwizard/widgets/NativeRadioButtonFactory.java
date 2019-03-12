@@ -400,8 +400,8 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
     private void addRequiredValidator(RadioGroup radioGroup, JSONObject jsonObject) throws JSONException {
         JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
         if (requiredObject != null) {
-            String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
-            if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
+            boolean requiredValue = requiredObject.getBoolean(JsonFormConstants.VALUE);
+            if (Boolean.TRUE.equals(requiredValue)) {
                 radioGroup.setTag(R.id.error, requiredObject.optString(JsonFormConstants.ERR, null));
             }
         }

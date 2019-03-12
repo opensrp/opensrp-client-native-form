@@ -147,21 +147,8 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             } else {
                 setSpinnerError(spinner, null);
             }
-        } else if (childAt instanceof CustomTextView) {
-            CustomTextView customTextView = (CustomTextView) childAt;
-            String type = (String) childAt.getTag(R.id.type);
-            if (!TextUtils.isEmpty(type) && type.equals(JsonFormConstants.NUMBER_SELECTOR)) {
-                ValidationStatus validationStatus = NumberSelectorFactory.validate(formFragmentView, customTextView);
-                if (!validationStatus.isValid()) {
-                    if (requestFocus) validationStatus.requestAttention();
-                    customTextView.setError(validationStatus.getErrorMessage());
-                    return validationStatus;
-                } else {
-                    customTextView.setError(null);
-                }
-            }
-        } else if (childAt instanceof ViewGroup && childAt.getTag(R.id.checkbox_linear_layout) != null
-                && Boolean.TRUE.equals(childAt.getTag(R.id.checkbox_linear_layout))) {
+        } else if (childAt instanceof ViewGroup && childAt.getTag(R.id.is_checkbox_linear_layout) != null
+                && Boolean.TRUE.equals(childAt.getTag(R.id.is_checkbox_linear_layout))) {
             LinearLayout checkboxLinearLayout = (LinearLayout) childAt;
             ValidationStatus validationStatus = CheckBoxFactory.validate(formFragmentView, checkboxLinearLayout);
             if (!validationStatus.isValid()) {
@@ -169,6 +156,13 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                 return validationStatus;
             }
 
+        } else if (childAt instanceof ViewGroup && childAt.getTag(R.id.is_number_selector_linear_layout) != null
+                && Boolean.TRUE.equals(childAt.getTag(R.id.is_number_selector_linear_layout))) {
+            ValidationStatus validationStatus = NumberSelectorFactory.validate(formFragmentView, (ViewGroup) childAt);
+            if (!validationStatus.isValid()) {
+                if (requestFocus) validationStatus.requestAttention();
+                return validationStatus;
+            }
         }
 
         return new ValidationStatus(true, null, null, null);
@@ -689,7 +683,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             popup = false;
         }
 
-        String value = (String) parent.getItemAtPosition(position);
+        String value = parent.getItemAtPosition(position).toString();
         getView().writeValue(mStepName, parentKey, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
 
         if (JsonFormConstants.NUMBER_SELECTOR.equals(type)) {
