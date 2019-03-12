@@ -51,7 +51,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         NumberSelectorFactory.receiver = new NumberSelectorFactoryReceiver();
     }
 
-    @SuppressLint ("NewApi")
+    @SuppressLint("NewApi")
     private static void setSelectedColor(Context context, CustomTextView customTextView, int item, int numberOfSelectors,
                                          String textColor) {
         if (customTextView != null && item > -1) {
@@ -68,13 +68,13 @@ public class NumberSelectorFactory implements FormWidgetFactory {
             }
         }
         //Change background color (for first and last drawables) after it was reset by skip logic
-        if(customTextView != null && customTextView.getBackground() instanceof GradientDrawable){
-            ((GradientDrawable)customTextView.getBackground()).setColor(context.getResources()
+        if (customTextView != null && customTextView.getBackground() instanceof GradientDrawable) {
+            ((GradientDrawable) customTextView.getBackground()).setColor(context.getResources()
                     .getColor(R.color.native_number_selector_selected));
         }
     }
 
-    @SuppressLint ("NewApi")
+    @SuppressLint("NewApi")
     private static void setDefaultColor(Context context, CustomTextView customTextView, int item, int numberOfSelectors,
                                         String textColor) {
         if (customTextView != null && item > -1) {
@@ -122,8 +122,11 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         }
     }
 
+
     public static void setSelectedTextViews(CustomTextView customTextView) {
         selectedTextView = customTextView;
+        ((View) customTextView.getParent()).setTag(R.id.selected_number_value, customTextView.getText().toString());
+        customTextView.setError(null);
     }
 
     /**
@@ -169,22 +172,16 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         selectedTextView.setText(viewText);
     }
 
-    public static ValidationStatus validate(JsonFormFragmentView formFragmentView, CustomTextView customTextView) {
-        if (!(customTextView.getTag(R.id.v_required) instanceof String) || !(customTextView
-                .getTag(R.id.error) instanceof String)) {
-            return new ValidationStatus(true, null, formFragmentView, customTextView);
+    public static ValidationStatus validate(JsonFormFragmentView formFragmentView, ViewGroup childAt) {
+
+        boolean isRequired = Boolean.valueOf((String) childAt.getTag(R.id.v_required));
+        String errorMessage = (String) childAt.getTag(R.id.error);
+        String selectedNumber = (String) childAt.getTag(R.id.selected_number_value);
+        if (isRequired && TextUtils.isEmpty(selectedNumber) && (childAt.getChildCount() != 0 && childAt.getVisibility() == View.VISIBLE)) {
+            return new ValidationStatus(false, errorMessage, formFragmentView, childAt);
         }
-        Boolean isRequired = Boolean.valueOf((String) customTextView.getTag(R.id.v_required));
-        if (!isRequired || !customTextView.isEnabled()) {
-            return new ValidationStatus(true, null, formFragmentView, customTextView);
-        }
-        String selectedNumber = String.valueOf(customTextView.getText());
-        if (!selectedNumber.isEmpty()) {
-            return new ValidationStatus(true, null, formFragmentView, customTextView);
-        } else {
-            return new ValidationStatus(false, (String) customTextView.getTag(R.id.error), formFragmentView,
-                    customTextView);
-        }
+        return new ValidationStatus(true, null, formFragmentView, childAt);
+
     }
 
     public static NumberSelectorFactoryReceiver getNumberSelectorsReceiver() {
@@ -262,13 +259,15 @@ public class NumberSelectorFactory implements FormWidgetFactory {
 
         views.add(rootLayout);
         createTextViews(context, jsonObject, rootLayout, listener, stepName, popup);
-
+        rootLayout.setTag(R.id.is_number_selector_linear_layout, true);
+        addRequiredTag(rootLayout, jsonObject);
+        ((JsonApi) context).addFormDataView(rootLayout);
         rootLayoutMap.put(jsonObject.getString(JsonFormConstants.KEY), rootLayout);
 
         return views;
     }
 
-    @SuppressLint ("NewApi")
+    @SuppressLint("NewApi")
     private void createTextViews(Context context, JSONObject jsonObject, LinearLayout linearLayout, CommonListener
             listener, String stepName, boolean popup) throws JSONException {
         int startSelectionNumber = jsonObject.optInt(JsonFormConstants.START_SELECTION_NUMBER, 1);
@@ -319,7 +318,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         return text;
     }
 
-    @SuppressLint ("NewApi")
+    @SuppressLint("NewApi")
     private CustomTextView createCustomView(Context context, JSONObject jsonObject, int width, int numberOfSelectors,
                                             CommonListener listener, LinearLayout linearLayout, int item, boolean popup)
             throws JSONException {
@@ -357,7 +356,6 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         customTextView.setTag(R.id.number_selector_selected_text_color, selectedTextColor);
         customTextView.setTag(R.id.number_selector_start_selection_number, startSelectionNumber);
         customTextView.setTag(R.id.number_selector_listener, listener);
-        customTextView.setTag(R.id.v_required, addRequiredTag(jsonObject));
         customTextView.setTag(R.id.extraPopup, popup);
         if (item == numberOfSelectors - 1) {
             customTextView.setTag(R.id.number_selector_layout, linearLayout);
@@ -401,17 +399,16 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         setSelectedTextViews(customTextView);
     }
 
-    private String addRequiredTag(JSONObject jsonObject) throws JSONException {
-        String required = "false";
+    private void addRequiredTag(View rootLayout, JSONObject jsonObject) throws JSONException {
         JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
         if (requiredObject != null) {
-            String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
-            if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
-                required = "true";
+            boolean requiredValue = requiredObject.getBoolean(JsonFormConstants.VALUE);
+            if (Boolean.TRUE.equals(requiredValue)) {
+                rootLayout.setTag(R.id.v_required, "true");
+                rootLayout.setTag(R.id.error, requiredObject.optString(JsonFormConstants.ERR, null));
             }
         }
 
-        return required;
     }
 
     private class SelectedNumberClickListener implements View.OnClickListener {

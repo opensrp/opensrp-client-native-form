@@ -262,7 +262,8 @@
         "text_color": "#000000",
         "selected_text_color": "#ffffff",
         "v_required": {
-          "value": false
+          "value": true,
+          "err":"Please enter the number of fetuses"
         },
         "relevance": {
           "step1:no_of_fetuses_unknown": {

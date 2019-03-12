@@ -113,7 +113,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
         rootLayout.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
         rootLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
         rootLayout.setTag(R.id.extraPopup, popup);
-        rootLayout.setTag(R.id.checkbox_linear_layout, true);
+        rootLayout.setTag(R.id.is_checkbox_linear_layout, true);
         canvasIds.put(rootLayout.getId());
         addRequiredValidator(rootLayout, jsonObject);
 
@@ -170,8 +170,8 @@ public class CheckBoxFactory implements FormWidgetFactory {
     private void addRequiredValidator(LinearLayout rootLayout, JSONObject jsonObject) throws JSONException {
         JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
         if (requiredObject != null) {
-            String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
-            if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
+            boolean requiredValue = requiredObject.getBoolean(JsonFormConstants.VALUE);
+            if (Boolean.TRUE.equals(requiredValue)) {
                 rootLayout.setTag(R.id.error, requiredObject.optString(JsonFormConstants.ERR, null));
             }
         }

@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -42,7 +43,6 @@ import com.vijay.jsonwizard.comparisons.LessThanEqualToComparison;
 import com.vijay.jsonwizard.comparisons.NotEqualToComparison;
 import com.vijay.jsonwizard.comparisons.RegexComparison;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
-import com.vijay.jsonwizard.customviews.CheckBox;
 import com.vijay.jsonwizard.customviews.GenericPopupDialog;
 import com.vijay.jsonwizard.customviews.MaterialSpinner;
 import com.vijay.jsonwizard.customviews.TextableView;
@@ -747,7 +747,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     for (int i = 0; i < constraint.length(); i++) {
                         JSONObject curConstraint = constraint.getJSONObject(i);
                         if (address.length == 2) {
-                            String value = getValueFromAddress(address, popup).get(JsonFormConstants.VALUE);
+                            String value = String.valueOf(getValueFromAddress(address, popup).get(JsonFormConstants.VALUE));
                             errorMessage = enforceConstraint(value, curView, curConstraint);
                             if (errorMessage != null) break;
                         }
@@ -1042,7 +1042,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         args[i] = valueMatcher.group(1);
                     } else {
                         try {
-                            args[i] = getValueFromAddress(curArg.split(":"), false).get(JsonFormConstants.VALUE);
+                            args[i] = String.valueOf(getValueFromAddress(curArg.split(":"), false).get(JsonFormConstants.VALUE));
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -1684,6 +1684,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         if (childElement instanceof ViewGroup) {
             childElement.setFocusable(true);
             ViewGroup group = (ViewGroup) childElement;
+            refreshNumberSelector(group);
             for (int id = 0; id < group.getChildCount(); id++) {
                 View child = group.getChildAt(id);
                 if (child instanceof CheckBox) {
@@ -1706,6 +1707,17 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     ((TextView) child).setText("");
                 }
                 refreshViews(group.getChildAt(id));
+            }
+        }
+    }
+
+    private void refreshNumberSelector(View group) {
+        //reset value for number selector linear layout
+        if (group instanceof LinearLayout) {
+            LinearLayout numSelectorLayout = (LinearLayout) group;
+            if (numSelectorLayout.getTag(R.id.is_number_selector_linear_layout) != null
+                    && Boolean.TRUE.equals(numSelectorLayout.getTag(R.id.is_number_selector_linear_layout))) {
+                numSelectorLayout.setTag(R.id.selected_number_value, null);
             }
         }
     }

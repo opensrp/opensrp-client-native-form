@@ -1,4 +1,5 @@
 {
+  "show_errors_on_submit": true,
   "count": "1",
   "encounter_type": "Birth Registration",
   "mother": {
@@ -126,11 +127,14 @@
         "openmrs_entity_id": "",
         "openmrs_data_type": "text",
         "type": "tree",
-        "hint": "Child's home health facility *",
+        "hint": "Child's home health facility",
         "tree": [
+          "Hilton",
+          "Sarova",
+          "Double tree"
         ],
         "v_required": {
-          "value": true,
+          "value": false,
           "err": "Please enter the child's home facility"
         }
       },
@@ -141,14 +145,14 @@
         "openmrs_entity_id": "ZEIR_ID",
         "type": "barcode",
         "barcode_type": "qrcode",
-        "hint": "Child's ZEIR ID *",
+        "hint": "Child's ZEIR ID",
         "scanButtonText": "Scan QR Code",
         "v_numeric": {
           "value": "true",
           "err": "Please enter a valid ID"
         },
         "v_required": {
-          "value": "true",
+          "value": true,
           "err": "Please enter the Child's ZEIR ID"
         }
       },
@@ -194,7 +198,7 @@
         "openmrs_entity": "person",
         "openmrs_entity_id": "last_name",
         "type": "edit_text",
-        "hint": "Last name *",
+        "hint": "Last name",
         "label_info_text": "If LMP is unknown and ultrasound wasn't done or it wasn't done early (before 24 weeks), then assess GA based on Symphysis Fundal Height (SFH) or abdominal palpation. Compare this GA against ultrasound GA (if done).",
         "label_info_title": "GA from SFH or abdominal palpation - weeks",
         "edit_type": "name",
@@ -213,8 +217,7 @@
         "openmrs_entity": "person",
         "openmrs_entity_id": "gender",
         "type": "spinner",
-        "editable": true,
-        "hint": "Sex *",
+        "hint": "Sex",
         "values": [
           "Male",
           "Female"
@@ -230,7 +233,7 @@
         "openmrs_entity": "person",
         "openmrs_entity_id": "birthdate",
         "type": "date_picker",
-        "hint": "Child's DOB *",
+        "hint": "Child's DOB",
         "expanded": false,
         "duration": {
           "label": "Age"
@@ -248,13 +251,13 @@
         "openmrs_entity": "person",
         "openmrs_entity_id": "birthtime",
         "type": "time_picker",
-        "hint": "Birth Time *",
+        "hint": "Birth Time",
         "expanded": false,
         "duration": {
           "label": "Birth Time"
         },
         "v_required": {
-          "value": "true",
+          "value": true,
           "err": "Please enter the time of birth"
         }
       },
@@ -265,7 +268,7 @@
         "openmrs_entity_id": "163260AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
         "openmrs_data_type": "text",
         "type": "date_picker",
-        "hint": "Date first seen *",
+        "hint": "Date first seen",
         "expanded": false,
         "min_date": "today-5y",
         "max_date": "today",
@@ -288,7 +291,7 @@
         "openmrs_entity_id": "5916AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
         "openmrs_data_type": "text",
         "type": "edit_text",
-        "hint": "Birth weight (kg) *",
+        "hint": "Birth weight (kg)",
         "v_min": {
           "value": "0.1",
           "err": "Weight must be greater than 0"
@@ -313,7 +316,7 @@
         "openmrs_entity_id": "first_name",
         "entity_id": "mother",
         "type": "edit_text",
-        "hint": "Mother/guardian first name *",
+        "hint": "Mother/guardian first name",
         "edit_type": "name",
         "look_up": "true",
         "v_required": {
@@ -332,7 +335,7 @@
         "openmrs_entity_id": "last_name",
         "entity_id": "mother",
         "type": "edit_text",
-        "hint": "Mother/guardian last name *",
+        "hint": "Mother/guardian last name",
         "edit_type": "name",
         "look_up": "true",
         "v_required": {
@@ -454,7 +457,7 @@
         "openmrs_data_type": "select one",
         "type": "spinner",
         "read_only": true,
-        "hint": "Place of birth *",
+        "hint": "Place of birth",
         "label_info_title": "Place of birth spinner",
         "label_info_text": "here is some text on this dialog",
         "values": [
@@ -497,7 +500,7 @@
         "openmrs_entity": "concept",
         "openmrs_entity_id": "160632AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
         "type": "edit_text",
-        "hint": "Other health facility *",
+        "hint": "Other health facility",
         "edit_type": "name",
         "v_required": {
           "value": true,
@@ -511,46 +514,12 @@
         }
       },
       {
-        "key": "Residential_Area",
-        "openmrs_entity_parent": "usual_residence",
-        "openmrs_entity": "person_address",
-        "openmrs_entity_id": "address3",
-        "openmrs_data_type": "text",
-        "type": "tree",
-        "hint": "Child's residential area *",
-        "tree": [
-        ],
-        "v_required": {
-          "value": true,
-          "err": "Please enter the child's residential area"
-        }
-      },
-      {
-        "key": "Residential_Area_Other",
-        "openmrs_entity_parent": "usual_residence",
-        "openmrs_entity": "person_address",
-        "openmrs_entity_id": "address5",
-        "type": "edit_text",
-        "hint": "Other residential area *",
-        "edit_type": "name",
-        "v_required": {
-          "value": true,
-          "err": "Please specify the residential area"
-        },
-        "relevance": {
-          "step1:Residential_Area": {
-            "type": "string",
-            "ex": "equalTo(., \"[\"Other\"]\")"
-          }
-        }
-      },
-      {
         "key": "Residential_Address",
         "openmrs_entity_parent": "usual_residence",
         "openmrs_entity": "person_address",
         "openmrs_entity_id": "address2",
         "type": "edit_text",
-        "hint": "Home address *",
+        "hint": "Home address",
         "edit_type": "name",
         "v_required": {
           "value": true,
@@ -1280,7 +1249,7 @@
         "text": "Please select the number of family members",
         "text_color": "#000000",
         "v_required": {
-          "value": true
+          "value": "false"
         }
       },
       {
@@ -1336,13 +1305,13 @@
         "openmrs_entity": "person",
         "openmrs_entity_id": "last_name",
         "type": "normal_edit_text",
-        "hint": "Guardians name *",
+        "hint": "Guardians name",
         "edit_type": "name",
         "read_only": true,
         "editable": true,
         "edit_text_style": "bordered",
         "v_required": {
-          "value": "true",
+          "value": true,
           "err": "Please enter the guardians name"
         },
         "v_regex": {

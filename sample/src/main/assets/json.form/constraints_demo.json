@@ -1,4 +1,5 @@
 {
+  "show_errors_on_submit": true,
   "count": "1",
   "encounter_type": "Constraints Demo",
   "entity_id": "",
@@ -58,7 +59,7 @@
   "step1": {
     "title": "Constraints Demo",
     "fields": [
-      {
+      /*{
         "key": "ultrasound_done",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -87,7 +88,8 @@
           }
         ],
         "v_required": {
-          "value": true
+          "value": true,
+          "err": "Ultrasound date is required!"
         },
         "min_date": "15-12-2016",
         "max_date": "today",
@@ -98,7 +100,7 @@
             }
           }
         }
-      },
+      },*/
       {
         "key": "spacer",
         "openmrs_entity_parent": "",
@@ -120,7 +122,8 @@
         "text_color": "#000000",
         "selected_text_color": "#ffffff",
         "v_required": {
-          "value": true
+          "value": true,
+          "err": "First number selector is required"
         }
       },
       {
@@ -144,7 +147,8 @@
         "text_color": "#000000",
         "selected_text_color": "#ffffff",
         "v_required": {
-          "value": true
+          "value": true,
+          "err": "Second number selector is required"
         },
         "constraints": [
           {
@@ -174,7 +178,8 @@
         "text_color": "#000000",
         "selected_text_color": "#ffffff",
         "v_required": {
-          "value": true
+          "value": true,
+          "err": "Third number selector is required"
         },
         "constraints": {
           "rules-engine": {

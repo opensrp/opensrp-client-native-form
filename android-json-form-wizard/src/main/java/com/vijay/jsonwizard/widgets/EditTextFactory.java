@@ -190,14 +190,14 @@ public class EditTextFactory implements FormWidgetFactory {
         return R.layout.native_form_item_edit_text;
     }
 
-    private void addRequiredValidator(JSONObject jsonObject, MaterialEditText editText) throws JSONException {
+     private void addRequiredValidator(JSONObject jsonObject, MaterialEditText editText) throws JSONException {
         JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
         if (requiredObject != null) {
-            String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
-            if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
+            boolean requiredValue = requiredObject.getBoolean(JsonFormConstants.VALUE);
+            if ( Boolean.TRUE.equals(requiredValue)) {
                 editText.addValidator(new RequiredValidator(requiredObject.getString(JsonFormConstants.ERR)));
+                FormUtils.setRequiredOnHint(editText);
             }
-
         }
     }
 
