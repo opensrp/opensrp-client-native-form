@@ -7,9 +7,13 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.constraint.ConstraintLayout;
+import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -520,6 +524,14 @@ public class FormUtils {
             default:
                 view.setTypeface(null, Typeface.NORMAL);
                 break;
+        }
+    }
+
+    public static void setRequiredOnHint(AppCompatEditText editText) {
+        if (!TextUtils.isEmpty(editText.getHint())) {
+            SpannableString hint = new SpannableString(editText.getHint() + " *");
+            hint.setSpan(new ForegroundColorSpan(Color.RED), hint.length() - 1, hint.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            editText.setHint(hint);
         }
     }
 

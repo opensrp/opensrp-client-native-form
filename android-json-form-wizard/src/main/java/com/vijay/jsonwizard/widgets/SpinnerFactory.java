@@ -1,7 +1,11 @@
 package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -107,11 +111,12 @@ public class SpinnerFactory implements FormWidgetFactory {
 
         JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
         if (requiredObject != null) {
-            String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
-            if (!TextUtils.isEmpty(requiredValue)) {
-                spinner.setTag(R.id.v_required, requiredValue);
-                spinner.setTag(R.id.error, requiredObject.optString(JsonFormConstants.ERR));
+            boolean requiredValue = requiredObject.getBoolean(JsonFormConstants.VALUE);
+            if (Boolean.TRUE.equals(requiredValue)) {
+                setRequiredOnHint(spinner);
             }
+            spinner.setTag(R.id.v_required, requiredValue);
+            spinner.setTag(R.id.error, requiredObject.optString(JsonFormConstants.ERR));
         }
 
         String valueToSelect = "";
@@ -145,6 +150,14 @@ public class SpinnerFactory implements FormWidgetFactory {
         FormUtils.showInfoIcon(stepName, jsonObject, listener, labelInfoText, labelInfoTitle, spinnerInfoIconImageView,
                 canvasIds);
         spinner.setTag(R.id.canvas_ids, canvasIds.toString());
+    }
+
+    private static void setRequiredOnHint(MaterialSpinner spinner) {
+        if (!TextUtils.isEmpty(spinner.getHint())) {
+            SpannableString hint = new SpannableString(spinner.getHint() + " *");
+            hint.setSpan(new ForegroundColorSpan(Color.RED), hint.length() - 1, hint.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spinner.setHint(hint);
+        }
     }
 
     private void setViewTags(JSONObject jsonObject, JSONArray canvasIds, String stepName, boolean popup,
