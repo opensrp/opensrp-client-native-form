@@ -76,3 +76,24 @@ priority: 1
 condition: "(!global_bmi.isEmpty() && global_bmi >= 30) || step3_prev_preg_comps.contains('gestational_diabetes') || step3_prev_preg_comps.contains('macrosomia') || (!global_urine_glucose.isEmpty() && (global_urine_glucose == '++' || global_urine_glucose == '+++' || global_urine_glucose == '++++'))"
 actions:
 - "calculation = 1"
+---
+name: step1_first_weight
+description: This is a calculated field for purposes of making weight calculations simpler. It fixes which weight to use as pre-gestational weight.
+priority: 1
+condition: "true"
+actions:
+- "calculation = ((!step1_pregest_weight_unknown.isEmpty() && step1_pregest_weight_unknown.contains('pregest_weight_unknown')) ? step1_current_weight : step1_pregest_weight)"
+---
+name: step1_tot_weight_gain
+description: Total weight gain in pregnancy so far (in kg).
+priority: 1
+condition: "true"
+actions:
+- "calculation = (step1_current_weight - step1_first_weight)"
+---
+name: step1_toaster2
+description: Note displaying the woman's BMI, her weight category, and how much weight she should put on during pregnancy for her weight category.
+priority: 1
+condition: "true"
+actions:
+- "calculation = ['tot_weight_gain' : step1_tot_weight_gain]"

@@ -962,10 +962,12 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 }
 
             } else {
-                JSONArray fields = fetchFields(mJSONObject.getJSONObject(address[0]), popup);
-                for (int i = 0; i < fields.length(); i++) {
-                    if (fields.getJSONObject(i).getString(JsonFormConstants.KEY).equals(address[1])) {
-                        return fields.getJSONObject(i);
+                if (mJSONObject.has(address[0])) {
+                    JSONArray fields = fetchFields(mJSONObject.getJSONObject(address[0]), popup);
+                    for (int i = 0; i < fields.length(); i++) {
+                        if (fields.getJSONObject(i).getString(JsonFormConstants.KEY).equals(address[1])) {
+                            return fields.getJSONObject(i);
+                        }
                     }
                 }
             }

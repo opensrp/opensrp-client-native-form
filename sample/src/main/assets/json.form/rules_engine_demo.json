@@ -1,12 +1,13 @@
 {
   "count": "2",
   "encounter_type": "Rules Engine Demo",
+  "validate_on_submit": true,
   "entity_id": "",
   "relational_id": "",
   "global": {
     "has_cat_scan": true,
     "stock_count": 100,
-    "heroes" : "['flash','the hulk','wonder woman']"
+    "heroes": "['flash','the hulk','wonder woman']"
   },
   "metadata": {
     "start": {
@@ -60,6 +61,166 @@
     "title": "Rules Engine Demo",
     "next": "step2",
     "fields": [
+      {
+        "key": "pregest_weight_label",
+        "type": "label",
+        "label_text_style": "bold",
+        "text": "Pre-gestational weight (kg)",
+        "text_color": "#000000",
+        "v_required": {
+          "value": "true",
+          "err": "Please enter pre-gestational weight"
+        },
+        "relevance": {
+          "step:pregest_weight_unknown": {
+            "ex-checkbox": [
+              {
+                "not": [
+                  "pregest_weight_unknown"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "pregest_weight",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person",
+        "openmrs_entity_id": "5090",
+        "type": "normal_edit_text",
+        "edit_text_style": "bordered",
+        "edit_type": "number",
+        "relevance": {
+          "step1:pregest_weight_unknown": {
+            "ex-checkbox": [
+              {
+                "not": [
+                  "pregest_weight_unknown"
+                ]
+              }
+            ]
+          }
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": ""
+        },
+        "v_min": {
+          "value": "30",
+          "err": "Weight must be equal or greater than 30"
+        },
+        "v_max": {
+          "value": "180",
+          "err": "Weight must be equal or less than 180"
+        },
+        "v_required": {
+          "value": "true",
+          "err": "Pre-gestational weight is required"
+        }
+      },
+      {
+        "key": "pregest_weight_unknown",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "check_box",
+        "options": [
+          {
+            "key": "pregest_weight_unknown",
+            "text": "Pre-gestational weight unknown",
+            "value": "false"
+          }
+        ]
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "10sp"
+      },
+      {
+        "key": "current_weight_label",
+        "type": "label",
+        "label_text_style": "bold",
+        "text": "Current weight (kg)",
+        "text_color": "#000000",
+        "v_required": {
+          "value": true
+        }
+      },
+      {
+        "key": "current_weight",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "5089",
+        "type": "normal_edit_text",
+        "edit_text_style": "bordered",
+        "edit_type": "number",
+        "v_numeric": {
+          "value": "true",
+          "err": ""
+        },
+        "v_min": {
+          "value": "30",
+          "err": "Weight must be equal or greater than 30"
+        },
+        "v_max": {
+          "value": "180",
+          "err": "Weight must be equal or less than 180"
+        },
+        "v_required": {
+          "value": "true",
+          "err": "Please enter the current weight"
+        }
+      },
+      {
+        "key": "first_weight",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-calculation-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "tot_weight_gain",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-calculation-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "toaster2",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "Weight gain finding",
+        "openmrs_entity_id": "122887",
+        "type": "toaster_notes",
+        "text": "Total weight gain in pregnancy so far: {tot_weight_gain} kg",
+        "text_color": "#1199F9",
+        "toaster_type": "info",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-calculation-rules.yml"
+            }
+          }
+        }
+      },
       {
         "key": "First_Name",
         "openmrs_entity_parent": "",
@@ -244,7 +405,7 @@
         "openmrs_entity": "person",
         "openmrs_entity_id": "last_name",
         "type": "edit_text",
-        "hint": "Last name *",
+        "hint": "Last name",
         "edit_type": "name",
         "v_required": {
           "value": "true",
