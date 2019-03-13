@@ -40,3 +40,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 --------------------
 ### Added
 - Added the support for saving the widget OpenMRS attributes and the value options for widgets with options e.g the native radio button, the anc radio button, the spinner and the check boxes. 
+- Added validation for Radio buttons, Checkboxes
+- Added functionality for skipping required fields until on submit
+- Added new fragement for showing missing required fields
+
+[1.5.2] - 03-12-2019
+--------------------
+### Added
+- Added the support for saving the widget OpenMRS attributes and the value options for widgets with options e.g the native radio button, the anc radio button, the spinner and the check boxes. 
+
+[1.5.3] - 03-13-2019
+--------------------
+### Fixed
+- Rules engine not returning negative values for calculation
+
+### Changed 
+- Layout for labels used by radio buttons and checkboxes
+- Text appearance on templates to bold
