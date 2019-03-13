@@ -97,3 +97,10 @@ priority: 1
 condition: "true"
 actions:
 - "calculation = ['tot_weight_gain' : step1_tot_weight_gain]"
+---
+name: step1_next_of_kin
+description: Next of kin
+priority: 1
+condition: "true"
+actions:
+- 'calculation = ["kid_count" : step1_hepb_immun_status, "grand_children" : (step1_hepb_immun_status * 2) , "heros" : global_heroes]'

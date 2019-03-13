@@ -1523,16 +1523,16 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     TextView checkboxLabel = ((View) view.getParent().getParent()).findViewById(R.id.label_text);
                     if (checkboxLabel != null) {
                         checkboxLabel
-                                .setText(getRenderText(calculation, checkboxLabel.getTag(R.id.original_text).toString()));
+                                .setText(getRenderText(calculation, checkboxLabel.getTag(R.id.original_text).toString(),false));
                     }
 
                 } else if (view instanceof TextableView) {
                     TextableView textView = ((TextableView) view);
                     if (!TextUtils.isEmpty(calculation)) {
-                        Spanned spanned = Html.fromHtml(calculation.charAt(0) == '{' ?
-                                getRenderText(calculation, textView.getTag(R.id.original_text).toString()) :
+                        CharSequence spanned = calculation.charAt(0) == '{' ?
+                                getRenderText(calculation, textView.getTag(R.id.original_text).toString(),true) :
                                 (textView.getTag(R.id.original_text) != null && "0".equals(calculation)) ?
-                                        textView.getTag(R.id.original_text).toString() : calculation);
+                                        textView.getTag(R.id.original_text).toString() : calculation;
                         textView.setText(spanned);
                     }
                 } else if (view instanceof EditText) {
@@ -1559,7 +1559,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                             renderView.setTag(R.id.original_text, renderView.getText());
                         }
                         renderView.setText(calculation.charAt(0) == '{' ?
-                                getRenderText(calculation, renderView.getTag(R.id.original_text).toString()) : calculation);
+                                getRenderText(calculation, renderView.getTag(R.id.original_text).toString(),false) : calculation);
 
                         renderView.setVisibility(renderView.getText().toString().contains("{") ||
                                 renderView.getText().toString().equals("0") ? View.GONE : View.VISIBLE);
@@ -1582,21 +1582,24 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     }
 
-    private String getRenderText(String calculation, String textTemplate) {
+    private CharSequence getRenderText(String calculation, String textTemplate,boolean makeBold) {
         Map<String, Object> valueMap = new Gson().fromJson(calculation, new TypeToken<HashMap<String, Object>>() {
         }.getType());
 
-        return stringFormat(textTemplate, valueMap);
+        return stringFormat(textTemplate, valueMap,makeBold);
     }
 
-    public String stringFormat(String string, Map<String, Object> valueMap) {
+    public Spanned stringFormat(String string, Map<String, Object> valueMap, boolean makeBold) {
         String resString = string;
         for (Map.Entry<String, Object> entry : valueMap.entrySet()) {
-            resString = resString.replace("{" + entry.getKey() + "}", "<b>" +
-                    getTemplateValue(entry.getValue()) + "</b>");
+            String templateValue =  getTemplateValue(entry.getValue());
+            if (makeBold){
+                templateValue = "<b>" + getTemplateValue(entry.getValue()) + "</b>";
+            }
+            resString = resString.replace("{" + entry.getKey() + "}", templateValue);
         }
 
-        return resString;
+        return Html.fromHtml(resString);
     }
 
     protected Object getValue(JSONObject object) throws JSONException {

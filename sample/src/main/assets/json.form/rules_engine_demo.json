@@ -254,6 +254,53 @@
         "spacer_height": "15sp"
       },
       {
+        "key": "next_of_kin",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "concept",
+        "openmrs_entity_id": "160697AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "type": "native_radio",
+        "label": "Choose next of kin",
+        "label_text_style": "bold",
+        "options": [
+          {
+            "key": "hero",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "1427AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "text": "Choose super heroes",
+            "extra_info": "NOTE: Favorite super heroes are {heros}"
+          },
+          {
+            "key": "grandkids",
+            "text": "Choose grandchildren",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "159618AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "extra_info": "NOTE: Total number of grandchildren is {grand_children}!"
+          },
+          {
+            "key": "kids",
+            "text": "Choose kids",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "1439AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "extra_info": "NOTE: kids are {kid_count} in number"
+          }
+        ],
+        "value": "none",
+        "v_required": {
+          "value": "true",
+          "err": "Please select preferred gestational age"
+        },
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-calculation-rules.yml"
+            }
+          }
+        }
+      },
+      {
         "key": "tobacco_cessation_toaster",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
