@@ -76,7 +76,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
                 ]
               }
 
-[1.5.3] - 03-13-2019
+# [1.5.3] - 03-13-2019
 --------------------
 ### Fixed
 - Rules engine not returning negative values for calculation
