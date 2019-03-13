@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
      `android:authorities="${applicationId}.fileprovider"`
      
      
-[1.3.0] - 11-29-2018
+# [1.3.0] - 11-29-2018
 --------------------
 ### Changed
 - The checkbox UI XML to use Linear layouts with layout widths instead of Relative layouts
@@ -36,7 +36,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add helper class for use in rules engine - added method to get difference in days for 2 dates to be used in condition or action , example syntax `calculation = (1 + helper.getDifferenceDays('2018-12-18'))` 
 - Add skip logic based on date duration
 
-[1.5.0] - 02-29-2019
+# [1.5.0] - 02-29-2019
 --------------------
 ### Added
 - Added the support for saving the widget OpenMRS attributes and the value options for widgets with secondary values | popups e.g the native radio button, the anc radio button, the spinner and the check boxes.
@@ -74,4 +74,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
                     "openmrs_entity_id": ""
                   }
                 ]
-              }```
+              }
+
+[1.5.3] - 03-13-2019
+--------------------
+### Fixed
+- Rules engine not returning negative values for calculation
+
+### Changed 
+- Layout for labels used by radio buttons and checkboxes
+- Text appearance on templates to bold
