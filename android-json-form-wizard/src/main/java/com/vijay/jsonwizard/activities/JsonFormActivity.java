@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
+import android.text.Html;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -1527,10 +1529,11 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 } else if (view instanceof TextableView) {
                     TextableView textView = ((TextableView) view);
                     if (!TextUtils.isEmpty(calculation)) {
-                        textView.setText(calculation.charAt(0) == '{' ?
+                        Spanned spanned = Html.fromHtml(calculation.charAt(0) == '{' ?
                                 getRenderText(calculation, textView.getTag(R.id.original_text).toString()) :
                                 (textView.getTag(R.id.original_text) != null && "0".equals(calculation)) ?
                                         textView.getTag(R.id.original_text).toString() : calculation);
+                        textView.setText(spanned);
                     }
                 } else if (view instanceof EditText) {
                     String type = (String) view.getTag(R.id.type);
@@ -1589,7 +1592,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     public String stringFormat(String string, Map<String, Object> valueMap) {
         String resString = string;
         for (Map.Entry<String, Object> entry : valueMap.entrySet()) {
-            resString = resString.replace("{" + entry.getKey() + "}", getTemplateValue(entry.getValue()));
+            resString = resString.replace("{" + entry.getKey() + "}", "<b>" +
+                    getTemplateValue(entry.getValue()) + "</b>");
         }
 
         return resString;

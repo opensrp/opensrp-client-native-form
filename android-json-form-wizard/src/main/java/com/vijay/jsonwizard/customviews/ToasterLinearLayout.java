@@ -28,7 +28,7 @@ public class ToasterLinearLayout extends TextableView {
     }
 
     @Override
-    public void setText(String text) {
+    public void setText(CharSequence text) {
         ((TextView) findViewById(R.id.toaster_notes_text)).setText(text);
     }
 
