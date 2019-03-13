@@ -39,4 +39,41 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 [1.5.0] - 02-29-2019
 --------------------
 ### Added
-- Added the support for saving the widget OpenMRS attributes and the value options for widgets with options e.g the native radio button, the anc radio button, the spinner and the check boxes. 
+- Added the support for saving the widget OpenMRS attributes and the value options for widgets with secondary values | popups e.g the native radio button, the anc radio button, the spinner and the check boxes.
+  - This will make a single secondary value option to look like below:-
+    ```json
+{
+                "key": "respiratory_exam_abnormal",
+                "type": "check_box",
+                "values": [
+                  "rapid_breathing:Rapid breathing:true",
+                  "rales:Rales:true",
+                  "other:Other (specify):true"
+                ],
+                "openmrs_attributes": {
+                  "openmrs_entity_parent": "",
+                  "openmrs_entity": "",
+                  "openmrs_entity_id": ""
+                },
+                "value_openmrs_attributes": [
+                  {
+                    "key": "respiratory_exam_abnormal",
+                    "openmrs_entity_parent": "",
+                    "openmrs_entity": "TACHYPNEA",
+                    "openmrs_entity_id": "125061"
+                  },
+                  {
+                    "key": "respiratory_exam_abnormal",
+                    "openmrs_entity_parent": "",
+                    "openmrs_entity": "Respiratory Crackles",
+                    "openmrs_entity_id": "127640"
+                  },
+                  {
+                    "key": "respiratory_exam_abnormal",
+                    "openmrs_entity_parent": "",
+                    "openmrs_entity": "",
+                    "openmrs_entity_id": ""
+                  }
+                ]
+              }
+```
