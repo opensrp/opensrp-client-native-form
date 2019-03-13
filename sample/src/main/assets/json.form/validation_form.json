@@ -123,7 +123,7 @@
           }
         ],
         "v_required": {
-          "value": "false",
+          "value": true,
           "err": "Please specify the medication(s) that the woman is still taking"
         }
       },
