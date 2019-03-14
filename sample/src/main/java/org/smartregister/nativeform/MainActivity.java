@@ -110,6 +110,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             jsonForm.getJSONObject("metadata").put("encounter_location", currentLocationId);
 
             switch (formName) {
+                case "rules_engine_demo": {
+                    Intent intent = new Intent(this, JsonWizardFormActivity.class);
+                    intent.putExtra("json", jsonForm.toString());
+                    Log.d(getClass().getName(), "form is " + jsonForm.toString());
+
+                    Form form = new Form();
+                    form.setName("Rules engine demo");
+                    form.setWizard(true);
+                    form.setNextLabel(getString(R.string.next));
+                    form.setPreviousLabel(getString(R.string.previous));
+                    form.setSaveLabel(getString(R.string.save));
+                    form.setActionBarBackground(R.color.customAppThemeBlue);
+                    form.setNavigationBackground(R.color.button_navy_blue);
+                    form.setHideSaveLabel(true);
+                    intent.putExtra(JsonFormConstants.JSON_FORM_KEY.FORM, form);
+                    startActivityForResult(intent, jsonFormActivityRequestCode);
+                    break;
+                }
                 case "wizard_form": {
                     Intent intent = new Intent(this, JsonWizardFormActivity.class);
                     intent.putExtra("json", jsonForm.toString());

@@ -11,22 +11,6 @@
       "text_color": "#000000",
       "options": [
         {
-          "key": "dyspnoea",
-          "text": "Dyspnoea",
-          "openmrs_entity_parent": "",
-          "openmrs_entity": "",
-          "openmrs_entity_id": "",
-          "value": false
-        },
-        {
-          "key": "cough",
-          "text": "Cough",
-          "openmrs_entity_parent": "",
-          "openmrs_entity": " Cough",
-          "openmrs_entity_id": "143264",
-          "value": false
-        },
-        {
           "key": "rapid_breathing",
           "text": "Rapid breathing",
           "openmrs_entity_parent": "",
@@ -40,22 +24,6 @@
           "openmrs_entity_parent": "",
           "openmrs_entity": "",
           "openmrs_entity_id": "",
-          "value": false
-        },
-        {
-          "key": "wheezing",
-          "text": "Wheezing",
-          "openmrs_entity_parent": "",
-          "openmrs_entity": "WHEEZE",
-          "openmrs_entity_id": "5209",
-          "value": false
-        },
-        {
-          "key": "rales",
-          "text": "Rales",
-          "openmrs_entity_parent": "",
-          "openmrs_entity": "Respiratory Crackles",
-          "openmrs_entity_id": "127640",
           "value": false
         },
         {

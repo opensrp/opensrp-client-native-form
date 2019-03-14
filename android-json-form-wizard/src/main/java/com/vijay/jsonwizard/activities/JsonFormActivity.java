@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
+import android.text.Html;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -236,7 +238,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     if (value.equals(key)) {
                         JSONObject jsonObject = new JSONObject();
                         String optionOpenMRSConceptId = openmrsChoiceIds.get(key).toString();
-                        jsonObject.put(JsonFormConstants.KEY, value);
+                        jsonObject.put(JsonFormConstants.KEY, item.getString(JsonFormConstants.KEY));
                         jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_PARENT,
                                 item.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT));
                         jsonObject.put(JsonFormConstants.OPENMRS_ENTITY, item.getString(JsonFormConstants.OPENMRS_ENTITY));
@@ -268,17 +270,27 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         .equals(item.getString(JsonFormConstants.TYPE)) || JsonFormConstants.ANC_RADIO_BUTTON
                         .equals(item.getString(JsonFormConstants.TYPE))) && (itemOption.has(JsonFormConstants.KEY) && value
                         .equals(itemOption.getString(JsonFormConstants.KEY)))) {
-                    extractOptionOpenMRSAttributes(valueOpenMRSAttributes, itemOption);
+                    extractOptionOpenMRSAttributes(valueOpenMRSAttributes, itemOption,
+                            item.getString(JsonFormConstants.KEY));
                 } else if (JsonFormConstants.CHECK_BOX.equals(item.getString(JsonFormConstants.TYPE)) && itemOption
                         .has(JsonFormConstants.VALUE) && JsonFormConstants.TRUE
                         .equals(itemOption.getString(JsonFormConstants.VALUE))) {
-                    extractOptionOpenMRSAttributes(valueOpenMRSAttributes, itemOption);
+                    extractOptionOpenMRSAttributes(valueOpenMRSAttributes, itemOption,
+                            item.getString(JsonFormConstants.KEY));
                 }
             }
         }
     }
 
-    protected void extractOptionOpenMRSAttributes(JSONArray valueOpenMRSAttributes, JSONObject itemOption)
+    /**
+     * Extracts the openmrs attributes of the Radio button & check box components on popups.
+     *
+     * @param valueOpenMRSAttributes {@link JSONArray}
+     * @param itemOption             {@link JSONObject}
+     * @param itemKey                {@link String}
+     * @throws JSONException
+     */
+    protected void extractOptionOpenMRSAttributes(JSONArray valueOpenMRSAttributes, JSONObject itemOption, String itemKey)
             throws JSONException {
         if (itemOption.has(JsonFormConstants.OPENMRS_ENTITY_PARENT) && itemOption
                 .has(JsonFormConstants.OPENMRS_ENTITY) && itemOption.has(JsonFormConstants.OPENMRS_ENTITY_ID)) {
@@ -287,7 +299,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             String openmrsEntityId = itemOption.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
 
             JSONObject valueOpenMRSObject = new JSONObject();
-            valueOpenMRSObject.put(JsonFormConstants.KEY, itemOption.getString(JsonFormConstants.KEY));
+            valueOpenMRSObject.put(JsonFormConstants.KEY, itemKey);
             valueOpenMRSObject.put(JsonFormConstants.OPENMRS_ENTITY_PARENT, openmrsEntityParent);
             valueOpenMRSObject.put(JsonFormConstants.OPENMRS_ENTITY, openmrsEntity);
             valueOpenMRSObject.put(JsonFormConstants.OPENMRS_ENTITY_ID, openmrsEntityId);
@@ -965,10 +977,12 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 }
 
             } else {
-                JSONArray fields = fetchFields(mJSONObject.getJSONObject(address[0]), popup);
-                for (int i = 0; i < fields.length(); i++) {
-                    if (fields.getJSONObject(i).getString(JsonFormConstants.KEY).equals(address[1])) {
-                        return fields.getJSONObject(i);
+                if (mJSONObject.has(address[0])) {
+                    JSONArray fields = fetchFields(mJSONObject.getJSONObject(address[0]), popup);
+                    for (int i = 0; i < fields.length(); i++) {
+                        if (fields.getJSONObject(i).getString(JsonFormConstants.KEY).equals(address[1])) {
+                            return fields.getJSONObject(i);
+                        }
                     }
                 }
             }
@@ -1045,7 +1059,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         args[i] = valueMatcher.group(1);
                     } else {
                         try {
-                            args[i] = String.valueOf(getValueFromAddress(curArg.split(":"), false).get(JsonFormConstants.VALUE));
+                            args[i] = String
+                                    .valueOf(getValueFromAddress(curArg.split(":"), false).get(JsonFormConstants.VALUE));
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -1523,16 +1538,17 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     TextView checkboxLabel = ((View) view.getParent().getParent()).findViewById(R.id.label_text);
                     if (checkboxLabel != null) {
                         checkboxLabel
-                                .setText(getRenderText(calculation, checkboxLabel.getTag(R.id.original_text).toString()));
+                                .setText(getRenderText(calculation, checkboxLabel.getTag(R.id.original_text).toString(),false));
                     }
 
                 } else if (view instanceof TextableView) {
                     TextableView textView = ((TextableView) view);
                     if (!TextUtils.isEmpty(calculation)) {
-                        textView.setText(calculation.charAt(0) == '{' ?
-                                getRenderText(calculation, textView.getTag(R.id.original_text).toString()) :
+                        CharSequence spanned = calculation.charAt(0) == '{' ?
+                                getRenderText(calculation, textView.getTag(R.id.original_text).toString(),true) :
                                 (textView.getTag(R.id.original_text) != null && "0".equals(calculation)) ?
-                                        textView.getTag(R.id.original_text).toString() : calculation);
+                                        textView.getTag(R.id.original_text).toString() : calculation;
+                        textView.setText(spanned);
                     }
                 } else if (view instanceof EditText) {
                     String type = (String) view.getTag(R.id.type);
@@ -1557,7 +1573,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                             renderView.setTag(R.id.original_text, renderView.getText());
                         }
                         renderView.setText(calculation.charAt(0) == '{' ?
-                                getRenderText(calculation, renderView.getTag(R.id.original_text).toString()) : calculation);
+                                getRenderText(calculation, renderView.getTag(R.id.original_text).toString(),false) : calculation);
 
                         renderView.setVisibility(renderView.getText().toString().contains("{") ||
                                 renderView.getText().toString().equals("0") ? View.GONE : View.VISIBLE);
@@ -1580,20 +1596,24 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     }
 
-    private String getRenderText(String calculation, String textTemplate) {
+    private CharSequence getRenderText(String calculation, String textTemplate,boolean makeBold) {
         Map<String, Object> valueMap = new Gson().fromJson(calculation, new TypeToken<HashMap<String, Object>>() {
         }.getType());
 
-        return stringFormat(textTemplate, valueMap);
+        return stringFormat(textTemplate, valueMap,makeBold);
     }
 
-    public String stringFormat(String string, Map<String, Object> valueMap) {
+    public Spanned stringFormat(String string, Map<String, Object> valueMap, boolean makeBold) {
         String resString = string;
         for (Map.Entry<String, Object> entry : valueMap.entrySet()) {
-            resString = resString.replace("{" + entry.getKey() + "}", getTemplateValue(entry.getValue()));
+            String templateValue =  getTemplateValue(entry.getValue());
+            if (makeBold){
+                templateValue = "<b>" + getTemplateValue(entry.getValue()) + "</b>";
+            }
+            resString = resString.replace("{" + entry.getKey() + "}", templateValue);
         }
 
-        return resString;
+        return Html.fromHtml(resString);
     }
 
 
