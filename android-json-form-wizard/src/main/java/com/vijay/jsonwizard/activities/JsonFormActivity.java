@@ -235,7 +235,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     if (value.equals(key)) {
                         JSONObject jsonObject = new JSONObject();
                         String optionOpenMRSConceptId = openmrsChoiceIds.get(key).toString();
-                        jsonObject.put(JsonFormConstants.KEY, value);
+                        jsonObject.put(JsonFormConstants.KEY, item.getString(JsonFormConstants.KEY));
                         jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_PARENT,
                                 item.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT));
                         jsonObject.put(JsonFormConstants.OPENMRS_ENTITY, item.getString(JsonFormConstants.OPENMRS_ENTITY));
@@ -267,17 +267,27 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         .equals(item.getString(JsonFormConstants.TYPE)) || JsonFormConstants.ANC_RADIO_BUTTON
                         .equals(item.getString(JsonFormConstants.TYPE))) && (itemOption.has(JsonFormConstants.KEY) && value
                         .equals(itemOption.getString(JsonFormConstants.KEY)))) {
-                    extractOptionOpenMRSAttributes(valueOpenMRSAttributes, itemOption);
+                    extractOptionOpenMRSAttributes(valueOpenMRSAttributes, itemOption,
+                            item.getString(JsonFormConstants.KEY));
                 } else if (JsonFormConstants.CHECK_BOX.equals(item.getString(JsonFormConstants.TYPE)) && itemOption
                         .has(JsonFormConstants.VALUE) && JsonFormConstants.TRUE
                         .equals(itemOption.getString(JsonFormConstants.VALUE))) {
-                    extractOptionOpenMRSAttributes(valueOpenMRSAttributes, itemOption);
+                    extractOptionOpenMRSAttributes(valueOpenMRSAttributes, itemOption,
+                            item.getString(JsonFormConstants.KEY));
                 }
             }
         }
     }
 
-    protected void extractOptionOpenMRSAttributes(JSONArray valueOpenMRSAttributes, JSONObject itemOption)
+    /**
+     * Extracts the openmrs attributes of the Radio button & check box components on popups.
+     *
+     * @param valueOpenMRSAttributes {@link JSONArray}
+     * @param itemOption             {@link JSONObject}
+     * @param itemKey                {@link String}
+     * @throws JSONException
+     */
+    protected void extractOptionOpenMRSAttributes(JSONArray valueOpenMRSAttributes, JSONObject itemOption, String itemKey)
             throws JSONException {
         if (itemOption.has(JsonFormConstants.OPENMRS_ENTITY_PARENT) && itemOption
                 .has(JsonFormConstants.OPENMRS_ENTITY) && itemOption.has(JsonFormConstants.OPENMRS_ENTITY_ID)) {
@@ -286,7 +296,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             String openmrsEntityId = itemOption.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
 
             JSONObject valueOpenMRSObject = new JSONObject();
-            valueOpenMRSObject.put(JsonFormConstants.KEY, itemOption.getString(JsonFormConstants.KEY));
+            valueOpenMRSObject.put(JsonFormConstants.KEY, itemKey);
             valueOpenMRSObject.put(JsonFormConstants.OPENMRS_ENTITY_PARENT, openmrsEntityParent);
             valueOpenMRSObject.put(JsonFormConstants.OPENMRS_ENTITY, openmrsEntity);
             valueOpenMRSObject.put(JsonFormConstants.OPENMRS_ENTITY_ID, openmrsEntityId);
@@ -1046,7 +1056,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         args[i] = valueMatcher.group(1);
                     } else {
                         try {
-                            args[i] = String.valueOf(getValueFromAddress(curArg.split(":"), false).get(JsonFormConstants.VALUE));
+                            args[i] = String
+                                    .valueOf(getValueFromAddress(curArg.split(":"), false).get(JsonFormConstants.VALUE));
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
