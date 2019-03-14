@@ -211,8 +211,6 @@ public class RulesEngineFactory implements RuleListener {
             } catch (NumberFormatException e) {
 
             }
-        } else if (value.startsWith("-")) {
-            value = "";
         }
         return value;
     }
