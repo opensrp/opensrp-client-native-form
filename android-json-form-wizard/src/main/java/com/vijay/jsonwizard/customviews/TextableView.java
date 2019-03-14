@@ -53,7 +53,7 @@ public abstract class TextableView extends LinearLayout {
         setClickable(true);
     }
 
-    public abstract void setText(String text);
+    public abstract void setText(CharSequence text);
 
     public abstract CharSequence getText();
 

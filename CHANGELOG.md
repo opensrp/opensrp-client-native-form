@@ -9,17 +9,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
      `android:authorities="${applicationId}.fileprovider"`
      
      
-[1.3.0] - 11-29-2018
+### [1.3.0] - 11-29-2018
 --------------------
-### Changed
+#### Changed
 - The checkbox UI XML to use Linear layouts with layout widths instead of Relative layouts
 - New way to demo notable features in native form sample App - Multiple buttons with mnemonic feature name titles
 
-### Fixed
+#### Fixed
 - Checkbox widget all options select/deselect on moving to the next step and back caused by same view Id assignment
 - Improved optimization during json form render for special views (constrained, calculated and relevance views)
 
-### Added
+#### Added
 - The specify extra information popup. This enables you to define multiple widgets on the specify extra info popup. Examples of how to add it are in the sample json file
 - Add support for setting custom title in form exit alert dialog confirmation
 - Add support for setting custom message in form exit alert dialog confirmation
@@ -36,7 +36,51 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add helper class for use in rules engine - added method to get difference in days for 2 dates to be used in condition or action , example syntax `calculation = (1 + helper.getDifferenceDays('2018-12-18'))` 
 - Add skip logic based on date duration
 
-[1.5.0] - 02-29-2019
+### [1.5.0] - 02-29-2019
 --------------------
-### Added
-- Added the support for saving the widget OpenMRS attributes and the value options for widgets with options e.g the native radio button, the anc radio button, the spinner and the check boxes. 
+#### Added
+- Added the support for saving the widget OpenMRS attributes and the value options for widgets with secondary values | popups e.g the native radio button, the anc radio button, the spinner and the check boxes.
+  - This will make a single secondary value option to look like below:-
+    ```json{
+            "key": "respiratory_exam_abnormal",
+                "type": "check_box",
+                "values": [
+                  "rapid_breathing:Rapid breathing:true",
+                  "rales:Rales:true",
+                  "other:Other (specify):true"
+                ],
+                "openmrs_attributes": {
+                  "openmrs_entity_parent": "",
+                  "openmrs_entity": "",
+                  "openmrs_entity_id": ""
+                },
+                "value_openmrs_attributes": [
+                  {
+                    "key": "respiratory_exam_abnormal",
+                    "openmrs_entity_parent": "",
+                    "openmrs_entity": "TACHYPNEA",
+                    "openmrs_entity_id": "125061"
+                  },
+                  {
+                    "key": "respiratory_exam_abnormal",
+                    "openmrs_entity_parent": "",
+                    "openmrs_entity": "Respiratory Crackles",
+                    "openmrs_entity_id": "127640"
+                  },
+                  {
+                    "key": "respiratory_exam_abnormal",
+                    "openmrs_entity_parent": "",
+                    "openmrs_entity": "",
+                    "openmrs_entity_id": ""
+                  }
+                ]
+              }
+
+### [1.5.3] - 03-13-2019
+--------------------
+#### Fixed
+- Rules engine not returning negative values for calculation
+
+#### Changed 
+- Layout for labels used by radio buttons and checkboxes
+- Text appearance on templates to bold
