@@ -150,14 +150,29 @@ This form has been generated from the `JSON Form` below: [Click here to Skip](#u
         "openmrs_entity_id": "",
         "openmrs_data_type": "text",
         "type": "tree",
-        "hint": "Child's home health facility *",
+        "hint": "Child's home health facility",
         "tree": [
-
-        ],
-        "v_required": {
-          "value": true,
-          "err": "Please enter the child's home facility"
-        }
+          {
+            "name": "Hilton",
+            "key": "hilton",
+            "level": "1",
+            "nodes": [
+                    {
+                      "name": "Sarova",
+                      "key": "sarova"
+                    }
+                  ]
+                },
+                {
+                  "name": "Double tree",
+                  "key": "double_tree"
+                }
+              ],
+              "default": "Hilton",
+              "v_required": {
+                "value": false,
+                "err": "Please enter the child's home facility"
+          }
       },
       {
         "key": "ZEIR_ID",

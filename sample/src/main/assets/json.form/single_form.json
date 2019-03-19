@@ -129,10 +129,23 @@
         "type": "tree",
         "hint": "Child's home health facility",
         "tree": [
-          "Hilton",
-          "Sarova",
-          "Double tree"
+          {
+            "name": "Hilton",
+            "key": "hilton",
+            "level": "1",
+            "nodes": [
+              {
+                "name": "Sarova",
+                "key": "sarova"
+              }
+            ]
+          },
+          {
+            "name": "Double tree",
+            "key": "double_tree"
+          }
         ],
+        "default": "Hilton",
         "v_required": {
           "value": false,
           "err": "Please enter the child's home facility"
