@@ -76,8 +76,8 @@ public class EditTextFactory implements FormWidgetFactory {
         return attachJson(stepName, context, formFragment, jsonObject, listener, false);
     }
 
-    private List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject,
-                                  CommonListener listener, boolean popup) throws Exception {
+    protected List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject,
+                                    CommonListener listener, boolean popup) throws Exception {
 
         List<View> views = new ArrayList<>(1);
 
@@ -190,11 +190,11 @@ public class EditTextFactory implements FormWidgetFactory {
         return R.layout.native_form_item_edit_text;
     }
 
-     private void addRequiredValidator(JSONObject jsonObject, MaterialEditText editText) throws JSONException {
+    private void addRequiredValidator(JSONObject jsonObject, MaterialEditText editText) throws JSONException {
         JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
         if (requiredObject != null) {
             boolean requiredValue = requiredObject.getBoolean(JsonFormConstants.VALUE);
-            if ( Boolean.TRUE.equals(requiredValue)) {
+            if (Boolean.TRUE.equals(requiredValue)) {
                 editText.addValidator(new RequiredValidator(requiredObject.getString(JsonFormConstants.ERR)));
                 FormUtils.setRequiredOnHint(editText);
             }
@@ -356,7 +356,9 @@ public class EditTextFactory implements FormWidgetFactory {
                 JSONArray relatedFields = validationJSONObject.optJSONArray(RELATED_FIELDS);
 
                 if (relatedFields != null) {
-                    String errorMessage = String.format(DEFAULT_CUMULATIVE_VALIDATION_ERR, editTextJSONObject.get(KEY), relatedFields.join(", "), totalValueKey);
+                    String errorMessage = String
+                            .format(DEFAULT_CUMULATIVE_VALIDATION_ERR, editTextJSONObject.get(KEY), relatedFields.join(", "),
+                                    totalValueKey);
                     editText.addValidator(new CumulativeTotalValidator(
                             validationErrorMsg == null ? errorMessage : validationErrorMsg,
                             formFragment,
