@@ -95,3 +95,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 --------------------
 #### Added
 - Added a rules engine helper class to transform the GA from a string and give back the GA in numeric values
+- Added an example of how to use the tree location widget
+
+#### Changed
+- Updated the `attachJson` function scope for the `DatePickerFactory.class` & `EdixTextFactory` to protected so as to enable extending
