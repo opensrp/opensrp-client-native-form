@@ -1,5 +1,7 @@
 package com.vijay.jsonwizard.rules;
 
+import android.text.TextUtils;
+
 /**
  * Created by ndegwamartin on 17/12/2018.
  * This class is used by the rules engine while it parses configurations written in teh yaml.
@@ -75,6 +77,24 @@ public class RulesEngineHelper {
 
     public String getDateToday() {
         return rulesEngineDateUtil.getDateToday();
+    }
+
+    /**
+     * Strips the ANC Gestation age to just get me the weeks age
+     *
+     * @param gestAge {@link String}
+     * @return ga {@link String}
+     */
+    public String stripGaNumber(String gestAge) {
+        String ga = "";
+        if (!TextUtils.isEmpty(gestAge)) {
+            String[] gestAgeSplit = gestAge.split(" ");
+            if (gestAgeSplit.length >= 4) {
+                int gaWeeks = Integer.parseInt(gestAgeSplit[0]);
+                ga = String.valueOf(gaWeeks);
+            }
+        }
+        return ga;
     }
 
     //A secondary value has the format key:name e.g. ultrasound_done:yes

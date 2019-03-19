@@ -158,6 +158,7 @@ public class JsonFormInteractor {
             Log.e(TAG,
                     "Exception occurred in making view : Exception is : "
                             + e.getMessage());
+            e.printStackTrace();
         }
 
     }

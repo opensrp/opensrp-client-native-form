@@ -29,21 +29,24 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
     private ArrayList<String> name;
     private HashMap<TreeNode, String> treeNodeHashMap;
 
-    public TreeViewDialog(Context context, JSONArray structure, ArrayList<String> defaultValue, ArrayList<String> value) throws
+    public TreeViewDialog(Context context, JSONArray structure, ArrayList<String> defaultValue, ArrayList<String> value)
+            throws
             JSONException {
         super(context);
         this.context = context;
         init(structure, defaultValue, value);
     }
 
-    public TreeViewDialog(Context context, int theme, JSONArray structure, ArrayList<String> defaultValue, ArrayList<String> value) throws JSONException {
+    public TreeViewDialog(Context context, int theme, JSONArray structure, ArrayList<String> defaultValue,
+                          ArrayList<String> value) throws JSONException {
         super(context, theme);
         this.context = context;
         init(structure, defaultValue, value);
     }
 
     protected TreeViewDialog(Context context, boolean cancelable, OnCancelListener
-            cancelListener, JSONArray structure, ArrayList<String> defaultValue, ArrayList<String> value) throws JSONException {
+            cancelListener, JSONArray structure, ArrayList<String> defaultValue, ArrayList<String> value)
+            throws JSONException {
         super(context, cancelable, cancelListener);
         this.context = context;
         init(structure, defaultValue, value);
@@ -64,7 +67,8 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
         return null;
     }
 
-    private static void setSelectedValue(TreeNode treeNode, int level, ArrayList<String> defaultValue, HashMap<TreeNode, String> treeNodeHashMap) {
+    private static void setSelectedValue(TreeNode treeNode, int level, ArrayList<String> defaultValue,
+                                         HashMap<TreeNode, String> treeNodeHashMap) {
         if (treeNode != null) {
             if (defaultValue != null && level >= 0 && level < defaultValue.size()) {
                 String levelValue = defaultValue.get(level);
@@ -87,7 +91,7 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
                       final ArrayList<String> value) throws JSONException {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.setContentView(R.layout.native_form_dialog_tree_view);
-        LinearLayout canvas = (LinearLayout) this.findViewById(R.id.canvas);
+        LinearLayout canvas = this.findViewById(R.id.canvas);
 
 
         this.value = new ArrayList<>();
@@ -111,12 +115,12 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
 
     private TreeNode constructTreeView(JSONObject structure, TreeNode parent, ArrayList<String> defaultValue) throws
             JSONException {
-        String name = structure.getString(KEY_NAME);
-        String key = structure.getString(KEY_KEY);
+        String name = structure.optString(KEY_NAME, "");
+        String key = structure.optString(KEY_KEY, "");
         TreeNode curNode = new TreeNode(name);
         treeNodeHashMap.put(curNode, key);
         curNode.setClickListener(this);
-        curNode.setViewHolder(new SelectableItemHolder(context, structure.getString(KEY_LEVEL)));
+        curNode.setViewHolder(new SelectableItemHolder(context, structure.optString(KEY_LEVEL, "")));
         if (parent == null) {
             curNode.setSelectable(false);
         }
