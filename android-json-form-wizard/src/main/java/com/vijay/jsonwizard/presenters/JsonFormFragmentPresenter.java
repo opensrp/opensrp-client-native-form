@@ -144,8 +144,6 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                 if (requestFocus) validationStatus.requestAttention();
                 setSpinnerError(spinner, validationStatus.getErrorMessage());
                 return validationStatus;
-            } else {
-                setSpinnerError(spinner, null);
             }
         } else if (childAt instanceof ViewGroup && childAt.getTag(R.id.is_checkbox_linear_layout) != null
                 && Boolean.TRUE.equals(childAt.getTag(R.id.is_checkbox_linear_layout))) {
