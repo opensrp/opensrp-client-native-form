@@ -37,14 +37,14 @@ import java.util.List;
 public class SpinnerFactory implements FormWidgetFactory {
 
     public static ValidationStatus validate(JsonFormFragmentView formFragmentView, MaterialSpinner spinner) {
-        if(spinner.getTag(R.id.v_required) == null){
+        if (spinner.getTag(R.id.v_required) == null) {
             return new ValidationStatus(true, null, formFragmentView, spinner);
         }
         boolean isRequired = (boolean) spinner.getTag(R.id.v_required);
         String error = (String) spinner.getTag(R.id.error);
         int selectedItemPosition = spinner.getSelectedItemPosition();
 
-        if (isRequired && selectedItemPosition == 0) {
+        if (isRequired && selectedItemPosition == 0 && spinner.isEnabled()) {
             return new ValidationStatus(false, error, formFragmentView, spinner);
         }
         return new ValidationStatus(true, null, formFragmentView, spinner);
