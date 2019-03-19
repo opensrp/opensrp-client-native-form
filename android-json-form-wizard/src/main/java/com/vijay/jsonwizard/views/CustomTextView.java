@@ -45,7 +45,7 @@ public class CustomTextView extends AppCompatTextView {
 
     public void setHintOnText(boolean hintOnText) {
         this.hintOnText = hintOnText;
-        setText((String) getText());
+        setText(getText().toString());
     }
 
     @Override

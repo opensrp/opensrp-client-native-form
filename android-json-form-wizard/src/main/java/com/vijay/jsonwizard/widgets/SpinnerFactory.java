@@ -36,20 +36,18 @@ import java.util.List;
  */
 public class SpinnerFactory implements FormWidgetFactory {
 
-    public static ValidationStatus validate(JsonFormFragmentView formFragmentView,
-                                            MaterialSpinner spinner) {
-        if (!(spinner.getTag(R.id.v_required) instanceof String) || !(spinner.getTag(R.id.error) instanceof String)) {
+    public static ValidationStatus validate(JsonFormFragmentView formFragmentView, MaterialSpinner spinner) {
+        if (spinner.getTag(R.id.v_required) == null) {
             return new ValidationStatus(true, null, formFragmentView, spinner);
         }
-        Boolean isRequired = Boolean.valueOf((String) spinner.getTag(R.id.v_required));
-        if (!isRequired || !spinner.isEnabled()) {
-            return new ValidationStatus(true, null, formFragmentView, spinner);
-        }
+        boolean isRequired = (boolean) spinner.getTag(R.id.v_required);
+        String error = (String) spinner.getTag(R.id.error);
         int selectedItemPosition = spinner.getSelectedItemPosition();
-        if (selectedItemPosition > 0) {
-            return new ValidationStatus(true, null, formFragmentView, spinner);
+
+        if (isRequired && selectedItemPosition == 0 && spinner.isEnabled()) {
+            return new ValidationStatus(false, error, formFragmentView, spinner);
         }
-        return new ValidationStatus(false, (String) spinner.getTag(R.id.error), formFragmentView, spinner);
+        return new ValidationStatus(true, null, formFragmentView, spinner);
     }
 
     @Override
@@ -111,12 +109,12 @@ public class SpinnerFactory implements FormWidgetFactory {
 
         JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
         if (requiredObject != null) {
-            boolean requiredValue = requiredObject.getBoolean(JsonFormConstants.VALUE);
+            boolean requiredValue = requiredObject.optBoolean(JsonFormConstants.VALUE, false);
             if (Boolean.TRUE.equals(requiredValue)) {
                 setRequiredOnHint(spinner);
             }
             spinner.setTag(R.id.v_required, requiredValue);
-            spinner.setTag(R.id.error, requiredObject.optString(JsonFormConstants.ERR));
+            spinner.setTag(R.id.error, requiredObject.optString(JsonFormConstants.ERR, null));
         }
 
         String valueToSelect = "";
