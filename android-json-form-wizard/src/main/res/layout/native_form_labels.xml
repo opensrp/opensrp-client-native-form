@@ -34,8 +34,8 @@
     <ImageView
         android:paddingTop="@dimen/label_imageview_padding"
         android:id="@+id/label_edit_button"
-        android:layout_width="@dimen/default_info_icon_size"
-        android:layout_height="@dimen/default_info_icon_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:adjustViewBounds="true"
         android:background="@null"
