@@ -244,6 +244,45 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         return text == null || text.isEmpty() ? "" : "(" + text + ")";
     }
 
+    public static ValidationStatus validate(JsonFormFragmentView formFragmentView, RadioGroup radioGroup) {
+        String error = (String) radioGroup.getTag(R.id.error);
+        if (radioGroup.isEnabled() && error != null) {
+            boolean isValid = performValidation(radioGroup);
+            if (!isValid) {
+                return new ValidationStatus(false, error, formFragmentView, radioGroup);
+            }
+        }
+        return new ValidationStatus(true, null, formFragmentView, radioGroup);
+    }
+
+    private static boolean performValidation(RadioGroup radioGroup) {
+        boolean isChecked = false;
+        for (int i = 0; i < radioGroup.getChildCount(); i++) {
+            isChecked = getCheckedRadio(radioGroup.getChildAt(i));
+            if (isChecked) {
+                break;
+            }
+        }
+        return isChecked;
+    }
+
+    /**
+     * @param item radiogroup nested layout
+     * @return true if any of the radio buttons is selected.
+     */
+    private static boolean getCheckedRadio(View item) {
+        if (item instanceof ViewGroup) {
+            ViewGroup outerRelativeLayout = (ViewGroup) item;
+            //Get radio button on the fourth hierarchy of the nested radio group layout
+            ViewGroup mainRadioLayout = (ViewGroup) outerRelativeLayout.getChildAt(0);
+            ViewGroup radioContentLinearLayout = (ViewGroup) mainRadioLayout.getChildAt(0);
+            RadioButton radioButton = (RadioButton) radioContentLinearLayout.getChildAt(0);
+
+            return radioButton.isChecked();
+        }
+        return false;
+    }
+
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
                                        JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
@@ -406,46 +445,6 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             }
         }
     }
-
-    public static ValidationStatus validate(JsonFormFragmentView formFragmentView, RadioGroup radioGroup) {
-        String error = (String) radioGroup.getTag(R.id.error);
-        if (radioGroup.isEnabled() && error != null) {
-            boolean isValid = performValidation(radioGroup);
-            if (!isValid) {
-                return new ValidationStatus(false, error, formFragmentView, radioGroup);
-            }
-        }
-        return new ValidationStatus(true, null, formFragmentView, radioGroup);
-    }
-
-    private static boolean performValidation(RadioGroup radioGroup) {
-        boolean isChecked = false;
-        for (int i = 0; i < radioGroup.getChildCount(); i++) {
-            isChecked = getCheckedRadio(radioGroup.getChildAt(i));
-            if (isChecked) {
-                break;
-            }
-        }
-        return isChecked;
-    }
-
-    /**
-     * @param item radiogroup nested layout
-     * @return true if any of the radio buttons is selected.
-     */
-    private static boolean getCheckedRadio(View item) {
-        if (item instanceof ViewGroup) {
-            ViewGroup outerRelativeLayout = (ViewGroup) item;
-            //Get radio button on the fourth hierarchy of the nested radio group layout
-            ViewGroup mainRadioLayout = (ViewGroup) outerRelativeLayout.getChildAt(0);
-            ViewGroup radioContentLinearLayout = (ViewGroup) mainRadioLayout.getChildAt(0);
-            RadioButton radioButton = (RadioButton) radioContentLinearLayout.getChildAt(0);
-
-            return radioButton.isChecked();
-        }
-        return false;
-    }
-
 
     private void createRadioButton(RelativeLayout rootLayout, JSONObject jsonObject, JSONObject item,
                                    final CommonListener listener, boolean popup) throws JSONException {

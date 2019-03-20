@@ -35,6 +35,7 @@
     <item name="specify_step_name" type="id" />
     <item name="specify_fragment" type="id" />
     <item name="specify_context" type="id" />
+    <item name="not_click_radio_button" type="id" />
     <item name="native_radio_button" type="id" />
     <item name="number_selector_textview" type="id" />
     <item name="number_selector_item" type="id" />
