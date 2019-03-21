@@ -494,7 +494,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         String optionText = item.getString(JsonFormConstants.TEXT);
 
         if (item.has(JsonFormConstants.SECONDARY_VALUE)) {
-            optionText = getOptionTextWithSecondaryValue(item);
+            optionText = getOptionTextWithSecondaryValue(item, jsonObject);
         }
 
         setRadioButton(radioButton);
@@ -534,9 +534,13 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
                                        Context context, Boolean readOnly, JSONObject item, Boolean popup,
                                        JsonFormFragment formFragment, String stepName)
             throws JSONException {
-        String specifyText = item.has(JsonFormConstants.SECONDARY_VALUE) ?
-                context.getResources().getString(R.string.radio_button_tap_to_change) :
-                item.getString(JsonFormConstants.CONTENT_INFO);
+        String optionKey = item.optString(JsonFormConstants.KEY, "");
+        String widgetValue = item.optString(JsonFormConstants.VALUE, "");
+
+        String specifyText;
+        if (item.has(JsonFormConstants.SECONDARY_VALUE) && widgetValue.equals(optionKey))
+            specifyText = context.getResources().getString(R.string.radio_button_tap_to_change);
+        else specifyText = item.getString(JsonFormConstants.CONTENT_INFO);
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
 
         CustomTextView specifyTextView = rootLayout.findViewById(R.id.specifyTextView);
@@ -560,17 +564,22 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
      * @throws JSONException {@link JSONException}
      * @author dubdabasoduba
      */
-    private String getOptionTextWithSecondaryValue(JSONObject item) throws JSONException {
+    private String getOptionTextWithSecondaryValue(JSONObject item, JSONObject jsonObject) throws JSONException {
         String optionText = item.getString(JsonFormConstants.TEXT);
-        JSONArray secondaryValueArray = item.getJSONArray(JsonFormConstants.SECONDARY_VALUE);
-        if (secondaryValueArray != null && secondaryValueArray.length() > 0) {
-            JSONObject secondaryValue = secondaryValueArray.getJSONObject(0);
-            String secondValueKey = secondaryValue.getString(JsonFormConstants.KEY);
-            String secondValueType = secondaryValue.getString(JsonFormConstants.TYPE);
-            if (item.getString(JsonFormConstants.KEY).equals(secondValueKey) &&
-                    secondValueType.equals(JsonFormConstants.DATE_PICKER)) {
-                String secondaryValueDate = getSecondaryDateValue(secondaryValue.getJSONArray(JsonFormConstants.VALUES));
-                optionText = item.getString(JsonFormConstants.TEXT) + ":" + secondaryValueDate;
+        String optionKey = item.getString(JsonFormConstants.KEY);
+        String widgetValue = jsonObject.optString(JsonFormConstants.VALUE, "");
+
+        if (optionKey.equals(widgetValue)) {
+            JSONArray secondaryValueArray = item.getJSONArray(JsonFormConstants.SECONDARY_VALUE);
+            if (secondaryValueArray != null && secondaryValueArray.length() > 0) {
+                JSONObject secondaryValue = secondaryValueArray.getJSONObject(0);
+                String secondValueKey = secondaryValue.getString(JsonFormConstants.KEY);
+                String secondValueType = secondaryValue.getString(JsonFormConstants.TYPE);
+                if (item.getString(JsonFormConstants.KEY).equals(secondValueKey) &&
+                        secondValueType.equals(JsonFormConstants.DATE_PICKER)) {
+                    String secondaryValueDate = getSecondaryDateValue(secondaryValue.getJSONArray(JsonFormConstants.VALUES));
+                    optionText = item.getString(JsonFormConstants.TEXT) + ":" + secondaryValueDate;
+                }
             }
         }
 
@@ -634,24 +643,28 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
         String popupReasonsText = "";
         CustomTextView reasonsTextView = rootLayout.findViewById(R.id.reasonsTextView);
-        if (item.has(JsonFormConstants.SECONDARY_VALUE)) {
-            popupReasonsText = formUtils.getSpecifyText(item.getJSONArray(JsonFormConstants.SECONDARY_VALUE));
-            if (item.has(JsonFormConstants.CONTENT_WIDGET) &&
-                    !item.getString(JsonFormConstants.CONTENT_WIDGET).equals(JsonFormConstants.DATE_PICKER)) {
-                reasonsTextView.setVisibility(View.VISIBLE);
+        String optionKey = item.optString(JsonFormConstants.KEY, "");
+        String widgetValue = item.optString(JsonFormConstants.VALUE, "");
+        if (widgetValue.equals(optionKey)) {
+            if (item.has(JsonFormConstants.SECONDARY_VALUE)) {
+                popupReasonsText = formUtils.getSpecifyText(item.getJSONArray(JsonFormConstants.SECONDARY_VALUE));
+                if (item.has(JsonFormConstants.CONTENT_WIDGET) &&
+                        !item.getString(JsonFormConstants.CONTENT_WIDGET).equals(JsonFormConstants.DATE_PICKER)) {
+                    reasonsTextView.setVisibility(View.VISIBLE);
+                }
             }
-        }
 
-        if (item.has(JsonFormConstants.SECONDARY_SUFFIX)) {
-            String suffix = item.getString(JsonFormConstants.SECONDARY_SUFFIX);
-            if (!TextUtils.isEmpty(popupReasonsText)) {
-                popupReasonsText = popupReasonsText + " " + suffix;
+            if (item.has(JsonFormConstants.SECONDARY_SUFFIX)) {
+                String suffix = item.getString(JsonFormConstants.SECONDARY_SUFFIX);
+                if (!TextUtils.isEmpty(popupReasonsText)) {
+                    popupReasonsText = popupReasonsText + " " + suffix;
+                }
             }
-        }
 
-        addTextViewAttributes(jsonObject, item, reasonsTextView, stepName, text_color);
-        reasonsTextView.setTag(R.id.relevance, relevance);
-        reasonsTextView.setText(JsonFormConstants.SECONDARY_PREFIX + popupReasonsText);
+            addTextViewAttributes(jsonObject, item, reasonsTextView, stepName, text_color);
+            reasonsTextView.setTag(R.id.relevance, relevance);
+            reasonsTextView.setText(JsonFormConstants.SECONDARY_PREFIX + popupReasonsText);
+        }
         setReasonsTextView(reasonsTextView);
     }
 

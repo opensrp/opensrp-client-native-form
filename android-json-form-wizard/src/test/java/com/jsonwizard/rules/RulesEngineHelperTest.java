@@ -19,11 +19,4 @@ public class RulesEngineHelperTest extends BaseTest {
         assertEquals("1", helper.ifNull("", "1"));
         assertEquals("123", helper.ifNull("123", ""));
     }
-
-
-    @Test
-    public void testStripGaNumber() {
-        RulesEngineHelper helper = new RulesEngineHelper();
-        assertEquals("12", helper.stripGaNumber("12 Weeks 7 Days"));
-    }
 }

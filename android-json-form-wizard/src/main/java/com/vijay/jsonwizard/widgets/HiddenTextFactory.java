@@ -72,11 +72,6 @@ public class HiddenTextFactory implements FormWidgetFactory {
         hiddenText.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
         hiddenText.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
 
-        if (!TextUtils.isEmpty(jsonObject.optString(JsonFormConstants.VALUE))) {
-            hiddenText.setText(jsonObject.optString(JsonFormConstants.VALUE));
-            hiddenText.setSelection(hiddenText.getText().length());
-        }
-
         hiddenText.setVisibility(View.GONE);
 
         hiddenText.addTextChangedListener(new GenericTextWatcher(stepName, formFragment, hiddenText));
@@ -95,6 +90,7 @@ public class HiddenTextFactory implements FormWidgetFactory {
             ((JsonApi) context).addCalculationLogicView(hiddenText);
         }
 
+        hiddenText.addTextChangedListener(new GenericTextWatcher(stepName, formFragment, hiddenText));
     }
 
     protected int getLayout() {
