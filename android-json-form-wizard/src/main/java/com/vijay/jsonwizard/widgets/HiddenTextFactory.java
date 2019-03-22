@@ -25,8 +25,9 @@ import java.util.List;
 public class HiddenTextFactory implements FormWidgetFactory {
 
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener
-            listener, boolean popup) throws Exception {
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
+                                       JSONObject jsonObject, CommonListener
+                                               listener, boolean popup) throws Exception {
         List<View> views = new ArrayList<>(1);
 
         RelativeLayout rootLayout = (RelativeLayout) LayoutInflater.from(context).inflate(
@@ -47,7 +48,8 @@ public class HiddenTextFactory implements FormWidgetFactory {
     }
 
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
+                                       JSONObject jsonObject, CommonListener listener) throws Exception {
         return getViewsFromJson(stepName, context, formFragment, jsonObject, listener, false);
     }
 
@@ -70,7 +72,6 @@ public class HiddenTextFactory implements FormWidgetFactory {
         hiddenText.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
         hiddenText.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
 
-
         hiddenText.setVisibility(View.GONE);
 
         hiddenText.addTextChangedListener(new GenericTextWatcher(stepName, formFragment, hiddenText));
@@ -89,6 +90,7 @@ public class HiddenTextFactory implements FormWidgetFactory {
             ((JsonApi) context).addCalculationLogicView(hiddenText);
         }
 
+        hiddenText.addTextChangedListener(new GenericTextWatcher(stepName, formFragment, hiddenText));
     }
 
     protected int getLayout() {
