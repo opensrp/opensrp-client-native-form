@@ -390,7 +390,11 @@ public class FormUtils {
                     for (RadioButton button : radioButtonList) {
                         if (button.getId() != radioButtonView.getId()) {
                             button.setChecked(false);
-                            resetRadioButtonsSpecifyText(button);
+                            try {
+                                resetRadioButtonsSpecifyText(button);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }
@@ -425,7 +429,7 @@ public class FormUtils {
      * @param button {@link CompoundButton}
      * @author kitoto
      */
-    private static void resetRadioButtonsSpecifyText(RadioButton button) {
+    private static void resetRadioButtonsSpecifyText(RadioButton button) throws JSONException {
         CustomTextView specifyText = (CustomTextView) button.getTag(R.id.specify_textview);
         CustomTextView reasonsText = (CustomTextView) button.getTag(R.id.specify_reasons_textview);
         CustomTextView extraInfoTextView = (CustomTextView) button
@@ -438,6 +442,7 @@ public class FormUtils {
             String specifyInfo = optionsJson.optString(JsonFormConstants.CONTENT_INFO);
             String newText = "(" + specifyInfo + ")";
             specifyText.setText(newText);
+            optionsJson.put(JsonFormConstants.SECONDARY_VALUE, "");
         }
 
         if (reasonsText != null) {
@@ -530,7 +535,8 @@ public class FormUtils {
     public static void setRequiredOnHint(AppCompatEditText editText) {
         if (!TextUtils.isEmpty(editText.getHint())) {
             SpannableString hint = new SpannableString(editText.getHint() + " *");
-            hint.setSpan(new ForegroundColorSpan(Color.RED), hint.length() - 1, hint.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            hint.setSpan(new ForegroundColorSpan(Color.RED), hint.length() - 1, hint.length(),
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             editText.setHint(hint);
         }
     }

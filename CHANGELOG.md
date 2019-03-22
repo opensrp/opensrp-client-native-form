@@ -90,7 +90,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 #### Added
 - Added the French translations from Transifex 
 
-
 ### [1.5.5] - 03-18-2019
 --------------------
 #### Added
@@ -99,3 +98,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 #### Changed
 - Updated the `attachJson` function scope for the `DatePickerFactory.class` & `EdixTextFactory` to protected so as to enable extending
+
+### [1.5.6] - 03-20-2019
+--------------------
+#### Added
+- Added a value set function to the hidden text factory. This is to enable the setting of this values from the previous ones incase calculations fail
+
+#### Changed
+- Updated the scope for the `moveToNextWizardStep` to protected to allow for extension
