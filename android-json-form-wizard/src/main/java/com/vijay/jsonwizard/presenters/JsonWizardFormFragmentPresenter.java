@@ -38,7 +38,7 @@ public class JsonWizardFormFragmentPresenter extends JsonFormFragmentPresenter {
         }
     }
 
-    private void moveToNextWizardStep() {
+    protected void moveToNextWizardStep() {
         JsonFormFragment next = JsonWizardFormFragment.getFormFragment(mStepDetails.optString(JsonFormConstants.NEXT));
         getView().hideKeyBoard();
         getView().transactThis(next);
