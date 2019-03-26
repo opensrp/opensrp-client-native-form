@@ -535,7 +535,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
                                        JsonFormFragment formFragment, String stepName)
             throws JSONException {
         String optionKey = item.optString(JsonFormConstants.KEY, "");
-        String widgetValue = item.optString(JsonFormConstants.VALUE, "");
+        String widgetValue = jsonObject.optString(JsonFormConstants.VALUE, "");
 
         String specifyText;
         if (item.has(JsonFormConstants.SECONDARY_VALUE) && widgetValue.equals(optionKey))
@@ -644,7 +644,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         String popupReasonsText = "";
         CustomTextView reasonsTextView = rootLayout.findViewById(R.id.reasonsTextView);
         String optionKey = item.optString(JsonFormConstants.KEY, "");
-        String widgetValue = item.optString(JsonFormConstants.VALUE, "");
+        String widgetValue = jsonObject.optString(JsonFormConstants.VALUE, "");
         if (widgetValue.equals(optionKey)) {
             if (item.has(JsonFormConstants.SECONDARY_VALUE)) {
                 popupReasonsText = formUtils.getSpecifyText(item.getJSONArray(JsonFormConstants.SECONDARY_VALUE));
