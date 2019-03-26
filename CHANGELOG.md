@@ -106,3 +106,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 #### Changed
 - Updated the scope for the `moveToNextWizardStep` to protected to allow for extension
+
+### [1.5.7] - 03-26-2019
+--------------------
+#### Changed
+- Updated the native radio button to display the secondary values picked before step change
+- Update the `JsonFormActivity` to allow implementation of the `getConfirmCloseMessage, setConfirmCloseMessage, getConfirmCloseTitle, setConfirmCloseTitle`
