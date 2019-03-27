@@ -89,8 +89,6 @@ public class HiddenTextFactory implements FormWidgetFactory {
             hiddenText.setTag(R.id.calculation, calculation);
             ((JsonApi) context).addCalculationLogicView(hiddenText);
         }
-
-        hiddenText.addTextChangedListener(new GenericTextWatcher(stepName, formFragment, hiddenText));
     }
 
     protected int getLayout() {
