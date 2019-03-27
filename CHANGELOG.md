@@ -106,3 +106,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 #### Changed
 - Updated the scope for the `moveToNextWizardStep` to protected to allow for extension
+
+### [1.5.7] - 03-26-2019
+--------------------
+#### Changed
+- Moved validation for Edittext to OnTextChanged from OnFocusChange event
