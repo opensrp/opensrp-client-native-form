@@ -97,4 +97,12 @@ public interface JsonApi {
     void setGenericPopup(GenericPopupDialog context);
 
     Map<String, ValidationStatus> getInvalidFields();
+
+    String getConfirmCloseMessage();
+
+    void setConfirmCloseMessage(String message);
+
+    String getConfirmCloseTitle();
+
+    void setConfirmCloseTitle(String title);
 }
