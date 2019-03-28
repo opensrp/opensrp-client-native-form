@@ -1166,7 +1166,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     private String enforceConstraint(Facts curValueMap, JSONObject constraint) throws Exception {
-        return curValueMap.asMap().size() == 0 ? "0" : rulesEngineFactory.getConstraint(curValueMap,
+        return curValueMap.asMap().size() == 0 ? "0" : getRulesEngineFactory().getConstraint(curValueMap,
                 constraint.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getString(RuleConstant.RULES_FILE));
     }
 
@@ -1344,7 +1344,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private boolean isRelevant(Facts curValueMap, JSONObject curRelevance) throws Exception {
         if (curRelevance != null) {
             if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_RULES)) {
-                return curValueMap.asMap().size() != 0 && rulesEngineFactory.getRelevance(curValueMap,
+                return curValueMap.asMap().size() != 0 && getRulesEngineFactory().getRelevance(curValueMap,
                         curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES)
                                 .getString(RuleConstant.RULES_FILE));
             } else if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_CHECKBOX)) {
@@ -1423,7 +1423,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
                 Yaml yaml = new Yaml();
                 InputStreamReader inputStreamReader =
-                        new InputStreamReader(this.getAssets().open((rulesEngineFactory.getRulesFolderPath() + filename)));
+                        new InputStreamReader(
+                                this.getAssets().open((getRulesEngineFactory().getRulesFolderPath() + filename)));
                 Iterable<Object> ruleObjects = yaml.loadAll(inputStreamReader);
 
                 for (Object object : ruleObjects) {
@@ -1530,7 +1531,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
         try {
 
-            String calculation = rulesEngineFactory.getCalculation(valueMap, rulesFile);
+            String calculation = getRulesEngineFactory().getCalculation(valueMap, rulesFile);
 
             if (calculation != null) {
                 if (view instanceof CheckBox) {
