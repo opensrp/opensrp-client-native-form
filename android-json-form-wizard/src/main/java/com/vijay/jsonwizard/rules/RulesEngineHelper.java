@@ -9,9 +9,6 @@ public class RulesEngineHelper {
 
     private RulesEngineDateUtil rulesEngineDateUtil = new RulesEngineDateUtil();
 
-    public RulesEngineHelper() {
-    }
-
     public long getDifferenceDays(String dateString) {
 
         return rulesEngineDateUtil.getDifferenceDays(dateString);
