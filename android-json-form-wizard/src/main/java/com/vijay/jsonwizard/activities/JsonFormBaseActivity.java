@@ -48,6 +48,7 @@ abstract class JsonFormBaseActivity extends AppCompatActivity implements OnField
     protected String confirmCloseMessage;
     protected Form form;
     protected Map<String, String> globalValues = null;
+
     protected RulesEngineFactory rulesEngineFactory = null;
     protected LocalBroadcastManager localBroadcastManager;
     private Toolbar mToolbar;
@@ -154,6 +155,7 @@ abstract class JsonFormBaseActivity extends AppCompatActivity implements OnField
             return null;
         }
     }
+
     public Map<String, ValidationStatus> getInvalidFields() {
         return invalidFields;
     }
@@ -166,5 +168,13 @@ abstract class JsonFormBaseActivity extends AppCompatActivity implements OnField
     @Override
     public Map<String, ValidationStatus> getPassedInvalidFields() {
         return getInvalidFields();
+    }
+
+    public RulesEngineFactory getRulesEngineFactory() {
+        return rulesEngineFactory;
+    }
+
+    public void setRulesEngineFactory(RulesEngineFactory rulesEngineFactory) {
+        this.rulesEngineFactory = rulesEngineFactory;
     }
 }

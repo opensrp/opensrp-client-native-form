@@ -46,6 +46,9 @@ public class RulesEngineFactory implements RuleListener {
 
     }
 
+    public RulesEngineFactory() {
+    }
+
     private Rules getRulesFromAsset(String fileName) {
         try {
             if (!ruleMap.containsKey(fileName)) {
@@ -107,7 +110,7 @@ public class RulesEngineFactory implements RuleListener {
         return formatCalculationReturnValue(facts.get(RuleConstant.CONSTRAINT));
     }
 
-    private Facts initializeFacts(Facts facts) {
+    protected Facts initializeFacts(Facts facts) {
 
         if (globalValues != null) {
 
@@ -126,7 +129,7 @@ public class RulesEngineFactory implements RuleListener {
         return facts;
     }
 
-    private Object getValue(String value) {
+    protected Object getValue(String value) {
 
         String rawValue = value.trim();
 
