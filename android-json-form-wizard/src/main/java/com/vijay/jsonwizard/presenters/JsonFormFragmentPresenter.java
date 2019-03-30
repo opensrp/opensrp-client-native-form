@@ -189,7 +189,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
 
     }
 
-    @SuppressLint("ResourceAsColor")
+    @SuppressLint ("ResourceAsColor")
     public void setUpToolBar() {
         getView().setActionBarTitle(mStepDetails.optString(JsonFormConstants.STEP_TITLE));
         getView().setToolbarTitleColor(R.color.white);
@@ -257,7 +257,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             errorFragment = new JsonFormErrorFragment();
         }
         FragmentManager fm = ((JsonFormFragment) getView()).getChildFragmentManager();
-        @SuppressLint("CommitTransaction") FragmentTransaction ft = fm.beginTransaction();
+        @SuppressLint ("CommitTransaction") FragmentTransaction ft = fm.beginTransaction();
         errorFragment.show(ft, JsonFormErrorFragment.TAG);
     }
 
@@ -499,6 +499,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
     }
 
     private void setViewEditable(View editButton) {
+        resetWidgetReadOnly(editButton);
         View editableView = (View) editButton.getTag(R.id.editable_view);
         editableView.setEnabled(true);
         editableView.setFocusable(true);
@@ -506,9 +507,23 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         editableView.requestFocusFromTouch();
     }
 
-    @SuppressWarnings({"unchecked"})
+    private void resetWidgetReadOnly(View view) {
+        JSONObject jsonForm = this.formFragment.getJsonApi().getmJSONObject();
+        JSONObject field;
+        try {
+            field = FormUtils.getFieldFromForm(jsonForm, (String) view.getTag(R.id.key));
+            if (field.has(JsonFormConstants.READ_ONLY) && field.getBoolean(JsonFormConstants.READ_ONLY)) {
+                field.put(JsonFormConstants.READ_ONLY, false);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @SuppressWarnings ({"unchecked"})
     private void setCheckboxesEditable(View editButton) {
         List<View> checkboxLayouts = (ArrayList<View>) editButton.getTag(R.id.editable_view);
+        resetWidgetReadOnly(editButton);
         for (View checkboxLayout : checkboxLayouts) {
             setViewGroupEditable(checkboxLayout);
         }
@@ -516,6 +531,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
 
     protected void setRadioViewsEditable(View editButton) {
         RadioGroup radioGroup = (RadioGroup) editButton.getTag(R.id.editable_view);
+        resetWidgetReadOnly(editButton);
         radioGroup.setEnabled(true);
         radioGroup.setFocusable(true);
         for (int i = 0; i < radioGroup.getChildCount(); i++) {
