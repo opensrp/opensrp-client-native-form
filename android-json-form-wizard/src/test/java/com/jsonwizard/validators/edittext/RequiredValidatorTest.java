@@ -9,7 +9,7 @@ import org.junit.Test;
 
 public class RequiredValidatorTest extends BaseTest {
     @Test
-    public void isValidShouldReturnFalseWhenWhenStringIsEmpty() {
+    public void isValidShouldReturnFalseWhenStringIsEmpty() {
 
         RequiredValidator validator = new RequiredValidator(DEFAULT_ERROR_MSG);
         Assert.assertEquals(false, validator.isValid(DEFAULT_TEST_MESSAGE, true));

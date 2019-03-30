@@ -89,4 +89,8 @@ public class RulesEngineHelper {
 
     }
 
+    public String ifNull(String value, String defaultIfNull) {
+        return value == null || value.isEmpty() ? defaultIfNull : value;
+    }
+
 }

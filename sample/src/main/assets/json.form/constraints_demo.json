@@ -1,4 +1,5 @@
 {
+  "show_errors_on_submit": true,
   "count": "1",
   "encounter_type": "Constraints Demo",
   "entity_id": "",
@@ -58,7 +59,7 @@
   "step1": {
     "title": "Constraints Demo",
     "fields": [
-      {
+      /*{
         "key": "ultrasound_done",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -87,7 +88,8 @@
           }
         ],
         "v_required": {
-          "value": true
+          "value": true,
+          "err": "Ultrasound date is required!"
         },
         "min_date": "15-12-2016",
         "max_date": "today",
@@ -120,7 +122,8 @@
         "text_color": "#000000",
         "selected_text_color": "#ffffff",
         "v_required": {
-          "value": true
+          "value": true,
+          "err": "First number selector is required"
         }
       },
       {
@@ -144,7 +147,8 @@
         "text_color": "#000000",
         "selected_text_color": "#ffffff",
         "v_required": {
-          "value": true
+          "value": true,
+          "err": "Second number selector is required"
         },
         "constraints": [
           {
@@ -174,7 +178,8 @@
         "text_color": "#000000",
         "selected_text_color": "#ffffff",
         "v_required": {
-          "value": true
+          "value": true,
+          "err": "Third number selector is required"
         },
         "constraints": {
           "rules-engine": {
@@ -182,6 +187,97 @@
               "rules-file": "sample-constraint-rules.yml"
             }
           }
+        }
+      },*/
+      {
+        "key": "enabled_label",
+        "type": "label",
+        "text": "This is enabled",
+        "hint_on_text": false,
+        "text_color": "#FFC100",
+        "text_size": "17sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "label_info_text": "Checking out the display oof the info icon needed to display this infomation",
+        "label_info_title": "Highest Level of School"
+      },
+      {
+        "key": "height_label",
+        "type": "label",
+        "label_text_style": "bold",
+        "text": "Height (cm)",
+        "text_color": "#000000",
+        "v_required": {
+          "value": true
+        }
+      },
+      {
+        "key": "height",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "5090",
+        "type": "normal_edit_text",
+        "edit_text_style": "bordered",
+        "edit_type": "number",
+        "v_required": {
+          "value": "true",
+          "err": "Please enter the height"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": ""
+        },
+        "v_min": {
+          "value": "100",
+          "err": "Height must be equal or greater than 100"
+        },
+        "v_max": {
+          "value": "200",
+          "err": "Height must be equal or less than 200"
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "10sp"
+      },
+      {
+        "key": "current_weight_label",
+        "type": "label",
+        "label_text_style": "bold",
+        "text": "Current weight (kg)",
+        "text_color": "#000000",
+        "v_required": {
+          "value": true
+        }
+      },
+      {
+        "key": "current_weight",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "5089",
+        "type": "normal_edit_text",
+        "edit_text_style": "bordered",
+        "edit_type": "number",
+        "v_numeric": {
+          "value": "true",
+          "err": ""
+        },
+        "v_min": {
+          "value": "30",
+          "err": "Weight must be equal or greater than 30"
+        },
+        "v_max": {
+          "value": "180",
+          "err": "Weight must be equal or less than 180"
+        },
+        "v_required": {
+          "value": "true",
+          "err": "Please enter the current weight"
         }
       }
     ]

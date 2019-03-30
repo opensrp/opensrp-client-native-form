@@ -3,6 +3,8 @@
   "encounter_type": "Test",
   "entity_id": "",
   "relational_id": "",
+  "validate_on_submit": true,
+  "show_errors_on_submit": true,
   "metadata": {
     "start": {
       "openmrs_entity_parent": "",
@@ -61,14 +63,14 @@
         "openmrs_entity": "person",
         "openmrs_entity_id": "first_name",
         "type": "edit_text",
-        "hint": "First name *",
+        "hint": "First name",
         "edit_type": "name",
         "v_required": {
-          "value": "false",
+          "value": "true",
           "err": "Please enter the first name"
         },
         "v_regex": {
-          "value": "[A-Za-z\\s\.\-]*",
+          "value": "[A-Za-z\\s\\.\\-]*",
           "err": "Please enter a valid name"
         }
       },
@@ -78,14 +80,14 @@
         "openmrs_entity": "person",
         "openmrs_entity_id": "last_name",
         "type": "edit_text",
-        "hint": "Last name *",
+        "hint": "Last name",
         "edit_type": "name",
         "v_required": {
-          "value": "false",
+          "value": "true",
           "err": "Please enter the last name"
         },
         "v_regex": {
-          "value": "[A-Za-z\\s\.\-]*",
+          "value": "[A-Za-z\\s\\.\\-]*",
           "err": "Please enter a valid name"
         },
         "value": "Kuku"
@@ -158,14 +160,7 @@
         "openmrs_entity_id": "",
         "type": "normal_edit_text",
         "edit_text_style": "bordered",
-        "edit_type": "number",
-        "calculation": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "sample-calculation-rules.yml"
-            }
-          }
-        }
+        "edit_type": "number"
       },
       {
         "key": "test_date",

@@ -89,8 +89,8 @@ public class DatePickerFactory implements FormWidgetFactory {
         return attachJson(stepName, context, formFragment, jsonObject, false);
     }
 
-    private List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject,
-                                  boolean popup) {
+    protected List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject,
+                                    boolean popup) {
         List<View> views = new ArrayList<>(1);
         try {
 
@@ -151,6 +151,10 @@ public class DatePickerFactory implements FormWidgetFactory {
                 datePickerDialog.setCalendarViewShown(false);
             }
 
+            GenericTextWatcher genericTextWatcher = getGenericTextWatcher(stepName, (Activity) context, formFragment,
+                    editText, datePickerDialog);
+            editText.addTextChangedListener(genericTextWatcher);
+            addRefreshLogicView(context, editText, relevance, constraints, calculations);
             editText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -165,11 +169,6 @@ public class DatePickerFactory implements FormWidgetFactory {
                     return true;
                 }
             });
-
-            GenericTextWatcher genericTextWatcher = getGenericTextWatcher(stepName, (Activity) context, formFragment,
-                    editText, datePickerDialog);
-            editText.addTextChangedListener(genericTextWatcher);
-            addRefreshLogicView(context, editText, relevance, constraints, calculations);
             editText.setFocusable(false);
         } catch (Exception e) {
             e.printStackTrace();
@@ -229,9 +228,10 @@ public class DatePickerFactory implements FormWidgetFactory {
         editText.setTag(R.id.address, stepName + ":" + jsonObject.getString(KEY.KEY));
         if (jsonObject.has(JsonFormConstants.V_REQUIRED)) {
             JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
-            String requiredValue = requiredObject.getString(KEY.VALUE);
-            if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
+            boolean requiredValue = requiredObject.getBoolean(KEY.VALUE);
+            if (Boolean.TRUE.equals(requiredValue)) {
                 editText.addValidator(new RequiredValidator(requiredObject.getString(JsonFormConstants.ERR)));
+                FormUtils.setRequiredOnHint(editText);
             }
         }
 

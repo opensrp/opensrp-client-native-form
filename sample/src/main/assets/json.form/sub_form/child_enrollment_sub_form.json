@@ -11,22 +11,9 @@
       "text_color": "#000000",
       "options": [
         {
-          "key": "dyspnoea",
-          "text": "Dyspnoea",
-          "openmrs_entity": "",
-          "openmrs_entity_id": "",
-          "value": false
-        },
-        {
-          "key": "cough",
-          "text": "Cough",
-          "openmrs_entity": " Cough",
-          "openmrs_entity_id": "143264",
-          "value": false
-        },
-        {
           "key": "rapid_breathing",
           "text": "Rapid breathing",
+          "openmrs_entity_parent": "",
           "openmrs_entity": "TACHYPNEA",
           "openmrs_entity_id": "125061",
           "value": false
@@ -34,32 +21,39 @@
         {
           "key": "slow_breathing",
           "text": "Slow breathing",
+          "openmrs_entity_parent": "",
           "openmrs_entity": "",
           "openmrs_entity_id": "",
-          "value": false
-        },
-        {
-          "key": "wheezing",
-          "text": "Wheezing",
-          "openmrs_entity": "WHEEZE",
-          "openmrs_entity_id": "5209",
-          "value": false
-        },
-        {
-          "key": "rales",
-          "text": "Rales",
-          "openmrs_entity": "Respiratory Crackles",
-          "openmrs_entity_id": "127640",
           "value": false
         },
         {
           "key": "other",
           "text": "Other (specify)",
+          "openmrs_entity_parent": "",
           "openmrs_entity": "",
           "openmrs_entity_id": "",
           "value": false
         }
       ]
+    },
+    {
+      "key": "Place_Birth",
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_entity_id": "1572AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "openmrs_data_type": "select one",
+      "type": "spinner",
+      "hint": "Place of birth *",
+      "label_info_title": "Place of birth spinner",
+      "label_info_text": "here is some text on this dialog",
+      "values": [
+        "Health facility",
+        "Home"
+      ],
+      "openmrs_choice_ids": {
+        "Health facility": "1588AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "Home": "1536AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      }
     },
     {
       "key": "respiratory_exam_abnormal_other",
@@ -87,8 +81,8 @@
     {
       "key": "respiratory_exam_radio_button",
       "openmrs_entity_parent": "",
-      "openmrs_entity": "",
-      "openmrs_entity_id": "",
+      "openmrs_entity": "concept",
+      "openmrs_entity_id": "165300AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
       "type": "native_radio",
       "label": "Respiratory exam",
       "label_text_style": "bold",
@@ -98,15 +92,24 @@
       "options": [
         {
           "key": "1",
-          "text": "Not done"
+          "text": "Not done",
+          "openmrs_entity_parent": "",
+          "openmrs_entity": "concept",
+          "openmrs_entity_id": "165269AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
         },
         {
           "key": "2",
-          "text": "Normal"
+          "text": "Normal",
+          "openmrs_entity_parent": "",
+          "openmrs_entity": "concept",
+          "openmrs_entity_id": "165230AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
         },
         {
           "key": "3",
-          "text": "Abnormal"
+          "text": "Abnormal",
+          "openmrs_entity_parent": "",
+          "openmrs_entity": "concept",
+          "openmrs_entity_id": "165231AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
         }
       ]
     }

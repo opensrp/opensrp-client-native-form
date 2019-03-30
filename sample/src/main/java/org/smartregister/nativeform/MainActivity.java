@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.rules_engine_skip_logic).setOnClickListener(this);
         findViewById(R.id.numbers_selector_widget).setOnClickListener(this);
         findViewById(R.id.generic_dialog_button).setOnClickListener(this);
+        findViewById(R.id.validation_form_button).setOnClickListener(this);
     }
 
     @Override
@@ -67,6 +68,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else if (id == R.id.action_wizard) {
             try {
                 startForm(REQUEST_CODE_GET_JSON, "wizard_form", null);
+            } catch (Exception e) {
+                Log.e(TAG, e.getMessage(), e);
+            }
+        } else if (id == R.id.action_validation) {
+            try {
+                startForm(REQUEST_CODE_GET_JSON, "validation_form", null);
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage(), e);
             }
@@ -102,49 +109,88 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (jsonForm != null) {
             jsonForm.getJSONObject("metadata").put("encounter_location", currentLocationId);
 
-            if (formName.equals("wizard_form")) {
-                Intent intent = new Intent(this, JsonWizardFormActivity.class);
-                intent.putExtra("json", jsonForm.toString());
-                Log.d(getClass().getName(), "form is " + jsonForm.toString());
+            switch (formName) {
+                case "rules_engine_demo": {
+                    Intent intent = new Intent(this, JsonWizardFormActivity.class);
+                    intent.putExtra("json", jsonForm.toString());
+                    Log.d(getClass().getName(), "form is " + jsonForm.toString());
 
-                Form form = new Form();
-                form.setName(getString(R.string.profile));
-                form.setWizard(true);
-                form.setActionBarBackground(R.color.profile_actionbar);
-                form.setNavigationBackground(R.color.profile_navigation);
-                form.setHideSaveLabel(true);
-                form.setNextLabel(getString(R.string.next));
-                form.setPreviousLabel(getString(R.string.previous));
-                form.setSaveLabel(getString(R.string.save));
-                form.setBackIcon(R.drawable.ic_icon_positive);
-                intent.putExtra(JsonFormConstants.JSON_FORM_KEY.FORM, form);
-
-                startActivityForResult(intent, jsonFormActivityRequestCode);
-            } else {
-
-
-                if (entityId == null) {
-                    entityId = "ABC" + Math.random();
+                    Form form = new Form();
+                    form.setName("Rules engine demo");
+                    form.setWizard(true);
+                    form.setNextLabel(getString(R.string.next));
+                    form.setPreviousLabel(getString(R.string.previous));
+                    form.setSaveLabel(getString(R.string.save));
+                    form.setActionBarBackground(R.color.customAppThemeBlue);
+                    form.setNavigationBackground(R.color.button_navy_blue);
+                    form.setHideSaveLabel(true);
+                    intent.putExtra(JsonFormConstants.JSON_FORM_KEY.FORM, form);
+                    startActivityForResult(intent, jsonFormActivityRequestCode);
+                    break;
                 }
+                case "wizard_form": {
+                    Intent intent = new Intent(this, JsonWizardFormActivity.class);
+                    intent.putExtra("json", jsonForm.toString());
+                    Log.d(getClass().getName(), "form is " + jsonForm.toString());
+
+                    Form form = new Form();
+                    form.setName(getString(R.string.profile));
+                    form.setWizard(true);
+                    form.setActionBarBackground(R.color.profile_actionbar);
+                    form.setNavigationBackground(R.color.profile_navigation);
+                    form.setHideSaveLabel(true);
+                    form.setNextLabel(getString(R.string.next));
+                    form.setPreviousLabel(getString(R.string.previous));
+                    form.setSaveLabel(getString(R.string.save));
+                    form.setBackIcon(R.drawable.ic_icon_positive);
+                    intent.putExtra(JsonFormConstants.JSON_FORM_KEY.FORM, form);
+
+                    startActivityForResult(intent, jsonFormActivityRequestCode);
+                    break;
+                }
+                case "validation_form": {
+                    Intent intent = new Intent(this, JsonWizardFormActivity.class);
+                    intent.putExtra("json", jsonForm.toString());
+                    Log.d(getClass().getName(), "form is " + jsonForm.toString());
+
+                    Form form = new Form();
+                    form.setName(getString(R.string.validation_test));
+                    form.setWizard(true);
+                    form.setNextLabel("Next");
+                    form.setPreviousLabel("Previous");
+                    form.setSaveLabel("Submit");
+                    intent.putExtra(JsonFormConstants.JSON_FORM_KEY.FORM, form);
+
+                    startActivityForResult(intent, jsonFormActivityRequestCode);
+                    break;
+                }
+                default: {
 
 
-                // Inject zeir id into the form
-                JSONObject stepOne = jsonForm.getJSONObject(STEP1);
-                JSONArray jsonArray = stepOne.getJSONArray(FIELDS);
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    if (jsonObject.getString(KEY)
-                            .equalsIgnoreCase(ZEIR_ID)) {
-                        jsonObject.remove(VALUE);
-                        jsonObject.put(VALUE, entityId);
-                        continue;
+                    if (entityId == null) {
+                        entityId = "ABC" + Math.random();
                     }
-                }
 
-                Intent intent = new Intent(this, JsonFormActivity.class);
-                intent.putExtra("json", jsonForm.toString());
-                Log.d(getClass().getName(), "form is " + jsonForm.toString());
-                startActivityForResult(intent, jsonFormActivityRequestCode);
+
+                    // Inject zeir id into the form
+                    JSONObject stepOne = jsonForm.getJSONObject(STEP1);
+                    JSONArray jsonArray = stepOne.getJSONArray(FIELDS);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        if (jsonObject.getString(KEY)
+                                .equalsIgnoreCase(ZEIR_ID)) {
+                            jsonObject.remove(VALUE);
+                            jsonObject.put(VALUE, entityId);
+                            continue;
+                        }
+                    }
+
+                    Intent intent = new Intent(this, JsonFormActivity.class);
+                    intent.putExtra("json", jsonForm.toString());
+                    Log.d(getClass().getName(), "form is " + jsonForm.toString());
+                    startActivityForResult(intent, jsonFormActivityRequestCode);
+                    break;
+                }
             }
 
         }
@@ -172,9 +218,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ;
         } catch (JSONException e) {
             Log.e(TAG, e.getMessage(), e);
-            ;
         }
-
         return null;
     }
 
@@ -197,6 +241,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case R.id.generic_dialog_button:
                     startForm(REQUEST_CODE_GET_JSON, "generic_popup_form", null);
+                    break;
+                case R.id.validation_form_button:
+                    startForm(REQUEST_CODE_GET_JSON, "validation_form", null);
                     break;
                 default:
                     break;

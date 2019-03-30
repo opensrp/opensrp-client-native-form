@@ -68,7 +68,7 @@ public class NativeEditTextFactory implements FormWidgetFactory {
                 getLayout(), null);
         NativeEditText editText = rootLayout.findViewById(R.id.normal_edit_text);
         ImageView editButton = rootLayout.findViewById(R.id.normal_edit_text_edit_button);
-        FormUtils.showEditButton(jsonObject, editText, editButton, listener);
+        FormUtils.setEditButtonAttributes(jsonObject, editText, editButton, listener);
         makeFromJson(stepName, context, formFragment, jsonObject, editText, editButton);
         
         addRequiredValidator(jsonObject, editText);
@@ -159,15 +159,18 @@ public class NativeEditTextFactory implements FormWidgetFactory {
         return R.layout.native_form_normal_edit_text;
     }
     
-    private void addRequiredValidator(JSONObject jsonObject, NativeEditText editText) throws JSONException {
+    private static void addRequiredValidator(JSONObject jsonObject, NativeEditText editText) throws JSONException {
         JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
         if (requiredObject != null) {
-            String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
-            if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
+            boolean requiredValue = requiredObject.getBoolean(JsonFormConstants.VALUE);
+            if ( Boolean.TRUE.equals(requiredValue)) {
                 editText.addValidator(new RequiredValidator(requiredObject.getString(JsonFormConstants.ERR)));
+                FormUtils.setRequiredOnHint(editText);
             }
         }
     }
+
+
     
     private void addRegexValidator(JSONObject jsonObject, NativeEditText editText) throws JSONException {
         JSONObject regexObject = jsonObject.optJSONObject(JsonFormConstants.V_REGEX);

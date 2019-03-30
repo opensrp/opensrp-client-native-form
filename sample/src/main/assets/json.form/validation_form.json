@@ -1,0 +1,651 @@
+{
+  "count": "3",
+  "encounter_type": "Symptoms and Follow-up",
+  "entity_id": "",
+  "relational_id": "",
+  "validate_on_submit": true,
+  "show_errors_on_submit": true,
+  "metadata": {
+    "start": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "start",
+      "openmrs_entity_id": "163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "end": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "end",
+      "openmrs_entity_id": "163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "today": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "encounter",
+      "openmrs_entity_id": "encounter_date"
+    },
+    "deviceid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "deviceid",
+      "openmrs_entity_id": "163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "subscriberid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "subscriberid",
+      "openmrs_entity_id": "163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "simserial": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "simserial",
+      "openmrs_entity_id": "163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "phonenumber": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "phonenumber",
+      "openmrs_entity_id": "163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "encounter_location": "",
+    "look_up": {
+      "entity_id": "",
+      "value": ""
+    }
+  },
+  "step1": {
+    "title": "Medication Follow-up",
+    "next": "step2",
+    "fields": [
+      {
+        "key": "medications",
+        "openmrs_entity_parent": " 160741AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "openmrs_entity": "concept",
+        "openmrs_entity_id": "159367AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "type": "check_box",
+        "label": "Which medications is she still taking?",
+        "label_info_text": "The woman reported taking these medications in the previous contact. Un-select the medications that she has stopped taking. If still taking, leave them selected.",
+        "label_info_title": "Medication follow-up",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "exclusive": [
+          "dont_know",
+          "none"
+        ],
+        "options": [
+          {
+            "key": "none",
+            "text": "None",
+            "value": false,
+            "openmrs_entity_id": "1107AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "concept"
+          },
+          {
+            "key": "dont_know",
+            "text": "Don't know",
+            "value": false,
+            "openmrs_entity_id": "1107AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "concept"
+          },
+          {
+            "key": "magnesium",
+            "text": "Magnesium",
+            "value": false,
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "79224AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "openmrs_entity_parent": ""
+          },
+          {
+            "key": "metoclopramide",
+            "text": "Metoclopramide",
+            "value": false,
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "79755AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "openmrs_entity_parent": ""
+          },
+          {
+            "key": "anti_convulsive",
+            "text": "Anti-convulsive",
+            "value": false,
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "165230AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "openmrs_entity_parent": ""
+          },
+          {
+            "key": "other",
+            "text": "Other (specify)",
+            "value": false,
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "openmrs_entity_parent": ""
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Please specify the medication(s) that the woman is still taking"
+        }
+      },
+      {
+        "key": "no_of_fetuses",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "numbers_selector",
+        "number_of_selectors": "5",
+        "start_number": "1",
+        "max_value": "8",
+        "text_size": "16px",
+        "text_color": "#000000",
+        "selected_text_color": "#ffffff",
+        "v_required": {
+          "value": true,
+          "err":"Please enter the number of fetuses"
+        },
+        "relevance": {
+          "step1:no_of_fetuses_unknown": {
+            "ex-checkbox": [
+              {
+                "not": [
+                  "no_of_fetuses_unknown"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "10sp",
+        "relevance": {
+          "step1:no_of_fetuses_unknown": {
+            "ex-checkbox": [
+              {
+                "not": [
+                  "no_of_fetuses_unknown"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "10sp"
+      },
+      {
+        "key": "no_of_fetuses_unknown",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "check_box",
+        "options": [
+          {
+            "key": "no_of_fetuses_unknown",
+            "text": "No. of fetuses unknown",
+            "value": "false"
+          }
+        ]
+      },
+      {
+        "key": "medications_other",
+        "openmrs_entity_parent": " 159367AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "openmrs_entity": "concept",
+        "openmrs_entity_id": "160632AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "type": "edit_text",
+        "hint": "Specify",
+        "v_regex": {
+          "value": "[A-Za-z\\s\\.\\-]*",
+          "err": "Please enter valid content"
+        },
+        "v_required": {
+          "value": "true",
+          "err": "Previous persisting behaviour is required"
+        },
+        "relevance": {
+          "step1:medications": {
+            "ex-checkbox": [
+              {
+                "or": [
+                  "other"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "occupation",
+        "openmrs_entity_parent": " 159367AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "openmrs_entity": "concept",
+        "openmrs_entity_id": "160632AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "type": "edit_text",
+        "hint": "Specify occupation",
+        "v_regex": {
+          "value": "[A-Za-z\\s\\.\\-]*",
+          "err": "Please enter valid content"
+        },
+        "v_required": {
+          "value": "true",
+          "err": "Previous persisting behaviour is required"
+        },
+        "relevance": {
+          "step1:medications": {
+            "ex-checkbox": [
+              {
+                "or": [
+                  "other"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "calcium_comply",
+        "openmrs_entity_parent": " 72650AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "openmrs_entity": "concept",
+        "openmrs_entity_id": "165272AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "type": "native_radio",
+        "label": "Is she taking her calcium supplements?",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "options": [
+          {
+            "key": "1",
+            "text": "Yes",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          },
+          {
+            "key": "0",
+            "text": "No",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "First calcium comply is required"
+        }
+      },
+      {
+        "key": "calcium_comply2",
+        "openmrs_entity_parent": " 72650AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "openmrs_entity": "concept",
+        "openmrs_entity_id": "165272AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "type": "native_radio",
+        "label": "Is she taking her calcium supplements?",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "options": [
+          {
+            "key": "1",
+            "text": "Yes",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          },
+          {
+            "key": "0",
+            "text": "No",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          }
+        ]
+      },
+      {
+        "key": "calcium_comply3",
+        "openmrs_entity_parent": " 72650AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "openmrs_entity": "concept",
+        "openmrs_entity_id": "165272AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "type": "native_radio",
+        "label": "Is she taking her calcium supplements?",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "options": [
+          {
+            "key": "1",
+            "text": "Yes",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          },
+          {
+            "key": "0",
+            "text": "No",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Third calcium comply is required"
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "10sp"
+      },
+      {
+        "key": "height_label",
+        "type": "label",
+        "label_text_style": "bold",
+        "text": "Height (cm)",
+        "text_color": "#000000",
+        "v_required": {
+          "value": "true",
+          "err": "Height is required"
+        }
+      },
+      {
+        "key": "height",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "5090",
+        "type": "normal_edit_text",
+        "edit_text_style": "bordered",
+        "edit_type": "number",
+        "v_required": {
+          "value": "true",
+          "err": "Please enter the height"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": ""
+        },
+        "v_min": {
+          "value": "100",
+          "err": "Height must be equal or greater than 100"
+        },
+        "v_max": {
+          "value": "200",
+          "err": "Height must be equal or less than 200"
+        }
+      }
+    ]
+  },
+  "step2": {
+    "title": "Previous Behaviour",
+    "next": "step3",
+    "fields": [
+      {
+        "key": "behaviour_persist",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "concept",
+        "openmrs_entity_id": "165251AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "type": "check_box",
+        "label": "Which of the following behaviours persist?",
+        "label_info_text": "These behaviours were reported in the previous contact. Select the ones that are still occurring or select \"None\".",
+        "label_info_title": "Previous behaviours",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "exclusive": [
+          "none"
+        ],
+        "options": [
+          {
+            "key": "none",
+            "text": "None",
+            "value": false,
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "1107AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "openmrs_entity_parent": ""
+          },
+          {
+            "key": "alcohol_use",
+            "text": "Alcohol use",
+            "value": false,
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "143098AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "openmrs_entity_parent": ""
+          },
+          {
+            "key": "substance_use",
+            "text": "Substance use",
+            "value": false,
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "160246AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "openmrs_entity_parent": ""
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Previous persisting behaviour is required"
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "10sp"
+      },
+      {
+        "key": "current_weight_label",
+        "type": "label",
+        "label_text_style": "bold",
+        "text": "Current weight (kg)",
+        "text_color": "#000000",
+        "v_required": {
+          "value": "true",
+          "err": "Please enter current weight"
+        }
+      },
+      {
+        "key": "current_weight",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "5089",
+        "type": "normal_edit_text",
+        "edit_text_style": "bordered",
+        "edit_type": "number",
+        "v_numeric": {
+          "value": "true",
+          "err": ""
+        },
+        "v_min": {
+          "value": "30",
+          "err": "Weight must be equal or greater than 30"
+        },
+        "v_max": {
+          "value": "180",
+          "err": "Weight must be equal or less than 180"
+        },
+        "v_required": {
+          "value": "true",
+          "err": "Please enter the current weight"
+        }
+      }
+    ]
+  },
+  "step3": {
+    "title": "Physiological Symptoms",
+    "fields": [
+      {
+        "key": "phys_symptoms",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "check_box",
+        "label": "Any physiological symptoms?",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "exclusive": [
+          "none"
+        ],
+        "options": [
+          {
+            "key": "none",
+            "text": "None",
+            "value": false,
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "1107AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "openmrs_entity_parent": ""
+          },
+          {
+            "key": "nausea_vomiting",
+            "text": "Nausea and vomiting",
+            "value": false,
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "133473AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "openmrs_entity_parent": ""
+          },
+          {
+            "key": "pelvic_pain",
+            "text": "Pelvic pain",
+            "value": false,
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "131034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "openmrs_entity_parent": ""
+          },
+          {
+            "key": "varicose_veins",
+            "text": "Varicose veins",
+            "value": false,
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "156666AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "openmrs_entity_parent": ""
+          },
+          {
+            "key": "oedema",
+            "text": "Oedema",
+            "value": false,
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "460AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "openmrs_entity_parent": ""
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Please specify any other physiological symptoms or select none"
+        }
+      },
+      {
+        "key": "other_symptoms_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "concept",
+        "openmrs_entity_id": "160632AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "type": "edit_text",
+        "hint": "Specify",
+        "v_regex": {
+          "value": "[A-Za-z\\s\\.\\-]*",
+          "err": "Please enter valid content"
+        },
+        "relevance": {
+          "step3:other_symptoms": {
+            "ex-checkbox": [
+              {
+                "or": [
+                  "other"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "mat_percept_fetal_move",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "concept",
+        "openmrs_entity_id": "162107AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "type": "native_radio",
+        "label": "Has the woman felt the baby move?",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "options": [
+          {
+            "key": "normal_fetal_move",
+            "text": "Normal fetal movement",
+            "value": false,
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "162108AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "openmrs_entity_parent": ""
+          },
+          {
+            "key": "reduced_fetal_move",
+            "text": "Reduced or poor fetal movement",
+            "value": false,
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "113377AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "openmrs_entity_parent": ""
+          },
+          {
+            "key": "no_fetal_move",
+            "text": "No fetal movement",
+            "value": false,
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "1452AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "openmrs_entity_parent": ""
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Field has the woman felt the baby move is required"
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "10sp"
+      },
+      {
+        "key": "sfh_label",
+        "type": "label",
+        "label_text_style": "bold",
+        "text": "Symphysis-fundal height (SFH) in centimetres (cm)",
+        "text_color": "#000000",
+        "v_required": {
+          "value": false,
+          "err": "Sfh needed"
+        }
+      },
+      {
+        "key": "sfh",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "FUNDAL HEIGHT",
+        "openmrs_entity_id": "1439",
+        "type": "normal_edit_text",
+        "edit_text_style": "bordered",
+        "edit_type": "number",
+        "v_min": {
+          "value": "0.1",
+          "err": "SFH must be greater than 0"
+        },
+        "v_max": {
+          "value": "44",
+          "err": "SFH must be less than or equal to 44"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Enter a valid sfh"
+        },
+        "v_required": {
+          "value": "true",
+          "err": "Please enter the SFH"
+        }
+      }
+    ]
+  }
+}

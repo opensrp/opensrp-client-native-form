@@ -7,9 +7,13 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.constraint.ConstraintLayout;
+import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -278,7 +282,8 @@ public class FormUtils {
             ImageView editButton = labelConstraintLayout.findViewById(R.id.label_edit_button);
             if (requiredObject != null) {
                 String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
-                if (!TextUtils.isEmpty(requiredValue) && Boolean.TRUE.toString().equalsIgnoreCase(requiredValue)) {
+                if (!TextUtils.isEmpty(requiredValue) && (Boolean.TRUE.toString().equalsIgnoreCase(requiredValue) || Boolean
+                        .valueOf(requiredValue))) {
                     asterisks = "<font color=#CF0800> *</font>";
                 }
             }
@@ -292,9 +297,6 @@ public class FormUtils {
             labelText.setTag(R.id.original_text, Html.fromHtml(combinedLabelText));
             labelText.setTextSize(labelTextSize);
             canvasIds.put(labelConstraintLayout.getId());
-            if (readOnly) {
-                editButton.setVisibility(View.VISIBLE);
-            }
             labelConstraintLayout.setEnabled(!readOnly);
             linearLayout.addView(labelConstraintLayout);
             createdViewsMap.put(JsonFormConstants.EDIT_BUTTON, editButton);
@@ -363,8 +365,8 @@ public class FormUtils {
         }
     }
 
-    public static void showEditButton(JSONObject jsonObject, View editableView, ImageView editButton,
-                                      CommonListener listener) throws JSONException {
+    public static void setEditButtonAttributes(JSONObject jsonObject, View editableView, ImageView editButton,
+                                               CommonListener listener) throws JSONException {
         editButton.setTag(R.id.editable_view, editableView);
         editButton.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
         editButton.setTag(R.id.type, jsonObject.getString("type"));
@@ -388,7 +390,11 @@ public class FormUtils {
                     for (RadioButton button : radioButtonList) {
                         if (button.getId() != radioButtonView.getId()) {
                             button.setChecked(false);
-                            resetRadioButtonsSpecifyText(button);
+                            try {
+                                resetRadioButtonsSpecifyText(button);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }
@@ -423,7 +429,7 @@ public class FormUtils {
      * @param button {@link CompoundButton}
      * @author kitoto
      */
-    private static void resetRadioButtonsSpecifyText(RadioButton button) {
+    private static void resetRadioButtonsSpecifyText(RadioButton button) throws JSONException {
         CustomTextView specifyText = (CustomTextView) button.getTag(R.id.specify_textview);
         CustomTextView reasonsText = (CustomTextView) button.getTag(R.id.specify_reasons_textview);
         CustomTextView extraInfoTextView = (CustomTextView) button
@@ -436,6 +442,7 @@ public class FormUtils {
             String specifyInfo = optionsJson.optString(JsonFormConstants.CONTENT_INFO);
             String newText = "(" + specifyInfo + ")";
             specifyText.setText(newText);
+            optionsJson.put(JsonFormConstants.SECONDARY_VALUE, "");
         }
 
         if (reasonsText != null) {
@@ -525,6 +532,15 @@ public class FormUtils {
         }
     }
 
+    public static void setRequiredOnHint(AppCompatEditText editText) {
+        if (!TextUtils.isEmpty(editText.getHint())) {
+            SpannableString hint = new SpannableString(editText.getHint() + " *");
+            hint.setSpan(new ForegroundColorSpan(Color.RED), hint.length() - 1, hint.length(),
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            editText.setHint(hint);
+        }
+    }
+
     public static void setEditMode(JSONObject jsonObject, View editableView, ImageView editButton) throws JSONException {
         if (jsonObject.has(JsonFormConstants.EDITABLE)) {
             boolean editable = jsonObject.getBoolean(JsonFormConstants.EDITABLE);
@@ -566,6 +582,45 @@ public class FormUtils {
 
 
         return stringBuilder.toString();
+    }
+
+    public static JSONObject getFieldFromForm(JSONObject jsonForm, String key) throws JSONException {
+        JSONObject field = new JSONObject();
+        if (jsonForm != null) {
+            JSONArray formFields = getMultiStepFormFields(jsonForm);
+            if (formFields != null) {
+                for (int i = 0; i < formFields.length(); i++) {
+                    JSONObject widget = formFields.getJSONObject(i);
+                    if (widget.has(JsonFormConstants.KEY) && key.equals(widget.getString(JsonFormConstants.KEY))) {
+                        field = widget;
+                    }
+                }
+            }
+        }
+        return field;
+    }
+
+    public static JSONArray getMultiStepFormFields(JSONObject jsonForm) {
+        JSONArray fields = new JSONArray();
+        try {
+            if (jsonForm.has(JsonFormConstants.COUNT)) {
+                int stepCount = Integer.parseInt(jsonForm.getString(JsonFormConstants.COUNT));
+                for (int i = 0; i < stepCount; i++) {
+                    String stepName = "step" + (i + 1);
+                    JSONObject step = jsonForm.has(stepName) ? jsonForm.getJSONObject(stepName) : null;
+                    if (step != null && step.has(JsonFormConstants.FIELDS)) {
+                        JSONArray stepFields = step.getJSONArray(JsonFormConstants.FIELDS);
+                        for (int k = 0; k < stepFields.length(); k++) {
+                            JSONObject field = stepFields.getJSONObject(k);
+                            fields.put(field);
+                        }
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, "", e);
+        }
+        return fields;
     }
 
     public static JSONArray fields(JSONObject jsonForm, String step) {
@@ -816,5 +871,18 @@ public class FormUtils {
             }
         }
         return fields;
+    }
+
+    public JSONObject getOpenMRSAttributes(JSONObject jsonObject) throws JSONException {
+        String openmrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
+        String openmrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
+        String openmrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
+
+        JSONObject openmrsAttributes = new JSONObject();
+        openmrsAttributes.put(JsonFormConstants.OPENMRS_ENTITY_PARENT, openmrsEntityParent);
+        openmrsAttributes.put(JsonFormConstants.OPENMRS_ENTITY, openmrsEntity);
+        openmrsAttributes.put(JsonFormConstants.OPENMRS_ENTITY_ID, openmrsEntityId);
+
+        return openmrsAttributes;
     }
 }

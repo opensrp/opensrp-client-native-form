@@ -23,6 +23,7 @@ public class JsonFormConstants {
     public static final String OPTIONS_FIELD_NAME = "options";
     public static final String SPINNER = "spinner";
     public static final String DATE_PICKER = "date_picker";
+    public static final String TIME_PICKER = "time_picker";
     public static final String TREE = "tree";
     public static final String BARCODE = "barcode";
     public static final String BUTTON = "button";
@@ -62,6 +63,9 @@ public class JsonFormConstants {
     public static final String V_RELATIVE_MAX = "v_relative_max";
     public static final String RELATIVE_MAX_VALIDATION_EXCEPTION = "exception";
     public static final String DEFAULT_RELATIVE_MAX_VALIDATION_ERR = "Value cannot be higher than %s";
+    public static final String V_CUMULATIVE_TOTAL = "v_cumulative_total";
+    public static final String DEFAULT_CUMULATIVE_VALIDATION_ERR = "Sum of %s and %s should be equal to %s";
+    public static final String RELATED_FIELDS = "related_fields";
     public static final String NUMBER_SELECTOR = "numbers_selector";
     public static final String START_SELECTION_NUMBER = "start_number";
     public static final String NUMBER_OF_SELECTORS = "number_of_selectors";
@@ -139,6 +143,16 @@ public class JsonFormConstants {
     public static final String SPECIFY_DATE_HIDDEN_FIELD_SUFFIX = "_date";
     public static final String SECONDARY_SUFFIX = "secondary_suffix";
     public static final String SECONDARY_PREFIX = "Specified: ";
+    public static final String OPENMRS_ATTRIBUTES = "openmrs_attributes";
+    public static final String VALUE_OPENMRS_ATTRIBUTES = "value_openmrs_attributes";
+    public static final String OPENMRS_CHOICE_IDS = "openmrs_choice_ids";
+    public static final String ANC_RADIO_BUTTON = "anc_radio_button";
+    public static final String TRUE = "true";
+    public static final String IS_VISIBLE = "is_visible";
+    public static final String VALIDATE_ON_SUBMIT = "validate_on_submit";
+    public static final String NEXT = "next";
+    public static final String STEP_TITLE = "title";
+    public static final String SHOW_ERRORS_ON_SUBMIT = "show_errors_on_submit";
 
     public static class JSON_FORM_KEY {
         public static final String EX_RULES = "ex-rules";

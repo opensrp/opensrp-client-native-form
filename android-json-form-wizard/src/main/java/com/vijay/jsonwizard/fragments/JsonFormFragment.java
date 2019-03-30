@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -28,12 +29,13 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
-import com.vijay.jsonwizard.customviews.CheckBox;
 import com.vijay.jsonwizard.customviews.RadioButton;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.interfaces.OnFieldsInvalid;
 import com.vijay.jsonwizard.mvp.MvpFragment;
 import com.vijay.jsonwizard.presenters.JsonFormFragmentPresenter;
+import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 import com.vijay.jsonwizard.viewstates.JsonFormFragmentViewState;
 
@@ -55,6 +57,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     private Menu mMenu;
     private JsonApi mJsonApi;
     private Map<String, List<View>> lookUpMap = new HashMap<>();
+    public OnFieldsInvalid onFieldsInvalid;
 
     public static JsonFormFragment getFormFragment(String stepName) {
         JsonFormFragment jsonFormFragment = new JsonFormFragment();
@@ -68,6 +71,11 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     public void onAttach(Activity activity) {
         mJsonApi = (JsonApi) activity;
         super.onAttach(activity);
+        try {
+            onFieldsInvalid = (OnFieldsInvalid) getActivity();
+        } catch (ClassCastException ex) {
+            throw new ClassCastException("Error retrieving passed invalid fields");
+        }
     }
 
     @Override
@@ -276,6 +284,11 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     @Override
     public void showToast(String message) {
         Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showSnackBar(String message) {
+        Utils.showSnackBar(getMainView(),message);
     }
 
     @Override
