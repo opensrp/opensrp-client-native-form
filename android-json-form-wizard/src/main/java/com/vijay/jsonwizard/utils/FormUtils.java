@@ -584,6 +584,45 @@ public class FormUtils {
         return stringBuilder.toString();
     }
 
+    public static JSONObject getFieldFromForm(JSONObject jsonForm, String key) throws JSONException {
+        JSONObject field = new JSONObject();
+        if (jsonForm != null) {
+            JSONArray formFields = getMultiStepFormFields(jsonForm);
+            if (formFields != null) {
+                for (int i = 0; i < formFields.length(); i++) {
+                    JSONObject widget = formFields.getJSONObject(i);
+                    if (widget.has(JsonFormConstants.KEY) && key.equals(widget.getString(JsonFormConstants.KEY))) {
+                        field = widget;
+                    }
+                }
+            }
+        }
+        return field;
+    }
+
+    public static JSONArray getMultiStepFormFields(JSONObject jsonForm) {
+        JSONArray fields = new JSONArray();
+        try {
+            if (jsonForm.has(JsonFormConstants.COUNT)) {
+                int stepCount = Integer.parseInt(jsonForm.getString(JsonFormConstants.COUNT));
+                for (int i = 0; i < stepCount; i++) {
+                    String stepName = "step" + (i + 1);
+                    JSONObject step = jsonForm.has(stepName) ? jsonForm.getJSONObject(stepName) : null;
+                    if (step != null && step.has(JsonFormConstants.FIELDS)) {
+                        JSONArray stepFields = step.getJSONArray(JsonFormConstants.FIELDS);
+                        for (int k = 0; k < stepFields.length(); k++) {
+                            JSONObject field = stepFields.getJSONObject(k);
+                            fields.put(field);
+                        }
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, "", e);
+        }
+        return fields;
+    }
+
     public static JSONArray fields(JSONObject jsonForm, String step) {
         try {
             JSONObject stepJSONObject = jsonForm.has(step) ? jsonForm.getJSONObject(step) : null;
