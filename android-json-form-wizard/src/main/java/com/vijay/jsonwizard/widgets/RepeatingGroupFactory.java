@@ -1,9 +1,13 @@
 package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
@@ -35,6 +39,17 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         int rootLayoutId = View.generateViewId();
         rootLayout.setId(rootLayoutId);
         views.add(rootLayout);
+
+        EditText editText = rootLayout.findViewById(R.id.reference_edit_text);
+        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    return true;
+                }
+                return false;
+            }
+        });
 
         JSONArray repeatingGroupLayout = jsonObject.getJSONArray(REPEATING_GROUP_LAYOUT);
         repeatingGroupLayouts.put(rootLayoutId, repeatingGroupLayout);
