@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewParent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -31,7 +32,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
     public static Map<Integer, JSONArray> repeatingGroupLayouts = new HashMap<>();
 
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
+    public List<View> getViewsFromJson(String stepName, final Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
         List<View> views = new ArrayList<>(1);
 
         LinearLayout rootLayout = (LinearLayout) LayoutInflater.from(context).inflate(getLayout(), null);
@@ -45,6 +46,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    attachRepeatingGroup(v.getParent(), Integer.parseInt(v.getText().toString()), context);
                     return true;
                 }
                 return false;
@@ -55,6 +57,14 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         repeatingGroupLayouts.put(rootLayoutId, repeatingGroupLayout);
 
         return views;
+    }
+
+    private void attachRepeatingGroup(ViewParent rootLayout, int numRepeatingGroups, Context context) {
+        for (int i = 0; i < numRepeatingGroups; i++) {
+            EditText testEditText = new EditText(context);
+            testEditText.setHint("Edit text " + i);
+            ((LinearLayout) rootLayout).addView(testEditText);
+        }
     }
 
     @Override
