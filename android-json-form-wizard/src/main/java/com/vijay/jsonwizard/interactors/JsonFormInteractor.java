@@ -22,6 +22,7 @@ import com.vijay.jsonwizard.widgets.NativeEditTextFactory;
 import com.vijay.jsonwizard.widgets.NativeRadioButtonFactory;
 import com.vijay.jsonwizard.widgets.NumberSelectorFactory;
 import com.vijay.jsonwizard.widgets.RadioButtonFactory;
+import com.vijay.jsonwizard.widgets.RepeatingGroupFactory;
 import com.vijay.jsonwizard.widgets.SectionFactory;
 import com.vijay.jsonwizard.widgets.SpinnerFactory;
 import com.vijay.jsonwizard.widgets.TimePickerFactory;
@@ -75,6 +76,7 @@ public class JsonFormInteractor {
         map.put(JsonFormConstants.SPACER, new ComponentSpacerFactory());
         map.put(JsonFormConstants.NATIVE_EDIT_TEXT, new NativeEditTextFactory());
         map.put(JsonFormConstants.TIME_PICKER, new TimePickerFactory());
+        map.put(JsonFormConstants.REPEATING_GROUP, new RepeatingGroupFactory());
     }
 
     public List<View> fetchFormElements(String stepName, JsonFormFragment formFragment,
