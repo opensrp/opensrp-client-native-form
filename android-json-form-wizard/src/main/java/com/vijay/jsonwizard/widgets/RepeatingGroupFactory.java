@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
@@ -60,10 +61,20 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
     }
 
     private void attachRepeatingGroup(ViewParent rootLayout, int numRepeatingGroups, Context context) {
-        for (int i = 0; i < numRepeatingGroups; i++) {
-            EditText testEditText = new EditText(context);
-            testEditText.setHint("Edit text " + i);
-            ((LinearLayout) rootLayout).addView(testEditText);
+        int numChildren = ((ViewGroup)rootLayout).getChildCount() - 1;
+        int diff = numRepeatingGroups - numChildren;
+        LinearLayout parent = ((LinearLayout) rootLayout);
+        if (diff > 0) {
+            for (int i = numChildren; i < numRepeatingGroups; i++) {
+                EditText testEditText = new EditText(context);
+                testEditText.setHint("Edit text " + i);
+                parent.addView(testEditText);
+            }
+        } else {
+            diff = Math.abs(diff);
+            for (int i = numChildren; i > numChildren - diff; i--) {
+                parent.removeViewAt(i);
+            }
         }
     }
 
