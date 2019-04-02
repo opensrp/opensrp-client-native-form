@@ -23,6 +23,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
         List<View> views = new ArrayList<>(1);
         LinearLayout rootLayout = (LinearLayout) LayoutInflater.from(context).inflate(getLayout(), null);
+        rootLayout.setId(View.generateViewId());
         views.add(rootLayout);
         return views;
     }
