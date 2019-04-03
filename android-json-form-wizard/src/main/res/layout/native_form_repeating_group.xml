@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <com.rengwuxian.materialedittext.MaterialEditText
         app:met_textColorHint="@color/text_hint_color"
@@ -15,6 +15,7 @@
         android:textSize="@dimen/default_text_size"
         android:hint="Reference edit text field"
         android:paddingLeft="20dp"
+        android:imeOptions="actionDone"
         app:met_floatingLabel="highlight"
         app:met_floatingLabelText=""
         app:met_floatingLabelTextSize="@dimen/default_text_size"

@@ -35,6 +35,8 @@
     <string name="radio_button_tap_to_change">tap to change</string>
     <string name="select_one">Select a number</string>
     <string name="done">Done</string>
+    <string name="creating_repeating_group_title">Please wait</string>
+    <string name="creating_repeating_group_message">Creating repeating group</string>
 
     <string-array name="spinnerItems">
         <item>item1</item>

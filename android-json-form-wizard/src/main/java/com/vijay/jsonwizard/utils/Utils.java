@@ -1,6 +1,9 @@
 package com.vijay.jsonwizard.utils;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
 import android.support.v4.util.TimeUtils;
 import android.text.TextUtils;
@@ -8,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.widgets.DatePickerFactory;
 
 import java.text.ParseException;
@@ -18,6 +22,8 @@ import java.util.concurrent.TimeUnit;
 public class Utils {
 
     private static final String TAG = Utils.class.getCanonicalName();
+
+    private static ProgressDialog progressDialog;
 
     public static void showToast(Context context, String message) {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show();
@@ -147,5 +153,19 @@ public class Utils {
             return duration;
         }
         return null;
+    }
+
+    public static void showProgressDialog(@StringRes int title, @StringRes int message, Activity activity) {
+        progressDialog = new ProgressDialog(activity);
+        progressDialog.setCancelable(false);
+        progressDialog.setTitle(activity.getString(title));
+        progressDialog.setMessage(activity.getString(message));
+        progressDialog.show();
+    }
+
+    public static void hideProgressDialog() {
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+        }
     }
 }

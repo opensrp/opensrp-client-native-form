@@ -1,6 +1,7 @@
 package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -28,14 +30,16 @@ import java.util.List;
 import java.util.Map;
 
 import static com.vijay.jsonwizard.constants.JsonFormConstants.TYPE;
+import static com.vijay.jsonwizard.utils.Utils.hideProgressDialog;
+import static com.vijay.jsonwizard.utils.Utils.showProgressDialog;
 
 /**
  * @author Vincent Karuri
  */
 public class RepeatingGroupFactory implements FormWidgetFactory {
 
-    private String REPEATING_GROUP_LAYOUT = "repeating_group_layout";
-    private String TAG = RepeatingGroupFactory.class.getName();
+    private final String REPEATING_GROUP_LAYOUT = "repeating_group_layout";
+    private final String TAG = RepeatingGroupFactory.class.getName();
     private final ViewGroup.LayoutParams WIDTH_MATCH_PARENT_HEIGHT_WRAP_CONTENT = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     private static Map<Integer, JSONArray> repeatingGroupLayouts = new HashMap<>();
 
@@ -82,32 +86,60 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
 
     private void addOnDoneAction(int rootLayoutId, TextView textView, WidgetArgs widgetArgs) {
         try {
+            InputMethodManager inputMethodManager = (InputMethodManager) widgetArgs.getFormFragment().getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0);
             attachRepeatingGroup(textView.getParent(), Integer.parseInt(textView.getText().toString()), rootLayoutId, widgetArgs);
         } catch (Exception e) {
             Log.e(TAG, e.getStackTrace().toString());
         }
     }
 
-    private void attachRepeatingGroup(ViewParent parent, int numRepeatingGroups, int rootLayoutId, WidgetArgs widgetArgs) {
-        int currNumRepeatingGroups = ((ViewGroup) parent).getChildCount() - 1;
-        int diff = numRepeatingGroups - currNumRepeatingGroups;
-        LinearLayout rootLayout = (LinearLayout) parent;
-        rootLayout.setLayoutParams(WIDTH_MATCH_PARENT_HEIGHT_WRAP_CONTENT);
-        rootLayout.setOrientation(LinearLayout.VERTICAL);
-        if (diff > 0) {
-            for (int i = currNumRepeatingGroups; i < numRepeatingGroups; i++) {
-                try {
-                    LinearLayout repeatingGroup = buildRepeatingGroupLayout(rootLayoutId, widgetArgs);
-                    rootLayout.addView(repeatingGroup);
-                } catch (Exception e) {
-                    Log.e(TAG, e.getStackTrace().toString());
-                }
+    private void attachRepeatingGroup(final ViewParent parent, final int numRepeatingGroups, final int rootLayoutId, final WidgetArgs widgetArgs) {
+
+        class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> {
+            LinearLayout rootLayout = (LinearLayout) parent;
+            List<View> repeatingGroups = new ArrayList<>();
+            int diff = 0;
+
+            @Override
+            protected void onPreExecute() {
+                showProgressDialog(R.string.creating_repeating_group_title, R.string.creating_repeating_group_message, widgetArgs.getFormFragment().getActivity());
             }
-        } else {
-            for (int i = currNumRepeatingGroups; i > numRepeatingGroups; i--) {
-                rootLayout.removeViewAt(i);
+
+            @Override
+            protected List<View> doInBackground(Void... objects) {
+                int currNumRepeatingGroups = ((ViewGroup) parent).getChildCount() - 1;
+                diff = numRepeatingGroups - currNumRepeatingGroups;
+                if (diff > 0) {
+                    for (int i = currNumRepeatingGroups; i < numRepeatingGroups; i++) {
+                        try {
+                            repeatingGroups.add(buildRepeatingGroupLayout(rootLayoutId, widgetArgs));
+                        } catch (Exception e) {
+                            Log.e(TAG, e.getStackTrace().toString());
+                        }
+                    }
+                } else {
+                    for (int i = 0; i <= numRepeatingGroups; i++) {
+                        repeatingGroups.add(rootLayout.getChildAt(i));
+                    }
+                }
+
+                return repeatingGroups;
+            }
+
+            @Override
+            protected void onPostExecute(List<View> result) {
+                if (diff < 0) {
+                    rootLayout.removeAllViews();
+                }
+                for (View repeatingGroup : repeatingGroups) {
+                    rootLayout.addView(repeatingGroup);
+                }
+                hideProgressDialog();
             }
         }
+
+        new AttachRepeatingGroupTask().execute();
     }
 
     private LinearLayout buildRepeatingGroupLayout(int rootLayoutId, WidgetArgs widgetArgs) throws Exception {
