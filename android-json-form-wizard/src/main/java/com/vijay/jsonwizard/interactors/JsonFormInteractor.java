@@ -45,7 +45,7 @@ public class JsonFormInteractor {
 
     private static final String TAG = "JsonFormInteractor";
     private static final JsonFormInteractor INSTANCE = new JsonFormInteractor();
-    protected Map<String, FormWidgetFactory> map = new HashMap<>();
+    public static Map<String, FormWidgetFactory> map;
 
     public JsonFormInteractor() {
         registerWidgets();
@@ -56,6 +56,7 @@ public class JsonFormInteractor {
     }
 
     protected void registerWidgets() {
+        map = new HashMap<>();
         map.put(JsonFormConstants.SECTION_LABEL, new SectionFactory());
         map.put(JsonFormConstants.EDIT_TEXT, new EditTextFactory());
         map.put(JsonFormConstants.HIDDEN, new HiddenTextFactory());
