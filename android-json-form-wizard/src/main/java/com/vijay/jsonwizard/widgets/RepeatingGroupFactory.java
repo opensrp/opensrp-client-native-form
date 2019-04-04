@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.vijay.jsonwizard.constants.JsonFormConstants.TYPE;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUE;
 import static com.vijay.jsonwizard.utils.Utils.hideProgressDialog;
 import static com.vijay.jsonwizard.utils.Utils.showProgressDialog;
 
@@ -48,7 +49,6 @@ import static com.vijay.jsonwizard.utils.Utils.showProgressDialog;
  */
 public class RepeatingGroupFactory implements FormWidgetFactory {
 
-    private final String REPEATING_GROUP_LAYOUT = "repeating_group_layout";
     private final String TAG = RepeatingGroupFactory.class.getName();
 
     protected int MAX_NUM_REPEATING_GROUPS = 35;
@@ -66,7 +66,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         rootLayout.setId(rootLayoutId);
         views.add(rootLayout);
 
-        JSONArray repeatingGroupLayout = jsonObject.getJSONArray(REPEATING_GROUP_LAYOUT);
+        JSONArray repeatingGroupLayout = jsonObject.getJSONArray(VALUE);
         repeatingGroupLayouts.put(rootLayoutId, repeatingGroupLayout);
 
         final WidgetArgs widgetArgs = new WidgetArgs();
@@ -157,7 +157,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
             protected List<View> doInBackground(Void... objects) {
                 int currNumRepeatingGroups = ((ViewGroup) parent).getChildCount() - 1;
                 diff = numRepeatingGroups - currNumRepeatingGroups;
-                if (diff > 0) {
+                if (diff >= 0) {
                     for (int i = currNumRepeatingGroups; i < numRepeatingGroups; i++) {
                         try {
                             repeatingGroups.add(buildRepeatingGroupLayout(rootLayoutId, widgetArgs));
@@ -182,6 +182,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                 for (View repeatingGroup : repeatingGroups) {
                     rootLayout.addView(repeatingGroup);
                 }
+                ((JsonApi) widgetArgs.getContext()).invokeRefreshLogic(null, false, null, null);
                 hideProgressDialog();
             }
         }
