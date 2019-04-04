@@ -2,6 +2,8 @@ package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -15,6 +17,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.vijay.jsonwizard.R;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.customviews.GenericTextWatcher;
 import com.vijay.jsonwizard.domain.WidgetArgs;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
@@ -32,6 +36,11 @@ import java.util.Map;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.TYPE;
 import static com.vijay.jsonwizard.utils.Utils.hideProgressDialog;
 import static com.vijay.jsonwizard.utils.Utils.showProgressDialog;
+import com.rengwuxian.materialedittext.MaterialEditText;
+import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.presenters.JsonFormFragmentPresenter;
+import com.vijay.jsonwizard.utils.ValidationStatus;
+import com.vijay.jsonwizard.validators.edittext.MaxNumericValidator;
 
 /**
  * @author Vincent Karuri
@@ -40,6 +49,9 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
 
     private final String REPEATING_GROUP_LAYOUT = "repeating_group_layout";
     private final String TAG = RepeatingGroupFactory.class.getName();
+
+    protected int MAX_NUM_REPEATING_GROUPS = 35;
+
     private final ViewGroup.LayoutParams WIDTH_MATCH_PARENT_HEIGHT_WRAP_CONTENT = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     private static Map<Integer, JSONArray> repeatingGroupLayouts = new HashMap<>();
 
@@ -64,8 +76,8 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                 .withListener(listener)
                 .withPopup(popup);
 
-        EditText editText = rootLayout.findViewById(R.id.reference_edit_text);
-        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        final MaterialEditText referenceEditText = rootLayout.findViewById(R.id.reference_edit_text);
+        referenceEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -75,6 +87,28 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                 return false;
             }
         });
+
+        String errMsg = context.getString(R.string.repeating_group_max_value_err_msg, MAX_NUM_REPEATING_GROUPS);
+        referenceEditText.addValidator(new MaxNumericValidator(errMsg, MAX_NUM_REPEATING_GROUPS));
+        referenceEditText.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+        referenceEditText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    // do nothing
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    // do nothing
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    JsonFormFragmentPresenter.validate(formFragment, referenceEditText, false);
+                }
+        });
+
+        ((JsonApi) context).addFormDataView(referenceEditText);
 
         return views;
     }
@@ -95,6 +129,10 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
     }
 
     private void attachRepeatingGroup(final ViewParent parent, final int numRepeatingGroups, final int rootLayoutId, final WidgetArgs widgetArgs) {
+
+        if (numRepeatingGroups > MAX_NUM_REPEATING_GROUPS) {
+            return;
+        }
 
         class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> {
             LinearLayout rootLayout = (LinearLayout) parent;
