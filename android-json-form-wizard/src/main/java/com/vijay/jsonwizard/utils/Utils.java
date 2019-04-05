@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.widgets.DatePickerFactory;
 
 import java.text.ParseException;

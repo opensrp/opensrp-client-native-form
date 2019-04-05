@@ -19,7 +19,6 @@ import android.widget.TextView;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rengwuxian.materialedittext.validation.RegexpValidator;
 import com.vijay.jsonwizard.R;
-import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.WidgetArgs;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
@@ -83,27 +82,27 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
 
 
         final MaterialEditText referenceEditText = rootLayout.findViewById(R.id.reference_edit_text);
-        setUpReferenceEditText(referenceEditText, rootLayoutId, widgetArgs);
+        setUpReferenceEditText(referenceEditText, widgetArgs);
 
         ((JsonApi) context).addFormDataView(referenceEditText);
 
         return views;
     }
 
-    private void setUpReferenceEditText(final MaterialEditText referenceEditText, final int rootLayoutId, final WidgetArgs widgetArgs) throws JSONException {
+    private void setUpReferenceEditText(final MaterialEditText referenceEditText, final WidgetArgs widgetArgs) throws JSONException {
         Context context = widgetArgs.getContext();
         referenceEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    addOnDoneAction(rootLayoutId, v, widgetArgs);
+                    addOnDoneAction(v, widgetArgs);
                     return true;
                 }
                 return false;
             }
         });
 
-        referenceEditText.setTag(R.id.address, widgetArgs.getStepName() + ":" + widgetArgs.getJsonObject().getString(JsonFormConstants.KEY));
+        referenceEditText.setTag(R.id.address, widgetArgs.getStepName() + ":" + widgetArgs.getJsonObject().getString(KEY));
         referenceEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -131,7 +130,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         return getViewsFromJson(stepName, context, formFragment, jsonObject, listener, false);
     }
 
-    private void addOnDoneAction(int rootLayoutId, TextView textView, WidgetArgs widgetArgs) {
+    private void addOnDoneAction(TextView textView, WidgetArgs widgetArgs) {
         try {
             InputMethodManager inputMethodManager = (InputMethodManager) widgetArgs.getFormFragment().getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0);
@@ -148,9 +147,9 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         }
 
         class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> {
-            LinearLayout rootLayout = (LinearLayout) parent;
-            List<View> repeatingGroups = new ArrayList<>();
-            int diff = 0;
+            private LinearLayout rootLayout = (LinearLayout) parent;
+            private List<View> repeatingGroups = new ArrayList<>();
+            private int diff = 0;
 
             @Override
             protected void onPreExecute() {
