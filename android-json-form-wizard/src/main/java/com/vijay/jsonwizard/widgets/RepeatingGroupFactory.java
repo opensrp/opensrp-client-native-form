@@ -38,7 +38,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
+import static com.vijay.jsonwizard.constants.JsonFormConstants.FIELDS;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.RELEVANCE;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.TYPE;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUE;
 import static com.vijay.jsonwizard.utils.Utils.hideProgressDialog;
@@ -54,7 +58,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
     protected int MAX_NUM_REPEATING_GROUPS = 35;
 
     private final ViewGroup.LayoutParams WIDTH_MATCH_PARENT_HEIGHT_WRAP_CONTENT = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-    private static Map<Integer, JSONArray> repeatingGroupLayouts = new HashMap<>();
+    private static Map<Integer, String> repeatingGroupLayouts = new HashMap<>();
 
     @Override
     public List<View> getViewsFromJson(final String stepName, final Context context, final JsonFormFragment formFragment, final JSONObject jsonObject, final CommonListener listener, final boolean popup) throws Exception {
@@ -67,7 +71,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         views.add(rootLayout);
 
         JSONArray repeatingGroupLayout = jsonObject.getJSONArray(VALUE);
-        repeatingGroupLayouts.put(rootLayoutId, repeatingGroupLayout);
+        repeatingGroupLayouts.put(rootLayoutId, repeatingGroupLayout.toString());
 
         final WidgetArgs widgetArgs = new WidgetArgs();
         widgetArgs.withStepName(stepName)
@@ -131,13 +135,13 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         try {
             InputMethodManager inputMethodManager = (InputMethodManager) widgetArgs.getFormFragment().getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0);
-            attachRepeatingGroup(textView.getParent(), Integer.parseInt(textView.getText().toString()), rootLayoutId, widgetArgs);
+            attachRepeatingGroup(textView.getParent(), Integer.parseInt(textView.getText().toString()), widgetArgs);
         } catch (Exception e) {
             Log.e(TAG, e.getStackTrace().toString());
         }
     }
 
-    private void attachRepeatingGroup(final ViewParent parent, final int numRepeatingGroups, final int rootLayoutId, final WidgetArgs widgetArgs) {
+    private void attachRepeatingGroup(final ViewParent parent, final int numRepeatingGroups, final WidgetArgs widgetArgs) {
 
         if (numRepeatingGroups > MAX_NUM_REPEATING_GROUPS) {
             return;
@@ -160,7 +164,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                 if (diff >= 0) {
                     for (int i = currNumRepeatingGroups; i < numRepeatingGroups; i++) {
                         try {
-                            repeatingGroups.add(buildRepeatingGroupLayout(rootLayoutId, widgetArgs));
+                            repeatingGroups.add(buildRepeatingGroupLayout(parent, widgetArgs));
                         } catch (Exception e) {
                             Log.e(TAG, e.getStackTrace().toString());
                         }
@@ -190,27 +194,48 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         new AttachRepeatingGroupTask().execute();
     }
 
-    private LinearLayout buildRepeatingGroupLayout(int rootLayoutId, WidgetArgs widgetArgs) throws Exception {
+    private LinearLayout buildRepeatingGroupLayout(ViewParent parent, WidgetArgs widgetArgs) throws Exception {
         Context context = widgetArgs.getContext();
 
         LinearLayout repeatingGroup = new LinearLayout(context);
         repeatingGroup.setLayoutParams(WIDTH_MATCH_PARENT_HEIGHT_WRAP_CONTENT);
         repeatingGroup.setOrientation(LinearLayout.VERTICAL);
 
-        JSONArray repeatingGroupJson = repeatingGroupLayouts.get(rootLayoutId);
+        JSONArray repeatingGroupJson = new JSONArray(repeatingGroupLayouts.get(((LinearLayout) parent).getId()));
+        String uniqueId = UUID.randomUUID().toString();
         for (int i = 0; i < repeatingGroupJson.length(); i++) {
             JSONObject element = repeatingGroupJson.getJSONObject(i);
             String elementType = element.optString(TYPE, null);
             if (elementType != null) {
+                addUniqueIdentifiers(element, uniqueId);
                 FormWidgetFactory factory = JsonFormInteractor.getInstance().map.get(elementType);
                 List<View> widgetViews = factory.getViewsFromJson(widgetArgs.getStepName(), context, widgetArgs.getFormFragment(), element, widgetArgs.getListener(), widgetArgs.isPopup());
                 for (View view : widgetViews) {
                     view.setLayoutParams(WIDTH_MATCH_PARENT_HEIGHT_WRAP_CONTENT);
                     repeatingGroup.addView(view);
                 }
+                // add element to json form object to be written into
+                JSONObject step = ((JsonApi) widgetArgs.getContext()).getmJSONObject().getJSONObject(widgetArgs.getStepName());
+                step.getJSONArray(FIELDS).put(element);
             }
         }
         return repeatingGroup;
+    }
+
+    private void addUniqueIdentifiers(JSONObject element, String uniqueId) throws JSONException {
+        // make repeating group element key unique
+        String currKey = element.getString(KEY);
+        currKey += ("_" + uniqueId);
+        element.put(KEY, currKey);
+        // modify relevance to reflect changes in unique key name
+        JSONObject relevance = element.optJSONObject(RELEVANCE);
+        if (relevance != null) {
+            String currRelevanceKey = relevance.keys().next();
+            JSONObject relevanceObj = relevance.getJSONObject(currRelevanceKey);
+            String newRelevanceKey = currRelevanceKey + "_" + uniqueId;
+            relevance.remove(currRelevanceKey);
+            relevance.put(newRelevanceKey, relevanceObj);
+        }
     }
 
     protected int getLayout() {

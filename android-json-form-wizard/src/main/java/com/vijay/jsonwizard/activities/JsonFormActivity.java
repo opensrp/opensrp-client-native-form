@@ -181,24 +181,14 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             JSONArray fields = fetchFields(jsonObject, popup);
             for (int i = 0; i < fields.length(); i++) {
                 JSONObject field = fields.getJSONObject(i);
-                boolean wroteValues = writeValues(field, stepName, key, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
-                JSONArray nestedValue = field.optJSONArray(JsonFormConstants.VALUE);
-                if (!wroteValues && nestedValue != null) {
-                    // write values for elements in nested value json array
-                    for (int j = 0; j < nestedValue.length(); j++) {
-                        writeValues(nestedValue.getJSONObject(j), stepName, key, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
-                    }
-                }
+                writeValues(field, key, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
             }
         }
     }
 
 
-    private boolean writeValues(JSONObject field, String stepName, String key, String value, String openMrsEntityParent,
+    private void writeValues(JSONObject field, String key, String value, String openMrsEntityParent,
                                 String openMrsEntity, String openMrsEntityId, boolean popup) throws JSONException {
-
-        boolean wroteValues = false;
-
         String keyAtIndex = field.getString(JsonFormConstants.KEY);
         String itemType = field.has(JsonFormConstants.TYPE) ? field.getString(JsonFormConstants.TYPE) : "";
         boolean isSpecialWidget = isSpecialWidget(itemType);
@@ -213,10 +203,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             addOpenMrsAttributes(openMrsEntityParent, openMrsEntity, openMrsEntityId, field);
 
             invokeRefreshLogic(value, popup, cleanKey, null);
-            wroteValues = true;
         }
-
-        return wroteValues;
     }
 
     private void addOpenMrsAttributes(String openMrsEntityParent, String openMrsEntity, String openMrsEntityId,
@@ -996,11 +983,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 if (mJSONObject.has(address[0])) {
                     JSONArray fields = fetchFields(mJSONObject.getJSONObject(address[0]), popup);
                     relevantFieldObj = extractRelevantFieldObj(fields, address[1]);
-                }
-                // extract relevant field from a nested value
-                if (address.length > 2) {
-                    JSONArray nestedValue = relevantFieldObj.getJSONArray(JsonFormConstants.VALUE);
-                    relevantFieldObj = extractRelevantFieldObj(nestedValue, address[2]);
                 }
                 return relevantFieldObj;
             }
