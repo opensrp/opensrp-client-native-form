@@ -40,6 +40,9 @@
     <string name="repeating_group_max_value_err_msg">Number of repeating groups cannot be greater than %1$d</string>
     <string name="repeating_group_min_value_err_msg">Number of repeating groups must be a number greater than 0</string>
     <string name="repeating_group_number_format_err_msg">Number of repeating groups must be an integer value</string>
+    <string name="enter_number_of_repeating_group_items">Enter # of repeating group items</string>
+    <string name="repeating_group_item">Item</string>
+    <string name="repeating_group_label">repeating_group_label</string>
 
     <string-array name="spinnerItems">
         <item>item1</item>

@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -60,6 +61,12 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
     private final ViewGroup.LayoutParams WIDTH_MATCH_PARENT_HEIGHT_WRAP_CONTENT = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     private static Map<Integer, String> repeatingGroupLayouts = new HashMap<>();
 
+    private final String REFERENCE_EDIT_TEXT_HINT = "reference_edit_text_hint";
+    private final String REPEATING_GROUP_LABEL = "repeating_group_label";
+
+    protected final float REPEATING_GROUP_LABEL_TEXT_SIZE = 20;
+    protected final int REPEATING_GROUP_LABEL_TEXT_COLOR = R.color.black;
+
     @Override
     public List<View> getViewsFromJson(final String stepName, final Context context, final JsonFormFragment formFragment, final JSONObject jsonObject, final CommonListener listener, final boolean popup) throws Exception {
         List<View> views = new ArrayList<>(1);
@@ -83,14 +90,16 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
 
 
         final MaterialEditText referenceEditText = rootLayout.findViewById(R.id.reference_edit_text);
-        setUpReferenceEditText(referenceEditText, widgetArgs);
+        final String referenceEditTextHint = jsonObject.optString(REFERENCE_EDIT_TEXT_HINT, context.getString(R.string.enter_number_of_repeating_group_items));
+        final String repeatingGroupLabel = jsonObject.optString(REPEATING_GROUP_LABEL, context.getString(R.string.repeating_group_item));
+        setUpReferenceEditText(referenceEditText, widgetArgs, referenceEditTextHint, repeatingGroupLabel);
 
         ((JsonApi) context).addFormDataView(referenceEditText);
 
         return views;
     }
 
-    private void setUpReferenceEditText(final MaterialEditText referenceEditText, final WidgetArgs widgetArgs) throws JSONException {
+    private void setUpReferenceEditText(final MaterialEditText referenceEditText, final WidgetArgs widgetArgs, String referenceEditTextHint, String repeatingGroupLabel) throws JSONException {
         Context context = widgetArgs.getContext();
         referenceEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -120,6 +129,11 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                 JsonFormFragmentPresenter.validate(widgetArgs.getFormFragment(), referenceEditText, false);
             }
         });
+
+        referenceEditText.setHint(referenceEditTextHint);
+        referenceEditText.setTag(R.id.repeating_group_label, repeatingGroupLabel);
+        referenceEditText.setTag(R.id.repeating_group_item_count, 1);
+
         referenceEditText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
         referenceEditText.addValidator(new RegexpValidator(context.getString(R.string.repeating_group_number_format_err_msg), "\\d*"));
         referenceEditText.addValidator(new MaxNumericValidator(context.getString(R.string.repeating_group_max_value_err_msg, MAX_NUM_REPEATING_GROUPS), MAX_NUM_REPEATING_GROUPS));
@@ -186,6 +200,9 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                 for (View repeatingGroup : repeatingGroups) {
                     rootLayout.addView(repeatingGroup);
                 }
+                if (diff < 0) {
+                    rootLayout.getChildAt(0).setTag(R.id.repeating_group_item_count, repeatingGroups.size());
+                }
                 ((JsonApi) widgetArgs.getContext()).invokeRefreshLogic(null, false, null, null);
                 hideProgressDialog();
             }
@@ -200,6 +217,19 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         LinearLayout repeatingGroup = new LinearLayout(context);
         repeatingGroup.setLayoutParams(WIDTH_MATCH_PARENT_HEIGHT_WRAP_CONTENT);
         repeatingGroup.setOrientation(LinearLayout.VERTICAL);
+
+        TextView repeatingGroupLabel = new TextView(context);
+        repeatingGroup.setLayoutParams(WIDTH_MATCH_PARENT_HEIGHT_WRAP_CONTENT);
+
+        EditText referenceEditText = (EditText) ((LinearLayout) parent).getChildAt(0);
+
+        String repeatingGroupLabelTxt = (String) referenceEditText.getTag(R.id.repeating_group_label);
+        int repeatingGroupItemCount = (Integer) referenceEditText.getTag(R.id.repeating_group_item_count);
+        repeatingGroupLabel.setText(repeatingGroupLabelTxt + " " + repeatingGroupItemCount);
+        repeatingGroupLabel.setTextSize(REPEATING_GROUP_LABEL_TEXT_SIZE);
+        repeatingGroupLabel.setTextColor(context.getColor(REPEATING_GROUP_LABEL_TEXT_COLOR));
+        repeatingGroup.addView(repeatingGroupLabel);
+        referenceEditText.setTag(R.id.repeating_group_item_count, repeatingGroupItemCount + 1);
 
         JSONArray repeatingGroupJson = new JSONArray(repeatingGroupLayouts.get(((LinearLayout) parent).getId()));
         String uniqueId = UUID.randomUUID().toString();
