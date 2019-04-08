@@ -44,6 +44,7 @@ import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.RELEVANCE;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.TYPE;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUE;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.V_RELATIVE_MAX;
 import static com.vijay.jsonwizard.utils.Utils.hideProgressDialog;
 import static com.vijay.jsonwizard.utils.Utils.showProgressDialog;
 
@@ -234,6 +235,13 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
             String newRelevanceKey = currRelevanceKey + "_" + uniqueId;
             relevance.remove(currRelevanceKey);
             relevance.put(newRelevanceKey, relevanceObj);
+        }
+        // modify relative max validator to reflect changes in unique key name
+        JSONObject relativeMaxValidator = element.optJSONObject(V_RELATIVE_MAX);
+        if (relativeMaxValidator != null) {
+            String currRelativeMaxValidatorValue = relativeMaxValidator.getString(VALUE);
+            String newRelativeMaxValidatorValue = currRelativeMaxValidatorValue + "_" + uniqueId;
+            relativeMaxValidator.put(VALUE, newRelativeMaxValidatorValue);
         }
     }
 
