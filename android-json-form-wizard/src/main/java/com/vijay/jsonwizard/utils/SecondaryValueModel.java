@@ -9,14 +9,14 @@ public class SecondaryValueModel {
     private String type;
     private JSONArray values;
     private JSONArray valuesOpenMRSAttributes;
-    private JSONObject openmrsAttributes;
+    private JSONObject openMRSAttributes;
 
-    public SecondaryValueModel(String key, String type, JSONArray values, JSONObject openmrsAttributes,
+    public SecondaryValueModel(String key, String type, JSONArray values, JSONObject openMRSAttributes,
                                JSONArray valuesOpenMRSAttributes) {
         this.key = key;
         this.type = type;
         this.values = values;
-        this.openmrsAttributes = openmrsAttributes;
+        this.openMRSAttributes = openMRSAttributes;
         this.valuesOpenMRSAttributes = valuesOpenMRSAttributes;
     }
 
@@ -44,12 +44,12 @@ public class SecondaryValueModel {
         this.values = values;
     }
 
-    public JSONObject getOpenmrsAttributes() {
-        return openmrsAttributes;
+    public JSONObject getOpenMRSAttributes() {
+        return openMRSAttributes;
     }
 
-    public void setOpenmrsAttributes(JSONObject openmrsAttributes) {
-        this.openmrsAttributes = openmrsAttributes;
+    public void setOpenMRSAttributes(JSONObject openMRSAttributes) {
+        this.openMRSAttributes = openMRSAttributes;
     }
 
     public JSONArray getValuesOpenMRSAttributes() {
