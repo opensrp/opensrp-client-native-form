@@ -12,6 +12,7 @@
     <item name="editable_view" type="id" />
     <item name="repeating_group_item_count" type="id" />
     <item name="repeating_group_label" type="id" />
+    <item name="repeating_group_key" type="id" />
 
     <item name="v_required" type="id" />
     <item name="error" type="id" />

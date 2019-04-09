@@ -39,8 +39,10 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import static com.vijay.jsonwizard.constants.JsonFormConstants.FIELDS;
@@ -187,26 +189,40 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                             Log.e(TAG, e.getStackTrace().toString());
                         }
                     }
-                } else {
-                    for (int i = 0; i <= numRepeatingGroups; i++) {
-                        repeatingGroups.add(rootLayout.getChildAt(i));
-                    }
                 }
-
                 return repeatingGroups;
             }
 
             @Override
             protected void onPostExecute(List<View> result) {
                 if (diff < 0) {
-                    rootLayout.removeAllViews();
+                    try {
+                        JSONObject step = ((JsonApi) widgetArgs.getContext()).getmJSONObject().getJSONObject(widgetArgs.getStepName());
+                        JSONArray fields = step.getJSONArray(FIELDS);
+                        int currNumRepeatingGroups = rootLayout.getChildCount() - 1;
+                        Set<String> keysToRemove = new HashSet<>();
+                        for (int i = currNumRepeatingGroups; i > numRepeatingGroups; i--) {
+                            String repeatingGroupKey = (String) rootLayout.getChildAt(i).getTag(R.id.repeating_group_key);
+                            keysToRemove.add(repeatingGroupKey);
+                            rootLayout.removeViewAt(i);
+                        }
+                        // remove deleted fields from form json
+                        for (int i = 0; i < fields.length(); i++) {
+                            String[] key = ((String) fields.getJSONObject(i).get(KEY)).split("_");
+                            if (keysToRemove.contains(key[key.length - 1])) {
+                                fields.remove(i);
+                            }
+                        }
+                        rootLayout.getChildAt(0).setTag(R.id.repeating_group_item_count, rootLayout.getChildCount());
+                    } catch (JSONException e) {
+                        Log.e(TAG, e.getStackTrace().toString());
+                    }
+                } else {
+                    for (View repeatingGroup : repeatingGroups) {
+                        rootLayout.addView(repeatingGroup);
+                    }
                 }
-                for (View repeatingGroup : repeatingGroups) {
-                    rootLayout.addView(repeatingGroup);
-                }
-                if (diff < 0) {
-                    rootLayout.getChildAt(0).setTag(R.id.repeating_group_item_count, repeatingGroups.size());
-                }
+
                 ((JsonApi) widgetArgs.getContext()).invokeRefreshLogic(null, false, null, null);
                 hideProgressDialog();
             }
@@ -245,6 +261,8 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                 step.getJSONArray(FIELDS).put(element);
             }
         }
+        repeatingGroup.setTag(R.id.repeating_group_key, uniqueId);
+
         return repeatingGroup;
     }
 
