@@ -152,6 +152,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         try {
             InputMethodManager inputMethodManager = (InputMethodManager) widgetArgs.getFormFragment().getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0);
+            textView.clearFocus();
             attachRepeatingGroup(textView.getParent(), Integer.parseInt(textView.getText().toString()), widgetArgs);
         } catch (Exception e) {
             Log.e(TAG, e.getStackTrace().toString());
