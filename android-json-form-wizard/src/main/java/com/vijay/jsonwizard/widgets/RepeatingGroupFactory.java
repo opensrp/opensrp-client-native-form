@@ -181,13 +181,11 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
             protected List<View> doInBackground(Void... objects) {
                 int currNumRepeatingGroups = ((ViewGroup) parent).getChildCount() - 1;
                 diff = numRepeatingGroups - currNumRepeatingGroups;
-                if (diff >= 0) {
-                    for (int i = currNumRepeatingGroups; i < numRepeatingGroups; i++) {
-                        try {
-                            repeatingGroups.add(buildRepeatingGroupLayout(parent, widgetArgs));
-                        } catch (Exception e) {
-                            Log.e(TAG, e.getStackTrace().toString());
-                        }
+                for (int i = 0; i < diff; i++) {
+                    try {
+                        repeatingGroups.add(buildRepeatingGroupLayout(parent, widgetArgs));
+                    } catch (Exception e) {
+                        Log.e(TAG, e.getStackTrace().toString());
                     }
                 }
                 return repeatingGroups;
