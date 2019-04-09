@@ -1,10 +1,13 @@
 package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.text.Editable;
 import android.text.InputType;
+import android.text.SpannableString;
 import android.text.TextWatcher;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -218,18 +221,10 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         repeatingGroup.setLayoutParams(WIDTH_MATCH_PARENT_HEIGHT_WRAP_CONTENT);
         repeatingGroup.setOrientation(LinearLayout.VERTICAL);
 
-        TextView repeatingGroupLabel = new TextView(context);
-        repeatingGroup.setLayoutParams(WIDTH_MATCH_PARENT_HEIGHT_WRAP_CONTENT);
-
         EditText referenceEditText = (EditText) ((LinearLayout) parent).getChildAt(0);
-
-        String repeatingGroupLabelTxt = (String) referenceEditText.getTag(R.id.repeating_group_label);
-        int repeatingGroupItemCount = (Integer) referenceEditText.getTag(R.id.repeating_group_item_count);
-        repeatingGroupLabel.setText(repeatingGroupLabelTxt + " " + repeatingGroupItemCount);
-        repeatingGroupLabel.setTextSize(REPEATING_GROUP_LABEL_TEXT_SIZE);
-        repeatingGroupLabel.setTextColor(context.getColor(REPEATING_GROUP_LABEL_TEXT_COLOR));
+        TextView repeatingGroupLabel = new TextView(context);
+        formatRepeatingGroupLabelText(referenceEditText, repeatingGroupLabel, context);
         repeatingGroup.addView(repeatingGroupLabel);
-        referenceEditText.setTag(R.id.repeating_group_item_count, repeatingGroupItemCount + 1);
 
         JSONArray repeatingGroupJson = new JSONArray(repeatingGroupLayouts.get(((LinearLayout) parent).getId()));
         String uniqueId = UUID.randomUUID().toString();
@@ -250,6 +245,18 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
             }
         }
         return repeatingGroup;
+    }
+
+    private void formatRepeatingGroupLabelText(EditText referenceEditText, TextView repeatingGroupLabel, Context context) {
+        int repeatingGroupItemCount = (Integer) referenceEditText.getTag(R.id.repeating_group_item_count);
+        String repeatingGroupLabelTxt = (String) referenceEditText.getTag(R.id.repeating_group_label);
+        SpannableString formattedLabel = new SpannableString(repeatingGroupLabelTxt + " " + repeatingGroupItemCount);
+        formattedLabel.setSpan(new StyleSpan(Typeface.BOLD), 0, formattedLabel.length(), 0);
+        formattedLabel.setSpan(new StyleSpan(Typeface.ITALIC), 0, formattedLabel.length(), 0);
+        repeatingGroupLabel.setText(formattedLabel);
+        repeatingGroupLabel.setTextSize(REPEATING_GROUP_LABEL_TEXT_SIZE);
+        repeatingGroupLabel.setTextColor(context.getColor(REPEATING_GROUP_LABEL_TEXT_COLOR));
+        referenceEditText.setTag(R.id.repeating_group_item_count, repeatingGroupItemCount + 1);
     }
 
     private void addUniqueIdentifiers(JSONObject element, String uniqueId) throws JSONException {
