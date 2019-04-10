@@ -192,7 +192,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     if (item.has(JsonFormConstants.TEXT)) {
                         item.put(JsonFormConstants.TEXT, value);
                     } else {
-                        performPopupOperations(value, popup, item, keyAtIndex, itemType);
                         widgetWriteItemValue(value, item, itemType);
                     }
                     addOpenMrsAttributes(openMrsEntityParent, openMrsEntity, openMrsEntityId, item);
@@ -215,97 +214,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         item.put(JsonFormConstants.VALUE, itemType.equals(JsonFormConstants.HIDDEN) && TextUtils.isEmpty(value) ?
                 item.has(JsonFormConstants.VALUE) && !TextUtils.isEmpty(item.getString(JsonFormConstants.VALUE)) ?
                         item.getString(JsonFormConstants.VALUE) : value : value);
-    }
-
-    private void performPopupOperations(String value, boolean popup, JSONObject item, String keyAtIndex, String itemType)
-            throws JSONException {
-        if (popup) {
-            String itemText = "";
-            if (itemType.equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
-                itemText = formUtils.getRadioButtonText(item, value);
-            }
-
-            JSONArray valueOpenMRSAttributes = new JSONArray();
-            if (itemType.equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
-                getOptionsOpenMRSAttributes(value, item, valueOpenMRSAttributes);
-            }
-
-            if (itemType.equals(JsonFormConstants.SPINNER) && item.has(JsonFormConstants.OPENMRS_CHOICE_IDS)) {
-                JSONObject openmrsChoiceIds = item.getJSONObject(JsonFormConstants.OPENMRS_CHOICE_IDS);
-                Iterator<String> keys = openmrsChoiceIds.keys();
-                while (keys.hasNext()) {
-                    String key = keys.next();
-                    if (value.equals(key)) {
-                        JSONObject jsonObject = new JSONObject();
-                        String optionOpenMRSConceptId = openmrsChoiceIds.get(key).toString();
-                        jsonObject.put(JsonFormConstants.KEY, item.getString(JsonFormConstants.KEY));
-                        jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_PARENT,
-                                item.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT));
-                        jsonObject.put(JsonFormConstants.OPENMRS_ENTITY, item.getString(JsonFormConstants.OPENMRS_ENTITY));
-                        jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_ID, optionOpenMRSConceptId);
-
-                        valueOpenMRSAttributes.put(jsonObject);
-                    }
-
-                }
-            }
-
-            JSONObject openmrsAttributes = formUtils.getOpenMRSAttributes(item);
-
-            genericDialogInterface
-                    .addSelectedValues(openmrsAttributes, valueOpenMRSAttributes,
-                            formUtils.addAssignedValue(keyAtIndex, "", value, itemType,
-                                    itemText));
-            //extraFieldsWithValues = fields;
-        }
-    }
-
-    protected void getOptionsOpenMRSAttributes(String value, JSONObject item, JSONArray valueOpenMRSAttributes)
-            throws JSONException {
-        JSONArray options = item.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
-        if (options.length() > 0) {
-            for (int i = 0; i < options.length(); i++) {
-                JSONObject itemOption = options.getJSONObject(i);
-                if ((JsonFormConstants.NATIVE_RADIO_BUTTON
-                        .equals(item.getString(JsonFormConstants.TYPE)) || JsonFormConstants.ANC_RADIO_BUTTON
-                        .equals(item.getString(JsonFormConstants.TYPE))) && (itemOption.has(JsonFormConstants.KEY) && value
-                        .equals(itemOption.getString(JsonFormConstants.KEY)))) {
-                    extractOptionOpenMRSAttributes(valueOpenMRSAttributes, itemOption,
-                            item.getString(JsonFormConstants.KEY));
-                } else if (JsonFormConstants.CHECK_BOX.equals(item.getString(JsonFormConstants.TYPE)) && itemOption
-                        .has(JsonFormConstants.VALUE) && JsonFormConstants.TRUE
-                        .equals(itemOption.getString(JsonFormConstants.VALUE))) {
-                    extractOptionOpenMRSAttributes(valueOpenMRSAttributes, itemOption,
-                            item.getString(JsonFormConstants.KEY));
-                }
-            }
-        }
-    }
-
-    /**
-     * Extracts the openmrs attributes of the Radio button & check box components on popups.
-     *
-     * @param valueOpenMRSAttributes {@link JSONArray}
-     * @param itemOption             {@link JSONObject}
-     * @param itemKey                {@link String}
-     * @throws JSONException
-     */
-    protected void extractOptionOpenMRSAttributes(JSONArray valueOpenMRSAttributes, JSONObject itemOption, String itemKey)
-            throws JSONException {
-        if (itemOption.has(JsonFormConstants.OPENMRS_ENTITY_PARENT) && itemOption
-                .has(JsonFormConstants.OPENMRS_ENTITY) && itemOption.has(JsonFormConstants.OPENMRS_ENTITY_ID)) {
-            String openmrsEntityParent = itemOption.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
-            String openmrsEntity = itemOption.getString(JsonFormConstants.OPENMRS_ENTITY);
-            String openmrsEntityId = itemOption.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
-
-            JSONObject valueOpenMRSObject = new JSONObject();
-            valueOpenMRSObject.put(JsonFormConstants.KEY, itemKey);
-            valueOpenMRSObject.put(JsonFormConstants.OPENMRS_ENTITY_PARENT, openmrsEntityParent);
-            valueOpenMRSObject.put(JsonFormConstants.OPENMRS_ENTITY, openmrsEntity);
-            valueOpenMRSObject.put(JsonFormConstants.OPENMRS_ENTITY_ID, openmrsEntityId);
-
-            valueOpenMRSAttributes.put(valueOpenMRSObject);
-        }
     }
 
     private boolean checkPopUpValidity(String[] curKey, boolean popup) throws JSONException {
@@ -369,35 +277,14 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             for (int i = 0; i < fields.length(); i++) {
                 JSONObject item = fields.getJSONObject(i);
                 String keyAtIndex = item.getString(JsonFormConstants.KEY);
-                String itemType = "";
-                if (popup) {
-                    itemType = item.getString(JsonFormConstants.TYPE);
-                }
                 if (parentKey.equals(keyAtIndex)) {
                     JSONArray jsonArray = item.getJSONArray(childObjectKey);
                     for (int j = 0; j < jsonArray.length(); j++) {
                         JSONObject innerItem = jsonArray.getJSONObject(j);
                         String anotherKeyAtIndex = innerItem.getString(JsonFormConstants.KEY);
-                        String itemText = "";
-                        if (itemType.equals(JsonFormConstants.CHECK_BOX)) {
-                            itemText = innerItem.getString(JsonFormConstants.TEXT);
-                        }
                         if (childKey.equals(anotherKeyAtIndex)) {
                             innerItem.put(JsonFormConstants.VALUE, value);
-                            if (popup) {
-                                JSONArray valueOpenMRSAttributes = new JSONArray();
-                                if (innerItem.has(JsonFormConstants.VALUE_OPENMRS_ATTRIBUTES)) {
-                                    valueOpenMRSAttributes =
-                                            innerItem.getJSONArray(JsonFormConstants.VALUE_OPENMRS_ATTRIBUTES);
-                                }
-                                getOptionsOpenMRSAttributes(value, item, valueOpenMRSAttributes);
-                                JSONObject openMRSAttributes = formUtils.getOpenMRSAttributes(item);
-                                genericDialogInterface.addSelectedValues(openMRSAttributes, valueOpenMRSAttributes,
-                                        formUtils.addAssignedValue(keyAtIndex, childKey, value, itemType, itemText));
-                            }
-
                             invokeRefreshLogic(value, popup, parentKey, childKey);
-
                             return;
                         }
                     }
@@ -1027,8 +914,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     private boolean doComparison(String value, JSONObject comparison) throws Exception {
-        String type = comparison.getString("type").toLowerCase();
-        String ex = comparison.getString("ex");
+        String type = comparison.getString(JsonFormConstants.TYPE).toLowerCase();
+        String ex = comparison.getString(JsonFormConstants.EX);
 
         Pattern pattern = Pattern.compile("(" + functionRegex + ")\\((.*)\\)");
         Matcher matcher = pattern.matcher(ex);
@@ -1074,7 +961,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     protected void refreshMediaLogic(String key, String value) {
         try {
-            JSONObject object = getStep("step1");
+            JSONObject object = getStep(JsonFormConstants.STEP1);
             JSONArray fields = object.getJSONArray("fields");
             for (int i = 0; i < fields.length(); i++) {
                 JSONObject questionGroup = fields.getJSONObject(i);
@@ -1137,7 +1024,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private String enforceConstraint(String value, View view, JSONObject constraint) throws Exception {
 
         String type = constraint.getString("type").toLowerCase();
-        String ex = constraint.getString("ex");
+        String ex = constraint.getString(JsonFormConstants.EX);
         String errorMessage = type.equals(JsonFormConstants.NUMBER_SELECTOR) ? constraint.optString(JsonFormConstants.ERR) :
                 constraint.getString(JsonFormConstants.ERR);
         Pattern pattern = Pattern.compile("(" + functionRegex + ")\\((.*)\\)");
