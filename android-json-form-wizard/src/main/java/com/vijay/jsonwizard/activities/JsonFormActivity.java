@@ -282,7 +282,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         if (childKey.equals(anotherKeyAtIndex)) {
                             innerItem.put(JsonFormConstants.VALUE, value);
                             invokeRefreshLogic(value, popup, parentKey, childKey);
-
                             return;
                         }
                     }

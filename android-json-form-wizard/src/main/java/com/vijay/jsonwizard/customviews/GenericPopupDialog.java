@@ -408,7 +408,6 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
      *
      * @param jsonObject
      * @param childKey
-     *
      * @return item {@link JSONObject}
      */
     protected JSONObject getJsonObjectToUpdate(JSONObject jsonObject, String childKey) {
@@ -474,13 +473,14 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
                     field.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
                 values = getOptionsValueCheckBox(field.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME));
                 getOptionsOpenMRSAttributes(field, valueOpenMRSAttributes);
-            } else if (JsonFormConstants.ANC_RADIO_BUTTON.equals(field.getString(JsonFormConstants.TYPE)) ||
-                    JsonFormConstants.NATIVE_RADIO_BUTTON.equals(field.getString(JsonFormConstants.TYPE)) &&
-                            field.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
+            } else if ((JsonFormConstants.ANC_RADIO_BUTTON.equals(field.getString(JsonFormConstants.TYPE)) ||
+                    JsonFormConstants.NATIVE_RADIO_BUTTON.equals(field.getString(JsonFormConstants.TYPE))) &&
+                    field.has(JsonFormConstants.OPTIONS_FIELD_NAME) && field.has(JsonFormConstants.VALUE)) {
                 values.put(getOptionsValueRadioButton(field.optString(JsonFormConstants.VALUE),
                         field.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME)));
                 getOptionsOpenMRSAttributes(field, valueOpenMRSAttributes);
-            } else if (JsonFormConstants.SPINNER.equals(field.getString(JsonFormConstants.TYPE))) {
+            } else if (JsonFormConstants.SPINNER.equals(field.getString(JsonFormConstants.TYPE)) && field
+                    .has(JsonFormConstants.VALUE)) {
                 values.put(field.optString(JsonFormConstants.VALUE));
                 getSpinnerValueOpenMRSAttributes(field, valueOpenMRSAttributes);
             } else {
@@ -524,11 +524,10 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
      * @param valueOpenMRSAttributes {@link JSONArray}
      * @param itemOption             {@link JSONObject}
      * @param itemKey                {@link String}
-     *
      * @throws JSONException
      */
     protected void extractOptionOpenMRSAttributes(JSONArray valueOpenMRSAttributes, JSONObject itemOption, String itemKey)
-    throws JSONException {
+            throws JSONException {
         if (itemOption.has(JsonFormConstants.OPENMRS_ENTITY_PARENT) && itemOption.has(JsonFormConstants.OPENMRS_ENTITY) &&
                 itemOption.has(JsonFormConstants.OPENMRS_ENTITY_ID)) {
             String openmrsEntityParent = itemOption.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
@@ -613,7 +612,6 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
      * @param values
      * @param openMRSAttributes
      * @param valueOpenMRSAttributes
-     *
      * @return
      */
     protected JSONObject createSecondaryValueObject(String key, String type, JSONArray values, JSONObject openMRSAttributes,
