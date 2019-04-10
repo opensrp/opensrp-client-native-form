@@ -137,6 +137,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
 
         referenceEditText.setHint(referenceEditTextHint);
         referenceEditText.setTag(R.id.repeating_group_label, repeatingGroupLabel);
+        referenceEditText.setTag(R.id.extraPopup, false);
         referenceEditText.setTag(R.id.repeating_group_item_count, 1);
 
         referenceEditText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
