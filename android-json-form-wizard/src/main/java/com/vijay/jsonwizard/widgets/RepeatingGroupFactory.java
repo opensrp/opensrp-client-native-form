@@ -205,7 +205,8 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                             rootLayout.removeViewAt(i);
                         }
                         // remove deleted fields from form json
-                        for (int i = 0; i < fields.length(); i++) {
+                        int len = fields.length();
+                        for (int i = len - 1; i >= 0; i--) {
                             String[] key = ((String) fields.getJSONObject(i).get(KEY)).split("_");
                             if (keysToRemove.contains(key[key.length - 1])) {
                                 fields.remove(i);
