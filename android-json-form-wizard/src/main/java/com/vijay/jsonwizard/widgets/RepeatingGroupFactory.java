@@ -139,6 +139,10 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         referenceEditText.setTag(R.id.repeating_group_label, repeatingGroupLabel);
         referenceEditText.setTag(R.id.extraPopup, false);
         referenceEditText.setTag(R.id.repeating_group_item_count, 1);
+        referenceEditText.setTag(R.id.key, "reference_edit_text");
+        referenceEditText.setTag(R.id.openmrs_entity_parent, "");
+        referenceEditText.setTag(R.id.openmrs_entity, "");
+        referenceEditText.setTag(R.id.openmrs_entity_id, "");
 
         referenceEditText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
         referenceEditText.addValidator(new RegexpValidator(context.getString(R.string.repeating_group_number_format_err_msg), "\\d*"));
