@@ -11,6 +11,7 @@ import com.vijay.jsonwizard.exceptions.JsonFormRuntimeException;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.presenters.JsonFormFragmentPresenter;
+import com.vijay.jsonwizard.utils.ValidationStatus;
 
 import org.json.JSONException;
 
@@ -73,20 +74,21 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
         String openMrsEntity = (String) mView.getTag(R.id.openmrs_entity);
         String openMrsEntityId = (String) mView.getTag(R.id.openmrs_entity_id);
         Boolean popup = (Boolean) mView.getTag(R.id.extraPopup);
-        try {
-            api.writeValue(mStepName, key, text, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
-        } catch (JSONException e) {
-            Log.e(TAG, e.getMessage(), e);
+        ValidationStatus validationStatus = JsonFormFragmentPresenter.validate(formFragment, mView,
+                false);
+        if(validationStatus.isValid()) {
+            try {
+                api.writeValue(mStepName, key, text, openMrsEntityParent, openMrsEntity,
+                        openMrsEntityId, popup);
+            } catch (JSONException e) {
+                Log.e(TAG, e.getMessage(), e);
+            }
         }
-
 
     }
 
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
-        if (!hasFocus) {
-            JsonFormFragmentPresenter.validate(formFragment, mView, false);
-        }
         for (View.OnFocusChangeListener curListener : onFocusChangeListeners) {
             curListener.onFocusChange(v, hasFocus);
         }

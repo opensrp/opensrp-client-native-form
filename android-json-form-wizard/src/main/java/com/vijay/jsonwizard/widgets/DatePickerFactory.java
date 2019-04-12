@@ -89,8 +89,8 @@ public class DatePickerFactory implements FormWidgetFactory {
         return attachJson(stepName, context, formFragment, jsonObject, false);
     }
 
-    private List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject,
-                                  boolean popup) {
+    protected List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject,
+                                    boolean popup) {
         List<View> views = new ArrayList<>(1);
         try {
 

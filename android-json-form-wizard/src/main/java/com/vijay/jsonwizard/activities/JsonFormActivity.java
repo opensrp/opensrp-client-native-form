@@ -189,7 +189,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     if (item.has(JsonFormConstants.TEXT)) {
                         item.put(JsonFormConstants.TEXT, value);
                     } else {
-                        performPopupOperations(value, popup, item, keyAtIndex, itemType);
                         widgetWriteItemValue(value, item, itemType);
                     }
                     addOpenMrsAttributes(openMrsEntityParent, openMrsEntity, openMrsEntityId, item);
@@ -212,97 +211,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         item.put(JsonFormConstants.VALUE, itemType.equals(JsonFormConstants.HIDDEN) && TextUtils.isEmpty(value) ?
                 item.has(JsonFormConstants.VALUE) && !TextUtils.isEmpty(item.getString(JsonFormConstants.VALUE)) ?
                         item.getString(JsonFormConstants.VALUE) : value : value);
-    }
-
-    private void performPopupOperations(String value, boolean popup, JSONObject item, String keyAtIndex, String itemType)
-            throws JSONException {
-        if (popup) {
-            String itemText = "";
-            if (itemType.equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
-                itemText = formUtils.getRadioButtonText(item, value);
-            }
-
-            JSONArray valueOpenMRSAttributes = new JSONArray();
-            if (itemType.equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
-                getOptionsOpenMRSAttributes(value, item, valueOpenMRSAttributes);
-            }
-
-            if (itemType.equals(JsonFormConstants.SPINNER) && item.has(JsonFormConstants.OPENMRS_CHOICE_IDS)) {
-                JSONObject openmrsChoiceIds = item.getJSONObject(JsonFormConstants.OPENMRS_CHOICE_IDS);
-                Iterator<String> keys = openmrsChoiceIds.keys();
-                while (keys.hasNext()) {
-                    String key = keys.next();
-                    if (value.equals(key)) {
-                        JSONObject jsonObject = new JSONObject();
-                        String optionOpenMRSConceptId = openmrsChoiceIds.get(key).toString();
-                        jsonObject.put(JsonFormConstants.KEY, item.getString(JsonFormConstants.KEY));
-                        jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_PARENT,
-                                item.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT));
-                        jsonObject.put(JsonFormConstants.OPENMRS_ENTITY, item.getString(JsonFormConstants.OPENMRS_ENTITY));
-                        jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_ID, optionOpenMRSConceptId);
-
-                        valueOpenMRSAttributes.put(jsonObject);
-                    }
-
-                }
-            }
-
-            JSONObject openmrsAttributes = formUtils.getOpenMRSAttributes(item);
-
-            genericDialogInterface
-                    .addSelectedValues(openmrsAttributes, valueOpenMRSAttributes,
-                            formUtils.addAssignedValue(keyAtIndex, "", value, itemType,
-                                    itemText));
-            //extraFieldsWithValues = fields;
-        }
-    }
-
-    protected void getOptionsOpenMRSAttributes(String value, JSONObject item, JSONArray valueOpenMRSAttributes)
-            throws JSONException {
-        JSONArray options = item.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
-        if (options.length() > 0) {
-            for (int i = 0; i < options.length(); i++) {
-                JSONObject itemOption = options.getJSONObject(i);
-                if ((JsonFormConstants.NATIVE_RADIO_BUTTON
-                        .equals(item.getString(JsonFormConstants.TYPE)) || JsonFormConstants.ANC_RADIO_BUTTON
-                        .equals(item.getString(JsonFormConstants.TYPE))) && (itemOption.has(JsonFormConstants.KEY) && value
-                        .equals(itemOption.getString(JsonFormConstants.KEY)))) {
-                    extractOptionOpenMRSAttributes(valueOpenMRSAttributes, itemOption,
-                            item.getString(JsonFormConstants.KEY));
-                } else if (JsonFormConstants.CHECK_BOX.equals(item.getString(JsonFormConstants.TYPE)) && itemOption
-                        .has(JsonFormConstants.VALUE) && JsonFormConstants.TRUE
-                        .equals(itemOption.getString(JsonFormConstants.VALUE))) {
-                    extractOptionOpenMRSAttributes(valueOpenMRSAttributes, itemOption,
-                            item.getString(JsonFormConstants.KEY));
-                }
-            }
-        }
-    }
-
-    /**
-     * Extracts the openmrs attributes of the Radio button & check box components on popups.
-     *
-     * @param valueOpenMRSAttributes {@link JSONArray}
-     * @param itemOption             {@link JSONObject}
-     * @param itemKey                {@link String}
-     * @throws JSONException
-     */
-    protected void extractOptionOpenMRSAttributes(JSONArray valueOpenMRSAttributes, JSONObject itemOption, String itemKey)
-            throws JSONException {
-        if (itemOption.has(JsonFormConstants.OPENMRS_ENTITY_PARENT) && itemOption
-                .has(JsonFormConstants.OPENMRS_ENTITY) && itemOption.has(JsonFormConstants.OPENMRS_ENTITY_ID)) {
-            String openmrsEntityParent = itemOption.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
-            String openmrsEntity = itemOption.getString(JsonFormConstants.OPENMRS_ENTITY);
-            String openmrsEntityId = itemOption.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
-
-            JSONObject valueOpenMRSObject = new JSONObject();
-            valueOpenMRSObject.put(JsonFormConstants.KEY, itemKey);
-            valueOpenMRSObject.put(JsonFormConstants.OPENMRS_ENTITY_PARENT, openmrsEntityParent);
-            valueOpenMRSObject.put(JsonFormConstants.OPENMRS_ENTITY, openmrsEntity);
-            valueOpenMRSObject.put(JsonFormConstants.OPENMRS_ENTITY_ID, openmrsEntityId);
-
-            valueOpenMRSAttributes.put(valueOpenMRSObject);
-        }
     }
 
     private boolean checkPopUpValidity(String[] curKey, boolean popup) throws JSONException {
@@ -366,35 +274,14 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             for (int i = 0; i < fields.length(); i++) {
                 JSONObject item = fields.getJSONObject(i);
                 String keyAtIndex = item.getString(JsonFormConstants.KEY);
-                String itemType = "";
-                if (popup) {
-                    itemType = item.getString(JsonFormConstants.TYPE);
-                }
                 if (parentKey.equals(keyAtIndex)) {
                     JSONArray jsonArray = item.getJSONArray(childObjectKey);
                     for (int j = 0; j < jsonArray.length(); j++) {
                         JSONObject innerItem = jsonArray.getJSONObject(j);
                         String anotherKeyAtIndex = innerItem.getString(JsonFormConstants.KEY);
-                        String itemText = "";
-                        if (itemType.equals(JsonFormConstants.CHECK_BOX)) {
-                            itemText = innerItem.getString(JsonFormConstants.TEXT);
-                        }
                         if (childKey.equals(anotherKeyAtIndex)) {
                             innerItem.put(JsonFormConstants.VALUE, value);
-                            if (popup) {
-                                JSONArray valueOpenMRSAttributes = new JSONArray();
-                                if (innerItem.has(JsonFormConstants.VALUE_OPENMRS_ATTRIBUTES)) {
-                                    valueOpenMRSAttributes =
-                                            innerItem.getJSONArray(JsonFormConstants.VALUE_OPENMRS_ATTRIBUTES);
-                                }
-                                getOptionsOpenMRSAttributes(value, item, valueOpenMRSAttributes);
-                                JSONObject openMRSAttributes = formUtils.getOpenMRSAttributes(item);
-                                genericDialogInterface.addSelectedValues(openMRSAttributes, valueOpenMRSAttributes,
-                                        formUtils.addAssignedValue(keyAtIndex, childKey, value, itemType, itemText));
-                            }
-
                             invokeRefreshLogic(value, popup, parentKey, childKey);
-
                             return;
                         }
                     }
@@ -1024,8 +911,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     private boolean doComparison(String value, JSONObject comparison) throws Exception {
-        String type = comparison.getString("type").toLowerCase();
-        String ex = comparison.getString("ex");
+        String type = comparison.getString(JsonFormConstants.TYPE).toLowerCase();
+        String ex = comparison.getString(JsonFormConstants.EX);
 
         Pattern pattern = Pattern.compile("(" + functionRegex + ")\\((.*)\\)");
         Matcher matcher = pattern.matcher(ex);
@@ -1071,7 +958,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     protected void refreshMediaLogic(String key, String value) {
         try {
-            JSONObject object = getStep("step1");
+            JSONObject object = getStep(JsonFormConstants.STEP1);
             JSONArray fields = object.getJSONArray("fields");
             for (int i = 0; i < fields.length(); i++) {
                 JSONObject questionGroup = fields.getJSONObject(i);
@@ -1134,7 +1021,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private String enforceConstraint(String value, View view, JSONObject constraint) throws Exception {
 
         String type = constraint.getString("type").toLowerCase();
-        String ex = constraint.getString("ex");
+        String ex = constraint.getString(JsonFormConstants.EX);
         String errorMessage = type.equals(JsonFormConstants.NUMBER_SELECTOR) ? constraint.optString(JsonFormConstants.ERR) :
                 constraint.getString(JsonFormConstants.ERR);
         Pattern pattern = Pattern.compile("(" + functionRegex + ")\\((.*)\\)");
@@ -1166,7 +1053,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     private String enforceConstraint(Facts curValueMap, JSONObject constraint) throws Exception {
-        return curValueMap.asMap().size() == 0 ? "0" : rulesEngineFactory.getConstraint(curValueMap,
+        return curValueMap.asMap().size() == 0 ? "0" : getRulesEngineFactory().getConstraint(curValueMap,
                 constraint.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getString(RuleConstant.RULES_FILE));
     }
 
@@ -1317,18 +1204,22 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         return fieldArray;
     }
 
+    @Override
     public String getConfirmCloseTitle() {
         return confirmCloseTitle;
     }
 
+    @Override
     public void setConfirmCloseTitle(String confirmCloseTitle) {
         this.confirmCloseTitle = confirmCloseTitle;
     }
 
+    @Override
     public String getConfirmCloseMessage() {
         return confirmCloseMessage;
     }
 
+    @Override
     public void setConfirmCloseMessage(String confirmCloseMessage) {
         this.confirmCloseMessage = confirmCloseMessage;
     }
@@ -1340,7 +1231,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private boolean isRelevant(Facts curValueMap, JSONObject curRelevance) throws Exception {
         if (curRelevance != null) {
             if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_RULES)) {
-                return curValueMap.asMap().size() != 0 && rulesEngineFactory.getRelevance(curValueMap,
+                return curValueMap.asMap().size() != 0 && getRulesEngineFactory().getRelevance(curValueMap,
                         curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES)
                                 .getString(RuleConstant.RULES_FILE));
             } else if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_CHECKBOX)) {
@@ -1419,7 +1310,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
                 Yaml yaml = new Yaml();
                 InputStreamReader inputStreamReader =
-                        new InputStreamReader(this.getAssets().open((rulesEngineFactory.getRulesFolderPath() + filename)));
+                        new InputStreamReader(
+                                this.getAssets().open((getRulesEngineFactory().getRulesFolderPath() + filename)));
                 Iterable<Object> ruleObjects = yaml.loadAll(inputStreamReader);
 
                 for (Object object : ruleObjects) {
@@ -1526,7 +1418,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
         try {
 
-            String calculation = rulesEngineFactory.getCalculation(valueMap, rulesFile);
+            String calculation = getRulesEngineFactory().getCalculation(valueMap, rulesFile);
 
             if (calculation != null) {
                 if (view instanceof CheckBox) {
@@ -1534,14 +1426,15 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     TextView checkboxLabel = ((View) view.getParent().getParent()).findViewById(R.id.label_text);
                     if (checkboxLabel != null) {
                         checkboxLabel
-                                .setText(getRenderText(calculation, checkboxLabel.getTag(R.id.original_text).toString(),false));
+                                .setText(getRenderText(calculation, checkboxLabel.getTag(R.id.original_text).toString(),
+                                        false));
                     }
 
                 } else if (view instanceof TextableView) {
                     TextableView textView = ((TextableView) view);
                     if (!TextUtils.isEmpty(calculation)) {
                         CharSequence spanned = calculation.charAt(0) == '{' ?
-                                getRenderText(calculation, textView.getTag(R.id.original_text).toString(),true) :
+                                getRenderText(calculation, textView.getTag(R.id.original_text).toString(), true) :
                                 (textView.getTag(R.id.original_text) != null && "0".equals(calculation)) ?
                                         textView.getTag(R.id.original_text).toString() : calculation;
                         textView.setText(spanned);
@@ -1570,7 +1463,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                             renderView.setTag(R.id.original_text, renderView.getText());
                         }
                         renderView.setText(calculation.charAt(0) == '{' ?
-                                getRenderText(calculation, renderView.getTag(R.id.original_text).toString(),false) : calculation);
+                                getRenderText(calculation, renderView.getTag(R.id.original_text).toString(),
+                                        false) : calculation);
 
                         renderView.setVisibility(renderView.getText().toString().contains("{") ||
                                 renderView.getText().toString().equals("0") ? View.GONE : View.VISIBLE);
@@ -1593,18 +1487,18 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     }
 
-    private CharSequence getRenderText(String calculation, String textTemplate,boolean makeBold) {
+    private CharSequence getRenderText(String calculation, String textTemplate, boolean makeBold) {
         Map<String, Object> valueMap = new Gson().fromJson(calculation, new TypeToken<HashMap<String, Object>>() {
         }.getType());
 
-        return stringFormat(textTemplate, valueMap,makeBold);
+        return stringFormat(textTemplate, valueMap, makeBold);
     }
 
     public Spanned stringFormat(String string, Map<String, Object> valueMap, boolean makeBold) {
         String resString = string;
         for (Map.Entry<String, Object> entry : valueMap.entrySet()) {
-            String templateValue =  getTemplateValue(entry.getValue());
-            if (makeBold){
+            String templateValue = getTemplateValue(entry.getValue());
+            if (makeBold) {
                 templateValue = "<b>" + getTemplateValue(entry.getValue()) + "</b>";
             }
             resString = resString.replace("{" + entry.getKey() + "}", templateValue);

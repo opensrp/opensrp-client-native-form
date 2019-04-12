@@ -19,5 +19,4 @@ public class RulesEngineHelperTest extends BaseTest {
         assertEquals("1", helper.ifNull("", "1"));
         assertEquals("123", helper.ifNull("123", ""));
     }
-
 }
