@@ -1,38 +1,38 @@
 <resources>
     <string name="app_name">jsonwizard</string>
 
-    <string name="hello_world">Salut le monde!</string>
-    <string name="action_settings">Paramètres</string>
-    <string name="badly_formed_date">Date mal conçu</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="badly_formed_date">Badly formed date</string>
     <string name="ic_check_circle_blank">&#xe03e;</string>
     <string name="ic_keyboard_arrow_down">&#xe0c5;</string>
     <string name="ic_keyboard_arrow_left">&#xe0c6;</string>
     <string name="ic_keyboard_arrow_right">&#xe0c7;</string>
     <string name="ic_keyboard_arrow_up">&#xe0c8;</string>
-    <string name="confirm_form_close">Confirmer la clôture du formulaire</string>
-    <string name="confirm_form_close_explanation">Êtes-vous certain que vous voulez retourner? Tous les données que vous avez entré à date seront éffacés.</string>
-    <string name="yes">Oui</string>
-    <string name="no">Non</string>
-    <string name="cancel">Annuler</string>
+    <string name="confirm_form_close">Confirm form close</string>
+    <string name="confirm_form_close_explanation">Are you sure you want to go back? All data you have entered in this form will be cleared.</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
-    <string name="record_location">Enregistrer lieu</string>
+    <string name="record_location">Record location</string>
     <string name="latitude">Latitude: %s</string>
     <string name="longitude">Longitude: %s</string>
     <string name="altitude">Altitude: %s</string>
-    <string name="accuracy">Précision: %s</string>
-    <string name="loading_location">Chargement de coordonnées</string>
-    <string name="could_not_get_your_location">Coordonnées GPS échoués</string>
-    <string name="using_provider">Utilisant prestataire %s </string>
-    <string name="unknown_gps_accuracy">Niveau de précision inconnu</string>
+    <string name="accuracy">Accuracy: %s</string>
+    <string name="loading_location">Loading Location</string>
+    <string name="could_not_get_your_location">Could not get your GPS location</string>
+    <string name="using_provider">Using %s provider</string>
+    <string name="unknown_gps_accuracy">Accuracy is unknown</string>
     <string name="required">*</string>
-    <string name="info_label">Étiquette d\'info</string>
+    <string name="info_label">Info Label</string>
     <string name="label_text_string">%1$s %2$s</string>
-    <string name="the_toaster_icon">L\'icône grille-pain</string>
+    <string name="the_toaster_icon">The toaster icon</string>
     <string name="asterisks">*</string>
-    <string name="save">Sauvegarder</string>
-    <string name="radio_button_tap_to_change">Touchez pour modifier</string>
-    <string name="select_one">Choisir un numéro</string>
-    <string name="done">Fait</string>
+    <string name="save">Save</string>
+    <string name="radio_button_tap_to_change">tap to change</string>
+    <string name="select_one">Select a number</string>
+    <string name="done">Done</string>
 
     <string-array name="spinnerItems">
         <item>item1</item>
@@ -41,30 +41,30 @@
         <item>item4</item>
     </string-array>
 
-    <string name="scan_qr_code_title">Scanner le QR code</string>
+    <string name="scan_qr_code_title">Scan QR Code</string>
 
     <!--The barcode strings-->
-    <string name="permission_camera_rationale">Accès au caméra requise pour la détection</string>
-    <string name="no_camera_permission">L\'application ne peut pas fonctionner sans permission d\'utiliser le caméra. l\'application va quitter.</string>
-    <string name="low_storage_error">Impossible de télécharger les dépendences pour le détecteur de visages à cause d\'une manque d\'éspace dans l\'appareil.</string>
-    <string name="title_activity_main">Échantillon lecteur code de barre</string>
-    <string name="barcode_header">Cliquez &quot;Lire code de barre&quot; pour lire code de barre</string>
-    <string name="read_barcode">Lire code de barre</string>
-    <string name="auto_focus">Auto focus</string>
-    <string name="use_flash">Employer flash</string>
-    <string name="barcode_success">Code de barre réussi</string>
-    <string name="barcode_failure">Aucun code de barre capturé</string>
-    <string name="barcode_error">Erreure dans la lecture du code de barre: %1$s</string>
-    <string name="allow_camera_management">Vous avez besoin de permettre à l\'application d\'utliser le caméra pour scanner les codes barres&#8230;</string>
-    <string name="please_specify_content">Veuillez spécifier les informations que vous voulez afficher dans la fenêtre&#8230;</string>
-    <string name="previous">Dernier</string>
-    <string name="next">Prochain</string>
-    <string name="submit">Envoyer</string>
-    <string name="the_extra_info_icon">l\'icône d\'info supplémentaire</string>
-    <string name="edit_button_label">bouton éditer</string>
-    <string name="info_icon">l\'icône d\'info</string>
+    <string name="permission_camera_rationale">Access to the camera is needed for detection</string>
+    <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
+    <string name="low_storage_error">Face detector dependencies cannot be downloaded due to low device storage</string>
+    <string name="title_activity_main">Barcode Reader Sample</string>
+    <string name="barcode_header">Click &quot;Read Barcode&quot; to read a barcode</string>
+    <string name="read_barcode">Read Barcode</string>
+    <string name="auto_focus">Auto Focus</string>
+    <string name="use_flash">Use Flash</string>
+    <string name="barcode_success">Barcode read successfully</string>
+    <string name="barcode_failure">No barcode captured</string>
+    <string name="barcode_error">"Error reading barcode: %1$s"</string>
+    <string name="allow_camera_management">You need to allow the app to use the camera to scan QR codes&#8230;</string>
+    <string name="please_specify_content">Please specify content to be displayed by the pop up&#8230;</string>
+    <string name="previous">Previous</string>
+    <string name="next">Next</string>
+    <string name="submit">Submit</string>
+    <string name="the_extra_info_icon">The extra info Icon</string>
+    <string name="edit_button_label">edit button</string>
+    <string name="info_icon">Info Icon</string>
     <string name="attention">Attention</string>
-    <string name="json_form_error_msg" >%d Erreur(s) ont été retrouvés dans le formulaire. Veuillez les corriger avant de pouvoir le soumettre.</string>
-    <string name="json_form_on_next_error_msg" >Veuillez corriger le(s) erreur(s) dans le formulaire avant de procéder</string>
-    <string name="go_to_step">Aller à l\'étape</string>
+    <string name="json_form_error_msg" >Found %d error(s) in the form. Please correct them to submit</string>
+    <string name="json_form_on_next_error_msg" >Please correct the error(s) in the form to proceed</string>
+    <string name="go_to_step">Go to step</string>
 </resources>
