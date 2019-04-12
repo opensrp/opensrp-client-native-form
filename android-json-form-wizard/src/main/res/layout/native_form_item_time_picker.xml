@@ -21,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="@dimen/date_duration_left_margin"
+        android:layout_marginStart="@dimen/date_duration_left_margin"
         android:paddingBottom="15dp"
         android:textSize="@dimen/default_text_size" />
 </RelativeLayout>
