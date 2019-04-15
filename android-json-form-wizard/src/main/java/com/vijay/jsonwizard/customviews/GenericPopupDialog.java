@@ -464,32 +464,39 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         JSONArray formFields = getSubFormsFields();
         for (int i = 0; i < formFields.length(); i++) {
             JSONObject field = formFields.getJSONObject(i);
-            JSONArray valueOpenMRSAttributes = new JSONArray();
-            JSONObject openMRSAttributes = getFieldOpenMRSAttributes(field);
-            String key = field.getString(JsonFormConstants.KEY);
-            String type = field.getString(JsonFormConstants.TYPE);
-            JSONArray values = new JSONArray();
-            if (JsonFormConstants.CHECK_BOX.equals(field.getString(JsonFormConstants.TYPE)) &&
-                    field.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
-                values = getOptionsValueCheckBox(field.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME));
-                getOptionsOpenMRSAttributes(field, valueOpenMRSAttributes);
-            } else if ((JsonFormConstants.ANC_RADIO_BUTTON.equals(field.getString(JsonFormConstants.TYPE)) ||
-                    JsonFormConstants.NATIVE_RADIO_BUTTON.equals(field.getString(JsonFormConstants.TYPE))) &&
-                    field.has(JsonFormConstants.OPTIONS_FIELD_NAME) && field.has(JsonFormConstants.VALUE)) {
-                values.put(getOptionsValueRadioButton(field.optString(JsonFormConstants.VALUE),
-                        field.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME)));
-                getOptionsOpenMRSAttributes(field, valueOpenMRSAttributes);
-            } else if (JsonFormConstants.SPINNER.equals(field.getString(JsonFormConstants.TYPE)) && field
-                    .has(JsonFormConstants.VALUE)) {
-                values.put(field.optString(JsonFormConstants.VALUE));
-                getSpinnerValueOpenMRSAttributes(field, valueOpenMRSAttributes);
-            } else {
-                if (field.has(JsonFormConstants.VALUE)) {
+            if (field != null && field.has(JsonFormConstants.TYPE) && !JsonFormConstants.LABEL
+                    .equals(field.getString(JsonFormConstants.TYPE)) && !JsonFormConstants.SECTIONS
+                    .equals(field.getString(JsonFormConstants.TYPE))) {
+                JSONArray valueOpenMRSAttributes = new JSONArray();
+                JSONObject openMRSAttributes = getFieldOpenMRSAttributes(field);
+                String key = field.getString(JsonFormConstants.KEY);
+                String type = field.getString(JsonFormConstants.TYPE);
+                JSONArray values = new JSONArray();
+                if (JsonFormConstants.CHECK_BOX.equals(field.getString(JsonFormConstants.TYPE)) &&
+                        field.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
+                    values = getOptionsValueCheckBox(field.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME));
+                    getOptionsOpenMRSAttributes(field, valueOpenMRSAttributes);
+                } else if ((JsonFormConstants.ANC_RADIO_BUTTON.equals(field.getString(JsonFormConstants.TYPE)) ||
+                        JsonFormConstants.NATIVE_RADIO_BUTTON.equals(field.getString(JsonFormConstants.TYPE))) &&
+                        field.has(JsonFormConstants.OPTIONS_FIELD_NAME) && field.has(JsonFormConstants.VALUE)) {
+                    values.put(getOptionsValueRadioButton(field.optString(JsonFormConstants.VALUE),
+                            field.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME)));
+                    getOptionsOpenMRSAttributes(field, valueOpenMRSAttributes);
+                } else if (JsonFormConstants.SPINNER.equals(field.getString(JsonFormConstants.TYPE)) && field
+                        .has(JsonFormConstants.VALUE)) {
                     values.put(field.optString(JsonFormConstants.VALUE));
+                    getSpinnerValueOpenMRSAttributes(field, valueOpenMRSAttributes);
+                } else {
+                    if (field.has(JsonFormConstants.VALUE)) {
+                        values.put(field.optString(JsonFormConstants.VALUE));
+                    }
+                }
+
+                if (values.length() > 0) {
+                    selectedValues
+                            .put(createSecondaryValueObject(key, type, values, openMRSAttributes, valueOpenMRSAttributes));
                 }
             }
-
-            selectedValues.put(createSecondaryValueObject(key, type, values, openMRSAttributes, valueOpenMRSAttributes));
         }
 
         return selectedValues;

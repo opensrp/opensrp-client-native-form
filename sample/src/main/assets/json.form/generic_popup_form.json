@@ -247,6 +247,39 @@
             "ex": "equalTo(., \"resThree3\")"
           }
         }
+      },
+      {
+        "key": "cervical_exam",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "Uterine cervix examination (text) ",
+        "openmrs_entity_id": "160968",
+        "type": "native_radio",
+        "label": "Cervical exam done?",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "extra_rel": true,
+        "has_extra_rel": "1",
+        "options": [
+          {
+            "key": "1",
+            "text": "Done",
+            "specify_info": "specify cm cervix dilated...",
+            "specify_widget": "normal_edit_text",
+            "specify_info_color": "#8C8C8C",
+            "secondary_suffix": "cm",
+            "content_form": "cervical_exam_sub_form",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "1118AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          },
+          {
+            "key": "2",
+            "text": "Not done",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "1118AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          }
+        ]
       }
     ]
   }
