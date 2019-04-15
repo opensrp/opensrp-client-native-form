@@ -17,6 +17,7 @@ import android.view.ViewParent;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -72,6 +73,8 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
     protected final float REPEATING_GROUP_LABEL_TEXT_SIZE = 20;
     protected final int REPEATING_GROUP_LABEL_TEXT_COLOR = R.color.black;
 
+    private ImageButton doneButton;
+
     @Override
     public List<View> getViewsFromJson(final String stepName, final Context context, final JsonFormFragment formFragment, final JSONObject jsonObject, final CommonListener listener, final boolean popup) throws Exception {
         List<View> views = new ArrayList<>(1);
@@ -98,6 +101,15 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         final String referenceEditTextHint = jsonObject.optString(REFERENCE_EDIT_TEXT_HINT, context.getString(R.string.enter_number_of_repeating_group_items));
         final String repeatingGroupLabel = jsonObject.optString(REPEATING_GROUP_LABEL, context.getString(R.string.repeating_group_item));
         setUpReferenceEditText(referenceEditText, widgetArgs, referenceEditTextHint, repeatingGroupLabel);
+
+        doneButton = rootLayout.findViewById(R.id.btn_repeating_group_done);
+
+        doneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addOnDoneAction(referenceEditText, widgetArgs);
+            }
+        });
 
         ((JsonApi) context).addFormDataView(referenceEditText);
 
@@ -131,6 +143,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
 
             @Override
             public void afterTextChanged(Editable s) {
+                doneButton.setImageResource(R.drawable.ic_done_grey);
                 JsonFormFragmentPresenter.validate(widgetArgs.getFormFragment(), referenceEditText, false);
             }
         });
@@ -160,7 +173,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
             InputMethodManager inputMethodManager = (InputMethodManager) widgetArgs.getFormFragment().getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0);
             textView.clearFocus();
-            attachRepeatingGroup(textView.getParent(), Integer.parseInt(textView.getText().toString()), widgetArgs);
+            attachRepeatingGroup(textView.getParent().getParent(), Integer.parseInt(textView.getText().toString()), widgetArgs);
         } catch (Exception e) {
             Log.e(TAG, e.getStackTrace().toString());
         }
@@ -217,7 +230,8 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                                 fields.remove(i);
                             }
                         }
-                        rootLayout.getChildAt(0).setTag(R.id.repeating_group_item_count, rootLayout.getChildCount());
+                        LinearLayout referenceLayout = (LinearLayout) ((LinearLayout) parent).getChildAt(0);
+                        referenceLayout.getChildAt(0).setTag(R.id.repeating_group_item_count, rootLayout.getChildCount());
                     } catch (JSONException e) {
                         Log.e(TAG, e.getStackTrace().toString());
                     }
@@ -229,6 +243,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
 
                 ((JsonApi) widgetArgs.getContext()).invokeRefreshLogic(null, false, null, null);
                 hideProgressDialog();
+                doneButton.setImageResource(R.drawable.ic_done_green);
             }
         }
 
@@ -242,7 +257,8 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         repeatingGroup.setLayoutParams(WIDTH_MATCH_PARENT_HEIGHT_WRAP_CONTENT);
         repeatingGroup.setOrientation(LinearLayout.VERTICAL);
 
-        EditText referenceEditText = (EditText) ((LinearLayout) parent).getChildAt(0);
+        LinearLayout rootLayout = (LinearLayout) ((LinearLayout) parent).getChildAt(0);
+        EditText referenceEditText = (EditText) rootLayout.getChildAt(0);
         TextView repeatingGroupLabel = new TextView(context);
         formatRepeatingGroupLabelText(referenceEditText, repeatingGroupLabel, context);
         repeatingGroup.addView(repeatingGroupLabel);
