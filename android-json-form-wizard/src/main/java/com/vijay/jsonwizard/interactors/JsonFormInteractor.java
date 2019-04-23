@@ -45,7 +45,7 @@ public class JsonFormInteractor {
 
     private static final String TAG = "JsonFormInteractor";
     private static final JsonFormInteractor INSTANCE = new JsonFormInteractor();
-    public static Map<String, FormWidgetFactory> map;
+    public Map<String, FormWidgetFactory> map;
 
     public JsonFormInteractor() {
         registerWidgets();

@@ -70,7 +70,6 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
     private final String REFERENCE_EDIT_TEXT_HINT = "reference_edit_text_hint";
     private final String REPEATING_GROUP_LABEL = "repeating_group_label";
 
-    protected final float REPEATING_GROUP_LABEL_TEXT_SIZE = 20;
     protected final int REPEATING_GROUP_LABEL_TEXT_COLOR = R.color.black;
 
     private ImageButton doneButton;
@@ -170,7 +169,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
 
     private void addOnDoneAction(TextView textView, WidgetArgs widgetArgs) {
         try {
-            InputMethodManager inputMethodManager = (InputMethodManager) widgetArgs.getFormFragment().getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager inputMethodManager = (InputMethodManager) widgetArgs.getFormFragment().getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0);
             textView.clearFocus();
             attachRepeatingGroup(textView.getParent().getParent(), Integer.parseInt(textView.getText().toString()), widgetArgs);
@@ -192,7 +191,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
 
             @Override
             protected void onPreExecute() {
-                showProgressDialog(R.string.creating_repeating_group_title, R.string.creating_repeating_group_message, widgetArgs.getFormFragment().getActivity());
+                showProgressDialog(R.string.creating_repeating_group_title, R.string.creating_repeating_group_message, widgetArgs.getFormFragment().getContext());
             }
 
             @Override
@@ -270,7 +269,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
             String elementType = element.optString(TYPE, null);
             if (elementType != null) {
                 addUniqueIdentifiers(element, uniqueId);
-                FormWidgetFactory factory = JsonFormInteractor.getInstance().map.get(elementType);
+                FormWidgetFactory factory =  widgetArgs.getFormFragment().getPresenter().getInteractor().map.get(elementType);
                 List<View> widgetViews = factory.getViewsFromJson(widgetArgs.getStepName(), context, widgetArgs.getFormFragment(), element, widgetArgs.getListener(), widgetArgs.isPopup());
                 for (View view : widgetViews) {
                     view.setLayoutParams(WIDTH_MATCH_PARENT_HEIGHT_WRAP_CONTENT);
@@ -293,12 +292,12 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         formattedLabel.setSpan(new StyleSpan(Typeface.BOLD), 0, formattedLabel.length(), 0);
         formattedLabel.setSpan(new StyleSpan(Typeface.ITALIC), 0, formattedLabel.length(), 0);
         repeatingGroupLabel.setText(formattedLabel);
-        repeatingGroupLabel.setTextSize(REPEATING_GROUP_LABEL_TEXT_SIZE);
+        repeatingGroupLabel.setTextSize(context.getResources().getInteger(R.integer.repeating_group_label_text_size));
         repeatingGroupLabel.setTextColor(context.getColor(REPEATING_GROUP_LABEL_TEXT_COLOR));
         referenceEditText.setTag(R.id.repeating_group_item_count, repeatingGroupItemCount + 1);
     }
 
-    private void addUniqueIdentifiers(JSONObject element, String uniqueId) throws JSONException {
+    protected void addUniqueIdentifiers(JSONObject element, String uniqueId) throws JSONException {
         // make repeating group element key unique
         String currKey = element.getString(KEY);
         currKey += ("_" + uniqueId);

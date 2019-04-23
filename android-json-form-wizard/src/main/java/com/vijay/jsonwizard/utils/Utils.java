@@ -1,6 +1,5 @@
 package com.vijay.jsonwizard.utils;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.support.annotation.StringRes;
@@ -154,11 +153,11 @@ public class Utils {
         return null;
     }
 
-    public static void showProgressDialog(@StringRes int title, @StringRes int message, Activity activity) {
-        progressDialog = new ProgressDialog(activity);
+    public static void showProgressDialog(@StringRes int title, @StringRes int message, Context context) {
+        progressDialog = new ProgressDialog(context);
         progressDialog.setCancelable(false);
-        progressDialog.setTitle(activity.getString(title));
-        progressDialog.setMessage(activity.getString(message));
+        progressDialog.setTitle(context.getString(title));
+        progressDialog.setMessage(context.getString(message));
         progressDialog.show();
     }
 
