@@ -24,14 +24,17 @@ import android.widget.TextView;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rengwuxian.materialedittext.validation.RegexpValidator;
 import com.vijay.jsonwizard.R;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.WidgetArgs;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.presenters.JsonFormFragmentPresenter;
+import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.validators.edittext.MaxNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.MinNumericValidator;
+import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -159,6 +162,19 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         referenceEditText.addValidator(new RegexpValidator(context.getString(R.string.repeating_group_number_format_err_msg), "\\d*"));
         referenceEditText.addValidator(new MaxNumericValidator(context.getString(R.string.repeating_group_max_value_err_msg, MAX_NUM_REPEATING_GROUPS), MAX_NUM_REPEATING_GROUPS));
         referenceEditText.addValidator(new MinNumericValidator(context.getString(R.string.repeating_group_min_value_err_msg), 0));
+
+        addRequiredValidator(widgetArgs.getJsonObject(), referenceEditText);
+    }
+
+    private void addRequiredValidator(JSONObject jsonObject, MaterialEditText editText) throws JSONException {
+        JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
+        if (requiredObject != null) {
+            boolean requiredValue = requiredObject.getBoolean(JsonFormConstants.VALUE);
+            if (Boolean.TRUE.equals(requiredValue)) {
+                editText.addValidator(new RequiredValidator(requiredObject.getString(JsonFormConstants.ERR)));
+                FormUtils.setRequiredOnHint(editText);
+            }
+        }
     }
 
     @Override
