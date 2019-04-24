@@ -26,7 +26,6 @@ import com.rengwuxian.materialedittext.validation.RegexpValidator;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.domain.WidgetArgs;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
-import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
