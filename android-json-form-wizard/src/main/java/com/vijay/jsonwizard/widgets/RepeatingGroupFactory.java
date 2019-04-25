@@ -169,7 +169,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
     private void addRequiredValidator(JSONObject jsonObject, MaterialEditText editText) throws JSONException {
         JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
         if (requiredObject != null) {
-            boolean requiredValue = requiredObject.getBoolean(JsonFormConstants.VALUE);
+            boolean requiredValue = requiredObject.getBoolean(VALUE);
             if (Boolean.TRUE.equals(requiredValue)) {
                 editText.addValidator(new RequiredValidator(requiredObject.getString(JsonFormConstants.ERR)));
                 FormUtils.setRequiredOnHint(editText);
