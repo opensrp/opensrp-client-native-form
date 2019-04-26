@@ -742,4 +742,8 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         }
         return null;
     }
+
+    public JsonFormInteractor getInteractor() {
+        return mJsonFormInteractor;
+    }
 }
