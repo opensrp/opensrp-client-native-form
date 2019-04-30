@@ -137,7 +137,9 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     public void writeValue(String stepName, String key, String value, String openMrsEntityParent, String openMrsEntity,
                            String openMrsEntityId, boolean popup) throws JSONException {
         if (invokeRefreshLogic(stepName, null, key, value)) {
-            cacheFormMapValues(stepName, null, key, value);
+            if (!popup) {
+                cacheFormMapValues(stepName, null, key, value);
+            }
             widgetsWriteValue(stepName, key, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
         }
     }
@@ -147,7 +149,9 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                            String openMrsEntityParent, String openMrsEntity, String openMrsEntityId, boolean popup)
             throws JSONException {
         if (invokeRefreshLogic(stepName, parentKey, childKey, value)) {
-            cacheFormMapValues(stepName, parentKey, childKey, value);
+            if (!popup) {
+                cacheFormMapValues(stepName, parentKey, childKey, value);
+            }
             checkBoxWriteValue(stepName, parentKey, childObjectKey, childKey, value, popup);
 
         }
@@ -1776,9 +1780,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     private void cacheFormMapValues(String stepName, String parentKey, String childKey, String value) {
-
-        //formValuesCacheMap.put(stepName + "_" + (parentKey != null ? parentKey + "_" : "") + childKey, value);
-
+        formValuesCacheMap.put(stepName + "_" + (parentKey != null ? parentKey + "_" : "") + childKey, value);
     }
 
     private boolean invokeRefreshLogic(String stepName, String parentKey, String childKey, String value) {
