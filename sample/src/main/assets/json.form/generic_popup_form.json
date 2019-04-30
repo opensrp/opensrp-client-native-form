@@ -60,6 +60,76 @@
     "title": "Birth Registration",
     "fields": [
       {
+        "key": "medications",
+        "openmrs_entity_parent": " 160741AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "openmrs_entity": "concept",
+        "openmrs_entity_id": "159367AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "type": "check_box",
+        "label": "Which medications is she still taking?",
+        "label_info_text": "The woman reported taking these medications in the previous contact. Un-select the medications that she has stopped taking. If still taking, leave them selected.",
+        "label_info_title": "Medication follow-up",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "exclusive": [
+          "dont_know",
+          "none"
+        ],
+        "options": [
+          {
+            "key": "none",
+            "text": "None",
+            "value": false,
+            "openmrs_entity_id": "1107AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "concept"
+          },
+          {
+            "key": "dont_know",
+            "text": "Don't know",
+            "value": false,
+            "openmrs_entity_id": "1107AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "concept"
+          },
+          {
+            "key": "magnesium",
+            "text": "Magnesium",
+            "value": false,
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "79224AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "openmrs_entity_parent": ""
+          },
+          {
+            "key": "metoclopramide",
+            "text": "Metoclopramide",
+            "value": false,
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "79755AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "openmrs_entity_parent": ""
+          },
+          {
+            "key": "anti_convulsive",
+            "text": "Anti-convulsive",
+            "value": false,
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "165230AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "openmrs_entity_parent": ""
+          },
+          {
+            "key": "other",
+            "text": "Other (specify)",
+            "value": false,
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "openmrs_entity_parent": ""
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Please specify the medication(s) that the woman is still taking"
+        }
+      },
+      {
         "v_required": {
           "value": "true",
           "err": "Please select first Respiratory Exam"
@@ -280,6 +350,42 @@
             "openmrs_entity_id": "1118AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
           }
         ]
+      },
+      {
+        "key": "toaster26_hidden",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-calculation-rules.yml"
+            }
+          },
+          "src": {
+            "key": "cervical_exam",
+            "option_key": "1",
+            "stepName": "step1"
+          }
+        }
+      },
+      {
+        "key": "toaster26",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Cervix is more than 2 cm dilated. Please check for other signs and symptoms of labour (if GA is 37 weeks or later) or pre-term labour and other related complications (if GA is less than 37 weeks).",
+        "text_color": "#E20000",
+        "toaster_type": "problem",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-relevance-rules.yml"
+            }
+          }
+        }
       }
     ]
   }

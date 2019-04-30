@@ -32,6 +32,13 @@
       "v_required": {
         "value": true,
         "err": "Field cervical dilation is required"
+      },
+      "calculation": {
+        "rules-engine": {
+          "ex-rules": {
+            "rules-file": "sample-calculation-rules.yml"
+          }
+        }
       }
     }
   ]
