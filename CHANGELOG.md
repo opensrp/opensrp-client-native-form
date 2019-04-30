@@ -110,7 +110,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### [1.5.7] - 03-26-2019
 --------------------
 #### Changed
-<<<<<<< HEAD
 - Updated the native radio button to display the secondary values picked before step change
 - Update the `JsonFormActivity` to allow implementation of the `getConfirmCloseMessage, setConfirmCloseMessage, getConfirmCloseTitle, setConfirmCloseTitle`
 - Moved validation for Edittext to OnTextChanged from OnFocusChange event
+
+### [1.6.1-SNAPSHOT] - 04-26-2019
+--------------------
+#### Changed
+- Added RepeatingGroup widget
