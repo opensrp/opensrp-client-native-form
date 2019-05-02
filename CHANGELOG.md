@@ -113,3 +113,34 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Updated the native radio button to display the secondary values picked before step change
 - Update the `JsonFormActivity` to allow implementation of the `getConfirmCloseMessage, setConfirmCloseMessage, getConfirmCloseTitle, setConfirmCloseTitle`
 - Moved validation for Edittext to OnTextChanged from OnFocusChange event
+
+### [1.6.2] - 05-02-2019
+--------------------
+#### Added
+- Added a calculation logic to write values on the main form values from the popup
+    - This only works with the rules engine logic. 
+    - You need to add the src json object on the calculation json object.  
+    - Then set the `key` (this is the key of main widget launching the popup)
+    - Then set the `option_key` (this is the option key where the popup is located )
+    - Then set the `stepName` (this is the form step name)
+    - ```json
+{
+        "key": "toaster26_hidden",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-calculation-rules.yml"
+            }
+          },
+          "src": {
+            "key": "cervical_exam",
+            "option_key": "1",
+            "stepName": "step1"
+          }
+        }
+      }
+
