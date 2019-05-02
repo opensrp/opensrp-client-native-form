@@ -36,7 +36,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add helper class for use in rules engine - added method to get difference in days for 2 dates to be used in condition or action , example syntax `calculation = (1 + helper.getDifferenceDays('2018-12-18'))` 
 - Add skip logic based on date duration
 
-### [1.5.0] - 02-29-2019
+### [1.5.0-SNAPSHOT] - 02-29-2019
 --------------------
 #### Added
 - Added the support for saving the widget OpenMRS attributes and the value options for widgets with secondary values | popups e.g the native radio button, the anc radio button, the spinner and the check boxes.
@@ -76,7 +76,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
                 ]
               }
 
-### [1.5.3] - 03-13-2019
+### [1.5.3-SNAPSHOT] - 03-13-2019
 --------------------
 #### Fixed
 - Rules engine not returning negative values for calculation
@@ -85,12 +85,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Layout for labels used by radio buttons and checkboxes
 - Text appearance on templates to bold
 
-### [1.5.4] - 03-14-2019
+### [1.5.4-SNAPSHOT] - 03-14-2019
 --------------------
 #### Added
 - Added the French translations from Transifex 
 
-### [1.5.5] - 03-18-2019
+### [1.5.5-SNAPSHOT] - 03-18-2019
 --------------------
 #### Added
 - Added a rules engine helper class to transform the GA from a string and give back the GA in numeric values
@@ -99,7 +99,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 #### Changed
 - Updated the `attachJson` function scope for the `DatePickerFactory.class` & `EdixTextFactory` to protected so as to enable extending
 
-### [1.5.6] - 03-20-2019
+### [1.5.6-SNAPSHOT] - 03-20-2019
 --------------------
 #### Added
 - Added a value set function to the hidden text factory. This is to enable the setting of this values from the previous ones incase calculations fail
@@ -107,14 +107,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 #### Changed
 - Updated the scope for the `moveToNextWizardStep` to protected to allow for extension
 
-### [1.5.7] - 03-26-2019
+### [1.5.7-SNAPSHOT] - 03-26-2019
 --------------------
 #### Changed
 - Updated the native radio button to display the secondary values picked before step change
 - Update the `JsonFormActivity` to allow implementation of the `getConfirmCloseMessage, setConfirmCloseMessage, getConfirmCloseTitle, setConfirmCloseTitle`
 - Moved validation for Edittext to OnTextChanged from OnFocusChange event
 
-### [1.6.2] - 05-02-2019
+### [1.6.1-SNAPSHOT] - 04-26-2019
+--------------------
+#### Changed
+- Added RepeatingGroup widget
+
+### [1.6.2-SNAPSHOT] - 05-02-2019
 --------------------
 #### Added
 - Added a calculation logic to write values on the main form values from the popup

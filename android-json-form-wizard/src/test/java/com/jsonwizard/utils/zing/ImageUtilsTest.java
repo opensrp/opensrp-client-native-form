@@ -5,8 +5,10 @@ import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.view.Display;
 import android.view.WindowManager;
+
 import com.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.utils.ImageUtils;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
