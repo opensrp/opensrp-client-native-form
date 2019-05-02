@@ -60,76 +60,6 @@
     "title": "Birth Registration",
     "fields": [
       {
-        "key": "medications",
-        "openmrs_entity_parent": " 160741AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-        "openmrs_entity": "concept",
-        "openmrs_entity_id": "159367AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-        "type": "check_box",
-        "label": "Which medications is she still taking?",
-        "label_info_text": "The woman reported taking these medications in the previous contact. Un-select the medications that she has stopped taking. If still taking, leave them selected.",
-        "label_info_title": "Medication follow-up",
-        "label_text_style": "bold",
-        "text_color": "#000000",
-        "exclusive": [
-          "dont_know",
-          "none"
-        ],
-        "options": [
-          {
-            "key": "none",
-            "text": "None",
-            "value": false,
-            "openmrs_entity_id": "1107AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "openmrs_entity_parent": "",
-            "openmrs_entity": "concept"
-          },
-          {
-            "key": "dont_know",
-            "text": "Don't know",
-            "value": false,
-            "openmrs_entity_id": "1107AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "openmrs_entity_parent": "",
-            "openmrs_entity": "concept"
-          },
-          {
-            "key": "magnesium",
-            "text": "Magnesium",
-            "value": false,
-            "openmrs_entity": "concept",
-            "openmrs_entity_id": "79224AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "openmrs_entity_parent": ""
-          },
-          {
-            "key": "metoclopramide",
-            "text": "Metoclopramide",
-            "value": false,
-            "openmrs_entity": "concept",
-            "openmrs_entity_id": "79755AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "openmrs_entity_parent": ""
-          },
-          {
-            "key": "anti_convulsive",
-            "text": "Anti-convulsive",
-            "value": false,
-            "openmrs_entity": "concept",
-            "openmrs_entity_id": "165230AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "openmrs_entity_parent": ""
-          },
-          {
-            "key": "other",
-            "text": "Other (specify)",
-            "value": false,
-            "openmrs_entity": "concept",
-            "openmrs_entity_id": "5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "openmrs_entity_parent": ""
-          }
-        ],
-        "v_required": {
-          "value": true,
-          "err": "Please specify the medication(s) that the woman is still taking"
-        }
-      },
-      {
         "v_required": {
           "value": "true",
           "err": "Please select first Respiratory Exam"
@@ -329,6 +259,7 @@
         "text_color": "#000000",
         "extra_rel": true,
         "has_extra_rel": "1",
+        "value": "1",
         "options": [
           {
             "key": "1",
@@ -340,7 +271,21 @@
             "content_form": "cervical_exam_sub_form",
             "openmrs_entity_parent": "",
             "openmrs_entity": "concept",
-            "openmrs_entity_id": "1118AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+            "openmrs_entity_id": "1118AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "secondary_value": [
+              {
+                "key": "dilation_cm",
+                "type": "edit_text",
+                "values": [
+                  "9"
+                ],
+                "openmrs_attributes": {
+                  "openmrs_entity_parent": "",
+                  "openmrs_entity": "Amount of cervical dilation ",
+                  "openmrs_entity_id": "162261"
+                }
+              }
+            ]
           },
           {
             "key": "2",

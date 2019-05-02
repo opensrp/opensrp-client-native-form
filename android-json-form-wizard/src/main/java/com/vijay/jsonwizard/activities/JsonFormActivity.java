@@ -416,8 +416,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                             JSONObject result = new JSONObject();
                             JSONArray rulesArray = new JSONArray();
 
-                            JSONObject mainWidget = FormUtils
-                                    .getFieldFromForm(mJSONObject, key);
+                            JSONObject mainWidget = FormUtils.getFieldFromForm(mJSONObject, key);
 
                             if (mainWidget.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
                                 JSONArray options = mainWidget.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
@@ -427,20 +426,13 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                                     if (option != null && option.has(JsonFormConstants.KEY) && optionKey
                                             .equals(option.getString(JsonFormConstants.KEY)) && option
                                             .has(JsonFormConstants.CONTENT_FORM)) {
-                                        String formName = option.getString(JsonFormConstants.CONTENT_FORM);
-                                        JSONObject subform = FormUtils.getSubFormJson(formName, "", this);
-                                        if (subform.has(JsonFormConstants.CONTENT_FORM)) {
-                                            JSONArray subFields = subform.getJSONArray(JsonFormConstants.CONTENT_FORM);
-                                            for (int j = 0; j < subFields.length(); j++) {
-                                                if (rulesList.contains(stepName + "_" + subFields.getJSONObject(j)
-                                                        .getString(JsonFormConstants.KEY))) {
-
-                                                    JSONObject fieldObject = subFields.getJSONObject(i);
-                                                    fieldObject.put(RuleConstant.STEP, stepName);
-                                                    rulesArray.put(fieldObject);
-
-                                                }
-                                            }
+                                        if (genericDialogInterface != null) {
+                                            JSONArray subFormField = genericDialogInterface.getPopUpFields();
+                                            getFieldObject(stepName, rulesList, rulesArray, subFormField);
+                                        } else if (option.has(JsonFormConstants.SECONDARY_VALUE)) {
+                                            JSONArray secondaryValue =
+                                                    option.getJSONArray(JsonFormConstants.SECONDARY_VALUE);
+                                            getFieldObject(stepName, rulesList, rulesArray, secondaryValue);
                                         }
 
                                     }
@@ -585,6 +577,33 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         }
 
         return key;
+    }
+
+    private void getFieldObject(String stepName, List<String> rulesList, JSONArray rulesArray, JSONArray feilds)
+            throws JSONException {
+        if (feilds.length() > 0) {
+            for (int j = 0; j < feilds.length(); j++) {
+                JSONObject fieldObject = feilds.getJSONObject(j);
+                if (rulesList.contains(stepName + "_" + fieldObject
+                        .getString(JsonFormConstants.KEY)) && !JsonFormConstants.LABEL
+                        .equals(fieldObject.getString(JsonFormConstants.TYPE))) {
+                    if (fieldObject.has(JsonFormConstants.VALUES)) {
+                        String value;
+                        if (JsonFormConstants.CHECK_BOX.equals(fieldObject.getString(JsonFormConstants.TYPE))) {
+                            value = String.valueOf(fieldObject.getJSONArray(JsonFormConstants.VALUES));
+                            fieldObject.put(JsonFormConstants.VALUE, value);
+                        } else {
+                            value = fieldObject.getJSONArray(JsonFormConstants.VALUES).getString(0);
+                            fieldObject.put(JsonFormConstants.VALUE, value);
+                        }
+                    }
+
+                    fieldObject.put(RuleConstant.STEP, stepName);
+                    rulesArray.put(fieldObject);
+
+                }
+            }
+        }
     }
 
     protected void widgetsWriteValue(String stepName, String key, String value, String openMrsEntityParent,
