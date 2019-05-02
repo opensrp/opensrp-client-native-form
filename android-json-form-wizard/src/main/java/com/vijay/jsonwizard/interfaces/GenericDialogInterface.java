@@ -7,6 +7,8 @@ public interface GenericDialogInterface {
 
     String getParentKey();
 
+    String getFormIdentity();
+
     void setFormIdentity(String formIdentity);
 
     void setFormLocation(String formLocation);

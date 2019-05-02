@@ -298,8 +298,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
                         JSONObject curRelevance = calculation.getJSONObject(curKey);
                         JSONObject valueSource = new JSONObject();
-                        if (calculation.has("src")) {
-                            valueSource = calculation.getJSONObject("src");
+                        if (calculation.has(JsonFormConstants.SRC)) {
+                            valueSource = calculation.getJSONObject(JsonFormConstants.SRC);
                         }
 
                         String[] address = null;
@@ -311,7 +311,13 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         }
 
                         if (address != null) {
-                            Facts curValueMap = getValueFromAddress(address, popup, valueSource);
+                            Facts curValueMap;
+                            if (valueSource.length() > 0) {
+                                curValueMap = getValueFromAddress(address, popup, valueSource);
+                            } else {
+                                curValueMap = getValueFromAddress(address, popup);
+                            }
+
 
                             if (address.length > 2 && RuleConstant.RULES_ENGINE.equals(address[0]) &&
                                     (!JsonFormConstants.TOASTER_NOTES.equals(curView.getTag(R.id.type)) &&
@@ -398,11 +404,11 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     @Override
     public JSONObject getObjectUsingAddress(String[] address, boolean popup, JSONObject valueSource) throws JSONException {
         if (valueSource != null && valueSource.has(JsonFormConstants.KEY) && valueSource
-                .has(JsonFormConstants.STEPNAME) && valueSource.has("option_key")) {
+                .has(JsonFormConstants.STEPNAME) && valueSource.has(JsonFormConstants.OPTION_KEY)) {
 
             String key = valueSource.getString(JsonFormConstants.KEY);
             String stepName = valueSource.getString(JsonFormConstants.STEPNAME);
-            String optionKey = valueSource.getString("option_key");
+            String optionKey = valueSource.getString(JsonFormConstants.OPTION_KEY);
 
             try {
                 if (address != null && address.length > 1) {
@@ -426,7 +432,9 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                                     if (option != null && option.has(JsonFormConstants.KEY) && optionKey
                                             .equals(option.getString(JsonFormConstants.KEY)) && option
                                             .has(JsonFormConstants.CONTENT_FORM)) {
-                                        if (genericDialogInterface != null) {
+                                        String formName = option.getString(JsonFormConstants.CONTENT_FORM);
+                                        String popupFormName = genericDialogInterface.getFormIdentity();
+                                        if (genericDialogInterface != null && formName.equals(popupFormName)) {
                                             JSONArray subFormField = genericDialogInterface.getPopUpFields();
                                             getFieldObject(stepName, rulesList, rulesArray, subFormField);
                                         } else if (option.has(JsonFormConstants.SECONDARY_VALUE)) {

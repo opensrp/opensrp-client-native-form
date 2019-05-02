@@ -286,6 +286,11 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                setFormFragment(null);
+                setFormIdentity(null);
+                setFormLocation(null);
+                setContext(null);
+                jsonApi.setGenericPopup(null);
                 jsonApi.updateGenericPopupSecondaryValues(null);
                 GenericPopupDialog.this.dismiss();
             }
@@ -296,6 +301,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
             @Override
             public void onClick(View v) {
                 passData();
+                jsonApi.setGenericPopup(null);
                 jsonApi.updateGenericPopupSecondaryValues(null);
                 GenericPopupDialog.this.dismiss();
             }
@@ -332,6 +338,10 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         List<View> listOfViews = new ArrayList<>();
         jsonFormInteractor.fetchFields(listOfViews, stepName, formFragment, specifyContent, commonListener, true);
         return listOfViews;
+    }
+
+    public void setContext(Context context) throws IllegalStateException {
+        this.context = context;
     }
 
     protected void passData() {
@@ -646,6 +656,16 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         this.parentKey = parentKey;
     }
 
+    @Override
+    public String getFormIdentity() {
+        return formIdentity;
+    }
+
+    @Override
+    public void setFormIdentity(String formIdentity) {
+        this.formIdentity = formIdentity;
+    }
+
     public String getChildKey() {
         return childKey;
     }
@@ -726,15 +746,6 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         this.specifyContent = specifyContent;
     }
 
-    public String getFormIdentity() {
-        return formIdentity;
-    }
-
-    @Override
-    public void setFormIdentity(String formIdentity) {
-        this.formIdentity = formIdentity;
-    }
-
     public String getFormLocation() {
         return formLocation;
     }
@@ -742,9 +753,5 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
     @Override
     public void setFormLocation(String formLocation) {
         this.formLocation = formLocation;
-    }
-
-    public void setContext(Context context) throws IllegalStateException {
-        this.context = context;
     }
 }
