@@ -1,5 +1,6 @@
 package com.vijay.jsonwizard.activities;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -266,6 +267,30 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         return itemType.equals(JsonFormConstants.NUMBER_SELECTOR);
     }
 
+    @SuppressLint("NewApi")
+    private JSONArray addCheckBoxValue(JSONObject item, String childKey, String value) throws JSONException {
+        JSONArray values = new JSONArray();
+        if (item.has(JsonFormConstants.VALUE)) {
+            values = item.getJSONArray(JsonFormConstants.VALUE);
+            if (values.length() > 0) {
+                for (int i = 0; i < values.length(); i++) {
+                    String savedValue = values.getString(i);
+                    if (childKey.equals(savedValue)) {
+                        if ("false".equals(value)) {
+                            values.remove(i);
+                        }
+                    } else if ("true".equals(value)) {
+                        values.put(childKey);
+                    }
+                }
+            }
+        } else {
+            values.put(childKey);
+        }
+
+        return values;
+    }
+
     protected void checkBoxWriteValue(String stepName, String parentKey, String childObjectKey, String childKey,
                                       String value, boolean popup) throws JSONException {
         synchronized (mJSONObject) {
@@ -281,6 +306,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         String anotherKeyAtIndex = innerItem.getString(JsonFormConstants.KEY);
                         if (childKey.equals(anotherKeyAtIndex)) {
                             innerItem.put(JsonFormConstants.VALUE, value);
+                            item.put(JsonFormConstants.VALUE, addCheckBoxValue(item, childKey, value));
                             invokeRefreshLogic(value, popup, parentKey, childKey);
                             return;
                         }
