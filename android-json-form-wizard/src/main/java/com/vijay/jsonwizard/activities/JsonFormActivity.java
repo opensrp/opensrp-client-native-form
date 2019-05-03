@@ -50,6 +50,7 @@ import com.vijay.jsonwizard.customviews.GenericPopupDialog;
 import com.vijay.jsonwizard.customviews.MaterialSpinner;
 import com.vijay.jsonwizard.customviews.TextableView;
 import com.vijay.jsonwizard.domain.Form;
+import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.GenericDialogInterface;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.interfaces.LifeCycleListener;
@@ -148,7 +149,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     @Override
     public void writeValue(String stepName, String parentKey, String childObjectKey, String childKey, String value,
                            String openMrsEntityParent, String openMrsEntity, String openMrsEntityId, boolean popup)
-            throws JSONException {
+    throws JSONException {
         if (invokeRefreshLogic(stepName, parentKey, childKey, value)) {
             if (!popup) {
                 cacheFormMapValues(stepName, parentKey, childKey, value);
@@ -306,8 +307,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_RULES)) {
                             address = new String[]{curKey,
                                     curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getString(
-                                            RuleConstant.RULES_FILE), curView.getTag(R.id.address).toString().replace(':',
-                                    '_')};
+                                            RuleConstant.RULES_FILE),
+                                    curView.getTag(R.id.address).toString().replace(':', '_')};
                         }
 
                         if (address != null) {
@@ -403,8 +404,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     @Override
     public JSONObject getObjectUsingAddress(String[] address, boolean popup, JSONObject valueSource) throws JSONException {
-        if (valueSource != null && valueSource.has(JsonFormConstants.KEY) && valueSource
-                .has(JsonFormConstants.STEPNAME) && valueSource.has(JsonFormConstants.OPTION_KEY)) {
+        if (valueSource != null && valueSource.has(JsonFormConstants.KEY) && valueSource.has(JsonFormConstants.STEPNAME) &&
+                valueSource.has(JsonFormConstants.OPTION_KEY)) {
 
             String key = valueSource.getString(JsonFormConstants.KEY);
             String stepName = valueSource.getString(JsonFormConstants.STEPNAME);
@@ -429,9 +430,9 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                                 for (int i = 0; i < options.length(); i++) {
                                     JSONObject option = options.getJSONObject(i);
 
-                                    if (option != null && option.has(JsonFormConstants.KEY) && optionKey
-                                            .equals(option.getString(JsonFormConstants.KEY)) && option
-                                            .has(JsonFormConstants.CONTENT_FORM)) {
+                                    if (option != null && option.has(JsonFormConstants.KEY) &&
+                                            optionKey.equals(option.getString(JsonFormConstants.KEY)) &&
+                                            option.has(JsonFormConstants.CONTENT_FORM)) {
                                         String formName = option.getString(JsonFormConstants.CONTENT_FORM);
                                         String popupFormName = genericDialogInterface.getFormIdentity();
                                         if (genericDialogInterface != null && formName.equals(popupFormName)) {
@@ -588,13 +589,12 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     private void getFieldObject(String stepName, List<String> rulesList, JSONArray rulesArray, JSONArray feilds)
-            throws JSONException {
+    throws JSONException {
         if (feilds.length() > 0) {
             for (int j = 0; j < feilds.length(); j++) {
                 JSONObject fieldObject = feilds.getJSONObject(j);
-                if (rulesList.contains(stepName + "_" + fieldObject
-                        .getString(JsonFormConstants.KEY)) && !JsonFormConstants.LABEL
-                        .equals(fieldObject.getString(JsonFormConstants.TYPE))) {
+                if (rulesList.contains(stepName + "_" + fieldObject.getString(JsonFormConstants.KEY)) &&
+                        !JsonFormConstants.LABEL.equals(fieldObject.getString(JsonFormConstants.TYPE))) {
                     if (fieldObject.has(JsonFormConstants.VALUES)) {
                         String value;
                         if (JsonFormConstants.CHECK_BOX.equals(fieldObject.getString(JsonFormConstants.TYPE))) {
@@ -725,7 +725,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         }
     }
 
-    @SuppressLint ("NewApi")
+    @SuppressLint("NewApi")
     private JSONArray addCheckBoxValue(JSONObject item, String childKey, String value) throws JSONException {
         JSONArray values = new JSONArray();
         if (item.has(JsonFormConstants.VALUE)) {
@@ -1165,8 +1165,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         args[i] = valueMatcher.group(1);
                     } else {
                         try {
-                            args[i] = String
-                                    .valueOf(getValueFromAddress(curArg.split(":"), false).get(JsonFormConstants.VALUE));
+                            args[i] = String.valueOf(
+                                    getValueFromAddress(curArg.split(":"), false).get(JsonFormConstants.VALUE));
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -1237,6 +1237,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
      * @param value      {@link String} The value to be checked
      * @param view       {@link View} The value to be checked
      * @param constraint {@link JSONObject} The constraint expression to use
+     *
      * @return An error message if constraint has not been enforced or NULL if constraint enforced
      * @throws Exception
      */
@@ -1317,6 +1318,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
      *
      * @param sectionJson
      * @param popup
+     *
      * @return
      * @throws JSONException
      * @author dubdabasoduba
@@ -1351,6 +1353,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
      *
      * @param parentJson
      * @param popup
+     *
      * @return fields
      * @throws JSONException
      * @author dubdabasoduba
@@ -1511,9 +1514,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             try {
 
                 Yaml yaml = new Yaml();
-                InputStreamReader inputStreamReader =
-                        new InputStreamReader(
-                                this.getAssets().open((getRulesEngineFactory().getRulesFolderPath() + filename)));
+                InputStreamReader inputStreamReader = new InputStreamReader(
+                        this.getAssets().open((getRulesEngineFactory().getRulesFolderPath() + filename)));
                 Iterable<Object> ruleObjects = yaml.loadAll(inputStreamReader);
 
                 for (Object object : ruleObjects) {
@@ -1617,9 +1619,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     //For now were only handling checkbox titles only
                     TextView checkboxLabel = ((View) view.getParent().getParent()).findViewById(R.id.label_text);
                     if (checkboxLabel != null) {
-                        checkboxLabel
-                                .setText(getRenderText(calculation, checkboxLabel.getTag(R.id.original_text).toString(),
-                                        false));
+                        checkboxLabel.setText(
+                                getRenderText(calculation, checkboxLabel.getTag(R.id.original_text).toString(), false));
                     }
 
                 } else if (view instanceof TextableView) {
@@ -1642,21 +1643,23 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     }
 
                 } else if (view instanceof RadioGroup) {
-                    RadioGroup radioButton = (RadioGroup) view;
-                    int count = radioButton.getChildCount();
+                    RadioGroup radioGroup = (RadioGroup) view;
+                    int count = radioGroup.getChildCount();
                     for (int i = 0; i < count; i++) {
-                        TextView renderView = radioButton.getChildAt(i).findViewById(R.id.extraInfoTextView);
+                        CustomTextView renderView = radioGroup.getChildAt(i).findViewById(R.id.extraInfoTextView);
 
-                        // if (((AppCompatRadioButton) ((ViewGroup) radioButton.getChildAt(i).findViewById(R.id
+                        // if (((AppCompatRadioButton) ((ViewGroup) radioGroup.getChildAt(i).findViewById(R.id
                         // .radioContentLinearLayout))
                         // .getChildAt(0)).isChecked()) {
 
                         if (renderView.getTag(R.id.original_text) == null) {
                             renderView.setTag(R.id.original_text, renderView.getText());
                         }
-                        renderView.setText(calculation.charAt(0) == '{' ?
-                                getRenderText(calculation, renderView.getTag(R.id.original_text).toString(),
-                                        false) : calculation);
+                        if (!TextUtils.isEmpty(calculation)) {
+                            renderView.setText(calculation.charAt(0) == '{' ?
+                                    getRenderText(calculation, renderView.getTag(R.id.original_text).toString(), false) :
+                                    calculation);
+                        }
 
                         renderView.setVisibility(renderView.getText().toString().contains("{") ||
                                 renderView.getText().toString().equals("0") ? View.GONE : View.VISIBLE);
@@ -1668,8 +1671,32 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
                     }
 
-                } else {
+                } else if (view instanceof LinearLayout) {
+                    LinearLayout linearLayout = (LinearLayout) view;
+                    String type = (String) linearLayout.getTag(R.id.type);
+                    if (JsonFormConstants.NUMBER_SELECTOR.equals(type)) {
+                        int childCount = linearLayout.getChildCount();
+                        for (int i = 0; i < childCount; i++) {
+                            if (linearLayout.getChildAt(i) instanceof TextView) {
+                                TextView textView = (TextView) linearLayout.getChildAt(i);
+                                String text = textView.getText().toString();
+                                CommonListener commonListener =
+                                        (CommonListener) textView.getTag(R.id.number_selector_listener);
+                                TextView selectedTextView = NumberSelectorFactory.getSelectedTextView();
 
+                                String selectedNumber = "";
+                                if (selectedTextView != null) {
+                                    selectedNumber = selectedTextView.getText().toString();
+                                }
+
+                                if (calculation.equals(text) && !calculation.equals(selectedNumber)) {
+                                    textView.setOnClickListener(commonListener);
+                                    textView.performClick();
+                                }
+                            }
+                        }
+                    }
+                } else {
                     ((TextView) view).setText(calculation);
                 }
             }
@@ -1752,7 +1779,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     private void updateCanvas(View view, boolean visible, JSONArray canvasViewIds, String addressString, JSONObject object)
-            throws JSONException {
+    throws JSONException {
         for (int i = 0; i < canvasViewIds.length(); i++) {
             int curId = canvasViewIds.getInt(i);
 
@@ -1821,8 +1848,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         //reset value for number selector linear layout
         if (group instanceof LinearLayout) {
             LinearLayout numSelectorLayout = (LinearLayout) group;
-            if (numSelectorLayout.getTag(R.id.is_number_selector_linear_layout) != null
-                    && Boolean.TRUE.equals(numSelectorLayout.getTag(R.id.is_number_selector_linear_layout))) {
+            if (numSelectorLayout.getTag(R.id.is_number_selector_linear_layout) != null &&
+                    Boolean.TRUE.equals(numSelectorLayout.getTag(R.id.is_number_selector_linear_layout))) {
                 numSelectorLayout.setTag(R.id.selected_number_value, null);
             }
         }
@@ -1838,16 +1865,14 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         if (background instanceof ColorDrawable) {
             int color = ((ColorDrawable) background).getColor();
             if (color == child.getContext().getResources().getColor(R.color.native_number_selector_selected)) {
-                child.setBackgroundColor(child.getContext().getResources()
-                        .getColor(R.color.native_number_selector));
+                child.setBackgroundColor(child.getContext().getResources().getColor(R.color.native_number_selector));
             }
         } else if (background instanceof GradientDrawable) {
-            ((GradientDrawable) background).setColor(child.getContext().getResources()
-                    .getColor(R.color.native_number_selector));
+            ((GradientDrawable) background)
+                    .setColor(child.getContext().getResources().getColor(R.color.native_number_selector));
             child.setBackground(background);
         }
-        ((CustomTextView) child).setTextColor(child.getContext().getResources()
-                .getColor(R.color.primary_text));
+        ((CustomTextView) child).setTextColor(child.getContext().getResources().getColor(R.color.primary_text));
     }
 
     public JSONArray getExtraFieldsWithValues() {
