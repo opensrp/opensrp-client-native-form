@@ -434,12 +434,14 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                                             optionKey.equals(option.getString(JsonFormConstants.KEY)) &&
                                             option.has(JsonFormConstants.CONTENT_FORM)) {
                                         String formName = option.getString(JsonFormConstants.CONTENT_FORM);
+                                        String popupFormName = "";
                                         if (genericDialogInterface != null) {
-                                            String popupFormName = genericDialogInterface.getFormIdentity();
-                                            if (formName.equals(popupFormName)) {
-                                                JSONArray subFormField = genericDialogInterface.getPopUpFields();
-                                                getFieldObject(stepName, rulesList, rulesArray, subFormField);
-                                            }
+                                            popupFormName = genericDialogInterface.getFormIdentity();
+                                        }
+
+                                        if (genericDialogInterface != null && formName.equals(popupFormName)) {
+                                            JSONArray subFormField = genericDialogInterface.getPopUpFields();
+                                            getFieldObject(stepName, rulesList, rulesArray, subFormField);
                                         } else if (option.has(JsonFormConstants.SECONDARY_VALUE)) {
                                             JSONArray secondaryValue =
                                                     option.getJSONArray(JsonFormConstants.SECONDARY_VALUE);
