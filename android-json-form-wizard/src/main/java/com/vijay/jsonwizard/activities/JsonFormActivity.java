@@ -1644,41 +1644,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     }
 
                 } else if (view instanceof RadioGroup) {
-                    RadioGroup radioGroup = (RadioGroup) view;
-                    int count = radioGroup.getChildCount();
-                    for (int i = 0; i < count; i++) {
-                        if (!TextUtils.isEmpty(calculation)) {
-                            RelativeLayout radioButtonLayout = (RelativeLayout) radioGroup.getChildAt(i);
-                            int radioButtonViewId = (int) radioButtonLayout.getTag(R.id.native_radio_button_view_id);
-                            RadioButton radioButton = radioButtonLayout.findViewById(radioButtonViewId);
-                            boolean showExtraInfo = (boolean) radioButton.getTag(R.id.native_radio_button_extra_info);
-                            String radioButtonKey = (String) radioButton.getTag(R.id.childKey);
-
-                            if (!TextUtils.isEmpty(radioButtonKey) && calculation.equals(radioButtonKey)) {
-                                radioButton.setChecked(true);
-                                radioButton.performClick();
-                            }
-
-                            if (showExtraInfo) {
-                                CustomTextView renderView = radioGroup.getChildAt(i).findViewById(R.id.extraInfoTextView);
-
-                                if (renderView.getTag(R.id.original_text) == null) {
-                                    renderView.setTag(R.id.original_text, renderView.getText());
-                                }
-                                if (!TextUtils.isEmpty(calculation)) {
-                                    renderView.setText(calculation.charAt(0) == '{' ?
-                                            getRenderText(calculation, renderView.getTag(R.id.original_text).toString(),
-                                                    false) :
-                                            calculation);
-                                }
-
-                                renderView.setVisibility(renderView.getText().toString().contains("{") ||
-                                        renderView.getText().toString().equals("0") ? View.GONE : View.VISIBLE);
-                            }
-                        }
-
-
-                    }
+                    setRadioButtonCalculation((RadioGroup) view, calculation);
 
                 } else if (view instanceof LinearLayout) {
                     LinearLayout linearLayout = (LinearLayout) view;
@@ -1694,6 +1660,44 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             Log.e(TAG, "calling updateCalculation on Non TextView or Text View decendant", e);
         }
 
+    }
+
+    private void setRadioButtonCalculation(RadioGroup view, String calculation) {
+        RadioGroup radioGroup = view;
+        int count = radioGroup.getChildCount();
+        for (int i = 0; i < count; i++) {
+            if (!TextUtils.isEmpty(calculation)) {
+                RelativeLayout radioButtonLayout = (RelativeLayout) radioGroup.getChildAt(i);
+                int radioButtonViewId = (int) radioButtonLayout.getTag(R.id.native_radio_button_view_id);
+                RadioButton radioButton = radioButtonLayout.findViewById(radioButtonViewId);
+                boolean showExtraInfo = (boolean) radioButton.getTag(R.id.native_radio_button_extra_info);
+                String radioButtonKey = (String) radioButton.getTag(R.id.childKey);
+
+                if (!TextUtils.isEmpty(radioButtonKey) && calculation.equals(radioButtonKey)) {
+                    radioButton.setChecked(true);
+                    radioButton.performClick();
+                }
+
+                if (showExtraInfo) {
+                    CustomTextView renderView = radioGroup.getChildAt(i).findViewById(R.id.extraInfoTextView);
+
+                    if (renderView.getTag(R.id.original_text) == null) {
+                        renderView.setTag(R.id.original_text, renderView.getText());
+                    }
+                    if (!TextUtils.isEmpty(calculation)) {
+                        renderView.setText(calculation.charAt(0) == '{' ?
+                                getRenderText(calculation, renderView.getTag(R.id.original_text).toString(),
+                                        false) :
+                                calculation);
+                    }
+
+                    renderView.setVisibility(renderView.getText().toString().contains("{") ||
+                            renderView.getText().toString().equals("0") ? View.GONE : View.VISIBLE);
+                }
+            }
+
+
+        }
     }
 
     private void setNumberSelectorCalculation(String calculation, LinearLayout linearLayout) {

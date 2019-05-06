@@ -455,35 +455,14 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         String specifyInfo = item.optString(JsonFormConstants.CONTENT_INFO, null);
         String extraInfo = item.optString(JsonFormConstants.NATIVE_RADIO_EXTRA_INFO, null);
         String text_color = item.optString(JsonFormConstants.CONTENT_INFO_COLOR, JsonFormConstants.DEFAULT_HINT_TEXT_COLOR);
-        String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
 
         if (extraInfo != null) {
             createExtraInfoDisplayTextView(rootLayout, jsonObject, readOnly, item, this.stepName, this.context, text_color);
         }
 
-        String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
-        String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
-        String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
 
         final RadioButton radioButton = rootLayout.findViewById(R.id.mainRadioButton);
-        int generatedViewId = ViewUtil.generateViewId();
-        radioButton.setId(generatedViewId);
-        radioButton.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
-        radioButton.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
-        radioButton.setTag(R.id.openmrs_entity, openMrsEntity);
-        radioButton.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-        radioButton.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
-        radioButton.setTag(R.id.childKey, item.getString(JsonFormConstants.KEY));
-        radioButton.setTag(R.id.address, this.stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
-        radioButton.setTag(R.id.relevance, relevance);
-        rootLayout.setTag(R.id.native_radio_button_view_id, generatedViewId);
-        if (extraInfo != null) {
-            radioButton.setTag(R.id.native_radio_button_extra_info, true);
-        } else {
-            radioButton.setTag(R.id.native_radio_button_extra_info, false);
-
-        }
-        radioButton.setTag(jsonObject.getString(JsonFormConstants.TYPE));
+        setRadioButtonTags(rootLayout, jsonObject, item, extraInfo, radioButton);
 
         if (!TextUtils.isEmpty(jsonObject.optString(JsonFormConstants.VALUE)) &&
                 jsonObject.optString(JsonFormConstants.VALUE).equals(item.getString(JsonFormConstants.KEY))) {
@@ -520,6 +499,33 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         this.canvasIds.put(radioButton.getId());
         radioButton.setOnCheckedChangeListener(listener);
         radioButton.setTag(R.id.canvas_ids, canvasIds.toString());
+    }
+
+    private void setRadioButtonTags(RelativeLayout rootLayout, JSONObject jsonObject, JSONObject item, String extraInfo,
+                                    RadioButton radioButton) throws JSONException {
+        String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
+        String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
+        String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
+        String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
+
+        int generatedViewId = ViewUtil.generateViewId();
+        radioButton.setId(generatedViewId);
+        radioButton.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+        radioButton.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
+        radioButton.setTag(R.id.openmrs_entity, openMrsEntity);
+        radioButton.setTag(R.id.openmrs_entity_id, openMrsEntityId);
+        radioButton.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
+        radioButton.setTag(R.id.childKey, item.getString(JsonFormConstants.KEY));
+        radioButton.setTag(R.id.address, this.stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+        radioButton.setTag(R.id.relevance, relevance);
+        rootLayout.setTag(R.id.native_radio_button_view_id, generatedViewId);
+        if (extraInfo != null) {
+            radioButton.setTag(R.id.native_radio_button_extra_info, true);
+        } else {
+            radioButton.setTag(R.id.native_radio_button_extra_info, false);
+
+        }
+        radioButton.setTag(jsonObject.getString(JsonFormConstants.TYPE));
     }
 
     /**
