@@ -253,11 +253,15 @@
         ],
         "alias": {
           "Ame OA": "Married",
-          "Haja OA": "Female"
+          "Haja OA": "Single"
         },
         "v_required": {
           "value": "true",
           "err": "Please enter the sex"
+        },
+        "openmrs_choice_ids": {
+          "Married": "1107AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+          "Single": "1713AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
         }
       },
       {
