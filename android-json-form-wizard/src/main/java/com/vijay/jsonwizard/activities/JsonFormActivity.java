@@ -100,6 +100,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private GenericDialogInterface genericDialogInterface;
     private JSONArray extraFieldsWithValues;
     private Map<String, String> formValuesCacheMap = new HashMap<>();
+    private TextView selectedTextView = null;
 
     private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
         @Override
@@ -388,14 +389,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 }
 
             } else {
-                if (mJSONObject.has(address[0])) {
-                    JSONArray fields = fetchFields(mJSONObject.getJSONObject(address[0]), popup);
-                    for (int i = 0; i < fields.length(); i++) {
-                        if (fields.getJSONObject(i).getString(JsonFormConstants.KEY).equals(address[1])) {
-                            return fields.getJSONObject(i);
-                        }
-                    }
-                }
+                return getRelevanceReferencedObject(address[0], address[1], popup);
             }
         }
 
@@ -457,14 +451,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         }
 
                     } else {
-                        if (mJSONObject.has(address[0])) {
-                            JSONArray fields = fetchFields(mJSONObject.getJSONObject(address[0]), popup);
-                            for (int i = 0; i < fields.length(); i++) {
-                                if (fields.getJSONObject(i).getString(JsonFormConstants.KEY).equals(address[1])) {
-                                    return fields.getJSONObject(i);
-                                }
-                            }
-                        }
+                        return getRelevanceReferencedObject(address[0], address[1], popup);
                     }
                 }
             } catch (Exception e) {
@@ -590,6 +577,23 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         }
 
         return key;
+    }
+
+    private JSONObject getRelevanceReferencedObject(String stepName, String key, boolean popup) {
+        JSONObject field = new JSONObject();
+        try {
+            if (mJSONObject.has(stepName)) {
+                JSONArray fields = fetchFields(mJSONObject.getJSONObject(stepName), popup);
+                for (int i = 0; i < fields.length(); i++) {
+                    if (fields.getJSONObject(i).getString(JsonFormConstants.KEY).equals(key)) {
+                        return fields.getJSONObject(i);
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, "", e);
+        }
+        return field;
     }
 
     private void getFieldObject(String stepName, List<String> rulesList, JSONArray rulesArray, JSONArray feilds)
@@ -1663,11 +1667,10 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     private void setRadioButtonCalculation(RadioGroup view, String calculation) {
-        RadioGroup radioGroup = view;
-        int count = radioGroup.getChildCount();
+        int count = view.getChildCount();
         for (int i = 0; i < count; i++) {
             if (!TextUtils.isEmpty(calculation)) {
-                RelativeLayout radioButtonLayout = (RelativeLayout) radioGroup.getChildAt(i);
+                RelativeLayout radioButtonLayout = (RelativeLayout) view.getChildAt(i);
                 int radioButtonViewId = (int) radioButtonLayout.getTag(R.id.native_radio_button_view_id);
                 RadioButton radioButton = radioButtonLayout.findViewById(radioButtonViewId);
                 boolean showExtraInfo = (boolean) radioButton.getTag(R.id.native_radio_button_extra_info);
@@ -1679,7 +1682,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 }
 
                 if (showExtraInfo) {
-                    CustomTextView renderView = radioGroup.getChildAt(i).findViewById(R.id.extraInfoTextView);
+                    CustomTextView renderView = view.getChildAt(i).findViewById(R.id.extraInfoTextView);
 
                     if (renderView.getTag(R.id.original_text) == null) {
                         renderView.setTag(R.id.original_text, renderView.getText());
@@ -1709,7 +1712,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     String text = textView.getText().toString();
                     CommonListener commonListener =
                             (CommonListener) textView.getTag(R.id.number_selector_listener);
-                    TextView selectedTextView = NumberSelectorFactory.getSelectedTextView();
 
                     String selectedNumber = "";
                     if (selectedTextView != null) {
@@ -1728,20 +1730,20 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                                     textView.performClick();
                                 }
                             } else {
-                                selectNumber(calculation, textView, value, commonListener, selectedNumber);
+                                selectNumber(calculation, textView, value, commonListener);
                             }
                         }
                     } else {
-                        selectNumber(calculation, textView, text, commonListener, selectedNumber);
+                        selectNumber(calculation, textView, text, commonListener);
                     }
                 }
             }
         }
     }
 
-    private void selectNumber(String calculation, TextView textView, String text, CommonListener commonListener,
-                              String selectedNumber) {
-        if (calculation.equals(text) && !calculation.equals(selectedNumber)) {
+    private void selectNumber(String calculation, TextView textView, String text, CommonListener commonListener) {
+        if (calculation.equals(text) && !textView.equals(selectedTextView)) {
+            selectedTextView = textView;
             textView.setOnClickListener(commonListener);
             textView.performClick();
         }
