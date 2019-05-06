@@ -103,8 +103,9 @@ public class SpinnerFactory implements FormWidgetFactory {
             spinner.setFloatingLabelText(jsonObject.getString(JsonFormConstants.HINT));
         }
 
+        JSONObject aliasJson = null;
         if (jsonObject.has(JsonFormConstants.ALIAS)) {
-            JSONObject aliasJson = jsonObject.getJSONObject(JsonFormConstants.ALIAS);
+            aliasJson = jsonObject.getJSONObject(JsonFormConstants.ALIAS);
             spinner.setTag(R.id.alias, aliasJson);
         }
 
@@ -136,7 +137,9 @@ public class SpinnerFactory implements FormWidgetFactory {
             values = new String[valuesJson.length()];
             for (int i = 0; i < valuesJson.length(); i++) {
                 values[i] = valuesJson.optString(i);
-                if (valueToSelect.equals(values[i])) {
+                if (aliasJson == null && valueToSelect.equals(values[i])) {
+                    indexToSelect = i;
+                } else if (aliasJson != null && valueToSelect.equals(aliasJson.getString(values[i]))) {
                     indexToSelect = i;
                 }
             }
