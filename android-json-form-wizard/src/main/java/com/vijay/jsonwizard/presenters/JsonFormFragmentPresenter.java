@@ -189,7 +189,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
 
     }
 
-    @SuppressLint ("ResourceAsColor")
+    @SuppressLint("ResourceAsColor")
     public void setUpToolBar() {
         getView().setActionBarTitle(mStepDetails.optString(JsonFormConstants.STEP_TITLE));
         getView().setToolbarTitleColor(R.color.white);
@@ -257,7 +257,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             errorFragment = new JsonFormErrorFragment();
         }
         FragmentManager fm = ((JsonFormFragment) getView()).getChildFragmentManager();
-        @SuppressLint ("CommitTransaction") FragmentTransaction ft = fm.beginTransaction();
+        @SuppressLint("CommitTransaction") FragmentTransaction ft = fm.beginTransaction();
         errorFragment.show(ft, JsonFormErrorFragment.TAG);
     }
 
@@ -520,7 +520,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         }
     }
 
-    @SuppressWarnings ({"unchecked"})
+    @SuppressWarnings({"unchecked"})
     private void setCheckboxesEditable(View editButton) {
         List<View> checkboxLayouts = (ArrayList<View>) editButton.getTag(R.id.editable_view);
         resetWidgetReadOnly(editButton);
@@ -691,7 +691,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         String openMrsEntityParent = (String) parent.getTag(R.id.openmrs_entity_parent);
         String openMrsEntity = (String) parent.getTag(R.id.openmrs_entity);
         String openMrsEntityId = (String) parent.getTag(R.id.openmrs_entity_id);
-        JSONArray jsonArray = (JSONArray) parent.getTag(R.id.alias);
+        JSONArray jsonArray = (JSONArray) parent.getTag(R.id.keys);
         CustomTextView customTextView = (CustomTextView) parent.getTag(R.id.number_selector_textview);
         Boolean popup = (Boolean) parent.getTag(R.id.extraPopup);
         if (popup == null) {
@@ -699,7 +699,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         }
 
         String value = parent.getItemAtPosition(position).toString();
-        if(jsonArray != null && position >0 && jsonArray.length() > 0){
+        if (jsonArray != null && position > -1 && jsonArray.length() > 0) {
             try {
                 value = jsonArray.getString(position);
             } catch (JSONException e) {

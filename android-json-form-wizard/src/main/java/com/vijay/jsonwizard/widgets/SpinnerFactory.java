@@ -103,10 +103,10 @@ public class SpinnerFactory implements FormWidgetFactory {
             spinner.setFloatingLabelText(jsonObject.getString(JsonFormConstants.HINT));
         }
 
-        JSONArray aliasJson = null;
-        if (jsonObject.has(JsonFormConstants.ALIAS)) {
-            aliasJson = jsonObject.getJSONArray(JsonFormConstants.ALIAS);
-            spinner.setTag(R.id.alias, aliasJson);
+        JSONArray keysJson = null;
+        if (jsonObject.has(JsonFormConstants.KEYS)) {
+            keysJson = jsonObject.getJSONArray(JsonFormConstants.KEYS);
+            spinner.setTag(R.id.keys, keysJson);
         }
 
         setViewTags(jsonObject, canvasIds, stepName, popup, openMrsEntityParent, openMrsEntity, openMrsEntityId, spinner);
@@ -137,9 +137,9 @@ public class SpinnerFactory implements FormWidgetFactory {
             values = new String[valuesJson.length()];
             for (int i = 0; i < valuesJson.length(); i++) {
                 values[i] = valuesJson.optString(i);
-                if (aliasJson == null && valueToSelect.equals(values[i])) {
+                if (keysJson == null && valueToSelect.equals(values[i])) {
                     indexToSelect = i;
-                } else if (aliasJson != null && valueToSelect.equals(aliasJson.optString(i))) {
+                } else if (keysJson != null && valueToSelect.equals(keysJson.optString(i))) {
                     indexToSelect = i;
                 }
             }
