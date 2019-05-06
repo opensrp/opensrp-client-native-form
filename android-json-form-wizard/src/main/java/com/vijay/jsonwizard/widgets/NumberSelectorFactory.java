@@ -129,6 +129,10 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         customTextView.setError(null);
     }
 
+    public static CustomTextView getSelectedTextView() {
+        return selectedTextView;
+    }
+
     /**
      * Create the spinner with the numbers starting from the last number in hte selectors
      *
@@ -229,6 +233,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
         String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
+        String calculations = jsonObject.optString(JsonFormConstants.CALCULATION);
 
         LinearLayout rootLayout = new LinearLayout(context);
         LinearLayout.LayoutParams layoutParams = FormUtils
@@ -257,6 +262,10 @@ public class NumberSelectorFactory implements FormWidgetFactory {
             ((JsonApi) context).addConstrainedView(rootLayout);
         }
 
+        if (!TextUtils.isEmpty(calculations) && context instanceof JsonApi) {
+            rootLayout.setTag(R.id.calculation, calculations);
+            ((JsonApi) context).addCalculationLogicView(rootLayout);
+        }
         views.add(rootLayout);
         createTextViews(context, jsonObject, rootLayout, listener, stepName, popup);
         rootLayout.setTag(R.id.is_number_selector_linear_layout, true);

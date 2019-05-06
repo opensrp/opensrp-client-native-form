@@ -3,7 +3,9 @@ package com.jsonwizard.comparisons;
 import com.jsonwizard.BaseTest;
 import com.jsonwizard.TestConstants;
 import com.vijay.jsonwizard.comparisons.NotEqualToComparison;
+
 import junit.framework.Assert;
+
 import org.junit.Test;
 
 public class NotEqualsToComparisonTest extends BaseTest {

@@ -481,4 +481,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         return view instanceof LinearLayout && view.getTag(R.id.type).equals(JsonFormConstants.CHECK_BOX + "_parent");
     }
 
+    public JsonFormFragmentPresenter getPresenter() {
+        return presenter;
+    }
 }
