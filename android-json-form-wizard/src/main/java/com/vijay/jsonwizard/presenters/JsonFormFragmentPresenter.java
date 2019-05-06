@@ -691,6 +691,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         String openMrsEntityParent = (String) parent.getTag(R.id.openmrs_entity_parent);
         String openMrsEntity = (String) parent.getTag(R.id.openmrs_entity);
         String openMrsEntityId = (String) parent.getTag(R.id.openmrs_entity_id);
+        JSONObject jsonObject = (JSONObject) parent.getTag(R.id.alias);
         CustomTextView customTextView = (CustomTextView) parent.getTag(R.id.number_selector_textview);
         Boolean popup = (Boolean) parent.getTag(R.id.extraPopup);
         if (popup == null) {
@@ -698,6 +699,13 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         }
 
         String value = parent.getItemAtPosition(position).toString();
+        if(jsonObject != null && jsonObject.has(value)){
+            try {
+                value = jsonObject.getString(value);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
         getView().writeValue(mStepName, parentKey, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
 
         if (JsonFormConstants.NUMBER_SELECTOR.equals(type)) {

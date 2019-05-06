@@ -241,6 +241,26 @@
         }
       },
       {
+        "key": "marital",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person",
+        "openmrs_entity_id": "person_attribute",
+        "type": "spinner",
+        "hint": "Marital Status",
+        "values": [
+          "Ame OA",
+          "Haja OA"
+        ],
+        "alias": {
+          "Ame OA": "Married",
+          "Haja OA": "Female"
+        },
+        "v_required": {
+          "value": "true",
+          "err": "Please enter the sex"
+        }
+      },
+      {
         "key": "Date_Birth",
         "openmrs_entity_parent": "",
         "openmrs_entity": "person",

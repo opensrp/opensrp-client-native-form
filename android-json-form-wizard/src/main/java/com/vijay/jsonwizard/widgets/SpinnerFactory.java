@@ -29,7 +29,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by nipun on 30/05/15.
@@ -101,6 +103,11 @@ public class SpinnerFactory implements FormWidgetFactory {
         if (!TextUtils.isEmpty(hint)) {
             spinner.setHint(jsonObject.getString(JsonFormConstants.HINT));
             spinner.setFloatingLabelText(jsonObject.getString(JsonFormConstants.HINT));
+        }
+
+        if (jsonObject.has(JsonFormConstants.ALIAS)) {
+            JSONObject aliasJson = jsonObject.getJSONObject(JsonFormConstants.ALIAS);
+            spinner.setTag(R.id.alias, aliasJson);
         }
 
         setViewTags(jsonObject, canvasIds, stepName, popup, openMrsEntityParent, openMrsEntity, openMrsEntityId, spinner);
