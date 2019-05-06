@@ -251,10 +251,10 @@
           "Ame OA",
           "Haja OA"
         ],
-        "alias": {
-          "Ame OA": "Married",
-          "Haja OA": "Single"
-        },
+        "alias": [
+          "Married",
+          "Single"
+        ],
         "v_required": {
           "value": "true",
           "err": "Please enter the sex"

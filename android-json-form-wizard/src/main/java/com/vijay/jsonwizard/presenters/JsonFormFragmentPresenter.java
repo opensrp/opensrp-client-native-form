@@ -691,7 +691,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         String openMrsEntityParent = (String) parent.getTag(R.id.openmrs_entity_parent);
         String openMrsEntity = (String) parent.getTag(R.id.openmrs_entity);
         String openMrsEntityId = (String) parent.getTag(R.id.openmrs_entity_id);
-        JSONObject jsonObject = (JSONObject) parent.getTag(R.id.alias);
+        JSONArray jsonArray = (JSONArray) parent.getTag(R.id.alias);
         CustomTextView customTextView = (CustomTextView) parent.getTag(R.id.number_selector_textview);
         Boolean popup = (Boolean) parent.getTag(R.id.extraPopup);
         if (popup == null) {
@@ -699,9 +699,9 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         }
 
         String value = parent.getItemAtPosition(position).toString();
-        if(jsonObject != null && jsonObject.has(value)){
+        if(jsonArray != null && position >0 && jsonArray.length() > 0){
             try {
-                value = jsonObject.getString(value);
+                value = jsonArray.getString(position);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
