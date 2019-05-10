@@ -103,6 +103,12 @@ public class SpinnerFactory implements FormWidgetFactory {
             spinner.setFloatingLabelText(jsonObject.getString(JsonFormConstants.HINT));
         }
 
+        JSONArray keysJson = null;
+        if (jsonObject.has(JsonFormConstants.KEYS)) {
+            keysJson = jsonObject.getJSONArray(JsonFormConstants.KEYS);
+            spinner.setTag(R.id.keys, keysJson);
+        }
+
         setViewTags(jsonObject, canvasIds, stepName, popup, openMrsEntityParent, openMrsEntity, openMrsEntityId, spinner);
 
         addSkipLogicTags(context, relevance, constraints, calculations, spinner);
@@ -131,7 +137,9 @@ public class SpinnerFactory implements FormWidgetFactory {
             values = new String[valuesJson.length()];
             for (int i = 0; i < valuesJson.length(); i++) {
                 values[i] = valuesJson.optString(i);
-                if (valueToSelect.equals(values[i])) {
+                if (keysJson == null && valueToSelect.equals(values[i])) {
+                    indexToSelect = i;
+                } else if (keysJson != null && valueToSelect.equals(keysJson.optString(i))) {
                     indexToSelect = i;
                 }
             }
