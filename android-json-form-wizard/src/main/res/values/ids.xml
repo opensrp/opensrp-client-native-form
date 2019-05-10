@@ -19,6 +19,7 @@
     <item name="openmrs_entity_parent" type='id' />
     <item name="openmrs_entity" type='id' />
     <item name="openmrs_entity_id" type='id' />
+    <item name="keys" type='id' />
     <item name="relevance" type="id" />
     <item name="calculation" type="id" />
     <item name="constraints" type="id" />
