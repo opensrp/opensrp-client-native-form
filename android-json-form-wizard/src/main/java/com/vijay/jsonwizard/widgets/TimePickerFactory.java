@@ -225,10 +225,6 @@ public class TimePickerFactory implements FormWidgetFactory {
             editText.setEnabled(!readOnly);
             editText.setFocusable(!readOnly);
         }
-
-        editText.addValidator(new RegexpValidator(
-                context.getResources().getString(R.string.badly_formed_date),
-                TIME_FORMAT_REGEX));
     }
 
     private void updateTimeText(MaterialEditText editText, String durationText) {

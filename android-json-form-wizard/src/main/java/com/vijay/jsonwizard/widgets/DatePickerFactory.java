@@ -247,10 +247,6 @@ public class DatePickerFactory implements FormWidgetFactory {
             editText.setEnabled(!readOnly);
             editText.setFocusable(!readOnly);
         }
-
-        editText.addValidator(new RegexpValidator(
-                context.getResources().getString(R.string.badly_formed_date),
-                DATE_FORMAT_REGEX));
     }
 
     private DatePickerDialog createDateDialog(Context context, final TextView duration, final MaterialEditText editText,
