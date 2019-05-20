@@ -164,4 +164,34 @@ public class Utils {
             progressDialog.dismiss();
         }
     }
+
+    public static String convertArabicToEnglish(String str) {
+        String answer = str;
+        answer = answer.replace("١", "1");
+        answer = answer.replace("٢", "2");
+        answer = answer.replace("٣", "3");
+        answer = answer.replace("٤", "4");
+        answer = answer.replace("٥", "5");
+        answer = answer.replace("٦", "6");
+        answer = answer.replace("٧", "7");
+        answer = answer.replace("٨", "8");
+        answer = answer.replace("٩", "9");
+        answer = answer.replace("٠", "0");
+        return answer;
+    }
+
+    public static String convertEnglishToArabic(String str) {
+        String answer = str;
+        answer = answer.replace("1","١");
+        answer = answer.replace("2","٢");
+        answer = answer.replace("3","٣");
+        answer = answer.replace("4","٤");
+        answer = answer.replace("5","٥");
+        answer = answer.replace("6","٦");
+        answer = answer.replace("7","٧");
+        answer = answer.replace("8","٨");
+        answer = answer.replace("9","٩");
+        answer = answer.replace("0","٠");
+        return answer;
+    }
 }

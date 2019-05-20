@@ -60,6 +60,7 @@ import com.vijay.jsonwizard.rules.RuleConstant;
 import com.vijay.jsonwizard.utils.ExObjectResult;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.PropertyManager;
+import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.views.CustomTextView;
 import com.vijay.jsonwizard.widgets.NumberSelectorFactory;
 
@@ -139,6 +140,9 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     @Override
     public void writeValue(String stepName, String key, String value, String openMrsEntityParent, String openMrsEntity,
                            String openMrsEntityId, boolean popup) throws JSONException {
+        if(key.equalsIgnoreCase("Date_Birth") || key.equalsIgnoreCase("Time_Birth")) {
+            value = Utils.convertArabicToEnglish(value);
+        }
         if (invokeRefreshLogic(stepName, null, key, value)) {
             if (!popup) {
                 cacheFormMapValues(stepName, null, key, value);
@@ -163,7 +167,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     @Override
     public void writeValue(String stepName, String key, String value, String openMrsEntityParent, String openMrsEntity,
                            String openMrsEntityId) throws JSONException {
-
         if (invokeRefreshLogic(stepName, null, key, value)) {
             cacheFormMapValues(stepName, null, key, value);
             widgetsWriteValue(stepName, key, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, false);
