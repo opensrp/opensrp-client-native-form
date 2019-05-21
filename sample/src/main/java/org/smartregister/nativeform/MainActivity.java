@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         findViewById(R.id.child_enrollment).setOnClickListener(this);
         findViewById(R.id.wizard_form).setOnClickListener(this);
+        findViewById(R.id.native_form_basic).setOnClickListener(this);
         findViewById(R.id.rules_engine_skip_logic).setOnClickListener(this);
         findViewById(R.id.numbers_selector_widget).setOnClickListener(this);
         findViewById(R.id.generic_dialog_button).setOnClickListener(this);
@@ -148,6 +149,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     startActivityForResult(intent, jsonFormActivityRequestCode);
                     break;
                 }
+                case "basic_form": {
+                    Intent intent = new Intent(this, JsonWizardFormActivity.class);
+                    intent.putExtra("json", jsonForm.toString());
+                    Log.d(getClass().getName(), "form is " + jsonForm.toString());
+
+                    Form form = new Form();
+                    form.setName(getString(R.string.basic_form));
+                    form.setWizard(true);
+                    form.setActionBarBackground(R.color.profile_actionbar);
+                    form.setNavigationBackground(R.color.profile_navigation);
+                    form.setHideSaveLabel(true);
+                    form.setNextLabel(getString(R.string.next));
+                    form.setPreviousLabel(getString(R.string.previous));
+                    form.setSaveLabel(getString(R.string.save));
+                    form.setBackIcon(R.drawable.ic_icon_positive);
+                    intent.putExtra(JsonFormConstants.JSON_FORM_KEY.FORM, form);
+
+                    startActivityForResult(intent, jsonFormActivityRequestCode);
+                    break;
+                }
                 case "validation_form": {
                     Intent intent = new Intent(this, JsonWizardFormActivity.class);
                     intent.putExtra("json", jsonForm.toString());
@@ -232,6 +253,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case R.id.wizard_form:
                     startForm(REQUEST_CODE_GET_JSON, "wizard_form", null);
+                    break;
+                case R.id.native_form_basic:
+                    startForm(REQUEST_CODE_GET_JSON, "basic_form", null);
                     break;
                 case R.id.rules_engine_skip_logic:
                     startForm(REQUEST_CODE_GET_JSON, "rules_engine_demo", null);
