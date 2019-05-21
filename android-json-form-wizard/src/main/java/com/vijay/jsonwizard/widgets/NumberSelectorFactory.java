@@ -1,24 +1,25 @@
 package com.vijay.jsonwizard.widgets;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.support.v7.widget.CardView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
-import com.vijay.jsonwizard.customviews.NumberSelectorAdapter;
-import com.vijay.jsonwizard.customviews.NumberSelectorSpinner;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
@@ -134,42 +135,18 @@ public class NumberSelectorFactory implements FormWidgetFactory {
     }
 
     /**
-     * Create the spinner with the numbers starting from the last number in hte selectors
+     * Get numbers to display in the number selector dialog
      *
-     * @param context
      * @param jsonObject
      */
-    private static Spinner createDialogSpinner(Context context, JSONObject jsonObject, int spinnerStartNumber,
-                                               final CommonListener
-                                                       listener, String stepName) throws JSONException {
-        String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
-        String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
-        String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
-
+    private static List<String> getNumbersForNumberSelectorDialog(JSONObject jsonObject, int startNumber) {
         int maxValue = jsonObject.optInt(JsonFormConstants.MAX_SELECTION_VALUE, 20);
 
-        final NumberSelectorSpinner spinner = new NumberSelectorSpinner(context, Spinner.MODE_DROPDOWN);
         List<String> numbers = new ArrayList<>();
-        for (int i = spinnerStartNumber; i <= maxValue; i++) {
+        for (int i = startNumber; i <= maxValue; i++) {
             numbers.add(String.valueOf(i));
         }
-
-        NumberSelectorAdapter numbersAdapter = new NumberSelectorAdapter(context, numbers);
-        spinner.setAdapter(numbersAdapter);
-        spinner.setId(ViewUtil.generateViewId());
-        spinner.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY) + JsonFormConstants.SUFFIX.SPINNER);
-        spinner.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
-        spinner.setTag(R.id.openmrs_entity, openMrsEntity);
-        spinner.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-        spinner.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
-        spinner.setTag(R.id.address, stepName + ":" + spinner.getTag(R.id.key));
-        spinner.post(new Runnable() {
-            @Override
-            public void run() {
-                spinner.setListener(listener);
-            }
-        });
-        return spinner;
+        return numbers;
     }
 
     public static void setSelectedTextViewText(String viewText) {
@@ -192,18 +169,48 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         return receiver;
     }
 
-    private void createNumberSelector(CustomTextView textView) {
-        final Spinner spinner = (Spinner) textView.getTag(R.id.number_selector_spinner);
-
-        LinearLayout parent = ((LinearLayout) textView.getTag(R.id.toolbar_parent_layout));
-
-        if (spinner != null && parent.findViewById(spinner.getId()) == null) {
-            parent.addView(spinner);
+    private void createNumberSelector(final CustomTextView textView) {
+        Context context = textView.getContext();
+        final Dialog numbersDialog = new Dialog(context);
+        View layout = LinearLayout.inflate(context, R.layout.number_selector_dialog, null);
+        CardView numbersCardView = layout.findViewById(R.id.number_selector_dialog_card_view);
+        LinearLayout numbersLinearLayout = new LinearLayout(context);
+        numbersLinearLayout.setOrientation(LinearLayout.VERTICAL);
+        List<String> numbers = (List<String>) textView.getTag(R.id.number_selector_dialog_numbers);
+        for (final String number : numbers) {
+            CustomTextView numberTextView = new CustomTextView(context);
+            numberTextView.setTag(R.id.is_number_selector_dialog_textview, true);
+            numberTextView.setTag(R.id.number_selector_dialog, numbersDialog);
+            numberTextView.setTag(R.id.number_selector_main_textview, textView);
+            numberTextView.setTag(R.id.type, JsonFormConstants.NUMBER_SELECTOR);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            layoutParams.setMargins(32, 24, 32, 8);
+            numberTextView.setPadding(16, 16, 16, 16);
+            numberTextView.setTextSize(18.0f);
+            numberTextView.setClickable(true);
+            numberTextView.setTextColor(context.getResources().getColor(R.color.black));
+            numberTextView.setLayoutParams(layoutParams);
+            numberTextView.setText(number);
+            TypedValue outValue = new TypedValue();
+            context.getTheme().resolveAttribute(android.R.attr.selectableItemBackground, outValue, true);
+            numberTextView.setBackgroundResource(outValue.resourceId);
+            numbersLinearLayout.addView(numberTextView);
+            numberTextView.setOnClickListener(listener) ;
         }
-        if (spinner != null) {
-            spinner.performClick();
+
+        numbersCardView.addView(numbersLinearLayout);
+        numbersDialog.setContentView(layout);
+
+        int width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.50);
+        int height = (context.getResources().getDisplayMetrics().heightPixels);
+
+        if (numbersDialog.getWindow() != null) {
+            numbersDialog.getWindow().setLayout(width, height);
+            numbersDialog.getWindow().setGravity(Gravity.END);
         }
 
+        numbersDialog.setCancelable(true);
+        numbersDialog.show();
     }
 
     @Override
@@ -267,7 +274,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
             ((JsonApi) context).addCalculationLogicView(rootLayout);
         }
         views.add(rootLayout);
-        createTextViews(context, jsonObject, rootLayout, listener, stepName, popup);
+        createTextViews(context, jsonObject, rootLayout, listener, popup);
         rootLayout.setTag(R.id.is_number_selector_linear_layout, true);
         addRequiredTag(rootLayout, jsonObject);
         ((JsonApi) context).addFormDataView(rootLayout);
@@ -278,9 +285,9 @@ public class NumberSelectorFactory implements FormWidgetFactory {
 
     @SuppressLint("NewApi")
     private void createTextViews(Context context, JSONObject jsonObject, LinearLayout linearLayout, CommonListener
-            listener, String stepName, boolean popup) throws JSONException {
+            listener, boolean popup) throws JSONException {
         int startSelectionNumber = jsonObject.optInt(JsonFormConstants.START_SELECTION_NUMBER, 1);
-        int width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.83);
+        int width = 0; //since we are using layout weight this will be calculated so its set to 0
         int numberOfSelectors = jsonObject.optInt(JsonFormConstants.NUMBER_OF_SELECTORS, 5);
 
         if (linearLayout.getTag(R.id.is_automatic) == null) {
@@ -302,12 +309,9 @@ public class NumberSelectorFactory implements FormWidgetFactory {
             if (i == (numberOfSelectors - 1) && (numberOfSelectors < maxValue)) {
                 customTextView.setTag(R.id.toolbar_parent_layout, linearLayout);
                 customTextView.setOnClickListener(selectedNumberClickListener);
-                Spinner spinner = createDialogSpinner(context, jsonObject,
-                        (startSelectionNumber + (numberOfSelectors - 1)),
-                        listener, stepName);
-                customTextView.setTag(R.id.number_selector_spinner, spinner);
-                spinner.setTag(R.id.number_selector_textview, customTextView);
-                spinner.setTag(R.id.extraPopup, popup);
+                List<String> numbers = getNumbersForNumberSelectorDialog(jsonObject,
+                        (startSelectionNumber + (numberOfSelectors - 1)));
+                customTextView.setTag(R.id.number_selector_dialog_numbers, numbers);
 
             } else {
                 customTextView.setOnClickListener(listener);
@@ -344,8 +348,9 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         textSize = textSize == null ? String
                 .valueOf(context.getResources().getDimension(R.dimen.default_label_text_size)) : String
                 .valueOf(FormUtils.getValueFromSpOrDpOrPx(textSize, context));
-        LinearLayout.LayoutParams layoutParams = FormUtils
-                .getLinearLayoutParams(width / numberOfSelectors, FormUtils.WRAP_CONTENT, 1, 2, 1, 2);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT, 1.0f);
+        layoutParams.setMargins(1, 0, 1, 0);
 
         CustomTextView customTextView = FormUtils.getTextViewWith(context, Integer.parseInt(textSize), getText(item,
                 startSelectionNumber, numberOfSelectors, maxValue),
@@ -452,11 +457,9 @@ public class NumberSelectorFactory implements FormWidgetFactory {
                     LinearLayout rootLayout = rootLayoutMap.get(intent.getStringExtra(JsonFormConstants.JSON_OBJECT_KEY));
                     rootLayout.removeAllViews();
                     rootLayout.setTag(R.id.is_automatic, true);
-                    createTextViews(context, jsonObject, rootLayout, listener,
-                            intent.getStringExtra(JsonFormConstants.STEPNAME), isPopUp);
+                    createTextViews(context, jsonObject, rootLayout, listener, isPopUp);
                     rootLayout.setTag(R.id.is_automatic, null);
                 }
-
 
             } catch (JSONException e) {
                 Log.e(TAG, e.getMessage(), e);

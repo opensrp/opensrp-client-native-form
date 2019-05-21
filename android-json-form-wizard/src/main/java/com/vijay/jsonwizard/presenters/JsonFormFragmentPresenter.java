@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -364,7 +365,6 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
      * Validates the passed view
      *
      * @param childAt view to be validated
-     *
      * @return ValidationStatus for the view
      */
     private ValidationStatus validateView(View childAt) {
@@ -404,7 +404,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         }
     }
 
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         Log.d(TAG, "Permission callback called-------");
 
         if (grantResults.length == 0) {
@@ -681,12 +681,10 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
 
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         String parentKey = (String) parent.getTag(R.id.key);
-        String type = (String) parent.getTag(R.id.type);
         String openMrsEntityParent = (String) parent.getTag(R.id.openmrs_entity_parent);
         String openMrsEntity = (String) parent.getTag(R.id.openmrs_entity);
         String openMrsEntityId = (String) parent.getTag(R.id.openmrs_entity_id);
         JSONArray jsonArray = (JSONArray) parent.getTag(R.id.keys);
-        CustomTextView customTextView = (CustomTextView) parent.getTag(R.id.number_selector_textview);
         Boolean popup = (Boolean) parent.getTag(R.id.extraPopup);
         if (popup == null) {
             popup = false;
@@ -697,32 +695,43 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             try {
                 value = jsonArray.getString(position);
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.e(TAG, e.toString());
             }
         }
         getView().writeValue(mStepName, parentKey, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
-
-        if (JsonFormConstants.NUMBER_SELECTOR.equals(type)) {
-            NumberSelectorFactory.setBackgrounds(customTextView);
-            NumberSelectorFactory.setSelectedTextViews(customTextView);
-            NumberSelectorFactory.setSelectedTextViewText((String) parent.getItemAtPosition(position));
-        }
     }
 
     private void createNumberSelector(View view) {
+        Object isNumberSelectorTextView = view.getTag(R.id.is_number_selector_dialog_textview);
         CustomTextView customTextView = (CustomTextView) view;
-        int item = (int) customTextView.getTag(R.id.number_selector_item);
-        int numberOfSelectors = (int) customTextView.getTag(R.id.number_selector_number_of_selectors);
-        if (item <= (numberOfSelectors - 1)) {
-            NumberSelectorFactory.setBackgrounds(customTextView);
+        if (isNumberSelectorTextView != null && (boolean) isNumberSelectorTextView) {
+            Dialog dialog = (Dialog) customTextView.getTag(R.id.number_selector_dialog);
+            CustomTextView mainTextView = (CustomTextView) customTextView.getTag(R.id.number_selector_main_textview);
+            NumberSelectorFactory.setBackgrounds(mainTextView);
+            NumberSelectorFactory.setSelectedTextViews(mainTextView);
+            NumberSelectorFactory.setSelectedTextViewText(customTextView.getText().toString());
+            saveValueFromCustomView(mainTextView);
+            dialog.dismiss();
+        } else {
+            int item = (int) customTextView.getTag(R.id.number_selector_item);
+            int numberOfSelectors = (int) customTextView.getTag(R.id.number_selector_number_of_selectors);
+            if (item <= (numberOfSelectors - 1)) {
+                NumberSelectorFactory.setBackgrounds(customTextView);
+            }
+            NumberSelectorFactory.setSelectedTextViews(customTextView);
+            saveValueFromCustomView(customTextView);
         }
-        NumberSelectorFactory.setSelectedTextViews(customTextView);
+
+    }
+
+    private void saveValueFromCustomView(CustomTextView customTextView) {
         //String parentKey = (String) customTextView.getTag(R.id.key);
         String parentKey = (String) ((View) customTextView.getParent()).getTag(R.id.key);
         String openMrsEntityParent = (String) customTextView.getTag(R.id.openmrs_entity_parent);
         String openMrsEntity = (String) customTextView.getTag(R.id.openmrs_entity);
         String openMrsEntityId = (String) customTextView.getTag(R.id.openmrs_entity_id);
         Boolean popup = (Boolean) customTextView.getTag(R.id.extraPopup);
+
         if (popup == null) {
             popup = false;
         }
