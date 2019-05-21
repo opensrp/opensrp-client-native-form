@@ -202,7 +202,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         numbersDialog.setContentView(layout);
 
         int width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.50);
-        int height = (context.getResources().getDisplayMetrics().heightPixels);
+        int height = (int) (context.getResources().getDisplayMetrics().heightPixels * 0.9);
 
         if (numbersDialog.getWindow() != null) {
             numbersDialog.getWindow().setLayout(width, height);
