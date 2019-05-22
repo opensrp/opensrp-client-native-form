@@ -16,12 +16,10 @@
             android:id="@+id/number_selector_dialog_card_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginBottom="4dp"
+             android:layout_marginBottom="4dp"
             android:clipChildren="false"
             android:clipToPadding="false"
-            app:cardElevation="8dp"
+            app:cardElevation="0dp"
             card_view:cardPreventCornerOverlap="false" />
 
     </LinearLayout>

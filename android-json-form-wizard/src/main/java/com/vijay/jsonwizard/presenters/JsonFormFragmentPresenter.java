@@ -4,7 +4,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,6 +17,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.widget.AppCompatRadioButton;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -704,14 +704,15 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
     private void createNumberSelector(View view) {
         Object isNumberSelectorTextView = view.getTag(R.id.is_number_selector_dialog_textview);
         CustomTextView customTextView = (CustomTextView) view;
+
         if (isNumberSelectorTextView != null && (boolean) isNumberSelectorTextView) {
-            Dialog dialog = (Dialog) customTextView.getTag(R.id.number_selector_dialog);
-            CustomTextView mainTextView = (CustomTextView) customTextView.getTag(R.id.number_selector_main_textview);
-            NumberSelectorFactory.setBackgrounds(mainTextView);
-            NumberSelectorFactory.setSelectedTextViews(mainTextView);
-            NumberSelectorFactory.setSelectedTextViewText(customTextView.getText().toString());
-            saveValueFromCustomView(mainTextView);
-            dialog.dismiss();
+            NumberSelectorFactory.createNumberSelector(customTextView);
+            //Save the last value if none is selected
+            if(customTextView.getText().toString().contains("+")){
+                String currentText = customTextView.getText().toString().replace("+","");
+                customTextView.setText(currentText);
+                saveValueFromCustomView(customTextView);
+            }
         } else {
             int item = (int) customTextView.getTag(R.id.number_selector_item);
             int numberOfSelectors = (int) customTextView.getTag(R.id.number_selector_number_of_selectors);
@@ -757,5 +758,23 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
 
     public JsonFormInteractor getInteractor() {
         return mJsonFormInteractor;
+    }
+
+    public boolean onMenuItemClick(MenuItem item) {
+        Intent intent = item.getIntent();
+        if (intent != null && intent.getBooleanExtra(JsonFormConstants.IS_NUMBER_SELECTOR_MENU, true)) {
+            String parentKey = intent.getStringExtra(JsonFormConstants.PARENT_KEY);
+            String value = item.getTitle().toString();
+            String openMrsEntityParent = intent.getStringExtra(JsonFormConstants.OPENMRS_ENTITY_PARENT);
+            String openMrsEntity = intent.getStringExtra(JsonFormConstants.OPENMRS_ENTITY);
+            String openMrsEntityId = intent.getStringExtra(JsonFormConstants.OPENMRS_ENTITY_ID);
+            boolean popup = intent.getBooleanExtra(JsonFormConstants.IS_POPUP, false);
+            NumberSelectorFactory.setSelectedTextViewText(value);
+            getView().writeValue(mStepName, parentKey, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
+
+            return true;
+        }
+
+        return false;
     }
 }

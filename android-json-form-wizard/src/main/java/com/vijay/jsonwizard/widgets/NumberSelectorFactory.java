@@ -1,21 +1,18 @@
 package com.vijay.jsonwizard.widgets;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import android.support.v7.widget.CardView;
 import android.text.TextUtils;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
@@ -42,7 +39,6 @@ public class NumberSelectorFactory implements FormWidgetFactory {
     public static final String TAG = NumberSelectorFactory.class.getCanonicalName();
     public static NumberSelectorFactoryReceiver receiver;
     private static CustomTextView selectedTextView;
-    private SelectedNumberClickListener selectedNumberClickListener = new SelectedNumberClickListener();
     private Context context;
     private CommonListener listener;
     private Map<String, JSONObject> jsonObjectMap = new HashMap<>();
@@ -169,48 +165,36 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         return receiver;
     }
 
-    private void createNumberSelector(final CustomTextView textView) {
+    /**
+     * Display list of numbers in a popup menu
+     *
+     * @param textView the text view that the popup will be displayed against.
+     */
+    public static void createNumberSelector(final CustomTextView textView) {
+        setBackgrounds(textView);
+        setSelectedTextViews(textView);
         Context context = textView.getContext();
-        final Dialog numbersDialog = new Dialog(context);
-        View layout = LinearLayout.inflate(context, R.layout.number_selector_dialog, null);
-        CardView numbersCardView = layout.findViewById(R.id.number_selector_dialog_card_view);
-        LinearLayout numbersLinearLayout = new LinearLayout(context);
-        numbersLinearLayout.setOrientation(LinearLayout.VERTICAL);
         List<String> numbers = (List<String>) textView.getTag(R.id.number_selector_dialog_numbers);
+        PopupMenu menu = new PopupMenu(context, textView);
+        menu.inflate(R.menu.menu_popup);
         for (final String number : numbers) {
-            CustomTextView numberTextView = new CustomTextView(context);
-            numberTextView.setTag(R.id.is_number_selector_dialog_textview, true);
-            numberTextView.setTag(R.id.number_selector_dialog, numbersDialog);
-            numberTextView.setTag(R.id.number_selector_main_textview, textView);
-            numberTextView.setTag(R.id.type, JsonFormConstants.NUMBER_SELECTOR);
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            layoutParams.setMargins(32, 24, 32, 8);
-            numberTextView.setPadding(16, 16, 16, 16);
-            numberTextView.setTextSize(18.0f);
-            numberTextView.setClickable(true);
-            numberTextView.setTextColor(context.getResources().getColor(R.color.black));
-            numberTextView.setLayoutParams(layoutParams);
-            numberTextView.setText(number);
-            TypedValue outValue = new TypedValue();
-            context.getTheme().resolveAttribute(android.R.attr.selectableItemBackground, outValue, true);
-            numberTextView.setBackgroundResource(outValue.resourceId);
-            numbersLinearLayout.addView(numberTextView);
-            numberTextView.setOnClickListener(listener) ;
+            String parentKey = (String) ((View) textView.getParent()).getTag(R.id.key);
+            String openMrsEntityParent = (String) textView.getTag(R.id.openmrs_entity_parent);
+            String openMrsEntity = (String) textView.getTag(R.id.openmrs_entity);
+            String openMrsEntityId = (String) textView.getTag(R.id.openmrs_entity_id);
+            Boolean popup = (Boolean) textView.getTag(R.id.extraPopup);
+            Intent intent = new Intent().putExtra(JsonFormConstants.IS_NUMBER_SELECTOR_MENU, true)
+                    .putExtra(JsonFormConstants.PARENT_KEY, parentKey)
+                    .putExtra(JsonFormConstants.OPENMRS_ENTITY_PARENT, openMrsEntityParent)
+                    .putExtra(JsonFormConstants.OPENMRS_ENTITY, openMrsEntity)
+                    .putExtra(JsonFormConstants.OPENMRS_ENTITY_ID, openMrsEntityId)
+                    .putExtra(JsonFormConstants.IS_POPUP, popup);
+
+            menu.getMenu().add(number).setIntent(intent);
         }
-
-        numbersCardView.addView(numbersLinearLayout);
-        numbersDialog.setContentView(layout);
-
-        int width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.50);
-        int height = (int) (context.getResources().getDisplayMetrics().heightPixels * 0.9);
-
-        if (numbersDialog.getWindow() != null) {
-            numbersDialog.getWindow().setLayout(width, height);
-            numbersDialog.getWindow().setGravity(Gravity.END);
-        }
-
-        numbersDialog.setCancelable(true);
-        numbersDialog.show();
+        CommonListener listener = (CommonListener) textView.getTag(R.id.number_selector_listener);
+        menu.setOnMenuItemClickListener(listener);
+        menu.show();
     }
 
     @Override
@@ -306,17 +290,16 @@ public class NumberSelectorFactory implements FormWidgetFactory {
                 customTextView.setBackgroundResource(R.drawable.number_selector_right_rounded_background);
             }
 
+            //Set a tag to the last text view displayed in the number selector widget
             if (i == (numberOfSelectors - 1) && (numberOfSelectors < maxValue)) {
                 customTextView.setTag(R.id.toolbar_parent_layout, linearLayout);
-                customTextView.setOnClickListener(selectedNumberClickListener);
+                customTextView.setTag(R.id.is_number_selector_dialog_textview, true);
                 List<String> numbers = getNumbersForNumberSelectorDialog(jsonObject,
                         (startSelectionNumber + (numberOfSelectors - 1)));
                 customTextView.setTag(R.id.number_selector_dialog_numbers, numbers);
 
-            } else {
-                customTextView.setOnClickListener(listener);
             }
-
+            customTextView.setOnClickListener(listener);
             linearLayout.addView(customTextView);
             showSelectedTextView(jsonObject, customTextView);
         }
@@ -425,12 +408,6 @@ public class NumberSelectorFactory implements FormWidgetFactory {
 
     }
 
-    private class SelectedNumberClickListener implements View.OnClickListener {
-        @Override
-        public void onClick(View view) {
-            createNumberSelector((CustomTextView) view);
-        }
-    }
 
     public class NumberSelectorFactoryReceiver extends BroadcastReceiver {
 
