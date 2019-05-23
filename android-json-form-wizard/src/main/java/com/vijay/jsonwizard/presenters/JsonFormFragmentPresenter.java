@@ -475,7 +475,13 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             case JsonFormConstants.NATIVE_EDIT_TEXT:
                 setViewEditable(v);
                 break;
+            case JsonFormConstants.DATE_PICKER:
+                if (v.getId() == R.id.date_picker_info_icon) {
+                    showInformationDialog(v);
+                }
+                break;
             default:
+
                 break;
         }
     }
