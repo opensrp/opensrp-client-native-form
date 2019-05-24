@@ -271,6 +271,8 @@
         "openmrs_entity_id": "birthdate",
         "type": "date_picker",
         "hint": "Child's DOB",
+        "label_info_title": "Child's Date of Birth",
+        "label_info_text": "here is some text on this dialog",
         "expanded": false,
         "duration": {
           "label": "Age"
@@ -322,28 +324,16 @@
         ]
       },
       {
-        "key": "Birth_Weight",
+        "key": "hb_meter",
         "openmrs_entity_parent": "",
         "openmrs_entity": "concept",
         "openmrs_entity_id": "5916AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
         "openmrs_data_type": "text",
         "type": "edit_text",
-        "hint": "Birth weight (kg)",
-        "v_min": {
-          "value": "0.1",
-          "err": "Weight must be greater than 0"
-        },
-        "v_max": {
-          "value": "200",
-          "err": "Weight must be less than 200"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "Enter a valid weight"
-        },
+        "hint": "Hb test result - haemoglobinometer (g/dl)",
         "v_required": {
           "value": "true",
-          "err": "Enter the child's birth weight"
+          "err": "Please enter cool text"
         }
       },
       {
@@ -407,7 +397,8 @@
         "openmrs_entity_id": "NRC_Number",
         "entity_id": "mother",
         "type": "edit_text",
-        "hint": "Mother/guardian NRC number Mother\n/guardian NRC number Mother/\nguardian NRC number",
+        "floating_label": "normal",
+        "hint": "Mother/guardian NRC number Mother/guardian NRC number Mother/guardian NRC number",
         "v_regex": {
           "value": "([0-9]{6}/[0-9]{2}/[0-9])|\\s*",
           "err": "Number must take the format of ######/##/#"

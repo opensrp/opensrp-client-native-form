@@ -158,6 +158,8 @@ public class JsonFormConstants {
     public static final String EX = "ex";
     public static final String SRC = "src";
     public static final String OPTION_KEY = "option_key";
+    public static final String PARENT_KEY = "parent_key";
+    public static final String IS_NUMBER_SELECTOR_MENU = "is_number_selector_menu";
 
     public static class JSON_FORM_KEY {
         public static final String EX_RULES = "ex-rules";

@@ -482,4 +482,9 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     public JsonFormFragmentPresenter getPresenter() {
         return presenter;
     }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        return presenter.onMenuItemClick(item);
+    }
 }
