@@ -1036,7 +1036,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     protected Facts getValueFromAddressCore(JSONObject object) throws JSONException {
         Facts result = new Facts();
 
-        if (object != null) {
+        if (object != null && object.has(JsonFormConstants.TYPE)) {
             switch (object.getString(JsonFormConstants.TYPE)) {
                 case JsonFormConstants.CHECK_BOX:
                     JSONArray options = object.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);

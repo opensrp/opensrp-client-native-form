@@ -53,7 +53,7 @@
     <item name="number_selector_selected_text_color" type="id" />
     <item name="number_selector_listener" type="id" />
     <item name="number_selector_start_selection_number" type="id" />
-    <item name="number_selector_spinner" type="id" />
+    <item name="number_selector_dialog_numbers" type="id" />
 
     <item name="extraRelCheck" type="id" />
     <item name="extraRelArray" type="id" />
@@ -67,4 +67,7 @@
     <item name="next_step" type="id" />
     <item name="is_number_selector_linear_layout" type="id" />
     <item name="selected_number_value" type="id" />
+    <item name="is_number_selector_dialog_textview" type="id" />
+    <item name="number_selector_dialog" type="id" />
+    <item name="number_selector_main_textview" type="id" />
 </resources>

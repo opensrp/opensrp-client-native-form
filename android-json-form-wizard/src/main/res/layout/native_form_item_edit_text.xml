@@ -21,11 +21,9 @@
             android:layout_toStartOf="@+id/material_edit_text_edit_button"
             android:layout_toLeftOf="@+id/material_edit_text_edit_button"
             android:textSize="@dimen/default_text_size"
-            app:met_floatingLabel="highlight"
-            app:met_floatingLabelText=""
+            app:met_floatingLabel="normal"
             app:met_floatingLabelTextSize="@dimen/default_text_size"
             app:met_primaryColor="?colorAccent"
-            app:met_singleLineEllipsis="true"
             app:met_textColorHint="@color/text_hint_color" />
 
         <ImageView

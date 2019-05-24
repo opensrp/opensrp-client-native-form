@@ -135,12 +135,19 @@
         }
       },
       {
-        "key": "gps",
+        "key": "user_gps",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "openmrs_data_type": "text",
         "type": "gps"
+      },
+      {
+        "key": "user_calculation_one",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "concept",
+        "openmrs_entity_id": "165260AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "type": "hidden"
       }
     ]
   },
@@ -182,8 +189,8 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "normal_edit_text",
-        "edit_text_style": "bordered",
-        "edit_type": "number"
+        "hint": "User Text ",
+        "edit_text_style": "bordered"
       },
       {
         "key": "user_normal_edit_number",
@@ -191,6 +198,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "normal_edit_text",
+        "hint": "User number",
         "edit_text_style": "bordered",
         "edit_type": "number"
       },
@@ -285,8 +293,8 @@
           "User Option Two"
         ],
         "keys": [
-          "user_one",
-          "user_two"
+          "user_option_one",
+          "user_option_two"
         ],
         "v_required": {
           "value": "true",

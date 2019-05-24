@@ -17,6 +17,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.widget.AppCompatRadioButton;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -364,7 +365,6 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
      * Validates the passed view
      *
      * @param childAt view to be validated
-     *
      * @return ValidationStatus for the view
      */
     private ValidationStatus validateView(View childAt) {
@@ -404,7 +404,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         }
     }
 
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         Log.d(TAG, "Permission callback called-------");
 
         if (grantResults.length == 0) {
@@ -475,7 +475,13 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             case JsonFormConstants.NATIVE_EDIT_TEXT:
                 setViewEditable(v);
                 break;
+            case JsonFormConstants.DATE_PICKER:
+                if (v.getId() == R.id.date_picker_info_icon) {
+                    showInformationDialog(v);
+                }
+                break;
             default:
+
                 break;
         }
     }
@@ -681,12 +687,10 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
 
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         String parentKey = (String) parent.getTag(R.id.key);
-        String type = (String) parent.getTag(R.id.type);
         String openMrsEntityParent = (String) parent.getTag(R.id.openmrs_entity_parent);
         String openMrsEntity = (String) parent.getTag(R.id.openmrs_entity);
         String openMrsEntityId = (String) parent.getTag(R.id.openmrs_entity_id);
         JSONArray jsonArray = (JSONArray) parent.getTag(R.id.keys);
-        CustomTextView customTextView = (CustomTextView) parent.getTag(R.id.number_selector_textview);
         Boolean popup = (Boolean) parent.getTag(R.id.extraPopup);
         if (popup == null) {
             popup = false;
@@ -697,32 +701,44 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             try {
                 value = jsonArray.getString(position);
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.e(TAG, e.toString());
             }
         }
         getView().writeValue(mStepName, parentKey, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
-
-        if (JsonFormConstants.NUMBER_SELECTOR.equals(type)) {
-            NumberSelectorFactory.setBackgrounds(customTextView);
-            NumberSelectorFactory.setSelectedTextViews(customTextView);
-            NumberSelectorFactory.setSelectedTextViewText((String) parent.getItemAtPosition(position));
-        }
     }
 
     private void createNumberSelector(View view) {
+        Object isNumberSelectorTextView = view.getTag(R.id.is_number_selector_dialog_textview);
         CustomTextView customTextView = (CustomTextView) view;
-        int item = (int) customTextView.getTag(R.id.number_selector_item);
-        int numberOfSelectors = (int) customTextView.getTag(R.id.number_selector_number_of_selectors);
-        if (item <= (numberOfSelectors - 1)) {
-            NumberSelectorFactory.setBackgrounds(customTextView);
+
+        if (isNumberSelectorTextView != null && (boolean) isNumberSelectorTextView) {
+            NumberSelectorFactory.createNumberSelector(customTextView);
+            //Save the last value if none is selected
+            if(customTextView.getText().toString().contains("+")){
+                String currentText = customTextView.getText().toString().replace("+","");
+                customTextView.setText(currentText);
+                saveValueFromCustomView(customTextView);
+            }
+        } else {
+            int item = (int) customTextView.getTag(R.id.number_selector_item);
+            int numberOfSelectors = (int) customTextView.getTag(R.id.number_selector_number_of_selectors);
+            if (item <= (numberOfSelectors - 1)) {
+                NumberSelectorFactory.setBackgrounds(customTextView);
+            }
+            NumberSelectorFactory.setSelectedTextViews(customTextView);
+            saveValueFromCustomView(customTextView);
         }
-        NumberSelectorFactory.setSelectedTextViews(customTextView);
+
+    }
+
+    private void saveValueFromCustomView(CustomTextView customTextView) {
         //String parentKey = (String) customTextView.getTag(R.id.key);
         String parentKey = (String) ((View) customTextView.getParent()).getTag(R.id.key);
         String openMrsEntityParent = (String) customTextView.getTag(R.id.openmrs_entity_parent);
         String openMrsEntity = (String) customTextView.getTag(R.id.openmrs_entity);
         String openMrsEntityId = (String) customTextView.getTag(R.id.openmrs_entity_id);
         Boolean popup = (Boolean) customTextView.getTag(R.id.extraPopup);
+
         if (popup == null) {
             popup = false;
         }
@@ -748,5 +764,23 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
 
     public JsonFormInteractor getInteractor() {
         return mJsonFormInteractor;
+    }
+
+    public boolean onMenuItemClick(MenuItem item) {
+        Intent intent = item.getIntent();
+        if (intent != null && intent.getBooleanExtra(JsonFormConstants.IS_NUMBER_SELECTOR_MENU, true)) {
+            String parentKey = intent.getStringExtra(JsonFormConstants.PARENT_KEY);
+            String value = item.getTitle().toString();
+            String openMrsEntityParent = intent.getStringExtra(JsonFormConstants.OPENMRS_ENTITY_PARENT);
+            String openMrsEntity = intent.getStringExtra(JsonFormConstants.OPENMRS_ENTITY);
+            String openMrsEntityId = intent.getStringExtra(JsonFormConstants.OPENMRS_ENTITY_ID);
+            boolean popup = intent.getBooleanExtra(JsonFormConstants.IS_POPUP, false);
+            NumberSelectorFactory.setSelectedTextViewText(value);
+            getView().writeValue(mStepName, parentKey, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
+
+            return true;
+        }
+
+        return false;
     }
 }
