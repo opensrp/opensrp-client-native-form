@@ -22,7 +22,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.washington.cs.ubicomplab.rdt_reader.ImageQualityActivity;
 import edu.washington.cs.ubicomplab.rdt_reader.activity.RDTCaptureActivity;
 
 import static android.app.Activity.RESULT_OK;
