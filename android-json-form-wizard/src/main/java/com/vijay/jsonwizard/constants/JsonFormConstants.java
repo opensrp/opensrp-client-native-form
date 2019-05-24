@@ -83,6 +83,7 @@ public class JsonFormConstants {
     public static final String HORIZONTAL_LINE = "h_line";
     public static final String NATIVE_RADIO_BUTTON = "native_radio";
     public static final String REPEATING_GROUP = "repeating_group";
+    public static final String RDT_CAPTURE = "rdt_capture";
     public static final String NATIVE_RADIO_BUTTON_MULTI_RELEVANCE = "multi_relevance";
     public static final String CONTENT_INFO = "specify_info";
     public static final String CONTENT_WIDGET = "specify_widget";
