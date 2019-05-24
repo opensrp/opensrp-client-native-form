@@ -156,6 +156,8 @@ public class JsonFormConstants {
     public static final String SHOW_ERRORS_ON_SUBMIT = "show_errors_on_submit";
     public static final String EX = "ex";
 
+    public static final int RDT_CAPTURE_CODE = 3290;
+
     public static class JSON_FORM_KEY {
         public static final String EX_RULES = "ex-rules";
         public static final String EX_CHECKBOX = "ex-checkbox";
