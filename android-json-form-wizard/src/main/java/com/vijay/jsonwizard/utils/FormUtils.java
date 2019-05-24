@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.Typeface;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.AppCompatEditText;
@@ -71,6 +72,12 @@ public class FormUtils {
     private static final String END_JAVAROSA_PROPERTY = "end";
     private static final String TODAY_JAVAROSA_PROPERTY = "today";
     private static final String TAG = FormUtils.class.getSimpleName();
+
+    public static Point getViewLocationOnScreen(View view) {
+        int[] location = new int[2];
+        view.getLocationOnScreen(location);
+        return new Point(location[0], location[1]);
+    }
 
     public static LinearLayout.LayoutParams getLinearLayoutParams(int width, int height, int left, int top, int right,
                                                                   int bottom) {

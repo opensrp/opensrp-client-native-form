@@ -149,3 +149,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
         }
       }
 
+### [1.6.5-SNAPSHOT] - 05-23-2019
+--------------------
+
+#### Changed
+- Changed implementation of popup used by number selector.
+- Implemented using a Popup Menu provided by android instead of using custom popup dialog.
+    
+#### Fixed
+- Number selector cutting off in some devices with smaller resolutions
+- Edit text hint cutting off

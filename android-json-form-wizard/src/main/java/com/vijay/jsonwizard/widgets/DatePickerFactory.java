@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -81,17 +82,17 @@ public class DatePickerFactory implements FormWidgetFactory {
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
                                        JSONObject jsonObject,
                                        CommonListener listener, boolean popup) {
-        return attachJson(stepName, context, formFragment, jsonObject, popup);
+        return attachJson(stepName, context, formFragment, jsonObject, popup, listener);
     }
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
                                        JSONObject jsonObject, CommonListener listener) throws Exception {
-        return attachJson(stepName, context, formFragment, jsonObject, false);
+        return attachJson(stepName, context, formFragment, jsonObject, false, listener);
     }
 
     protected List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject,
-                                    boolean popup) {
+                                    boolean popup, CommonListener listener) {
         List<View> views = new ArrayList<>(1);
         try {
 
@@ -112,6 +113,7 @@ public class DatePickerFactory implements FormWidgetFactory {
 
             ((JsonApi) context).addFormDataView(editText);
             views.add(dateViewRelativeLayout);
+            attachInfoIcon(stepName, jsonObject, dateViewRelativeLayout, canvasIds, listener);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -173,6 +175,18 @@ public class DatePickerFactory implements FormWidgetFactory {
             editText.setFocusable(false);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+
+    }
+
+    private void attachInfoIcon(String stepName, JSONObject jsonObject, RelativeLayout rootLayout, JSONArray canvasIds,
+                                CommonListener listener) throws JSONException {
+        if (jsonObject.has(JsonFormConstants.LABEL_INFO_TEXT)) {
+            String labelInfoText = jsonObject.optString(JsonFormConstants.LABEL_INFO_TEXT, "");
+            String labelInfoTitle = jsonObject.optString(JsonFormConstants.LABEL_INFO_TITLE, "");
+
+            ImageView infoIcon = rootLayout.findViewById(R.id.date_picker_info_icon);
+            FormUtils.showInfoIcon(stepName, jsonObject, listener, labelInfoText, labelInfoTitle, infoIcon, canvasIds);
         }
 
     }
