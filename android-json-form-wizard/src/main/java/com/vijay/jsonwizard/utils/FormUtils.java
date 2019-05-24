@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.Typeface;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.AppCompatEditText;
@@ -71,6 +72,12 @@ public class FormUtils {
     private static final String TODAY_JAVAROSA_PROPERTY = "today";
     private static final String TAG = FormUtils.class.getSimpleName();
 
+    public static Point getViewLocationOnScreen(View view) {
+        int[] location = new int[2];
+        view.getLocationOnScreen(location);
+        return new Point(location[0], location[1]);
+    }
+
     public static LinearLayout.LayoutParams getLinearLayoutParams(int width, int height, int left, int top, int right,
                                                                   int bottom) {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(width, height);
@@ -83,6 +90,16 @@ public class FormUtils {
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, height);
         layoutParams.setMargins(left, top, right, bottom);
         return layoutParams;
+    }
+
+    public static CustomTextView getTextViewWith(Context context, int textSizeInSp, String text,
+                                                 String key, String type, String openMrsEntityParent,
+                                                 String openMrsEntity, String openMrsEntityId,
+                                                 String relevance,
+                                                 LinearLayout.LayoutParams layoutParams, String fontPath) {
+        return getTextViewWith(context, textSizeInSp, text, key, type, openMrsEntityParent, openMrsEntity, openMrsEntityId,
+                relevance,
+                layoutParams, fontPath, 0, null);
     }
 
     public static CustomTextView getTextViewWith(Context context, int textSizeInSp, String text,
@@ -115,21 +132,6 @@ public class FormUtils {
             ((JsonApi) context).addSkipLogicView(textView);
         }
         return textView;
-    }
-
-    public static CustomTextView getTextViewWith(Context context, int textSizeInSp, String text,
-                                                 String key, String type, String openMrsEntityParent,
-                                                 String openMrsEntity, String openMrsEntityId,
-                                                 String relevance,
-                                                 LinearLayout.LayoutParams layoutParams, String fontPath) {
-        return getTextViewWith(context, textSizeInSp, text, key, type, openMrsEntityParent, openMrsEntity, openMrsEntityId,
-                relevance,
-                layoutParams, fontPath, 0, null);
-    }
-
-    public static int dpToPixels(Context context, float dps) {
-        float scale = context.getResources().getDisplayMetrics().density;
-        return (int) (dps * scale + 0.5f);
     }
 
     public static void updateStartProperties(PropertyManager propertyManager, JSONObject form)
@@ -238,29 +240,6 @@ public class FormUtils {
         }
     }
 
-    public static int spToPx(Context context, float sp) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, context.getResources().getDisplayMetrics());
-    }
-
-    public static int getValueFromSpOrDpOrPx(String spOrDpOrPx, Context context) {
-        int px = 0;
-        if (!TextUtils.isEmpty(spOrDpOrPx)) {
-            if (spOrDpOrPx.contains("sp")) {
-                int unitValues = Integer.parseInt(spOrDpOrPx.replace("sp", ""));
-                px = spToPx(context, unitValues);
-            } else if (spOrDpOrPx.contains("dp")) {
-                int unitValues = Integer.parseInt(spOrDpOrPx.replace("dp", ""));
-                px = FormUtils.dpToPixels(context, unitValues);
-            } else if (spOrDpOrPx.contains("px")) {
-                px = Integer.parseInt(spOrDpOrPx.replace("px", ""));
-            } else {
-                px = (int) context.getResources().getDimension(R.dimen.default_label_text_size);
-            }
-        }
-
-        return px;
-    }
-
     public static Map<String, View> createRadioButtonAndCheckBoxLabel(String stepName, LinearLayout linearLayout,
                                                                       JSONObject jsonObject, Context context,
                                                                       JSONArray canvasIds, Boolean readOnly,
@@ -303,6 +282,25 @@ public class FormUtils {
             createdViewsMap.put(JsonFormConstants.CUSTOM_TEXT, labelText);
         }
         return createdViewsMap;
+    }
+
+    public static int getValueFromSpOrDpOrPx(String spOrDpOrPx, Context context) {
+        int px = 0;
+        if (!TextUtils.isEmpty(spOrDpOrPx)) {
+            if (spOrDpOrPx.contains("sp")) {
+                int unitValues = Integer.parseInt(spOrDpOrPx.replace("sp", ""));
+                px = spToPx(context, unitValues);
+            } else if (spOrDpOrPx.contains("dp")) {
+                int unitValues = Integer.parseInt(spOrDpOrPx.replace("dp", ""));
+                px = FormUtils.dpToPixels(context, unitValues);
+            } else if (spOrDpOrPx.contains("px")) {
+                px = Integer.parseInt(spOrDpOrPx.replace("px", ""));
+            } else {
+                px = (int) context.getResources().getDimension(R.dimen.default_label_text_size);
+            }
+        }
+
+        return px;
     }
 
     public static ConstraintLayout createLabelLinearLayout(String stepName, JSONArray canvasIds, JSONObject jsonObject,
@@ -351,6 +349,39 @@ public class FormUtils {
         return constraintLayout;
     }
 
+    /**
+     * @param textStyle
+     * @param view
+     */
+    public static void setTextStyle(String textStyle, AppCompatTextView view) {
+        switch (textStyle) {
+            case JsonFormConstants.BOLD:
+                view.setTypeface(null, Typeface.BOLD);
+                break;
+            case JsonFormConstants.ITALIC:
+                view.setTypeface(null, Typeface.ITALIC);
+                break;
+            case JsonFormConstants.NORMAL:
+                view.setTypeface(null, Typeface.NORMAL);
+                break;
+            case JsonFormConstants.BOLD_ITALIC:
+                view.setTypeface(null, Typeface.BOLD_ITALIC);
+                break;
+            default:
+                view.setTypeface(null, Typeface.NORMAL);
+                break;
+        }
+    }
+
+    public static int spToPx(Context context, float sp) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, context.getResources().getDisplayMetrics());
+    }
+
+    public static int dpToPixels(Context context, float dps) {
+        float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dps * scale + 0.5f);
+    }
+
     public static void showInfoIcon(String stepName, JSONObject jsonObject, CommonListener listener, String labelInfoText,
                                     String labelInfoTitle, ImageView imageView, JSONArray canvasIds) throws JSONException {
         if (!TextUtils.isEmpty(labelInfoText)) {
@@ -372,7 +403,6 @@ public class FormUtils {
         editButton.setTag(R.id.type, jsonObject.getString("type"));
         editButton.setOnClickListener(listener);
     }
-
 
     /**
      * Checks and uncheck the radio buttons in a linear layout view
@@ -506,30 +536,6 @@ public class FormUtils {
         calendarDate.set(Calendar.MILLISECOND, 0);
 
         return calendarDate;
-    }
-
-    /**
-     * @param textStyle
-     * @param view
-     */
-    public static void setTextStyle(String textStyle, AppCompatTextView view) {
-        switch (textStyle) {
-            case JsonFormConstants.BOLD:
-                view.setTypeface(null, Typeface.BOLD);
-                break;
-            case JsonFormConstants.ITALIC:
-                view.setTypeface(null, Typeface.ITALIC);
-                break;
-            case JsonFormConstants.NORMAL:
-                view.setTypeface(null, Typeface.NORMAL);
-                break;
-            case JsonFormConstants.BOLD_ITALIC:
-                view.setTypeface(null, Typeface.BOLD_ITALIC);
-                break;
-            default:
-                view.setTypeface(null, Typeface.NORMAL);
-                break;
-        }
     }
 
     public static void setRequiredOnHint(AppCompatEditText editText) {
@@ -729,33 +735,6 @@ public class FormUtils {
 
     }
 
-    public String getValueFromSecondaryValues(String type, String itemString) {
-        String newString;
-        String[] strings = itemString.split(":");
-        if (type.equals(JsonFormConstants.CHECK_BOX) || type.equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
-            newString = strings[1];
-        } else {
-            if (strings.length > 1) {
-                newString = strings[1];
-            } else {
-                newString = strings[0];
-            }
-        }
-
-        return newString;
-    }
-
-    public JSONArray concatArray(JSONArray... arrs)
-            throws JSONException {
-        JSONArray result = new JSONArray();
-        for (JSONArray arr : arrs) {
-            for (int i = 0; i < arr.length(); i++) {
-                result.put(arr.get(i));
-            }
-        }
-        return result;
-    }
-
     public Map<String, String> addAssignedValue(String itemKey, String optionKey, String keyValue, String itemType,
                                                 String itemText) {
         Map<String, String> value = new HashMap<>();
@@ -820,8 +799,24 @@ public class FormUtils {
         return specifyText.toString().replaceAll(", $", "");
     }
 
+    public String getValueFromSecondaryValues(String type, String itemString) {
+        String newString;
+        String[] strings = itemString.split(":");
+        if (type.equals(JsonFormConstants.CHECK_BOX) || type.equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
+            newString = strings[1];
+        } else {
+            if (strings.length > 1) {
+                newString = strings[1];
+            } else {
+                newString = strings[0];
+            }
+        }
+
+        return newString;
+    }
+
     public JSONArray getSecondaryValues(JSONObject jsonObject, String type) {
-        JSONArray value = null;
+        JSONArray value = new JSONArray();
         String secondaryValues = type
                 .equals(JsonFormConstants.EXPANSION_PANEL) ? JsonFormConstants.VALUE : JsonFormConstants.SECONDARY_VALUE;
 
@@ -871,6 +866,17 @@ public class FormUtils {
             }
         }
         return fields;
+    }
+
+    public JSONArray concatArray(JSONArray... arrs)
+            throws JSONException {
+        JSONArray result = new JSONArray();
+        for (JSONArray arr : arrs) {
+            for (int i = 0; i < arr.length(); i++) {
+                result.put(arr.get(i));
+            }
+        }
+        return result;
     }
 
     public JSONObject getOpenMRSAttributes(JSONObject jsonObject) throws JSONException {

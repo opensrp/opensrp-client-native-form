@@ -49,8 +49,8 @@ import java.util.Map;
 /**
  * Created by vijay on 5/7/15.
  */
-public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, JsonFormFragmentViewState> implements
-        CommonListener, JsonFormFragmentView<JsonFormFragmentViewState> {
+public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, JsonFormFragmentViewState>
+        implements CommonListener, JsonFormFragmentView<JsonFormFragmentViewState> {
     private static final String TAG = "JsonFormFragment";
     protected LinearLayout mMainView;
     protected ScrollView mScrollView;
@@ -193,8 +193,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
 
         presenter.onRequestPermissionsResult(requestCode, permissions, grantResults);
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -237,13 +236,12 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     }
 
     @Override
-    public void writeValue(String stepName, String prentKey, String childObjectKey, String childKey,
-                           String value, String openMrsEntityParent, String openMrsEntity,
-                           String openMrsEntityId, boolean popup) {
+    public void writeValue(String stepName, String prentKey, String childObjectKey, String childKey, String value,
+                           String openMrsEntityParent, String openMrsEntity, String openMrsEntityId, boolean popup) {
         // Log.d(CONST_REAL_TIME_VALIDATION, CONST_FRAGMENT_WRITEVALUE_CALLED);
         try {
-            mJsonApi.writeValue(stepName, prentKey, childObjectKey, childKey, value,
-                    openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
+            mJsonApi.writeValue(stepName, prentKey, childObjectKey, childKey, value, openMrsEntityParent, openMrsEntity,
+                    openMrsEntityId, popup);
         } catch (JSONException e) {
             // TODO - handle
             Log.e(TAG, e.getMessage(), e);
@@ -288,7 +286,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     @Override
     public void showSnackBar(String message) {
-        Utils.showSnackBar(getMainView(),message);
+        Utils.showSnackBar(getMainView(), message);
     }
 
     @Override
@@ -366,28 +364,30 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     @Override
     public void unCheck(String parentKey, String exclusiveKey, CompoundButton compoundButton) {
 
-        ViewGroup mMainView = compoundButton instanceof CheckBox ? (ViewGroup) compoundButton.getParent()
-                .getParent() : (ViewGroup) compoundButton.getParent().getParent().getParent();
-        int childCount = mMainView.getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            View view = mMainView.getChildAt(i);
+        ViewGroup mMainView = compoundButton instanceof CheckBox ? (ViewGroup) compoundButton.getParent().getParent() :
+                (ViewGroup) compoundButton.getParent().getParent().getParent();
+        if (mMainView != null) {
+            int childCount = mMainView.getChildCount();
+            for (int i = 0; i < childCount; i++) {
+                View view = mMainView.getChildAt(i);
 
-            if (view instanceof RadioButton) {
-                AppCompatRadioButton radio = (((ViewGroup) view).getChildAt(0))
-                        .findViewWithTag(JsonFormConstants.NATIVE_RADIO_BUTTON);
-                String parentKeyAtIndex = (String) radio.getTag(R.id.key);
-                String childKeyAtIndex = (String) radio.getTag(R.id.childKey);
-                if (radio.isChecked() && parentKeyAtIndex.equals(parentKey) && childKeyAtIndex.equals(exclusiveKey)) {
-                    radio.setChecked(false);
-                    break;
-                }
-            } else if (isCheckbox(view)) {
-                CheckBox checkBox = ((LinearLayout) view).findViewWithTag(JsonFormConstants.CHECK_BOX);
-                String parentKeyAtIndex = (String) checkBox.getTag(R.id.key);
-                String childKeyAtIndex = (String) checkBox.getTag(R.id.childKey);
-                if (checkBox.isChecked() && parentKeyAtIndex.equals(parentKey) && childKeyAtIndex.equals(exclusiveKey)) {
-                    checkBox.setChecked(false);
-                    break;
+                if (view instanceof RadioButton) {
+                    AppCompatRadioButton radio =
+                            (((ViewGroup) view).getChildAt(0)).findViewWithTag(JsonFormConstants.NATIVE_RADIO_BUTTON);
+                    String parentKeyAtIndex = (String) radio.getTag(R.id.key);
+                    String childKeyAtIndex = (String) radio.getTag(R.id.childKey);
+                    if (radio.isChecked() && parentKeyAtIndex.equals(parentKey) && childKeyAtIndex.equals(exclusiveKey)) {
+                        radio.setChecked(false);
+                        break;
+                    }
+                } else if (isCheckbox(view)) {
+                    CheckBox checkBox = ((LinearLayout) view).findViewWithTag(JsonFormConstants.CHECK_BOX);
+                    String parentKeyAtIndex = (String) checkBox.getTag(R.id.key);
+                    String childKeyAtIndex = (String) checkBox.getTag(R.id.childKey);
+                    if (checkBox.isChecked() && parentKeyAtIndex.equals(parentKey) && childKeyAtIndex.equals(exclusiveKey)) {
+                        checkBox.setChecked(false);
+                        break;
+                    }
                 }
             }
         }
@@ -438,12 +438,10 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     @Override
     public void transactThis(JsonFormFragment next) {
-        getActivity()
-                .getSupportFragmentManager()
-                .beginTransaction()
+        getActivity().getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left,
-                        R.anim.exit_to_right).replace(R.id.container, next)
-                .addToBackStack(next.getClass().getSimpleName()).commit();
+                        R.anim.exit_to_right).replace(R.id.container, next).addToBackStack(next.getClass().getSimpleName())
+                .commit();
     }
 
     public Menu getMenu() {
@@ -483,5 +481,10 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     public JsonFormFragmentPresenter getPresenter() {
         return presenter;
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        return presenter.onMenuItemClick(item);
     }
 }
