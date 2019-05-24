@@ -65,6 +65,15 @@
             android:layout_gravity="center"
             android:text="FORM VALIDATION"
             android:textColor="@android:color/white" />
+        <Button
+            android:id="@+id/native_form_basic"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Basic Form"
+            android:textColor="@android:color/white"
+            android:theme="@style/AppTheme" />
 
     </LinearLayout>
 </RelativeLayout>
