@@ -159,3 +159,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 #### Fixed
 - Number selector cutting off in some devices with smaller resolutions
 - Edit text hint cutting off
+
+### [1.6.6-SNAPSHOT] - 05-24-2019
+--------------------
+
+#### Added
+- Added RTL Support

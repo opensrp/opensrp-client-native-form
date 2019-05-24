@@ -184,7 +184,7 @@ public class TimePickerFactory implements FormWidgetFactory {
         mTimePicker.setOnTimeSetListener(new android.app.TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                editText.setTag(R.id.locale_independent_value,  hourOfDay+":"+ String.format(Locale.ENGLISH,"%02d", minute));
+                editText.setTag(R.id.locale_independent_value,  String.format(Locale.ENGLISH,"%02d", hourOfDay)+":"+ String.format(Locale.ENGLISH,"%02d", minute));
                 updateTimeText(editText,hourOfDay,minute);
             }
         });
