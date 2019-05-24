@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.washington.cs.ubicomplab.rdt_reader.ImageQualityActivity;
+import edu.washington.cs.ubicomplab.rdt_reader.activity.RDTCaptureActivity;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -79,7 +80,7 @@ public class RDTCaptureFactory implements FormWidgetFactory {
     }
 
     private void launchRDTCaptureActivity(Activity activity) {
-        Intent intent = new Intent(activity, ImageQualityActivity.class);
+        Intent intent = new Intent(activity, RDTCaptureActivity.class);
         activity.startActivityForResult(intent, JsonFormConstants.RDT_CAPTURE_CODE);
     }
 
