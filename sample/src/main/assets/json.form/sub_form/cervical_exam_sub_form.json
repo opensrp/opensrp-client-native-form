@@ -15,24 +15,30 @@
       "openmrs_entity_parent": "",
       "openmrs_entity": "Amount of cervical dilation ",
       "openmrs_entity_id": "162261",
-      "type": "normal_edit_text",
-      "edit_text_style": "bordered",
+      "type": "edit_text",
       "edit_type": "number",
       "v_numeric_integer": {
         "value": "true",
         "err": "Enter valid cervical dilation in cm"
       },
       "v_min": {
-        "value": "0.1",
-        "err": "Cervical dilation must be greater than 0"
+        "value": "0",
+        "err": "Cervical dilation must be greater than or equal to 0"
       },
       "v_max": {
         "value": "10",
-        "err": "Cervical dilation must be equal or less than 10"
+        "err": "Cervical dilation must be equal to or less than 10"
       },
       "v_required": {
-        "value": "false",
+        "value": true,
         "err": "Field cervical dilation is required"
+      },
+      "calculation": {
+        "rules-engine": {
+          "ex-rules": {
+            "rules-file": "sample-calculation-rules.yml"
+          }
+        }
       }
     }
   ]

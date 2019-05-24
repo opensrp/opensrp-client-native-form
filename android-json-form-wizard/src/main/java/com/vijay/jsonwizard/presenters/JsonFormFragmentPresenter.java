@@ -17,6 +17,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.widget.AppCompatRadioButton;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -145,8 +146,8 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                 setSpinnerError(spinner, validationStatus.getErrorMessage());
                 return validationStatus;
             }
-        } else if (childAt instanceof ViewGroup && childAt.getTag(R.id.is_checkbox_linear_layout) != null
-                && Boolean.TRUE.equals(childAt.getTag(R.id.is_checkbox_linear_layout))) {
+        } else if (childAt instanceof ViewGroup && childAt.getTag(R.id.is_checkbox_linear_layout) != null &&
+                Boolean.TRUE.equals(childAt.getTag(R.id.is_checkbox_linear_layout))) {
             LinearLayout checkboxLinearLayout = (LinearLayout) childAt;
             ValidationStatus validationStatus = CheckBoxFactory.validate(formFragmentView, checkboxLinearLayout);
             if (!validationStatus.isValid()) {
@@ -154,8 +155,8 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                 return validationStatus;
             }
 
-        } else if (childAt instanceof ViewGroup && childAt.getTag(R.id.is_number_selector_linear_layout) != null
-                && Boolean.TRUE.equals(childAt.getTag(R.id.is_number_selector_linear_layout))) {
+        } else if (childAt instanceof ViewGroup && childAt.getTag(R.id.is_number_selector_linear_layout) != null &&
+                Boolean.TRUE.equals(childAt.getTag(R.id.is_number_selector_linear_layout))) {
             ValidationStatus validationStatus = NumberSelectorFactory.validate(formFragmentView, (ViewGroup) childAt);
             if (!validationStatus.isValid()) {
                 if (requestFocus) validationStatus.requestAttention();
@@ -183,13 +184,12 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             Log.e(TAG, e.getMessage(), e);
         }
         List<View> views = mJsonFormInteractor
-                .fetchFormElements(mStepName, formFragment, mStepDetails, getView().getCommonListener(),
-                        false);
+                .fetchFormElements(mStepName, formFragment, mStepDetails, getView().getCommonListener(), false);
         getView().addFormElements(views);
 
     }
 
-    @SuppressLint ("ResourceAsColor")
+    @SuppressLint("ResourceAsColor")
     public void setUpToolBar() {
         getView().setActionBarTitle(mStepDetails.optString(JsonFormConstants.STEP_TITLE));
         getView().setToolbarTitleColor(R.color.white);
@@ -257,7 +257,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             errorFragment = new JsonFormErrorFragment();
         }
         FragmentManager fm = ((JsonFormFragment) getView()).getChildFragmentManager();
-        @SuppressLint ("CommitTransaction") FragmentTransaction ft = fm.beginTransaction();
+        @SuppressLint("CommitTransaction") FragmentTransaction ft = fm.beginTransaction();
         errorFragment.show(ft, JsonFormErrorFragment.TAG);
     }
 
@@ -275,8 +275,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         } else if (isFormValid()) {
             moveToNextStep();
         } else {
-            getView().showSnackBar(getView().getContext().getResources()
-                    .getString(R.string.json_form_on_next_error_msg));
+            getView().showSnackBar(getView().getContext().getResources().getString(R.string.json_form_on_next_error_msg));
         }
     }
 
@@ -323,8 +322,8 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                 String parentKey = (String) childAt.getTag(R.id.key);
                 String childKey = (String) childAt.getTag(R.id.childKey);
                 getView().writeValue(mStepName, parentKey, JsonFormConstants.OPTIONS_FIELD_NAME, childKey,
-                        String.valueOf(((CheckBox)
-                                childAt).isChecked()), openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
+                        String.valueOf(((CheckBox) childAt).isChecked()), openMrsEntityParent, openMrsEntity,
+                        openMrsEntityId, popup);
             } else if (childAt instanceof RadioButton) {
                 String parentKey = (String) childAt.getTag(R.id.key);
                 String childKey = (String) childAt.getTag(R.id.childKey);
@@ -398,14 +397,14 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == RESULT_LOAD_IMG && resultCode == Activity.RESULT_OK) {
             String imagePath = mCurrentPhotoPath;
-            getView().updateRelevantImageView(
-                    ImageUtils.loadBitmapFromFile(getView().getContext(), imagePath, ImageUtils.getDeviceWidth
-                            (getView().getContext()), dpToPixels(getView().getContext(), 200)), imagePath, mCurrentKey);
+            getView().updateRelevantImageView(ImageUtils
+                    .loadBitmapFromFile(getView().getContext(), imagePath, ImageUtils.getDeviceWidth(getView().getContext()),
+                            dpToPixels(getView().getContext(), 200)), imagePath, mCurrentKey);
             //cursor.close();
         }
     }
 
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         Log.d(TAG, "Permission callback called-------");
 
         if (grantResults.length == 0) {
@@ -414,9 +413,8 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
 
         switch (requestCode) {
             case PermissionUtils.CAMERA_PERMISSION_REQUEST_CODE:
-                if (PermissionUtils
-                        .verifyPermissionGranted(permissions, grantResults, Manifest.permission.CAMERA, Manifest.permission
-                                .READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                if (PermissionUtils.verifyPermissionGranted(permissions, grantResults, Manifest.permission.CAMERA,
+                        Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                     dispatchTakePictureIntent(key, type);
                 }
                 break;
@@ -477,7 +475,13 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             case JsonFormConstants.NATIVE_EDIT_TEXT:
                 setViewEditable(v);
                 break;
+            case JsonFormConstants.DATE_PICKER:
+                if (v.getId() == R.id.date_picker_info_icon) {
+                    showInformationDialog(v);
+                }
+                break;
             default:
+
                 break;
         }
     }
@@ -520,7 +524,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         }
     }
 
-    @SuppressWarnings ({"unchecked"})
+    @SuppressWarnings({"unchecked"})
     private void setCheckboxesEditable(View editButton) {
         List<View> checkboxLayouts = (ArrayList<View>) editButton.getTag(R.id.editable_view);
         resetWidgetReadOnly(editButton);
@@ -558,8 +562,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         builderSingle.setIcon(R.drawable.dialog_info_filled);
 
         builderSingle.setNegativeButton(getView().getContext().getResources().getString(R.string.ok),
-                new DialogInterface.OnClickListener
-                        () {
+                new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -570,9 +573,9 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
     }
 
     private void dispatchTakePictureIntent(String key, String type) {
-        if (PermissionUtils.isPermissionGranted(formFragment, new String[]{Manifest.permission.CAMERA, Manifest.permission
-                        .READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                PermissionUtils.CAMERA_PERMISSION_REQUEST_CODE)) {
+        if (PermissionUtils.isPermissionGranted(formFragment,
+                new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE}, PermissionUtils.CAMERA_PERMISSION_REQUEST_CODE)) {
 
             if (JsonFormConstants.CHOOSE_IMAGE.equals(type)) {
                 getView().hideKeyBoard();
@@ -587,9 +590,8 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                     }
 
                     if (imageFile != null) {
-                        Uri photoURI = FileProvider
-                                .getUriForFile(getView().getContext(), getView().getContext().getPackageName() + "" +
-                                        ".fileprovider", imageFile);
+                        Uri photoURI = FileProvider.getUriForFile(getView().getContext(),
+                                getView().getContext().getPackageName() + "" + ".fileprovider", imageFile);
 
                         // Grant permission to the default camera app
                         PackageManager packageManager = getView().getContext().getPackageManager();
@@ -600,9 +602,8 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                                         photoURI,
                                         Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
-                        applicationContext
-                                .grantUriPermission("com.vijay.jsonwizard", photoURI, Intent.FLAG_GRANT_READ_URI_PERMISSION |
-                                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                        applicationContext.grantUriPermission("com.vijay.jsonwizard", photoURI,
+                                Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
                         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                         getView().startActivityForResult(takePictureIntent, RESULT_LOAD_IMG);
@@ -662,8 +663,7 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
 
 
             getView().writeValue(mStepName, parentKey, JsonFormConstants.OPTIONS_FIELD_NAME, childKey,
-                    String.valueOf(compoundButton
-                            .isChecked()), openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
+                    String.valueOf(compoundButton.isChecked()), openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
         } else if ((compoundButton instanceof AppCompatRadioButton || compoundButton instanceof RadioButton) && isChecked) {
             String parentKey = (String) compoundButton.getTag(R.id.key);
             String openMrsEntityParent = (String) compoundButton.getTag(R.id.openmrs_entity_parent);
@@ -687,39 +687,58 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
 
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         String parentKey = (String) parent.getTag(R.id.key);
-        String type = (String) parent.getTag(R.id.type);
         String openMrsEntityParent = (String) parent.getTag(R.id.openmrs_entity_parent);
         String openMrsEntity = (String) parent.getTag(R.id.openmrs_entity);
         String openMrsEntityId = (String) parent.getTag(R.id.openmrs_entity_id);
-        CustomTextView customTextView = (CustomTextView) parent.getTag(R.id.number_selector_textview);
+        JSONArray jsonArray = (JSONArray) parent.getTag(R.id.keys);
         Boolean popup = (Boolean) parent.getTag(R.id.extraPopup);
         if (popup == null) {
             popup = false;
         }
 
         String value = parent.getItemAtPosition(position).toString();
-        getView().writeValue(mStepName, parentKey, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
-
-        if (JsonFormConstants.NUMBER_SELECTOR.equals(type)) {
-            NumberSelectorFactory.setBackgrounds(customTextView);
-            NumberSelectorFactory.setSelectedTextViews(customTextView);
-            NumberSelectorFactory.setSelectedTextViewText((String) parent.getItemAtPosition(position));
+        if (jsonArray != null && position > -1 && jsonArray.length() > 0) {
+            try {
+                value = jsonArray.getString(position);
+            } catch (JSONException e) {
+                Log.e(TAG, e.toString());
+            }
         }
+        getView().writeValue(mStepName, parentKey, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
     }
 
     private void createNumberSelector(View view) {
+        Object isNumberSelectorTextView = view.getTag(R.id.is_number_selector_dialog_textview);
         CustomTextView customTextView = (CustomTextView) view;
-        int item = (int) customTextView.getTag(R.id.number_selector_item);
-        int numberOfSelectors = (int) customTextView.getTag(R.id.number_selector_number_of_selectors);
-        if (item <= (numberOfSelectors - 1)) {
-            NumberSelectorFactory.setBackgrounds(customTextView);
+
+        if (isNumberSelectorTextView != null && (boolean) isNumberSelectorTextView) {
+            NumberSelectorFactory.createNumberSelector(customTextView);
+            //Save the last value if none is selected
+            if(customTextView.getText().toString().contains("+")){
+                String currentText = customTextView.getText().toString().replace("+","");
+                customTextView.setText(currentText);
+                saveValueFromCustomView(customTextView);
+            }
+        } else {
+            int item = (int) customTextView.getTag(R.id.number_selector_item);
+            int numberOfSelectors = (int) customTextView.getTag(R.id.number_selector_number_of_selectors);
+            if (item <= (numberOfSelectors - 1)) {
+                NumberSelectorFactory.setBackgrounds(customTextView);
+            }
+            NumberSelectorFactory.setSelectedTextViews(customTextView);
+            saveValueFromCustomView(customTextView);
         }
-        NumberSelectorFactory.setSelectedTextViews(customTextView);
-        String parentKey = (String) customTextView.getTag(R.id.key);
+
+    }
+
+    private void saveValueFromCustomView(CustomTextView customTextView) {
+        //String parentKey = (String) customTextView.getTag(R.id.key);
+        String parentKey = (String) ((View) customTextView.getParent()).getTag(R.id.key);
         String openMrsEntityParent = (String) customTextView.getTag(R.id.openmrs_entity_parent);
         String openMrsEntity = (String) customTextView.getTag(R.id.openmrs_entity);
         String openMrsEntityId = (String) customTextView.getTag(R.id.openmrs_entity_id);
         Boolean popup = (Boolean) customTextView.getTag(R.id.extraPopup);
+
         if (popup == null) {
             popup = false;
         }
@@ -741,5 +760,27 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
             Log.e(TAG, e.getMessage(), e);
         }
         return null;
+    }
+
+    public JsonFormInteractor getInteractor() {
+        return mJsonFormInteractor;
+    }
+
+    public boolean onMenuItemClick(MenuItem item) {
+        Intent intent = item.getIntent();
+        if (intent != null && intent.getBooleanExtra(JsonFormConstants.IS_NUMBER_SELECTOR_MENU, true)) {
+            String parentKey = intent.getStringExtra(JsonFormConstants.PARENT_KEY);
+            String value = item.getTitle().toString();
+            String openMrsEntityParent = intent.getStringExtra(JsonFormConstants.OPENMRS_ENTITY_PARENT);
+            String openMrsEntity = intent.getStringExtra(JsonFormConstants.OPENMRS_ENTITY);
+            String openMrsEntityId = intent.getStringExtra(JsonFormConstants.OPENMRS_ENTITY_ID);
+            boolean popup = intent.getBooleanExtra(JsonFormConstants.IS_POPUP, false);
+            NumberSelectorFactory.setSelectedTextViewText(value);
+            getView().writeValue(mStepName, parentKey, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
+
+            return true;
+        }
+
+        return false;
     }
 }
