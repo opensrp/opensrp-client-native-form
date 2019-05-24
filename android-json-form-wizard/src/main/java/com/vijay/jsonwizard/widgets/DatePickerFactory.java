@@ -14,7 +14,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
-import com.rengwuxian.materialedittext.validation.RegexpValidator;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
@@ -36,6 +35,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author Jason Rogena - jrogena@ona.io
@@ -45,6 +45,7 @@ public class DatePickerFactory implements FormWidgetFactory {
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
     public static final String DATE_FORMAT_REGEX = "(^(((0[1-9]|1[0-9]|2[0-8])[-](0[1-9]|1[012]))|((29|30|31)[-](0[13578]|1[02]))|((29|30)[-](0[4,6,9]|11)))[-](19|[2-9][0-9])\\d\\d$)|(^29[-]02[-](19|[2-9][0-9])(00|04|08|12|16|20|24|28|32|36|40|44|48|52|56|60|64|68|72|76|80|84|88|92|96)$)|\\s*";
     private static final String TAG = "DatePickerFactory";
+    public static final SimpleDateFormat DATE_FORMAT_LOCALE_INDEPENDET = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
 
     private static void updateDateText(MaterialEditText editText, TextView duration, String date) {
         editText.setText(date);
@@ -212,6 +213,7 @@ public class DatePickerFactory implements FormWidgetFactory {
 
     private void updateEditText(MaterialEditText editText, JSONObject jsonObject, String stepName, Context context,
                                 TextView duration) throws JSONException {
+        SimpleDateFormat DATE_FORMAT_LOCALE = new SimpleDateFormat("dd-MM-yyyy", context.getResources().getConfiguration().locale);
 
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
@@ -226,6 +228,7 @@ public class DatePickerFactory implements FormWidgetFactory {
         editText.setTag(R.id.openmrs_entity, openMrsEntity);
         editText.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         editText.setTag(R.id.address, stepName + ":" + jsonObject.getString(KEY.KEY));
+        editText.setTag(R.id.locale_independent_value,jsonObject.optString(KEY.VALUE));
         if (jsonObject.has(JsonFormConstants.V_REQUIRED)) {
             JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
             boolean requiredValue = requiredObject.getBoolean(KEY.VALUE);
@@ -236,10 +239,10 @@ public class DatePickerFactory implements FormWidgetFactory {
         }
 
         if (!TextUtils.isEmpty(jsonObject.optString(KEY.VALUE))) {
-            updateDateText(editText, duration, jsonObject.optString(KEY.VALUE));
+                updateDateText(editText, duration, DATE_FORMAT_LOCALE.format(FormUtils.getDate(jsonObject.optString(KEY.VALUE)).getTime()));
         } else if (jsonObject.has(KEY.DEFAULT)) {
             updateDateText(editText, duration,
-                    DATE_FORMAT.format(FormUtils.getDate(jsonObject.getString(KEY.DEFAULT)).getTime()));
+                    DATE_FORMAT_LOCALE.format(FormUtils.getDate(jsonObject.getString(KEY.DEFAULT)).getTime()));
         }
 
         if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
@@ -261,6 +264,9 @@ public class DatePickerFactory implements FormWidgetFactory {
                 calendarDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                 calendarDate.set(Calendar.MONTH, monthOfYear);
                 calendarDate.set(Calendar.YEAR, year);
+
+                editText.setTag(R.id.locale_independent_value,  DATE_FORMAT_LOCALE_INDEPENDET.format(calendarDate.getTime()));
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB
                         && calendarDate.getTimeInMillis() >= view.getMinDate()
                         && calendarDate.getTimeInMillis() <= view.getMaxDate()) {

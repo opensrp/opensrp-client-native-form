@@ -67,4 +67,5 @@
     <item name="next_step" type="id" />
     <item name="is_number_selector_linear_layout" type="id" />
     <item name="selected_number_value" type="id" />
+    <item name="locale_independent_value" type="id" />
 </resources>
