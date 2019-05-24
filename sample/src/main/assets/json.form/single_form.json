@@ -271,6 +271,8 @@
         "openmrs_entity_id": "birthdate",
         "type": "date_picker",
         "hint": "Child's DOB",
+        "label_info_title": "Child's Date of Birth",
+        "label_info_text": "here is some text on this dialog",
         "expanded": false,
         "duration": {
           "label": "Age"
