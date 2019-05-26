@@ -1,0 +1,79 @@
+<resources>
+    <string name="app_name">jsonwizard</string>
+
+    <string name="hello_world">مرحباً يا عالم!</string>
+    <string name="action_settings">الإعدادات</string>
+    <string name="badly_formed_date">تاريخ سيء التشكيل</string>
+    <string name="badly_formed_time">وقت سيء التشكيل</string>
+    <string name="ic_check_circle_blank">&#xe03e;</string>
+    <string name="ic_keyboard_arrow_down">&#xe0c5;</string>
+    <string name="ic_keyboard_arrow_left">&#xe0c6;</string>
+    <string name="ic_keyboard_arrow_right">&#xe0c7;</string>
+    <string name="ic_keyboard_arrow_up">&#xe0c8;</string>
+    <string name="confirm_form_close">تأكيد استمارة مغلقة</string>
+    <string name="confirm_form_close_explanation">هل أنت متأكد أنك تريد تسجيل الخروج؟ سيتم مسح جميع البيانات</string>
+    <string name="yes">نعم</string>
+    <string name="no">لا</string>
+    <string name="cancel">إلغاء</string>
+    <string name="ok">موافق</string>
+    <string name="record_location">موقع السجل</string>
+    <string name="latitude">خط العرض: %s</string>
+    <string name="longitude">خط الطول:%s</string>
+    <string name="altitude">الارتفاع: %s</string>
+    <string name="accuracy">الدقة:%s</string>
+    <string name="loading_location">جارى تحميل الموقع</string>
+    <string name="could_not_get_your_location">لا يمكن الحصول على النظام العالمي لتحديد المواقع الخاص بموقعك.</string>
+    <string name="using_provider">جارى استعمال %s مزود</string>
+    <string name="unknown_gps_accuracy">الدقة غير معروفة</string>
+    <string name="required">*</string>
+    <string name="info_label">ملصق المعلومات</string>
+    <string name="label_text_string">%1$s %2$s</string>
+    <string name="the_toaster_icon">ألأيقونة المحمصة</string>
+    <string name="asterisks">*</string>
+    <string name="save">حفظ</string>
+    <string name="radio_button_tap_to_change">اضغط للتغيير</string>
+    <string name="select_one">اختر رقم</string>
+    <string name="done">تم</string>
+    <string name="creating_repeating_group_title">الرجاء الانتظار</string>
+    <string name="creating_repeating_group_message">جارى انشاء المجموعا المتكررة</string>
+    <string name="repeating_group_max_value_err_msg">لا يمكن أن يكون عدد المجموعات المتكررة أكبر من %1$d</string>
+    <string name="repeating_group_min_value_err_msg">يجب ان يكون عدد المجموعات المتكررة أكبر من 0 </string>
+    <string name="repeating_group_number_format_err_msg">يجب ان يكون عدد المجموعات المتكررة عدداً صحيحاً</string>
+    <string name="enter_number_of_repeating_group_items">أدخل # عناصر المجموعة المتكررة</string>
+    <string name="repeating_group_item">عنصر`</string>
+    <string name="repeating_group_label">ملصق_المجموعات_المتكررة</string>
+
+    <string-array name="spinnerItems">
+        <item>عنصر1</item>
+        <item>عنصر2</item>
+        <item>عنصر3</item>
+        <item>عنصر4</item>
+    </string-array>
+
+    <string name="scan_qr_code_title">مسح شفرة الاستجابة السريعة </string>
+
+    <!--The barcode strings-->
+    <string name="permission_camera_rationale">الوصول إلى الكاميرا ضروري للكشف</string>
+    <string name="no_camera_permission">لا يمكن تشغيل هذا التطبيق لأنه لا يملك إذن الكاميرا. سيتم الآن الخروج من التطبيق.</string>
+    <string name="low_storage_error">لا يمكن تنزيل تبعيات كاشف الوجه نظرًا لانخفاض سعة تخزين الجهاز</string>
+    <string name="title_activity_main">عينة قارئ الشفرة</string>
+    <string name="barcode_header">انقر على & quot؛ قراءة الشفرة & quot؛ لقراءة الشفرة</string>
+    <string name="read_barcode">اقرأ الشفرة</string>
+    <string name="auto_focus">التركيز التلقائي`</string>
+    <string name="use_flash">استعمل الوميض</string>
+    <string name="barcode_success">تمت قراءة الشفرة بنجاح</string>
+    <string name="barcode_failure">لم يتم التقاط الشفرة</string>
+    <string name="barcode_error">خطأ في قراءة الشفرة: %1$s</string>
+    <string name="allow_camera_management">يلزمك السماح للتطبيق باستخدام الكاميرا لمسح رموز الاستجابة السريعة & # 8230؛</string>
+    <string name="please_specify_content">يرجى تحديد المحتوى الذي سيتم عرضه بواسطة النافذة المنبثقة & # 8230؛</string>
+    <string name="previous"> سابق</string>
+    <string name="next">التالي</string>
+    <string name="submit">ارسال</string>
+    <string name="the_extra_info_icon">أيقونة المعلومات إلاضافية</string>
+    <string name="edit_button_label">زر التحرير</string>
+    <string name="info_icon">أيقونة المعلومات</string>
+    <string name="attention">انتباه</string>
+    <string name="json_form_error_msg" >تم العثور على %d خطأ (أخطاء) في الاستمارة. يرجى تصحيحها يرجى تصحيحها لتقديم</string>
+    <string name="json_form_on_next_error_msg" >يرجى تصحيح الخطأ (الأخطاء) في الاستمارة للتقدم</string>
+    <string name="go_to_step">اذهب إلى الخطوة</string>
+</resources>
