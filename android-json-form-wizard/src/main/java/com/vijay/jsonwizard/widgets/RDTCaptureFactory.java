@@ -58,7 +58,7 @@ public class RDTCaptureFactory implements FormWidgetFactory {
         return getViewsFromJson(stepName, context, formFragment, jsonObject, listener, false);
     }
 
-    public void setUpRDTCaptureActivity(WidgetArgs widgetArgs) {
+    public void setUpRDTCaptureActivity(final WidgetArgs widgetArgs) {
         Context context = widgetArgs.getContext();
         if (context instanceof JsonApi) {
             JsonApi jsonApi = (JsonApi) context;
@@ -71,6 +71,9 @@ public class RDTCaptureFactory implements FormWidgetFactory {
                                    // todo: do something
                                 } else {
                                     Log.i(TAG, "No result data for RDT capture!");
+                                }
+                                if (!widgetArgs.getFormFragment().next()) {
+                                    widgetArgs.getFormFragment().save(true);
                                 }
                             }
                         }
