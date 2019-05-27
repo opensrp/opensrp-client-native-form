@@ -261,22 +261,27 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         errorFragment.show(ft, JsonFormErrorFragment.TAG);
     }
 
-    private void moveToNextStep() {
-        JsonFormFragment next = JsonFormFragment.getFormFragment(mStepDetails.optString(JsonFormConstants.NEXT));
-        getView().hideKeyBoard();
-        getView().transactThis(next);
+    private boolean moveToNextStep() {
+        if (!"".equals(mStepDetails.optString(JsonFormConstants.NEXT))) {
+            JsonFormFragment next = JsonFormFragment.getFormFragment(mStepDetails.optString(JsonFormConstants.NEXT));
+            getView().hideKeyBoard();
+            getView().transactThis(next);
+            return true;
+        }
+        return false;
     }
 
-    public void onNextClick(LinearLayout mainView) {
+    public boolean onNextClick(LinearLayout mainView) {
         validateAndWriteValues();
         boolean validateOnSubmit = validateOnSubmit();
         if (validateOnSubmit && incorrectlyFormattedFields.isEmpty()) {
-            moveToNextStep();
+            return moveToNextStep();
         } else if (isFormValid()) {
-            moveToNextStep();
+            return moveToNextStep();
         } else {
             getView().showSnackBar(getView().getContext().getResources().getString(R.string.json_form_on_next_error_msg));
         }
+        return false;
     }
 
 

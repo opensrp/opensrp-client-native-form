@@ -172,8 +172,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     public boolean next() {
         try {
-            presenter.onNextClick(mMainView);
-            return true;
+            return presenter.onNextClick(mMainView);
         } catch (Exception e) {
             Log.e(TAG, Log.getStackTraceString(e));
         }
