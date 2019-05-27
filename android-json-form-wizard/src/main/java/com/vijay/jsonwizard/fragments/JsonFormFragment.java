@@ -441,7 +441,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         getActivity().getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left,
                         R.anim.exit_to_right).replace(R.id.container, next).addToBackStack(next.getClass().getSimpleName())
-                .commit();
+                .commitAllowingStateLoss(); // use https://stackoverflow.com/a/10261449/9782187
     }
 
     public Menu getMenu() {
