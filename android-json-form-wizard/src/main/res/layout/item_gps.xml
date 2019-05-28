@@ -25,8 +25,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:textSize="@dimen/default_text_size"
-            android:layout_marginLeft="@dimen/inner_components_spacing"
-            android:layout_marginRight="@dimen/inner_components_spacing"
+            android:layout_marginStart="@dimen/inner_components_spacing"
+            android:layout_marginEnd="@dimen/inner_components_spacing"
             android:text="@string/latitude" />
 
         <com.rey.material.widget.TextView
@@ -35,8 +35,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:textSize="@dimen/default_text_size"
-            android:layout_marginLeft="@dimen/inner_components_spacing"
-            android:layout_marginRight="@dimen/inner_components_spacing"
+            android:layout_marginStart="@dimen/inner_components_spacing"
+            android:layout_marginEnd="@dimen/inner_components_spacing"
             android:text="@string/longitude" />
 
         <com.rey.material.widget.TextView
@@ -45,8 +45,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:textSize="@dimen/default_text_size"
-            android:layout_marginLeft="@dimen/inner_components_spacing"
-            android:layout_marginRight="@dimen/inner_components_spacing"
+            android:layout_marginStart="@dimen/inner_components_spacing"
+            android:layout_marginEnd="@dimen/inner_components_spacing"
             android:text="@string/altitude" />
 
         <com.rey.material.widget.TextView
@@ -55,8 +55,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:textSize="@dimen/default_text_size"
-            android:layout_marginLeft="@dimen/inner_components_spacing"
-            android:layout_marginRight="@dimen/inner_components_spacing"
+            android:layout_marginStart="@dimen/inner_components_spacing"
+            android:layout_marginEnd="@dimen/inner_components_spacing"
             android:text="@string/accuracy" />
     </LinearLayout>
 
