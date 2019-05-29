@@ -109,7 +109,7 @@ abstract class JsonFormBaseActivity extends AppCompatActivity implements OnField
         }
     }
 
-    public void initializeFormFragment() {
+    public synchronized void initializeFormFragment() {
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.container, JsonFormFragment.getFormFragment(JsonFormConstants.FIRST_STEP_NAME)).commitAllowingStateLoss();
     }

@@ -90,7 +90,7 @@ public class RDTCaptureFactory implements FormWidgetFactory {
 
                 @Override
                 public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
+                    hideProgressDialog();
                     final JsonApi jsonApi = (JsonApi) widgetArgs.getContext();
                     if (requestCode == JsonFormConstants.RDT_CAPTURE_CODE && resultCode == RESULT_OK) {
                         if (data != null) {
@@ -143,10 +143,6 @@ public class RDTCaptureFactory implements FormWidgetFactory {
             Intent intent = new Intent(activity, RDTCaptureActivity.class);
             activity.startActivityForResult(intent,JsonFormConstants.RDT_CAPTURE_CODE);
             return null;
-        }
-
-        protected void onPostExecute(Void result) {
-            hideProgressDialog();
         }
     }
 
