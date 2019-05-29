@@ -130,8 +130,7 @@ public class RDTCaptureFactory implements FormWidgetFactory {
         }
     }
 
-    private class LaunchRDTCameraTask extends AsyncTask<WidgetArgs, Void, Void> {
-        private Activity activity;
+    private class LaunchRDTCameraTask extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected void onPreExecute() {
@@ -139,8 +138,8 @@ public class RDTCaptureFactory implements FormWidgetFactory {
         }
 
         @Override
-        protected Void doInBackground(WidgetArgs... widgetArgs) {
-            activity = (Activity) widgetArgs[0].getContext();
+        protected Void doInBackground(Void... voids) {
+            Activity activity = (Activity) widgetArgs.getContext();
             Intent intent = new Intent(activity, RDTCaptureActivity.class);
             activity.startActivityForResult(intent,JsonFormConstants.RDT_CAPTURE_CODE);
             return null;
