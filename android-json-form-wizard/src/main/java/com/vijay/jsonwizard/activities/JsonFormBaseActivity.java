@@ -111,7 +111,7 @@ abstract class JsonFormBaseActivity extends AppCompatActivity implements OnField
 
     public void initializeFormFragment() {
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.container, JsonFormFragment.getFormFragment(JsonFormConstants.FIRST_STEP_NAME)).commit();
+                .add(R.id.container, JsonFormFragment.getFormFragment(JsonFormConstants.FIRST_STEP_NAME)).commitAllowingStateLoss();
     }
 
     @Override
@@ -148,7 +148,7 @@ abstract class JsonFormBaseActivity extends AppCompatActivity implements OnField
         }
     }
 
-    private Form extractForm(Serializable serializable) {
+    protected Form extractForm(Serializable serializable) {
         if (serializable instanceof Form) {
             return (Form) serializable;
         } else {

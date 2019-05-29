@@ -65,7 +65,7 @@ public class PropertyManager {
         }
     }
 
-    private void grantPhoneStatePermission() {
+    public void grantPhoneStatePermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.READ_PHONE_STATE)
                     != PackageManager.PERMISSION_GRANTED) {

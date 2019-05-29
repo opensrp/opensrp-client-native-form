@@ -70,6 +70,7 @@ import org.json.JSONObject;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -492,6 +493,11 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 checkViewConstraints(curView, popup);
             }
         }
+    }
+
+    @Override
+    protected Form extractForm(Serializable serializable) {
+        return super.extractForm(serializable);
     }
 
     @Override

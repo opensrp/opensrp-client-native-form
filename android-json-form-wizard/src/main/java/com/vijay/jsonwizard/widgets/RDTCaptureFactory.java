@@ -1,12 +1,14 @@
 package com.vijay.jsonwizard.widgets;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.support.v4.content.ContextCompat;
 
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
@@ -25,6 +27,7 @@ import java.util.List;
 
 import edu.washington.cs.ubicomplab.rdt_reader.activity.RDTCaptureActivity;
 
+import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUE;
 import static edu.washington.cs.ubicomplab.rdt_reader.Constants.SAVED_IMAGE_FILE_PATH;
@@ -83,6 +86,8 @@ public class RDTCaptureFactory implements FormWidgetFactory {
 
                 @Override
                 public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+                    final JsonApi jsonApi = (JsonApi) widgetArgs.getContext();
                     if (requestCode == JsonFormConstants.RDT_CAPTURE_CODE && resultCode == RESULT_OK) {
                         if (data != null) {
                             try {
@@ -93,7 +98,6 @@ public class RDTCaptureFactory implements FormWidgetFactory {
                                 String openMrsEntityParent = (String) rootLayout.getTag(R.id.openmrs_entity_parent);
                                 String openMrsEntity = (String) rootLayout.getTag(R.id.openmrs_entity);
                                 String openMrsEntityId = (String) rootLayout.getTag(R.id.openmrs_entity_id);
-                                final JsonApi jsonApi = (JsonApi) widgetArgs.getContext();
                                 jsonApi.writeValue(widgetArgs.getStepName(), key, imageFilePath, openMrsEntityParent,
                                         openMrsEntity, openMrsEntityId, widgetArgs.isPopup());
                             } catch (JSONException e) {
@@ -105,6 +109,8 @@ public class RDTCaptureFactory implements FormWidgetFactory {
                         if (!widgetArgs.getFormFragment().next()) {
                             widgetArgs.getFormFragment().save(true);
                         }
+                    } else if (resultCode == RESULT_CANCELED) {
+                        ((Activity) widgetArgs.getContext()).finish();
                     }
                 }
         };
@@ -121,8 +127,11 @@ public class RDTCaptureFactory implements FormWidgetFactory {
     }
 
     private void launchRDTCaptureActivity(Activity activity) {
-        Intent intent = new Intent(activity, RDTCaptureActivity.class);
-        activity.startActivityForResult(intent, JsonFormConstants.RDT_CAPTURE_CODE);
+        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_PHONE_STATE)
+                == PackageManager.PERMISSION_GRANTED) {
+            Intent intent = new Intent(activity, RDTCaptureActivity.class);
+            activity.startActivityForResult(intent, JsonFormConstants.RDT_CAPTURE_CODE);
+        }
     }
 
     protected int getLayout() {
