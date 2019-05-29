@@ -5,10 +5,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.support.v4.content.ContextCompat;
 
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
@@ -30,6 +31,8 @@ import edu.washington.cs.ubicomplab.rdt_reader.activity.RDTCaptureActivity;
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUE;
+import static com.vijay.jsonwizard.utils.Utils.hideProgressDialog;
+import static com.vijay.jsonwizard.utils.Utils.showProgressDialog;
 import static edu.washington.cs.ubicomplab.rdt_reader.Constants.SAVED_IMAGE_FILE_PATH;
 
 /**
@@ -38,11 +41,12 @@ import static edu.washington.cs.ubicomplab.rdt_reader.Constants.SAVED_IMAGE_FILE
 public class RDTCaptureFactory implements FormWidgetFactory {
 
     private static final String TAG = RDTCaptureFactory.class.getName();
+    private WidgetArgs widgetArgs;
     private View rootLayout;
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
-        WidgetArgs widgetArgs = new WidgetArgs();
+        widgetArgs = new WidgetArgs();
         widgetArgs.withStepName(stepName)
                 .withContext(context)
                 .withFormFragment(formFragment)
@@ -53,8 +57,8 @@ public class RDTCaptureFactory implements FormWidgetFactory {
         rootLayout = LayoutInflater.from(context).inflate(getLayout(), null);
 
         addWidgetTags(jsonObject);
-        setUpRDTCaptureActivity(widgetArgs);
-        launchRDTCaptureActivity((Activity) context);
+        setUpRDTCaptureActivity();
+        launchRDTCaptureActivity();
 
         List<View> views = new ArrayList<>(1);
         views.add(rootLayout);
@@ -80,7 +84,7 @@ public class RDTCaptureFactory implements FormWidgetFactory {
     }
 
 
-    private OnActivityResultListener createOnActivityResultListener(final WidgetArgs widgetArgs) {
+    private OnActivityResultListener createOnActivityResultListener() {
 
          OnActivityResultListener resultListener =  new OnActivityResultListener() {
 
@@ -118,19 +122,38 @@ public class RDTCaptureFactory implements FormWidgetFactory {
         return resultListener;
     }
 
-    public void setUpRDTCaptureActivity(final WidgetArgs widgetArgs) {
+    public void setUpRDTCaptureActivity() {
         Context context = widgetArgs.getContext();
         if (context instanceof JsonApi) {
             final JsonApi jsonApi = (JsonApi) context;
-            jsonApi.addOnActivityResultListener(JsonFormConstants.RDT_CAPTURE_CODE , createOnActivityResultListener(widgetArgs));
+            jsonApi.addOnActivityResultListener(JsonFormConstants.RDT_CAPTURE_CODE , createOnActivityResultListener());
         }
     }
 
-    private void launchRDTCaptureActivity(Activity activity) {
-        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_PHONE_STATE)
-                == PackageManager.PERMISSION_GRANTED) {
+    private class LaunchRDTCameraTask extends AsyncTask<WidgetArgs, Void, Void> {
+        private Activity activity;
+
+        @Override
+        protected void onPreExecute() {
+            showProgressDialog(R.string.please_wait_title, R.string.launching_rdt_capture_message, widgetArgs.getContext());
+        }
+
+        @Override
+        protected Void doInBackground(WidgetArgs... widgetArgs) {
+            activity = (Activity) widgetArgs[0].getContext();
             Intent intent = new Intent(activity, RDTCaptureActivity.class);
-            activity.startActivityForResult(intent, JsonFormConstants.RDT_CAPTURE_CODE);
+            activity.startActivityForResult(intent,JsonFormConstants.RDT_CAPTURE_CODE);
+            return null;
+        }
+
+        protected void onPostExecute(Void result) {
+            hideProgressDialog();
+        }
+    }
+
+    private void launchRDTCaptureActivity() {
+        if (ContextCompat.checkSelfPermission((Activity) widgetArgs.getContext(), Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+            new LaunchRDTCameraTask().execute();
         }
     }
 
