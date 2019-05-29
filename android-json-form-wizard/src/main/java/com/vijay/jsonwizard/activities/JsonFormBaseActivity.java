@@ -54,6 +54,7 @@ abstract class JsonFormBaseActivity extends AppCompatActivity implements OnField
     private Toolbar mToolbar;
     private Map<String, ValidationStatus> invalidFields = new HashMap<>();
 
+    protected boolean isFormFragmentInitialized;
 
     public void init(String json) {
         try {
@@ -95,6 +96,7 @@ abstract class JsonFormBaseActivity extends AppCompatActivity implements OnField
         onActivityResultListeners = new HashMap<>();
         onActivityRequestPermissionResultListeners = new HashMap<>();
         lifeCycleListeners = new ArrayList<>();
+        isFormFragmentInitialized = false;
         if (savedInstanceState == null) {
             init(getIntent().getStringExtra(JsonFormConstants.JSON_FORM_KEY.JSON));
             initializeFormFragment();
@@ -110,6 +112,7 @@ abstract class JsonFormBaseActivity extends AppCompatActivity implements OnField
     }
 
     public synchronized void initializeFormFragment() {
+        isFormFragmentInitialized = true;
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.container, JsonFormFragment.getFormFragment(JsonFormConstants.FIRST_STEP_NAME)).commitAllowingStateLoss();
     }
