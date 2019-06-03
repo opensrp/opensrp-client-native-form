@@ -151,7 +151,7 @@ abstract class JsonFormBaseActivity extends AppCompatActivity implements OnField
         }
     }
 
-    protected Form extractForm(Serializable serializable) {
+    private Form extractForm(Serializable serializable) {
         if (serializable instanceof Form) {
             return (Form) serializable;
         } else {

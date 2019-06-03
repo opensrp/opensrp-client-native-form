@@ -498,11 +498,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     @Override
-    protected Form extractForm(Serializable serializable) {
-        return super.extractForm(serializable);
-    }
-
-    @Override
     public void addOnActivityResultListener(final Integer requestCode, OnActivityResultListener onActivityResultListener) {
         onActivityResultListeners.put(requestCode, onActivityResultListener);
     }
