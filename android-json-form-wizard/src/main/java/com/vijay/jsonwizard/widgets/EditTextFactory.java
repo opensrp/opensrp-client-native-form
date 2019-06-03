@@ -141,6 +141,7 @@ public class EditTextFactory implements FormWidgetFactory {
             editText.setFloatingLabelText(jsonObject.getString(JsonFormConstants.HINT));
         }
         FormUtils.setEditMode(jsonObject, editText, editButton);
+        FormUtils.toggleEditTextVisibility(jsonObject, editText);
 
         addRequiredValidator(jsonObject, editText);
         addLengthValidator(jsonObject, editText);
