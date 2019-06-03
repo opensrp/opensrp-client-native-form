@@ -305,6 +305,11 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
 
                 handleWrongFormatInputs(validationStatus, fieldKey, rawValue);
 
+                String type = (String) childAt.getTag(R.id.type);
+                rawValue = JsonFormConstants.DATE_PICKER.equals(type)||JsonFormConstants.TIME_PICKER.
+                        equals(type) ? childAt.getTag(R.id.locale_independent_value).toString() : rawValue;
+                Log.d("Writing values ..", key + " " + rawValue);
+
                 getView().writeValue(mStepName, key, rawValue, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
             } else if (childAt instanceof NativeEditText) {
                 NativeEditText editText = (NativeEditText) childAt;

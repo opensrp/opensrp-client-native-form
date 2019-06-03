@@ -50,6 +50,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -65,8 +66,8 @@ public class FormUtils {
     public static final String METADATA_PROPERTY = "metadata";
     public static final String LOOK_UP_JAVAROSA_PROPERTY = "look_up";
     public static final String NATIIVE_FORM_DATE_FORMAT_PATTERN = "dd-MM-yyyy";
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(NATIIVE_FORM_DATE_FORMAT_PATTERN);
-    private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(NATIIVE_FORM_DATE_FORMAT_PATTERN, Locale.ENGLISH);
+    private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
     private static final String START_JAVAROSA_PROPERTY = "start";
     private static final String END_JAVAROSA_PROPERTY = "end";
     private static final String TODAY_JAVAROSA_PROPERTY = "today";
