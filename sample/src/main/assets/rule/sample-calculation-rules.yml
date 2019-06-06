@@ -1,4 +1,18 @@
 ---
+name: step1_first_name
+description: Number Selectors
+priority: 1
+condition: "true"
+actions:
+    - "calculation = 'Bonita Ramafosa'"
+---
+name: step1_middle_name
+description: Number Selectors
+priority: 1
+condition: "true"
+actions:
+    - "calculation = 'Beth'"
+---
 name: step1_tobacco_cessation_toaster
 description: cease tobacco toaster
 priority: 1

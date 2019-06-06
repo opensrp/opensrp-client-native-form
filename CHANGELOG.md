@@ -165,3 +165,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 #### Added
 - Added RTL Support for date & time widgets
+
+### [1.6.8-SNAPSHOT] - 06-03-2019
+--------------------
+
+#### Added
+- Added Hidden attribute to EditText factory to toggle visibility of the edit text. Useful when
+performing calculations that do not default to 0 as in hidden widget.
