@@ -165,3 +165,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 #### Added
 - Added RTL Support for date & time widgets
+
+
+### [1.6.9-SNAPSHOT] - 06-06-2019
+--------------------
+
+- Added RDT capture widget
