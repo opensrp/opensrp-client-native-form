@@ -686,6 +686,22 @@ public class FormUtils {
         }
     }
 
+    /***
+     *  This method adds an attribute to toggle visibility of the edit text
+     *  You will find it useful when working with calculations
+     *  that require you to check whether the value is empty since hidden widget defaults to '0'
+     * @param jsonObject JsonObject that defines the edit Text
+     * @param editText The edit text that you want to toggle its visibility
+     * @throws JSONException throws JsonException
+     * @author ellykits
+     */
+    public static void toggleEditTextVisibility(JSONObject jsonObject, AppCompatEditText editText) throws JSONException {
+        if (jsonObject.has(JsonFormConstants.HIDDEN)) {
+            boolean hidden = jsonObject.getBoolean(JsonFormConstants.HIDDEN);
+            editText.setVisibility(hidden ? View.GONE : View.VISIBLE);
+        }
+    }
+
     public void showGenericDialog(View view) {
         Context context = (Context) view.getTag(R.id.specify_context);
         String specifyContent = (String) view.getTag(R.id.specify_content);
