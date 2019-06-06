@@ -18,14 +18,12 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AlertDialog;
 import android.telephony.TelephonyManager;
 
 import com.vijay.jsonwizard.interfaces.JsonApi;
@@ -65,7 +63,7 @@ public class PropertyManager {
         }
     }
 
-    private void grantPhoneStatePermission() {
+    public void grantPhoneStatePermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.READ_PHONE_STATE)
                     != PackageManager.PERMISSION_GRANTED) {
@@ -114,23 +112,7 @@ public class PropertyManager {
                                     boolean isUserInformed = ActivityCompat.shouldShowRequestPermissionRationale((Activity) mContext,
                                             Manifest.permission.READ_PHONE_STATE);
                                     if (isUserInformed) {
-                                        new AlertDialog.Builder(mContext)
-                                                .setTitle("Permission Denied")
-                                                .setMessage("The app needs this permission to capture the device information required when submitting forms. " +
-                                                        "Without this permission the app will not function properly. " +
-                                                        "Are you sure you want to deny this permission?")
-                                                .setPositiveButton("NO", new DialogInterface.OnClickListener() {
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        ActivityCompat.requestPermissions((Activity) mContext, new String[]{
-                                                                Manifest.permission.READ_PHONE_STATE}, PermissionUtils.PHONE_STATE_PERMISSION);
-                                                    }
-                                                })
-                                                .setNegativeButton("YES", new DialogInterface.OnClickListener() {
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        dialog.dismiss();
-                                                    }
-                                                })
-                                                .show();
+                                        jsonApi.showPermissionDeniedDialog();
                                     }
                                 }
                             }

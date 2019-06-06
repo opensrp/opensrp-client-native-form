@@ -83,6 +83,7 @@ public class JsonFormConstants {
     public static final String HORIZONTAL_LINE = "h_line";
     public static final String NATIVE_RADIO_BUTTON = "native_radio";
     public static final String REPEATING_GROUP = "repeating_group";
+    public static final String RDT_CAPTURE = "rdt_capture";
     public static final String NATIVE_RADIO_BUTTON_MULTI_RELEVANCE = "multi_relevance";
     public static final String CONTENT_INFO = "specify_info";
     public static final String CONTENT_WIDGET = "specify_widget";
@@ -160,6 +161,8 @@ public class JsonFormConstants {
     public static final String OPTION_KEY = "option_key";
     public static final String PARENT_KEY = "parent_key";
     public static final String IS_NUMBER_SELECTOR_MENU = "is_number_selector_menu";
+
+    public static final int RDT_CAPTURE_CODE = 3290;
 
     public static class JSON_FORM_KEY {
         public static final String EX_RULES = "ex-rules";
