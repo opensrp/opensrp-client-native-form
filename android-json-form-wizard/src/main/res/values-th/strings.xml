@@ -1,0 +1,79 @@
+<resources>
+    <string name="app_name">jsonwizard</string>
+
+    <string name="hello_world">สวัสดีชาวโลก!</string>
+    <string name="action_settings">การตั้งค่า</string>
+    <string name="badly_formed_date">รูปแบบวันที่ไม่ถูกต้อง</string>
+    <string name="badly_formed_time">รูปแบบเวลาไม่ถูกต้อง</string>
+    <string name="ic_check_circle_blank">&#xe03e;</string>
+    <string name="ic_keyboard_arrow_down">&#xe0c5;</string>
+    <string name="ic_keyboard_arrow_left">&#xe0c6;</string>
+    <string name="ic_keyboard_arrow_right">&#xe0c7;</string>
+    <string name="ic_keyboard_arrow_up">&#xe0c8;</string>
+    <string name="confirm_form_close">ยืนยันการปิดแบบฟอร์ม</string>
+    <string name="confirm_form_close_explanation">ท่านแน่ใจหรือไม่ที่จะย้อนกลับ? ข้อมูลทั้งหมดที่ท่านป้อนไว้ในแบบฟอร์มนี้จะถูกลบทิ้ง</string>
+    <string name="yes">ใช่</string>
+    <string name="no">ไม่ใช่</string>
+    <string name="cancel">ยกเลิก</string>
+    <string name="ok">ตกลง</string>
+    <string name="record_location">สถานที่บันทึกข้อมูล</string>
+    <string name="latitude">ละติจูด: %s</string>
+    <string name="longitude">ลองจิจูด: %s</string>
+    <string name="altitude">ระดับความสูง: %s</string>
+    <string name="accuracy">ความถูกต้อง: %s</string>
+    <string name="loading_location">กำลังโหลดข้อมูลสถานที่</string>
+    <string name="could_not_get_your_location">ไม่สามารถเข้าถึงสถานที่อยู่ตาม GPS ของคุณ</string>
+    <string name="using_provider">กำลังใช้ผู้ให้บริการ %s</string>
+    <string name="unknown_gps_accuracy">ไม่ทราบระดับความถูกต้อง</string>
+    <string name="required">*</string>
+    <string name="info_label">ป้ายกำกับข้อมูล</string>
+    <string name="label_text_string">%1$s %2$s</string>
+    <string name="the_toaster_icon">ไอคอน the toaster</string>
+    <string name="asterisks">*</string>
+    <string name="save">บันทึก</string>
+    <string name="radio_button_tap_to_change">แตะเพื่อเปลี่ยน</string>
+    <string name="select_one">โปรเเลือกหมายเลข</string>
+    <string name="done">สำเร็จ</string>
+    <string name="creating_repeating_group_title">โปรดรอสักครู่</string>
+    <string name="creating_repeating_group_message">กำลังสร้างกลุ่มข้อมูลที่ซ้ำกัน</string>
+    <string name="repeating_group_max_value_err_msg">จำนวนของกลุ่มข้อมูลที่ซ้ำกันต้องไม่มากเกินไปกว่า %1$d</string>
+    <string name="repeating_group_min_value_err_msg">จำนวนของกลุ่มข้อมูลที่ซ้ำกันต้องมากกว่า 0</string>
+    <string name="repeating_group_number_format_err_msg">จำนวนของกลุ่มข้อมูลที่ซ้ำกันต้องมีค่าเป็นจำนวนเต็ม</string>
+    <string name="enter_number_of_repeating_group_items">โปรดใส่จำนวนรายการของกลุ่มข้อมูลที่ซ้ำกัน</string>
+    <string name="repeating_group_item">รายการ</string>
+    <string name="repeating_group_label">repeating_group_label</string>
+
+    <string-array name="spinnerItems">
+        <item>รายการที่1</item>
+        <item>รายการที่2</item>
+        <item>รายการที่3</item>
+        <item>รายการที่4</item>
+    </string-array>
+
+    <string name="scan_qr_code_title">สแกนรหัสคิวอาร์</string>
+
+    <!--The barcode strings-->
+    <string name="permission_camera_rationale">จำเป็นต้องเข้าถึงกล้องถ่ายรูปในการตรวจหา</string>
+    <string name="no_camera_permission">ไม่สามารถเข้าสู่แอพพลิเคชั่นนี้ได้เนื่องจากไม่ได้รับอนุญาตให้ใช้กล้องถ่ายรูป จะทำการปิดแอพพลิเคชั่นเดี๋ยวนี้</string>
+    <string name="low_storage_error">ไม่สามารถดาวน์โหลดรายการที่ใช้ระบบตรวจจับใบหน้าได้เนื่องจากหน่วยความจำในเครื่องเหลือน้อย</string>
+    <string name="title_activity_main">ตัวอย่างเครื่องอ่านบาร์โค้ด</string>
+    <string name="barcode_header">คลิ๊ก &quot;อ่านบาร์โค้ด&quot; เพื่ออ่านบาร์โค้ด</string>
+    <string name="read_barcode">อ่านบาร์โค้ด</string>
+    <string name="auto_focus">โฟกัสอัตโนมัติ</string>
+    <string name="use_flash">ใช้แฟลช</string>
+    <string name="barcode_success">อ่านบาร์โค้ดได้สำเร็จ</string>
+    <string name="barcode_failure">ไม่พบว่ามีบาร์โค้ด</string>
+    <string name="barcode_error">การอ่านบาร์โค้ดผิดพลาด: %1$s</string>
+    <string name="allow_camera_management">คุณต้องอนุญาตให้แอพฯเข้าถึงกล้องถ่ายรูป จึงจะสามารถสแกนรหัสคิวอาร์ได้&#8230;</string>
+    <string name="please_specify_content">โปรดระบุเนื้อหาที่จะแสดงบนป๊อปอัพ&#8230;</string>
+    <string name="previous">ก่อนหน้า</string>
+    <string name="next">ถัดไป</string>
+    <string name="submit">ส่ง</string>
+    <string name="the_extra_info_icon">ไอคอนข้อมูลเพิ่มเติม</string>
+    <string name="edit_button_label">ปุ่มแก้ไข</string>
+    <string name="info_icon">ไอคอนข้อมูล</string>
+    <string name="attention">สิ่งที่ต้องคำนึงถึง</string>
+    <string name="json_form_error_msg" >พบความผิดพลาด %d ตำแหน่ง ในแบบฟอร์ม โปรดแก้ไขให้ถูกต้องเพื่อนำส่ง</string>
+    <string name="json_form_on_next_error_msg" >โปรดแก้ไขข้อผิดพลาดในแบบฟอร์มเพื่อดำเนินการต่อ</string>
+    <string name="go_to_step">ไปยังขั้นตอน</string>
+</resources>
