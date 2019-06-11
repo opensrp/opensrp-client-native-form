@@ -1,6 +1,12 @@
 package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.View;
@@ -22,6 +28,10 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.vijay.jsonwizard.constants.JsonFormConstants.BTN_BG_COLOR;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.BTN_TEXT_COLOR;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.BTN_TEXT_SIZE;
 
 /**
  * Created by Jason Rogena - jrogena@ona.io on 07/07/2017.
@@ -49,22 +59,32 @@ public class ButtonFactory implements FormWidgetFactory {
 
         List<View> views = new ArrayList<>(1);
         JSONArray canvasIds = new JSONArray();
-        Button button = new Button(context);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.bottomMargin = context.getResources()
-                .getDimensionPixelSize(R.dimen.extra_bottom_margin);
-        button.setLayoutParams(layoutParams);
-        button.setTextSize(TypedValue.COMPLEX_UNIT_PX, context.getResources()
-                .getDimension(R.dimen.button_text_size));
-        button.setTextColor(context.getResources().getColor(android.R.color.white));
-        button.setHeight(context.getResources().getDimensionPixelSize(R.dimen.button_height));
 
+        Button button = createButton(context);
+
+        // set text properties
         String hint = jsonObject.optString(JsonFormConstants.HINT);
         if (!TextUtils.isEmpty(hint)) {
             button.setText(hint);
+            String textColorStr = jsonObject.optString(BTN_TEXT_COLOR);
+            int textColor = Color.parseColor(textColorStr);
+            int textSize = jsonObject.optInt(BTN_TEXT_SIZE);
+            button.setTextColor(textColor);
+            button.setTextSize(textSize);
         }
+
+        // set background color
+        String bgColorStr = jsonObject.optString(BTN_BG_COLOR);
+        int bgColor = Color.parseColor(bgColorStr);
+        Drawable background = button.getBackground();
+        if (background instanceof ShapeDrawable) {
+            ((ShapeDrawable) background).getPaint().setColor(bgColor);
+        } else if (background instanceof GradientDrawable) {
+            ((GradientDrawable) background).setColor(bgColor);
+        } else if (background instanceof ColorDrawable) {
+            ((ColorDrawable) background).setColor(bgColor);
+        }
+
 
         button.setId(ViewUtil.generateViewId());
         canvasIds.put(button.getId());
@@ -129,5 +149,22 @@ public class ButtonFactory implements FormWidgetFactory {
         }
 
         return views;
+    }
+
+    protected Button createButton(Context context) {
+        Button button = new Button(context);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams.bottomMargin = context.getResources()
+                .getDimensionPixelSize(R.dimen.extra_bottom_margin);
+        button.setLayoutParams(layoutParams);
+        button.setTextSize(TypedValue.COMPLEX_UNIT_PX, context.getResources()
+                .getDimension(R.dimen.button_text_size));
+        button.setTextColor(context.getResources().getColor(android.R.color.white));
+        button.setHeight(context.getResources().getDimensionPixelSize(R.dimen.button_height));
+        button.setBackgroundResource(R.drawable.btn_bg);
+
+        return button;
     }
 }
