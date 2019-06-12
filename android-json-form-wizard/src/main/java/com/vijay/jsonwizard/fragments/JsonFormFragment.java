@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -46,6 +47,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.vijay.jsonwizard.constants.JsonFormConstants.BOTTOM_NAVIGATION;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.BOTTOM_NAVIGATION_ORIENTATION;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.NEXT;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.NEXT_LABEL;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.NEXT_TYPE;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.PREVIOUS;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.PREVIOUS_LABEL;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.STEPNAME;
+
 /**
  * Created by vijay on 5/7/15.
  */
@@ -58,6 +68,12 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     private JsonApi mJsonApi;
     private Map<String, List<View>> lookUpMap = new HashMap<>();
     public OnFieldsInvalid onFieldsInvalid;
+
+    private Button previousButton;
+    private Button nextButton;
+    private String stepName;
+    private LinearLayout bottomNavigation;
+
 
     public static JsonFormFragment getFormFragment(String stepName) {
         JsonFormFragment jsonFormFragment = new JsonFormFragment();
@@ -90,20 +106,59 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
         mMainView = rootView.findViewById(R.id.main_layout);
         mScrollView = rootView.findViewById(R.id.scroll_view);
+        previousButton = rootView.findViewById(R.id.previous_button);
+        nextButton = rootView.findViewById(R.id.next_button);
+        bottomNavigation = rootView.findViewById(R.id.bottom_navigation_layout);
+        if (getArguments() != null) {
+            stepName = getArguments().getString(STEPNAME);
+        }
 
         setupToolbarBackButton();
+
+        JSONObject step = getStep(stepName);
+        if (step.optBoolean(BOTTOM_NAVIGATION)) {
+            initializeBottomNavigation(step);
+        }
         return rootView;
     }
 
     private void setupToolbarBackButton() {
         if (getArguments() != null) {
-            String stepName = getArguments().getString(JsonFormConstants.STEPNAME);
+            String stepName = getArguments().getString(STEPNAME);
             if (getStep(stepName).optBoolean(JsonFormConstants.DISPLAY_BACK_BUTTON)) {
                 getSupportActionBar().setHomeAsUpIndicator(getHomeUpIndicator());
                 setUpBackButton();
             }
         }
 
+    }
+
+    protected void initializeBottomNavigation(JSONObject step) {
+        bottomNavigation.setVisibility(View.VISIBLE);
+        if (step.has(PREVIOUS)) {
+            previousButton.setVisibility(View.VISIBLE);
+            if (step.has(PREVIOUS_LABEL)) {
+                previousButton.setText(step.optString(PREVIOUS_LABEL));
+            }
+        }
+        if (step.has(NEXT)) {
+            nextButton.setVisibility(View.VISIBLE);
+            if (step.has(NEXT_LABEL)) {
+                nextButton.setText(step.optString(NEXT_LABEL));
+            }
+        }
+        if (step.has(BOTTOM_NAVIGATION_ORIENTATION)) {
+            // layout orientation
+            int orientation = "vertical".equals(step.optString(BOTTOM_NAVIGATION_ORIENTATION)) ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL;
+            bottomNavigation.setOrientation(orientation);
+            bottomNavigation.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            // nav btn params
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            int layoutMargin = Utils.pixelToDp(15, getContext());
+            params.setMargins(layoutMargin, layoutMargin, layoutMargin, layoutMargin);
+            previousButton.setLayoutParams(params);
+            nextButton.setLayoutParams(params);
+        }
     }
 
     @DrawableRes

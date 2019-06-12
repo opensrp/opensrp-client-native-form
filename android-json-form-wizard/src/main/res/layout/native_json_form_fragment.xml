@@ -21,8 +21,10 @@
         </LinearLayout>
     </ScrollView>
     <LinearLayout
+        android:id="@+id/bottom_navigation_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:visibility="gone">
         <Button
             android:id="@+id/previous_button"
             style="@style/Widget.AppCompat.Button.Borderless"
@@ -31,13 +33,14 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/bottom_navigation_margin"
             android:layout_marginTop="@dimen/bottom_navigation_margin"
+            android:layout_marginLeft="@dimen/bottom_navigation_margin"
             android:paddingEnd="@dimen/bottom_navigation_padding"
             android:paddingStart="@dimen/bottom_navigation_padding"
             android:text="@string/previous"
             android:textAllCaps="true"
             android:textAppearance="@style/TextAppearance.AppCompat.Button"
             android:textColor="#737373"
-            android:textSize="16sp" />
+            android:textSize="20sp" />
 
         <Button
             android:id="@+id/next_button"
@@ -47,6 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/bottom_navigation_margin"
             android:layout_marginTop="@dimen/bottom_navigation_margin"
+            android:layout_marginRight="@dimen/bottom_navigation_margin"
             android:background="@drawable/btn_bg"
             android:paddingEnd="@dimen/bottom_navigation_padding"
             android:paddingStart="@dimen/bottom_navigation_padding"
@@ -54,6 +58,6 @@
             android:textAllCaps="true"
             android:textAppearance="@style/TextAppearance.AppCompat.Button"
             android:textColor="#FFFFFF"
-            android:textSize="16sp" />
+            android:textSize="20sp" />
     </LinearLayout>
 </LinearLayout>
