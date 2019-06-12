@@ -86,6 +86,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import io.reactivex.SingleObserver;
+import io.reactivex.disposables.Disposable;
+
 import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 
 public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
@@ -735,7 +738,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         }
     }
 
-    @SuppressLint ("NewApi")
+    @SuppressLint("NewApi")
     private JSONArray addCheckBoxValue(JSONObject item, String childKey, String value) throws JSONException {
         JSONArray values = new JSONArray();
         if (item.has(JsonFormConstants.VALUE)) {
@@ -1615,57 +1618,64 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         return conditionToken;
     }
 
-    private void updateCalculation(Facts valueMap, View view, String rulesFile) {
+    private void updateCalculation(Facts valueMap, final View view, String rulesFile) {
 
-        try {
+        getRulesEngineFactory().getCalculation(valueMap, rulesFile).subscribe(new SingleObserver<String>() {
+            @Override
+            public void onSubscribe(Disposable d) {
 
-            String calculation = getRulesEngineFactory().getCalculation(valueMap, rulesFile);
+            }
 
-            if (calculation != null) {
-                if (view instanceof CheckBox) {
-                    //For now were only handling checkbox titles only
-                    TextView checkboxLabel = ((View) view.getParent().getParent()).findViewById(R.id.label_text);
-                    if (checkboxLabel != null) {
-                        checkboxLabel.setText(
-                                getRenderText(calculation, checkboxLabel.getTag(R.id.original_text).toString(), false));
+            @Override
+            public void onSuccess(String calculation) {
+                if (calculation != null) {
+                    if (view instanceof CheckBox) {
+                        //For now were only handling checkbox titles only
+                        TextView checkboxLabel = ((View) view.getParent().getParent()).findViewById(R.id.label_text);
+                        if (checkboxLabel != null) {
+                            checkboxLabel.setText(
+                                    getRenderText(calculation, checkboxLabel.getTag(R.id.original_text).toString(), false));
+                        }
+
+                    } else if (view instanceof TextableView) {
+                        TextableView textView = ((TextableView) view);
+                        if (!TextUtils.isEmpty(calculation)) {
+                            CharSequence spanned = calculation.charAt(0) == '{' ?
+                                    getRenderText(calculation, textView.getTag(R.id.original_text).toString(), true) :
+                                    (textView.getTag(R.id.original_text) != null && "0".equals(calculation)) ?
+                                            textView.getTag(R.id.original_text).toString() : calculation;
+                            textView.setText(spanned);
+                        }
+                    } else if (view instanceof EditText) {
+                        String type = (String) view.getTag(R.id.type);
+                        if (JsonFormConstants.HIDDEN.equals(type) && TextUtils.isEmpty(calculation)) {
+                            calculation = "0";
+                        }
+
+                        if (!TextUtils.isEmpty(calculation)) {
+                            ((EditText) view).setText(calculation);
+                        }
+
+                    } else if (view instanceof RadioGroup) {
+                        setRadioButtonCalculation((RadioGroup) view, calculation);
+
+                    } else if (view instanceof LinearLayout) {
+                        LinearLayout linearLayout = (LinearLayout) view;
+                        String type = (String) linearLayout.getTag(R.id.type);
+                        if (JsonFormConstants.NUMBER_SELECTOR.equals(type)) {
+                            setNumberSelectorCalculation(calculation, linearLayout);
+                        }
+                    } else {
+                        ((TextView) view).setText(calculation);
                     }
-
-                } else if (view instanceof TextableView) {
-                    TextableView textView = ((TextableView) view);
-                    if (!TextUtils.isEmpty(calculation)) {
-                        CharSequence spanned = calculation.charAt(0) == '{' ?
-                                getRenderText(calculation, textView.getTag(R.id.original_text).toString(), true) :
-                                (textView.getTag(R.id.original_text) != null && "0".equals(calculation)) ?
-                                        textView.getTag(R.id.original_text).toString() : calculation;
-                        textView.setText(spanned);
-                    }
-                } else if (view instanceof EditText) {
-                    String type = (String) view.getTag(R.id.type);
-                    if (JsonFormConstants.HIDDEN.equals(type) && TextUtils.isEmpty(calculation)) {
-                        calculation = "0";
-                    }
-
-                    if (!TextUtils.isEmpty(calculation)) {
-                        ((EditText) view).setText(calculation);
-                    }
-
-                } else if (view instanceof RadioGroup) {
-                    setRadioButtonCalculation((RadioGroup) view, calculation);
-
-                } else if (view instanceof LinearLayout) {
-                    LinearLayout linearLayout = (LinearLayout) view;
-                    String type = (String) linearLayout.getTag(R.id.type);
-                    if (JsonFormConstants.NUMBER_SELECTOR.equals(type)) {
-                        setNumberSelectorCalculation(calculation, linearLayout);
-                    }
-                } else {
-                    ((TextView) view).setText(calculation);
                 }
             }
-        } catch (Exception e) {
-            Log.e(TAG, "calling updateCalculation on Non TextView or Text View decendant", e);
-        }
 
+            @Override
+            public void onError(Throwable e) {
+                Log.e(TAG, "Error with calculation: see below: \n\n", e);
+            }
+        });
     }
 
     private void setRadioButtonCalculation(RadioGroup view, String calculation) {

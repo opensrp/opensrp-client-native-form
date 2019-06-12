@@ -21,6 +21,11 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
+
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 public class RulesEngineFactory implements RuleListener {
     public final String TAG = RulesEngineFactory.class.getCanonicalName();
@@ -49,7 +54,14 @@ public class RulesEngineFactory implements RuleListener {
     public RulesEngineFactory() {
     }
 
-    private Rules getRulesFromAsset(String fileName) {
+    /**
+     * Synchronized method that reads yml config files containing the rules. We need to fetch all
+     * the rules first before doing any processing on a separate thread.
+     *
+     * @param fileName file containing the rules
+     * @return Rules obtained from the file
+     */
+    synchronized private Rules getRulesFromAsset(String fileName) {
         try {
             if (!ruleMap.containsKey(fileName)) {
 
@@ -82,19 +94,26 @@ public class RulesEngineFactory implements RuleListener {
         return facts.get(RuleConstant.IS_RELEVANT);
     }
 
-    public String getCalculation(Facts calculationFact, String ruleFilename) {
+    public Single<String> getCalculation(final Facts calculationFact, final String ruleFilename) {
 
-        //need to clean curValue map as constraint depend on valid values, empties wont do
+        return Single.fromCallable(new Callable<String>() {
+            @Override
+            public String call() {
+                //need to clean curValue map as constraint depend on valid values, empties wont do
 
-        Facts facts = initializeFacts(calculationFact);
+                Facts facts = initializeFacts(calculationFact);
 
-        facts.put(RuleConstant.CALCULATION, "");
+                facts.put(RuleConstant.CALCULATION, "");
 
-        rules = getRulesFromAsset(RULE_FOLDER_PATH + ruleFilename);
+                rules = getRulesFromAsset(RULE_FOLDER_PATH + ruleFilename);
 
-        processDefaultRules(rules, facts);
+                processDefaultRules(rules, facts);
 
-        return formatCalculationReturnValue(facts.get(RuleConstant.CALCULATION));
+                return formatCalculationReturnValue(facts.get(RuleConstant.CALCULATION));
+            }
+        }).subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread());
+
     }
 
     public String getConstraint(Facts constraintFact, String ruleFilename) {
