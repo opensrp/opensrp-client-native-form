@@ -160,6 +160,8 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
             int orientation = "vertical".equals(step.optString(BOTTOM_NAVIGATION_ORIENTATION)) ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL;
             bottomNavigation.setOrientation(orientation);
             bottomNavigation.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            bottomNavigation.removeView(previousButton);
+            bottomNavigation.addView(previousButton);
             // nav btn params
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             int layoutMargin = Utils.pixelToDp(15, getContext());
