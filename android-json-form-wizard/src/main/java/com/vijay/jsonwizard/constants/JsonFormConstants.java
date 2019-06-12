@@ -111,6 +111,9 @@ public class JsonFormConstants {
     public static final String BOLD_ITALIC = "bold_italic";
     public static final String EDIT_BUTTON = "edit_button";
     public static final String CUSTOM_TEXT = "custom_text";
+    public static final String BTN_TEXT_COLOR = "btn_text_color";
+    public static final String BTN_TEXT_SIZE = "btn_text_size";
+    public static final String BTN_BG_COLOR = "btn_bg_color";
 
     public static final String STEPNAME = "stepName";
     public static final String DISPLAY_BACK_BUTTON = "display_back_button";
