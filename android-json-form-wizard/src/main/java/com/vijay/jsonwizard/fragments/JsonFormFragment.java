@@ -55,6 +55,7 @@ import static com.vijay.jsonwizard.constants.JsonFormConstants.NEXT_TYPE;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.PREVIOUS;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.PREVIOUS_LABEL;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.STEPNAME;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.SUBMIT;
 
 /**
  * Created by vijay on 5/7/15.
@@ -74,6 +75,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     private String stepName;
     private LinearLayout bottomNavigation;
 
+    private BottomNavigationListener navigationListener;
 
     public static JsonFormFragment getFormFragment(String stepName) {
         JsonFormFragment jsonFormFragment = new JsonFormFragment();
@@ -109,6 +111,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         previousButton = rootView.findViewById(R.id.previous_button);
         nextButton = rootView.findViewById(R.id.next_button);
         bottomNavigation = rootView.findViewById(R.id.bottom_navigation_layout);
+        navigationListener = new BottomNavigationListener();
         if (getArguments() != null) {
             stepName = getArguments().getString(STEPNAME);
         }
@@ -117,7 +120,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
         JSONObject step = getStep(stepName);
         if (step.optBoolean(BOTTOM_NAVIGATION)) {
-            initializeBottomNavigation(step);
+            initializeBottomNavigation(step, rootView);
         }
         return rootView;
     }
@@ -133,7 +136,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     }
 
-    protected void initializeBottomNavigation(JSONObject step) {
+    protected void initializeBottomNavigation(JSONObject step, View rootView) {
         bottomNavigation.setVisibility(View.VISIBLE);
         if (step.has(PREVIOUS)) {
             previousButton.setVisibility(View.VISIBLE);
@@ -141,12 +144,17 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
                 previousButton.setText(step.optString(PREVIOUS_LABEL));
             }
         }
+
         if (step.has(NEXT)) {
             nextButton.setVisibility(View.VISIBLE);
             if (step.has(NEXT_LABEL)) {
                 nextButton.setText(step.optString(NEXT_LABEL));
             }
+        }  else if (step.optString(NEXT_TYPE).equalsIgnoreCase(SUBMIT)) {
+            nextButton.setTag(R.id.submit, true);
+            nextButton.setVisibility(View.VISIBLE);
         }
+
         if (step.has(BOTTOM_NAVIGATION_ORIENTATION)) {
             // layout orientation
             int orientation = "vertical".equals(step.optString(BOTTOM_NAVIGATION_ORIENTATION)) ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL;
@@ -159,6 +167,9 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
             previousButton.setLayoutParams(params);
             nextButton.setLayoutParams(params);
         }
+
+        rootView.findViewById(R.id.previous_button).setOnClickListener(navigationListener);
+        rootView.findViewById(R.id.next_button).setOnClickListener(navigationListener);
     }
 
     @DrawableRes
@@ -541,4 +552,22 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     public boolean onMenuItemClick(MenuItem item) {
         return presenter.onMenuItemClick(item);
     }
+
+
+    protected class BottomNavigationListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            if (v.getId() == R.id.next_button) {
+                Object isSubmit = v.getTag(R.id.submit);
+                if (isSubmit != null && Boolean.valueOf(isSubmit.toString())) {
+                    save(false);
+                } else {
+                    next();
+                }
+            } else if (v.getId() == R.id.previous_button) {
+                getFragmentManager().popBackStack();
+            }
+        }
+    }
+
 }
