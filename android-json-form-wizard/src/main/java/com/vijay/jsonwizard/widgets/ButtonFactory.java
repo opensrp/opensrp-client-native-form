@@ -66,25 +66,32 @@ public class ButtonFactory implements FormWidgetFactory {
         String hint = jsonObject.optString(JsonFormConstants.HINT);
         if (!TextUtils.isEmpty(hint)) {
             button.setText(hint);
-            String textColorStr = jsonObject.optString(BTN_TEXT_COLOR);
-            int textColor = Color.parseColor(textColorStr);
-            int textSize = jsonObject.optInt(BTN_TEXT_SIZE);
-            button.setTextColor(textColor);
-            button.setTextSize(textSize);
+            // btn text color
+            String textColorStr = jsonObject.optString(BTN_TEXT_COLOR, null);
+            if (textColorStr != null) {
+                int textColor = Color.parseColor(textColorStr);
+                button.setTextColor(textColor);
+            }
+            // btn text size
+            int textSize = jsonObject.optInt(BTN_TEXT_SIZE, -1);
+            if (textSize != -1) {
+                button.setTextSize(textSize);
+            }
         }
 
-        // set background color
-        String bgColorStr = jsonObject.optString(BTN_BG_COLOR);
-        int bgColor = Color.parseColor(bgColorStr);
-        Drawable background = button.getBackground();
-        if (background instanceof ShapeDrawable) {
-            ((ShapeDrawable) background).getPaint().setColor(bgColor);
-        } else if (background instanceof GradientDrawable) {
-            ((GradientDrawable) background).setColor(bgColor);
-        } else if (background instanceof ColorDrawable) {
-            ((ColorDrawable) background).setColor(bgColor);
+        // set btn background color
+        String bgColorStr = jsonObject.optString(BTN_BG_COLOR, null);
+        if (bgColorStr != null) {
+            int bgColor = Color.parseColor(bgColorStr);
+            Drawable background = button.getBackground();
+            if (background instanceof ShapeDrawable) {
+                ((ShapeDrawable) background).getPaint().setColor(bgColor);
+            } else if (background instanceof GradientDrawable) {
+                ((GradientDrawable) background).setColor(bgColor);
+            } else if (background instanceof ColorDrawable) {
+                ((ColorDrawable) background).setColor(bgColor);
+            }
         }
-
 
         button.setId(ViewUtil.generateViewId());
         canvasIds.put(button.getId());
