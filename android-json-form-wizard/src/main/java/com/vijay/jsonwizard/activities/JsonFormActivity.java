@@ -83,11 +83,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import io.reactivex.Single;
 import io.reactivex.SingleObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 
@@ -107,6 +112,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private JSONArray extraFieldsWithValues;
     private Map<String, String> formValuesCacheMap = new HashMap<>();
     private TextView selectedTextView = null;
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
         @Override
@@ -811,14 +817,14 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         }
     }
 
-    protected void addRelevance(View view, boolean popup) {
+    protected void addRelevance(final View view, boolean popup) {
         String relevanceTag = (String) view.getTag(R.id.relevance);
         if (relevanceTag != null && relevanceTag.length() > 0) {
             try {
                 boolean isPopup = popup;
                 JSONObject relevance = new JSONObject(relevanceTag);
                 Iterator<String> keys = relevance.keys();
-                boolean ok = true;
+                final Boolean ok = true;
                 while (keys.hasNext()) {
                     String curKey = keys.next();
                     JSONObject curRelevance = relevance.has(curKey) ? relevance.getJSONObject(curKey) : null;
@@ -827,18 +833,34 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     isPopup = checkPopUpValidity(address, popup);
                     if (address.length > 1) {
                         Facts curValueMap = getValueFromAddress(address, isPopup);
-                        try {
-                            boolean comparison = isRelevant(curValueMap, curRelevance);
+//                        try {
+//                            boolean comparison = isRelevant(curValueMap, curRelevance);
+//
+//                            ok = ok && comparison;
+//                            if (!ok) break;
+//                        } catch (Exception e) {
+//                            Log.e(TAG, e.getMessage(), e);
+//                        }
+                        final boolean finalIsPopup = isPopup;
+                        isRelevant(curValueMap, curRelevance).subscribe(new SingleObserver<Boolean>() {
+                            @Override
+                            public void onSubscribe(Disposable d) {
+                                compositeDisposable.add(d);
+                            }
 
-                            ok = ok && comparison;
-                            if (!ok) break;
-                        } catch (Exception e) {
-                            Log.e(TAG, e.getMessage(), e);
-                        }
+                            @Override
+                            public void onSuccess(Boolean isRelevant) {
+                                toggleViewVisibility(view, isRelevant, finalIsPopup);
+                            }
 
+                            @Override
+                            public void onError(Throwable e) {
+                                Log.e(TAG, "Error occurred while getting relevance. See below: \n\n" + e);
+                            }
+                        });
                     }
                 }
-                toggleViewVisibility(view, ok, isPopup);
+
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage(), e);
             }
@@ -1443,31 +1465,38 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         return form;
     }
 
-    private boolean isRelevant(Facts curValueMap, JSONObject curRelevance) throws Exception {
-        if (curRelevance != null) {
-            if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_RULES)) {
-                return curValueMap.asMap().size() != 0 && getRulesEngineFactory().getRelevance(curValueMap,
-                        curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES)
-                                .getString(RuleConstant.RULES_FILE));
-            } else if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_CHECKBOX)) {
-                JSONArray exArray = curRelevance.getJSONArray(JsonFormConstants.JSON_FORM_KEY.EX_CHECKBOX);
+    private Single<Boolean> isRelevant(final Facts curValueMap, final JSONObject curRelevance) throws Exception {
+        return Single.fromCallable(new Callable<Boolean>() {
+            @Override
+            public Boolean call() throws Exception {
+                if (curRelevance != null) {
+                    if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_RULES)) {
+                        return curValueMap.asMap().size() != 0 && getRulesEngineFactory().getRelevance(curValueMap,
+                                curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES)
+                                        .getString(RuleConstant.RULES_FILE));
+                    } else if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_CHECKBOX)) {
+                        JSONArray exArray = curRelevance.getJSONArray(JsonFormConstants.JSON_FORM_KEY.EX_CHECKBOX);
 
-                for (int i = 0; i < exArray.length(); i++) {
-                    ExObjectResult exObjectResult = isExObjectRelevant(curValueMap, exArray.getJSONObject(i));
-                    if (exObjectResult.isRelevant()) {
-                        return true;
-                    } else if (!exObjectResult.isRelevant() && exObjectResult.isFinal()) {
+                        for (int i = 0; i < exArray.length(); i++) {
+                            ExObjectResult exObjectResult = isExObjectRelevant(curValueMap, exArray.getJSONObject(i));
+                            if (exObjectResult.isRelevant()) {
+                                return true;
+                            } else if (!exObjectResult.isRelevant() && exObjectResult.isFinal()) {
+                                return false;
+                            }
+
+                        }
                         return false;
+                    } else {
+                        String curValue = String.valueOf(curValueMap.get(JsonFormConstants.VALUE));
+                        return doComparison(curValue, curRelevance);
                     }
-
                 }
                 return false;
-            } else {
-                String curValue = String.valueOf(curValueMap.get(JsonFormConstants.VALUE));
-                return doComparison(curValue != null ? curValue : "", curRelevance);
             }
-        }
-        return false;
+        }).subscribeOn(Schedulers.trampoline())
+                .observeOn(AndroidSchedulers.mainThread());
+
     }
 
     private ExObjectResult isExObjectRelevant(Facts curValueMap, JSONObject object) throws Exception {
@@ -1623,7 +1652,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         getRulesEngineFactory().getCalculation(valueMap, rulesFile).subscribe(new SingleObserver<String>() {
             @Override
             public void onSubscribe(Disposable d) {
-
+                compositeDisposable.add(d);
             }
 
             @Override
@@ -1969,6 +1998,11 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        //Unsubscribe from streams to release resources
+        if(!compositeDisposable.isDisposed()){
+            compositeDisposable.clear();
+        }
+
         for (LifeCycleListener lifeCycleListener : lifeCycleListeners) {
             lifeCycleListener.onDestroy();
         }

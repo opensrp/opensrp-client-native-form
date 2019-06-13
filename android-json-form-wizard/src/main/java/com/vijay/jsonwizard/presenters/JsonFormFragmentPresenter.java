@@ -306,8 +306,9 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
                 handleWrongFormatInputs(validationStatus, fieldKey, rawValue);
 
                 String type = (String) childAt.getTag(R.id.type);
-                rawValue = JsonFormConstants.DATE_PICKER.equals(type)||JsonFormConstants.TIME_PICKER.
-                        equals(type) ? childAt.getTag(R.id.locale_independent_value).toString() : rawValue;
+                rawValue = (JsonFormConstants.DATE_PICKER.equals(type) || JsonFormConstants.TIME_PICKER.
+                        equals(type)) && childAt.getTag(R.id.locale_independent_value) != null ?
+                        childAt.getTag(R.id.locale_independent_value).toString() : rawValue;
                 Log.d("Writing values ..", key + " " + rawValue);
 
                 getView().writeValue(mStepName, key, rawValue, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
@@ -724,8 +725,8 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         if (isNumberSelectorTextView != null && (boolean) isNumberSelectorTextView) {
             NumberSelectorFactory.createNumberSelector(customTextView);
             //Save the last value if none is selected
-            if(customTextView.getText().toString().contains("+")){
-                String currentText = customTextView.getText().toString().replace("+","");
+            if (customTextView.getText().toString().contains("+")) {
+                String currentText = customTextView.getText().toString().replace("+", "");
                 customTextView.setText(currentText);
                 saveValueFromCustomView(customTextView);
             }

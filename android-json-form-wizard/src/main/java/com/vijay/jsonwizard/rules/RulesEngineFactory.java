@@ -111,7 +111,7 @@ public class RulesEngineFactory implements RuleListener {
 
                 return formatCalculationReturnValue(facts.get(RuleConstant.CALCULATION));
             }
-        }).subscribeOn(Schedulers.computation())
+        }).subscribeOn(Schedulers.trampoline())
                 .observeOn(AndroidSchedulers.mainThread());
 
     }
