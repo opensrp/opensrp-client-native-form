@@ -1,5 +1,5 @@
 {
-  "count": "3",
+  "count": "4",
   "encounter_type": "Test",
   "entity_id": "",
   "relational_id": "",
@@ -241,6 +241,7 @@
   },
   "step3": {
     "title": "Maternal Exam",
+    "next": "step4",
     "fields": [
       {
         "key": "spacer",
@@ -533,6 +534,29 @@
             }
           }
         }
+      }
+    ]
+  },
+  "step4": {
+    "title": "How to instructions",
+    "fields": [
+      {
+        "key": "illustration_text_description",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_illustration_text",
+        "text": "Take the test by doing it as shown in the image below",
+        "label_text_style": "bold",
+        "text_color": "#000000"
+      },
+      {
+        "key": "illustration_image",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_illustration_image",
+        "image_file_path": "test_image.jpg"
       }
     ]
   }
