@@ -2,25 +2,23 @@ package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-import com.rey.material.widget.ImageView;
-import com.rey.material.widget.TextView;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
+import com.vijay.jsonwizard.utils.FormUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,21 +51,25 @@ public class ImageWithTextFactory implements FormWidgetFactory {
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
         String descriptionText = jsonObject.getString(JsonFormConstants.TEXT);
-        String imageFile = jsonObject.getString(JsonFormConstants.IMAGE_FILE);
+        String imageFile = jsonObject.getString(JsonFormConstants.IMAGE_FILE_NAME);
 
         if (!TextUtils.isEmpty(descriptionText)) {
             TextView descriptionTextView = rootLayout.findViewById(R.id.text);
+            if (jsonObject.has(JsonFormConstants.TEXT_COLOR)) {
+                descriptionTextView.setTextColor(Color.parseColor(JsonFormConstants.TEXT_COLOR));
+            }
             descriptionTextView.setText(descriptionText);
         }
 
         if (!TextUtils.isEmpty(imageFile)) {
-            ImageView imageView = rootLayout.findViewById(R.id.image);
-            try {
-                InputStream is = context.getAssets().open(imageFile);
-                Bitmap bitmap = BitmapFactory.decodeStream(is);
+            String folderName = null;
+            if (jsonObject.has(JsonFormConstants.IMAGE_FOLDER)) {
+                folderName = jsonObject.getString(JsonFormConstants.IMAGE_FOLDER);
+            }
+            Bitmap bitmap = FormUtils.getBitmap(context, folderName, imageFile);
+            if (bitmap != null) {
+                ImageView imageView = rootLayout.findViewById(R.id.image);
                 imageView.setImageBitmap(bitmap);
-            } catch (IOException ioe) {
-                Log.e(TAG, ioe.toString());
             }
         }
 
