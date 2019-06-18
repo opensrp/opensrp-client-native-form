@@ -904,16 +904,17 @@ public class FormUtils {
      *
      * @param context
      * @param folder The folder within the Assets folder where the image resides
-     * @param fileName Name of the file
+     * @param imageFile Path and the name of the file
      * @return Bitmap
      */
-    public static Bitmap getBitmap(Context context, String folder, String fileName) {
+    public static Bitmap getBitmap(Context context, String folder, String imageFile) {
         Bitmap bitmap = null;
+        String filePath = imageFile;
         try {
             if (folder == null || folder.isEmpty()){
-                fileName = DEFAULT_FORM_IMAGES_FOLDER + fileName;
+                filePath = DEFAULT_FORM_IMAGES_FOLDER + imageFile;
             }
-            InputStream is = context.getAssets().open(fileName);
+            InputStream is = context.getAssets().open(filePath);
             bitmap = BitmapFactory.decodeStream(is);
         } catch (IOException ioe) {
             Log.e(TAG, ioe.toString());

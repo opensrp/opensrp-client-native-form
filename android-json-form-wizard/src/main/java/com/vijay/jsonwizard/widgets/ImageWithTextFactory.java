@@ -24,7 +24,6 @@ import java.util.List;
 
 public class ImageWithTextFactory implements FormWidgetFactory {
 
-    private static String TAG = ImageWithTextFactory.class.getCanonicalName();
     private View rootLayout;
 
     @Override
