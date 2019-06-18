@@ -909,10 +909,13 @@ public class FormUtils {
      */
     public static Bitmap getBitmap(Context context, String folder, String imageFile) {
         Bitmap bitmap = null;
-        String filePath = imageFile;
+        String filePath;
         try {
             if (folder == null || folder.isEmpty()){
                 filePath = DEFAULT_FORM_IMAGES_FOLDER + imageFile;
+            }
+            else {
+                filePath = folder + imageFile;
             }
             InputStream is = context.getAssets().open(filePath);
             bitmap = BitmapFactory.decodeStream(is);

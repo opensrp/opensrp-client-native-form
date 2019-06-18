@@ -545,10 +545,10 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "type": "image_with_text",
+        "type": "image_view",
         "text": "Take the test by doing it as shown in the image below",
-        "image_file": "image/process.jpeg",
-        "label_text_style": "bold",
+        "label_text_size": "18sp",
+        "image_file": "process.jpeg",
         "text_color": "#000000"
       }
     ]

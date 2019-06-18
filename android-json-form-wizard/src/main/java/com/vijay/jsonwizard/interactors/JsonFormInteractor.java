@@ -17,7 +17,7 @@ import com.vijay.jsonwizard.widgets.GpsFactory;
 import com.vijay.jsonwizard.widgets.HiddenTextFactory;
 import com.vijay.jsonwizard.widgets.HorizontalLineFactory;
 import com.vijay.jsonwizard.widgets.ImagePickerFactory;
-import com.vijay.jsonwizard.widgets.ImageWithTextFactory;
+import com.vijay.jsonwizard.widgets.ImageViewFactory;
 import com.vijay.jsonwizard.widgets.LabelFactory;
 import com.vijay.jsonwizard.widgets.NativeEditTextFactory;
 import com.vijay.jsonwizard.widgets.NativeRadioButtonFactory;
@@ -81,7 +81,7 @@ public class JsonFormInteractor {
         map.put(JsonFormConstants.TIME_PICKER, new TimePickerFactory());
         map.put(JsonFormConstants.REPEATING_GROUP, new RepeatingGroupFactory());
         map.put(JsonFormConstants.RDT_CAPTURE, new RDTCaptureFactory());
-        map.put(JsonFormConstants.TEXT_WITH_IMAGE, new ImageWithTextFactory());
+        map.put(JsonFormConstants.IMAGE_VIEW, new ImageViewFactory());
     }
 
     public List<View> fetchFormElements(String stepName, JsonFormFragment formFragment,

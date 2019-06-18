@@ -22,7 +22,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ImageWithTextFactory implements FormWidgetFactory {
+public class ImageViewFactory implements FormWidgetFactory {
 
     private View rootLayout;
 
@@ -41,7 +41,7 @@ public class ImageWithTextFactory implements FormWidgetFactory {
     }
 
     private int getLayout() {
-        return R.layout.native_form_text_and_image;
+        return R.layout.native_form_image_view;
     }
 
     private void setWidgetTags(JSONObject jsonObject, Context context) throws JSONException {
@@ -50,13 +50,18 @@ public class ImageWithTextFactory implements FormWidgetFactory {
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
         String descriptionText = jsonObject.getString(JsonFormConstants.TEXT);
-        String imageFile = jsonObject.getString(JsonFormConstants.IMAGE_FILE_NAME);
+        String imageFile = jsonObject.getString(JsonFormConstants.IMAGE_FILE);
 
         if (!TextUtils.isEmpty(descriptionText)) {
+            String textSize = String.valueOf(context.getResources().getDimension(R.dimen.label_text_size));
             TextView descriptionTextView = rootLayout.findViewById(R.id.text);
             if (jsonObject.has(JsonFormConstants.TEXT_COLOR)) {
-                descriptionTextView.setTextColor(Color.parseColor(JsonFormConstants.TEXT_COLOR));
+                descriptionTextView.setTextColor(Color.parseColor(jsonObject.getString(JsonFormConstants.TEXT_COLOR)));
             }
+            if (jsonObject.has(JsonFormConstants.TEXT_SIZE)) {
+                textSize = jsonObject.getString(JsonFormConstants.TEXT_SIZE);
+            }
+            descriptionTextView.setTextSize(FormUtils.getValueFromSpOrDpOrPx(textSize, context));
             descriptionTextView.setText(descriptionText);
         }
 
