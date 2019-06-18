@@ -116,8 +116,8 @@ public class EditTextFactory implements FormWidgetFactory {
 
     }
 
-    protected void attachLayout(String stepName, Context context, JsonFormFragment formFragment,
-                                JSONObject jsonObject, MaterialEditText editText, ImageView editButton)
+    protected GenericTextWatcher attachLayout(String stepName, Context context, JsonFormFragment formFragment,
+                                              JSONObject jsonObject, MaterialEditText editText, ImageView editButton)
             throws Exception {
 
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
@@ -162,8 +162,10 @@ public class EditTextFactory implements FormWidgetFactory {
             }
         }
 
-        editText.addTextChangedListener(new GenericTextWatcher(stepName, formFragment, editText));
+        GenericTextWatcher textWatcher = new GenericTextWatcher(stepName, formFragment, editText);
+        editText.addTextChangedListener(textWatcher);
         initSpecialViewsRefs(context, jsonObject, editText);
+        return textWatcher;
     }
 
     private void initSpecialViewsRefs(Context context, JSONObject jsonObject, MaterialEditText editText) {
