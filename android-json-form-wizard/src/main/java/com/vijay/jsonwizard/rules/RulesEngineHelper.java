@@ -7,6 +7,18 @@ package com.vijay.jsonwizard.rules;
  */
 public class RulesEngineHelper {
 
+    private static RulesEngineHelper rulesEngineHelper;
+
+    private RulesEngineHelper() {
+    }
+
+    public static RulesEngineHelper getInstance (){
+        if(rulesEngineHelper == null){
+            rulesEngineHelper = new RulesEngineHelper();
+        }
+        return rulesEngineHelper;
+    }
+
     private RulesEngineDateUtil rulesEngineDateUtil = new RulesEngineDateUtil();
 
     public long getDifferenceDays(String dateString) {

@@ -14,7 +14,7 @@ public class RulesEngineHelperTest extends BaseTest {
 
     @Test
     public void testIfNull() {
-        RulesEngineHelper helper = new RulesEngineHelper();
+        RulesEngineHelper helper =  RulesEngineHelper.getInstance();
         assertEquals("0", helper.ifNull(null, "0"));
         assertEquals("1", helper.ifNull("", "1"));
         assertEquals("123", helper.ifNull("123", ""));

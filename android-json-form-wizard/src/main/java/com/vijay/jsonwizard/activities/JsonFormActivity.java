@@ -113,6 +113,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private Map<String, String> formValuesCacheMap = new HashMap<>();
     private TextView selectedTextView = null;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private Map<String, Object> valuesMap = new HashMap<>();
 
     private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
         @Override
@@ -331,8 +332,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                                 curValueMap = getValueFromAddress(address, popup);
                             }
 
-
-                            if (address.length > 2 && RuleConstant.RULES_ENGINE.equals(address[0]) &&
+                            if (RuleConstant.RULES_ENGINE.equals(address[0]) &&
                                     (!JsonFormConstants.TOASTER_NOTES.equals(curView.getTag(R.id.type)) &&
                                             !JsonFormConstants.NATIVE_RADIO_BUTTON.equals(curView.getTag(R.id.type)))) {
 
@@ -649,7 +649,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     if (item.has(JsonFormConstants.TEXT)) {
                         item.put(JsonFormConstants.TEXT, value);
                     } else {
-                        widgetWriteItemValue(value, item, itemType);
+                        widgetWriteItemValue(value, item, itemType, stepName);
                     }
                     addOpenMrsAttributes(openMrsEntityParent, openMrsEntity, openMrsEntityId, item);
 
@@ -667,10 +667,20 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         item.put(JsonFormConstants.OPENMRS_ENTITY_ID, openMrsEntityId);
     }
 
-    private void widgetWriteItemValue(String value, JSONObject item, String itemType) throws JSONException {
-        item.put(JsonFormConstants.VALUE, itemType.equals(JsonFormConstants.HIDDEN) && TextUtils.isEmpty(value) ?
-                item.has(JsonFormConstants.VALUE) && !TextUtils.isEmpty(item.getString(JsonFormConstants.VALUE)) ?
-                        item.getString(JsonFormConstants.VALUE) : value : value);
+    private void widgetWriteItemValue(String value, JSONObject item, String itemType, String stepName) throws JSONException {
+        if (itemType.equals(JsonFormConstants.HIDDEN) && TextUtils.isEmpty(value))
+            item.put(JsonFormConstants.VALUE, item.has(JsonFormConstants.VALUE) && !TextUtils.isEmpty(item.getString(JsonFormConstants.VALUE)) ?
+                    item.getString(JsonFormConstants.VALUE) : value);
+        else {
+            item.put(JsonFormConstants.VALUE, value);
+        }
+        updateValuesMap(item, stepName);
+    }
+
+    private void updateValuesMap(JSONObject item, String stepName) throws JSONException {
+        if (item.has(JsonFormConstants.VALUE)) {
+            valuesMap.put(stepName + "_" + item.getString(JsonFormConstants.KEY), item.getString(JsonFormConstants.VALUE));
+        }
     }
 
     private boolean checkPopUpValidity(String[] curKey, boolean popup) throws JSONException {
@@ -735,6 +745,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                             innerItem.put(JsonFormConstants.VALUE, value);
 
                             item.put(JsonFormConstants.VALUE, addCheckBoxValue(item, childKey, value));
+                            updateValuesMap(item, stepName);
                             invokeRefreshLogic(value, popup, parentKey, childKey);
                             return;
                         }
@@ -833,14 +844,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     isPopup = checkPopUpValidity(address, popup);
                     if (address.length > 1) {
                         Facts curValueMap = getValueFromAddress(address, isPopup);
-//                        try {
-//                            boolean comparison = isRelevant(curValueMap, curRelevance);
-//
-//                            ok = ok && comparison;
-//                            if (!ok) break;
-//                        } catch (Exception e) {
-//                            Log.e(TAG, e.getMessage(), e);
-//                        }
+
                         final boolean finalIsPopup = isPopup;
                         isRelevant(curValueMap, curRelevance).subscribe(new SingleObserver<Boolean>() {
                             @Override
@@ -1999,7 +2003,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     protected void onDestroy() {
         super.onDestroy();
         //Unsubscribe from streams to release resources
-        if(!compositeDisposable.isDisposed()){
+        if (!compositeDisposable.isDisposed()) {
             compositeDisposable.clear();
         }
 

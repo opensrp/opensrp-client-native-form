@@ -96,7 +96,7 @@ description: This is a calculated field for purposes of making weight calculatio
 priority: 1
 condition: "true"
 actions:
-    - "calculation = ((!step1_pregest_weight_unknown.isEmpty() && step1_pregest_weight_unknown.contains('pregest_weight_unknown')) ? step1_current_weight : step1_pregest_weight)"
+    - "calculation = ((!step1_pregest_weight_unknown.isEmpty() && step1_pregest_weight_unknown.contains('pregest_weight_unknown'))  || step1_pregest_weight_unknown == null  ? step1_current_weight : step1_pregest_weight)"
 ---
 name: step1_tot_weight_gain
 description: Total weight gain in pregnancy so far (in kg).

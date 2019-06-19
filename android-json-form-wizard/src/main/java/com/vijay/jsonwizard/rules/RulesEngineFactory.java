@@ -38,8 +38,10 @@ public class RulesEngineFactory implements RuleListener {
     private Gson gson;
     private Map<String, String> globalValues;
     private RulesEngineHelper rulesEngineHelper;
+    private static RulesEngineFactory rulesEngineFactory;
 
-    public RulesEngineFactory(Context context, Map<String, String> globalValues) {
+
+    private RulesEngineFactory(Context context, Map<String, String> globalValues) {
         this.context = context;
         RulesEngineParameters parameters = new RulesEngineParameters().skipOnFirstAppliedRule(true);
         this.defaultRulesEngine = new DefaultRulesEngine(parameters);
@@ -47,13 +49,17 @@ public class RulesEngineFactory implements RuleListener {
         this.ruleMap = new HashMap<>();
         gson = new Gson();
         this.globalValues = globalValues;
-        this.rulesEngineHelper = new RulesEngineHelper();
+        this.rulesEngineHelper =  RulesEngineHelper.getInstance();
 
     }
 
-    public RulesEngineFactory() {
-    }
 
+    public static RulesEngineFactory getInstance(Context context, Map<String, String> globalValues ){
+        if(rulesEngineFactory == null){
+            rulesEngineFactory = new RulesEngineFactory(context, globalValues);
+        }
+        return  rulesEngineFactory;
+    }
     /**
      * Synchronized method that reads yml config files containing the rules. We need to fetch all
      * the rules first before doing any processing on a separate thread.

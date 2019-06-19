@@ -74,7 +74,7 @@ abstract class JsonFormBaseActivity extends AppCompatActivity implements OnField
                 globalValues = new HashMap<>();
             }
 
-            rulesEngineFactory = new RulesEngineFactory(this, globalValues);
+            rulesEngineFactory = RulesEngineFactory.getInstance(this, globalValues);
 
             confirmCloseTitle = getString(R.string.confirm_form_close);
             confirmCloseMessage = getString(R.string.confirm_form_close_explanation);
@@ -83,6 +83,12 @@ abstract class JsonFormBaseActivity extends AppCompatActivity implements OnField
         } catch (JSONException e) {
             Log.e(TAG, "Initialization error. Json passed is invalid : " + e.getMessage(), e);
         }
+    }
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        rulesEngineFactory = null; // Avoid memory leak
     }
 
     @Override

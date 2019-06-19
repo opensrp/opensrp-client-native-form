@@ -72,7 +72,7 @@
           "err": "Please enter pre-gestational weight"
         },
         "relevance": {
-          "step:pregest_weight_unknown": {
+          "step1:pregest_weight_unknown": {
             "ex-checkbox": [
               {
                 "not": [
