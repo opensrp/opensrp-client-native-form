@@ -64,6 +64,7 @@ public class BarcodeFactory implements FormWidgetFactory {
         List<View> views = new ArrayList<>(1);
         try {
             String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
+            String calculation = jsonObject.optString(JsonFormConstants.CALCULATION);
             final String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
             String value = jsonObject.optString(JsonFormConstants.VALUE, null);
 
@@ -92,24 +93,7 @@ public class BarcodeFactory implements FormWidgetFactory {
                 }
             });
 
-            if (context instanceof JsonApi) {
-                JsonApi jsonApi = (JsonApi) context;
-                jsonApi.addOnActivityResultListener(JsonFormConstants.BARCODE_CONSTANTS.BARCODE_REQUEST_CODE,
-                        new OnActivityResultListener() {
-                            @Override
-                            public void onActivityResult(int requestCode,
-                                                         int resultCode, Intent data) {
-                                if (requestCode == JsonFormConstants.BARCODE_CONSTANTS.BARCODE_REQUEST_CODE && resultCode == RESULT_OK) {
-                                    if (data != null) {
-                                        Barcode barcode = data.getParcelableExtra(JsonFormConstants.BARCODE_CONSTANTS.BARCODE_KEY);
-                                        Log.d("Scanned QR Code", barcode.displayValue);
-                                        editText.setText(barcode.displayValue);
-                                    } else
-                                        Log.i("", "NO RESULT FOR QR CODE");
-                                }
-                            }
-                        });
-            }
+            addOnBarCodeResultListeners(context, editText);
 
             GenericTextWatcher textWatcher = new GenericTextWatcher(stepName, formFragment, editText);
             textWatcher.addOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -133,6 +117,10 @@ public class BarcodeFactory implements FormWidgetFactory {
                 editText.setTag(R.id.constraints, constraints);
                 ((JsonApi) context).addConstrainedView(editText);
             }
+            if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
+                editText.setTag(R.id.calculation, calculation);
+                ((JsonApi) context).addCalculationLogicView(editText);
+            }
 
             ((JsonApi) context).addFormDataView(editText);
 
@@ -142,6 +130,27 @@ public class BarcodeFactory implements FormWidgetFactory {
         }
 
         return views;
+    }
+
+    protected void addOnBarCodeResultListeners(final Context context, final MaterialEditText editText) {
+        if (context instanceof JsonApi) {
+            JsonApi jsonApi = (JsonApi) context;
+            jsonApi.addOnActivityResultListener(JsonFormConstants.BARCODE_CONSTANTS.BARCODE_REQUEST_CODE,
+                    new OnActivityResultListener() {
+                        @Override
+                        public void onActivityResult(int requestCode,
+                                                     int resultCode, Intent data) {
+                            if (requestCode == JsonFormConstants.BARCODE_CONSTANTS.BARCODE_REQUEST_CODE && resultCode == RESULT_OK) {
+                                if (data != null) {
+                                    Barcode barcode = data.getParcelableExtra(JsonFormConstants.BARCODE_CONSTANTS.BARCODE_KEY);
+                                    Log.d("Scanned QR Code", barcode.displayValue);
+                                    editText.setText(barcode.displayValue);
+                                } else
+                                    Log.i("", "NO RESULT FOR QR CODE");
+                            }
+                        }
+                    });
+        }
     }
 
     private MaterialEditText createEditText(RelativeLayout rootLayout, JSONObject jsonObject, int canvasId, String stepName, boolean popup) throws JSONException {
