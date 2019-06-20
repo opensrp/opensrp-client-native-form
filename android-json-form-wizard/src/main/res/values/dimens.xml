@@ -56,6 +56,6 @@
     <dimen name="label_bottom_padding">6dp</dimen>
     <dimen name="label_imageview_padding">4dp</dimen>
 
-    <dimen name="bottom_navigation_margin">15dp</dimen>
+    <dimen name="bottom_navigation_margin">4dp</dimen>
     <dimen name="bottom_navigation_padding">8dp</dimen>
 </resources>

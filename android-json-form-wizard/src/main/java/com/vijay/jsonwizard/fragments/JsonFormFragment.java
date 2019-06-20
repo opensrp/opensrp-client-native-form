@@ -164,7 +164,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
             bottomNavigation.addView(previousButton);
             // nav btn params
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            int layoutMargin = Utils.pixelToDp(15, getContext());
+            int layoutMargin = Utils.pixelToDp((int) getContext().getResources().getDimension(R.dimen.bottom_navigation_margin), getContext());
             params.setMargins(layoutMargin, layoutMargin, layoutMargin, layoutMargin);
             previousButton.setLayoutParams(params);
             nextButton.setLayoutParams(params);
