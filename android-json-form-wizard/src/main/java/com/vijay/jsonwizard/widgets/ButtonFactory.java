@@ -102,7 +102,7 @@ public class ButtonFactory implements FormWidgetFactory {
         button.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
         button.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
         button.setTag(R.id.extraPopup, popup);
-        button.setTag(R.id.raw_value, jsonObject.getString(JsonFormConstants.VALUE));
+        button.setTag(R.id.raw_value, jsonObject.optString(JsonFormConstants.VALUE));
 
         if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
             button.setEnabled(!jsonObject.getBoolean(JsonFormConstants.READ_ONLY));
