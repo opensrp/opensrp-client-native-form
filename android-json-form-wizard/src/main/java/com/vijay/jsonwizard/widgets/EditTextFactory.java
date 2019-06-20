@@ -162,6 +162,7 @@ public class EditTextFactory implements FormWidgetFactory {
             }
         }
 
+        editText.setSingleLine(false);
         editText.addTextChangedListener(new GenericTextWatcher(stepName, formFragment, editText));
         initSpecialViewsRefs(context, jsonObject, editText);
     }
