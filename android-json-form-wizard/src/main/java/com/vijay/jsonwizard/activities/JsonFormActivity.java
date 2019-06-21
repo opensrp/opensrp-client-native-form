@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -735,7 +736,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         }
     }
 
-    @SuppressLint ("NewApi")
+    @SuppressLint("NewApi")
     private JSONArray addCheckBoxValue(JSONObject item, String childKey, String value) throws JSONException {
         JSONArray values = new JSONArray();
         if (item.has(JsonFormConstants.VALUE)) {
@@ -805,6 +806,13 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
         for (LifeCycleListener lifeCycleListener : lifeCycleListeners) {
             lifeCycleListener.onResume();
+        }
+        if (!getmJSONObject().has(JsonFormConstants.INVISIBLE_REQUIRED_FIELDS)) {
+            try {
+                getmJSONObject().put(JsonFormConstants.INVISIBLE_REQUIRED_FIELDS, invisibleRequiredFields);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -1846,7 +1854,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     view.setFocusable(true);
                 }
             } else {
-
                 clearHiddenViewsValues(object, addressString);
                 curCanvasView.setEnabled(false);
                 curCanvasView.setVisibility(View.GONE);
@@ -1855,8 +1862,37 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
             if (object != null) {
                 object.put(JsonFormConstants.IS_VISIBLE, visible);
+                //Only keep track of required fields that are invisible
+                if (object.has(JsonFormConstants.V_REQUIRED) && object.getJSONObject(JsonFormConstants.V_REQUIRED)
+                        .getBoolean(JsonFormConstants.VALUE)) {
+                    trackInvisibleFields(object, visible);
+                }
             }
         }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private void trackInvisibleFields(final JSONObject object, final boolean visible) {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                try {
+                    synchronized (invisibleRequiredFields) {
+                        if (visible) {
+                            invisibleRequiredFields.remove(object.getString(JsonFormConstants.KEY));
+                        } else {
+                            invisibleRequiredFields.add(object.getString(JsonFormConstants.KEY));
+                        }
+                        getmJSONObject().put(JsonFormConstants.INVISIBLE_REQUIRED_FIELDS, invisibleRequiredFields);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }.
+
+                execute();
     }
 
     private void refreshViews(View childElement) {
@@ -1997,11 +2033,13 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         return localBroadcastManager;
     }
 
-    private void cacheFormMapValues(String stepName, String parentKey, String childKey, String value) {
+    private void cacheFormMapValues(String stepName, String parentKey, String childKey, String
+            value) {
         formValuesCacheMap.put(stepName + "_" + (parentKey != null ? parentKey + "_" : "") + childKey, value);
     }
 
-    private boolean invokeRefreshLogic(String stepName, String parentKey, String childKey, String value) {
+    private boolean invokeRefreshLogic(String stepName, String parentKey, String
+            childKey, String value) {
         String oldValue = formValuesCacheMap.get(stepName + "_" + (parentKey != null ? parentKey + "_" : "") + childKey);
 
         return !value.equals(oldValue);

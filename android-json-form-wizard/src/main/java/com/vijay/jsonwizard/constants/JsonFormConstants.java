@@ -166,6 +166,7 @@ public class JsonFormConstants {
     public static final String IS_NUMBER_SELECTOR_MENU = "is_number_selector_menu";
 
     public static final int RDT_CAPTURE_CODE = 3290;
+    public static final String INVISIBLE_REQUIRED_FIELDS = "invisible_required_fields";
 
     public static class JSON_FORM_KEY {
         public static final String EX_RULES = "ex-rules";
