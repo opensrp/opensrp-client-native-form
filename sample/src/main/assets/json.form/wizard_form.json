@@ -539,7 +539,6 @@
   },
   "step4": {
     "title": "Countdown until results ready",
-    "next": "step4",
     "fields": [
       {
         "key": "countdown_timer",

@@ -85,7 +85,7 @@ public class CountDownTimerFactory implements FormWidgetFactory {
         new CountDownTimer(seconds, countdownInterval) {
             @Override
             public void onTick(long millisUntilFinished) {
-                tv.setText(String.format("%1d :%2d", TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished), TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished)));
+                tv.setText(String.format("%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished), TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished)));
             }
 
             @Override
