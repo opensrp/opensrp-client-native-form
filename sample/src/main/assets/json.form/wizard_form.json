@@ -241,6 +241,7 @@
   },
   "step3": {
     "title": "Maternal Exam",
+    "next": "step4",
     "fields": [
       {
         "key": "spacer",
@@ -533,6 +534,20 @@
             }
           }
         }
+      }
+    ]
+  },
+  "step4": {
+    "title": "Countdown until results ready",
+    "next": "step4",
+    "fields": [
+      {
+        "key": "countdown_timer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "timer",
+        "type": "countdown_timer",
+        "countdown_timer_seconds": "10000"
       }
     ]
   }
