@@ -158,6 +158,10 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
             } else {
                 nextButton.setText(R.string.submit);
             }
+        } else if (!step.has(NEXT)) {
+            nextButton.setTag(R.id.submit, true);
+            nextButton.setVisibility(View.VISIBLE);
+            nextButton.setText(R.string.save);
         }
 
         if (step.has(BOTTOM_NAVIGATION_ORIENTATION)) {
