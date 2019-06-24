@@ -23,8 +23,7 @@
     <LinearLayout
         android:id="@+id/bottom_navigation_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone">
+        android:layout_height="wrap_content">
         <Button
             android:id="@+id/previous_button"
             style="@style/Widget.AppCompat.Button.Borderless"
@@ -40,7 +39,8 @@
             android:textAllCaps="true"
             android:textAppearance="@style/TextAppearance.AppCompat.Button"
             android:textColor="#737373"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/next_button"
@@ -58,6 +58,7 @@
             android:textAllCaps="true"
             android:textAppearance="@style/TextAppearance.AppCompat.Button"
             android:textColor="#FFFFFF"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:visibility="gone"/>
     </LinearLayout>
 </LinearLayout>

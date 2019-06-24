@@ -56,6 +56,7 @@ import static com.vijay.jsonwizard.constants.JsonFormConstants.PREVIOUS;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.PREVIOUS_LABEL;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.STEPNAME;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.SUBMIT;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.SUBMIT_LABEL;
 
 /**
  * Created by vijay on 5/7/15.
@@ -137,7 +138,6 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     }
 
     protected void initializeBottomNavigation(JSONObject step, View rootView) {
-        bottomNavigation.setVisibility(View.VISIBLE);
         if (step.has(PREVIOUS)) {
             previousButton.setVisibility(View.VISIBLE);
             if (step.has(PREVIOUS_LABEL)) {
@@ -153,6 +153,11 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         }  else if (step.optString(NEXT_TYPE).equalsIgnoreCase(SUBMIT)) {
             nextButton.setTag(R.id.submit, true);
             nextButton.setVisibility(View.VISIBLE);
+            if (step.has(SUBMIT_LABEL)) {
+                nextButton.setText(step.optString(SUBMIT_LABEL));
+            } else {
+                nextButton.setText(R.string.submit);
+            }
         }
 
         if (step.has(BOTTOM_NAVIGATION_ORIENTATION)) {
