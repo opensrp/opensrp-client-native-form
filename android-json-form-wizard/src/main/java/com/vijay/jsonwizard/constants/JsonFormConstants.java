@@ -164,7 +164,9 @@ public class JsonFormConstants {
     public static final String OPTION_KEY = "option_key";
     public static final String PARENT_KEY = "parent_key";
     public static final String IS_NUMBER_SELECTOR_MENU = "is_number_selector_menu";
+    public static final String COUNTDOWN_TIMER = "countdown_timer";
     public static final String COUNTDOWN_TIMER_SECONDS = "countdown_timer_seconds";
+    public static final String COUNTDOWN_INTERVAL = "countdown_interval";
 
     public static final int RDT_CAPTURE_CODE = 3290;
 

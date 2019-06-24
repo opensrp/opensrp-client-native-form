@@ -11,27 +11,36 @@ import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
+import com.vijay.jsonwizard.utils.FormUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class CountDownTimerFactory implements FormWidgetFactory {
 
     private View rootLayout;
+    private TextView countDownTextView;
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
         List<View> views = new ArrayList<>(1);
         rootLayout = LayoutInflater.from(context).inflate(getLayout(), null);
+        countDownTextView = rootLayout.findViewById(R.id.countDown);
+
         setWidgetTags(jsonObject);
+        formatWidget(jsonObject, context);
+
         String secondsString = jsonObject.optString(JsonFormConstants.COUNTDOWN_TIMER_SECONDS);
+        String interValString = jsonObject.optString(JsonFormConstants.COUNTDOWN_INTERVAL);
         long seconds = (secondsString.isEmpty()) ? 0 : Long.parseLong(secondsString);
-        final TextView countDownTextView = rootLayout.findViewById(R.id.countDown);
-        startCountDown(seconds, countDownTextView);
+        long defaultCountdownInterval = 1000;
+        long interval = (interValString.isEmpty()) ? defaultCountdownInterval : Long.parseLong(interValString);
         views.add(rootLayout);
+        startCountDown(seconds, interval, countDownTextView);
         return views;
     }
 
@@ -52,6 +61,15 @@ public class CountDownTimerFactory implements FormWidgetFactory {
         rootLayout.setTag(openMrsEntityId);
     }
 
+    private void formatWidget(JSONObject jsonObject, Context context) {
+        String textSize = jsonObject.optString(JsonFormConstants.TEXT_SIZE);
+        String defaultTimerTextSize = "30dp";
+        if (textSize.isEmpty()) {
+            textSize = defaultTimerTextSize;
+        }
+        countDownTextView.setTextSize((FormUtils.getValueFromSpOrDpOrPx(textSize, context)));
+    }
+
     private int getLayout() {
         return R.layout.native_form_countdown_timer;
     }
@@ -59,13 +77,15 @@ public class CountDownTimerFactory implements FormWidgetFactory {
     /**
      * Start the countdown
      *
-     * @param seconds The number of seconds to count down to 0
+     * @param seconds           The time count down to
+     * @param countdownInterval The intervals for running the countdown
+     * @param tv                The TextView to show the countdown
      */
-    private void startCountDown(long seconds, final TextView tv) {
-        new CountDownTimer(seconds, 1000) {
+    private void startCountDown(long seconds, long countdownInterval, final TextView tv) {
+        new CountDownTimer(seconds, countdownInterval) {
             @Override
             public void onTick(long millisUntilFinished) {
-             tv.setText(String.format("%d", millisUntilFinished));
+                tv.setText(String.format("%1d :%2d", TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished), TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished)));
             }
 
             @Override

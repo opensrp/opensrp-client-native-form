@@ -11,6 +11,7 @@ import com.vijay.jsonwizard.widgets.BarcodeFactory;
 import com.vijay.jsonwizard.widgets.ButtonFactory;
 import com.vijay.jsonwizard.widgets.CheckBoxFactory;
 import com.vijay.jsonwizard.widgets.ComponentSpacerFactory;
+import com.vijay.jsonwizard.widgets.CountDownTimerFactory;
 import com.vijay.jsonwizard.widgets.DatePickerFactory;
 import com.vijay.jsonwizard.widgets.EditTextFactory;
 import com.vijay.jsonwizard.widgets.GpsFactory;
@@ -80,6 +81,7 @@ public class JsonFormInteractor {
         map.put(JsonFormConstants.TIME_PICKER, new TimePickerFactory());
         map.put(JsonFormConstants.REPEATING_GROUP, new RepeatingGroupFactory());
         map.put(JsonFormConstants.RDT_CAPTURE, new RDTCaptureFactory());
+        map.put(JsonFormConstants.COUNTDOWN_TIMER, new CountDownTimerFactory());
     }
 
     public List<View> fetchFormElements(String stepName, JsonFormFragment formFragment,
