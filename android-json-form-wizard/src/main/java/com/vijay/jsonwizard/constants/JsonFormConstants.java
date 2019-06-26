@@ -83,6 +83,7 @@ public class JsonFormConstants {
     public static final String HORIZONTAL_LINE = "h_line";
     public static final String NATIVE_RADIO_BUTTON = "native_radio";
     public static final String REPEATING_GROUP = "repeating_group";
+    public static final String RDT_CAPTURE = "rdt_capture";
     public static final String NATIVE_RADIO_BUTTON_MULTI_RELEVANCE = "multi_relevance";
     public static final String CONTENT_INFO = "specify_info";
     public static final String CONTENT_WIDGET = "specify_widget";
@@ -110,6 +111,9 @@ public class JsonFormConstants {
     public static final String BOLD_ITALIC = "bold_italic";
     public static final String EDIT_BUTTON = "edit_button";
     public static final String CUSTOM_TEXT = "custom_text";
+    public static final String BTN_TEXT_COLOR = "btn_text_color";
+    public static final String BTN_TEXT_SIZE = "btn_text_size";
+    public static final String BTN_BG_COLOR = "btn_bg_color";
 
     public static final String STEPNAME = "stepName";
     public static final String DISPLAY_BACK_BUTTON = "display_back_button";
@@ -160,6 +164,15 @@ public class JsonFormConstants {
     public static final String OPTION_KEY = "option_key";
     public static final String PARENT_KEY = "parent_key";
     public static final String IS_NUMBER_SELECTOR_MENU = "is_number_selector_menu";
+    public static final String PREVIOUS = "previous";
+    public static final String PREVIOUS_LABEL = "previous_label";
+    public static final String NEXT_LABEL = "next_label";
+    public static final String SUBMIT_LABEL = "submit_label";
+    public static final String NEXT_TYPE = "next_type";
+    public static final String SUBMIT = "submit";
+    public static final String BOTTOM_NAVIGATION_ORIENTATION = "bottom_navigation_orientation";
+    public static final String BOTTOM_NAVIGATION = "bottom_navigation";
+    public static final int RDT_CAPTURE_CODE = 3290;
 
     public static class JSON_FORM_KEY {
         public static final String EX_RULES = "ex-rules";

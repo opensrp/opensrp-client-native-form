@@ -1825,3 +1825,110 @@ After the elements are generated, the tick will turn green. At the moment, speci
 ![image](https://user-images.githubusercontent.com/33488286/56918119-de2b6c00-6ac5-11e9-99a0-fe2606630bca.png)
  
 **NOTE**: At the moment the repeating group widget has not been tested with the rules engine
+
+
+
+### RDT Capture widget
+
+This widget uses the phone camera to take raw images of an RDT (Rapid Diagnostic Test) cassette. 
+
+The example below shows how to include the widget in a json form:
+
+```
+{
+  "count": "2",
+  "encounter_type": "Spray",
+  "entity_id": "",
+  "metadata": {
+    "start": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "start",
+      "openmrs_entity_id": "163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "end": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "end",
+      "openmrs_entity_id": "163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "today": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "encounter",
+      "openmrs_entity_id": "encounter_date"
+    },
+    "deviceid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "deviceid",
+      "openmrs_entity_id": "163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "subscriberid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "subscriberid",
+      "openmrs_entity_id": "163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "simserial": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "simserial",
+      "openmrs_entity_id": "163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "phonenumber": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "phonenumber",
+      "openmrs_entity_id": "163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "encounter_location": ""
+  },
+  "step1": {
+    "title": "Capture RDT image",
+    "display_back_button": "true",
+    "next": "step2",
+    "fields": [
+      {
+        "key": "rdt_capture",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "rdt_capture"
+      }
+    ]
+  },
+  "step2": {
+    "title": "Select RDT reader result",
+    "display_back_button": "true",
+    "fields": [
+      {
+        "key": "rdt_result",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Select RDT reader result",
+        "options": [
+          {
+            "key": "positive",
+            "text": "positive"
+          },
+          {
+            "key": "negative",
+            "text": "negative"
+          },
+          {
+            "key": "invalid",
+            "text": "invalid"
+          }
+        ],
+        "value": "negative",
+        "v_required": {
+          "value": "true",
+          "err": "Please select the RDT reader result"
+        }
+      }
+    ]
+  }
+}
+```

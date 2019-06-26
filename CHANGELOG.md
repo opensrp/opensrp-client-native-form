@@ -172,3 +172,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 #### Added
 - Added Hidden attribute to EditText factory to toggle visibility of the edit text. Useful when
 performing calculations that do not default to 0 as in hidden widget.
+
+### [1.6.9-SNAPSHOT] - 06-06-2019
+--------------------
+
+#### Added
+- Added RDT capture widget
