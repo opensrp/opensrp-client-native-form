@@ -173,7 +173,14 @@ public class JsonFormConstants {
     public static final String PROGRESSBAR_TEXT_COLOR = "progressbar_text_color";
     public static final String DEFAULT_COUNTDOWN_TIME_UNIT = "seconds";
     public static final String MINUTES_COUNTDOWN_TIME_UNIT = "minutes";
-
+    public static final String PREVIOUS = "previous";
+    public static final String PREVIOUS_LABEL = "previous_label";
+    public static final String NEXT_LABEL = "next_label";
+    public static final String SUBMIT_LABEL = "submit_label";
+    public static final String NEXT_TYPE = "next_type";
+    public static final String SUBMIT = "submit";
+    public static final String BOTTOM_NAVIGATION_ORIENTATION = "bottom_navigation_orientation";
+    public static final String BOTTOM_NAVIGATION = "bottom_navigation";
     public static final int RDT_CAPTURE_CODE = 3290;
 
     public static class JSON_FORM_KEY {
