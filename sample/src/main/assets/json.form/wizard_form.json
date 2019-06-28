@@ -547,13 +547,14 @@
         "openmrs_entity_id": "timer",
         "type": "countdown_timer",
         "label": "Read results in 10 seconds",
-        "label_text_size": "20sp",
+        "label_text_size": "8sp",
         "label_text_color": "#535F67",
         "countdown_time_unit": "seconds",
         "countdown_time_value": "10",
+        "countdown_interval": "1000",
         "progressbar_background_color": "#e7b330",
-        "progress_color": "#e76130",
-        "progress_text_color": "#f9916b"
+        "progressbar_color": "#e76130",
+        "progressbar_text_color": "#f9916b"
       }
     ]
   }

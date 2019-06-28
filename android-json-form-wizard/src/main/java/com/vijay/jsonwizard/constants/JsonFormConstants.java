@@ -165,8 +165,14 @@ public class JsonFormConstants {
     public static final String PARENT_KEY = "parent_key";
     public static final String IS_NUMBER_SELECTOR_MENU = "is_number_selector_menu";
     public static final String COUNTDOWN_TIMER = "countdown_timer";
-    public static final String COUNTDOWN_TIMER_SECONDS = "countdown_timer_seconds";
+    public static final String COUNTDOWN_TIME_UNIT = "countdown_time_unit";
+    public static final String COUNTDOWN_TIME_VALUE = "countdown_time_value";
     public static final String COUNTDOWN_INTERVAL = "countdown_interval";
+    public static final String PROGRESSBAR_BACKGROUND_COLOR = "progressbar_background_color";
+    public static final String PROGRESSBAR_COLOR = "progressbar_color";
+    public static final String PROGRESSBAR_TEXT_COLOR = "progressbar_text_color";
+    public static final String DEFAULT_COUNTDOWN_TIME_UNIT = "seconds";
+    public static final String MINUTES_COUNTDOWN_TIME_UNIT = "minutes";
 
     public static final int RDT_CAPTURE_CODE = 3290;
 
