@@ -546,7 +546,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "timer",
         "type": "countdown_timer",
-        "countdown_timer_seconds": "10000"
+        "countdown_timer_seconds": "10"
       }
     ]
   }
