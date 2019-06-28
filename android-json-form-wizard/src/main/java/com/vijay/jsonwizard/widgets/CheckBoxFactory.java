@@ -120,6 +120,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
         Map<String, View> labelViews = FormUtils
                 .createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly, listener);
 
+
         ArrayList<View> editableCheckBoxes = addCheckBoxOptionsElements(jsonObject, context, readOnly, canvasIds, stepName,
                 rootLayout, listener, popup);
 
@@ -182,6 +183,11 @@ public class CheckBoxFactory implements FormWidgetFactory {
                                                        String stepName, LinearLayout linearLayout, CommonListener listener,
                                                        boolean popup) throws JSONException {
 
+        JSONArray checkBoxValues = null;
+
+        if (jsonObject.has(JsonFormConstants.VALUE)) {
+            checkBoxValues = jsonObject.getJSONArray(JsonFormConstants.VALUE);
+        }
 
         JSONArray options = jsonObject.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
         ArrayList<CheckBox> checkBoxes = new ArrayList<>();
@@ -221,6 +227,15 @@ public class CheckBoxFactory implements FormWidgetFactory {
             if (!TextUtils.isEmpty(item.optString(JsonFormConstants.VALUE))) {
                 checkBox.setChecked(Boolean.valueOf(item.optString(JsonFormConstants.VALUE)));
             }
+
+            //Preselect values if they exist
+            if (checkBoxValues != null) {
+                if (FormUtils.getCurrentCheckboxValues(checkBoxValues)
+                        .contains(item.getString(JsonFormConstants.KEY))) {
+                    checkBox.setChecked(true);
+                }
+            }
+
             checkBox.setEnabled(!readOnly);
             if (i == options.length() - 1) {
                 checkboxLayout.setLayoutParams(
