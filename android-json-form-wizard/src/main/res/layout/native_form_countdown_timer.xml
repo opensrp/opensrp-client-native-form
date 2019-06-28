@@ -5,23 +5,18 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/text"
+        android:id="@+id/label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Wait until..." />
+        />
 
     <com.emredavarci.circleprogressbar.CircleProgressBar xmlns:cpb="http://schemas.android.com/apk/res-auto"
         android:id="@+id/progressBar"
         android:layout_width="300dp"
         android:layout_height="300dp"
         android:layout_centerInParent="true"
-        cpb:backgroundColor="#e7b330"
         cpb:backgroundWidth="2"
-        cpb:maxValue="100"
         cpb:prefix=""
-        cpb:progressColor="#e76130"
-        cpb:progressText="00:00"
-        cpb:progressTextColor="#f9916b"
         cpb:roundedCorners="true"
         cpb:suffix=""
         cpb:textSize="50sp" />
