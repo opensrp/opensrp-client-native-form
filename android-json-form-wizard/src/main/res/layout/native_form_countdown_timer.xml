@@ -15,6 +15,7 @@
         android:layout_width="300dp"
         android:layout_height="300dp"
         android:layout_centerInParent="true"
+        android:layout_marginTop="50dp"
         cpb:backgroundWidth="2"
         cpb:prefix=""
         cpb:roundedCorners="true"
