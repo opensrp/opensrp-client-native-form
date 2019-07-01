@@ -125,7 +125,13 @@
         "v_required": {
           "value": true,
           "err": "Please specify the medication(s) that the woman is still taking"
-        }
+        },
+        "value": [
+          "anti_convulsive",
+          "metoclopramide",
+          "magnesium",
+          "other"
+        ]
       },
       {
         "key": "no_of_fetuses",

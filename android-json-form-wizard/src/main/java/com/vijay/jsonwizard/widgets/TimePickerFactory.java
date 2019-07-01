@@ -94,6 +94,7 @@ public class TimePickerFactory implements FormWidgetFactory {
             duration.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
             duration.setTag(R.id.openmrs_entity, openMrsEntity);
             duration.setTag(R.id.openmrs_entity_id, openMrsEntityId);
+            editText.setTag(com.vijay.jsonwizard.R.id.locale_independent_value,jsonObject.optString(TimePickerFactory.KEY.VALUE));
             if (jsonObject.has(TimePickerFactory.KEY.DURATION)) {
                 duration.setTag(R.id.label, jsonObject.getJSONObject(TimePickerFactory.KEY.DURATION).getString(JsonFormConstants.LABEL));
             }

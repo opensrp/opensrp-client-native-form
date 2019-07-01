@@ -51,6 +51,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -936,5 +937,18 @@ public class FormUtils {
         openmrsAttributes.put(JsonFormConstants.OPENMRS_ENTITY_ID, openmrsEntityId);
 
         return openmrsAttributes;
+    }
+
+    public static JSONArray getCheckboxValueJsonArray(HashSet<String> optionValues) {
+        return new JSONArray(optionValues);
+    }
+
+
+    public static HashSet<String> getCurrentCheckboxValues(JSONArray optionsArray) throws JSONException {
+        HashSet<String> result = new HashSet<>();
+        for (int i = 0; i < optionsArray.length(); i++) {
+            result.add(optionsArray.getString(i));
+        }
+        return result;
     }
 }
