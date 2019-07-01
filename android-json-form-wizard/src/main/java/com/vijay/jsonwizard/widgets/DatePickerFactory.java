@@ -13,7 +13,6 @@ import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
@@ -27,16 +26,14 @@ import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * @author Jason Rogena - jrogena@ona.io
@@ -182,11 +179,8 @@ public class DatePickerFactory implements FormWidgetFactory {
     private void attachInfoIcon(String stepName, JSONObject jsonObject, RelativeLayout rootLayout, JSONArray canvasIds,
                                 CommonListener listener) throws JSONException {
         if (jsonObject.has(JsonFormConstants.LABEL_INFO_TEXT)) {
-            String labelInfoText = jsonObject.optString(JsonFormConstants.LABEL_INFO_TEXT, "");
-            String labelInfoTitle = jsonObject.optString(JsonFormConstants.LABEL_INFO_TITLE, "");
-
             ImageView infoIcon = rootLayout.findViewById(R.id.date_picker_info_icon);
-            FormUtils.showInfoIcon(stepName, jsonObject, listener, labelInfoText, labelInfoTitle, infoIcon, canvasIds);
+            FormUtils.showInfoIcon(stepName, jsonObject, listener,FormUtils.getInfoDialogAttributes(jsonObject), infoIcon, canvasIds);
         }
 
     }
