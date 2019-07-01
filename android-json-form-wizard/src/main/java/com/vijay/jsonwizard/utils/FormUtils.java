@@ -911,11 +911,13 @@ public class FormUtils {
     public static Bitmap getBitmap(Context context, String folder, String imageFile) {
         Bitmap bitmap = null;
         String filePath;
+        if (TextUtils.isEmpty(imageFile)) {
+            return null;
+        }
         try {
-            if (folder == null || folder.isEmpty()){
+            if (TextUtils.isEmpty(folder)){
                 filePath = DEFAULT_FORM_IMAGES_FOLDER + imageFile;
-            }
-            else {
+            } else {
                 filePath = folder + imageFile;
             }
             InputStream is = context.getAssets().open(filePath);

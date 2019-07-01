@@ -16,7 +16,6 @@ import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.utils.FormUtils;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -31,6 +30,7 @@ public class ImageViewFactory implements FormWidgetFactory {
         List<View> views = new ArrayList<>(1);
         rootLayout = LayoutInflater.from(context).inflate(getLayout(), null);
         setWidgetTags(jsonObject, context);
+        setViewConfigs(jsonObject, context);
         views.add(rootLayout);
         return views;
     }
@@ -44,43 +44,40 @@ public class ImageViewFactory implements FormWidgetFactory {
         return R.layout.native_form_image_view;
     }
 
-    private void setWidgetTags(JSONObject jsonObject, Context context) throws JSONException {
-        String key = jsonObject.getString(JsonFormConstants.KEY);
-        String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
-        String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
-        String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
-        String descriptionText = jsonObject.getString(JsonFormConstants.TEXT);
-        String imageFile = jsonObject.getString(JsonFormConstants.IMAGE_FILE);
+    private void setWidgetTags(JSONObject jsonObject, Context context) {
+        String key = jsonObject.optString(JsonFormConstants.KEY, "");
+        String openMrsEntityParent = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT, "");
+        String openMrsEntity = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY, "");
+        String openMrsEntityId = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_ID, "");
+
+        rootLayout.setTag(R.id.key, key);
+        rootLayout.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
+        rootLayout.setTag(R.id.openmrs_entity, openMrsEntity);
+        rootLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
+
+    }
+
+    private void setViewConfigs(JSONObject jsonObject, Context context) {
+        String descriptionText = jsonObject.optString(JsonFormConstants.TEXT, "");
+        String imageFile = jsonObject.optString(JsonFormConstants.IMAGE_FILE, "");
 
         if (!TextUtils.isEmpty(descriptionText)) {
-            String textSize = String.valueOf(context.getResources().getDimension(R.dimen.label_text_size));
             TextView descriptionTextView = rootLayout.findViewById(R.id.text);
-            if (jsonObject.has(JsonFormConstants.TEXT_COLOR)) {
-                descriptionTextView.setTextColor(Color.parseColor(jsonObject.getString(JsonFormConstants.TEXT_COLOR)));
-            }
-            if (jsonObject.has(JsonFormConstants.TEXT_SIZE)) {
-                textSize = jsonObject.getString(JsonFormConstants.TEXT_SIZE);
-            }
+            String textColor = jsonObject.optString(JsonFormConstants.TEXT_COLOR, "#000000");
+            descriptionTextView.setTextColor(Color.parseColor(textColor));
+            String textSize = jsonObject.optString(JsonFormConstants.TEXT_SIZE, String.valueOf(context.getResources().getDimension(R.dimen.label_text_size)));
             descriptionTextView.setTextSize(FormUtils.getValueFromSpOrDpOrPx(textSize, context));
             descriptionTextView.setText(descriptionText);
         }
 
         if (!TextUtils.isEmpty(imageFile)) {
-            String folderName = null;
-            if (jsonObject.has(JsonFormConstants.IMAGE_FOLDER)) {
-                folderName = jsonObject.getString(JsonFormConstants.IMAGE_FOLDER);
-            }
+            String folderName = jsonObject.optString(JsonFormConstants.IMAGE_FOLDER, "");
             Bitmap bitmap = FormUtils.getBitmap(context, folderName, imageFile);
             if (bitmap != null) {
                 ImageView imageView = rootLayout.findViewById(R.id.image);
                 imageView.setImageBitmap(bitmap);
             }
         }
-
-        rootLayout.setTag(R.id.key, key);
-        rootLayout.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
-        rootLayout.setTag(R.id.openmrs_entity, openMrsEntity);
-        rootLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
     }
 
 }
