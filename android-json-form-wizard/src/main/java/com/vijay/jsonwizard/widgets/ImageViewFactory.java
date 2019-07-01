@@ -29,7 +29,7 @@ public class ImageViewFactory implements FormWidgetFactory {
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
         List<View> views = new ArrayList<>(1);
         rootLayout = LayoutInflater.from(context).inflate(getLayout(), null);
-        setWidgetTags(jsonObject, context);
+        setWidgetTags(jsonObject);
         setViewConfigs(jsonObject, context);
         views.add(rootLayout);
         return views;
@@ -44,7 +44,7 @@ public class ImageViewFactory implements FormWidgetFactory {
         return R.layout.native_form_image_view;
     }
 
-    private void setWidgetTags(JSONObject jsonObject, Context context) {
+    private void setWidgetTags(JSONObject jsonObject) {
         String key = jsonObject.optString(JsonFormConstants.KEY, "");
         String openMrsEntityParent = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT, "");
         String openMrsEntity = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY, "");
