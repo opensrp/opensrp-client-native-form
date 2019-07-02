@@ -35,6 +35,7 @@ public class CountDownTimerFactory implements FormWidgetFactory {
     private int progressBarMaxValue = 100;
     private long millis;
     private long interval;
+    private Ringtone alarmTone;
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
@@ -136,7 +137,7 @@ public class CountDownTimerFactory implements FormWidgetFactory {
 
     private void ringAlarm(Context context) {
         Uri alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-        Ringtone alarmTone = (alert == null) ? RingtoneManager.getRingtone(context, Settings.System.DEFAULT_RINGTONE_URI) : RingtoneManager.getRingtone(context, alert);
+        alarmTone = (alert == null) ? RingtoneManager.getRingtone(context, Settings.System.DEFAULT_RINGTONE_URI) : RingtoneManager.getRingtone(context, alert);
         if (!alarmTone.isPlaying()) {
             alarmTone.play();
         }
@@ -146,5 +147,13 @@ public class CountDownTimerFactory implements FormWidgetFactory {
     private String getFormattedTimeText(long timeValue) {
         return String.format(Locale.getDefault(), "%02d:%02d",
                 TimeUnit.MILLISECONDS.toMinutes(timeValue), TimeUnit.MILLISECONDS.toSeconds(timeValue));
+    }
+
+    /**
+     * Override this to provide more on countdown complete post processing
+     */
+    protected void onCountdownFinish() {
+        // Countdown complete post processing
+        alarmTone.stop();
     }
 }
