@@ -16,8 +16,10 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:contentDescription="@string/shows_image_on_dialog"
-      android:scaleType="centerCrop"
+      android:adjustViewBounds="true"
+      android:scaleType="fitXY"
       android:visibility="gone"/>
+
     <android.support.v7.widget.AppCompatButton
       android:text="@string/ok"
       android:textStyle="bold"

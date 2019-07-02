@@ -24,10 +24,12 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import com.rengwuxian.materialedittext.MaterialEditText;
@@ -637,9 +639,20 @@ public class JsonFormFragmentPresenter extends
   private void showCustomDialog(View view) {
     final Dialog dialog = new Dialog(view.getContext());
     dialog.setContentView(R.layout.native_form_custom_dialog);
+    if(dialog.getWindow() != null) {
+      WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+      params.width = (int) (view.getContext().getResources().getDisplayMetrics().widthPixels
+          * 0.90);
+      params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+    }
+
     ImageView dialogImage = dialog.findViewById(R.id.dialogImage);
+    dialogImage.setFitsSystemWindows(true);
+    dialogImage.setScaleType(ScaleType.FIT_XY);
     AppCompatButton dialogButton = dialog.findViewById(R.id.dialogButton);
     String imagePath = (String) view.getTag(R.id.label_dialog_image_src);
+
+
 
     dialogImage.setVisibility(View.VISIBLE);
     try {
