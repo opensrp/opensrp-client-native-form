@@ -91,16 +91,18 @@
         }
       },
       {
-        "key": "penicillin_comply",
+        "key": "danger_sign",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Is she taking her penicillin treatment for syphilis?",
+        "label": "Does the woman have any of the danger signs in the image?",
         "label_text_style": "bold",
         "text_color": "#000000",
         "label_info_text": "A maximum of up to 3 weekly doses may be required.",
         "label_info_title": "Syphilis Compliance",
+        "label_info_image_src": "img/chw.png",
+        "label_info_has_image": true,
         "options": [
           {
             "key": "1",
