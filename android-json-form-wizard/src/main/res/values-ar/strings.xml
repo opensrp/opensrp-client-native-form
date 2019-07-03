@@ -33,9 +33,10 @@
     <string name="save">حفظ</string>
     <string name="radio_button_tap_to_change">اضغط للتغيير</string>
     <string name="select_one">اختر رقم</string>
-    <string name="done">تم</string>
-    <string name="creating_repeating_group_title">الرجاء الانتظار</string>
+    <string name="done">موافق</string>
+    <string name="please_wait_title">ارجوك انتظر</string>
     <string name="creating_repeating_group_message">جارى انشاء المجموعا المتكررة</string>
+    <string name="launching_rdt_capture_message">Launching RDT capture widget</string>
     <string name="repeating_group_max_value_err_msg">لا يمكن أن يكون عدد المجموعات المتكررة أكبر من %1$d</string>
     <string name="repeating_group_min_value_err_msg">يجب ان يكون عدد المجموعات المتكررة أكبر من 0 </string>
     <string name="repeating_group_number_format_err_msg">يجب ان يكون عدد المجموعات المتكررة عدداً صحيحاً</string>
@@ -76,4 +77,5 @@
     <string name="json_form_error_msg" >تم العثور على %d خطأ (أخطاء) في الاستمارة. يرجى تصحيحها يرجى تصحيحها لتقديم</string>
     <string name="json_form_on_next_error_msg" >يرجى تصحيح الخطأ (الأخطاء) في الاستمارة للتقدم</string>
     <string name="go_to_step">اذهب إلى الخطوة</string>
+  <string name="shows_image_on_dialog">shows Image on dialog</string>
 </resources>
