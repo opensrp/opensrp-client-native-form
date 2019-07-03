@@ -146,7 +146,7 @@ public class RDTCaptureFactory implements FormWidgetFactory {
         }
     }
 
-    private void launchRDTCaptureActivity() {
+    protected void launchRDTCaptureActivity() {
         if (ContextCompat.checkSelfPermission((Activity) widgetArgs.getContext(), Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
             new LaunchRDTCameraTask().execute();
         }
