@@ -130,7 +130,7 @@ public class CountDownTimerFactory implements FormWidgetFactory {
                 elapsedCount = 0;
                 progressBar.setText(getFormattedTimeText(0));
                 progressBar.setProgress(progressBarMaxValue);
-                ringAlarm(context);
+                onCountdownFinish(context);
             }
         }.start();
     }
@@ -143,6 +143,12 @@ public class CountDownTimerFactory implements FormWidgetFactory {
         }
     }
 
+    private void stopAlarm() {
+        if (alarmTone != null) {
+            alarmTone.stop();
+        }
+    }
+
 
     private String getFormattedTimeText(long timeValue) {
         return String.format(Locale.getDefault(), "%02d:%02d",
@@ -152,8 +158,8 @@ public class CountDownTimerFactory implements FormWidgetFactory {
     /**
      * Override this to provide more on countdown complete post processing
      */
-    protected void onCountdownFinish() {
+    protected void onCountdownFinish(Context context) {
         // Countdown complete post processing
-        alarmTone.stop();
+        ringAlarm(context);
     }
 }
