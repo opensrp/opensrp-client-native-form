@@ -551,7 +551,7 @@
         "label_text_color": "#535F67",
         "countdown_time_unit": "seconds",
         "countdown_time_value": "10",
-        "countdown_interval": "1000",
+        "countdown_interval": "1",
         "progressbar_background_color": "#e7b330",
         "progressbar_color": "#e76130",
         "progressbar_text_color": "#f9916b"
