@@ -206,7 +206,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
 
             @Override
             protected void onPreExecute() {
-                showProgressDialog(R.string.creating_repeating_group_title, R.string.creating_repeating_group_message, widgetArgs.getFormFragment().getContext());
+                showProgressDialog(R.string.please_wait_title, R.string.creating_repeating_group_message, widgetArgs.getFormFragment().getContext());
             }
 
             @Override

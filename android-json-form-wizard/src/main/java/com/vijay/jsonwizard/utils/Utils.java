@@ -164,4 +164,11 @@ public class Utils {
             progressDialog.dismiss();
         }
     }
+
+    public static int pixelToDp(int dpValue, Context context) {
+        float dpRatio = context.getResources().getDisplayMetrics().density;
+        float pixelForDp =  dpValue * dpRatio;
+
+        return (int) pixelForDp;
+    }
 }

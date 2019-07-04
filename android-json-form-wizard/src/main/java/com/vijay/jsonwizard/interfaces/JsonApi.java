@@ -107,4 +107,6 @@ public interface JsonApi {
     String getConfirmCloseTitle();
 
     void setConfirmCloseTitle(String title);
+
+    void showPermissionDeniedDialog();
 }

@@ -1,6 +1,7 @@
 package com.vijay.jsonwizard.activities;
 
-import android.annotation.SuppressLint;
+import android.Manifest;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,8 +13,8 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -59,6 +60,7 @@ import com.vijay.jsonwizard.interfaces.OnActivityResultListener;
 import com.vijay.jsonwizard.rules.RuleConstant;
 import com.vijay.jsonwizard.utils.ExObjectResult;
 import com.vijay.jsonwizard.utils.FormUtils;
+import com.vijay.jsonwizard.utils.PermissionUtils;
 import com.vijay.jsonwizard.utils.PropertyManager;
 import com.vijay.jsonwizard.views.CustomTextView;
 import com.vijay.jsonwizard.widgets.NumberSelectorFactory;
@@ -84,6 +86,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
+import static com.vijay.jsonwizard.utils.FormUtils.getCheckboxValueJsonArray;
+import static com.vijay.jsonwizard.utils.FormUtils.getCurrentCheckboxValues;
 
 public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
@@ -708,52 +712,42 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     protected void checkBoxWriteValue(String stepName, String parentKey, String childObjectKey, String childKey,
                                       String value, boolean popup) throws JSONException {
+
         synchronized (mJSONObject) {
-            JSONObject jsonObject = mJSONObject.getJSONObject(stepName);
-            JSONArray fields = fetchFields(jsonObject, popup);
+            JSONObject checkboxObject = null;
+            JSONArray checkboxOptions = null;
+            JSONObject stepJson = mJSONObject.getJSONObject(stepName);
+            JSONArray fields = fetchFields(stepJson, popup);
             for (int i = 0; i < fields.length(); i++) {
-                JSONObject item = fields.getJSONObject(i);
-                String keyAtIndex = item.getString(JsonFormConstants.KEY);
-                if (parentKey.equals(keyAtIndex)) {
-                    JSONArray jsonArray = item.getJSONArray(childObjectKey);
-                    for (int j = 0; j < jsonArray.length(); j++) {
-                        JSONObject innerItem = jsonArray.getJSONObject(j);
-                        String anotherKeyAtIndex = innerItem.getString(JsonFormConstants.KEY);
-                        if (childKey.equals(anotherKeyAtIndex)) {
-                            innerItem.put(JsonFormConstants.VALUE, value);
+                if (parentKey.equals(fields.getJSONObject(i).getString(JsonFormConstants.KEY))) {
+                    checkboxObject = fields.getJSONObject(i);
+                    checkboxOptions = checkboxObject.getJSONArray(childObjectKey);
+                    break;
+                }
+            }
+            HashSet<String> currentValues = new HashSet<>();
+            //Get current values
+            if (checkboxObject != null && checkboxOptions != null) {
+                if (checkboxObject.has(JsonFormConstants.VALUE)) {
+                    currentValues.addAll(getCurrentCheckboxValues(checkboxObject.getJSONArray(JsonFormConstants.VALUE)));
+                }
 
-                            item.put(JsonFormConstants.VALUE, addCheckBoxValue(item, childKey, value));
-                            invokeRefreshLogic(value, popup, parentKey, childKey);
-                            return;
+                for (int index = 0; index < checkboxOptions.length(); index++) {
+                    JSONObject option = checkboxOptions.getJSONObject(index);
+                    if (option.has(JsonFormConstants.KEY) &&
+                            childKey.equals(option.getString(JsonFormConstants.KEY))) {
+                        option.put(JsonFormConstants.VALUE, Boolean.parseBoolean(value));
+                        if (Boolean.parseBoolean(value)) {
+                            currentValues.add(childKey);
+                        } else {
+                            currentValues.remove(childKey);
                         }
                     }
                 }
+                checkboxObject.put(JsonFormConstants.VALUE, getCheckboxValueJsonArray(currentValues));
             }
+            invokeRefreshLogic(value, popup, parentKey, childKey);
         }
-    }
-
-    @SuppressLint ("NewApi")
-    private JSONArray addCheckBoxValue(JSONObject item, String childKey, String value) throws JSONException {
-        JSONArray values = new JSONArray();
-        if (item.has(JsonFormConstants.VALUE)) {
-            values = item.getJSONArray(JsonFormConstants.VALUE);
-            if (values.length() > 0) {
-                for (int i = 0; i < values.length(); i++) {
-                    String savedValue = values.getString(i);
-                    if (childKey.equals(savedValue)) {
-                        if ("false".equals(value)) {
-                            values.remove(i);
-                        }
-                    } else if ("true".equals(value)) {
-                        values.put(childKey);
-                    }
-                }
-            }
-        } else {
-            values.put(childKey);
-        }
-
-        return values;
     }
 
     @Override
@@ -2014,5 +2008,26 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         return object.has(JsonFormConstants.EDIT_TYPE) &&
                 object.getString(JsonFormConstants.EDIT_TYPE).equals(JsonFormConstants.EDIT_TEXT_TYPE.NUMBER) ||
                 object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.NUMBER_SELECTOR);
+    }
+
+    @Override
+    public void showPermissionDeniedDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Permission Denied")
+                .setMessage("The app needs this permission to capture the device information required when submitting forms. " +
+                        "Without this permission the app will not function properly. " +
+                        "Are you sure you want to deny this permission?")
+                .setPositiveButton("NO", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        ActivityCompat.requestPermissions(JsonFormActivity.this, new String[]{
+                                Manifest.permission.READ_PHONE_STATE}, PermissionUtils.PHONE_STATE_PERMISSION);
+                    }
+                })
+                .setNegativeButton("YES", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
     }
 }

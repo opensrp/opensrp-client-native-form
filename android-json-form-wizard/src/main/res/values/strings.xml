@@ -34,8 +34,9 @@
     <string name="radio_button_tap_to_change">tap to change</string>
     <string name="select_one">Select a number</string>
     <string name="done">Done</string>
-    <string name="creating_repeating_group_title">Please wait</string>
+    <string name="please_wait_title">Please wait</string>
     <string name="creating_repeating_group_message">Creating repeating group</string>
+    <string name="launching_rdt_capture_message">Launching RDT capture widget</string>
     <string name="repeating_group_max_value_err_msg">Number of repeating groups cannot be greater than %1$d</string>
     <string name="repeating_group_min_value_err_msg">Number of repeating groups must be a number greater than 0</string>
     <string name="repeating_group_number_format_err_msg">Number of repeating groups must be an integer value</string>
@@ -76,4 +77,5 @@
     <string name="json_form_error_msg" >Found %d error(s) in the form. Please correct them to submit</string>
     <string name="json_form_on_next_error_msg" >Please correct the error(s) in the form to proceed</string>
     <string name="go_to_step">Go to step</string>
+  <string name="shows_image_on_dialog">shows Image on dialog</string>
 </resources>
