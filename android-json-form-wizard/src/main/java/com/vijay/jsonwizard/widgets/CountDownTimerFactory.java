@@ -34,7 +34,7 @@ public class CountDownTimerFactory implements FormWidgetFactory {
     private int elapsedCount = 0;
     private int progressBarMaxValue = 100;
     private long millis;
-    private long interval;
+    private long intervalMillis;
     private Ringtone alarmTone;
 
     @Override
@@ -44,7 +44,7 @@ public class CountDownTimerFactory implements FormWidgetFactory {
         setWidgetTags(jsonObject);
         initializeViewConfigs(jsonObject);
         formatWidget(jsonObject, context);
-        startCountDown(millis, interval, context);
+        startCountDown(millis, intervalMillis, context);
         views.add(rootLayout);
         return views;
     }
@@ -79,14 +79,15 @@ public class CountDownTimerFactory implements FormWidgetFactory {
 
         String countdownTimeUnit = jsonObject.optString(JsonFormConstants.COUNTDOWN_TIME_UNIT, JsonFormConstants.DEFAULT_COUNTDOWN_TIME_UNIT);
         String countdownTimeValue = jsonObject.optString(JsonFormConstants.COUNTDOWN_TIME_VALUE, "0");
-        String countdownInterval = jsonObject.optString(JsonFormConstants.COUNTDOWN_INTERVAL, "1000");
+        String countdownInterval = jsonObject.optString(JsonFormConstants.COUNTDOWN_INTERVAL, "1");
         long time = Long.parseLong(countdownTimeValue);
+        long interval = Long.parseLong(countdownInterval);
+        intervalMillis = interval * 1000; // Interval unit of measurement is seconds by default. No other
         if (countdownTimeUnit.equals(JsonFormConstants.DEFAULT_COUNTDOWN_TIME_UNIT)) {
             millis = time * 1000;
         } else if (countdownTimeUnit.equals(JsonFormConstants.MINUTES_COUNTDOWN_TIME_UNIT)) {
             millis = time * 60 * 1000;
         }
-        interval = Long.parseLong(countdownInterval);
     }
 
     private void formatWidget(JSONObject jsonObject, Context context) {
@@ -152,7 +153,8 @@ public class CountDownTimerFactory implements FormWidgetFactory {
 
     private String getFormattedTimeText(long timeValue) {
         return String.format(Locale.getDefault(), "%02d:%02d",
-                TimeUnit.MILLISECONDS.toMinutes(timeValue), TimeUnit.MILLISECONDS.toSeconds(timeValue));
+                TimeUnit.MILLISECONDS.toMinutes(timeValue), TimeUnit.MILLISECONDS.toSeconds(timeValue) -
+                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(timeValue)));
     }
 
     /**
