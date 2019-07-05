@@ -217,10 +217,10 @@ This form has been generated from the `JSON Form` below: [Click here to Skip](#u
         "type": "edit_text",
         "hint": "First name",
         "edit_type": "name",
-		"v_max_length": {
+        "v_max_length": {
           "value": "30",
           "err": "First name must be less than or equal to 30"
-          }
+          },
         "v_regex": {
           "value": "[A-Za-z\\s\.\-]*",
           "err": "Please enter a valid name"
