@@ -185,7 +185,7 @@ public class JsonFormConstants {
     public static final String LABEL_INFO_HAS_IMAGE = "label_info_has_image";
     public static final String LABEL_INFO_IMAGE_SRC = "label_info_image_src";
 
-  public static class JSON_FORM_KEY {
+    public static class JSON_FORM_KEY {
         public static final String EX_RULES = "ex-rules";
         public static final String EX_CHECKBOX = "ex-checkbox";
         public static final String OR = "or";
