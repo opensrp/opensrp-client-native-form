@@ -275,6 +275,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
 
             } else if (v.getId() == R.id.previous || v.getId() == R.id.previous_icon) {
                 assert getFragmentManager() != null;
+                presenter.checkAndStopCountdownAlarm();
                 getFragmentManager().popBackStack();
             }
         }
