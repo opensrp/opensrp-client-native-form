@@ -72,4 +72,5 @@
     <item name="number_selector_dialog" type="id" />
     <item name="number_selector_main_textview" type="id" />
     <item name="submit" type="id" />
+  <item name="label_dialog_image_src" type="id"/>
 </resources>
