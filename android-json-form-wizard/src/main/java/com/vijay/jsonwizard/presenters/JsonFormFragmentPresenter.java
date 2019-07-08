@@ -51,6 +51,7 @@ import com.vijay.jsonwizard.views.CustomTextView;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 import com.vijay.jsonwizard.viewstates.JsonFormFragmentViewState;
 import com.vijay.jsonwizard.widgets.CheckBoxFactory;
+import com.vijay.jsonwizard.widgets.CountDownTimerFactory;
 import com.vijay.jsonwizard.widgets.EditTextFactory;
 import com.vijay.jsonwizard.widgets.GpsFactory;
 import com.vijay.jsonwizard.widgets.ImagePickerFactory;
@@ -303,6 +304,7 @@ public class JsonFormFragmentPresenter extends
 
   public boolean onNextClick(LinearLayout mainView) {
     validateAndWriteValues();
+    checkAndStopCountdownAlarm();
     boolean validateOnSubmit = validateOnSubmit();
     if (validateOnSubmit && incorrectlyFormattedFields.isEmpty()) {
       return moveToNextStep();
@@ -420,6 +422,7 @@ public class JsonFormFragmentPresenter extends
 
   public void onSaveClick(LinearLayout mainView) {
     validateAndWriteValues();
+    checkAndStopCountdownAlarm();
     boolean isFormValid = isFormValid();
     if (isFormValid || Boolean.valueOf(mainView.getTag(R.id.skip_validation).toString())) {
       Intent returnIntent = new Intent();
@@ -889,5 +892,13 @@ public class JsonFormFragmentPresenter extends
     }
 
     return false;
+  }
+
+  public void checkAndStopCountdownAlarm() {
+    // Check if alarm is ringing and stop
+    JSONObject step = getView().getStep(mStepName);
+    if(step.optJSONArray(JsonFormConstants.FIELDS).optJSONObject(0).has(JsonFormConstants.COUNTDOWN_TIME_VALUE)) {
+      CountDownTimerFactory.stopAlarm();
+    }
   }
 }
