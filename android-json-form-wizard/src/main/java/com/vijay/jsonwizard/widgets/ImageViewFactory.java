@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
@@ -16,6 +17,7 @@ import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.utils.FormUtils;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -24,12 +26,14 @@ import java.util.List;
 public class ImageViewFactory implements FormWidgetFactory {
 
     private View rootLayout;
+    private TextView descriptionTextView;
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
         List<View> views = new ArrayList<>(1);
         rootLayout = LayoutInflater.from(context).inflate(getLayout(), null);
-        setWidgetTags(jsonObject);
+        descriptionTextView = rootLayout.findViewById(R.id.imageViewLabel);
+        setWidgetTags(jsonObject, stepName);
         setViewConfigs(jsonObject, context);
         views.add(rootLayout);
         return views;
@@ -44,17 +48,29 @@ public class ImageViewFactory implements FormWidgetFactory {
         return R.layout.native_form_image_view;
     }
 
-    private void setWidgetTags(JSONObject jsonObject) {
+    private void setWidgetTags(JSONObject jsonObject, String stepName) {
+        setBasicTags(jsonObject, rootLayout);
+        setBasicTags(jsonObject, descriptionTextView);
+
+        JSONArray canvasIds = new JSONArray();
+        rootLayout.setId(ViewUtil.generateViewId());
+        canvasIds.put(rootLayout.getId());
+        rootLayout.setTag(R.id.canvas_ids, canvasIds);
+        rootLayout.setTag(R.id.type, jsonObject.optString(JsonFormConstants.TYPE));
+        rootLayout.setTag(R.id.address, stepName + ":" + jsonObject.optString(JsonFormConstants.KEY));
+        rootLayout.setTag(R.id.extraPopup, false);
+    }
+
+    private void setBasicTags(JSONObject jsonObject, View view) {
         String key = jsonObject.optString(JsonFormConstants.KEY, "");
         String openMrsEntityParent = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT, "");
         String openMrsEntity = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY, "");
         String openMrsEntityId = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_ID, "");
 
-        rootLayout.setTag(R.id.key, key);
-        rootLayout.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
-        rootLayout.setTag(R.id.openmrs_entity, openMrsEntity);
-        rootLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-
+        view.setTag(R.id.key, key);
+        view.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
+        view.setTag(R.id.openmrs_entity, openMrsEntity);
+        view.setTag(R.id.openmrs_entity_id, openMrsEntityId);
     }
 
     private void setViewConfigs(JSONObject jsonObject, Context context) {
@@ -62,7 +78,6 @@ public class ImageViewFactory implements FormWidgetFactory {
         String imageFile = jsonObject.optString(JsonFormConstants.IMAGE_FILE, "");
 
         if (!TextUtils.isEmpty(descriptionText)) {
-            TextView descriptionTextView = rootLayout.findViewById(R.id.text);
             descriptionTextView.setText(descriptionText);
             String textColor = jsonObject.optString(JsonFormConstants.TEXT_COLOR, "#000000");
             descriptionTextView.setTextColor(Color.parseColor(textColor));
