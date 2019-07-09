@@ -20,6 +20,9 @@ public class JsonFormConstants {
     public static final String LABEL_INFO_TITLE = "label_info_title";
     public static final String LABEL_NUMBER = "label_number";
     public static final String CHOOSE_IMAGE = "choose_image";
+    public static final String IMAGE_FILE = "image_file";
+    public static final String IMAGE_FOLDER = "image_folder";
+    public static final String IMAGE_VIEW = "image_view";
     public static final String OPTIONS_FIELD_NAME = "options";
     public static final String SPINNER = "spinner";
     public static final String DATE_PICKER = "date_picker";
