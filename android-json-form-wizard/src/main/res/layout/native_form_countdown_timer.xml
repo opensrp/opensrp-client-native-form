@@ -5,13 +5,13 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/label"
+        android:id="@+id/timerLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         />
 
     <com.emredavarci.circleprogressbar.CircleProgressBar xmlns:cpb="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/progressBar"
+        android:id="@+id/progressCircularBar"
         android:layout_width="300dp"
         android:layout_height="300dp"
         android:layout_centerInParent="true"

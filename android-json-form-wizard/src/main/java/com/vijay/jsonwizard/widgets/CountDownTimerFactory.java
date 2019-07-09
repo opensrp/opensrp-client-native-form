@@ -7,18 +7,22 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.CountDownTimer;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
 import com.emredavarci.circleprogressbar.CircleProgressBar;
+import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
+import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -41,10 +45,13 @@ public class CountDownTimerFactory implements FormWidgetFactory {
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
         List<View> views = new ArrayList<>(1);
         rootLayout = LayoutInflater.from(context).inflate(getLayout(), null);
-        setWidgetTags(jsonObject);
         initializeViewConfigs(jsonObject);
+        setWidgetTags(jsonObject, stepName);
         formatWidget(jsonObject, context);
         startCountDown(millis, intervalMillis, context);
+        progressBar.setTag(R.id.raw_value, String.valueOf(System.currentTimeMillis())); // We're interested in the timestamp when the countdown started
+        initSpecialViewsRefs(context, jsonObject, progressBar);
+        ((JsonApi) context).addFormDataView(progressBar);
         views.add(rootLayout);
         return views;
     }
@@ -54,21 +61,33 @@ public class CountDownTimerFactory implements FormWidgetFactory {
         return getViewsFromJson(stepName, context, formFragment, jsonObject, listener, false);
     }
 
-    private void setWidgetTags(JSONObject jsonObject) {
+    private void setWidgetTags(JSONObject jsonObject, String stepName) {
+        JSONArray canvasIds = new JSONArray();
+        rootLayout.setId(ViewUtil.generateViewId());
+
+        setBasicTags(labelView, jsonObject);
+        setBasicTags(progressBar, jsonObject);
+        canvasIds.put(rootLayout.getId());
+        progressBar.setTag(R.id.canvas_ids, canvasIds.toString());
+        progressBar.setTag(R.id.type, jsonObject.optString(JsonFormConstants.TYPE));
+        progressBar.setTag(R.id.address, stepName + ":" + jsonObject.optString(JsonFormConstants.KEY));
+        progressBar.setTag(R.id.extraPopup, false);
+    }
+
+    private void setBasicTags(View view, JSONObject jsonObject) {
         String key = jsonObject.optString(JsonFormConstants.KEY, "");
         String openMrsEntityParent = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT, "");
         String openMrsEntity = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY, "");
         String openMrsEntityId = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_ID, "");
-
-        rootLayout.setTag(key);
-        rootLayout.setTag(openMrsEntityParent);
-        rootLayout.setTag(openMrsEntity);
-        rootLayout.setTag(openMrsEntityId);
+        view.setTag(R.id.key, key);
+        view.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
+        view.setTag(R.id.openmrs_entity, openMrsEntity);
+        view.setTag(R.id.openmrs_entity_id, openMrsEntityId);
     }
 
     private void initializeViewConfigs(JSONObject jsonObject) {
-        labelView = rootLayout.findViewById(R.id.label);
-        progressBar = rootLayout.findViewById(R.id.progressBar);
+        labelView = rootLayout.findViewById(R.id.timerLabel);
+        progressBar = rootLayout.findViewById(R.id.progressCircularBar);
 
         String label = jsonObject.optString(JsonFormConstants.LABEL, "");
 
@@ -104,6 +123,27 @@ public class CountDownTimerFactory implements FormWidgetFactory {
         progressBar.setBackgroundColor(progressBarBackgroundColor);
         progressBar.setProgressColor(progressBarColor);
         progressBar.setTextColor(progressBarTextColor);
+    }
+
+    private void initSpecialViewsRefs(Context context, JSONObject jsonObject, CircleProgressBar circleProgressBar) {
+        String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
+        String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
+        String calculation = jsonObject.optString(JsonFormConstants.CALCULATION);
+
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+            circleProgressBar.setTag(R.id.relevance, relevance);
+            ((JsonApi) context).addSkipLogicView(circleProgressBar);
+        }
+
+        if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
+            circleProgressBar.setTag(R.id.constraints, constraints);
+            ((JsonApi) context).addConstrainedView(circleProgressBar);
+        }
+
+        if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
+            circleProgressBar.setTag(R.id.calculation, calculation);
+            ((JsonApi) context).addCalculationLogicView(circleProgressBar);
+        }
     }
 
     private int getLayout() {
