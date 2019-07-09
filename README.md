@@ -217,6 +217,10 @@ This form has been generated from the `JSON Form` below: [Click here to Skip](#u
         "type": "edit_text",
         "hint": "First name",
         "edit_type": "name",
+        "v_max_length": {
+          "value": "30",
+          "err": "Characters must be less than or equal to 30"
+          },
         "v_regex": {
           "value": "[A-Za-z\\s\.\-]*",
           "err": "Please enter a valid name"
@@ -230,6 +234,10 @@ This form has been generated from the `JSON Form` below: [Click here to Skip](#u
         "type": "edit_text",
         "hint": "Last name *",
         "edit_type": "name",
+        "v_min_length": {
+          "value": "2",
+          "err": "Characters must be greater than or equal to 2"
+          },
         "v_required": {
           "value": "true",
           "err": "Please enter the last name"
@@ -994,6 +1002,8 @@ Death | A deceased child/patient is reported
    * `v_regex` - This is used for validating input using [Regular Expression](https://en.wikipedia.org/wiki/Regular_expression) 
    * `v_min` - This validation ensures input entered is not below minimum value stated
    * `v_max` - Ensure that the input entered is not above the maximum value stated
+   * `v_min_length` - Ensure that the number of characters entered is above the minimum value stated
+   * `v_max_length` - Ensure that the number of characters entered is not above the maximum value stated
    
 The Number Selector widget has constraints which can be defined in either of two ways
    * Using the Rules engine as shown below
