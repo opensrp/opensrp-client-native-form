@@ -104,7 +104,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
         Form form = getForm();
         if (form != null && form.isWizard()) {
             getMenu().findItem(com.vijay.jsonwizard.R.id.action_next).setVisible(false);
-            getMenu().findItem(com.vijay.jsonwizard.R.id.action_save).setVisible(false);
+            getMenu().findItem(com.vijay.jsonwizard.R.id.action_save).setVisible(save);
         } else {
             getMenu().findItem(com.vijay.jsonwizard.R.id.action_next).setVisible(next);
             getMenu().findItem(com.vijay.jsonwizard.R.id.action_save).setVisible(save);
