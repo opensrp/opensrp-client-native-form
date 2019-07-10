@@ -904,9 +904,20 @@ public class JsonFormFragmentPresenter extends
 
     public void checkAndStopCountdownAlarm() {
         // Check if alarm is ringing and stop
-        JSONObject step = getView().getStep(mStepName);
-        if (step.optJSONArray(JsonFormConstants.FIELDS).optJSONObject(0).has(JsonFormConstants.COUNTDOWN_TIME_VALUE)) {
-            CountDownTimerFactory.stopAlarm();
+        JSONObject formJSONObject = null;
+        JSONObject fieldObject = null;
+        try {
+            formJSONObject = new JSONObject(formFragment.getCurrentJsonState());
+            JSONArray fields = FormUtils.fields(formJSONObject, mStepName);
+            for (int i = 0; i < fields.length(); i++) {
+                fieldObject = (JSONObject) fields.get(i);
+                if (fieldObject.has(JsonFormConstants.COUNTDOWN_TIME_VALUE)) {
+                    CountDownTimerFactory.stopAlarm();
+                }
+            }
+        } catch (Exception ex) {
+            Log.w(TAG, "Countdown alarm not stopped");
+            ex.printStackTrace();
         }
     }
 }
