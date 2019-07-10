@@ -170,7 +170,7 @@ public class JsonFormConstants {
     public static final String COUNTDOWN_TIMER = "countdown_timer";
     public static final String COUNTDOWN_TIME_UNIT = "countdown_time_unit";
     public static final String COUNTDOWN_TIME_VALUE = "countdown_time_value";
-    public static final String COUNTDOWN_INTERVAL = "countdown_interval";
+    public static final String COUNTDOWN_INTERVAL_SECONDS = "countdown_interval_seconds";
     public static final String PROGRESSBAR_BACKGROUND_COLOR = "progressbar_background_color";
     public static final String PROGRESSBAR_COLOR = "progressbar_color";
     public static final String PROGRESSBAR_TEXT_COLOR = "progressbar_text_color";

@@ -98,14 +98,17 @@ public class CountDownTimerFactory implements FormWidgetFactory {
 
         String countdownTimeUnit = jsonObject.optString(JsonFormConstants.COUNTDOWN_TIME_UNIT, JsonFormConstants.DEFAULT_COUNTDOWN_TIME_UNIT);
         String countdownTimeValue = jsonObject.optString(JsonFormConstants.COUNTDOWN_TIME_VALUE, "0");
-        String countdownInterval = jsonObject.optString(JsonFormConstants.COUNTDOWN_INTERVAL, "1");
+        String countdownInterval = jsonObject.optString(JsonFormConstants.COUNTDOWN_INTERVAL_SECONDS, "1");
         long time = Long.parseLong(countdownTimeValue);
-        long interval = Long.parseLong(countdownInterval);
-        intervalMillis = interval * 1000; // Interval unit of measurement is seconds by default. No other
+        long intervalSeconds = Long.parseLong(countdownInterval);
+        intervalMillis = intervalSeconds * 1000; // Interval unit of measurement is SECONDS by default. No other accepted
         if (countdownTimeUnit.equals(JsonFormConstants.DEFAULT_COUNTDOWN_TIME_UNIT)) {
             millis = time * 1000;
         } else if (countdownTimeUnit.equals(JsonFormConstants.MINUTES_COUNTDOWN_TIME_UNIT)) {
             millis = time * 60 * 1000;
+        }
+        if (intervalMillis > millis) {
+            intervalMillis = 1000; // Default interval of 1 second if interval specified is greater than countdown time
         }
     }
 
