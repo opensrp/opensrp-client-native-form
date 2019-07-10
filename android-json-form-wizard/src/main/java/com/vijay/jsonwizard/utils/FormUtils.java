@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Typeface;
@@ -62,7 +64,6 @@ import java.util.regex.Pattern;
  * Created by vijay on 24-05-2015.
  */
 public class FormUtils {
-
     public static final String FONT_BOLD_PATH = "fonts/Roboto-Bold.ttf";
     //public static final String FONT_REGULAR_PATH = "fonts/Roboto-Regular.ttf";
     public static final int MATCH_PARENT = -1;
@@ -77,6 +78,7 @@ public class FormUtils {
     private static final String START_JAVAROSA_PROPERTY = "start";
     private static final String END_JAVAROSA_PROPERTY = "end";
     private static final String TODAY_JAVAROSA_PROPERTY = "today";
+    private static final String DEFAULT_FORM_IMAGES_FOLDER = "image/";
     private static final String TAG = FormUtils.class.getSimpleName();
 
     public static Point getViewLocationOnScreen(View view) {
@@ -781,6 +783,34 @@ public class FormUtils {
             boolean hidden = jsonObject.getBoolean(JsonFormConstants.HIDDEN);
             editText.setVisibility(hidden ? View.GONE : View.VISIBLE);
         }
+    }
+
+    /**
+     * Get Bitmap given a location in the assets folder and the name of the file
+     *
+     * @param context
+     * @param folder    The folder within the Assets folder where the image resides
+     * @param imageFile Path and the name of the file
+     * @return Bitmap
+     */
+    public static Bitmap getBitmap(Context context, String folder, String imageFile) {
+        Bitmap bitmap = null;
+        String filePath;
+        if (TextUtils.isEmpty(imageFile)) {
+            return null;
+        }
+        try {
+            if (TextUtils.isEmpty(folder)) {
+                filePath = DEFAULT_FORM_IMAGES_FOLDER + imageFile;
+            } else {
+                filePath = folder + imageFile;
+            }
+            InputStream is = context.getAssets().open(filePath);
+            bitmap = BitmapFactory.decodeStream(is);
+        } catch (IOException ioe) {
+            Log.e(TAG, ioe.toString());
+        }
+        return bitmap;
     }
 
     public static JSONArray getCheckboxValueJsonArray(HashSet<String> optionValues) {

@@ -18,6 +18,7 @@ import com.vijay.jsonwizard.widgets.GpsFactory;
 import com.vijay.jsonwizard.widgets.HiddenTextFactory;
 import com.vijay.jsonwizard.widgets.HorizontalLineFactory;
 import com.vijay.jsonwizard.widgets.ImagePickerFactory;
+import com.vijay.jsonwizard.widgets.ImageViewFactory;
 import com.vijay.jsonwizard.widgets.LabelFactory;
 import com.vijay.jsonwizard.widgets.NativeEditTextFactory;
 import com.vijay.jsonwizard.widgets.NativeRadioButtonFactory;
@@ -82,6 +83,7 @@ public class JsonFormInteractor {
         map.put(JsonFormConstants.REPEATING_GROUP, new RepeatingGroupFactory());
         map.put(JsonFormConstants.RDT_CAPTURE, new RDTCaptureFactory());
         map.put(JsonFormConstants.COUNTDOWN_TIMER, new CountDownTimerFactory());
+        map.put(JsonFormConstants.IMAGE_VIEW, new ImageViewFactory());
     }
 
     public List<View> fetchFormElements(String stepName, JsonFormFragment formFragment,

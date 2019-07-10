@@ -1,5 +1,5 @@
 {
-  "count": "3",
+  "count": "4",
   "encounter_type": "Test",
   "entity_id": "",
   "relational_id": "",
@@ -539,6 +539,7 @@
   },
   "step4": {
     "title": "Countdown until results ready",
+    "next": "step5",
     "fields": [
       {
         "key": "countdown_timer",
@@ -555,6 +556,22 @@
         "progressbar_background_color": "#e7b330",
         "progressbar_color": "#e76130",
         "progressbar_text_color": "#f9916b"
+      }
+    ]
+  },
+  "step5": {
+    "title": "How to instructions",
+    "fields": [
+      {
+        "key": "illustration_text_description",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "image_view",
+        "text": "Take the test by doing it as shown in the image below",
+        "label_text_size": "18sp",
+        "image_file": "process.jpeg",
+        "text_color": "#000000"
       }
     ]
   }
