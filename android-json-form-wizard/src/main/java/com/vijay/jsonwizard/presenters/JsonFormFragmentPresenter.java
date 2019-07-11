@@ -100,6 +100,9 @@ public class JsonFormFragmentPresenter extends MvpBasePresenter<JsonFormFragment
         this(formFragment);
         mJsonFormInteractor = jsonFormInteractor;
     }
+    public String getmCurrentPhotoPath(){
+        return mCurrentPhotoPath;
+    }
 
     public static ValidationStatus validate(JsonFormFragmentView formFragmentView, View childAt, boolean requestFocus) {
         if (childAt instanceof RadioGroup) {
