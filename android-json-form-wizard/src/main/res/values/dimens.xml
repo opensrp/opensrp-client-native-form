@@ -58,4 +58,5 @@
 
     <dimen name="bottom_navigation_margin">4dp</dimen>
     <dimen name="bottom_navigation_padding">8dp</dimen>
+  <dimen name="custom_dialog_margin">16dp</dimen>
 </resources>
