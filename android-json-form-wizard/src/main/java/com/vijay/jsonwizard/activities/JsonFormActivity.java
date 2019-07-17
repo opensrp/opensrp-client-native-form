@@ -663,6 +663,9 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     private void widgetWriteItemValue(String value, JSONObject item, String itemType) throws JSONException {
+        if (!TextUtils.isEmpty(value)) {
+            value = value.trim();
+        }
         item.put(JsonFormConstants.VALUE, itemType.equals(JsonFormConstants.HIDDEN) && TextUtils.isEmpty(value) ?
                 item.has(JsonFormConstants.VALUE) && !TextUtils.isEmpty(item.getString(JsonFormConstants.VALUE)) ?
                         item.getString(JsonFormConstants.VALUE) : value : value);

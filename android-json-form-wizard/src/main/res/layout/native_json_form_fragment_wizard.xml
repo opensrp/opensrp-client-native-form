@@ -50,8 +50,7 @@
                     android:textAllCaps="true"
                     android:textAppearance="?android:textAppearanceMedium"
                     android:textColor="@color/button_navy_blue"
-                    android:textSize="@dimen/form_container_navigation_text_size"
-                    android:visibility="gone"/>
+                    android:textSize="@dimen/form_container_navigation_text_size" />
 
                 <Button
                     android:id="@+id/next"
@@ -68,8 +67,7 @@
                     android:textAllCaps="true"
                     android:textAppearance="?android:textAppearanceMedium"
                     android:textColor="@color/button_navy_blue"
-                    android:textSize="@dimen/form_container_navigation_text_size"
-                    android:visibility="gone"/>
+                    android:textSize="@dimen/form_container_navigation_text_size" />
             </RelativeLayout>
 
         </LinearLayout>
