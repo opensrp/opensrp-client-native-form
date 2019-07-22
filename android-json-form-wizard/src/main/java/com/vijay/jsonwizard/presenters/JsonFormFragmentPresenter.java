@@ -668,6 +668,11 @@ public class JsonFormFragmentPresenter extends
     });
     dialog.show();
   }
+  //household_photo,JsonFormConstants.CHOOSE_IMAGE
+  public void onClickCameraIcon(String key,String type){
+
+    dispatchTakePictureIntent(key,type);
+  }
 
   private void dispatchTakePictureIntent(String key, String type) {
     if (PermissionUtils.isPermissionGranted(formFragment,
@@ -890,4 +895,8 @@ public class JsonFormFragmentPresenter extends
 
     return false;
   }
+
+    public String getmCurrentPhotoPath() {
+        return mCurrentPhotoPath;
+    }
 }
