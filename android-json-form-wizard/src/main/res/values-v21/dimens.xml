@@ -2,4 +2,5 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="tree_widget_text_size">28dp</dimen>
     <dimen name="toolbar_text_size">23sp</dimen>
+    <dimen name="floating_label_top_spacing">10dp</dimen>
 </resources>
