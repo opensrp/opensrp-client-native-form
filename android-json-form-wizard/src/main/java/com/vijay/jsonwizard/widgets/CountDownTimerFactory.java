@@ -192,7 +192,9 @@ public class CountDownTimerFactory implements FormWidgetFactory {
     }
 
     public static void stopAlarm() {
-        timer.cancel();
+        if (timer != null) {
+            timer.cancel();
+        }
         if (alarmTone != null && alarmTone.isPlaying()) {
             alarmTone.stop();
         }
