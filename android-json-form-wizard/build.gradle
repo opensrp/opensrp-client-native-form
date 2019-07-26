@@ -1,5 +1,6 @@
 buildscript {
     repositories {
+        mavenLocal()
         google()
         jcenter()
     }
@@ -57,6 +58,7 @@ tasks.withType(Test) {
 }
 
 repositories {
+    mavenLocal()
     maven { url "https://clojars.org/repo/" }
     google()
 }
@@ -115,7 +117,8 @@ dependencies {
     }
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation project(':circle-progressbar')
+    implementation 'io.ona.circle-progressbar:lib:0.1.0@aar'
+
 }
 
 dependencies {

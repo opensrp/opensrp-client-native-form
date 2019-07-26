@@ -1,2 +1,0 @@
-configurations.maybeCreate("default")
-artifacts.add("default", file('circle-progressbar-debug.aar'))
