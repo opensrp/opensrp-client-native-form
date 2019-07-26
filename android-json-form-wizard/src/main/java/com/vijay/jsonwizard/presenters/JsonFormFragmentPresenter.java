@@ -665,26 +665,26 @@ public class JsonFormFragmentPresenter extends
         String imagePath = (String) view.getTag(R.id.label_dialog_image_src);
 
 
-
-    dialogImage.setVisibility(View.VISIBLE);
-    try {
-      dialogImage.setImageDrawable(FormUtils.readImageFromAsset(view.getContext(), imagePath));
-    } catch (IOException e) {
-      Log.e(TAG, "Encountered an error reading image from assets" + e);
+        dialogImage.setVisibility(View.VISIBLE);
+        try {
+            dialogImage.setImageDrawable(FormUtils.readImageFromAsset(view.getContext(), imagePath));
+        } catch (IOException e) {
+            Log.e(TAG, "Encountered an error reading image from assets" + e);
+        }
+        dialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
-    dialogButton.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        dialog.dismiss();
-      }
-    });
-    dialog.show();
-  }
-  //household_photo,JsonFormConstants.CHOOSE_IMAGE
-  public void onClickCameraIcon(String key,String type){
 
-    dispatchTakePictureIntent(key,type);
-  }
+    //household_photo,JsonFormConstants.CHOOSE_IMAGE
+    public void onClickCameraIcon(String key, String type) {
+
+        dispatchTakePictureIntent(key, type);
+    }
 
     private void dispatchTakePictureIntent(String key, String type) {
         if (PermissionUtils.isPermissionGranted(formFragment,
