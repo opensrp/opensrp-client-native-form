@@ -1,13 +1,5 @@
 package com.vijay.jsonwizard.widgets;
 
-import static com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT;
-import static com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT;
-import static com.vijay.jsonwizard.utils.FormUtils.createRadioButtonAndCheckBoxLabel;
-import static com.vijay.jsonwizard.utils.FormUtils.getCurrentCheckboxValues;
-import static com.vijay.jsonwizard.utils.FormUtils.getLinearLayoutParams;
-import static com.vijay.jsonwizard.utils.FormUtils.getValueFromSpOrDpOrPx;
-import static com.vijay.jsonwizard.utils.FormUtils.showInfoIcon;
-
 import android.content.Context;
 import android.graphics.Color;
 import android.text.TextUtils;
@@ -16,6 +8,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
@@ -26,12 +19,22 @@ import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import static com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT;
+import static com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT;
+import static com.vijay.jsonwizard.utils.FormUtils.createRadioButtonAndCheckBoxLabel;
+import static com.vijay.jsonwizard.utils.FormUtils.getCurrentCheckboxValues;
+import static com.vijay.jsonwizard.utils.FormUtils.getLinearLayoutParams;
+import static com.vijay.jsonwizard.utils.FormUtils.getValueFromSpOrDpOrPx;
+import static com.vijay.jsonwizard.utils.FormUtils.showInfoIcon;
 
 /**
  * Created by vijay on 24-05-2015.
@@ -246,7 +249,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
             //Displaying optional info alert dialog
             ImageView imageView = checkboxLayout.findViewById(R.id.checkbox_info_icon);
 
-            showInfoIcon(stepName, jsonObject, listener,  FormUtils.getInfoDialogAttributes(item), imageView, canvasIds);
+            showInfoIcon(stepName, jsonObject, listener, FormUtils.getInfoDialogAttributes(item), imageView, canvasIds);
 
             checkboxLayout.setTag(R.id.canvas_ids, canvasIds.toString());
             checkboxLayouts.add(checkboxLayout);

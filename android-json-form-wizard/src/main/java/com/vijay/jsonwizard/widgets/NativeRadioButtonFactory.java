@@ -1,7 +1,5 @@
 package com.vijay.jsonwizard.widgets;
 
-import static com.vijay.jsonwizard.widgets.DatePickerFactory.DATE_FORMAT;
-
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
@@ -20,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
@@ -33,14 +32,18 @@ import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.CustomTextView;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+
+import static com.vijay.jsonwizard.widgets.DatePickerFactory.DATE_FORMAT;
 
 
 /**
@@ -381,7 +384,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         for (int i = 0; i < options.length(); i++) {
             JSONObject item = options.getJSONObject(i);
 
-          RelativeLayout radioGroupLayout =
+            RelativeLayout radioGroupLayout =
                     (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.native_item_radio_button, null);
             radioGroupLayout.setId(ViewUtil.generateViewId());
             radioGroupLayout.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
