@@ -14,15 +14,15 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:indeterminate="true"
-            android:layout_marginLeft="30dp"
+            android:layout_marginStart="30dp"
             android:layout_gravity="center_vertical"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:gravity="center_horizontal"
-            android:layout_marginLeft="@dimen/inner_components_spacing"
-            android:layout_marginRight="@dimen/inner_components_spacing"
+            android:layout_marginStart="@dimen/inner_components_spacing"
+            android:layout_marginEnd="@dimen/inner_components_spacing"
             android:orientation="vertical">
             <com.rey.material.widget.TextView
                 android:id="@+id/accuracy"
@@ -43,8 +43,8 @@
             android:id="@+id/cancel_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="7.5dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="7.5dp"
             android:layout_weight="1"
             android:text="@string/cancel" />
 
@@ -52,8 +52,8 @@
             android:id="@+id/ok_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginRight="15dp"
-            android:layout_marginLeft="7.5dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginStart="7.5dp"
             android:layout_weight="1"
             android:text="@string/ok" />
     </LinearLayout>

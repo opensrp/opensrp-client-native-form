@@ -13,7 +13,7 @@
         android:id="@+id/node_selector"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:visibility="gone"/>
@@ -25,8 +25,8 @@
         android:layout_alignWithParentIfMissing="true"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="28dp"
-        android:layout_toRightOf="@id/node_selector"
+        android:layout_marginStart="28dp"
+        android:layout_toEndOf="@id/node_selector"
         android:orientation="vertical">
 
         <View
@@ -58,7 +58,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="10dp"
-        android:layout_toRightOf="@+id/picture_wrapper"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/picture_wrapper"
         android:textSize="@dimen/default_text_size"/>
 </RelativeLayout>

@@ -48,11 +48,13 @@ abstract class JsonFormBaseActivity extends AppCompatActivity implements OnField
     protected String confirmCloseMessage;
     protected Form form;
     protected Map<String, String> globalValues = null;
+
     protected RulesEngineFactory rulesEngineFactory = null;
     protected LocalBroadcastManager localBroadcastManager;
     private Toolbar mToolbar;
     private Map<String, ValidationStatus> invalidFields = new HashMap<>();
 
+    protected boolean isFormFragmentInitialized;
 
     public void init(String json) {
         try {
@@ -94,6 +96,7 @@ abstract class JsonFormBaseActivity extends AppCompatActivity implements OnField
         onActivityResultListeners = new HashMap<>();
         onActivityRequestPermissionResultListeners = new HashMap<>();
         lifeCycleListeners = new ArrayList<>();
+        isFormFragmentInitialized = false;
         if (savedInstanceState == null) {
             init(getIntent().getStringExtra(JsonFormConstants.JSON_FORM_KEY.JSON));
             initializeFormFragment();
@@ -108,9 +111,10 @@ abstract class JsonFormBaseActivity extends AppCompatActivity implements OnField
         }
     }
 
-    public void initializeFormFragment() {
+    public synchronized void initializeFormFragment() {
+        isFormFragmentInitialized = true;
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.container, JsonFormFragment.getFormFragment(JsonFormConstants.FIRST_STEP_NAME)).commit();
+                .add(R.id.container, JsonFormFragment.getFormFragment(JsonFormConstants.FIRST_STEP_NAME)).commitAllowingStateLoss();
     }
 
     @Override
@@ -154,6 +158,7 @@ abstract class JsonFormBaseActivity extends AppCompatActivity implements OnField
             return null;
         }
     }
+
     public Map<String, ValidationStatus> getInvalidFields() {
         return invalidFields;
     }
@@ -166,5 +171,13 @@ abstract class JsonFormBaseActivity extends AppCompatActivity implements OnField
     @Override
     public Map<String, ValidationStatus> getPassedInvalidFields() {
         return getInvalidFields();
+    }
+
+    public RulesEngineFactory getRulesEngineFactory() {
+        return rulesEngineFactory;
+    }
+
+    public void setRulesEngineFactory(RulesEngineFactory rulesEngineFactory) {
+        this.rulesEngineFactory = rulesEngineFactory;
     }
 }

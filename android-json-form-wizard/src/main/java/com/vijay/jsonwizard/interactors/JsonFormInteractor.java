@@ -17,11 +17,14 @@ import com.vijay.jsonwizard.widgets.GpsFactory;
 import com.vijay.jsonwizard.widgets.HiddenTextFactory;
 import com.vijay.jsonwizard.widgets.HorizontalLineFactory;
 import com.vijay.jsonwizard.widgets.ImagePickerFactory;
+import com.vijay.jsonwizard.widgets.ImageViewFactory;
 import com.vijay.jsonwizard.widgets.LabelFactory;
 import com.vijay.jsonwizard.widgets.NativeEditTextFactory;
 import com.vijay.jsonwizard.widgets.NativeRadioButtonFactory;
 import com.vijay.jsonwizard.widgets.NumberSelectorFactory;
+import com.vijay.jsonwizard.widgets.RDTCaptureFactory;
 import com.vijay.jsonwizard.widgets.RadioButtonFactory;
+import com.vijay.jsonwizard.widgets.RepeatingGroupFactory;
 import com.vijay.jsonwizard.widgets.SectionFactory;
 import com.vijay.jsonwizard.widgets.SpinnerFactory;
 import com.vijay.jsonwizard.widgets.TimePickerFactory;
@@ -44,7 +47,7 @@ public class JsonFormInteractor {
 
     private static final String TAG = "JsonFormInteractor";
     private static final JsonFormInteractor INSTANCE = new JsonFormInteractor();
-    protected Map<String, FormWidgetFactory> map = new HashMap<>();
+    public Map<String, FormWidgetFactory> map;
 
     public JsonFormInteractor() {
         registerWidgets();
@@ -55,6 +58,7 @@ public class JsonFormInteractor {
     }
 
     protected void registerWidgets() {
+        map = new HashMap<>();
         map.put(JsonFormConstants.SECTION_LABEL, new SectionFactory());
         map.put(JsonFormConstants.EDIT_TEXT, new EditTextFactory());
         map.put(JsonFormConstants.HIDDEN, new HiddenTextFactory());
@@ -75,6 +79,9 @@ public class JsonFormInteractor {
         map.put(JsonFormConstants.SPACER, new ComponentSpacerFactory());
         map.put(JsonFormConstants.NATIVE_EDIT_TEXT, new NativeEditTextFactory());
         map.put(JsonFormConstants.TIME_PICKER, new TimePickerFactory());
+        map.put(JsonFormConstants.REPEATING_GROUP, new RepeatingGroupFactory());
+        map.put(JsonFormConstants.RDT_CAPTURE, new RDTCaptureFactory());
+        map.put(JsonFormConstants.IMAGE_VIEW, new ImageViewFactory());
     }
 
     public List<View> fetchFormElements(String stepName, JsonFormFragment formFragment,
@@ -158,6 +165,7 @@ public class JsonFormInteractor {
             Log.e(TAG,
                     "Exception occurred in making view : Exception is : "
                             + e.getMessage());
+            e.printStackTrace();
         }
 
     }

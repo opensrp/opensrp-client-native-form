@@ -41,6 +41,7 @@
     <dimen name="native_selector_button_min_padding">1px</dimen>
     <dimen name="dialog_content_margin">20dp</dimen>
     <dimen name="toolbar_text_size">23sp</dimen>
+    <integer name="repeating_group_label_text_size">20</integer>
 
     <!-- Form Container -->
     <dimen name="form_container_default_padding">20dp</dimen>
@@ -52,5 +53,12 @@
     <dimen name="form_container_navigation_elevation">3dp</dimen>
     <dimen name="form_container_drawable_padding">10dp</dimen>
     <dimen name="form_container_small_padding">5dp</dimen>
-    <dimen name="label_bottom_padding">12dp</dimen>
+    <dimen name="label_bottom_padding">6dp</dimen>
+    <dimen name="label_imageview_padding">4dp</dimen>
+
+    <dimen name="bottom_navigation_margin">4dp</dimen>
+    <dimen name="bottom_navigation_padding">8dp</dimen>
+    <dimen name="custom_dialog_margin">16dp</dimen>
+
+    <dimen name="floating_label_top_spacing">4dp</dimen>
 </resources>

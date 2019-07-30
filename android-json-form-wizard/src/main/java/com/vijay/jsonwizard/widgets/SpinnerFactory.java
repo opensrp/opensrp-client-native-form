@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
@@ -23,33 +22,29 @@ import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
-
+import java.util.ArrayList;
+import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by nipun on 30/05/15.
  */
 public class SpinnerFactory implements FormWidgetFactory {
 
-    public static ValidationStatus validate(JsonFormFragmentView formFragmentView,
-                                            MaterialSpinner spinner) {
-        if (!(spinner.getTag(R.id.v_required) instanceof String) || !(spinner.getTag(R.id.error) instanceof String)) {
+    public static ValidationStatus validate(JsonFormFragmentView formFragmentView, MaterialSpinner spinner) {
+        if (spinner.getTag(R.id.v_required) == null) {
             return new ValidationStatus(true, null, formFragmentView, spinner);
         }
-        Boolean isRequired = Boolean.valueOf((String) spinner.getTag(R.id.v_required));
-        if (!isRequired || !spinner.isEnabled()) {
-            return new ValidationStatus(true, null, formFragmentView, spinner);
-        }
+        boolean isRequired = (boolean) spinner.getTag(R.id.v_required);
+        String error = (String) spinner.getTag(R.id.error);
         int selectedItemPosition = spinner.getSelectedItemPosition();
-        if (selectedItemPosition > 0) {
-            return new ValidationStatus(true, null, formFragmentView, spinner);
+
+        if (isRequired && selectedItemPosition == 0 && spinner.isEnabled()) {
+            return new ValidationStatus(false, error, formFragmentView, spinner);
         }
-        return new ValidationStatus(false, (String) spinner.getTag(R.id.error), formFragmentView, spinner);
+        return new ValidationStatus(true, null, formFragmentView, spinner);
     }
 
     @Override
@@ -105,18 +100,24 @@ public class SpinnerFactory implements FormWidgetFactory {
             spinner.setFloatingLabelText(jsonObject.getString(JsonFormConstants.HINT));
         }
 
+        JSONArray keysJson = null;
+        if (jsonObject.has(JsonFormConstants.KEYS)) {
+            keysJson = jsonObject.getJSONArray(JsonFormConstants.KEYS);
+            spinner.setTag(R.id.keys, keysJson);
+        }
+
         setViewTags(jsonObject, canvasIds, stepName, popup, openMrsEntityParent, openMrsEntity, openMrsEntityId, spinner);
 
         addSkipLogicTags(context, relevance, constraints, calculations, spinner);
 
         JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
         if (requiredObject != null) {
-            boolean requiredValue = requiredObject.getBoolean(JsonFormConstants.VALUE);
+            boolean requiredValue = requiredObject.optBoolean(JsonFormConstants.VALUE, false);
             if (Boolean.TRUE.equals(requiredValue)) {
                 setRequiredOnHint(spinner);
             }
             spinner.setTag(R.id.v_required, requiredValue);
-            spinner.setTag(R.id.error, requiredObject.optString(JsonFormConstants.ERR));
+            spinner.setTag(R.id.error, requiredObject.optString(JsonFormConstants.ERR, null));
         }
 
         String valueToSelect = "";
@@ -133,7 +134,9 @@ public class SpinnerFactory implements FormWidgetFactory {
             values = new String[valuesJson.length()];
             for (int i = 0; i < valuesJson.length(); i++) {
                 values[i] = valuesJson.optString(i);
-                if (valueToSelect.equals(values[i])) {
+                if (keysJson == null && valueToSelect.equals(values[i])) {
+                    indexToSelect = i;
+                } else if (keysJson != null && valueToSelect.equals(keysJson.optString(i))) {
                     indexToSelect = i;
                 }
             }
@@ -147,7 +150,7 @@ public class SpinnerFactory implements FormWidgetFactory {
         }
         ((JsonApi) context).addFormDataView(spinner);
 
-        FormUtils.showInfoIcon(stepName, jsonObject, listener, labelInfoText, labelInfoTitle, spinnerInfoIconImageView,
+        FormUtils.showInfoIcon(stepName, jsonObject, listener, FormUtils.getInfoDialogAttributes(jsonObject), spinnerInfoIconImageView,
                 canvasIds);
         spinner.setTag(R.id.canvas_ids, canvasIds.toString());
     }

@@ -73,7 +73,8 @@ public class TreeViewFactory implements FormWidgetFactory {
     }
 
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
+                                       JSONObject jsonObject, CommonListener listener) throws Exception {
         return attachJson(stepName, context, formFragment, jsonObject, false);
     }
 
@@ -93,21 +94,26 @@ public class TreeViewFactory implements FormWidgetFactory {
 
         final MaterialEditText editText = createEditText(rootLayout, jsonObject, popup, stepName);
         ArrayList<String> defaultValue = new ArrayList<>();
-        try {
-            JSONArray jsonArray = new JSONArray(defaultValueString);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                defaultValue.add(jsonArray.getString(i));
+        if (!TextUtils.isEmpty(defaultValueString)) {
+            try {
+                JSONArray jsonArray = new JSONArray(defaultValueString);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    defaultValue.add(jsonArray.getString(i));
+                }
+            } catch (JSONException e) {
             }
-        } catch (JSONException e) {
         }
 
+
         ArrayList<String> value = new ArrayList<>();
-        try {
-            JSONArray jsonArray = new JSONArray(valueString);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                value.add(jsonArray.getString(i));
+        if (!TextUtils.isEmpty(valueString)) {
+            try {
+                JSONArray jsonArray = new JSONArray(valueString);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    value.add(jsonArray.getString(i));
+                }
+            } catch (JSONException e) {
             }
-        } catch (JSONException e) {
         }
 
         final TreeViewDialog treeViewDialog = new TreeViewDialog(context,
@@ -183,7 +189,8 @@ public class TreeViewFactory implements FormWidgetFactory {
         return views;
     }
 
-    private MaterialEditText createEditText(RelativeLayout rootLayout, JSONObject jsonObject, boolean popup, String stepName) throws JSONException {
+    private MaterialEditText createEditText(RelativeLayout rootLayout, JSONObject jsonObject, boolean popup, String stepName)
+            throws JSONException {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);

@@ -73,6 +73,8 @@ public interface JsonApi {
 
     JSONObject getObjectUsingAddress(String[] address, boolean popup) throws JSONException;
 
+    JSONObject getObjectUsingAddress(String[] address, boolean popup, JSONObject valueSource) throws JSONException;
+
     void refreshConstraints(String parentKey, String childKey, boolean popup);
 
     void addOnActivityResultListener(Integer requestCode, OnActivityResultListener onActivityResultListener);
@@ -97,4 +99,14 @@ public interface JsonApi {
     void setGenericPopup(GenericPopupDialog context);
 
     Map<String, ValidationStatus> getInvalidFields();
+
+    String getConfirmCloseMessage();
+
+    void setConfirmCloseMessage(String message);
+
+    String getConfirmCloseTitle();
+
+    void setConfirmCloseTitle(String title);
+
+    void showPermissionDeniedDialog();
 }

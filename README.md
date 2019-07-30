@@ -150,14 +150,29 @@ This form has been generated from the `JSON Form` below: [Click here to Skip](#u
         "openmrs_entity_id": "",
         "openmrs_data_type": "text",
         "type": "tree",
-        "hint": "Child's home health facility *",
+        "hint": "Child's home health facility",
         "tree": [
-
-        ],
-        "v_required": {
-          "value": true,
-          "err": "Please enter the child's home facility"
-        }
+          {
+            "name": "Hilton",
+            "key": "hilton",
+            "level": "1",
+            "nodes": [
+                    {
+                      "name": "Sarova",
+                      "key": "sarova"
+                    }
+                  ]
+                },
+                {
+                  "name": "Double tree",
+                  "key": "double_tree"
+                }
+              ],
+              "default": "Hilton",
+              "v_required": {
+                "value": false,
+                "err": "Please enter the child's home facility"
+          }
       },
       {
         "key": "ZEIR_ID",
@@ -202,6 +217,10 @@ This form has been generated from the `JSON Form` below: [Click here to Skip](#u
         "type": "edit_text",
         "hint": "First name",
         "edit_type": "name",
+        "v_max_length": {
+          "value": "30",
+          "err": "Characters must be less than or equal to 30"
+          },
         "v_regex": {
           "value": "[A-Za-z\\s\.\-]*",
           "err": "Please enter a valid name"
@@ -215,6 +234,10 @@ This form has been generated from the `JSON Form` below: [Click here to Skip](#u
         "type": "edit_text",
         "hint": "Last name *",
         "edit_type": "name",
+        "v_min_length": {
+          "value": "2",
+          "err": "Characters must be greater than or equal to 2"
+          },
         "v_required": {
           "value": "true",
           "err": "Please enter the last name"
@@ -979,6 +1002,8 @@ Death | A deceased child/patient is reported
    * `v_regex` - This is used for validating input using [Regular Expression](https://en.wikipedia.org/wiki/Regular_expression) 
    * `v_min` - This validation ensures input entered is not below minimum value stated
    * `v_max` - Ensure that the input entered is not above the maximum value stated
+   * `v_min_length` - Ensure that the number of characters entered is above the minimum value stated
+   * `v_max_length` - Ensure that the number of characters entered is not above the maximum value stated
    
 The Number Selector widget has constraints which can be defined in either of two ways
    * Using the Rules engine as shown below
@@ -1382,4 +1407,538 @@ In case of showing both video and text in dialog , the "media_type" should be "i
 In case of showing only text in dialog , the "media_type" should be "text" and the text to be shown should be included in "media_text".
 
 
-      
+### Repeating group
+
+This section provides documentation on how to use the Json Forms repeating group widget.
+
+The repeating group widget allows for replication of a single form definition where the user can define
+a form layout once, using the normal Json Forms syntax, and the layout can be replicated a number of
+times as specified by the user.
+
+The repeating group comprises of an edit text field (henceforth referred to as the `reference edit text`) 
+that is used to specify the number of repeating group elements the user would like to generate and the repeating group layout definition defined in Json.
+
+To specify the repeating group layout, add its Json definition to the value field in the repeating group widget.
+
+The repeating group form layout definition follows the same format as the regular Json form. 
+
+An example can be seen below:
+
+```
+{
+  "count": "1",
+  "encounter_type": "larval_dipping",
+  "entity_id": "",
+  "metadata": {
+    "start": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "start",
+      "openmrs_entity_id": "163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "end": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "end",
+      "openmrs_entity_id": "163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "today": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "encounter",
+      "openmrs_entity_id": "encounter_date"
+    },
+    "deviceid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "deviceid",
+      "openmrs_entity_id": "163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "subscriberid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "subscriberid",
+      "openmrs_entity_id": "163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "simserial": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "simserial",
+      "openmrs_entity_id": "163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "phonenumber": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "phonenumber",
+      "openmrs_entity_id": "163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "encounter_location": ""
+  },
+  "step1": {
+    "title": "Larval Dipping Details",
+    "display_back_button": "true",
+    "fields": [
+      {
+        "key": "task_business_status",
+        "label": "Status",
+        "type": "native_radio",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "options": [
+          {
+            "key": "In Progress",
+            "text": "In Progress"
+          },
+          {
+            "key": "Incomplete",
+            "text": "Incomplete"
+          },
+          {
+            "key": "Not Eligible",
+            "text": "Not Eligible"
+          },
+          {
+            "key": "Complete",
+            "text": "Complete"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Please specify the task status"
+        }
+      },
+      {
+        "key": "occurred_date",
+        "type": "date_picker",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "hint": "Date larval dipping was done",
+        "max_date": "today",
+        "v_required": {
+          "value": true,
+          "err": "Please specify the date larval dipping was done"
+        }
+      },
+      {
+        "key": "dips",
+        "type": "repeating_group",
+        "reference_edit_text_hint":"# of dips",
+        "repeating_group_label": "dip",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "v_required": {
+          "value": true,
+          "err": "Please specify the # of dips"
+        },
+        "value": [
+          {
+            "key": "larvae_total",
+            "type": "edit_text",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "hint": "# of larvae collected",
+            "v_numeric_integer": {
+              "value": "true",
+              "err": "Must be a rounded number"
+            },
+            "v_required": {
+              "value": true,
+              "err": "Please specify the total # of larvae collected"
+            }
+          },
+          {
+            "key": "larvae_1_total",
+            "type": "edit_text",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "hint": "# of stage 1-2 larvae collected",
+            "v_numeric_integer": {
+              "value": "true",
+              "err": "Must be a rounded number"
+            },
+            "v_relative_max": {
+              "value": "larvae_total",
+              "err": "# of stage 1-2 larvae cannot be greater than the total # of larvae collected"
+            }
+          },
+          {
+            "key": "larvae_3_total",
+            "type": "edit_text",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "hint": "# of stage 3-4 larvae collected",
+            "v_numeric_integer": {
+              "value": "true",
+              "err": "Must be a rounded number"
+            },
+            "v_relative_max": {
+              "value": "larvae_total",
+              "err": "# of stage 3-4 larvae cannot be greater than the total # of larvae collected"
+            }
+          },
+          {
+            "key": "moz_type",
+            "label": "Larvae species found",
+            "type": "check_box",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "options": [
+              {
+                "key": "An. gambiae",
+                "text": "An. gambiae",
+                "value": false
+              },
+              {
+                "key": "An. funestus",
+                "text": "An. funestus",
+                "value": false
+              },
+              {
+                "key": "An. minimus",
+                "text": "An. minimus",
+                "value": false
+              },
+              {
+                "key": "An. dirus",
+                "text": "An. dirus",
+                "value": false
+              },
+              {
+                "key": "An. maximus",
+                "text": "An. maximus",
+                "value": false
+              },
+              {
+                "key": "An. other",
+                "text": "An. other",
+                "value": false
+              },
+              {
+                "key": "Culex",
+                "text": "Culex",
+                "value": false
+              }
+            ],
+            "v_required": {
+              "value": true,
+              "err": "Please specify the larvae species collected"
+            }
+          },
+          {
+            "key": "An. gambiae",
+            "type": "edit_text",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "hint": "# of An. gambiae larvae collected",
+            "relevance": {
+              "step1:moz_type": {
+                "ex-checkbox": [
+                  {
+                    "or": ["An. gambiae"]
+                  }
+                ]
+              }
+            },
+            "v_numeric_integer": {
+              "value": "true",
+              "err": "Must be a rounded number"
+            },
+            "v_required": {
+              "value": true,
+              "err": "Please specify the number of larvae of this species collected"
+            }
+          },
+          {
+            "key": "An. funestus",
+            "type": "edit_text",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "hint": "# of An. funestus larvae collected",
+            "relevance": {
+              "step1:moz_type": {
+                "ex-checkbox": [
+                  {
+                    "or": ["An. funestus"]
+                  }
+                ]
+              }
+            },
+            "v_numeric_integer": {
+              "value": "true",
+              "err": "Must be a rounded number"
+            },
+            "v_required": {
+              "value": true,
+              "err": "Please specify the number of larvae of this species collected"
+            }
+          },
+          {
+            "key": "An. minimus",
+            "type": "edit_text",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "hint": "# of An. minimus larvae collected",
+            "relevance": {
+              "step1:moz_type": {
+                "ex-checkbox": [
+                  {
+                    "or": ["An. minimus"]
+                  }
+                ]
+              }
+            },
+            "v_numeric_integer": {
+              "value": "true",
+              "err": "Must be a rounded number"
+            },
+            "v_required": {
+              "value": true,
+              "err": "Please specify the number of larvae of this species collected"
+            }
+          },
+          {
+            "key": "An. dirus",
+            "type": "edit_text",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "hint": "# of An. dirus larvae collected",
+            "relevance": {
+              "step1:moz_type": {
+                "ex-checkbox": [
+                  {
+                    "or": ["An. dirus"]
+                  }
+                ]
+              }
+            },
+            "v_numeric_integer": {
+              "value": "true",
+              "err": "Must be a rounded number"
+            },
+            "v_required": {
+              "value": true,
+              "err": "Please specify the number of larvae of this species collected"
+            }
+          },
+          {
+            "key": "An. maximus",
+            "type": "edit_text",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "hint": "# of An. maximus larvae collected",
+            "relevance": {
+              "step1:moz_type": {
+                "ex-checkbox": [
+                  {
+                    "or": ["An. maximus"]
+                  }
+                ]
+              }
+            },
+            "v_numeric_integer": {
+              "value": "true",
+              "err": "Must be a rounded number"
+            },
+            "v_required": {
+              "value": true,
+              "err": "Please specify the number of larvae of this species collected"
+            }
+          },
+          {
+            "key": "An. other",
+            "type": "edit_text",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "hint": "# of An. other larvae collected",
+            "relevance": {
+              "step1:moz_type": {
+                "ex-checkbox": [
+                  {
+                    "or": ["An. other"]
+                  }
+                ]
+              }
+            },
+            "v_numeric_integer": {
+              "value": "true",
+              "err": "Must be a rounded number"
+            },
+            "v_required": {
+              "value": true,
+              "err": "Please specify the number of larvae of this species collected"
+            }
+          },
+          {
+            "key": "Culex",
+            "type": "edit_text",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "hint": "# of Culex larvae collected",
+            "relevance": {
+              "step1:moz_type": {
+                "ex-checkbox": [
+                  {
+                    "or": ["Culex"]
+                  }
+                ]
+              }
+            },
+            "v_numeric_integer": {
+              "value": "true",
+              "err": "Must be a rounded number"
+            },
+            "v_required": {
+              "value": true,
+              "err": "Please specify the number of larvae of this species collected"
+            }
+          },
+          {
+            "key": "comment",
+            "type": "edit_text",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "hint": "Add a comment"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+One can also specify the hint in the reference edit text and the label that appears before each repeating group element (an incrementing number starting from 1 will be appended to this label).
+
+Relevance and validation is respected in the repeating group. However, validators that require comparing the value in one field with values in other fields (henceforth called `relative validators`) may not work.
+
+At the moment, the only supported relative validator is the `RelativeMaxNumericValidator`. More relative validators can be added by overriding the `RepeatingGroupFactory#addUniqueIdentifiers(JSONObject element, String uniqueId)` method.
+
+To use the widget, simply enter the number of repeating group elements to be generated (limited at 35 for now but can be overridden) and either click the `Done`/`Enter` keyboard button or click the tick next to the reference edit text.
+
+![image](https://user-images.githubusercontent.com/33488286/56918097-cb189c00-6ac5-11e9-8ae4-a5ae52940fd9.png)
+
+After the elements are generated, the tick will turn green. At the moment, specifying a value in the reference edit text that is less than the current number of repeating group elements deletes the extra elements.
+
+![image](https://user-images.githubusercontent.com/33488286/56918119-de2b6c00-6ac5-11e9-99a0-fe2606630bca.png)
+ 
+**NOTE**: At the moment the repeating group widget has not been tested with the rules engine
+
+
+
+### RDT Capture widget
+
+This widget uses the phone camera to take raw images of an RDT (Rapid Diagnostic Test) cassette. 
+
+The example below shows how to include the widget in a json form:
+
+```
+{
+  "count": "2",
+  "encounter_type": "Spray",
+  "entity_id": "",
+  "metadata": {
+    "start": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "start",
+      "openmrs_entity_id": "163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "end": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "end",
+      "openmrs_entity_id": "163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "today": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "encounter",
+      "openmrs_entity_id": "encounter_date"
+    },
+    "deviceid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "deviceid",
+      "openmrs_entity_id": "163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "subscriberid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "subscriberid",
+      "openmrs_entity_id": "163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "simserial": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "simserial",
+      "openmrs_entity_id": "163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "phonenumber": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "phonenumber",
+      "openmrs_entity_id": "163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "encounter_location": ""
+  },
+  "step1": {
+    "title": "Capture RDT image",
+    "display_back_button": "true",
+    "next": "step2",
+    "fields": [
+      {
+        "key": "rdt_capture",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "rdt_capture"
+      }
+    ]
+  },
+  "step2": {
+    "title": "Select RDT reader result",
+    "display_back_button": "true",
+    "fields": [
+      {
+        "key": "rdt_result",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Select RDT reader result",
+        "options": [
+          {
+            "key": "positive",
+            "text": "positive"
+          },
+          {
+            "key": "negative",
+            "text": "negative"
+          },
+          {
+            "key": "invalid",
+            "text": "invalid"
+          }
+        ],
+        "value": "negative",
+        "v_required": {
+          "value": "true",
+          "err": "Please select the RDT reader result"
+        }
+      }
+    ]
+  }
+}
+```

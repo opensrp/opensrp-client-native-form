@@ -13,7 +13,6 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
-import com.rengwuxian.materialedittext.validation.RegexpValidator;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
@@ -30,9 +29,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class TimePickerFactory implements FormWidgetFactory {
     public static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm");
@@ -93,6 +94,7 @@ public class TimePickerFactory implements FormWidgetFactory {
             duration.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
             duration.setTag(R.id.openmrs_entity, openMrsEntity);
             duration.setTag(R.id.openmrs_entity_id, openMrsEntityId);
+            editText.setTag(com.vijay.jsonwizard.R.id.locale_independent_value,jsonObject.optString(TimePickerFactory.KEY.VALUE));
             if (jsonObject.has(TimePickerFactory.KEY.DURATION)) {
                 duration.setTag(R.id.label, jsonObject.getJSONObject(TimePickerFactory.KEY.DURATION).getString(JsonFormConstants.LABEL));
             }
@@ -183,14 +185,16 @@ public class TimePickerFactory implements FormWidgetFactory {
         mTimePicker.setOnTimeSetListener(new android.app.TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                      updateTimeText(editText,hourOfDay,minute);
+                editText.setTag(R.id.locale_independent_value,  String.format(Locale.ENGLISH,"%02d", hourOfDay)+":"+ String.format(Locale.ENGLISH,"%02d", minute));
+                updateTimeText(editText,hourOfDay,minute);
             }
         });
         return mTimePicker;
     }
 
     private void updateEditText(MaterialEditText editText, JSONObject jsonObject, String stepName, Context context
-                                ) throws JSONException {
+                                ) throws JSONException, ParseException {
+        SimpleDateFormat TIME_FORMAT_LOCALE = new SimpleDateFormat("hh:mm", context.getResources().getConfiguration().locale);
 
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
@@ -215,9 +219,9 @@ public class TimePickerFactory implements FormWidgetFactory {
         }
 
         if (!TextUtils.isEmpty(jsonObject.optString(TimePickerFactory.KEY.VALUE))) {
-            updateTimeText(editText, jsonObject.optString(TimePickerFactory.KEY.VALUE));
+            updateTimeText(editText, TIME_FORMAT_LOCALE.format(TIME_FORMAT.parse(jsonObject.optString(TimePickerFactory.KEY.VALUE))));
         } else if (jsonObject.has(TimePickerFactory.KEY.DEFAULT)) {
-            updateTimeText(editText, jsonObject.optString(TimePickerFactory.KEY.VALUE));
+            updateTimeText(editText, TIME_FORMAT_LOCALE.format(TIME_FORMAT.parse(jsonObject.optString(TimePickerFactory.KEY.VALUE))));
         }
 
         if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
@@ -225,10 +229,6 @@ public class TimePickerFactory implements FormWidgetFactory {
             editText.setEnabled(!readOnly);
             editText.setFocusable(!readOnly);
         }
-
-        editText.addValidator(new RegexpValidator(
-                context.getResources().getString(R.string.badly_formed_date),
-                TIME_FORMAT_REGEX));
     }
 
     private void updateTimeText(MaterialEditText editText, String durationText) {

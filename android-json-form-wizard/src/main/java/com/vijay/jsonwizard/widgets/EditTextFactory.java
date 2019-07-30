@@ -1,5 +1,16 @@
 package com.vijay.jsonwizard.widgets;
 
+import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_CUMULATIVE_VALIDATION_ERR;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_RELATIVE_MAX_VALIDATION_ERR;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.RELATED_FIELDS;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.RELATIVE_MAX_VALIDATION_EXCEPTION;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP1;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.V_CUMULATIVE_TOTAL;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.V_RELATIVE_MAX;
+import static com.vijay.jsonwizard.utils.FormUtils.fields;
+import static com.vijay.jsonwizard.utils.FormUtils.getFieldJSONObject;
+
 import android.content.Context;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -8,7 +19,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rengwuxian.materialedittext.validation.RegexpValidator;
 import com.rey.material.util.ViewUtil;
@@ -29,24 +39,11 @@ import com.vijay.jsonwizard.validators.edittext.MinNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.RelativeMaxNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
-
+import java.util.ArrayList;
+import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_CUMULATIVE_VALIDATION_ERR;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_RELATIVE_MAX_VALIDATION_ERR;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.RELATED_FIELDS;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.RELATIVE_MAX_VALIDATION_EXCEPTION;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP1;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.V_CUMULATIVE_TOTAL;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.V_RELATIVE_MAX;
-import static com.vijay.jsonwizard.utils.FormUtils.fields;
-import static com.vijay.jsonwizard.utils.FormUtils.getFieldJSONObject;
 
 public class EditTextFactory implements FormWidgetFactory {
     public static final int MIN_LENGTH = 0;
@@ -76,8 +73,8 @@ public class EditTextFactory implements FormWidgetFactory {
         return attachJson(stepName, context, formFragment, jsonObject, listener, false);
     }
 
-    private List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject,
-                                  CommonListener listener, boolean popup) throws Exception {
+    protected List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject,
+                                    CommonListener listener, boolean popup) throws Exception {
 
         List<View> views = new ArrayList<>(1);
 
@@ -107,11 +104,8 @@ public class EditTextFactory implements FormWidgetFactory {
     private void attachInfoIcon(String stepName, JSONObject jsonObject, RelativeLayout rootLayout, JSONArray canvasIds,
                                 CommonListener listener) throws JSONException {
         if (jsonObject.has(JsonFormConstants.LABEL_INFO_TEXT)) {
-            String labelInfoText = jsonObject.optString(JsonFormConstants.LABEL_INFO_TEXT, "");
-            String labelInfoTitle = jsonObject.optString(JsonFormConstants.LABEL_INFO_TITLE, "");
-
             ImageView infoIcon = rootLayout.findViewById(R.id.info_icon);
-            FormUtils.showInfoIcon(stepName, jsonObject, listener, labelInfoText, labelInfoTitle, infoIcon, canvasIds);
+            FormUtils.showInfoIcon(stepName, jsonObject, listener, FormUtils.getInfoDialogAttributes(jsonObject), infoIcon, canvasIds);
         }
 
     }
@@ -141,6 +135,7 @@ public class EditTextFactory implements FormWidgetFactory {
             editText.setFloatingLabelText(jsonObject.getString(JsonFormConstants.HINT));
         }
         FormUtils.setEditMode(jsonObject, editText, editButton);
+        FormUtils.toggleEditTextVisibility(jsonObject, editText);
 
         addRequiredValidator(jsonObject, editText);
         addLengthValidator(jsonObject, editText);
@@ -161,6 +156,7 @@ public class EditTextFactory implements FormWidgetFactory {
             }
         }
 
+        editText.setSingleLine(false);
         editText.addTextChangedListener(new GenericTextWatcher(stepName, formFragment, editText));
         initSpecialViewsRefs(context, jsonObject, editText);
     }
@@ -190,11 +186,11 @@ public class EditTextFactory implements FormWidgetFactory {
         return R.layout.native_form_item_edit_text;
     }
 
-     private void addRequiredValidator(JSONObject jsonObject, MaterialEditText editText) throws JSONException {
+    private void addRequiredValidator(JSONObject jsonObject, MaterialEditText editText) throws JSONException {
         JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
         if (requiredObject != null) {
             boolean requiredValue = requiredObject.getBoolean(JsonFormConstants.VALUE);
-            if ( Boolean.TRUE.equals(requiredValue)) {
+            if (Boolean.TRUE.equals(requiredValue)) {
                 editText.addValidator(new RequiredValidator(requiredObject.getString(JsonFormConstants.ERR)));
                 FormUtils.setRequiredOnHint(editText);
             }
@@ -356,7 +352,9 @@ public class EditTextFactory implements FormWidgetFactory {
                 JSONArray relatedFields = validationJSONObject.optJSONArray(RELATED_FIELDS);
 
                 if (relatedFields != null) {
-                    String errorMessage = String.format(DEFAULT_CUMULATIVE_VALIDATION_ERR, editTextJSONObject.get(KEY), relatedFields.join(", "), totalValueKey);
+                    String errorMessage = String
+                            .format(DEFAULT_CUMULATIVE_VALIDATION_ERR, editTextJSONObject.get(KEY), relatedFields.join(", "),
+                                    totalValueKey);
                     editText.addValidator(new CumulativeTotalValidator(
                             validationErrorMsg == null ? errorMessage : validationErrorMsg,
                             formFragment,

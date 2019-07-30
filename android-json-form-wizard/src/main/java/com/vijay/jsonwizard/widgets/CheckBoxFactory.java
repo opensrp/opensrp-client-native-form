@@ -1,5 +1,13 @@
 package com.vijay.jsonwizard.widgets;
 
+import static com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT;
+import static com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT;
+import static com.vijay.jsonwizard.utils.FormUtils.createRadioButtonAndCheckBoxLabel;
+import static com.vijay.jsonwizard.utils.FormUtils.getCurrentCheckboxValues;
+import static com.vijay.jsonwizard.utils.FormUtils.getLinearLayoutParams;
+import static com.vijay.jsonwizard.utils.FormUtils.getValueFromSpOrDpOrPx;
+import static com.vijay.jsonwizard.utils.FormUtils.showInfoIcon;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.text.TextUtils;
@@ -8,7 +16,6 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
@@ -19,14 +26,12 @@ import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by vijay on 24-05-2015.
@@ -117,8 +122,8 @@ public class CheckBoxFactory implements FormWidgetFactory {
         canvasIds.put(rootLayout.getId());
         addRequiredValidator(rootLayout, jsonObject);
 
-        Map<String, View> labelViews = FormUtils
-                .createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly, listener);
+        Map<String, View> labelViews = createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly, listener);
+
 
         ArrayList<View> editableCheckBoxes = addCheckBoxOptionsElements(jsonObject, context, readOnly, canvasIds, stepName,
                 rootLayout, listener, popup);
@@ -182,15 +187,18 @@ public class CheckBoxFactory implements FormWidgetFactory {
                                                        String stepName, LinearLayout linearLayout, CommonListener listener,
                                                        boolean popup) throws JSONException {
 
+        JSONArray checkBoxValues = null;
+
+        if (jsonObject.has(JsonFormConstants.VALUE)) {
+            checkBoxValues = jsonObject.getJSONArray(JsonFormConstants.VALUE);
+        }
 
         JSONArray options = jsonObject.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
         ArrayList<CheckBox> checkBoxes = new ArrayList<>();
         ArrayList<View> checkboxLayouts = new ArrayList<>();
         for (int i = 0; i < options.length(); i++) {
             JSONObject item = options.getJSONObject(i);
-            //Get options for alert dialog
-            String labelInfoText = item.optString(JsonFormConstants.LABEL_INFO_TEXT);
-            String labelInfoTitle = item.optString(JsonFormConstants.LABEL_INFO_TITLE);
+
             String openMrsEntityParent = item.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
             String openMrsEntity = item.optString(JsonFormConstants.OPENMRS_ENTITY);
             String openMrsEntityId = item.optString(JsonFormConstants.OPENMRS_ENTITY_ID);
@@ -221,16 +229,24 @@ public class CheckBoxFactory implements FormWidgetFactory {
             if (!TextUtils.isEmpty(item.optString(JsonFormConstants.VALUE))) {
                 checkBox.setChecked(Boolean.valueOf(item.optString(JsonFormConstants.VALUE)));
             }
+
+            //Preselect values if they exist
+            if (checkBoxValues != null && getCurrentCheckboxValues(checkBoxValues)
+                    .contains(item.getString(JsonFormConstants.KEY))) {
+                checkBox.setChecked(true);
+            }
+
             checkBox.setEnabled(!readOnly);
             if (i == options.length() - 1) {
                 checkboxLayout.setLayoutParams(
-                        FormUtils.getLinearLayoutParams(FormUtils.MATCH_PARENT, FormUtils.WRAP_CONTENT, 0, 0, 0, (int)
+                        getLinearLayoutParams(MATCH_PARENT, WRAP_CONTENT, 0, 0, 0, (int)
                                 context
                                         .getResources().getDimension(R.dimen.extra_bottom_margin)));
             }
             //Displaying optional info alert dialog
             ImageView imageView = checkboxLayout.findViewById(R.id.checkbox_info_icon);
-            FormUtils.showInfoIcon(stepName, jsonObject, listener, labelInfoText, labelInfoTitle, imageView, canvasIds);
+
+            showInfoIcon(stepName, jsonObject, listener,  FormUtils.getInfoDialogAttributes(item), imageView, canvasIds);
 
             checkboxLayout.setTag(R.id.canvas_ids, canvasIds.toString());
             checkboxLayouts.add(checkboxLayout);
@@ -261,7 +277,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
 
         checkBox.setText(item.getString(JsonFormConstants.TEXT));
         checkBox.setTextColor(Color.parseColor(optionTextColor));
-        checkBox.setTextSize(FormUtils.getValueFromSpOrDpOrPx(optionTextSize, context));
+        checkBox.setTextSize(getValueFromSpOrDpOrPx(optionTextSize, context));
         checkBox.setEnabled(!readOnly);
     }
 }
