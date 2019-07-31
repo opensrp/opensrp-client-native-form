@@ -6,11 +6,13 @@ import android.text.TextUtils;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.Utils;
 
+import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.joda.time.Months;
 import org.joda.time.Weeks;
 import org.joda.time.Years;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -52,6 +54,17 @@ public class RulesEngineDateUtil {
         }
 
     }
+     public  long getWeeksBetween(String stringDate){
+
+         DateTime dateToday = new DateTime(Utils.getDateFromString(getDateToday()));
+
+        DateTime dateTime1 = new DateTime(Utils.getDateFromString(stringDate));
+
+         int weeks = Weeks.weeksBetween(dateTime1, dateToday).getWeeks();
+         long weeksBetween = weeks;
+         return weeksBetween;
+
+     }
 
     public String getDOBFromAge(Integer age) {
         return (new LocalDate()).withMonthOfYear(1).withDayOfMonth(1).minusYears(age)
