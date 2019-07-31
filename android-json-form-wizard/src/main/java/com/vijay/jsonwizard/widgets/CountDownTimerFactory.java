@@ -32,15 +32,24 @@ import java.util.concurrent.TimeUnit;
 
 public class CountDownTimerFactory implements FormWidgetFactory {
 
+    private static CountDownTimer timer;
+    private static Ringtone alarmTone;
     private View rootLayout;
     private TextView labelView;
     private CircleProgressBar progressBar;
-    private static CountDownTimer timer;
     private int elapsedCount = 0;
     private int progressBarMaxValue = 100;
     private long millis;
     private long intervalMillis;
-    private static Ringtone alarmTone;
+
+    public static void stopAlarm() {
+        if (timer != null) {
+            timer.cancel();
+        }
+        if (alarmTone != null && alarmTone.isPlaying()) {
+            alarmTone.stop();
+        }
+    }
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
@@ -161,25 +170,23 @@ public class CountDownTimerFactory implements FormWidgetFactory {
      * @param countdownInterval The intervals for running the countdown
      */
     private void startCountDown(final long millis, long countdownInterval, final Context context) {
-        if (timer == null) {
-            timer = new CountDownTimer(millis, countdownInterval) {
-                @Override
-                public void onTick(long millisUntilFinished) {
-                    elapsedCount++;
-                    progressBar.setText(getFormattedTimeText(millisUntilFinished));
-                    int progress = (int) (elapsedCount * 100 / (millis / 1000));
-                    progressBar.setProgress(progress);
-                }
+        timer = new CountDownTimer(millis, countdownInterval) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                elapsedCount++;
+                progressBar.setText(getFormattedTimeText(millisUntilFinished));
+                int progress = (int) (elapsedCount * 100 / (millis / 1000));
+                progressBar.setProgress(progress);
+            }
 
-                @Override
-                public void onFinish() {
-                    elapsedCount = 0;
-                    progressBar.setText(getFormattedTimeText(0));
-                    progressBar.setProgress(progressBarMaxValue);
-                    onCountdownFinish(context);
-                }
-            };
-        }
+            @Override
+            public void onFinish() {
+                elapsedCount = 0;
+                progressBar.setText(getFormattedTimeText(0));
+                progressBar.setProgress(progressBarMaxValue);
+                onCountdownFinish(context);
+            }
+        };
         timer.start();
     }
 
@@ -190,16 +197,6 @@ public class CountDownTimerFactory implements FormWidgetFactory {
             alarmTone.play();
         }
     }
-
-    public static void stopAlarm() {
-        if (timer != null) {
-            timer.cancel();
-        }
-        if (alarmTone != null && alarmTone.isPlaying()) {
-            alarmTone.stop();
-        }
-    }
-
 
     private String getFormattedTimeText(long timeValue) {
         return String.format(Locale.getDefault(), "%02d:%02d",
