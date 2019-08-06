@@ -20,6 +20,9 @@ public class Form implements Serializable {
     private boolean wizard = true;
     private boolean hideSaveLabel = false;
 
+    private boolean hideNextButton = false;
+    private boolean hidePreviousButton = false;
+
     public String getName() {
         return name;
     }
@@ -98,5 +101,21 @@ public class Form implements Serializable {
 
     public void setBackIcon(int backIcon) {
         this.backIcon = backIcon;
+    }
+
+    public void setHideNextButton(Boolean b){
+        hideNextButton = b;
+    }
+
+    public void setHidePreviousButton(Boolean b){
+        hidePreviousButton = b;
+    }
+
+    public boolean isHideNextButton(){
+        return hideNextButton;
+    }
+
+    public boolean isHidePreviousButton() {
+        return hidePreviousButton;
     }
 }
