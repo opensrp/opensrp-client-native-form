@@ -29,6 +29,7 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,7 @@ abstract class JsonFormBaseActivity extends AppCompatActivity implements OnField
     protected static final String TAG = JsonFormActivity.class.getSimpleName();
     protected static final String JSON_STATE = "jsonState";
     protected static final String FORM_STATE = "formState";
+    protected final HashSet<String> invisibleRequiredFields = new HashSet<>();
     protected JSONObject mJSONObject;
     protected PropertyManager propertyManager;
     protected Map<String, View> skipLogicViews;
