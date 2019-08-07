@@ -103,9 +103,7 @@ dependencies {
         exclude group: 'com.android.support.test.espresso', module: 'espresso-core'
     }
 
-    implementation ('io.ona.CircleProgressbar:circle-progressbar:0.1.0@aar') {
-        transitive = true
-    }
+    implementation 'io.ona.CircleProgressbar:lib:0.1.0@aar'
 
     // PowerMock
     def powerMockVersion = '1.7.1'
