@@ -57,7 +57,6 @@ public class RulesEngineDateUtil {
     public long getWeeksBetween(String stringDate) {
 
         DateTime dateToday = new DateTime(Utils.getDateFromString(getDateToday()));
-
         DateTime dateTime1 = new DateTime(Utils.getDateFromString(stringDate));
 
         int weeks = Weeks.weeksBetween(dateTime1, dateToday).getWeeks();
