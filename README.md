@@ -29,7 +29,7 @@ Thanks to this [Android Native JSON Form Library](https://github.com/vijayrawats
 > **JSON Form** is written using **JSON (syntax)** which can be found [here](http://json.org/).
 
 
-# Features63
+# Features
 
 1. It enables definition of Android forms in JSON
 2. It enables one to define metadata for OpenMRS forms
