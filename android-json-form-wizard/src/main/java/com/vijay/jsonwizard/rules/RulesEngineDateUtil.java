@@ -53,17 +53,18 @@ public class RulesEngineDateUtil {
         }
 
     }
-     public  long getWeeksBetween(String stringDate){
 
-         DateTime dateToday = new DateTime(Utils.getDateFromString(getDateToday()));
+    public long getWeeksBetween(String stringDate) {
+
+        DateTime dateToday = new DateTime(Utils.getDateFromString(getDateToday()));
 
         DateTime dateTime1 = new DateTime(Utils.getDateFromString(stringDate));
 
-         int weeks = Weeks.weeksBetween(dateTime1, dateToday).getWeeks();
-         long weeksBetween = weeks;
-         return weeksBetween;
+        int weeks = Weeks.weeksBetween(dateTime1, dateToday).getWeeks();
+        long weeksBetween = weeks;
+        return weeksBetween;
 
-     }
+    }
 
     public String getDOBFromAge(Integer age) {
         return (new LocalDate()).withMonthOfYear(1).withDayOfMonth(1).minusYears(age)
@@ -165,6 +166,7 @@ public class RulesEngineDateUtil {
 
     /**
      * Returns a formatted age string from given date till today
+     *
      * @param date
      * @return String date
      */
@@ -174,6 +176,7 @@ public class RulesEngineDateUtil {
 
     /**
      * Returns a formatted age string from startdate to provided end date
+     *
      * @param date
      * @param endDate
      * @return String
