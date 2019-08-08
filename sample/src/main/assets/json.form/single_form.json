@@ -332,7 +332,7 @@
         "openmrs_entity_id": "5916AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
         "openmrs_data_type": "text",
         "type": "edit_text",
-        "hint": "Hb test result - haemoglobinometer (g/dl)",
+        "hint": "Hb test result - haemoglobinometer\ncomplete test (g/dl)",
         "v_required": {
           "value": "true",
           "err": "Please enter cool text"
