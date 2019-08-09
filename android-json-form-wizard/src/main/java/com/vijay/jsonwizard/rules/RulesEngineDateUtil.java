@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.Utils;
 
+import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.joda.time.Months;
@@ -50,6 +51,17 @@ public class RulesEngineDateUtil {
         } else {
             return 0;
         }
+
+    }
+
+    public long getWeeksBetween(String stringDate) {
+
+        DateTime dateToday = new DateTime(Utils.getDateFromString(getDateToday()));
+        DateTime dateTime1 = new DateTime(Utils.getDateFromString(stringDate));
+
+        int weeks = Weeks.weeksBetween(dateTime1, dateToday).getWeeks();
+        long weeksBetween = weeks;
+        return weeksBetween;
 
     }
 
@@ -153,6 +165,7 @@ public class RulesEngineDateUtil {
 
     /**
      * Returns a formatted age string from given date till today
+     *
      * @param date
      * @return String date
      */
@@ -162,6 +175,7 @@ public class RulesEngineDateUtil {
 
     /**
      * Returns a formatted age string from startdate to provided end date
+     *
      * @param date
      * @param endDate
      * @return String
