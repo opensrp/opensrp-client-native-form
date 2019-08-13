@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import static com.vijay.jsonwizard.constants.JsonFormConstants.COUNTDOWN_START_TIMESTAMP_VALUE;
+
 public class CountDownTimerFactory implements FormWidgetFactory {
 
     private static CountDownTimer timer;
@@ -58,6 +60,7 @@ public class CountDownTimerFactory implements FormWidgetFactory {
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
         widgetArgs = new WidgetArgs();
         widgetArgs.withStepName(stepName);
+        widgetArgs.withJsonObject(jsonObject);
         widgetArgs.withContext(context);
         widgetArgs.withPopup(popup);
 
@@ -182,9 +185,10 @@ public class CountDownTimerFactory implements FormWidgetFactory {
         String openMrsEntityParent = (String) rootLayout.getTag(R.id.openmrs_entity_parent);
         String openMrsEntity = (String) rootLayout.getTag(R.id.openmrs_entity);
         String openMrsEntityId = (String) rootLayout.getTag(R.id.openmrs_entity_id);
-        String timeStampString = String.valueOf(System.currentTimeMillis());
         boolean extraPopup = widgetArgs.isPopup();
+        String timeStampString = String.valueOf(System.currentTimeMillis());
         try {
+            widgetArgs.getJsonObject().put(COUNTDOWN_START_TIMESTAMP_VALUE, timeStampString);
             jsonApi.writeValue(stepName, key, timeStampString, openMrsEntityParent, openMrsEntity, openMrsEntityId, extraPopup);
         } catch (JSONException je) {
             je.printStackTrace();
