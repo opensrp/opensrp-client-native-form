@@ -185,6 +185,7 @@ public class JsonFormConstants {
     public static final String BOTTOM_NAVIGATION_ORIENTATION = "bottom_navigation_orientation";
     public static final String BOTTOM_NAVIGATION = "bottom_navigation";
     public static final int RDT_CAPTURE_CODE = 3290;
+    public static final String INVISIBLE_REQUIRED_FIELDS = "invisible_required_fields";
     public static final String LABEL_INFO_HAS_IMAGE = "label_info_has_image";
     public static final String LABEL_INFO_IMAGE_SRC = "label_info_image_src";
 

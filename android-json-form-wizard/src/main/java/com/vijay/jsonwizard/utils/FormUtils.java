@@ -581,7 +581,7 @@ public class FormUtils {
         if (dayString_ != null && dayString_.trim().length() > 0) {
             String dayString = dayString_.trim().toLowerCase();
             if (!"today".equals(dayString)) {
-                Pattern pattern = Pattern.compile("today\\s*([-\\+])\\s*(\\d+)([dmyDMY]{1})");
+                Pattern pattern = Pattern.compile("today\\s*([-\\+])\\s*(\\d+)([dmywDMY]{1})");
                 Matcher matcher = pattern.matcher(dayString);
                 if (matcher.find()) {
                     int timeValue = Integer.parseInt(matcher.group(2));
@@ -594,6 +594,8 @@ public class FormUtils {
                         field = Calendar.YEAR;
                     } else if (matcher.group(3).equalsIgnoreCase("m")) {
                         field = Calendar.MONTH;
+                    }else if (matcher.group(3).equalsIgnoreCase("w")) {
+                        field = Calendar.WEEK_OF_MONTH;
                     }
 
                     calendarDate.add(field, timeValue);
