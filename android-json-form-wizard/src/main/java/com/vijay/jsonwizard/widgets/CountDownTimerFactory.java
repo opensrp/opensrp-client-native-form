@@ -16,6 +16,7 @@ import com.emredavarci.circleprogressbar.CircleProgressBar;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.domain.WidgetArgs;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
@@ -23,6 +24,7 @@ import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -41,6 +43,7 @@ public class CountDownTimerFactory implements FormWidgetFactory {
     private int progressBarMaxValue = 100;
     private long millis;
     private long intervalMillis;
+    private WidgetArgs widgetArgs;
 
     public static void stopAlarm() {
         if (timer != null) {
@@ -53,15 +56,22 @@ public class CountDownTimerFactory implements FormWidgetFactory {
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
-        List<View> views = new ArrayList<>(1);
+        widgetArgs = new WidgetArgs();
+        widgetArgs.withStepName(stepName);
+        widgetArgs.withContext(context);
+        widgetArgs.withPopup(popup);
+
         rootLayout = LayoutInflater.from(context).inflate(getLayout(), null);
         initializeViewConfigs(jsonObject);
         setWidgetTags(jsonObject, stepName);
         formatWidget(jsonObject, context);
+        writeStartTimestamp(); // Write timestamp when the countdown started
         startCountDown(millis, intervalMillis, context);
-        progressBar.setTag(R.id.raw_value, String.valueOf(System.currentTimeMillis())); // We're interested in the timestamp when the countdown started
         initSpecialViewsRefs(context, jsonObject, progressBar);
+
         ((JsonApi) context).addFormDataView(progressBar);
+
+        List<View> views = new ArrayList<>(1);
         views.add(rootLayout);
         return views;
     }
@@ -75,9 +85,11 @@ public class CountDownTimerFactory implements FormWidgetFactory {
         JSONArray canvasIds = new JSONArray();
         rootLayout.setId(ViewUtil.generateViewId());
 
+        setBasicTags(rootLayout, jsonObject);
         setBasicTags(labelView, jsonObject);
         setBasicTags(progressBar, jsonObject);
         canvasIds.put(rootLayout.getId());
+
         progressBar.setTag(R.id.canvas_ids, canvasIds.toString());
         progressBar.setTag(R.id.type, jsonObject.optString(JsonFormConstants.TYPE));
         progressBar.setTag(R.id.address, stepName + ":" + jsonObject.optString(JsonFormConstants.KEY));
@@ -161,6 +173,22 @@ public class CountDownTimerFactory implements FormWidgetFactory {
 
     private int getLayout() {
         return R.layout.native_form_countdown_timer;
+    }
+
+    private void writeStartTimestamp() {
+        JsonApi jsonApi = (JsonApi) widgetArgs.getContext();
+        String stepName = widgetArgs.getStepName();
+        String key = (String) rootLayout.getTag(R.id.key);
+        String openMrsEntityParent = (String) rootLayout.getTag(R.id.openmrs_entity_parent);
+        String openMrsEntity = (String) rootLayout.getTag(R.id.openmrs_entity);
+        String openMrsEntityId = (String) rootLayout.getTag(R.id.openmrs_entity_id);
+        String timeStampString = String.valueOf(System.currentTimeMillis());
+        boolean extraPopup = widgetArgs.isPopup();
+        try {
+            jsonApi.writeValue(stepName, key, timeStampString, openMrsEntityParent, openMrsEntity, openMrsEntityId, extraPopup);
+        } catch (JSONException je) {
+            je.printStackTrace();
+        }
     }
 
     /**
