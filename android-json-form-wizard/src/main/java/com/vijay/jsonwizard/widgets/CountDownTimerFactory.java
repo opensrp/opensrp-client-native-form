@@ -88,26 +88,15 @@ public class CountDownTimerFactory implements FormWidgetFactory {
         JSONArray canvasIds = new JSONArray();
         rootLayout.setId(ViewUtil.generateViewId());
 
-        setBasicTags(rootLayout, jsonObject);
-        setBasicTags(labelView, jsonObject);
-        setBasicTags(progressBar, jsonObject);
+        FormUtils.setViewOpenMRSEntityAttributes(jsonObject, rootLayout);
+        FormUtils.setViewOpenMRSEntityAttributes(jsonObject, labelView);
+        FormUtils.setViewOpenMRSEntityAttributes(jsonObject, progressBar);
         canvasIds.put(rootLayout.getId());
 
         progressBar.setTag(R.id.canvas_ids, canvasIds.toString());
         progressBar.setTag(R.id.type, jsonObject.optString(JsonFormConstants.TYPE));
         progressBar.setTag(R.id.address, stepName + ":" + jsonObject.optString(JsonFormConstants.KEY));
         progressBar.setTag(R.id.extraPopup, false);
-    }
-
-    private void setBasicTags(View view, JSONObject jsonObject) {
-        String key = jsonObject.optString(JsonFormConstants.KEY, "");
-        String openMrsEntityParent = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT, "");
-        String openMrsEntity = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY, "");
-        String openMrsEntityId = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_ID, "");
-        view.setTag(R.id.key, key);
-        view.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
-        view.setTag(R.id.openmrs_entity, openMrsEntity);
-        view.setTag(R.id.openmrs_entity_id, openMrsEntityId);
     }
 
     private void initializeViewConfigs(JSONObject jsonObject) {

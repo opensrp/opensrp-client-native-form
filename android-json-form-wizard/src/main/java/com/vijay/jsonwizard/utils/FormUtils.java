@@ -594,7 +594,7 @@ public class FormUtils {
                         field = Calendar.YEAR;
                     } else if (matcher.group(3).equalsIgnoreCase("m")) {
                         field = Calendar.MONTH;
-                    }else if (matcher.group(3).equalsIgnoreCase("w")) {
+                    } else if (matcher.group(3).equalsIgnoreCase("w")) {
                         field = Calendar.WEEK_OF_MONTH;
                     }
 
@@ -826,6 +826,24 @@ public class FormUtils {
             result.add(optionsArray.getString(i));
         }
         return result;
+    }
+
+    /**
+     * Set view OpenMRS Entity attributes
+     *
+     * @param jsonObject JSON Object containing OpenMRS entity attributes
+     * @param view       View to be set with OpenMRS attributes
+     */
+    public static void setViewOpenMRSEntityAttributes(JSONObject jsonObject, View view) {
+        String key = jsonObject.optString(JsonFormConstants.KEY, "");
+        String openMrsEntityParent = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT, "");
+        String openMrsEntity = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY, "");
+        String openMrsEntityId = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_ID, "");
+
+        view.setTag(R.id.key, key);
+        view.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
+        view.setTag(R.id.openmrs_entity, openMrsEntity);
+        view.setTag(R.id.openmrs_entity_id, openMrsEntityId);
     }
 
     public void showGenericDialog(View view) {
