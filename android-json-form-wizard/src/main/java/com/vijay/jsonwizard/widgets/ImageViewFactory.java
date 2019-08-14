@@ -30,11 +30,12 @@ public class ImageViewFactory implements FormWidgetFactory {
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
-        List<View> views = new ArrayList<>(1);
         rootLayout = LayoutInflater.from(context).inflate(getLayout(), null);
         descriptionTextView = rootLayout.findViewById(R.id.imageViewLabel);
         setWidgetTags(jsonObject, stepName);
         setViewConfigs(jsonObject, context);
+
+        List<View> views = new ArrayList<>(1);
         views.add(rootLayout);
         return views;
     }
@@ -60,7 +61,7 @@ public class ImageViewFactory implements FormWidgetFactory {
         rootLayout.setTag(R.id.address, stepName + ":" + jsonObject.optString(JsonFormConstants.KEY));
         rootLayout.setTag(R.id.extraPopup, false);
     }
-
+    
     private void setBasicTags(JSONObject jsonObject, View view) {
         String key = jsonObject.optString(JsonFormConstants.KEY, "");
         String openMrsEntityParent = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT, "");

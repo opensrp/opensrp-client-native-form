@@ -11,10 +11,12 @@
         android:id="@+id/imageViewLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="5dp"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
         android:paddingBottom="20dp"
-        android:text="Sample text"
+        android:text="Sample text Add 60 ㎕ assay buffer solution (3 drops for vial type or 2 drops for bottle type) into the A well. Start a timer. Long text aye?"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
