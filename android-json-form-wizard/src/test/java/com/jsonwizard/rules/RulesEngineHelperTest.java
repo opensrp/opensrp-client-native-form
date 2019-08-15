@@ -20,12 +20,5 @@ public class RulesEngineHelperTest extends BaseTest {
         assertEquals("123", helper.ifNull("123", ""));
     }
 
-    @Test
-    public  void testGetWeeksBetween(){
-        RulesEngineHelper helper = new RulesEngineHelper();
-         String date  =  "15-08-2018";
-
-        assertEquals(50,helper.getWeeksBetween(date));
-    }
 
 }

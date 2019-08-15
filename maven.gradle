@@ -2,6 +2,7 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 def sonatypeRepositoryURL
+
 def mavenLocalFlag = hasProperty('mavenLocal') ? mavenLocal.toBoolean() : true;
 
 if (isReleaseBuild()) {
