@@ -118,9 +118,6 @@ dependencies {
 }
 
 dependencies {
-
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-
     androidTestImplementation 'com.jayway.android.robotium:robotium-solo:4.3'
     androidTestImplementation 'com.google.dexmaker:dexmaker-mockito:1.2'
     androidTestImplementation 'junit:junit:4.12'
