@@ -58,11 +58,11 @@ public class CountDownTimerFactory implements FormWidgetFactory {
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
-        widgetArgs = new WidgetArgs();
-        widgetArgs.withStepName(stepName);
-        widgetArgs.withJsonObject(jsonObject);
-        widgetArgs.withContext(context);
-        widgetArgs.withPopup(popup);
+        widgetArgs = new WidgetArgs()
+                .withStepName(stepName)
+                .withJsonObject(jsonObject)
+                .withContext(context)
+                .withPopup(popup);
 
         rootLayout = LayoutInflater.from(context).inflate(getLayout(), null);
         initializeViewConfigs(jsonObject);
