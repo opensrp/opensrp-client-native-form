@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
@@ -22,11 +23,13 @@ import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
-import java.util.ArrayList;
-import java.util.List;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by nipun on 30/05/15.
@@ -45,6 +48,14 @@ public class SpinnerFactory implements FormWidgetFactory {
             return new ValidationStatus(false, error, formFragmentView, spinner);
         }
         return new ValidationStatus(true, null, formFragmentView, spinner);
+    }
+
+    private static void setRequiredOnHint(MaterialSpinner spinner) {
+        if (!TextUtils.isEmpty(spinner.getHint())) {
+            SpannableString hint = new SpannableString(spinner.getHint() + " *");
+            hint.setSpan(new ForegroundColorSpan(Color.RED), hint.length() - 1, hint.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spinner.setHint(hint);
+        }
     }
 
     @Override
@@ -153,14 +164,6 @@ public class SpinnerFactory implements FormWidgetFactory {
         FormUtils.showInfoIcon(stepName, jsonObject, listener, FormUtils.getInfoDialogAttributes(jsonObject), spinnerInfoIconImageView,
                 canvasIds);
         spinner.setTag(R.id.canvas_ids, canvasIds.toString());
-    }
-
-    private static void setRequiredOnHint(MaterialSpinner spinner) {
-        if (!TextUtils.isEmpty(spinner.getHint())) {
-            SpannableString hint = new SpannableString(spinner.getHint() + " *");
-            hint.setSpan(new ForegroundColorSpan(Color.RED), hint.length() - 1, hint.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            spinner.setHint(hint);
-        }
     }
 
     private void setViewTags(JSONObject jsonObject, JSONArray canvasIds, String stepName, boolean popup,

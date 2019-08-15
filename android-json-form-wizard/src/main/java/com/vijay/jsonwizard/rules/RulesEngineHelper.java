@@ -21,10 +21,6 @@ public class RulesEngineHelper {
 
     }
 
-    public  long getWeeksBetween(String stringDate){
-        return  rulesEngineDateUtil.getWeeksBetween(stringDate);
-    }
-
     public String addDuration(String dateString, String durationString) {
         return rulesEngineDateUtil.addDuration(dateString, durationString);
     }

@@ -538,6 +538,28 @@
     ]
   },
   "step4": {
+    "title": "Countdown until results ready",
+    "next": "step5",
+    "fields": [
+      {
+        "key": "countdown_timer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "timer",
+        "type": "countdown_timer",
+        "label": "Read results in 10 seconds.",
+        "label_text_size": "8sp",
+        "label_text_color": "#535F67",
+        "countdown_time_unit": "seconds",
+        "countdown_time_value": "10",
+        "countdown_interval": "1",
+        "progressbar_background_color": "#e7b330",
+        "progressbar_color": "#e76130",
+        "progressbar_text_color": "#f9916b"
+      }
+    ]
+  },
+  "step5": {
     "title": "How to instructions",
     "fields": [
       {
