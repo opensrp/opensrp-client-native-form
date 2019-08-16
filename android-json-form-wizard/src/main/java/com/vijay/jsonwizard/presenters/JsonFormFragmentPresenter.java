@@ -31,7 +31,6 @@ import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 
-import com.emredavarci.circleprogressbar.CircleProgressBar;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rey.material.widget.Button;
 import com.vijay.jsonwizard.R;
@@ -386,11 +385,6 @@ public class JsonFormFragmentPresenter extends
                 Button button = (Button) childAt;
                 String rawValue = (String) button.getTag(R.id.raw_value);
                 getView().writeValue(mStepName, key, rawValue, openMrsEntityParent, openMrsEntity,
-                        openMrsEntityId, popup);
-            } else if (childAt instanceof CircleProgressBar) {
-                CircleProgressBar circleProgressBar = (CircleProgressBar) childAt;
-                String timeStamp = (String) circleProgressBar.getTag(R.id.raw_value);
-                getView().writeValue(mStepName, key, timeStamp, openMrsEntityParent, openMrsEntity,
                         openMrsEntityId, popup);
             }
 
