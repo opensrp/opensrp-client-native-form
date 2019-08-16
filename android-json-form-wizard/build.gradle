@@ -103,7 +103,13 @@ dependencies {
         exclude group: 'com.android.support.test.espresso', module: 'espresso-core'
     }
 
-    implementation 'io.ona.CircleProgressbar:lib:0.1.0@aar'
+    implementation('io.ona.CircleProgressbar:lib:0.1.0@aar') {
+        exclude group: 'com.android.support.constraint', module: 'constraint-layout'
+        exclude group: 'com.android.support', module: 'design'
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+        exclude group: 'com.android.support.test', module: 'runner'
+        exclude group: 'com.android.support.test.espresso', module: 'espresso-core'
+    }
 
     // PowerMock
     def powerMockVersion = '1.7.1'
