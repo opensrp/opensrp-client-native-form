@@ -11,7 +11,6 @@ import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
 
 import com.rey.material.util.ViewUtil;
 import com.rey.material.widget.Button;
@@ -88,8 +87,7 @@ public class GpsFactory implements FormWidgetFactory {
                                   boolean popup) throws JSONException {
 
         List<View> views = new ArrayList<>();
-
-        LinearLayout rootLayout = (LinearLayout) LayoutInflater.from(context)
+        View rootLayout = LayoutInflater.from(context)
                 .inflate(R.layout.item_gps, null);
         final int canvasId = ViewUtil.generateViewId();
         rootLayout.setId(canvasId);
@@ -189,10 +187,9 @@ public class GpsFactory implements FormWidgetFactory {
 
     protected void addViewTags(Button recordButton, WidgetArgs widgetArgs, WidgetMetadata metadata, View rootLayout) throws JSONException {
 
-        final Context context = widgetArgs.getContext();
         final JSONObject jsonObject = widgetArgs.getJsonObject();
-
         JSONArray canvasIdsArray = new JSONArray();
+
         canvasIdsArray.put(rootLayout.getId());
         recordButton.setTag(R.id.canvas_ids, canvasIdsArray.toString());
         recordButton.setTag(R.id.address, widgetArgs.getStepName() + ":" + jsonObject.getString(JsonFormConstants.KEY));
