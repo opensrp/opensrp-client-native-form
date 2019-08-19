@@ -128,23 +128,12 @@ public class GpsFactory implements FormWidgetFactory {
         final Context context = widgetArgs.getContext();
         final JSONObject jsonObject = widgetArgs.getJsonObject();
 
-        recordButton.setBackgroundColor(context.getResources().getColor(R.color.primary));
-        recordButton.setMinHeight(0);
-        recordButton.setMinimumHeight(0);
-        recordButton.setId(ViewUtil.generateViewId());
+        addViewTags(recordButton, widgetArgs, metadata, rootLayout);
+        cutomizeViews(recordButton, context);
+
         if (jsonObject.has(JsonFormConstants.HINT)) {
             recordButton.setText(jsonObject.getString(JsonFormConstants.HINT));
         }
-        JSONArray canvasIdsArray = new JSONArray();
-        canvasIdsArray.put(rootLayout.getId());
-        recordButton.setTag(R.id.canvas_ids, canvasIdsArray.toString());
-        recordButton.setTag(R.id.address, widgetArgs.getStepName() + ":" + jsonObject.getString(JsonFormConstants.KEY));
-        recordButton.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
-        recordButton.setTag(R.id.openmrs_entity_parent, metadata.getOpenMrsEntityParent());
-        recordButton.setTag(R.id.openmrs_entity, metadata.getOpenMrsEntity());
-        recordButton.setTag(R.id.openmrs_entity_id, metadata.getOpenMrsEntityId());
-        recordButton.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
-        recordButton.setTag(R.id.extraPopup, widgetArgs.isPopup());
 
         String relevance = metadata.getRelevance();
         if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
@@ -171,7 +160,7 @@ public class GpsFactory implements FormWidgetFactory {
         TextView longitudeTV = rootLayout.findViewById(R.id.longitude);
         TextView altitudeTV = rootLayout.findViewById(R.id.altitude);
         TextView accuracyTV = rootLayout.findViewById(R.id.accuracy);
-        //setCoordinates(context, latitudeTV, longitudeTV, altitudeTV, accuracyTV, "", "", "", "");
+
         attachLayout(context, jsonObject, recordButton, latitudeTV, longitudeTV, altitudeTV, accuracyTV);
 
         gpsDialog = new GpsDialog(context, recordButton, latitudeTV, longitudeTV, altitudeTV, accuracyTV);
@@ -189,6 +178,30 @@ public class GpsFactory implements FormWidgetFactory {
                 return false;
             }
         });
+    }
+
+    protected void cutomizeViews(Button recordButton, Context context) {
+        recordButton.setBackgroundColor(context.getResources().getColor(R.color.primary));
+        recordButton.setMinHeight(0);
+        recordButton.setMinimumHeight(0);
+        recordButton.setId(ViewUtil.generateViewId());
+    }
+
+    protected void addViewTags(Button recordButton, WidgetArgs widgetArgs, WidgetMetadata metadata, View rootLayout) throws JSONException {
+
+        final Context context = widgetArgs.getContext();
+        final JSONObject jsonObject = widgetArgs.getJsonObject();
+
+        JSONArray canvasIdsArray = new JSONArray();
+        canvasIdsArray.put(rootLayout.getId());
+        recordButton.setTag(R.id.canvas_ids, canvasIdsArray.toString());
+        recordButton.setTag(R.id.address, widgetArgs.getStepName() + ":" + jsonObject.getString(JsonFormConstants.KEY));
+        recordButton.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+        recordButton.setTag(R.id.openmrs_entity_parent, metadata.getOpenMrsEntityParent());
+        recordButton.setTag(R.id.openmrs_entity, metadata.getOpenMrsEntity());
+        recordButton.setTag(R.id.openmrs_entity_id, metadata.getOpenMrsEntityId());
+        recordButton.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
+        recordButton.setTag(R.id.extraPopup, widgetArgs.isPopup());
     }
 
     public void attachLayout(Context context, @NonNull JSONObject jsonObject, @NonNull View dataView, @NonNull TextView latitudeTv, @NonNull TextView longitudeTv, @NonNull TextView altitudeTv, @NonNull TextView accuracyTv) {
