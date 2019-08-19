@@ -44,7 +44,7 @@ import java.util.List;
 
 public class GpsFactory implements FormWidgetFactory {
 
-    private GpsDialog gpsDialog;
+    protected GpsDialog gpsDialog;
 
     public static ValidationStatus validate(JsonFormFragmentView formFragmentView,
                                             Button recordButton) {
