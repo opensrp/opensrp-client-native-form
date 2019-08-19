@@ -127,7 +127,6 @@ public class GpsFactory implements FormWidgetFactory {
         final JSONObject jsonObject = widgetArgs.getJsonObject();
 
         addViewTags(recordButton, widgetArgs, metadata, rootLayout);
-        customizeViews(recordButton, context);
 
         if (jsonObject.has(JsonFormConstants.HINT)) {
             recordButton.setText(jsonObject.getString(JsonFormConstants.HINT));
@@ -162,6 +161,8 @@ public class GpsFactory implements FormWidgetFactory {
         attachLayout(context, jsonObject, recordButton, latitudeTV, longitudeTV, altitudeTV, accuracyTV);
 
         gpsDialog = new GpsDialog(context, recordButton, latitudeTV, longitudeTV, altitudeTV, accuracyTV);
+
+        customizeViews(recordButton, context);
 
         recordButton.setOnClickListener(new View.OnClickListener() {
             @Override
