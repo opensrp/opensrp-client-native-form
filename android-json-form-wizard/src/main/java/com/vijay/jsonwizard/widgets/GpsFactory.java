@@ -129,7 +129,7 @@ public class GpsFactory implements FormWidgetFactory {
         final JSONObject jsonObject = widgetArgs.getJsonObject();
 
         addViewTags(recordButton, widgetArgs, metadata, rootLayout);
-        cutomizeViews(recordButton, context);
+        customizeViews(recordButton, context);
 
         if (jsonObject.has(JsonFormConstants.HINT)) {
             recordButton.setText(jsonObject.getString(JsonFormConstants.HINT));
@@ -180,7 +180,7 @@ public class GpsFactory implements FormWidgetFactory {
         });
     }
 
-    protected void cutomizeViews(Button recordButton, Context context) {
+    protected void customizeViews(Button recordButton, Context context) {
         recordButton.setBackgroundColor(context.getResources().getColor(R.color.primary));
         recordButton.setMinHeight(0);
         recordButton.setMinimumHeight(0);
