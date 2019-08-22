@@ -210,6 +210,7 @@ public class DatePickerFactory implements FormWidgetFactory {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
+                    datePickerDialog.setArguments(new Bundle());
                     showDatePickerDialog(context, datePickerDialog, editText);
                 }
             }
