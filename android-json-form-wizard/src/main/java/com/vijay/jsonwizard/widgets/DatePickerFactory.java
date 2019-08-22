@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -74,8 +75,18 @@ public class DatePickerFactory implements FormWidgetFactory {
         ft.addToBackStack(null);
 
         datePickerDialog.show(ft, TAG);
-        Calendar date = FormUtils.getDate(editText.getText().toString());
-        datePickerDialog.setDate(date.getTime());
+        String text = editText.getText().toString();
+        Calendar date = FormUtils.getDate(text);
+        if(text.isEmpty()){
+            Object defaultValue = datePickerDialog.getArguments().get(JsonFormConstants.DEFAULT);
+            if(defaultValue != null)
+                datePickerDialog.setDate(FormUtils.getDate(defaultValue.toString()).getTime());
+            else
+                datePickerDialog.setDate(date.getTime());
+        }
+        else{
+            datePickerDialog.setDate(date.getTime());
+        }
     }
 
     @Override
@@ -146,7 +157,6 @@ public class DatePickerFactory implements FormWidgetFactory {
             editText.setTag(R.id.json_object, jsonObject);
 
             final DatePickerDialog datePickerDialog = createDateDialog(context, duration, editText, jsonObject);
-
             if (jsonObject.has(JsonFormConstants.EXPANDED) && jsonObject.getBoolean(JsonFormConstants.EXPANDED)
                     && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                 datePickerDialog.setCalendarViewShown(true);
@@ -158,6 +168,9 @@ public class DatePickerFactory implements FormWidgetFactory {
                     editText, datePickerDialog);
             editText.addTextChangedListener(genericTextWatcher);
             addRefreshLogicView(context, editText, relevance, constraints, calculations);
+            Bundle datePickerArgs = new Bundle();
+            datePickerArgs.putString(JsonFormConstants.DEFAULT, jsonObject.optString(JsonFormConstants.DEFAULT));
+            datePickerDialog.setArguments(datePickerArgs);
             editText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -251,9 +264,6 @@ public class DatePickerFactory implements FormWidgetFactory {
 
         if (!TextUtils.isEmpty(jsonObject.optString(KEY.VALUE))) {
             updateDateText(editText, duration, DATE_FORMAT_LOCALE.format(FormUtils.getDate(jsonObject.optString(KEY.VALUE)).getTime()));
-        } else if (jsonObject.has(KEY.DEFAULT)) {
-            updateDateText(editText, duration,
-                    DATE_FORMAT_LOCALE.format(FormUtils.getDate(jsonObject.getString(KEY.DEFAULT)).getTime()));
         }
 
         if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
