@@ -65,6 +65,7 @@ import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.PermissionUtils;
 import com.vijay.jsonwizard.utils.PropertyManager;
 import com.vijay.jsonwizard.views.CustomTextView;
+import com.vijay.jsonwizard.widgets.CountDownTimerFactory;
 import com.vijay.jsonwizard.widgets.NumberSelectorFactory;
 
 import org.jeasy.rules.api.Facts;
@@ -765,6 +766,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         JsonFormActivity.this.finish();
+                        CountDownTimerFactory.stopAlarm();
                     }
                 }).setPositiveButton(R.string.no, new DialogInterface.OnClickListener() {
                     @Override

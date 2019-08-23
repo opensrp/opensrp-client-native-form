@@ -30,11 +30,12 @@ public class ImageViewFactory implements FormWidgetFactory {
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
-        List<View> views = new ArrayList<>(1);
         rootLayout = LayoutInflater.from(context).inflate(getLayout(), null);
         descriptionTextView = rootLayout.findViewById(R.id.imageViewLabel);
         setWidgetTags(jsonObject, stepName);
         setViewConfigs(jsonObject, context);
+
+        List<View> views = new ArrayList<>(1);
         views.add(rootLayout);
         return views;
     }
@@ -49,8 +50,8 @@ public class ImageViewFactory implements FormWidgetFactory {
     }
 
     private void setWidgetTags(JSONObject jsonObject, String stepName) {
-        setBasicTags(jsonObject, rootLayout);
-        setBasicTags(jsonObject, descriptionTextView);
+        FormUtils.setViewOpenMRSEntityAttributes(jsonObject, rootLayout);
+        FormUtils.setViewOpenMRSEntityAttributes(jsonObject, descriptionTextView);
 
         JSONArray canvasIds = new JSONArray();
         rootLayout.setId(ViewUtil.generateViewId());
@@ -60,18 +61,8 @@ public class ImageViewFactory implements FormWidgetFactory {
         rootLayout.setTag(R.id.address, stepName + ":" + jsonObject.optString(JsonFormConstants.KEY));
         rootLayout.setTag(R.id.extraPopup, false);
     }
+    
 
-    private void setBasicTags(JSONObject jsonObject, View view) {
-        String key = jsonObject.optString(JsonFormConstants.KEY, "");
-        String openMrsEntityParent = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT, "");
-        String openMrsEntity = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY, "");
-        String openMrsEntityId = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_ID, "");
-
-        view.setTag(R.id.key, key);
-        view.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
-        view.setTag(R.id.openmrs_entity, openMrsEntity);
-        view.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-    }
 
     private void setViewConfigs(JSONObject jsonObject, Context context) {
         String descriptionText = jsonObject.optString(JsonFormConstants.TEXT, "");

@@ -581,7 +581,7 @@ public class FormUtils {
         if (dayString_ != null && dayString_.trim().length() > 0) {
             String dayString = dayString_.trim().toLowerCase();
             if (!"today".equals(dayString)) {
-                Pattern pattern = Pattern.compile("today\\s*([-\\+])\\s*(\\d+)([dmyDMY]{1})");
+                Pattern pattern = Pattern.compile("today\\s*([-\\+])\\s*(\\d+)([dmywDMY]{1})");
                 Matcher matcher = pattern.matcher(dayString);
                 if (matcher.find()) {
                     int timeValue = Integer.parseInt(matcher.group(2));
@@ -594,6 +594,8 @@ public class FormUtils {
                         field = Calendar.YEAR;
                     } else if (matcher.group(3).equalsIgnoreCase("m")) {
                         field = Calendar.MONTH;
+                    } else if (matcher.group(3).equalsIgnoreCase("w")) {
+                        field = Calendar.WEEK_OF_MONTH;
                     }
 
                     calendarDate.add(field, timeValue);
@@ -824,6 +826,24 @@ public class FormUtils {
             result.add(optionsArray.getString(i));
         }
         return result;
+    }
+
+    /**
+     * Set view OpenMRS Entity attributes
+     *
+     * @param jsonObject JSON Object containing OpenMRS entity attributes
+     * @param view       View to be set with OpenMRS attributes
+     */
+    public static void setViewOpenMRSEntityAttributes(JSONObject jsonObject, View view) {
+        String key = jsonObject.optString(JsonFormConstants.KEY, "");
+        String openMrsEntityParent = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT, "");
+        String openMrsEntity = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY, "");
+        String openMrsEntityId = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_ID, "");
+
+        view.setTag(R.id.key, key);
+        view.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
+        view.setTag(R.id.openmrs_entity, openMrsEntity);
+        view.setTag(R.id.openmrs_entity_id, openMrsEntityId);
     }
 
     public void showGenericDialog(View view) {

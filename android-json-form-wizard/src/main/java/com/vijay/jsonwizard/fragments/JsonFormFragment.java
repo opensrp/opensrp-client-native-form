@@ -64,13 +64,12 @@ import static com.vijay.jsonwizard.constants.JsonFormConstants.SUBMIT_LABEL;
 public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, JsonFormFragmentViewState>
         implements CommonListener, JsonFormFragmentView<JsonFormFragmentViewState> {
     private static final String TAG = "JsonFormFragment";
+    public OnFieldsInvalid onFieldsInvalid;
     protected LinearLayout mMainView;
     protected ScrollView mScrollView;
     private Menu mMenu;
     private JsonApi mJsonApi;
     private Map<String, List<View>> lookUpMap = new HashMap<>();
-    public OnFieldsInvalid onFieldsInvalid;
-
     private Button previousButton;
     private Button nextButton;
     private String stepName;
@@ -150,7 +149,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
             if (step.has(NEXT_LABEL)) {
                 nextButton.setText(step.optString(NEXT_LABEL));
             }
-        }  else if (step.optString(NEXT_TYPE).equalsIgnoreCase(SUBMIT)) {
+        } else if (step.optString(NEXT_TYPE).equalsIgnoreCase(SUBMIT)) {
             nextButton.setTag(R.id.submit, true);
             nextButton.setVisibility(View.VISIBLE);
             if (step.has(SUBMIT_LABEL)) {
@@ -219,6 +218,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             presenter.onBackClick();
+            presenter.checkAndStopCountdownAlarm();
             return true;
         } else if (item.getItemId() == R.id.action_next) {
             return next();

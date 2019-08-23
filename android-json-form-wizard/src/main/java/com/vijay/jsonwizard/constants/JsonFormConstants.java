@@ -167,6 +167,15 @@ public class JsonFormConstants {
     public static final String OPTION_KEY = "option_key";
     public static final String PARENT_KEY = "parent_key";
     public static final String IS_NUMBER_SELECTOR_MENU = "is_number_selector_menu";
+    public static final String COUNTDOWN_TIMER = "countdown_timer";
+    public static final String COUNTDOWN_TIME_UNIT = "countdown_time_unit";
+    public static final String COUNTDOWN_TIME_VALUE = "countdown_time_value";
+    public static final String COUNTDOWN_INTERVAL_SECONDS = "countdown_interval_seconds";
+    public static final String PROGRESSBAR_BACKGROUND_COLOR = "progressbar_background_color";
+    public static final String PROGRESSBAR_COLOR = "progressbar_color";
+    public static final String PROGRESSBAR_TEXT_COLOR = "progressbar_text_color";
+    public static final String DEFAULT_COUNTDOWN_TIME_UNIT = "seconds";
+    public static final String MINUTES_COUNTDOWN_TIME_UNIT = "minutes";
     public static final String PREVIOUS = "previous";
     public static final String PREVIOUS_LABEL = "previous_label";
     public static final String NEXT_LABEL = "next_label";
@@ -180,7 +189,7 @@ public class JsonFormConstants {
     public static final String LABEL_INFO_HAS_IMAGE = "label_info_has_image";
     public static final String LABEL_INFO_IMAGE_SRC = "label_info_image_src";
 
-  public static class JSON_FORM_KEY {
+    public static class JSON_FORM_KEY {
         public static final String EX_RULES = "ex-rules";
         public static final String EX_CHECKBOX = "ex-checkbox";
         public static final String OR = "or";
