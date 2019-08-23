@@ -32,8 +32,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-import static com.vijay.jsonwizard.constants.JsonFormConstants.COUNTDOWN_START_TIMESTAMP_VALUE;
-
 public class CountDownTimerFactory implements FormWidgetFactory {
 
     private static CountDownTimer timer;
@@ -177,7 +175,6 @@ public class CountDownTimerFactory implements FormWidgetFactory {
         boolean extraPopup = widgetArgs.isPopup();
         String timeStampString = String.valueOf(System.currentTimeMillis());
         try {
-            widgetArgs.getJsonObject().put(COUNTDOWN_START_TIMESTAMP_VALUE, timeStampString);
             jsonApi.writeValue(stepName, key, timeStampString, openMrsEntityParent, openMrsEntity, openMrsEntityId, extraPopup);
         } catch (JSONException je) {
             je.printStackTrace();
