@@ -13,6 +13,7 @@ import com.vijay.jsonwizard.activities.JsonFormActivity;
 import com.vijay.jsonwizard.activities.JsonWizardFormActivity;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.Form;
+import com.vijay.jsonwizard.utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,6 +23,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Iterator;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int REQUEST_CODE_GET_JSON = 1234;
@@ -233,7 +235,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             inputStream.close();
 
-            return new JSONObject(stringBuilder.toString());
+            String rawJsonString = stringBuilder.toString();
+
+            return translateJson(rawJsonString);
         } catch (IOException e) {
             Log.e(TAG, e.getMessage(), e);
             ;
@@ -241,6 +245,59 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.e(TAG, e.getMessage(), e);
         }
         return null;
+    }
+
+    private JSONObject translateJson(String rawJsonString) throws JSONException {
+
+        String result = null;
+
+        JSONObject json = new JSONObject(rawJsonString);
+
+        JSONArray array = json.getJSONObject(JsonFormConstants.STEP1).getJSONArray(JsonFormConstants.FIELDS);
+
+        for (int i = 0; i < array.length(); i++) {
+
+            JSONObject innerJson = array.getJSONObject(i);
+
+            JSONObject clone = new JSONObject(innerJson.toString());
+
+            Iterator<String> iter = clone.keys();
+            while (iter.hasNext()) {
+                String key = iter.next();
+                try {
+                    String value = clone.getString(key);
+
+                    if (value.startsWith("@")) {
+                        String strKey = value.substring(1);
+                        strKey = strKey.substring(0, value.length() - 2);
+                        innerJson.put(key, Utils.getProperty(strKey, this));
+
+                    } else if (value.startsWith("{")) {
+                        JSONObject jo = new JSONObject(value);
+                        if (jo.has("err") && jo.getString("err").startsWith("@")) {
+                            String value2 = jo.getString("err");
+                            String strKey = value2.substring(1);
+                            strKey = strKey.substring(0, value2.length() - 2);
+
+                            jo.put("err", Utils.getProperty(strKey, this));
+
+                            innerJson.put(key, jo);
+                        }
+
+                    }
+
+                    Log.d("MLSDEBUG", value);
+
+                } catch (JSONException e) {
+                    // Something went wrong!
+                }
+            }
+
+        }
+
+
+        return json;
+
     }
 
     @Override
@@ -255,7 +312,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     startForm(REQUEST_CODE_GET_JSON, "wizard_form", null);
                     break;
                 case R.id.native_form_basic:
-                    startForm(REQUEST_CODE_GET_JSON, "basic_form", null);
+                    startForm(REQUEST_CODE_GET_JSON, "basic_form_mls", null);
                     break;
                 case R.id.rules_engine_skip_logic:
                     startForm(REQUEST_CODE_GET_JSON, "rules_engine_demo", null);

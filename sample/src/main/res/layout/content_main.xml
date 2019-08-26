@@ -71,7 +71,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Basic Form"
+            android:text="@string/basic_form"
+            android:textAllCaps="true"
             android:textColor="@android:color/white"
             android:theme="@style/AppTheme" />
 

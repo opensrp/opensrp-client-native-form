@@ -2,6 +2,7 @@ package com.vijay.jsonwizard.utils;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
 import android.support.v4.util.TimeUtils;
@@ -12,9 +13,14 @@ import android.widget.Toast;
 
 import com.vijay.jsonwizard.widgets.DatePickerFactory;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 public class Utils {
@@ -167,8 +173,34 @@ public class Utils {
 
     public static int pixelToDp(int dpValue, Context context) {
         float dpRatio = context.getResources().getDisplayMetrics().density;
-        float pixelForDp =  dpValue * dpRatio;
+        float pixelForDp = dpValue * dpRatio;
 
         return (int) pixelForDp;
+    }
+
+    public static String getProperty(String key, Context context) {
+        Properties properties = new Properties();
+        AssetManager assetManager = context.getAssets();
+        String locale = context.getResources().getConfiguration().locale.getLanguage();
+        try {
+            InputStream inputStream = assetManager.open(String.format("strings/string-%s.properties", locale));
+            properties.load(new InputStreamReader(inputStream, Charset.forName("UTF-8")));
+            return properties.getProperty(key);
+
+        } catch (Exception e) {
+            try {
+                if (e instanceof FileNotFoundException) {
+                    InputStream inputStream = assetManager.open(String.format("strings/string.properties", locale));
+                    properties.load(new InputStreamReader(inputStream, Charset.forName("UTF-8")));
+                    return properties.getProperty(key);
+                }
+            } catch (Exception e2) {
+
+                return null;
+            }
+            return null;
+
+        }
+
     }
 }
