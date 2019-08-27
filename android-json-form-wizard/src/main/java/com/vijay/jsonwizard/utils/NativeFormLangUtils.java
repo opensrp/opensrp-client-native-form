@@ -21,12 +21,14 @@ public class NativeFormLangUtils {
         Resources res = ctx.getResources();
         Configuration conf = res.getConfiguration();
         conf.setLocale(locale);
+        Context context;
         try {
-            ctx = ctx.createConfigurationContext(conf);
+            context = ctx.createConfigurationContext(conf);
         } catch (Exception e) {
+            context = ctx;
             Log.d("LangUtils", e.toString());
         }
 
-        return ctx;
+        return context;
     }
 }
