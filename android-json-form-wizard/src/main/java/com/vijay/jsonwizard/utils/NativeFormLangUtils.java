@@ -15,18 +15,18 @@ public class NativeFormLangUtils {
         return allSharedPreferences.fetchLanguagePreference();
     }
 
-    public static Context setAppLocale(Context context, String language) {
+    public static Context setAppLocale(Context ctx, String language) {
         Locale locale = new Locale(language);
 
-        Resources res = context.getResources();
+        Resources res = ctx.getResources();
         Configuration conf = res.getConfiguration();
         conf.setLocale(locale);
         try {
-            context = context.createConfigurationContext(conf);
+            ctx = ctx.createConfigurationContext(conf);
         } catch (Exception e) {
             Log.d("LangUtils", e.toString());
         }
 
-        return context;
+        return ctx;
     }
 }
