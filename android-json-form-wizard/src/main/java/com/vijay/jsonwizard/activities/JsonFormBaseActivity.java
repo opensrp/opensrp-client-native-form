@@ -34,7 +34,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-abstract class JsonFormBaseActivity extends AppCompatActivity implements OnFieldsInvalid {
+abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnFieldsInvalid {
     protected static final String TAG = JsonFormActivity.class.getSimpleName();
     protected static final String JSON_STATE = "jsonState";
     protected static final String FORM_STATE = "formState";
