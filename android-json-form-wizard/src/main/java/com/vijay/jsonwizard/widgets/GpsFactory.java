@@ -225,7 +225,7 @@ public class GpsFactory implements FormWidgetFactory {
         dataView.setTag(R.id.raw_value, constructString(latitude, longitude));
     }
 
-    private void requestPermissionsForLocation(Context context) {
+    public void requestPermissionsForLocation(Context context) {
         if (context instanceof Activity) {
             Activity activity = (Activity) context;
 
