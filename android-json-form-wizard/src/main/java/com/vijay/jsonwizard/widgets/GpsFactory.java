@@ -11,7 +11,6 @@ import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
 
 import com.rey.material.util.ViewUtil;
 import com.rey.material.widget.Button;
@@ -19,6 +18,8 @@ import com.rey.material.widget.TextView;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.GpsDialog;
+import com.vijay.jsonwizard.domain.WidgetArgs;
+import com.vijay.jsonwizard.domain.WidgetMetadata;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
@@ -43,7 +44,7 @@ import java.util.List;
 
 public class GpsFactory implements FormWidgetFactory {
 
-    private GpsDialog gpsDialog;
+    protected GpsDialog gpsDialog;
 
     public static ValidationStatus validate(JsonFormFragmentView formFragmentView,
                                             Button recordButton) {
@@ -82,38 +83,56 @@ public class GpsFactory implements FormWidgetFactory {
         return attachJson(stepName, context, jsonObject, false);
     }
 
-    private List<View> attachJson(String stepName, final Context context,
-                                  JSONObject jsonObject,
+    private List<View> attachJson(String stepName, final Context context, JSONObject jsonObject,
                                   boolean popup) throws JSONException {
+
         List<View> views = new ArrayList<>();
+        View rootLayout = LayoutInflater.from(context)
+                .inflate(R.layout.item_gps, null);
+        final int canvasId = ViewUtil.generateViewId();
+        rootLayout.setId(canvasId);
+
 
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
 
-        LinearLayout rootLayout = (LinearLayout) LayoutInflater.from(context)
-                .inflate(R.layout.item_gps, null);
-        final int canvasId = ViewUtil.generateViewId();
-        rootLayout.setId(canvasId);
+
         final Button recordButton = rootLayout.findViewById(R.id.record_button);
-        recordButton.setBackgroundColor(context.getResources().getColor(R.color.primary));
-        recordButton.setMinHeight(0);
-        recordButton.setMinimumHeight(0);
-        recordButton.setId(ViewUtil.generateViewId());
+
+        final WidgetMetadata metadata = new WidgetMetadata();
+        metadata.withOpenMrsEntityParent(openMrsEntityParent)
+                .withOpenMrsEntity(openMrsEntity)
+                .withOpenMrsEntityId(openMrsEntityId)
+                .withRelevance(relevance);
+
+        final WidgetArgs widgetArgs = new WidgetArgs();
+        widgetArgs.withStepName(stepName)
+                .withContext(context)
+                .withJsonObject(jsonObject)
+                .withPopup(popup);
+
+        setUpViews(recordButton, widgetArgs, rootLayout, metadata);
+
+        ((JsonApi) context).addFormDataView(recordButton);
+        views.add(rootLayout);
+
+        return views;
+    }
+
+    protected void setUpViews(Button recordButton, WidgetArgs widgetArgs, View rootLayout, WidgetMetadata metadata) throws JSONException {
+
+        final Context context = widgetArgs.getContext();
+        final JSONObject jsonObject = widgetArgs.getJsonObject();
+
+        addViewTags(recordButton, widgetArgs, metadata, rootLayout);
+
         if (jsonObject.has(JsonFormConstants.HINT)) {
             recordButton.setText(jsonObject.getString(JsonFormConstants.HINT));
         }
-        JSONArray canvasIdsArray = new JSONArray();
-        canvasIdsArray.put(canvasId);
-        recordButton.setTag(R.id.canvas_ids, canvasIdsArray.toString());
-        recordButton.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
-        recordButton.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
-        recordButton.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
-        recordButton.setTag(R.id.openmrs_entity, openMrsEntity);
-        recordButton.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-        recordButton.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
-        recordButton.setTag(R.id.extraPopup, popup);
+
+        String relevance = metadata.getRelevance();
         if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             recordButton.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(recordButton);
@@ -138,10 +157,12 @@ public class GpsFactory implements FormWidgetFactory {
         TextView longitudeTV = rootLayout.findViewById(R.id.longitude);
         TextView altitudeTV = rootLayout.findViewById(R.id.altitude);
         TextView accuracyTV = rootLayout.findViewById(R.id.accuracy);
-        //setCoordinates(context, latitudeTV, longitudeTV, altitudeTV, accuracyTV, "", "", "", "");
+
         attachLayout(context, jsonObject, recordButton, latitudeTV, longitudeTV, altitudeTV, accuracyTV);
 
         gpsDialog = new GpsDialog(context, recordButton, latitudeTV, longitudeTV, altitudeTV, accuracyTV);
+
+        customizeViews(recordButton, context);
 
         recordButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -156,11 +177,29 @@ public class GpsFactory implements FormWidgetFactory {
                 return false;
             }
         });
+    }
 
-        ((JsonApi) context).addFormDataView(recordButton);
-        views.add(rootLayout);
+    protected void customizeViews(Button recordButton, Context context) {
+        recordButton.setBackgroundColor(context.getResources().getColor(R.color.primary));
+        recordButton.setMinHeight(0);
+        recordButton.setMinimumHeight(0);
+        recordButton.setId(ViewUtil.generateViewId());
+    }
 
-        return views;
+    protected void addViewTags(Button recordButton, WidgetArgs widgetArgs, WidgetMetadata metadata, View rootLayout) throws JSONException {
+
+        final JSONObject jsonObject = widgetArgs.getJsonObject();
+        JSONArray canvasIdsArray = new JSONArray();
+
+        canvasIdsArray.put(rootLayout.getId());
+        recordButton.setTag(R.id.canvas_ids, canvasIdsArray.toString());
+        recordButton.setTag(R.id.address, widgetArgs.getStepName() + ":" + jsonObject.getString(JsonFormConstants.KEY));
+        recordButton.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+        recordButton.setTag(R.id.openmrs_entity_parent, metadata.getOpenMrsEntityParent());
+        recordButton.setTag(R.id.openmrs_entity, metadata.getOpenMrsEntity());
+        recordButton.setTag(R.id.openmrs_entity_id, metadata.getOpenMrsEntityId());
+        recordButton.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
+        recordButton.setTag(R.id.extraPopup, widgetArgs.isPopup());
     }
 
     public void attachLayout(Context context, @NonNull JSONObject jsonObject, @NonNull View dataView, @NonNull TextView latitudeTv, @NonNull TextView longitudeTv, @NonNull TextView altitudeTv, @NonNull TextView accuracyTv) {
@@ -213,7 +252,7 @@ public class GpsFactory implements FormWidgetFactory {
         }
     }
 
-    private void showGpsDialog() {
+    protected void showGpsDialog() {
         gpsDialog.show();
     }
 }
