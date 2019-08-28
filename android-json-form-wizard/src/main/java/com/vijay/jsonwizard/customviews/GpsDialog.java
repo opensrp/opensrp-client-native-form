@@ -84,7 +84,7 @@ public class GpsDialog extends Dialog implements LocationListener, GoogleApiClie
         GpsDialog.this.dismiss();
     }
 
-    private void initGoogleApiClient() {
+    protected void initGoogleApiClient() {
         if (googleApiClient == null) {
             googleApiClient = new GoogleApiClient.Builder(context)
                     .addApi(LocationServices.API)
