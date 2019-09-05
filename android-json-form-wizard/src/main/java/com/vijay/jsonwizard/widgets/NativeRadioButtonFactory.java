@@ -7,8 +7,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
+import android.support.constraint.ConstraintLayout;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
@@ -247,6 +250,16 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         if (radioGroup.isEnabled() && error != null) {
             boolean isValid = performValidation(radioGroup);
             if (!isValid) {
+                LinearLayout linearLayout = (LinearLayout) radioGroup.getParent();
+                ConstraintLayout constraintLayout = (ConstraintLayout) linearLayout.getChildAt(0);
+                TextView errorTv = new TextView(formFragmentView.getContext());
+                errorTv.setText(error);
+                errorTv.setTextColor(formFragmentView.getContext().getResources().getColor(R.color.toaster_note_red_icon));
+                errorTv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+                ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(constraintLayout.getLayoutParams());
+                layoutParams.topToBottom = R.id.label_text;
+                layoutParams.leftMargin = FormUtils.dpToPixels(formFragmentView.getContext(), 8);
+                constraintLayout.addView(errorTv, new ConstraintLayout.LayoutParams(layoutParams));
                 return new ValidationStatus(false, error, formFragmentView, radioGroup);
             }
         }
