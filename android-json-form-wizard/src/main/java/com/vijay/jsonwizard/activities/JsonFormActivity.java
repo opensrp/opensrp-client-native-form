@@ -367,6 +367,11 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     @Override
+    public View getFormDataView(String address) {
+        return formDataViews.get(address);
+    }
+
+    @Override
     public JSONObject getObjectUsingAddress(String[] address, boolean popup) throws JSONException {
         if (address != null && address.length > 1) {
             if (RuleConstant.RULES_ENGINE.equals(address[0])) {

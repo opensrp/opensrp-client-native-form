@@ -28,6 +28,7 @@ import com.vijay.jsonwizard.validators.edittext.MinLengthValidator;
 import com.vijay.jsonwizard.validators.edittext.MinNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.RelativeMaxNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
+import com.vijay.jsonwizard.validators.edittext.ReferenceValidator;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
 import org.json.JSONArray;
@@ -148,7 +149,7 @@ public class EditTextFactory implements FormWidgetFactory {
         addNumericValidator(jsonObject, editText);
         addNumericIntegerValidator(jsonObject, editText);
         addRelativeNumericIntegerValidator(jsonObject, formFragment, editText);
-        addCumulativeTotalValidator(jsonObject, formFragment, editText, stepName);
+        addCumulativeTotalValidator(jsonObject, formFragment, editText, stepName, (JsonApi) context);
         // edit type check
         String editType = jsonObject.optString(JsonFormConstants.EDIT_TYPE);
         if (!TextUtils.isEmpty(editType)) {
@@ -343,7 +344,7 @@ public class EditTextFactory implements FormWidgetFactory {
     }
 
     private void addCumulativeTotalValidator(JSONObject editTextJSONObject, JsonFormFragment formFragment,
-                                             MaterialEditText editText, String stepName) throws JSONException {
+                                             MaterialEditText editText, String stepName, JsonApi jsonApi) throws JSONException {
         JSONObject validationJSONObject = editTextJSONObject.optJSONObject(V_CUMULATIVE_TOTAL);
         if (validationJSONObject != null) {
             String totalValueKey = validationJSONObject.optString(JsonFormConstants.VALUE, null);
@@ -352,18 +353,30 @@ public class EditTextFactory implements FormWidgetFactory {
             if (totalFieldJSONObject != null) {
                 String validationErrorMsg = validationJSONObject
                         .optString(JsonFormConstants.ERR, null);
-                JSONArray relatedFields = validationJSONObject.optJSONArray(RELATED_FIELDS);
+                JSONArray relatedFieldsJson = validationJSONObject.optJSONArray(RELATED_FIELDS);
 
-                if (relatedFields != null) {
+                if (relatedFieldsJson != null) {
                     String errorMessage = String
-                            .format(DEFAULT_CUMULATIVE_VALIDATION_ERR, editTextJSONObject.get(KEY), relatedFields.join(", "),
+                            .format(DEFAULT_CUMULATIVE_VALIDATION_ERR, editTextJSONObject.get(KEY), relatedFieldsJson.join(", "),
                                     totalValueKey);
-                    editText.addValidator(new CumulativeTotalValidator(
+
+                    CumulativeTotalValidator cumulativeTotalValidator = new CumulativeTotalValidator(
                             validationErrorMsg == null ? errorMessage : validationErrorMsg,
                             formFragment,
                             stepName,
                             totalValueKey,
-                            relatedFields));
+                            relatedFieldsJson);
+                    editText.addValidator(cumulativeTotalValidator);
+                    for (int i = 0; i < relatedFieldsJson.length(); i++) {
+                        String fieldKey = relatedFieldsJson.getString(i);
+                        View view = jsonApi.getFormDataView(stepName + ":" + fieldKey);
+                        if (view instanceof MaterialEditText) {
+                            MaterialEditText relatedEditText = (MaterialEditText) view;
+                            ReferenceValidator validatorTrigger = new ReferenceValidator(cumulativeTotalValidator.getErrorMessage(), cumulativeTotalValidator, editText);
+                            relatedEditText.
+                                    addValidator(validatorTrigger);
+                        }
+                    }
                 }
             }
         }

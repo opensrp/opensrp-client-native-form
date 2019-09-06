@@ -71,6 +71,8 @@ public interface JsonApi {
 
     Collection<View> getFormDataViews();
 
+    View getFormDataView(String address);
+
     JSONObject getObjectUsingAddress(String[] address, boolean popup) throws JSONException;
 
     JSONObject getObjectUsingAddress(String[] address, boolean popup, JSONObject valueSource) throws JSONException;
