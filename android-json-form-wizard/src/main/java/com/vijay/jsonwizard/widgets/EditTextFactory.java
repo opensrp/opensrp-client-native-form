@@ -369,10 +369,8 @@ public class EditTextFactory implements FormWidgetFactory {
                             jsonApi);
                     editText.addValidator(cumulativeTotalValidator);
                     for (int i = 0; i < relatedFieldsJson.length(); i++) {
-                        String fieldKey = relatedFieldsJson.getString(i);
-                        View view = jsonApi.getFormDataView(stepName + ":" + fieldKey);
-                        if (view instanceof MaterialEditText) {
-                            MaterialEditText relatedEditText = (MaterialEditText) view;
+                        MaterialEditText relatedEditText = getViewUsingAddress(stepName, relatedFieldsJson.getString(i), jsonApi);
+                        if (relatedEditText != null) {
                             ReferenceValidator referenceValidator = new ReferenceValidator(
                                     cumulativeTotalValidator.getErrorMessage(), cumulativeTotalValidator, relatedEditText, editText);
                             relatedEditText.
@@ -380,9 +378,21 @@ public class EditTextFactory implements FormWidgetFactory {
                             cumulativeTotalValidator.getReferenceValidators().add(referenceValidator);
                         }
                     }
+
+                   /* MaterialEditText totalValueView = getViewUsingAddress(stepName, totalValueKey, jsonApi);
+                    totalValueView.addValidator(new ReferenceValidator(
+                            cumulativeTotalValidator.getErrorMessage(), cumulativeTotalValidator,totalValueView, editText));*/
                 }
             }
         }
 
+    }
+
+    private MaterialEditText getViewUsingAddress(String stepName, String fieldKey, JsonApi jsonApi) {
+        View view = jsonApi.getFormDataView(stepName + ":" + fieldKey);
+        if (view instanceof MaterialEditText)
+            return (MaterialEditText) view;
+        else
+            return null;
     }
 }
