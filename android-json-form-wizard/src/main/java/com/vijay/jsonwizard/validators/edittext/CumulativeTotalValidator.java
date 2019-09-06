@@ -1,10 +1,11 @@
 package com.vijay.jsonwizard.validators.edittext;
 
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
+import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rengwuxian.materialedittext.validation.METValidator;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
@@ -12,6 +13,9 @@ import com.vijay.jsonwizard.interfaces.JsonApi;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.vijay.jsonwizard.utils.FormUtils.fields;
 import static com.vijay.jsonwizard.utils.FormUtils.getFieldJSONObject;
@@ -29,6 +33,9 @@ public class CumulativeTotalValidator extends METValidator {
     private JsonFormFragment formFragment;
     private String step;
     private String totalValueFieldKey;
+    private MaterialEditText referenceEditText;
+    private List<ReferenceValidator> referenceValidators = new ArrayList<>();
+
 
     public CumulativeTotalValidator(@NonNull String errorMessage, @NonNull JsonFormFragment formFragment,
                                     String step, String totalValueField, JSONArray relatedFields, JsonApi jsonApi) {
@@ -43,6 +50,7 @@ public class CumulativeTotalValidator extends METValidator {
     @Override
     public boolean isValid(@NonNull CharSequence text, boolean isEmpty) {
         if (!isEmpty) {
+
             try {
                 JSONObject formJSONObject = new JSONObject(formFragment.getCurrentJsonState());
                 JSONArray formFields = fields(formJSONObject, step);
@@ -52,9 +60,11 @@ public class CumulativeTotalValidator extends METValidator {
 
                 for (int i = 0; i < relatedFields.length(); i++) {
                     View relatedView = jsonApi.getFormDataView(step + ":" + relatedFields.getString(i));
-                    if (relatedView instanceof TextView) {
-                        CharSequence value = ((TextView) relatedView).getText();
-                        if (value != null)
+                    if (relatedView instanceof MaterialEditText) {
+                        MaterialEditText editText = (MaterialEditText) relatedView;
+                        CharSequence value = editText.getText();
+
+                        if (!TextUtils.isEmpty(value))
                             cumulativeTotal += Integer.parseInt(value.toString());
                     }
 
@@ -67,7 +77,26 @@ public class CumulativeTotalValidator extends METValidator {
                 Log.e(TAG, e.getMessage());
                 return false;
             }
+            for (ReferenceValidator validator : referenceValidators) {
+                disableValidator(validator);
+
+            }
         }
         return true;
+    }
+
+    private void disableValidator(ReferenceValidator validator) {
+        validator.getEditText().setError(null);
+        validator.getEditText().postInvalidate();
+    }
+
+
+    public boolean isValid(@NonNull MaterialEditText referenceEditText, boolean isEmpty) {
+        this.referenceEditText = referenceEditText;
+        return isValid(TextUtils.isEmpty(referenceEditText.getText()) ? "0" : referenceEditText.getText(), isEmpty);
+    }
+
+    public List<ReferenceValidator> getReferenceValidators() {
+        return referenceValidators;
     }
 }

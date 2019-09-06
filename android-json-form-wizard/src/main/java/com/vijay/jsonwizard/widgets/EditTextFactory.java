@@ -26,9 +26,9 @@ import com.vijay.jsonwizard.validators.edittext.MaxLengthValidator;
 import com.vijay.jsonwizard.validators.edittext.MaxNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.MinLengthValidator;
 import com.vijay.jsonwizard.validators.edittext.MinNumericValidator;
+import com.vijay.jsonwizard.validators.edittext.ReferenceValidator;
 import com.vijay.jsonwizard.validators.edittext.RelativeMaxNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
-import com.vijay.jsonwizard.validators.edittext.ReferenceValidator;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
 import org.json.JSONArray;
@@ -373,9 +373,11 @@ public class EditTextFactory implements FormWidgetFactory {
                         View view = jsonApi.getFormDataView(stepName + ":" + fieldKey);
                         if (view instanceof MaterialEditText) {
                             MaterialEditText relatedEditText = (MaterialEditText) view;
-                            ReferenceValidator validatorTrigger = new ReferenceValidator(cumulativeTotalValidator.getErrorMessage(), cumulativeTotalValidator, editText);
+                            ReferenceValidator referenceValidator = new ReferenceValidator(
+                                    cumulativeTotalValidator.getErrorMessage(), cumulativeTotalValidator, relatedEditText, editText);
                             relatedEditText.
-                                    addValidator(validatorTrigger);
+                                    addValidator(referenceValidator);
+                            cumulativeTotalValidator.getReferenceValidators().add(referenceValidator);
                         }
                     }
                 }
