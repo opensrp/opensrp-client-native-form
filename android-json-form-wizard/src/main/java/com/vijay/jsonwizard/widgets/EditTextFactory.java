@@ -365,7 +365,8 @@ public class EditTextFactory implements FormWidgetFactory {
                             formFragment,
                             stepName,
                             totalValueKey,
-                            relatedFieldsJson);
+                            relatedFieldsJson,
+                            jsonApi);
                     editText.addValidator(cumulativeTotalValidator);
                     for (int i = 0; i < relatedFieldsJson.length(); i++) {
                         String fieldKey = relatedFieldsJson.getString(i);
