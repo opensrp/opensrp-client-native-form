@@ -100,7 +100,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private final List<String> PREFICES_OF_INTEREST = Arrays.asList(RuleConstant.PREFIX.GLOBAL, RuleConstant.STEP);
     private FormUtils formUtils = new FormUtils();
     private Map<String, View> constrainedViews;
-    private ArrayList<View> formDataViews;
+    private Map<String, View> formDataViews;
     private String functionRegex;
     private HashMap<String, Comparison> comparisons;
     private Map<String, List<String>> ruleKeys = new HashMap<>();
@@ -246,7 +246,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     @Override
     public void clearFormDataViews() {
-        formDataViews = new ArrayList<>();
+        formDataViews = new HashMap<>();
         clearSkipLogicViews();
         clearConstrainedViews();
         clearCalculationLogicViews();
@@ -269,7 +269,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     @Override
     public void refreshHiddenViews(boolean popup) {
-        for (View curView : formDataViews) {
+        for (View curView : getFormDataViews()) {
             String addressString = (String) curView.getTag(R.id.address);
             String[] address = addressString.split(":");
             try {
@@ -357,12 +357,13 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     @Override
     public void addFormDataView(View view) {
-        formDataViews.add(view);
+        String address = String.valueOf(view.getTag(R.id.address));
+        formDataViews.put(address, view);
     }
 
     @Override
-    public ArrayList<View> getFormDataViews() {
-        return formDataViews;
+    public Collection<View> getFormDataViews() {
+        return formDataViews.values();
     }
 
     @Override

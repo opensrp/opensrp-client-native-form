@@ -9,7 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -69,7 +69,7 @@ public interface JsonApi {
 
     void addFormDataView(View view);
 
-    ArrayList<View> getFormDataViews();
+    Collection<View> getFormDataViews();
 
     JSONObject getObjectUsingAddress(String[] address, boolean popup) throws JSONException;
 
