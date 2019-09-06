@@ -248,19 +248,26 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
     public static ValidationStatus validate(JsonFormFragmentView formFragmentView, RadioGroup radioGroup) {
         String error = (String) radioGroup.getTag(R.id.error);
         if (radioGroup.isEnabled() && error != null) {
+            LinearLayout linearLayout = (LinearLayout) radioGroup.getParent();
             boolean isValid = performValidation(radioGroup);
+            TextView errorTv = linearLayout.findViewById(R.id.error_textView);
             if (!isValid) {
-                LinearLayout linearLayout = (LinearLayout) radioGroup.getParent();
                 ConstraintLayout constraintLayout = (ConstraintLayout) linearLayout.getChildAt(0);
-                TextView errorTv = new TextView(formFragmentView.getContext());
+                if (errorTv == null) {
+                    errorTv = new TextView(formFragmentView.getContext());
+                    errorTv.setId(R.id.error_textView);
+                    errorTv.setTextColor(formFragmentView.getContext().getResources().getColor(R.color.toaster_note_red_icon));
+                    errorTv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                    ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(constraintLayout.getLayoutParams());
+                    layoutParams.topToBottom = R.id.label_text;
+                    layoutParams.leftMargin = FormUtils.dpToPixels(formFragmentView.getContext(), 8);
+                    constraintLayout.addView(errorTv, new ConstraintLayout.LayoutParams(layoutParams));
+                }
+                errorTv.setVisibility(View.VISIBLE);
                 errorTv.setText(error);
-                errorTv.setTextColor(formFragmentView.getContext().getResources().getColor(R.color.toaster_note_red_icon));
-                errorTv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-                ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(constraintLayout.getLayoutParams());
-                layoutParams.topToBottom = R.id.label_text;
-                layoutParams.leftMargin = FormUtils.dpToPixels(formFragmentView.getContext(), 8);
-                constraintLayout.addView(errorTv, new ConstraintLayout.LayoutParams(layoutParams));
                 return new ValidationStatus(false, error, formFragmentView, radioGroup);
+            } else if (errorTv != null) {
+                errorTv.setVisibility(View.GONE);
             }
         }
         return new ValidationStatus(true, null, formFragmentView, radioGroup);
