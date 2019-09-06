@@ -78,16 +78,16 @@ public class CumulativeTotalValidator extends METValidator {
                 return false;
             }
             for (ReferenceValidator validator : referenceValidators) {
-                disableValidator(validator);
-
+                disableValidator(validator.getEditText());
             }
+            disableValidator(referenceEditText);
         }
         return true;
     }
 
-    private void disableValidator(ReferenceValidator validator) {
-        validator.getEditText().setError(null);
-        validator.getEditText().postInvalidate();
+    private void disableValidator(MaterialEditText editText) {
+        editText.setError(null);
+        editText.postInvalidate();
     }
 
 
