@@ -1,24 +1,21 @@
 package com.vijay.jsonwizard.validators.edittext;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rengwuxian.materialedittext.validation.METValidator;
-import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.vijay.jsonwizard.utils.FormUtils.fields;
-import static com.vijay.jsonwizard.utils.FormUtils.getFieldJSONObject;
 
 /**
  * Created by samuelgithengi on 3/4/19.
@@ -52,18 +49,18 @@ public class CumulativeTotalValidator extends METValidator {
         if (!isEmpty) {
 
             try {
-                JSONObject formJSONObject = new JSONObject(formFragment.getCurrentJsonState());
-                JSONArray formFields = fields(formJSONObject, step);
                 int cumulativeTotal = Integer.parseInt(text.toString());
+                int totalMaxFieldValue = 0;
+                View totalMaxField = jsonApi.getFormDataView(step + ":" + totalValueFieldKey);
 
-                int totalMaxFieldValue = getFieldJSONObject(formFields, totalValueFieldKey).optInt(JsonFormConstants.VALUE);
+                if (totalMaxField instanceof TextView)
+                    totalMaxFieldValue = Integer.parseInt(((TextView) totalMaxField).getText().toString());
 
                 for (int i = 0; i < relatedFields.length(); i++) {
                     View relatedView = jsonApi.getFormDataView(step + ":" + relatedFields.getString(i));
                     if (relatedView instanceof MaterialEditText) {
                         MaterialEditText editText = (MaterialEditText) relatedView;
                         CharSequence value = editText.getText();
-
                         if (!TextUtils.isEmpty(value))
                             cumulativeTotal += Integer.parseInt(value.toString());
                     }
@@ -85,9 +82,11 @@ public class CumulativeTotalValidator extends METValidator {
         return true;
     }
 
-    private void disableValidator(MaterialEditText editText) {
-        editText.setError(null);
-        editText.postInvalidate();
+    private void disableValidator(@Nullable MaterialEditText editText) {
+        if (editText != null) {
+            editText.setError(null);
+            editText.postInvalidate();
+        }
     }
 
 
