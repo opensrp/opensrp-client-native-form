@@ -1,8 +1,10 @@
 package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
+import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +28,7 @@ import com.vijay.jsonwizard.validators.edittext.MaxLengthValidator;
 import com.vijay.jsonwizard.validators.edittext.MaxNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.MinLengthValidator;
 import com.vijay.jsonwizard.validators.edittext.MinNumericValidator;
+import com.vijay.jsonwizard.validators.edittext.ReferenceValidator;
 import com.vijay.jsonwizard.validators.edittext.RelativeMaxNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
@@ -148,7 +151,7 @@ public class EditTextFactory implements FormWidgetFactory {
         addNumericValidator(jsonObject, editText);
         addNumericIntegerValidator(jsonObject, editText);
         addRelativeNumericIntegerValidator(jsonObject, formFragment, editText);
-        addCumulativeTotalValidator(jsonObject, formFragment, editText, stepName);
+        addCumulativeTotalValidator(jsonObject, formFragment, editText, stepName, (JsonApi) context);
         // edit type check
         String editType = jsonObject.optString(JsonFormConstants.EDIT_TYPE);
         if (!TextUtils.isEmpty(editType)) {
@@ -343,7 +346,7 @@ public class EditTextFactory implements FormWidgetFactory {
     }
 
     private void addCumulativeTotalValidator(JSONObject editTextJSONObject, JsonFormFragment formFragment,
-                                             MaterialEditText editText, String stepName) throws JSONException {
+                                             final MaterialEditText editText, String stepName, JsonApi jsonApi) throws JSONException {
         JSONObject validationJSONObject = editTextJSONObject.optJSONObject(V_CUMULATIVE_TOTAL);
         if (validationJSONObject != null) {
             String totalValueKey = validationJSONObject.optString(JsonFormConstants.VALUE, null);
@@ -352,21 +355,62 @@ public class EditTextFactory implements FormWidgetFactory {
             if (totalFieldJSONObject != null) {
                 String validationErrorMsg = validationJSONObject
                         .optString(JsonFormConstants.ERR, null);
-                JSONArray relatedFields = validationJSONObject.optJSONArray(RELATED_FIELDS);
+                JSONArray relatedFieldsJson = validationJSONObject.optJSONArray(RELATED_FIELDS);
 
-                if (relatedFields != null) {
+                if (relatedFieldsJson != null) {
                     String errorMessage = String
-                            .format(DEFAULT_CUMULATIVE_VALIDATION_ERR, editTextJSONObject.get(KEY), relatedFields.join(", "),
+                            .format(DEFAULT_CUMULATIVE_VALIDATION_ERR, editTextJSONObject.get(KEY), relatedFieldsJson.join(", "),
                                     totalValueKey);
-                    editText.addValidator(new CumulativeTotalValidator(
+
+                    final CumulativeTotalValidator cumulativeTotalValidator = new CumulativeTotalValidator(
                             validationErrorMsg == null ? errorMessage : validationErrorMsg,
                             formFragment,
                             stepName,
                             totalValueKey,
-                            relatedFields));
+                            relatedFieldsJson,
+                            jsonApi);
+                    editText.addValidator(cumulativeTotalValidator);
+                    for (int i = 0; i < relatedFieldsJson.length(); i++) {
+                        MaterialEditText relatedEditText = getViewUsingAddress(stepName, relatedFieldsJson.getString(i), jsonApi);
+                        if (relatedEditText != null) {
+                            ReferenceValidator referenceValidator = new ReferenceValidator(
+                                    cumulativeTotalValidator.getErrorMessage(), cumulativeTotalValidator, relatedEditText, editText);
+                            relatedEditText.
+                                    addValidator(referenceValidator);
+                            cumulativeTotalValidator.getReferenceValidators().add(referenceValidator);
+                        }
+                    }
+
+                    MaterialEditText totalValueView = getViewUsingAddress(stepName, totalValueKey, jsonApi);
+
+                    totalValueView.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {//do nothing
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {//do nothing
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+                            if (!cumulativeTotalValidator.isValid(editText.getText(), TextUtils.isEmpty(s))
+                                    && !TextUtils.isEmpty(editText.getText())) {
+                                editText.setError(cumulativeTotalValidator.getErrorMessage());
+                            }
+                        }
+                    });
                 }
             }
         }
 
+    }
+
+    private MaterialEditText getViewUsingAddress(String stepName, String fieldKey, JsonApi jsonApi) {
+        View view = jsonApi.getFormDataView(stepName + ":" + fieldKey);
+        if (view instanceof MaterialEditText)
+            return (MaterialEditText) view;
+        else
+            return null;
     }
 }
