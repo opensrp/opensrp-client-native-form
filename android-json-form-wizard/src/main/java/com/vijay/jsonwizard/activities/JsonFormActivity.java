@@ -100,7 +100,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private final List<String> PREFICES_OF_INTEREST = Arrays.asList(RuleConstant.PREFIX.GLOBAL, RuleConstant.STEP);
     private FormUtils formUtils = new FormUtils();
     private Map<String, View> constrainedViews;
-    private Map<String, View> formDataViews;
+    private Map<String, View> formDataViews = new HashMap<>();
     private String functionRegex;
     private HashMap<String, Comparison> comparisons;
     private Map<String, List<String>> ruleKeys = new HashMap<>();
