@@ -1,8 +1,10 @@
 package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
+import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -344,7 +346,7 @@ public class EditTextFactory implements FormWidgetFactory {
     }
 
     private void addCumulativeTotalValidator(JSONObject editTextJSONObject, JsonFormFragment formFragment,
-                                             MaterialEditText editText, String stepName, JsonApi jsonApi) throws JSONException {
+                                             final MaterialEditText editText, String stepName, JsonApi jsonApi) throws JSONException {
         JSONObject validationJSONObject = editTextJSONObject.optJSONObject(V_CUMULATIVE_TOTAL);
         if (validationJSONObject != null) {
             String totalValueKey = validationJSONObject.optString(JsonFormConstants.VALUE, null);
@@ -360,7 +362,7 @@ public class EditTextFactory implements FormWidgetFactory {
                             .format(DEFAULT_CUMULATIVE_VALIDATION_ERR, editTextJSONObject.get(KEY), relatedFieldsJson.join(", "),
                                     totalValueKey);
 
-                    CumulativeTotalValidator cumulativeTotalValidator = new CumulativeTotalValidator(
+                    final CumulativeTotalValidator cumulativeTotalValidator = new CumulativeTotalValidator(
                             validationErrorMsg == null ? errorMessage : validationErrorMsg,
                             formFragment,
                             stepName,
@@ -379,9 +381,25 @@ public class EditTextFactory implements FormWidgetFactory {
                         }
                     }
 
-                   /* MaterialEditText totalValueView = getViewUsingAddress(stepName, totalValueKey, jsonApi);
-                    totalValueView.addValidator(new ReferenceValidator(
-                            cumulativeTotalValidator.getErrorMessage(), cumulativeTotalValidator,totalValueView, editText));*/
+                    MaterialEditText totalValueView = getViewUsingAddress(stepName, totalValueKey, jsonApi);
+
+                    totalValueView.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {//do nothing
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {//do nothing
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+                            if (!cumulativeTotalValidator.isValid(editText.getText(), TextUtils.isEmpty(s))
+                                    && !TextUtils.isEmpty(editText.getText())) {
+                                editText.setError(cumulativeTotalValidator.getErrorMessage());
+                            }
+                        }
+                    });
                 }
             }
         }
