@@ -502,6 +502,11 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     }
 
     @Override
+    public void startSimprintsRegistration() {
+        //TODO start simprint
+    }
+
+    @Override
     public void finishWithResult(Intent returnIntent) {
         getActivity().setResult(Activity.RESULT_OK, returnIntent);
         getActivity().finish();
@@ -580,5 +585,6 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
             }
         }
     }
+
 
 }
