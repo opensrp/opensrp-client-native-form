@@ -9,13 +9,17 @@ import android.widget.TextView;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rengwuxian.materialedittext.validation.METValidator;
+import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import timber.log.Timber;
 
 /**
  * Created by samuelgithengi on 3/4/19.
@@ -84,9 +88,22 @@ public class CumulativeTotalValidator extends METValidator {
 
     private void disableValidator(@Nullable MaterialEditText editText) {
         if (editText != null) {
+            try {
+                jsonApi.writeValue(step, getTag(editText.getTag(R.id.key)), editText.getText().toString(),
+                        getTag(editText.getTag(R.id.openmrs_entity_parent)),
+                        getTag(editText.getTag(R.id.openmrs_entity)),
+                        getTag(editText.getTag(R.id.openmrs_entity_id)), false);
+            } catch (JSONException e) {
+                Timber.e(e, "Error writing field value");
+            }
             editText.setError(null);
             editText.postInvalidate();
         }
+    }
+
+    private String getTag(Object object) {
+        return object == null ? null : object.toString();
+
     }
 
 

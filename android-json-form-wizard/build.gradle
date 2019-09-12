@@ -110,6 +110,7 @@ dependencies {
         exclude group: 'com.android.support.test', module: 'runner'
         exclude group: 'com.android.support.test.espresso', module: 'espresso-core'
     }
+    implementation 'com.jakewharton.timber:timber:4.7.1'
 
     // PowerMock
     def powerMockVersion = '1.7.1'
