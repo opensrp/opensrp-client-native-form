@@ -49,12 +49,12 @@ public class CumulativeTotalValidator extends METValidator {
         if (!isEmpty) {
 
             try {
-                int cumulativeTotal = Integer.parseInt(text.toString());
-                int totalMaxFieldValue = 0;
+                float cumulativeTotal = Float.parseFloat(text.toString());
+                float totalMaxFieldValue = 0;
                 View totalMaxField = jsonApi.getFormDataView(step + ":" + totalValueFieldKey);
 
                 if (totalMaxField instanceof TextView)
-                    totalMaxFieldValue = Integer.parseInt(((TextView) totalMaxField).getText().toString());
+                    totalMaxFieldValue = Float.parseFloat(((TextView) totalMaxField).getText().toString());
 
                 for (int i = 0; i < relatedFields.length(); i++) {
                     View relatedView = jsonApi.getFormDataView(step + ":" + relatedFields.getString(i));
@@ -62,7 +62,7 @@ public class CumulativeTotalValidator extends METValidator {
                         MaterialEditText editText = (MaterialEditText) relatedView;
                         CharSequence value = editText.getText();
                         if (!TextUtils.isEmpty(value))
-                            cumulativeTotal += Integer.parseInt(value.toString());
+                            cumulativeTotal += Float.parseFloat(value.toString());
                     }
 
                 }
