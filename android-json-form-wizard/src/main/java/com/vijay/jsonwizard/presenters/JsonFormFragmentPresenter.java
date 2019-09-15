@@ -63,6 +63,10 @@ import com.vijay.jsonwizard.widgets.SpinnerFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.smartregister.simprint.SimprintsConstant;
+import org.smartregister.simprint.SimprintsLibrary;
+import org.smartregister.simprint.SimprintsRegisterActivity;
+import org.smartregister.simprint.SimprintsRegistration;
 
 import java.io.File;
 import java.io.IOException;
@@ -491,7 +495,7 @@ public class JsonFormFragmentPresenter extends
         type = (String) v.getTag(R.id.type);
         switch (type) {
             case JsonFormConstants.CHOOSE_FINGER_PRINT:
-                openSimprints();
+                openSimprints(v);
                 break;
             case JsonFormConstants.CHOOSE_IMAGE:
                 dispatchTakePictureIntent(key, type);
@@ -547,8 +551,19 @@ public class JsonFormFragmentPresenter extends
         }
     }
 
-    private void openSimprints() {
-        getView().startSimprintsRegistration();
+    private void openSimprints(View v) {
+        String projectId = (String) v.getTag(R.id.project_id);
+        String userId = (String) v.getTag(R.id.user_id);
+        String moduleId = (String) v.getTag(R.id.module_id);
+        String fingerPrintOption = (String) v.getTag(R.id.finger_print_option);
+        if(!TextUtils.isEmpty(fingerPrintOption) && fingerPrintOption.equalsIgnoreCase(JsonFormConstants.SIMPRINTS_OPTION_REGISTER)){
+            getView().startSimprintsRegistration(projectId,userId,moduleId);
+
+        }else if(!TextUtils.isEmpty(fingerPrintOption) && fingerPrintOption.equalsIgnoreCase(JsonFormConstants.SIMPRINTS_OPTION_VERIFY)){
+           String guId = (String) v.getTag(R.id.guid);
+            getView().startSimprintsVerification(projectId,userId,moduleId,guId);
+        }
+
     }
 
     protected void nativeRadioButtonClickActions(View view) {

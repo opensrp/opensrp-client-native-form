@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.AppCompatRadioButton;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -42,6 +43,9 @@ import com.vijay.jsonwizard.viewstates.JsonFormFragmentViewState;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.smartregister.simprint.SimprintsLibrary;
+import org.smartregister.simprint.SimprintsRegisterActivity;
+import org.smartregister.simprint.SimprintsVerifyActivity;
 
 import java.util.HashMap;
 import java.util.List;
@@ -502,8 +506,25 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     }
 
     @Override
-    public void startSimprintsRegistration() {
-        //TODO start simprint
+    public void startSimprintsRegistration(String projectId,String userId,String moduleId) {
+        if(!TextUtils.isEmpty(projectId) && !TextUtils.isEmpty(userId) &&  !TextUtils.isEmpty(moduleId)){
+            SimprintsLibrary.init(getActivity(),projectId,userId);
+            SimprintsRegisterActivity.startSimprintsRegisterActivity(getActivity(),moduleId, JsonFormConstants.ACTIVITY_REQUEST_CODE.REQUEST_CODE_REGISTER);
+
+        }else {
+            Toast.makeText(getActivity(),"Project Id or user id or module id should not be empty",Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void startSimprintsVerification(String projectId, String userId, String moduleId, String guId) {
+        if(!TextUtils.isEmpty(projectId) && !TextUtils.isEmpty(userId) &&  !TextUtils.isEmpty(moduleId) && !TextUtils.isEmpty(guId) ){
+            SimprintsLibrary.init(getActivity(),projectId,userId);
+            SimprintsVerifyActivity.startSimprintsVerifyActivity(getActivity(),moduleId,guId, JsonFormConstants.ACTIVITY_REQUEST_CODE.REQUEST_CODE_VERIFY);
+
+        }else {
+            Toast.makeText(getActivity(),"Project Id or user id or module id should not be empty",Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override

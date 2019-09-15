@@ -124,6 +124,10 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
             onActivityResultListeners.get(requestCode).onActivityResult(requestCode, resultCode, data);
         } else {
             super.onActivityResult(requestCode, resultCode, data);
+//            if(resultCode == Activity.RESULT_OK && requestCode == JsonFormConstants.ACTIVITY_REQUEST_CODE.REQUEST_CODE_REGISTER){
+//                SimprintsRegistration registration = (SimprintsRegistration)data.getSerializableExtra(SimprintsConstant.INTENT_DATA);
+//                Log.v("SIMPRINT_SDK","onActivityResult base guid:"+registration.getGuid()+":status:"+registration.getCheckStatus());
+//            }
         }
     }
 

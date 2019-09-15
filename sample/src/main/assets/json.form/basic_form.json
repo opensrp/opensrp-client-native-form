@@ -66,6 +66,33 @@
         "uploadButtonText": "Take a photo of the child"
       },
       {
+        "key": "finger_print",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "choose_finger_print",
+        "project_id":"tZqJnw0ajK04LMYdZzyw",
+        "user_id":"test_user",
+        "module_id":"mpower",
+        "finger_print_option":"register",
+        "uploadButtonText": "Take finger print",
+        "image_file": ""
+      },
+      {
+        "key": "finger_print",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "choose_finger_print",
+        "project_id":"tZqJnw0ajK04LMYdZzyw",
+        "user_id":"test_user",
+        "module_id":"mpower",
+        "gu_id":"id",
+        "finger_print_option":"verify",
+        "uploadButtonText": "Verify finger print",
+        "image_file": ""
+      },
+      {
         "key": "user_first_name",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
