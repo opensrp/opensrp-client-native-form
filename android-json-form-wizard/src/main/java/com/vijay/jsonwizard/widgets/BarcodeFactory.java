@@ -37,6 +37,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
 import static android.app.Activity.RESULT_OK;
 import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 
@@ -143,10 +145,10 @@ public class BarcodeFactory implements FormWidgetFactory {
                             if (requestCode == JsonFormConstants.BARCODE_CONSTANTS.BARCODE_REQUEST_CODE && resultCode == RESULT_OK) {
                                 if (data != null) {
                                     Barcode barcode = data.getParcelableExtra(JsonFormConstants.BARCODE_CONSTANTS.BARCODE_KEY);
-                                    Log.d("Scanned QR Code", barcode.displayValue);
+                                    Timber.d("Scanned QR Code %s ", barcode.displayValue);
                                     currentMaterialEditText.setText(barcode.displayValue);
                                 } else
-                                    Log.i("", "NO RESULT FOR QR CODE");
+                                    Timber.i("NO RESULT FOR QR CODE");
                             }
                         }
                     });
@@ -219,7 +221,6 @@ public class BarcodeFactory implements FormWidgetFactory {
         if (barcodeType != null && barcodeType.equals(TYPE_QR) && PermissionUtils.isPermissionGranted(activity, Manifest.permission.CAMERA, PermissionUtils.CAMERA_PERMISSION_REQUEST_CODE)) {
             try {
                 Intent intent = new Intent(activity, JsonFormBarcodeScanActivity.class);
-                intent.putExtra("ViewId", editText.getId());
                 activity.startActivityForResult(intent, JsonFormConstants.BARCODE_CONSTANTS.BARCODE_REQUEST_CODE);
             } catch (SecurityException e) {
                 Utils.showToast(activity, activity.getApplicationContext().getResources().getString(R.string.allow_camera_management));
