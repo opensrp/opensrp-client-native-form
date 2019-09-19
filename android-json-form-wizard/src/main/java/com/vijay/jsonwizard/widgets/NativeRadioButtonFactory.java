@@ -7,8 +7,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
+import android.support.constraint.ConstraintLayout;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
@@ -245,9 +248,26 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
     public static ValidationStatus validate(JsonFormFragmentView formFragmentView, RadioGroup radioGroup) {
         String error = (String) radioGroup.getTag(R.id.error);
         if (radioGroup.isEnabled() && error != null) {
+            LinearLayout linearLayout = (LinearLayout) radioGroup.getParent();
             boolean isValid = performValidation(radioGroup);
+            TextView errorTv = linearLayout.findViewById(R.id.error_textView);
             if (!isValid) {
+                ConstraintLayout constraintLayout = (ConstraintLayout) linearLayout.getChildAt(0);
+                if (errorTv == null) {
+                    errorTv = new TextView(formFragmentView.getContext());
+                    errorTv.setId(R.id.error_textView);
+                    errorTv.setTextColor(formFragmentView.getContext().getResources().getColor(R.color.toaster_note_red_icon));
+                    errorTv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                    ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(constraintLayout.getLayoutParams());
+                    layoutParams.topToBottom = R.id.label_text;
+                    layoutParams.leftMargin = FormUtils.dpToPixels(formFragmentView.getContext(), 8);
+                    constraintLayout.addView(errorTv, new ConstraintLayout.LayoutParams(layoutParams));
+                }
+                errorTv.setVisibility(View.VISIBLE);
+                errorTv.setText(error);
                 return new ValidationStatus(false, error, formFragmentView, radioGroup);
+            } else if (errorTv != null) {
+                errorTv.setVisibility(View.GONE);
             }
         }
         return new ValidationStatus(true, null, formFragmentView, radioGroup);

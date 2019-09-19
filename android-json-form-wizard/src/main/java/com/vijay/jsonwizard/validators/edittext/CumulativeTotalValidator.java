@@ -1,17 +1,25 @@
 package com.vijay.jsonwizard.validators.edittext;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
+import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rengwuxian.materialedittext.validation.METValidator;
-import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
+import com.vijay.jsonwizard.interfaces.JsonApi;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
+import org.json.JSONException;
 
-import static com.vijay.jsonwizard.utils.FormUtils.fields;
-import static com.vijay.jsonwizard.utils.FormUtils.getFieldJSONObject;
+import java.util.ArrayList;
+import java.util.List;
+
+import timber.log.Timber;
 
 /**
  * Created by samuelgithengi on 3/4/19.
@@ -22,31 +30,45 @@ public class CumulativeTotalValidator extends METValidator {
     private final String TAG = CumulativeTotalValidator.class.getName();
 
     private JSONArray relatedFields;
+    private JsonApi jsonApi;
     private JsonFormFragment formFragment;
     private String step;
     private String totalValueFieldKey;
+    private MaterialEditText referenceEditText;
+    private List<ReferenceValidator> referenceValidators = new ArrayList<>();
+
 
     public CumulativeTotalValidator(@NonNull String errorMessage, @NonNull JsonFormFragment formFragment,
-                                    String step, String totalValueField, JSONArray relatedFields) {
+                                    String step, String totalValueField, JSONArray relatedFields, JsonApi jsonApi) {
         super(errorMessage);
         this.formFragment = formFragment;
         this.step = step;
         this.totalValueFieldKey = totalValueField;
         this.relatedFields = relatedFields;
+        this.jsonApi = jsonApi;
     }
 
     @Override
     public boolean isValid(@NonNull CharSequence text, boolean isEmpty) {
         if (!isEmpty) {
-            try {
-                JSONObject formJSONObject = new JSONObject(formFragment.getCurrentJsonState());
-                JSONArray formFields = fields(formJSONObject, step);
-                int cumulativeTotal = Integer.parseInt(text.toString());
 
-                int totalMaxFieldValue = getFieldJSONObject(formFields, totalValueFieldKey).optInt(JsonFormConstants.VALUE);
+            try {
+                float cumulativeTotal = Float.parseFloat(text.toString());
+                float totalMaxFieldValue = 0;
+                View totalMaxField = jsonApi.getFormDataView(step + ":" + totalValueFieldKey);
+
+                if (totalMaxField instanceof TextView)
+                    totalMaxFieldValue = Float.parseFloat(((TextView) totalMaxField).getText().toString());
 
                 for (int i = 0; i < relatedFields.length(); i++) {
-                    cumulativeTotal += getFieldJSONObject(formFields, relatedFields.getString(i)).optInt(JsonFormConstants.VALUE);
+                    View relatedView = jsonApi.getFormDataView(step + ":" + relatedFields.getString(i));
+                    if (relatedView instanceof MaterialEditText) {
+                        MaterialEditText editText = (MaterialEditText) relatedView;
+                        CharSequence value = editText.getText();
+                        if (!TextUtils.isEmpty(value))
+                            cumulativeTotal += Float.parseFloat(value.toString());
+                    }
+
                 }
 
                 if (cumulativeTotal != totalMaxFieldValue) {
@@ -56,7 +78,41 @@ public class CumulativeTotalValidator extends METValidator {
                 Log.e(TAG, e.getMessage());
                 return false;
             }
+            for (ReferenceValidator validator : referenceValidators) {
+                disableValidator(validator.getEditText());
+            }
+            disableValidator(referenceEditText);
         }
         return true;
+    }
+
+    private void disableValidator(@Nullable MaterialEditText editText) {
+        if (editText != null) {
+            try {
+                jsonApi.writeValue(step, getTag(editText.getTag(R.id.key)), editText.getText().toString(),
+                        getTag(editText.getTag(R.id.openmrs_entity_parent)),
+                        getTag(editText.getTag(R.id.openmrs_entity)),
+                        getTag(editText.getTag(R.id.openmrs_entity_id)), false);
+            } catch (JSONException e) {
+                Timber.e(e, "Error writing field value");
+            }
+            editText.setError(null);
+            editText.postInvalidate();
+        }
+    }
+
+    private String getTag(Object object) {
+        return object == null ? null : object.toString();
+
+    }
+
+
+    public boolean isValid(@NonNull MaterialEditText referenceEditText, boolean isEmpty) {
+        this.referenceEditText = referenceEditText;
+        return isValid(TextUtils.isEmpty(referenceEditText.getText()) ? "0" : referenceEditText.getText(), isEmpty);
+    }
+
+    public List<ReferenceValidator> getReferenceValidators() {
+        return referenceValidators;
     }
 }
