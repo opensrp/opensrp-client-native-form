@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -143,7 +142,7 @@ public class BarcodeFactory implements FormWidgetFactory {
                             if (requestCode == JsonFormConstants.BARCODE_CONSTANTS.BARCODE_REQUEST_CODE && resultCode == RESULT_OK) {
                                 if (data != null) {
                                     Barcode barcode = data.getParcelableExtra(JsonFormConstants.BARCODE_CONSTANTS.BARCODE_KEY);
-                                    Log.d("Scanned QR Code", barcode.displayValue);
+                                    Timber.d("Scanned QR Code %s ", barcode.displayValue);
                                     editText.setText(barcode.displayValue);
                                 } else
                                     Timber.i("NO RESULT FOR QR CODE");
