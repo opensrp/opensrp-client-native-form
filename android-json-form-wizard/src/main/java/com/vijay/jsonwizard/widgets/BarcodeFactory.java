@@ -95,8 +95,6 @@ public class BarcodeFactory implements FormWidgetFactory {
                 }
             });
 
-            addOnBarCodeResultListeners(context, editText);
-
             GenericTextWatcher textWatcher = new GenericTextWatcher(stepName, formFragment, editText);
             textWatcher.addOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
@@ -194,8 +192,8 @@ public class BarcodeFactory implements FormWidgetFactory {
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                launchBarcodeScanner((Activity) context, editText,
-                        jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
+                addOnBarCodeResultListeners(context, editText);
+                launchBarcodeScanner((Activity) context, editText, jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
             }
         });
 
@@ -224,12 +222,10 @@ public class BarcodeFactory implements FormWidgetFactory {
             } catch (SecurityException e) {
                 Utils.showToast(activity, activity.getApplicationContext().getResources().getString(R.string.allow_camera_management));
             }
-
         }
     }
 
     private boolean checkValue(String value) {
         return value.contains("ABC");
     }
-
 }
