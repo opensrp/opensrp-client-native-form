@@ -81,6 +81,7 @@ public class BarcodeFactory implements FormWidgetFactory {
             editText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    addOnBarCodeResultListeners(context, editText);
                     launchBarcodeScanner((Activity) context, editText,
                             jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
                 }
@@ -99,6 +100,7 @@ public class BarcodeFactory implements FormWidgetFactory {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
                     if (hasFocus) {
+                        addOnBarCodeResultListeners(context, editText);
                         launchBarcodeScanner((Activity) context, editText,
                                 jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
                     }
