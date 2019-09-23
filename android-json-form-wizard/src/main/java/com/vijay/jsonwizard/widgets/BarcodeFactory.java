@@ -81,9 +81,7 @@ public class BarcodeFactory implements FormWidgetFactory {
             editText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    addOnBarCodeResultListeners(context, editText);
-                    launchBarcodeScanner((Activity) context, editText,
-                            jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
+                    addOnClickActions(context, editText, jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
                 }
             });
 
@@ -100,9 +98,7 @@ public class BarcodeFactory implements FormWidgetFactory {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
                     if (hasFocus) {
-                        addOnBarCodeResultListeners(context, editText);
-                        launchBarcodeScanner((Activity) context, editText,
-                                jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
+                        addOnClickActions(context, editText, jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
                     }
                 }
             });
@@ -131,6 +127,11 @@ public class BarcodeFactory implements FormWidgetFactory {
         }
 
         return views;
+    }
+
+    private void addOnClickActions(Context context, MaterialEditText editText, String barcodeType) {
+        addOnBarCodeResultListeners(context, editText);
+        launchBarcodeScanner((Activity) context, editText, barcodeType);
     }
 
     protected void addOnBarCodeResultListeners(final Context context, final MaterialEditText editText) {
@@ -193,8 +194,7 @@ public class BarcodeFactory implements FormWidgetFactory {
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addOnBarCodeResultListeners(context, editText);
-                launchBarcodeScanner((Activity) context, editText, jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
+                addOnClickActions(context, editText, jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
             }
         });
 
