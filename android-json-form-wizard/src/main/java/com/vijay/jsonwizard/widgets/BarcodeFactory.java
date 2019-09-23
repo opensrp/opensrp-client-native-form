@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -49,7 +48,7 @@ import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 public class BarcodeFactory implements FormWidgetFactory {
     private static final String TYPE_QR = "qrcode";
 
-    private MaterialEditText currentMaterialEditText;
+
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
         return attachJson(stepName, context, formFragment, jsonObject, true);
@@ -82,8 +81,7 @@ public class BarcodeFactory implements FormWidgetFactory {
             editText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    launchBarcodeScanner((Activity) context, editText,
-                            jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
+                    addOnClickActions(context, editText, jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
                 }
             });
 
@@ -95,15 +93,12 @@ public class BarcodeFactory implements FormWidgetFactory {
                 }
             });
 
-            addOnBarCodeResultListeners(context);
-
             GenericTextWatcher textWatcher = new GenericTextWatcher(stepName, formFragment, editText);
             textWatcher.addOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
                     if (hasFocus) {
-                        launchBarcodeScanner((Activity) context, editText,
-                                jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
+                        addOnClickActions(context, editText, jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
                     }
                 }
             });
@@ -134,7 +129,12 @@ public class BarcodeFactory implements FormWidgetFactory {
         return views;
     }
 
-    protected void addOnBarCodeResultListeners(final Context context) {
+    private void addOnClickActions(Context context, MaterialEditText editText, String barcodeType) {
+        addOnBarCodeResultListeners(context, editText);
+        launchBarcodeScanner((Activity) context, editText, barcodeType);
+    }
+
+    protected void addOnBarCodeResultListeners(final Context context, final MaterialEditText editText) {
         if (context instanceof JsonApi) {
             JsonApi jsonApi = (JsonApi) context;
             jsonApi.addOnActivityResultListener(JsonFormConstants.BARCODE_CONSTANTS.BARCODE_REQUEST_CODE,
@@ -146,7 +146,7 @@ public class BarcodeFactory implements FormWidgetFactory {
                                 if (data != null) {
                                     Barcode barcode = data.getParcelableExtra(JsonFormConstants.BARCODE_CONSTANTS.BARCODE_KEY);
                                     Timber.d("Scanned QR Code %s ", barcode.displayValue);
-                                    currentMaterialEditText.setText(barcode.displayValue);
+                                    editText.setText(barcode.displayValue);
                                 } else
                                     Timber.i("NO RESULT FOR QR CODE");
                             }
@@ -194,8 +194,7 @@ public class BarcodeFactory implements FormWidgetFactory {
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                launchBarcodeScanner((Activity) context, editText,
-                        jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
+                addOnClickActions(context, editText, jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
             }
         });
 
@@ -214,7 +213,6 @@ public class BarcodeFactory implements FormWidgetFactory {
     }
 
     private void launchBarcodeScanner(Activity activity, MaterialEditText editText, String barcodeType) {
-        currentMaterialEditText = editText;
         InputMethodManager inputManager = (InputMethodManager) activity.getSystemService(
                 Context.INPUT_METHOD_SERVICE);
         inputManager.hideSoftInputFromWindow(editText.getWindowToken(), HIDE_NOT_ALWAYS);
@@ -225,12 +223,10 @@ public class BarcodeFactory implements FormWidgetFactory {
             } catch (SecurityException e) {
                 Utils.showToast(activity, activity.getApplicationContext().getResources().getString(R.string.allow_camera_management));
             }
-
         }
     }
 
     private boolean checkValue(String value) {
         return value.contains("ABC");
     }
-
 }
