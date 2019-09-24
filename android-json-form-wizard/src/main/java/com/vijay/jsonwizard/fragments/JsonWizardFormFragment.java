@@ -46,7 +46,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
     public static JsonWizardFormFragment getFormFragment(String stepName) {
         JsonWizardFormFragment jsonFormFragment = new JsonWizardFormFragment();
         Bundle bundle = new Bundle();
-        bundle.putString(JsonFormConstants.JSON_FORM_KEY.STEPNAME, stepName);
+        bundle.putString(JsonFormConstants.JsonFormKeyUtils.STEPNAME, stepName);
         jsonFormFragment.setArguments(bundle);
         return jsonFormFragment;
     }
@@ -64,17 +64,6 @@ public class JsonWizardFormFragment extends JsonFormFragment {
 
         return rootView;
     }
-
-    @Override
-    protected JsonFormFragmentViewState createViewState() {
-        return new JsonFormFragmentViewState();
-    }
-
-    @Override
-    protected JsonFormFragmentPresenter createPresenter() {
-        return new JsonWizardFormFragmentPresenter(this, JsonFormInteractor.getInstance());
-    }
-
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -97,6 +86,29 @@ public class JsonWizardFormFragment extends JsonFormFragment {
                 break;
         }
         return false;
+    }
+
+    @Override
+    protected JsonFormFragmentViewState createViewState() {
+        return new JsonFormFragmentViewState();
+    }
+
+    @Override
+    protected JsonFormFragmentPresenter createPresenter() {
+        return new JsonWizardFormFragmentPresenter(this, JsonFormInteractor.getInstance());
+    }
+
+    @Override
+    public void setActionBarTitle(String title) {
+        Form form = getForm();
+        if (form != null && !TextUtils.isEmpty(form.getName())) {
+            super.setActionBarTitle(form.getName());
+            if (stepName != null) {
+                stepName.setText(title);
+            }
+        } else {
+            super.setActionBarTitle(title);
+        }
     }
 
     @Override
@@ -154,19 +166,6 @@ public class JsonWizardFormFragment extends JsonFormFragment {
             if (form != null && form.isHidePreviousButton()) {
                 previousButton.setVisibility(View.GONE);
             }
-        }
-    }
-
-    @Override
-    public void setActionBarTitle(String title) {
-        Form form = getForm();
-        if (form != null && !TextUtils.isEmpty(form.getName())) {
-            super.setActionBarTitle(form.getName());
-            if (stepName != null) {
-                stepName.setText(title);
-            }
-        } else {
-            super.setActionBarTitle(title);
         }
     }
 
@@ -238,6 +237,13 @@ public class JsonWizardFormFragment extends JsonFormFragment {
 
     }
 
+    private Form getForm() {
+        if (getActivity() != null && getActivity() instanceof JsonFormActivity) {
+            return ((JsonFormActivity) getActivity()).getForm();
+        }
+        return null;
+    }
+
     protected void save() {
         try {
             Boolean skipValidation = ((JsonFormActivity) mMainView.getContext()).getIntent()
@@ -248,13 +254,6 @@ public class JsonWizardFormFragment extends JsonFormFragment {
             Log.e(TAG, e.getMessage());
             save(false);
         }
-    }
-
-    private Form getForm() {
-        if (getActivity() != null && getActivity() instanceof JsonFormActivity) {
-            return ((JsonFormActivity) getActivity()).getForm();
-        }
-        return null;
     }
 
     public TextView getStepName() {

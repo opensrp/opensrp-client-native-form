@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     form.setActionBarBackground(R.color.customAppThemeBlue);
                     form.setNavigationBackground(R.color.button_navy_blue);
                     form.setHideSaveLabel(true);
-                    intent.putExtra(JsonFormConstants.JSON_FORM_KEY.FORM, form);
+                    intent.putExtra(JsonFormConstants.JsonFormKeyUtils.FORM, form);
                     startActivityForResult(intent, jsonFormActivityRequestCode);
                     break;
                 }
@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     form.setPreviousLabel(getString(R.string.previous));
                     form.setSaveLabel(getString(R.string.save));
                     form.setBackIcon(R.drawable.ic_icon_positive);
-                    intent.putExtra(JsonFormConstants.JSON_FORM_KEY.FORM, form);
+                    intent.putExtra(JsonFormConstants.JsonFormKeyUtils.FORM, form);
 
                     startActivityForResult(intent, jsonFormActivityRequestCode);
                     break;
@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     form.setPreviousLabel(getString(R.string.previous));
                     form.setSaveLabel(getString(R.string.save));
                     form.setBackIcon(R.drawable.ic_icon_positive);
-                    intent.putExtra(JsonFormConstants.JSON_FORM_KEY.FORM, form);
+                    intent.putExtra(JsonFormConstants.JsonFormKeyUtils.FORM, form);
 
                     startActivityForResult(intent, jsonFormActivityRequestCode);
                     break;
@@ -180,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     form.setNextLabel("Next");
                     form.setPreviousLabel("Previous");
                     form.setSaveLabel("Submit");
-                    intent.putExtra(JsonFormConstants.JSON_FORM_KEY.FORM, form);
+                    intent.putExtra(JsonFormConstants.JsonFormKeyUtils.FORM, form);
 
                     startActivityForResult(intent, jsonFormActivityRequestCode);
                     break;

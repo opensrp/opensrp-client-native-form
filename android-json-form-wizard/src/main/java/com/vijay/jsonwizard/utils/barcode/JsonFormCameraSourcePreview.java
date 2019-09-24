@@ -67,18 +67,18 @@ public class JsonFormCameraSourcePreview extends ViewGroup {
         }
     }
 
-    public void release() {
-        if (cameraSource != null) {
-            cameraSource.release();
-            cameraSource = null;
-        }
-    }
-
     @RequiresPermission(Manifest.permission.CAMERA)
     private void startIfReady() throws IOException, SecurityException {
         if (startRequested && surfaceAvailable) {
             cameraSource.start(surfaceView.getHolder());
             startRequested = false;
+        }
+    }
+
+    public void release() {
+        if (cameraSource != null) {
+            cameraSource.release();
+            cameraSource = null;
         }
     }
 
@@ -112,13 +112,13 @@ public class JsonFormCameraSourcePreview extends ViewGroup {
         }
 
         @Override
-        public void surfaceDestroyed(SurfaceHolder surface) {
-            surfaceAvailable = false;
+        public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+            //Todo
         }
 
         @Override
-        public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-            //Todo
+        public void surfaceDestroyed(SurfaceHolder surface) {
+            surfaceAvailable = false;
         }
     }
 }

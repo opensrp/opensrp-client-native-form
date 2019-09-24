@@ -23,18 +23,18 @@ public abstract class MvpFragment<P extends MvpPresenter, V extends ViewState> e
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-    }
-
-    @Override
     public void onDestroyView() {
         super.onDestroyView();
         presenter.detachView(getRetainInstance());
     }
 
     protected abstract P createPresenter();
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+    }
 
     public void hideSoftKeyboard() {
         // Check if no view has focus:

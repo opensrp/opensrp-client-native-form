@@ -18,6 +18,23 @@ public abstract class TextableView extends LinearLayout {
         init(context, null, 0, 0);
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        // a fix to reset paddingLeft attribute
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            TypedArray a = context.obtainStyledAttributes(attrs, new int[]{android.R.attr.padding,
+                    android.R.attr.paddingLeft}, defStyleAttr, defStyleRes);
+
+            if (!a.hasValue(0) && !a.hasValue(1)) {
+                setPadding(0, getPaddingTop(), getPaddingRight(), getPaddingBottom());
+            }
+
+            a.recycle();
+        }
+
+        setClickable(true);
+    }
+
     public TextableView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
 
@@ -36,25 +53,8 @@ public abstract class TextableView extends LinearLayout {
         init(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-    private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        // a fix to reset paddingLeft attribute
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            TypedArray a = context.obtainStyledAttributes(attrs, new int[]{android.R.attr.padding,
-                    android.R.attr.paddingLeft}, defStyleAttr, defStyleRes);
-
-            if (!a.hasValue(0) && !a.hasValue(1)) {
-                setPadding(0, getPaddingTop(), getPaddingRight(), getPaddingBottom());
-            }
-
-            a.recycle();
-        }
-
-        setClickable(true);
-    }
+    public abstract CharSequence getText();
 
     public abstract void setText(CharSequence text);
-
-    public abstract CharSequence getText();
 
 }

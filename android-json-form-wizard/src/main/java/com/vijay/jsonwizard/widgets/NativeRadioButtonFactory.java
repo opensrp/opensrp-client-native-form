@@ -131,10 +131,10 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
                         map.put(customTextView.getTag(R.id.key).toString(),
                                 customTextView.getTag(R.id.childKey) + ":" + DATE_FORMAT.format(calendarDate.getTime()));
 
-                        Intent intent = new Intent(JsonFormConstants.INTENT_ACTION.JSON_FORM_ACTIVITY);
-                        intent.putExtra(JsonFormConstants.INTENT_KEY.MESSAGE, map);
-                        intent.putExtra(JsonFormConstants.INTENT_KEY.MESSAGE_TYPE,
-                                JsonFormConstants.MESSAGE_TYPE.GLOBAL_VALUES);
+                        Intent intent = new Intent(JsonFormConstants.IntentActionUtils.JSON_FORM_ACTIVITY);
+                        intent.putExtra(JsonFormConstants.IntentKeyUtils.MESSAGE, map);
+                        intent.putExtra(JsonFormConstants.IntentKeyUtils.MESSAGE_TYPE,
+                                JsonFormConstants.MessageTypeUtils.GLOBAL_VALUES);
 
                         ((JsonFormActivity) context).getLocalBroadcastManager().sendBroadcast(intent);
                     }

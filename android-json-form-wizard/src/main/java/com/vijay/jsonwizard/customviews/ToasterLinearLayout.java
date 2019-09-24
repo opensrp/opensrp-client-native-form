@@ -28,12 +28,12 @@ public class ToasterLinearLayout extends TextableView {
     }
 
     @Override
-    public void setText(CharSequence text) {
-        ((TextView) findViewById(R.id.toaster_notes_text)).setText(text);
+    public CharSequence getText() {
+        return ((TextView) findViewById(R.id.toaster_notes_text)).getText();
     }
 
     @Override
-    public CharSequence getText() {
-        return ((TextView) findViewById(R.id.toaster_notes_text)).getText();
+    public void setText(CharSequence text) {
+        ((TextView) findViewById(R.id.toaster_notes_text)).setText(text);
     }
 }

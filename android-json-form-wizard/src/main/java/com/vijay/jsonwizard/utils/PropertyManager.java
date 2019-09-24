@@ -41,15 +41,14 @@ import java.util.Locale;
 
 public class PropertyManager {
 
-    private HashMap<String, String> mProperties;
-    private TelephonyManager mTelephonyManager;
-    private Context mContext;
-
     public final static String DEVICE_ID_PROPERTY = "deviceid"; // imei
     public final static String SUBSCRIBER_ID_PROPERTY = "subscriberid"; // imsi
     public final static String SIM_SERIAL_PROPERTY = "simserial";
     public final static String PHONE_NUMBER_PROPERTY = "phonenumber";
     public static final String ANDROID6_FAKE_MAC = "02:00:00:00:00:00";
+    private HashMap<String, String> mProperties;
+    private TelephonyManager mTelephonyManager;
+    private Context mContext;
 
 
     public PropertyManager(Context context) {
@@ -59,7 +58,7 @@ public class PropertyManager {
         handleOnRequestPermissionResults();
         if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.READ_PHONE_STATE)
                 == PackageManager.PERMISSION_GRANTED) {
-           addPhoneProperties();
+            addPhoneProperties();
         }
     }
 

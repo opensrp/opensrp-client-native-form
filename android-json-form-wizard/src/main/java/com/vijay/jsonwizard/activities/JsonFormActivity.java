@@ -113,13 +113,13 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            String messageType = intent.getStringExtra(JsonFormConstants.INTENT_KEY.MESSAGE_TYPE);
+            String messageType = intent.getStringExtra(JsonFormConstants.IntentKeyUtils.MESSAGE_TYPE);
 
             switch (messageType) {
-                case JsonFormConstants.MESSAGE_TYPE.GLOBAL_VALUES:
+                case JsonFormConstants.MessageTypeUtils.GLOBAL_VALUES:
 
                     Map<String, String> map =
-                            (Map<String, String>) intent.getSerializableExtra(JsonFormConstants.INTENT_KEY.MESSAGE);
+                            (Map<String, String>) intent.getSerializableExtra(JsonFormConstants.IntentKeyUtils.MESSAGE);
                     globalValues.putAll(map);
 
                     break;
@@ -311,9 +311,9 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         }
 
                         String[] address = null;
-                        if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_RULES)) {
+                        if (curRelevance.has(JsonFormConstants.JsonFormKeyUtils.EX_RULES)) {
                             address = new String[]{curKey,
-                                    curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getString(
+                                    curRelevance.getJSONObject(JsonFormConstants.JsonFormKeyUtils.EX_RULES).getString(
                                             RuleConstant.RULES_FILE),
                                     curView.getTag(R.id.address).toString().replace(':', '_')};
                         }
@@ -582,6 +582,27 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         this.confirmCloseTitle = confirmCloseTitle;
     }
 
+    @Override
+    public void showPermissionDeniedDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Permission Denied")
+                .setMessage("The app needs this permission to capture the device information required when submitting forms. " +
+                        "Without this permission the app will not function properly. " +
+                        "Are you sure you want to deny this permission?")
+                .setPositiveButton("NO", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        ActivityCompat.requestPermissions(JsonFormActivity.this, new String[]{
+                                Manifest.permission.READ_PHONE_STATE}, PermissionUtils.PHONE_STATE_PERMISSION);
+                    }
+                })
+                .setNegativeButton("YES", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+    }
+
     private String getViewKey(View view) {
         String key = (String) view.getTag(R.id.key);
         if (view.getTag(R.id.childKey) != null) {
@@ -708,11 +729,11 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     protected String cleanWidgetKey(String itemKey, String itemType) {
         String key = itemKey;
 
-        if (isNumberSelector(itemType) && itemKey.endsWith(JsonFormConstants.SUFFIX.TEXT_VIEW) ||
-                itemKey.endsWith(JsonFormConstants.SUFFIX.SPINNER)) {
-            key = itemKey.endsWith(JsonFormConstants.SUFFIX.TEXT_VIEW) ?
-                    itemKey.substring(0, itemKey.indexOf(JsonFormConstants.SUFFIX.TEXT_VIEW)) :
-                    itemKey.substring(0, itemKey.indexOf(JsonFormConstants.SUFFIX.SPINNER));
+        if (isNumberSelector(itemType) && itemKey.endsWith(JsonFormConstants.suffix.TEXT_VIEW) ||
+                itemKey.endsWith(JsonFormConstants.suffix.SPINNER)) {
+            key = itemKey.endsWith(JsonFormConstants.suffix.TEXT_VIEW) ?
+                    itemKey.substring(0, itemKey.indexOf(JsonFormConstants.suffix.TEXT_VIEW)) :
+                    itemKey.substring(0, itemKey.indexOf(JsonFormConstants.suffix.SPINNER));
         }
 
         return key;
@@ -803,9 +824,9 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     protected void onResume() {
         super.onResume();
         localBroadcastManager
-                .registerReceiver(messageReceiver, new IntentFilter(JsonFormConstants.INTENT_ACTION.JSON_FORM_ACTIVITY));
+                .registerReceiver(messageReceiver, new IntentFilter(JsonFormConstants.IntentActionUtils.JSON_FORM_ACTIVITY));
         localBroadcastManager.registerReceiver(NumberSelectorFactory.getNumberSelectorsReceiver(),
-                new IntentFilter(JsonFormConstants.INTENT_ACTION.NUMBER_SELECTOR_FACTORY));
+                new IntentFilter(JsonFormConstants.IntentActionUtils.NUMBER_SELECTOR_FACTORY));
 
         for (LifeCycleListener lifeCycleListener : lifeCycleListeners) {
             lifeCycleListener.onResume();
@@ -855,7 +876,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     private String[] getAddress(View view, String curKey, JSONObject curRelevance) throws JSONException {
         return curKey.contains(":") ? curKey.split(":") : new String[]{curKey,
-                curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getString(RuleConstant.RULES_FILE),
+                curRelevance.getJSONObject(JsonFormConstants.JsonFormKeyUtils.EX_RULES).getString(RuleConstant.RULES_FILE),
                 view.getTag(R.id.address).toString().replace(':', '_')};
     }
 
@@ -976,7 +997,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                             (curView.getTag(R.id.previous) == null || !curView.getTag(R.id.previous).equals(errorMessage))) {
 
                         if (!"false".equals(errorMessage)) {
-                            Intent localIntent = new Intent(JsonFormConstants.INTENT_ACTION.NUMBER_SELECTOR_FACTORY);
+                            Intent localIntent = new Intent(JsonFormConstants.IntentActionUtils.NUMBER_SELECTOR_FACTORY);
                             localIntent.putExtra(JsonFormConstants.MAX_SELECTION_VALUE, Integer.valueOf(errorMessage));
                             localIntent.putExtra(JsonFormConstants.JSON_OBJECT_KEY, curView.getTag(R.id.key).toString());
                             localIntent.putExtra(JsonFormConstants.STEPNAME, address[0]);
@@ -1297,7 +1318,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     private String enforceConstraint(Facts curValueMap, JSONObject constraint) throws Exception {
         return curValueMap.asMap().size() == 0 ? "0" : getRulesEngineFactory().getConstraint(curValueMap,
-                constraint.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getString(RuleConstant.RULES_FILE));
+                constraint.getJSONObject(JsonFormConstants.JsonFormKeyUtils.EX_RULES).getString(RuleConstant.RULES_FILE));
     }
 
     private boolean isNumberSelectorConstraint(View view) {
@@ -1453,12 +1474,12 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     private boolean isRelevant(Facts curValueMap, JSONObject curRelevance) throws Exception {
         if (curRelevance != null) {
-            if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_RULES)) {
+            if (curRelevance.has(JsonFormConstants.JsonFormKeyUtils.EX_RULES)) {
                 return curValueMap.asMap().size() != 0 && getRulesEngineFactory().getRelevance(curValueMap,
-                        curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES)
+                        curRelevance.getJSONObject(JsonFormConstants.JsonFormKeyUtils.EX_RULES)
                                 .getString(RuleConstant.RULES_FILE));
-            } else if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_CHECKBOX)) {
-                JSONArray exArray = curRelevance.getJSONArray(JsonFormConstants.JSON_FORM_KEY.EX_CHECKBOX);
+            } else if (curRelevance.has(JsonFormConstants.JsonFormKeyUtils.EX_CHECKBOX)) {
+                JSONArray exArray = curRelevance.getJSONArray(JsonFormConstants.JsonFormKeyUtils.EX_CHECKBOX);
 
                 for (int i = 0; i < exArray.length(); i++) {
                     ExObjectResult exObjectResult = isExObjectRelevant(curValueMap, exArray.getJSONObject(i));
@@ -1479,8 +1500,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     private ExObjectResult isExObjectRelevant(Facts curValueMap, JSONObject object) throws Exception {
-        if (object.has(JsonFormConstants.JSON_FORM_KEY.NOT)) {
-            JSONArray orArray = object.getJSONArray(JsonFormConstants.JSON_FORM_KEY.NOT);
+        if (object.has(JsonFormConstants.JsonFormKeyUtils.NOT)) {
+            JSONArray orArray = object.getJSONArray(JsonFormConstants.JsonFormKeyUtils.NOT);
 
             for (int i = 0; i < orArray.length(); i++) {
 
@@ -1494,8 +1515,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             }
         }
 
-        if (object.has(JsonFormConstants.JSON_FORM_KEY.OR)) {
-            JSONArray orArray = object.getJSONArray(JsonFormConstants.JSON_FORM_KEY.OR);
+        if (object.has(JsonFormConstants.JsonFormKeyUtils.OR)) {
+            JSONArray orArray = object.getJSONArray(JsonFormConstants.JsonFormKeyUtils.OR);
 
             for (int i = 0; i < orArray.length(); i++) {
                 String curValue = curValueMap.get(orArray.getString(i));
@@ -1507,8 +1528,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
         }
 
-        if (object.has(JsonFormConstants.JSON_FORM_KEY.AND)) {
-            JSONArray andArray = object.getJSONArray(JsonFormConstants.JSON_FORM_KEY.AND);
+        if (object.has(JsonFormConstants.JsonFormKeyUtils.AND)) {
+            JSONArray andArray = object.getJSONArray(JsonFormConstants.JsonFormKeyUtils.AND);
 
             for (int i = 0; i < andArray.length(); i++) {
                 String curValue = curValueMap.get(andArray.getString(i));
@@ -1761,7 +1782,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             textView.performClick();
         }
     }
-
 
     private CharSequence getRenderText(String calculation, String textTemplate, boolean makeBold) {
         Map<String, Object> valueMap = new Gson().fromJson(calculation, new TypeToken<HashMap<String, Object>>() {
@@ -2056,28 +2076,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     protected boolean isNumberWidget(JSONObject object) throws JSONException {
         return object.has(JsonFormConstants.EDIT_TYPE) &&
-                object.getString(JsonFormConstants.EDIT_TYPE).equals(JsonFormConstants.EDIT_TEXT_TYPE.NUMBER) ||
+                object.getString(JsonFormConstants.EDIT_TYPE).equals(JsonFormConstants.EditTextTypeUtils.NUMBER) ||
                 object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.NUMBER_SELECTOR);
-    }
-
-    @Override
-    public void showPermissionDeniedDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle("Permission Denied")
-                .setMessage("The app needs this permission to capture the device information required when submitting forms. " +
-                        "Without this permission the app will not function properly. " +
-                        "Are you sure you want to deny this permission?")
-                .setPositiveButton("NO", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        ActivityCompat.requestPermissions(JsonFormActivity.this, new String[]{
-                                Manifest.permission.READ_PHONE_STATE}, PermissionUtils.PHONE_STATE_PERMISSION);
-                    }
-                })
-                .setNegativeButton("YES", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .show();
     }
 }

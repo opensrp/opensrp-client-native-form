@@ -46,15 +46,6 @@ public class TimePickerDialog extends DialogFragment {
         setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Light_Dialog);
     }
 
-    public void setOnShowListener(DialogInterface.OnShowListener onShowListener_) {
-
-        onShowListener = onShowListener_;
-    }
-
-    public DialogInterface.OnShowListener getOnShowListener(){
-        return onShowListener;
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -62,7 +53,7 @@ public class TimePickerDialog extends DialogFragment {
 
         Button cancelButton;
         Button okButton;
-        if(getOnShowListener()==null){
+        if (getOnShowListener() == null) {
             setOnShowListener(new DialogInterface.OnShowListener() {
                 @Override
                 public void onShow(DialogInterface dialog) {
@@ -108,8 +99,8 @@ public class TimePickerDialog extends DialogFragment {
                     TimePickerDialog.this.dismiss();
 //                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
-                        onTimeSetListener.onTimeSet(timePicker, timePicker.getCurrentHour(),
-                                timePicker.getCurrentMinute());
+                    onTimeSetListener.onTimeSet(timePicker, timePicker.getCurrentHour(),
+                            timePicker.getCurrentMinute());
 //                    }
                 }
             }
@@ -118,11 +109,13 @@ public class TimePickerDialog extends DialogFragment {
         return dialogView;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(this.date);
-        setDate(calendar);
+    public DialogInterface.OnShowListener getOnShowListener() {
+        return onShowListener;
+    }
+
+    public void setOnShowListener(DialogInterface.OnShowListener onShowListener_) {
+
+        onShowListener = onShowListener_;
     }
 
     private void setDate(Calendar calendar) {
@@ -134,6 +127,13 @@ public class TimePickerDialog extends DialogFragment {
                 timePicker.setMinute(today.getMinutes());
             }
         }
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(this.date);
+        setDate(calendar);
     }
 
     public void setOnTimeSetListener(android.app.TimePickerDialog.OnTimeSetListener onTimeSetListener) {

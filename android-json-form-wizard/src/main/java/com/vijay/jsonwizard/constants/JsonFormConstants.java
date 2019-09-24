@@ -117,10 +117,8 @@ public class JsonFormConstants {
     public static final String BTN_TEXT_COLOR = "btn_text_color";
     public static final String BTN_TEXT_SIZE = "btn_text_size";
     public static final String BTN_BG_COLOR = "btn_bg_color";
-
     public static final String STEPNAME = "stepName";
     public static final String DISPLAY_BACK_BUTTON = "display_back_button";
-
     public static final String COUNT = "count";
     public static final String CALCULATION = "calculation";
     public static final String HIDDEN = "hidden";
@@ -188,8 +186,44 @@ public class JsonFormConstants {
     public static final String INVISIBLE_REQUIRED_FIELDS = "invisible_required_fields";
     public static final String LABEL_INFO_HAS_IMAGE = "label_info_has_image";
     public static final String LABEL_INFO_IMAGE_SRC = "label_info_image_src";
+    public static final String GLOBAL = "global";
+    public static final String OTHER_FOR = "other_for";
+    public static final String OTHER = "other";
+    public static final String ACCORDION_INFO_TEXT = "accordion_info_text";
+    public static final String ACCORDION_INFO_TITLE = "accordion_info_title";
+    public static final String DISPLAY_BOTTOM_SECTION = "display_bottom_section";
+    public static final String BOTTOM_SECTION = "bottom_section";
+    public static final String DISPLAY_RECORD_BUTTON = "display_record_button";
+    public static final String CONTACT_CONTAINER = "container";
+    public static final String REQUIRED_FIELDS = "required_fields";
 
-    public static class JSON_FORM_KEY {
+    public static class SuffixUtils {
+        public static final String VALUE = "_value";
+        public static final String OTHER = "_other";
+        public static final String ABNORMAL = "_abnormal";
+        public static final String ABNORMAL_OTHER = ABNORMAL + OTHER;
+        public static final String SPINNER = "_spinner";
+        public static final String TEXT_VIEW = "_textview";
+        public static final String PARENT = "_parent";
+    }
+
+    public static final class KeyUtils {
+        public static final String KEY = "key";
+        public static final String VALUE = "value";
+        public static final String TREE = "tree";
+        public static final String DEFAULT = "default";
+        public static final String PHOTO = "photo";
+        public static final String AGE_ENTERED = "age_entered";
+        public static final String STEP = "step";
+        public static final String TYPE = "type";
+        public static final String FORM = "form";
+        public static final String CONTACT_NO = "contact_no";
+        public static final String LAST_CONTACT_DATE = "last_contact_date";
+        public static final String SECONDARY_VALUES = "secondary_values";
+        public static final String PARENT_SECONDARY_KEY = "parent_secondary_key";
+    }
+
+    public static class JsonFormKeyUtils {
         public static final String EX_RULES = "ex-rules";
         public static final String EX_CHECKBOX = "ex-checkbox";
         public static final String OR = "or";
@@ -202,34 +236,43 @@ public class JsonFormConstants {
         public static final String STEPNAME = "stepName";
     }
 
-    public static class BARCODE_CONSTANTS {
+    public static class BarcodeConstantsUtils {
         public static final String BARCODE_KEY = "barcode";
         public static final int BARCODE_REQUEST_CODE = 0x0000c0de;
-        // intent request code to handle updating play services if needed.
         public static final int RC_HANDLE_GMS = 9001;
     }
 
-    public static class EDIT_TEXT_TYPE {
+    public static class EditTextTypeUtils {
         public static final String NUMBER = "number";
     }
 
-    public static class INTENT_ACTION {
+    public static class IntentActionUtils {
         public static final String NUMBER_SELECTOR_FACTORY = "number_selector_factory";
         public static final String JSON_FORM_ACTIVITY = "json_form_activity";
     }
 
-    public static class SUFFIX {
-        public static final String SPINNER = "_spinner";
-        public static final String TEXT_VIEW = "_textview";
-        public static final String PARENT = "_parent";
-    }
-
-    public static class INTENT_KEY {
+    public static class IntentKeyUtils {
         public static final String MESSAGE = "message";
         public static final String MESSAGE_TYPE = "message_type";
     }
 
-    public static class MESSAGE_TYPE {
+    public static class MessageTypeUtils {
         public static final String GLOBAL_VALUES = "global_values";
+    }
+
+    public static class AncRadioButtonOptionTypesUtils {
+        public static final String DONE_TODAY = "done_today";
+        public static final String DONE_EARLIER = "done_earlier";
+        public static final String ORDERED = "ordered";
+        public static final String NOT_DONE = "not_done";
+        public static final String DONE = "done";
+    }
+
+    public static class AncRadioButtonOptionTextUtils {
+        public static final String DONE_TODAY = "Done today";
+        public static final String DONE_EARLIER = "Done earlier";
+        public static final String ORDERED = "Ordered";
+        public static final String NOT_DONE = "Not done";
+        public static final String DONE = "Done";
     }
 }

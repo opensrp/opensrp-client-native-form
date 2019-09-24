@@ -35,7 +35,7 @@ public class SelectableItemHolder extends TreeNode.BaseNodeViewHolder<String> {
         final LayoutInflater inflater = LayoutInflater.from(context);
         final View view = inflater.inflate(R.layout.native_form_layout_selectable_item, null, false);
 
-        TextView tvValue = (TextView) view.findViewById(R.id.node_value);
+        TextView tvValue = view.findViewById(R.id.node_value);
         if (TextUtils.isEmpty(levelLabel)) {
             tvValue.setText(value);
         } else {
@@ -43,10 +43,10 @@ public class SelectableItemHolder extends TreeNode.BaseNodeViewHolder<String> {
         }
         tvValue.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 context.getResources().getDimension(R.dimen.default_text_size));
-        arrowView = (PrintView) view.findViewById(R.id.arrowview);
+        arrowView = view.findViewById(R.id.arrowview);
         arrowView.setIconFont("fonts/material/fonts/material-icon-font.ttf");
 
-        nodeSelector = (CheckBox) view.findViewById(R.id.node_selector);
+        nodeSelector = view.findViewById(R.id.node_selector);
         nodeSelector.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -72,16 +72,16 @@ public class SelectableItemHolder extends TreeNode.BaseNodeViewHolder<String> {
     }
 
     @Override
-    public void toggleSelectionMode(boolean editModeEnabled) {
-        nodeSelector.setVisibility(editModeEnabled ? View.VISIBLE : View.GONE);
-        nodeSelector.setChecked(mNode.isSelected());
-    }
-
-    @Override
     public void toggle(boolean active) {
         if (!mNode.isLeaf()) {
             arrowView.setIconText(context.getResources().getString(active ?
                     R.string.ic_keyboard_arrow_down : R.string.ic_keyboard_arrow_right));
         }
+    }
+
+    @Override
+    public void toggleSelectionMode(boolean editModeEnabled) {
+        nodeSelector.setVisibility(editModeEnabled ? View.VISIBLE : View.GONE);
+        nodeSelector.setChecked(mNode.isSelected());
     }
 }

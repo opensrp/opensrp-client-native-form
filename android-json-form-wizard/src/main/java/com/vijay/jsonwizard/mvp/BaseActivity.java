@@ -25,12 +25,6 @@ public abstract class BaseActivity<V extends ViewState> extends AppCompatActivit
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        // Icepick.saveInstanceState(this, outState);
-    }
-
-    @Override
     public void setContentView(int layoutResID) {
         super.setContentView(layoutResID);
     }
@@ -48,6 +42,12 @@ public abstract class BaseActivity<V extends ViewState> extends AppCompatActivit
     @Override
     public void addContentView(View view, ViewGroup.LayoutParams params) {
         super.addContentView(view, params);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // Icepick.saveInstanceState(this, outState);
     }
 
     protected abstract V createViewState();

@@ -33,7 +33,7 @@
     <color name="form_error_color">#FF004C</color>
     <color name="form_error_stepname">#3E404F</color>
     <color name="customAppThemeBlue">#218CC5</color>
-
     <color name="button_navy_blue">#2539BC</color>
+    <color name="text_color_primary">#737373</color>
 
 </resources>

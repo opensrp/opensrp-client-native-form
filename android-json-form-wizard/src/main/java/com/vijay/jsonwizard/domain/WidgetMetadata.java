@@ -14,21 +14,13 @@ public class WidgetMetadata {
         return openMrsEntityParent;
     }
 
-    public String getOpenMrsEntity() {
-        return openMrsEntity;
-    }
-
-    public String getOpenMrsEntityId() {
-        return openMrsEntityId;
-    }
-
-    public String getRelevance() {
-        return relevance;
-    }
-
     public WidgetMetadata setOpenMrsEntityParent(String openMrsEntityParent) {
         this.openMrsEntityParent = openMrsEntityParent;
         return this;
+    }
+
+    public String getOpenMrsEntity() {
+        return openMrsEntity;
     }
 
     public WidgetMetadata setOpenMrsEntity(String openMrsEntity) {
@@ -36,9 +28,17 @@ public class WidgetMetadata {
         return this;
     }
 
+    public String getOpenMrsEntityId() {
+        return openMrsEntityId;
+    }
+
     public WidgetMetadata setOpenMrsEntityId(String openMrsEntityId) {
         this.openMrsEntityId = openMrsEntityId;
         return this;
+    }
+
+    public String getRelevance() {
+        return relevance;
     }
 
     public WidgetMetadata setRelevance(String relevance) {

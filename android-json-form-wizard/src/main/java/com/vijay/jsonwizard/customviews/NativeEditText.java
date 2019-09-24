@@ -91,57 +91,6 @@ public class NativeEditText extends AppCompatEditText {
         }
     }
 
-    private boolean hasCharactersCounter() {
-        return minCharacters > 0 || maxCharacters > 0;
-    }
-
-    /**
-     * if the main text matches the regex
-     *
-     * @deprecated use the new validator interface to add your own custom validator
-     */
-    @Deprecated
-    public boolean isValid(String regex) {
-        if (regex == null) {
-            return false;
-        }
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(getText());
-        return matcher.matches();
-    }
-
-    /**
-     * check if the main text matches the regex, and set the error text if not.
-     *
-     * @return true if it matches the regex, false if not.
-     * @deprecated use the new validator interface to add your own custom validator
-     */
-    @Deprecated
-    public boolean validate(String regex, CharSequence errorText) {
-        boolean isValid = isValid(regex);
-        if (!isValid) {
-            setError(errorText);
-        }
-        postInvalidate();
-        return isValid;
-    }
-
-    /**
-     * Run validation on a single validator instance
-     *
-     * @param validator Validator to check
-     * @return True if valid, false if not
-     */
-    public boolean validateWith(@NonNull METValidator validator) {
-        CharSequence text = getText();
-        boolean isValid = validator.isValid(text, text.length() == 0);
-        if (!isValid) {
-            setError(validator.getErrorMessage());
-        }
-        postInvalidate();
-        return isValid;
-    }
-
     /**
      * Check all validators, sets the error text if not
      * <p/>
@@ -170,6 +119,62 @@ public class NativeEditText extends AppCompatEditText {
             setError(null);
         }
 
+        postInvalidate();
+        return isValid;
+    }
+
+    private boolean hasCharactersCounter() {
+        return minCharacters > 0 || maxCharacters > 0;
+    }
+
+    private int checkLength(CharSequence text) {
+        if (lengthChecker == null) return text.length();
+        return lengthChecker.getLength(text);
+    }
+
+    /**
+     * check if the main text matches the regex, and set the error text if not.
+     *
+     * @return true if it matches the regex, false if not.
+     * @deprecated use the new validator interface to add your own custom validator
+     */
+    @Deprecated
+    public boolean validate(String regex, CharSequence errorText) {
+        boolean isValid = isValid(regex);
+        if (!isValid) {
+            setError(errorText);
+        }
+        postInvalidate();
+        return isValid;
+    }
+
+    /**
+     * if the main text matches the regex
+     *
+     * @deprecated use the new validator interface to add your own custom validator
+     */
+    @Deprecated
+    public boolean isValid(String regex) {
+        if (regex == null) {
+            return false;
+        }
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(getText());
+        return matcher.matches();
+    }
+
+    /**
+     * Run validation on a single validator instance
+     *
+     * @param validator Validator to check
+     * @return True if valid, false if not
+     */
+    public boolean validateWith(@NonNull METValidator validator) {
+        CharSequence text = getText();
+        boolean isValid = validator.isValid(text, text.length() == 0);
+        if (!isValid) {
+            setError(validator.getErrorMessage());
+        }
         postInvalidate();
         return isValid;
     }
@@ -216,10 +221,5 @@ public class NativeEditText extends AppCompatEditText {
 
     public void setLengthChecker(METLengthChecker lengthChecker) {
         this.lengthChecker = lengthChecker;
-    }
-
-    private int checkLength(CharSequence text) {
-        if (lengthChecker == null) return text.length();
-        return lengthChecker.getLength(text);
     }
 }

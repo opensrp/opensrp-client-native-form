@@ -32,10 +32,8 @@ import com.vijay.jsonwizard.R;
 
 public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.AnimatorUpdateListener {
 
-    private static String TAG = MaterialSpinner.class.getCanonicalName();
-
     public static final int DEFAULT_ARROW_WIDTH_DP = 12;
-
+    private static String TAG = MaterialSpinner.class.getCanonicalName();
     private Context context;
 
     //Paint objects
@@ -121,24 +119,6 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
         init(context, null);
     }
 
-    public MaterialSpinner(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(context, attrs);
-
-    }
-
-    public MaterialSpinner(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init(context, attrs);
-    }
-
-
-    /*
-     * **********************************************************************************
-     * INITIALISATION METHODS
-     * **********************************************************************************
-     */
-
     private void init(Context context, AttributeSet attrs) {
         this.context = context;
         initAttributes(context, attrs);
@@ -201,15 +181,11 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
     }
 
 
-    @Override
-    public void setSelection(final int position) {
-        this.post(new Runnable() {
-            @Override
-            public void run() {
-                MaterialSpinner.super.setSelection(position);
-            }
-        });
-    }
+    /*
+     * **********************************************************************************
+     * INITIALISATION METHODS
+     * **********************************************************************************
+     */
 
     private void initPaintObjects() {
 
@@ -234,9 +210,15 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
         }
     }
 
-    @Override
-    public int getSelectedItemPosition() {
-        return super.getSelectedItemPosition();
+    private void initDimensions() {
+        underlineTopSpacing = getResources().getDimensionPixelSize(R.dimen.underline_top_spacing);
+        underlineBottomSpacing = getResources().getDimensionPixelSize(R.dimen.underline_bottom_spacing);
+        floatingLabelTopSpacing = getResources().getDimensionPixelSize(R.dimen.floating_label_top_spacing);
+        floatingLabelBottomSpacing = getResources().getDimensionPixelSize(R.dimen.floating_label_bottom_spacing);
+        rightLeftSpinnerPadding = alignLabels ? getResources().getDimensionPixelSize(R.dimen.right_left_spinner_padding) : 0;
+        floatingLabelInsideSpacing = getResources().getDimensionPixelSize(R.dimen.floating_label_inside_spacing);
+        errorLabelSpacing = (int) getResources().getDimension(R.dimen.error_label_spacing);
+        minContentHeight = (int) getResources().getDimension(R.dimen.min_content_height);
     }
 
     private void initPadding() {
@@ -251,6 +233,23 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
 
     }
 
+    private void initFloatingLabelAnimator() {
+        if (floatingLabelAnimator == null) {
+            floatingLabelAnimator = ObjectAnimator.ofFloat(this, "floatingLabelPercent", 0f, 1f);
+            floatingLabelAnimator.addUpdateListener(this);
+        }
+    }
+
+    private void initOnItemSelectedListener() {
+        setOnItemSelectedListener(null);
+    }
+
+    private int dpToPx(float dp) {
+        final DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
+        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, displayMetrics);
+        return Math.round(px);
+    }
+
     private void updateBottomPadding() {
         Paint.FontMetrics textMetrics = textPaint.getFontMetrics();
         extraPaddingBottom = underlineTopSpacing + underlineBottomSpacing;
@@ -260,19 +259,46 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
         updatePadding();
     }
 
-    private void initDimensions() {
-        underlineTopSpacing = getResources().getDimensionPixelSize(R.dimen.underline_top_spacing);
-        underlineBottomSpacing = getResources().getDimensionPixelSize(R.dimen.underline_bottom_spacing);
-        floatingLabelTopSpacing = getResources().getDimensionPixelSize(R.dimen.floating_label_top_spacing);
-        floatingLabelBottomSpacing = getResources().getDimensionPixelSize(R.dimen.floating_label_bottom_spacing);
-        rightLeftSpinnerPadding = alignLabels ? getResources().getDimensionPixelSize(R.dimen.right_left_spinner_padding) : 0;
-        floatingLabelInsideSpacing = getResources().getDimensionPixelSize(R.dimen.floating_label_inside_spacing);
-        errorLabelSpacing = (int) getResources().getDimension(R.dimen.error_label_spacing);
-        minContentHeight = (int) getResources().getDimension(R.dimen.min_content_height);
+    @Override
+    public void setOnItemSelectedListener(final OnItemSelectedListener listener) {
+
+        final OnItemSelectedListener onItemSelectedListener = new OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                if (hint != null || floatingLabelText != null) {
+                    if (!floatingLabelVisible && position != 0) {
+                        showFloatingLabel();
+                    } else if (floatingLabelVisible && position == 0) {
+                        hideFloatingLabel();
+                    }
+                }
+
+                if (position != lastPosition && error != null) {
+                    setError(null);
+                }
+                lastPosition = position;
+
+                if (listener != null) {
+                    position = hint != null ? position - 1 : position;
+                    listener.onItemSelected(parent, view, position, id);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                if (listener != null) {
+                    listener.onNothingSelected(parent);
+                }
+            }
+        };
+
+        super.setOnItemSelectedListener(onItemSelectedListener);
     }
 
-    private void initOnItemSelectedListener() {
-        setOnItemSelectedListener(null);
+    @Override
+    public int getSelectedItemPosition() {
+        return super.getSelectedItemPosition();
     }
 
     /*
@@ -281,11 +307,31 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
      * **********************************************************************************
      */
 
-    private void initFloatingLabelAnimator() {
-        if (floatingLabelAnimator == null) {
-            floatingLabelAnimator = ObjectAnimator.ofFloat(this, "floatingLabelPercent", 0f, 1f);
-            floatingLabelAnimator.addUpdateListener(this);
+    @Override
+    public Object getItemAtPosition(int position_) {
+        int position = position_;
+        if (hint != null) {
+            position++;
         }
+        return (hintAdapter == null || position < 0) ? null : hintAdapter.getItem(position);
+    }
+
+    @Override
+    public long getItemIdAtPosition(int position_) {
+        int position = position_;
+        if (hint != null) {
+            position++;
+        }
+        return (hintAdapter == null || position < 0) ? INVALID_ROW_ID : hintAdapter.getItemId(position);
+    }
+
+    private void updatePadding() {
+        int left = innerPaddingLeft;
+        int top = innerPaddingTop + extraPaddingTop;
+        int right = innerPaddingRight;
+        int bottom = innerPaddingBottom + extraPaddingBottom;
+        super.setPadding(left, top, right, bottom);
+        setMinimumHeight(top + bottom + minContentHeight);
     }
 
     private void showFloatingLabel() {
@@ -306,6 +352,45 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
         }
     }
 
+
+    /*
+     * **********************************************************************************
+     * UTILITY METHODS
+     * **********************************************************************************
+     */
+
+    private void startErrorMultilineAnimator(float destLines) {
+        if (errorLabelAnimator == null) {
+            errorLabelAnimator = ObjectAnimator.ofFloat(this, "currentNbErrorLines", destLines);
+
+        } else {
+            errorLabelAnimator.setFloatValues(destLines);
+        }
+        errorLabelAnimator.start();
+    }
+
+    private int prepareBottomPadding() {
+
+        int targetNbLines = minNbErrorLines;
+        if (error != null && this.getVisibility() == VISIBLE) {
+            int width = (getWidth() - getPaddingRight() - getPaddingLeft()) < 0 ? convertDpToPx(getContext(), 300) : (getWidth() - getPaddingRight() - getPaddingLeft());
+            staticLayout = new StaticLayout(error, textPaint, width,
+                    Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
+            int nbErrorLines = staticLayout.getLineCount();
+            targetNbLines = Math.max(minNbErrorLines, nbErrorLines);
+        }
+        return targetNbLines;
+    }
+
+    private boolean needScrollingAnimation() {
+        if (error != null) {
+            float screenWidth = getWidth() - rightLeftSpinnerPadding;
+            float errorTextWidth = textPaint.measureText(error.toString(), 0, error.length());
+            return errorTextWidth > screenWidth;
+        }
+        return false;
+    }
+
     private void startErrorScrollingAnimator() {
 
         int textWidth = Math.round(textPaint.measureText(error.toString()));
@@ -322,61 +407,6 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
         errorLabelAnimator.start();
     }
 
-
-    private void startErrorMultilineAnimator(float destLines) {
-        if (errorLabelAnimator == null) {
-            errorLabelAnimator = ObjectAnimator.ofFloat(this, "currentNbErrorLines", destLines);
-
-        } else {
-            errorLabelAnimator.setFloatValues(destLines);
-        }
-        errorLabelAnimator.start();
-    }
-
-
-    /*
-     * **********************************************************************************
-     * UTILITY METHODS
-     * **********************************************************************************
-     */
-
-    private int dpToPx(float dp) {
-        final DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
-        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, displayMetrics);
-        return Math.round(px);
-    }
-
-    private void updatePadding() {
-        int left = innerPaddingLeft;
-        int top = innerPaddingTop + extraPaddingTop;
-        int right = innerPaddingRight;
-        int bottom = innerPaddingBottom + extraPaddingBottom;
-        super.setPadding(left, top, right, bottom);
-        setMinimumHeight(top + bottom + minContentHeight);
-    }
-
-    private boolean needScrollingAnimation() {
-        if (error != null) {
-            float screenWidth = getWidth() - rightLeftSpinnerPadding;
-            float errorTextWidth = textPaint.measureText(error.toString(), 0, error.length());
-            return errorTextWidth > screenWidth ? true : false;
-        }
-        return false;
-    }
-
-    private int prepareBottomPadding() {
-
-        int targetNbLines = minNbErrorLines;
-        if (error != null && this.getVisibility() == VISIBLE) {
-            int width = (getWidth() - getPaddingRight() - getPaddingLeft()) < 0 ? convertDpToPx(getContext(), 300) : (getWidth() - getPaddingRight() - getPaddingLeft());
-            staticLayout = new StaticLayout(error, textPaint, width,
-                    Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
-            int nbErrorLines = staticLayout.getLineCount();
-            targetNbLines = Math.max(minNbErrorLines, nbErrorLines);
-        }
-        return targetNbLines;
-    }
-
     /**
      * Calculate dp to px
      *
@@ -388,8 +418,10 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
         return (int) (dp * context.getResources().getDisplayMetrics().density);
     }
 
-    public boolean isSpinnerEmpty() {
-        return (hintAdapter.getCount() == 0 && hint == null) || (hintAdapter.getCount() == 1 && hint != null);
+    public MaterialSpinner(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init(context, attrs);
+
     }
 
     /*
@@ -398,6 +430,74 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
      * **********************************************************************************
      */
 
+
+    public MaterialSpinner(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init(context, attrs);
+    }
+
+    @Override
+    public void setSelection(final int position) {
+        this.post(new Runnable() {
+            @Override
+            public void run() {
+                MaterialSpinner.super.setSelection(position);
+            }
+        });
+    }
+
+    /*
+     * **********************************************************************************
+     * LISTENER METHODS
+     * **********************************************************************************
+     */
+
+    @Override
+    public SpinnerAdapter getAdapter() {
+        return hintAdapter != null ? hintAdapter.getWrappedAdapter() : null;
+    }
+
+    @Override
+    public void setAdapter(SpinnerAdapter adapter) {
+        hintAdapter = new HintAdapter(adapter, getContext());
+        super.setAdapter(hintAdapter);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (isEnabled()) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    isSelected = true;
+                    break;
+
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    isSelected = false;
+                    break;
+                default:
+                    break;
+            }
+            invalidate();
+        }
+        return super.onTouchEvent(event);
+    }
+
+
+    /*
+     * **********************************************************************************
+     * GETTERS AND SETTERS
+     * **********************************************************************************
+     */
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
+
+    public boolean isSpinnerEmpty() {
+        return (hintAdapter.getCount() == 0 && hint == null) || (hintAdapter.getCount() == 1 && hint != null);
+    }
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -495,80 +595,19 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
         canvas.drawPath(selectorPath, paint);
     }
 
-    /*
-     * **********************************************************************************
-     * LISTENER METHODS
-     * **********************************************************************************
+    /**
+     * @deprecated {use @link #setPaddingSafe(int, int, int, int)} to keep internal computation OK
      */
-
+    @Deprecated
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if (isEnabled()) {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    isSelected = true;
-                    break;
-
-                case MotionEvent.ACTION_UP:
-                case MotionEvent.ACTION_CANCEL:
-                    isSelected = false;
-                    break;
-                default:
-                    break;
-            }
-            invalidate();
-        }
-        return super.onTouchEvent(event);
-    }
-
-    @Override
-    public void setOnItemSelectedListener(final OnItemSelectedListener listener) {
-
-        final OnItemSelectedListener onItemSelectedListener = new OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                if (hint != null || floatingLabelText != null) {
-                    if (!floatingLabelVisible && position != 0) {
-                        showFloatingLabel();
-                    } else if (floatingLabelVisible && position == 0) {
-                        hideFloatingLabel();
-                    }
-                }
-
-                if (position != lastPosition && error != null) {
-                    setError(null);
-                }
-                lastPosition = position;
-
-                if (listener != null) {
-                    position = hint != null ? position - 1 : position;
-                    listener.onItemSelected(parent, view, position, id);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                if (listener != null) {
-                    listener.onNothingSelected(parent);
-                }
-            }
-        };
-
-        super.setOnItemSelectedListener(onItemSelectedListener);
+    public void setPadding(int left, int top, int right, int bottom) {
+        super.setPadding(left, top, right, bottom);
     }
 
     @Override
     public void onAnimationUpdate(ValueAnimator animation) {
         invalidate();
     }
-
-
-    /*
-     * **********************************************************************************
-     * GETTERS AND SETTERS
-     * **********************************************************************************
-     */
 
     public int getBaseColor() {
         return baseColor;
@@ -617,13 +656,13 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
         invalidate();
     }
 
+    public CharSequence getHint() {
+        return hint;
+    }
+
     public void setHint(CharSequence hint) {
         this.hint = hint;
         invalidate();
-    }
-
-    public CharSequence getHint() {
-        return hint;
     }
 
     public void setHint(int resid) {
@@ -639,13 +678,13 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
         this.mDropDownHintView = resId;
     }
 
+    public CharSequence getFloatingLabelText() {
+        return this.floatingLabelText;
+    }
+
     public void setFloatingLabelText(CharSequence floatingLabelText) {
         this.floatingLabelText = floatingLabelText;
         invalidate();
-    }
-
-    public CharSequence getFloatingLabelText() {
-        return this.floatingLabelText;
     }
 
     public void setFloatingLabelText(int resid) {
@@ -750,6 +789,19 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
         invalidate();
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        if (!enabled) {
+            isSelected = false;
+            invalidate();
+        }
+        super.setEnabled(enabled);
+    }
+
+    public CharSequence getError() {
+        return this.error;
+    }
+
     public void setError(CharSequence error) {
         this.error = error;
         if (errorLabelAnimator != null) {
@@ -762,19 +814,6 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
             startErrorScrollingAnimator();
         }
         requestLayout();
-    }
-
-    @Override
-    public void setEnabled(boolean enabled) {
-        if (!enabled) {
-            isSelected = false;
-            invalidate();
-        }
-        super.setEnabled(enabled);
-    }
-
-    public CharSequence getError() {
-        return this.error;
     }
 
     public void setError(int resid) {
@@ -791,16 +830,6 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
         return isRtl;
     }
 
-    /**
-     * @deprecated {use @link #setPaddingSafe(int, int, int, int)} to keep internal computation OK
-     */
-    @Deprecated
-    @Override
-    public void setPadding(int left, int top, int right, int bottom) {
-        super.setPadding(left, top, right, bottom);
-    }
-
-
     public void setPaddingSafe(int left, int top, int right, int bottom) {
         innerPaddingRight = right;
         innerPaddingLeft = left;
@@ -808,22 +837,6 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
         innerPaddingBottom = bottom;
 
         updatePadding();
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    }
-
-    @Override
-    public SpinnerAdapter getAdapter() {
-        return hintAdapter != null ? hintAdapter.getWrappedAdapter() : null;
-    }
-
-    @Override
-    public void setAdapter(SpinnerAdapter adapter) {
-        hintAdapter = new HintAdapter(adapter, getContext());
-        super.setAdapter(hintAdapter);
     }
 
     private float pxToDp(float px) {
@@ -856,24 +869,6 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
         updateBottomPadding();
     }
 
-    @Override
-    public Object getItemAtPosition(int position_) {
-        int position = position_;
-        if (hint != null) {
-            position++;
-        }
-        return (hintAdapter == null || position < 0) ? null : hintAdapter.getItem(position);
-    }
-
-    @Override
-    public long getItemIdAtPosition(int position_) {
-        int position = position_;
-        if (hint != null) {
-            position++;
-        }
-        return (hintAdapter == null || position < 0) ? INVALID_ROW_ID : hintAdapter.getItemId(position);
-    }
-
     /*
      * **********************************************************************************
      * INNER CLASS
@@ -890,23 +885,6 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
         public HintAdapter(SpinnerAdapter spinnerAdapter, Context context) {
             mSpinnerAdapter = spinnerAdapter;
             mContext = context;
-        }
-
-
-        @Override
-        public int getViewTypeCount() {
-            //Workaround waiting for a Google correction (https://code.google.com/p/android/issues/detail?id=79011)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                return 1;
-            }
-            int viewTypeCount = mSpinnerAdapter.getViewTypeCount();
-            return viewTypeCount;
-        }
-
-        @Override
-        public int getItemViewType(int position_) {
-            int position = hint != null ? position_ - 1 : position_;
-            return (position == -1) ? HINT_TYPE : mSpinnerAdapter.getItemViewType(position);
         }
 
         @Override
@@ -932,11 +910,6 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
             return buildView(position, convertView, parent, false);
         }
 
-        @Override
-        public View getDropDownView(int position, View convertView, ViewGroup parent) {
-            return buildView(position, convertView, parent, true);
-        }
-
         private View buildView(int position, View convertView_, ViewGroup parent, boolean isDropDownView) {
             View convertView = convertView_;
             if (getItemViewType(position) == HINT_TYPE) {
@@ -959,6 +932,27 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
             textView.setTextColor(MaterialSpinner.this.isEnabled() ? hintColor : disabledColor);
             textView.setTag(HINT_TYPE);
             return textView;
+        }
+
+        @Override
+        public View getDropDownView(int position, View convertView, ViewGroup parent) {
+            return buildView(position, convertView, parent, true);
+        }
+
+        @Override
+        public int getItemViewType(int position_) {
+            int position = hint != null ? position_ - 1 : position_;
+            return (position == -1) ? HINT_TYPE : mSpinnerAdapter.getItemViewType(position);
+        }
+
+        @Override
+        public int getViewTypeCount() {
+            //Workaround waiting for a Google correction (https://code.google.com/p/android/issues/detail?id=79011)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                return 1;
+            }
+            int viewTypeCount = mSpinnerAdapter.getViewTypeCount();
+            return viewTypeCount;
         }
 
         private SpinnerAdapter getWrappedAdapter() {

@@ -6,5 +6,6 @@ import java.util.Map;
 
 public interface OnFieldsInvalid {
     void passInvalidFields(Map<String, ValidationStatus> invalidFields);
+
     Map<String, ValidationStatus> getPassedInvalidFields();
 }

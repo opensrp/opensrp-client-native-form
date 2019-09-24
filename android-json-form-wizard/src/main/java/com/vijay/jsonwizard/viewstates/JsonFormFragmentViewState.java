@@ -8,23 +8,6 @@ import com.vijay.jsonwizard.mvp.ViewState;
  * Created by vijay on 5/14/15.
  */
 public class JsonFormFragmentViewState extends ViewState implements android.os.Parcelable {
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        super.writeToParcel(dest, flags);
-    }
-
-    public JsonFormFragmentViewState() {
-    }
-
-    protected JsonFormFragmentViewState(Parcel in) {
-        super(in);
-    }
-
     public static final Creator<JsonFormFragmentViewState> CREATOR = new Creator<JsonFormFragmentViewState>() {
         public JsonFormFragmentViewState createFromParcel(
                 Parcel source) {
@@ -36,4 +19,21 @@ public class JsonFormFragmentViewState extends ViewState implements android.os.P
             return new JsonFormFragmentViewState[size];
         }
     };
+
+    public JsonFormFragmentViewState() {
+    }
+
+    protected JsonFormFragmentViewState(Parcel in) {
+        super(in);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+    }
 }

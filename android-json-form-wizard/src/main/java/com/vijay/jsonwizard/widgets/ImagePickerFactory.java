@@ -35,12 +35,6 @@ import java.util.List;
  */
 public class ImagePickerFactory implements FormWidgetFactory {
 
-    public static int dp2px(Context context, float dp) {
-        Resources r = context.getResources();
-        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
-        return Math.round(px);
-    }
-
     public static ValidationStatus validate(JsonFormFragmentView formFragmentView,
                                             ImageView imageView) {
         if (!(imageView.getTag(R.id.v_required) instanceof String) || !(imageView.getTag(R.id.error) instanceof String)) {
@@ -170,5 +164,11 @@ public class ImagePickerFactory implements FormWidgetFactory {
         ((JsonApi) context).addFormDataView(imageView);
         imageView.setOnClickListener(listener);
         views.add(imageView);
+    }
+
+    public static int dp2px(Context context, float dp) {
+        Resources r = context.getResources();
+        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
+        return Math.round(px);
     }
 }

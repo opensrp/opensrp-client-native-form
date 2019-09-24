@@ -49,46 +49,6 @@ public class DatePickerFactory implements FormWidgetFactory {
     public static final SimpleDateFormat DATE_FORMAT_LOCALE_INDEPENDENT = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
     private static final String TAG = "DatePickerFactory";
 
-    private static void updateDateText(MaterialEditText editText, TextView duration, String date) {
-        editText.setText(date);
-        String durationLabel = (String) duration.getTag(R.id.label);
-        if (!TextUtils.isEmpty(durationLabel)) {
-            String durationText = Utils.getDuration(date);
-            if (!TextUtils.isEmpty(durationText)) {
-                durationText = String.format("(%s: %s)", durationLabel, durationText);
-            }
-            duration.setText(durationText);
-        }
-
-    }
-
-
-    private static void showDatePickerDialog(Activity context,
-                                             DatePickerDialog datePickerDialog,
-                                             MaterialEditText editText) {
-        FragmentTransaction ft = context.getFragmentManager().beginTransaction();
-        Fragment prev = context.getFragmentManager().findFragmentByTag(TAG);
-        if (prev != null) {
-            ft.remove(prev);
-        }
-
-        ft.addToBackStack(null);
-
-        datePickerDialog.show(ft, TAG);
-        String text = editText.getText().toString();
-        Calendar date = FormUtils.getDate(text);
-        if(text.isEmpty()){
-            Object defaultValue = datePickerDialog.getArguments().get(JsonFormConstants.DEFAULT);
-            if(defaultValue != null)
-                datePickerDialog.setDate(FormUtils.getDate(defaultValue.toString()).getTime());
-            else
-                datePickerDialog.setDate(date.getTime());
-        }
-        else{
-            datePickerDialog.setDate(date.getTime());
-        }
-    }
-
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
                                        JSONObject jsonObject,
@@ -131,6 +91,10 @@ public class DatePickerFactory implements FormWidgetFactory {
         }
 
         return views;
+    }
+
+    protected int getLayout() {
+        return R.layout.native_form_item_date_picker;
     }
 
     protected void attachLayout(String stepName, final Context context, JsonFormFragment formFragment, JSONObject jsonObject,
@@ -199,41 +163,6 @@ public class DatePickerFactory implements FormWidgetFactory {
             FormUtils.showInfoIcon(stepName, jsonObject, listener, FormUtils.getInfoDialogAttributes(jsonObject), infoIcon, canvasIds);
         }
 
-    }
-
-    @NonNull
-    private GenericTextWatcher getGenericTextWatcher(String stepName, final Activity context, JsonFormFragment formFragment,
-                                                     final MaterialEditText editText,
-                                                     final DatePickerDialog datePickerDialog) {
-        GenericTextWatcher genericTextWatcher = new GenericTextWatcher(stepName, formFragment, editText);
-        genericTextWatcher.addOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    datePickerDialog.setArguments(new Bundle());
-                    showDatePickerDialog(context, datePickerDialog, editText);
-                }
-            }
-        });
-        return genericTextWatcher;
-    }
-
-    private void addRefreshLogicView(Context context, MaterialEditText editText, String relevance, String constraints,
-                                     String calculations) {
-        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
-            editText.setTag(R.id.relevance, relevance);
-            ((JsonApi) context).addSkipLogicView(editText);
-        }
-
-        if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
-            editText.setTag(R.id.constraints, constraints);
-            ((JsonApi) context).addConstrainedView(editText);
-        }
-
-        if (!TextUtils.isEmpty(calculations) && context instanceof JsonApi) {
-            editText.setTag(R.id.calculation, calculations);
-            ((JsonApi) context).addCalculationLogicView(editText);
-        }
     }
 
     private void updateEditText(MaterialEditText editText, JSONObject jsonObject, String stepName, Context context,
@@ -321,8 +250,77 @@ public class DatePickerFactory implements FormWidgetFactory {
         return datePickerDialog;
     }
 
-    protected int getLayout() {
-        return R.layout.native_form_item_date_picker;
+    @NonNull
+    private GenericTextWatcher getGenericTextWatcher(String stepName, final Activity context, JsonFormFragment formFragment,
+                                                     final MaterialEditText editText,
+                                                     final DatePickerDialog datePickerDialog) {
+        GenericTextWatcher genericTextWatcher = new GenericTextWatcher(stepName, formFragment, editText);
+        genericTextWatcher.addOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    datePickerDialog.setArguments(new Bundle());
+                    showDatePickerDialog(context, datePickerDialog, editText);
+                }
+            }
+        });
+        return genericTextWatcher;
+    }
+
+    private void addRefreshLogicView(Context context, MaterialEditText editText, String relevance, String constraints,
+                                     String calculations) {
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+            editText.setTag(R.id.relevance, relevance);
+            ((JsonApi) context).addSkipLogicView(editText);
+        }
+
+        if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
+            editText.setTag(R.id.constraints, constraints);
+            ((JsonApi) context).addConstrainedView(editText);
+        }
+
+        if (!TextUtils.isEmpty(calculations) && context instanceof JsonApi) {
+            editText.setTag(R.id.calculation, calculations);
+            ((JsonApi) context).addCalculationLogicView(editText);
+        }
+    }
+
+    private static void showDatePickerDialog(Activity context,
+                                             DatePickerDialog datePickerDialog,
+                                             MaterialEditText editText) {
+        FragmentTransaction ft = context.getFragmentManager().beginTransaction();
+        Fragment prev = context.getFragmentManager().findFragmentByTag(TAG);
+        if (prev != null) {
+            ft.remove(prev);
+        }
+
+        ft.addToBackStack(null);
+
+        datePickerDialog.show(ft, TAG);
+        String text = editText.getText().toString();
+        Calendar date = FormUtils.getDate(text);
+        if (text.isEmpty()) {
+            Object defaultValue = datePickerDialog.getArguments().get(JsonFormConstants.DEFAULT);
+            if (defaultValue != null)
+                datePickerDialog.setDate(FormUtils.getDate(defaultValue.toString()).getTime());
+            else
+                datePickerDialog.setDate(date.getTime());
+        } else {
+            datePickerDialog.setDate(date.getTime());
+        }
+    }
+
+    private static void updateDateText(MaterialEditText editText, TextView duration, String date) {
+        editText.setText(date);
+        String durationLabel = (String) duration.getTag(R.id.label);
+        if (!TextUtils.isEmpty(durationLabel)) {
+            String durationText = Utils.getDuration(date);
+            if (!TextUtils.isEmpty(durationText)) {
+                durationText = String.format("(%s: %s)", durationLabel, durationText);
+            }
+            duration.setText(durationText);
+        }
+
     }
 
     public static class KEY {

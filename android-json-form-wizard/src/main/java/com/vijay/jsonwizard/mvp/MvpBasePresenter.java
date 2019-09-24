@@ -11,6 +11,14 @@ public class MvpBasePresenter<V extends MvpView> implements MvpPresenter<V> {
         viewRef = new WeakReference<V>(view);
     }
 
+    @Override
+    public void detachView(boolean retainInstance) {
+        if (viewRef != null) {
+            viewRef.clear();
+            viewRef = null;
+        }
+    }
+
     /**
      * Get the attached view. You should always call {@link #isViewAttached()}
      * to check if the view is attached to avoid NullPointerExceptions
@@ -25,13 +33,5 @@ public class MvpBasePresenter<V extends MvpView> implements MvpPresenter<V> {
      */
     protected boolean isViewAttached() {
         return viewRef != null && viewRef.get() != null;
-    }
-
-    @Override
-    public void detachView(boolean retainInstance) {
-        if (viewRef != null) {
-            viewRef.clear();
-            viewRef = null;
-        }
     }
 }

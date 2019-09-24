@@ -61,7 +61,6 @@ public class ImageViewFactory implements FormWidgetFactory {
         rootLayout.setTag(R.id.address, stepName + ":" + jsonObject.optString(JsonFormConstants.KEY));
         rootLayout.setTag(R.id.extraPopup, false);
     }
-    
 
 
     private void setViewConfigs(JSONObject jsonObject, Context context) {

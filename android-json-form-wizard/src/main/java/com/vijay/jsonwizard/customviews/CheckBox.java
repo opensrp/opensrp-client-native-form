@@ -13,6 +13,19 @@ public class CheckBox extends CompoundButton {
         init(context, null, 0, 0);
     }
 
+    private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        applyStyle(context, attrs, defStyleAttr, defStyleRes);
+    }
+
+    private void applyStyle(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        CheckBoxDrawable drawable = new CheckBoxDrawable.Builder(context, attrs, defStyleAttr, defStyleRes).build();
+        drawable.setInEditMode(isInEditMode());
+        drawable.setAnimEnable(false);
+        setButtonDrawable(null);
+        setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
+        drawable.setAnimEnable(true);
+    }
+
     public CheckBox(Context context, AttributeSet attrs) {
         super(context, attrs);
 
@@ -31,21 +44,8 @@ public class CheckBox extends CompoundButton {
         init(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        applyStyle(context, attrs, defStyleAttr, defStyleRes);
-    }
-
     public void applyStyle(int resId) {
         applyStyle(getContext(), null, 0, resId);
-    }
-
-    private void applyStyle(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        CheckBoxDrawable drawable = new CheckBoxDrawable.Builder(context, attrs, defStyleAttr, defStyleRes).build();
-        drawable.setInEditMode(isInEditMode());
-        drawable.setAnimEnable(false);
-        setButtonDrawable(null);
-        setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
-        drawable.setAnimEnable(true);
     }
 
     /**

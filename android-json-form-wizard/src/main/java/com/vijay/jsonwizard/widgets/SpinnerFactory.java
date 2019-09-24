@@ -50,14 +50,6 @@ public class SpinnerFactory implements FormWidgetFactory {
         return new ValidationStatus(true, null, formFragmentView, spinner);
     }
 
-    private static void setRequiredOnHint(MaterialSpinner spinner) {
-        if (!TextUtils.isEmpty(spinner.getHint())) {
-            SpannableString hint = new SpannableString(spinner.getHint() + " *");
-            hint.setSpan(new ForegroundColorSpan(Color.RED), hint.length() - 1, hint.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            spinner.setHint(hint);
-        }
-    }
-
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
                                        JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
@@ -88,6 +80,20 @@ public class SpinnerFactory implements FormWidgetFactory {
         addSpinner(jsonObject, spinnerRelativeLayout, listener, canvasIds, stepName, popup, context);
         views.add(spinnerRelativeLayout);
         return views;
+    }
+
+    private void setViewTags(JSONObject jsonObject, JSONArray canvasIds, String stepName, boolean popup,
+                             String openMrsEntityParent, String openMrsEntity, String openMrsEntityId,
+                             View view) throws JSONException {
+        view.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+        view.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
+        view.setTag(R.id.openmrs_entity, openMrsEntity);
+        view.setTag(R.id.openmrs_entity_id, openMrsEntityId);
+        view.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
+        view.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+        view.setTag(R.id.extraPopup, popup);
+        view.setId(ViewUtil.generateViewId());
+        canvasIds.put(view.getId());
     }
 
     private void addSpinner(JSONObject jsonObject, RelativeLayout spinnerRelativeLayout, CommonListener listener,
@@ -166,20 +172,6 @@ public class SpinnerFactory implements FormWidgetFactory {
         spinner.setTag(R.id.canvas_ids, canvasIds.toString());
     }
 
-    private void setViewTags(JSONObject jsonObject, JSONArray canvasIds, String stepName, boolean popup,
-                             String openMrsEntityParent, String openMrsEntity, String openMrsEntityId,
-                             View view) throws JSONException {
-        view.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
-        view.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
-        view.setTag(R.id.openmrs_entity, openMrsEntity);
-        view.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-        view.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
-        view.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
-        view.setTag(R.id.extraPopup, popup);
-        view.setId(ViewUtil.generateViewId());
-        canvasIds.put(view.getId());
-    }
-
     private void addSkipLogicTags(Context context, String relevance, String constraints, String calculations,
                                   MaterialSpinner spinner) {
         if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
@@ -194,6 +186,14 @@ public class SpinnerFactory implements FormWidgetFactory {
         if (!TextUtils.isEmpty(calculations) && context instanceof JsonApi) {
             spinner.setTag(R.id.calculation, calculations);
             ((JsonApi) context).addCalculationLogicView(spinner);
+        }
+    }
+
+    private static void setRequiredOnHint(MaterialSpinner spinner) {
+        if (!TextUtils.isEmpty(spinner.getHint())) {
+            SpannableString hint = new SpannableString(spinner.getHint() + " *");
+            hint.setSpan(new ForegroundColorSpan(Color.RED), hint.length() - 1, hint.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spinner.setHint(hint);
         }
     }
 }

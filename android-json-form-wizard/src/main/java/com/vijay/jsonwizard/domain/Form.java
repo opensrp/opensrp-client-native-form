@@ -103,19 +103,19 @@ public class Form implements Serializable {
         this.backIcon = backIcon;
     }
 
-    public void setHideNextButton(Boolean b){
-        hideNextButton = b;
-    }
-
-    public void setHidePreviousButton(Boolean b){
-        hidePreviousButton = b;
-    }
-
-    public boolean isHideNextButton(){
+    public boolean isHideNextButton() {
         return hideNextButton;
+    }
+
+    public void setHideNextButton(Boolean b) {
+        hideNextButton = b;
     }
 
     public boolean isHidePreviousButton() {
         return hidePreviousButton;
+    }
+
+    public void setHidePreviousButton(Boolean b) {
+        hidePreviousButton = b;
     }
 }

@@ -28,8 +28,30 @@ public class FormErrorView extends LinearLayoutCompat {
         this.setOrientation(VERTICAL);
     }
 
+    class FormErrorViewHolder {
+        private TextView stepNameTextView;
+        private TextView errorsTextView;
+        private View itemView;
 
-    private Map<String, ValidationStatus> getInvalidFields() {
+        FormErrorViewHolder(View itemView) {
+            this.itemView = itemView;
+            initViews();
+        }
+
+        private void initViews() {
+            stepNameTextView = itemView.findViewById(R.id.error_item_step_name);
+            errorsTextView = itemView.findViewById(R.id.error_item_values);
+        }
+
+        private void bindViews(String stepName, String errors) {
+            stepNameTextView.setText(stepName);
+            errorsTextView.setText(errors);
+        }
+
+        public View getItemView() {
+            return itemView;
+        }
+    }    private Map<String, ValidationStatus> getInvalidFields() {
         return invalidFields;
     }
 
@@ -82,28 +104,5 @@ public class FormErrorView extends LinearLayoutCompat {
         processInvalidFields();
     }
 
-    class FormErrorViewHolder {
-        private TextView stepNameTextView;
-        private TextView errorsTextView;
-        private View itemView;
 
-        FormErrorViewHolder(View itemView) {
-            this.itemView = itemView;
-            initViews();
-        }
-
-        private void initViews() {
-            stepNameTextView = itemView.findViewById(R.id.error_item_step_name);
-            errorsTextView = itemView.findViewById(R.id.error_item_values);
-        }
-
-        private void bindViews(String stepName, String errors) {
-            stepNameTextView.setText(stepName);
-            errorsTextView.setText(errors);
-        }
-
-        public View getItemView() {
-            return itemView;
-        }
-    }
 }

@@ -6,7 +6,6 @@ import android.text.TextUtils;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.Utils;
 
-import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.joda.time.Months;
@@ -61,105 +60,6 @@ public class RulesEngineDateUtil {
 
     public String getDateToday() {
         return (new LocalDate()).toString(FormUtils.NATIIVE_FORM_DATE_FORMAT_PATTERN);
-    }
-
-    /**
-     * @param dateString
-     * @param durationString
-     * @return String with date
-     */
-    public String addDuration(String dateString, String durationString) {
-
-        LocalDate date = new LocalDate(Utils.reverseDateString(dateString, "-"));
-
-        String[] durationArr = getDurationArray(durationString);
-
-        for (int i = 0; i < durationArr.length; i++) {
-
-            char suffix = durationArr[i].charAt(durationArr[i].length() - 1);
-            switch (suffix) {
-                case 'd':
-                    date = date.plusDays(getDurationValue(durationArr[i]));
-
-                    break;
-                case 'w':
-                    date = date.plusWeeks(getDurationValue(durationArr[i]));
-
-                    break;
-                case 'm':
-                    date = date.plusMonths(getDurationValue(durationArr[i]));
-
-                    break;
-                case 'y':
-                    date = date.plusYears(getDurationValue(durationArr[i]));
-                    break;
-
-                default:
-                    break;
-
-            }
-        }
-
-        return date.toString(FormUtils.NATIIVE_FORM_DATE_FORMAT_PATTERN);
-    }
-
-    @NonNull
-    private String[] getDurationArray(String durationString) {
-        String cleanDurationString = durationString.trim().toLowerCase();
-
-        return cleanDurationString.contains("-") ? cleanDurationString.trim().split("-") : new String[]{cleanDurationString};
-    }
-
-
-    /**
-     * @param dateString
-     * @param durationString
-     * @return String with date
-     */
-    public String subtractDuration(String dateString, String durationString) {
-
-        LocalDate date = new LocalDate(Utils.reverseDateString(dateString, "-"));
-
-        String[] durationArr = getDurationArray(durationString);
-
-        for (int i = 0; i < durationArr.length; i++) {
-
-            char suffix = durationArr[i].charAt(durationArr[i].length() - 1);
-            switch (suffix) {
-                case 'd':
-                    date = date.minusDays(getDurationValue(durationArr[i]));
-
-                    break;
-                case 'w':
-                    date = date.minusWeeks(getDurationValue(durationArr[i]));
-
-                    break;
-                case 'm':
-                    date = date.minusMonths(getDurationValue(durationArr[i]));
-
-                    break;
-                case 'y':
-                    date = date.minusYears(getDurationValue(durationArr[i]));
-                    break;
-
-                default:
-                    break;
-
-            }
-
-        }
-
-        return date.toString(FormUtils.NATIIVE_FORM_DATE_FORMAT_PATTERN);
-    }
-
-    /**
-     * Returns a formatted age string from given date till today
-     *
-     * @param date
-     * @return String date
-     */
-    public String getDuration(String date) {
-        return Utils.getDuration(date);
     }
 
     /**
@@ -219,11 +119,72 @@ public class RulesEngineDateUtil {
     }
 
     /**
+     * Returns a formatted age string from given date till today
+     *
+     * @param date
+     * @return String date
+     */
+    public String getDuration(String date) {
+        return Utils.getDuration(date);
+    }
+
+    /**
      * @param durationString
      * @return String with date
      */
     public String addDuration(String durationString) {
         return addDuration((new LocalDate()).toString(FormUtils.NATIIVE_FORM_DATE_FORMAT_PATTERN), durationString);
+    }
+
+    /**
+     * @param dateString
+     * @param durationString
+     * @return String with date
+     */
+    public String addDuration(String dateString, String durationString) {
+
+        LocalDate date = new LocalDate(Utils.reverseDateString(dateString, "-"));
+
+        String[] durationArr = getDurationArray(durationString);
+
+        for (int i = 0; i < durationArr.length; i++) {
+
+            char suffix = durationArr[i].charAt(durationArr[i].length() - 1);
+            switch (suffix) {
+                case 'd':
+                    date = date.plusDays(getDurationValue(durationArr[i]));
+
+                    break;
+                case 'w':
+                    date = date.plusWeeks(getDurationValue(durationArr[i]));
+
+                    break;
+                case 'm':
+                    date = date.plusMonths(getDurationValue(durationArr[i]));
+
+                    break;
+                case 'y':
+                    date = date.plusYears(getDurationValue(durationArr[i]));
+                    break;
+
+                default:
+                    break;
+
+            }
+        }
+
+        return date.toString(FormUtils.NATIIVE_FORM_DATE_FORMAT_PATTERN);
+    }
+
+    @NonNull
+    private String[] getDurationArray(String durationString) {
+        String cleanDurationString = durationString.trim().toLowerCase();
+
+        return cleanDurationString.contains("-") ? cleanDurationString.trim().split("-") : new String[]{cleanDurationString};
+    }
+
+    private Integer getDurationValue(String s) {
+        return Integer.valueOf(s.substring(0, s.length() - 1));
     }
 
     /**
@@ -234,8 +195,45 @@ public class RulesEngineDateUtil {
         return subtractDuration((new LocalDate()).toString(FormUtils.NATIIVE_FORM_DATE_FORMAT_PATTERN), durationString);
     }
 
-    private Integer getDurationValue(String s) {
-        return Integer.valueOf(s.substring(0, s.length() - 1));
+    /**
+     * @param dateString
+     * @param durationString
+     * @return String with date
+     */
+    public String subtractDuration(String dateString, String durationString) {
+
+        LocalDate date = new LocalDate(Utils.reverseDateString(dateString, "-"));
+
+        String[] durationArr = getDurationArray(durationString);
+
+        for (int i = 0; i < durationArr.length; i++) {
+
+            char suffix = durationArr[i].charAt(durationArr[i].length() - 1);
+            switch (suffix) {
+                case 'd':
+                    date = date.minusDays(getDurationValue(durationArr[i]));
+
+                    break;
+                case 'w':
+                    date = date.minusWeeks(getDurationValue(durationArr[i]));
+
+                    break;
+                case 'm':
+                    date = date.minusMonths(getDurationValue(durationArr[i]));
+
+                    break;
+                case 'y':
+                    date = date.minusYears(getDurationValue(durationArr[i]));
+                    break;
+
+                default:
+                    break;
+
+            }
+
+        }
+
+        return date.toString(FormUtils.NATIIVE_FORM_DATE_FORMAT_PATTERN);
     }
 
     public String minDate(String minimumDate) {

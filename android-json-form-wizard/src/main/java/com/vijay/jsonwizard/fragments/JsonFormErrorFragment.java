@@ -25,12 +25,6 @@ public class JsonFormErrorFragment extends DialogFragment implements View.OnClic
     private FormErrorView formError;
     private Toolbar dialogToolbar;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setStyle(DialogFragment.STYLE_NORMAL, R.style.NativeFormsFullScreenDialogStyle);
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -46,16 +40,17 @@ public class JsonFormErrorFragment extends DialogFragment implements View.OnClic
         return view;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        if (getDialog() != null) {
-            int width = ViewGroup.LayoutParams.MATCH_PARENT;
-            int height = ViewGroup.LayoutParams.MATCH_PARENT;
-            if (getDialog().getWindow() != null) {
-                getDialog().getWindow().setLayout(width, height);
-            }
-        }
+    protected void setupErrorFragmentToolBar() {
+        dialogToolbar.setNavigationIcon(R.drawable.ic_action_close);
+        dialogToolbar.setNavigationOnClickListener(this);
+        dialogToolbar.setTitle(R.string.attention);
+        dialogToolbar.setTitleTextColor(getContext().getResources().getColor(R.color.white));
+        dialogToolbar.setBackgroundColor(getContext().getResources().getColor(R.color.error_color));
+    }
+
+    protected void handleFormErrors() {
+        Map<String, ValidationStatus> invalidFields = onFieldsInvalid.getPassedInvalidFields();
+        formError.setInvalidFields(invalidFields);
     }
 
     @Override
@@ -73,17 +68,22 @@ public class JsonFormErrorFragment extends DialogFragment implements View.OnClic
         }
     }
 
-    protected void handleFormErrors() {
-        Map<String, ValidationStatus> invalidFields = onFieldsInvalid.getPassedInvalidFields();
-        formError.setInvalidFields(invalidFields);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setStyle(DialogFragment.STYLE_NORMAL, R.style.NativeFormsFullScreenDialogStyle);
     }
 
-    protected void setupErrorFragmentToolBar() {
-        dialogToolbar.setNavigationIcon(R.drawable.ic_action_close);
-        dialogToolbar.setNavigationOnClickListener(this);
-        dialogToolbar.setTitle(R.string.attention);
-        dialogToolbar.setTitleTextColor(getContext().getResources().getColor(R.color.white));
-        dialogToolbar.setBackgroundColor(getContext().getResources().getColor(R.color.error_color));
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (getDialog() != null) {
+            int width = ViewGroup.LayoutParams.MATCH_PARENT;
+            int height = ViewGroup.LayoutParams.MATCH_PARENT;
+            if (getDialog().getWindow() != null) {
+                getDialog().getWindow().setLayout(width, height);
+            }
+        }
     }
 
 }

@@ -10,11 +10,20 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.event.BaseEvent;
 import com.vijay.jsonwizard.widgets.DatePickerFactory;
 
+import org.greenrobot.eventbus.EventBus;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class Utils {
@@ -167,8 +176,49 @@ public class Utils {
 
     public static int pixelToDp(int dpValue, Context context) {
         float dpRatio = context.getResources().getDisplayMetrics().density;
-        float pixelForDp =  dpValue * dpRatio;
+        float pixelForDp = dpValue * dpRatio;
 
         return (int) pixelForDp;
+    }
+
+    public static void postEvent(BaseEvent event) {
+        EventBus.getDefault().post(event);
+    }
+
+    public List<String> createExpansionPanelChildren(JSONArray jsonArray) throws JSONException {
+        List<String> stringList = new ArrayList<>();
+        String label;
+        for (int i = 0; i < jsonArray.length(); i++) {
+            if (!jsonArray.isNull(i)) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                if (jsonObject.has(JsonFormConstants.VALUES) && jsonObject.has(JsonFormConstants.LABEL) &&
+                        !"".equals(jsonObject.getString(JsonFormConstants.LABEL))) {
+                    //Get label and replace any colon in some labels. Not needed at this point
+                    label = jsonObject.getString(JsonFormConstants.LABEL).replace(":", "");
+                    stringList.add(label + ":" + getStringValue(jsonObject));
+                }
+            }
+        }
+
+        return stringList;
+    }
+
+    private String getStringValue(JSONObject jsonObject) throws JSONException {
+        StringBuilder value = new StringBuilder();
+        if (jsonObject != null) {
+            JSONArray jsonArray = jsonObject.getJSONArray(JsonFormConstants.VALUES);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                String stringValue = jsonArray.getString(i);
+                value.append(getValueFromSecondaryValues(stringValue));
+                value.append(", ");
+            }
+        }
+
+        return value.toString().replaceAll(", $", "");
+    }
+
+    private String getValueFromSecondaryValues(String itemString) {
+        String[] strings = itemString.split(":");
+        return strings.length > 1 ? strings[1] : strings[0];
     }
 }

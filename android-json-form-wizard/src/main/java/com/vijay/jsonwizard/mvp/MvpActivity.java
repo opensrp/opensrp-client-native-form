@@ -14,11 +14,11 @@ public abstract class MvpActivity<P extends MvpPresenter, V extends ViewState> e
         presenter.attachView(this);
     }
 
+    protected abstract P createPresenter();
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         presenter.detachView(false);
     }
-
-    protected abstract P createPresenter();
 }

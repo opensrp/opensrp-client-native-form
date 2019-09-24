@@ -48,28 +48,6 @@ public class CustomTextView extends AppCompatTextView {
         setText(getText().toString());
     }
 
-    @Override
-    public void setTextColor(@ColorInt int color) {
-        ColorStateList colorStateList = getTextColors();
-
-        int[][] states = new int[][]{
-                new int[]{android.R.attr.state_enabled}, // enabled
-                new int[]{-android.R.attr.state_enabled}, // disabled
-                new int[]{-android.R.attr.state_checked}, // unchecked
-                new int[]{android.R.attr.state_pressed}  // pressed
-        };
-
-        int[] colors = new int[]{
-                color,
-                colorStateList.getColorForState(new int[]{-android.R.attr.state_enabled}, color),
-                colorStateList.getColorForState(new int[]{-android.R.attr.state_checked}, color),
-                colorStateList.getColorForState(new int[]{android.R.attr.state_pressed}, color)
-        };
-
-        ColorStateList newColorStateList = new ColorStateList(states, colors);
-        setTextColor(newColorStateList);
-    }
-
     public void setText(String text) {
         if (hintOnText && isEnabled()) {
             int currentStartScanIndex = 0;
@@ -99,5 +77,27 @@ public class CustomTextView extends AppCompatTextView {
         super.setEnabled(enabled);
         String text = getText().toString();
         setText(text);
+    }
+
+    @Override
+    public void setTextColor(@ColorInt int color) {
+        ColorStateList colorStateList = getTextColors();
+
+        int[][] states = new int[][]{
+                new int[]{android.R.attr.state_enabled}, // enabled
+                new int[]{-android.R.attr.state_enabled}, // disabled
+                new int[]{-android.R.attr.state_checked}, // unchecked
+                new int[]{android.R.attr.state_pressed}  // pressed
+        };
+
+        int[] colors = new int[]{
+                color,
+                colorStateList.getColorForState(new int[]{-android.R.attr.state_enabled}, color),
+                colorStateList.getColorForState(new int[]{-android.R.attr.state_checked}, color),
+                colorStateList.getColorForState(new int[]{android.R.attr.state_pressed}, color)
+        };
+
+        ColorStateList newColorStateList = new ColorStateList(states, colors);
+        setTextColor(newColorStateList);
     }
 }

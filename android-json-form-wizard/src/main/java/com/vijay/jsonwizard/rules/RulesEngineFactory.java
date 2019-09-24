@@ -49,26 +49,6 @@ public class RulesEngineFactory implements RuleListener {
     public RulesEngineFactory() {
     }
 
-    private Rules getRulesFromAsset(String fileName) {
-        try {
-            if (!ruleMap.containsKey(fileName)) {
-
-                BufferedReader bufferedReader = new BufferedReader(
-                        new InputStreamReader(context.getAssets().open(fileName)));
-                ruleMap.put(fileName, MVELRuleFactory.createRulesFrom(bufferedReader));
-            }
-            return ruleMap.get(fileName);
-        } catch (IOException e) {
-            Log.e(TAG, e.getMessage(), e);
-            return null;
-        }
-    }
-
-    protected void processDefaultRules(Rules rules, Facts facts) {
-
-        defaultRulesEngine.fire(rules, facts);
-    }
-
     public boolean getRelevance(Facts relevanceFact, String ruleFilename) {
 
         Facts facts = initializeFacts(relevanceFact);
@@ -80,34 +60,6 @@ public class RulesEngineFactory implements RuleListener {
         processDefaultRules(rules, facts);
 
         return facts.get(RuleConstant.IS_RELEVANT);
-    }
-
-    public String getCalculation(Facts calculationFact, String ruleFilename) {
-
-        //need to clean curValue map as constraint depend on valid values, empties wont do
-
-        Facts facts = initializeFacts(calculationFact);
-
-        facts.put(RuleConstant.CALCULATION, "");
-
-        rules = getRulesFromAsset(RULE_FOLDER_PATH + ruleFilename);
-
-        processDefaultRules(rules, facts);
-
-        return formatCalculationReturnValue(facts.get(RuleConstant.CALCULATION));
-    }
-
-    public String getConstraint(Facts constraintFact, String ruleFilename) {
-
-        Facts facts = initializeFacts(constraintFact);
-
-        facts.put(RuleConstant.CONSTRAINT, "0");
-
-        rules = getRulesFromAsset(RULE_FOLDER_PATH + ruleFilename);
-
-        processDefaultRules(rules, facts);
-
-        return formatCalculationReturnValue(facts.get(RuleConstant.CONSTRAINT));
     }
 
     protected Facts initializeFacts(Facts facts) {
@@ -127,6 +79,26 @@ public class RulesEngineFactory implements RuleListener {
 
         facts.put("helper", rulesEngineHelper);
         return facts;
+    }
+
+    private Rules getRulesFromAsset(String fileName) {
+        try {
+            if (!ruleMap.containsKey(fileName)) {
+
+                BufferedReader bufferedReader = new BufferedReader(
+                        new InputStreamReader(context.getAssets().open(fileName)));
+                ruleMap.put(fileName, MVELRuleFactory.createRulesFrom(bufferedReader));
+            }
+            return ruleMap.get(fileName);
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage(), e);
+            return null;
+        }
+    }
+
+    protected void processDefaultRules(Rules rules, Facts facts) {
+
+        defaultRulesEngine.fire(rules, facts);
     }
 
     protected Object getValue(String value) {
@@ -167,6 +139,52 @@ public class RulesEngineFactory implements RuleListener {
         return !value.isEmpty() && value.charAt(0) == '[';
     }
 
+    public String getCalculation(Facts calculationFact, String ruleFilename) {
+
+        //need to clean curValue map as constraint depend on valid values, empties wont do
+
+        Facts facts = initializeFacts(calculationFact);
+
+        facts.put(RuleConstant.CALCULATION, "");
+
+        rules = getRulesFromAsset(RULE_FOLDER_PATH + ruleFilename);
+
+        processDefaultRules(rules, facts);
+
+        return formatCalculationReturnValue(facts.get(RuleConstant.CALCULATION));
+    }
+
+    private String formatCalculationReturnValue(Object rawValue) {
+        String value = String.valueOf(rawValue).trim();
+        if (value.isEmpty()) {
+            return "";
+        } else if (rawValue instanceof Map) {
+
+            return new JSONObject((Map<String, String>) rawValue).toString();
+
+        } else if (value.contains(".")) {
+            try {
+                value = String.valueOf((float) Math.round(Float.valueOf(value) * 100) / 100);
+            } catch (NumberFormatException e) {
+
+            }
+        }
+        return value;
+    }
+
+    public String getConstraint(Facts constraintFact, String ruleFilename) {
+
+        Facts facts = initializeFacts(constraintFact);
+
+        facts.put(RuleConstant.CONSTRAINT, "0");
+
+        rules = getRulesFromAsset(RULE_FOLDER_PATH + ruleFilename);
+
+        processDefaultRules(rules, facts);
+
+        return formatCalculationReturnValue(facts.get(RuleConstant.CONSTRAINT));
+    }
+
     @Override
     public boolean beforeEvaluate(Rule rule, Facts facts) {
         return selectedRuleName != null && selectedRuleName.equals(rule.getName());
@@ -198,24 +216,6 @@ public class RulesEngineFactory implements RuleListener {
 
     public void setRulesFolderPath(String path) {
         RULE_FOLDER_PATH = path;
-    }
-
-    private String formatCalculationReturnValue(Object rawValue) {
-        String value = String.valueOf(rawValue).trim();
-        if (value.isEmpty()) {
-            return "";
-        } else if (rawValue instanceof Map) {
-
-            return new JSONObject((Map<String, String>) rawValue).toString();
-
-        } else if (value.contains(".")) {
-            try {
-                value = String.valueOf((float) Math.round(Float.valueOf(value) * 100) / 100);
-            } catch (NumberFormatException e) {
-
-            }
-        }
-        return value;
     }
 
 }

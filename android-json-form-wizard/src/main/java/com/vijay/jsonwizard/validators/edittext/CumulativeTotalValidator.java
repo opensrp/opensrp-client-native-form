@@ -48,6 +48,11 @@ public class CumulativeTotalValidator extends METValidator {
         this.jsonApi = jsonApi;
     }
 
+    public boolean isValid(@NonNull MaterialEditText referenceEditText, boolean isEmpty) {
+        this.referenceEditText = referenceEditText;
+        return isValid(TextUtils.isEmpty(referenceEditText.getText()) ? "0" : referenceEditText.getText(), isEmpty);
+    }
+
     @Override
     public boolean isValid(@NonNull CharSequence text, boolean isEmpty) {
         if (!isEmpty) {
@@ -104,12 +109,6 @@ public class CumulativeTotalValidator extends METValidator {
     private String getTag(Object object) {
         return object == null ? null : object.toString();
 
-    }
-
-
-    public boolean isValid(@NonNull MaterialEditText referenceEditText, boolean isEmpty) {
-        this.referenceEditText = referenceEditText;
-        return isValid(TextUtils.isEmpty(referenceEditText.getText()) ? "0" : referenceEditText.getText(), isEmpty);
     }
 
     public List<ReferenceValidator> getReferenceValidators() {

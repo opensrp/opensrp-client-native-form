@@ -28,12 +28,6 @@ public abstract class BaseFragment<V extends ViewState> extends Fragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        // Icepick.saveInstanceState(this, outState);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         int layoutRes = getLayoutRes();
         if (layoutRes == 0) {
@@ -49,6 +43,12 @@ public abstract class BaseFragment<V extends ViewState> extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // Icepick.saveInstanceState(this, outState);
     }
 
     @Override

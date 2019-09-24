@@ -89,6 +89,10 @@ public class NativeEditTextFactory implements FormWidgetFactory {
         return views;
     }
 
+    protected int getLayout() {
+        return R.layout.native_form_normal_edit_text;
+    }
+
     protected void makeFromJson(String stepName, Context context, JsonFormFragment formFragment,
                                 JSONObject jsonObject, NativeEditText editText, ImageView editButton) throws Exception {
 
@@ -154,10 +158,6 @@ public class NativeEditTextFactory implements FormWidgetFactory {
         }
 
         FormUtils.toggleEditTextVisibility(jsonObject, editText);
-    }
-
-    protected int getLayout() {
-        return R.layout.native_form_normal_edit_text;
     }
 
     private static void addRequiredValidator(JSONObject jsonObject, NativeEditText editText) throws JSONException {

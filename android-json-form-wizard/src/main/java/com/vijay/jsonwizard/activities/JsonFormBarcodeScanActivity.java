@@ -71,32 +71,14 @@ public class JsonFormBarcodeScanActivity extends Activity implements Detector.Pr
         cameraSource = builder.build();
     }
 
+    /**
+     * Restarts the camera.
+     */
     @Override
-    public void release() {
-        //Todo
+    protected void onResume() {
+        super.onResume();
+        startCameraSource();
     }
-
-    @Override
-    public void receiveDetections(Detector.Detections<Barcode> detections) {
-        final SparseArray<Barcode> barcodeSparseArray = detections.getDetectedItems();
-        if (barcodeSparseArray.size() > 0) {
-            Vibrator vibrator = (Vibrator) getApplicationContext().getSystemService(VIBRATOR_SERVICE);
-            assert vibrator != null;
-            vibrator.vibrate(100);
-            closeBarcodeActivity(barcodeSparseArray);
-        }
-    }
-
-    public void closeBarcodeActivity(SparseArray<Barcode> sparseArray) {
-        Intent intent = new Intent();
-        if (sparseArray != null) {
-            intent.putExtra(JsonFormConstants.BARCODE_CONSTANTS.BARCODE_KEY, sparseArray.valueAt(0));
-        }
-        setResult(RESULT_OK, intent);
-        finish();
-
-    }
-
 
     /**
      * Starts or restarts the camera source, if it exists.  If the camera source doesn't exist yet
@@ -108,7 +90,7 @@ public class JsonFormBarcodeScanActivity extends Activity implements Detector.Pr
                 getApplicationContext());
         if (code != ConnectionResult.SUCCESS) {
             Dialog errorDialog =
-                    GoogleApiAvailability.getInstance().getErrorDialog(this, code, JsonFormConstants.BARCODE_CONSTANTS.RC_HANDLE_GMS);
+                    GoogleApiAvailability.getInstance().getErrorDialog(this, code, JsonFormConstants.BarcodeConstantsUtils.RC_HANDLE_GMS);
             errorDialog.show();
         }
 
@@ -121,15 +103,6 @@ public class JsonFormBarcodeScanActivity extends Activity implements Detector.Pr
                 cameraSource = null;
             }
         }
-    }
-
-    /**
-     * Restarts the camera.
-     */
-    @Override
-    protected void onResume() {
-        super.onResume();
-        startCameraSource();
     }
 
     /**
@@ -153,5 +126,31 @@ public class JsonFormBarcodeScanActivity extends Activity implements Detector.Pr
         if (jsonFormCameraSourcePreview != null) {
             jsonFormCameraSourcePreview.release();
         }
+    }
+
+    @Override
+    public void release() {
+        //Todo
+    }
+
+    @Override
+    public void receiveDetections(Detector.Detections<Barcode> detections) {
+        final SparseArray<Barcode> barcodeSparseArray = detections.getDetectedItems();
+        if (barcodeSparseArray.size() > 0) {
+            Vibrator vibrator = (Vibrator) getApplicationContext().getSystemService(VIBRATOR_SERVICE);
+            assert vibrator != null;
+            vibrator.vibrate(100);
+            closeBarcodeActivity(barcodeSparseArray);
+        }
+    }
+
+    public void closeBarcodeActivity(SparseArray<Barcode> sparseArray) {
+        Intent intent = new Intent();
+        if (sparseArray != null) {
+            intent.putExtra(JsonFormConstants.BarcodeConstantsUtils.BARCODE_KEY, sparseArray.valueAt(0));
+        }
+        setResult(RESULT_OK, intent);
+        finish();
+
     }
 }

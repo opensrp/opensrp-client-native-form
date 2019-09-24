@@ -58,7 +58,7 @@ public class PermissionUtils {
         return false;
     }
 
-    public static boolean verifyPermissionGranted(String permissions[], int[] grantResults, String... permissionsToVerify) {
+    public static boolean verifyPermissionGranted(String[] permissions, int[] grantResults, String... permissionsToVerify) {
         Map<String, Integer> perms = new HashMap<>();
         // Initialize the map with both permissions
         for (String permission : permissionsToVerify) {

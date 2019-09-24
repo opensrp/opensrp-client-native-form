@@ -76,7 +76,7 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
         Boolean popup = (Boolean) mView.getTag(R.id.extraPopup);
         ValidationStatus validationStatus = JsonFormFragmentPresenter.validate(formFragment, mView,
                 false);
-        if(validationStatus.isValid()) {
+        if (validationStatus.isValid()) {
             try {
                 api.writeValue(mStepName, key, text, openMrsEntityParent, openMrsEntity,
                         openMrsEntityId, popup);
@@ -85,13 +85,6 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
             }
         }
 
-    }
-
-    @Override
-    public void onFocusChange(View v, boolean hasFocus) {
-        for (View.OnFocusChangeListener curListener : onFocusChangeListeners) {
-            curListener.onFocusChange(v, hasFocus);
-        }
     }
 
     private boolean isRedundantRepetition(String text) {
@@ -103,5 +96,12 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
         return ((currentFocus == null || !currentFocus.equals(mView)) && (prev != null && prev.equals(text)));
 
 
+    }
+
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        for (View.OnFocusChangeListener curListener : onFocusChangeListeners) {
+            curListener.onFocusChange(v, hasFocus);
+        }
     }
 }

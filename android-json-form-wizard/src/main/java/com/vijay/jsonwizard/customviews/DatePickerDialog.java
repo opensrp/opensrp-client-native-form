@@ -56,10 +56,6 @@ public class DatePickerDialog extends DialogFragment {
         setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Light_Dialog);
     }
 
-    public void setOnShowListener(DialogInterface.OnShowListener onShowListener_) {
-        onShowListener = onShowListener_;
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -116,6 +112,17 @@ public class DatePickerDialog extends DialogFragment {
         return dialogView;
     }
 
+    public void setOnShowListener(DialogInterface.OnShowListener onShowListener_) {
+        onShowListener = onShowListener_;
+    }
+
+    private void setDate(Calendar calendar) {
+        if (this.datePicker != null) {
+            datePicker.updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DAY_OF_MONTH));
+        }
+    }
+
     public void setMinDate(long minDate) {
         this.minDate = minDate;
     }
@@ -133,13 +140,6 @@ public class DatePickerDialog extends DialogFragment {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(this.date);
         setDate(calendar);
-    }
-
-    private void setDate(Calendar calendar) {
-        if (this.datePicker != null) {
-            datePicker.updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
-                    calendar.get(Calendar.DAY_OF_MONTH));
-        }
     }
 
     public void setOnDateSetListener(android.app.DatePickerDialog.OnDateSetListener onDateSetListener) {

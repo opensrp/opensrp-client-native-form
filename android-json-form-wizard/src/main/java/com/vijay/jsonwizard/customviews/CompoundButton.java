@@ -23,24 +23,6 @@ public class CompoundButton extends android.widget.CompoundButton {
         init(context, null, 0, 0);
     }
 
-    public CompoundButton(Context context, AttributeSet attrs) {
-        super(context, attrs);
-
-        init(context, attrs, 0, 0);
-    }
-
-    public CompoundButton(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-
-        init(context, attrs, defStyleAttr, 0);
-    }
-
-    public CompoundButton(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr);
-
-        init(context, attrs, defStyleAttr, defStyleRes);
-    }
-
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         // a fix to reset paddingLeft attribute
@@ -59,21 +41,30 @@ public class CompoundButton extends android.widget.CompoundButton {
         applyStyle(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    public void applyStyle(int resId) {
-        applyStyle(getContext(), null, 0, resId);
-    }
-
     private void applyStyle(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         mRippleManager.onCreate(this, context, attrs, defStyleAttr, defStyleRes);
     }
 
-    @Override
-    public void setBackgroundDrawable(Drawable drawable) {
-        Drawable background = getBackground();
-        if (background instanceof RippleDrawable && !(drawable instanceof RippleDrawable))
-            ((RippleDrawable) background).setBackgroundDrawable(drawable);
-        else
-            super.setBackgroundDrawable(drawable);
+    public CompoundButton(Context context, AttributeSet attrs) {
+        super(context, attrs);
+
+        init(context, attrs, 0, 0);
+    }
+
+    public CompoundButton(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+
+        init(context, attrs, defStyleAttr, 0);
+    }
+
+    public CompoundButton(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr);
+
+        init(context, attrs, defStyleAttr, defStyleRes);
+    }
+
+    public void applyStyle(int resId) {
+        applyStyle(getContext(), null, 0, resId);
     }
 
     @Override
@@ -87,9 +78,12 @@ public class CompoundButton extends android.widget.CompoundButton {
     }
 
     @Override
-    public boolean onTouchEvent(@NonNull MotionEvent event) {
-        boolean result = super.onTouchEvent(event);
-        return mRippleManager.onTouchEvent(this, event) || result;
+    public void setBackgroundDrawable(Drawable drawable) {
+        Drawable background = getBackground();
+        if (background instanceof RippleDrawable && !(drawable instanceof RippleDrawable))
+            ((RippleDrawable) background).setBackgroundDrawable(drawable);
+        else
+            super.setBackgroundDrawable(drawable);
     }
 
     @Override
@@ -114,5 +108,11 @@ public class CompoundButton extends android.widget.CompoundButton {
     public void setCompoundDrawablesWithIntrinsicBounds(Drawable left, Drawable top, Drawable right, Drawable bottom) {
         mButtonDrawable = right;
         super.setCompoundDrawablesWithIntrinsicBounds(left, top, right, bottom);
+    }
+
+    @Override
+    public boolean onTouchEvent(@NonNull MotionEvent event) {
+        boolean result = super.onTouchEvent(event);
+        return mRippleManager.onTouchEvent(this, event) || result;
     }
 }

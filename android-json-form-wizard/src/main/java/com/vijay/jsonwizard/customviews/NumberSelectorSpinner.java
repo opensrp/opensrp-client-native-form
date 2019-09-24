@@ -12,23 +12,23 @@ import android.util.AttributeSet;
  */
 public class NumberSelectorSpinner extends AppCompatSpinner {
     private OnItemSelectedListener listener;
-    
+
     public NumberSelectorSpinner(Context context) {
         super(context);
     }
-    
+
     public NumberSelectorSpinner(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
-    
+
     public NumberSelectorSpinner(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
-    
+
     public NumberSelectorSpinner(Context context, int mode) {
         super(context, mode);
     }
-    
+
     @Override
     public void setSelection(int position) {
         super.setSelection(position);
@@ -36,7 +36,7 @@ public class NumberSelectorSpinner extends AppCompatSpinner {
             listener.onItemSelected(this, getSelectedView(), position, getSelectedItemId());
         }
     }
-    
+
     public void setListener(OnItemSelectedListener listener) {
         this.listener = listener;
     }

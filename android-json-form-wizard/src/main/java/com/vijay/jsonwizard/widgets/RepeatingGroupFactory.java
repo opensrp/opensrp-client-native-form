@@ -62,18 +62,13 @@ import static com.vijay.jsonwizard.utils.Utils.showProgressDialog;
  */
 public class RepeatingGroupFactory implements FormWidgetFactory {
 
-    private final String TAG = RepeatingGroupFactory.class.getName();
-
-    protected int MAX_NUM_REPEATING_GROUPS = 35;
-
-    private final ViewGroup.LayoutParams WIDTH_MATCH_PARENT_HEIGHT_WRAP_CONTENT = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     private static Map<Integer, String> repeatingGroupLayouts = new HashMap<>();
-
+    protected final int REPEATING_GROUP_LABEL_TEXT_COLOR = R.color.black;
+    private final String TAG = RepeatingGroupFactory.class.getName();
+    private final ViewGroup.LayoutParams WIDTH_MATCH_PARENT_HEIGHT_WRAP_CONTENT = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     private final String REFERENCE_EDIT_TEXT_HINT = "reference_edit_text_hint";
     private final String REPEATING_GROUP_LABEL = "repeating_group_label";
-
-    protected final int REPEATING_GROUP_LABEL_TEXT_COLOR = R.color.black;
-
+    protected int MAX_NUM_REPEATING_GROUPS = 35;
     private ImageButton doneButton;
 
     @Override
@@ -115,6 +110,11 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         ((JsonApi) context).addFormDataView(referenceEditText);
 
         return views;
+    }
+
+    @Override
+    public List<View> getViewsFromJson(final String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+        return getViewsFromJson(stepName, context, formFragment, jsonObject, listener, false);
     }
 
     private void setUpReferenceEditText(final MaterialEditText referenceEditText, final WidgetArgs widgetArgs, String referenceEditTextHint, String repeatingGroupLabel) throws JSONException {
@@ -177,11 +177,6 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         }
     }
 
-    @Override
-    public List<View> getViewsFromJson(final String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
-        return getViewsFromJson(stepName, context, formFragment, jsonObject, listener, false);
-    }
-
     private void addOnDoneAction(TextView textView, WidgetArgs widgetArgs) {
         try {
             InputMethodManager inputMethodManager = (InputMethodManager) widgetArgs.getFormFragment().getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -205,11 +200,6 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
             private int diff = 0;
 
             @Override
-            protected void onPreExecute() {
-                showProgressDialog(R.string.please_wait_title, R.string.creating_repeating_group_message, widgetArgs.getFormFragment().getContext());
-            }
-
-            @Override
             protected List<View> doInBackground(Void... objects) {
                 int currNumRepeatingGroups = ((ViewGroup) parent).getChildCount() - 1;
                 diff = numRepeatingGroups - currNumRepeatingGroups;
@@ -221,6 +211,11 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                     }
                 }
                 return repeatingGroups;
+            }
+
+            @Override
+            protected void onPreExecute() {
+                showProgressDialog(R.string.please_wait_title, R.string.creating_repeating_group_message, widgetArgs.getFormFragment().getContext());
             }
 
             @Override
@@ -284,7 +279,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
             String elementType = element.optString(TYPE, null);
             if (elementType != null) {
                 addUniqueIdentifiers(element, uniqueId);
-                FormWidgetFactory factory =  widgetArgs.getFormFragment().getPresenter().getInteractor().map.get(elementType);
+                FormWidgetFactory factory = widgetArgs.getFormFragment().getPresenter().getInteractor().map.get(elementType);
                 List<View> widgetViews = factory.getViewsFromJson(widgetArgs.getStepName(), context, widgetArgs.getFormFragment(), element, widgetArgs.getListener(), widgetArgs.isPopup());
                 for (View view : widgetViews) {
                     view.setLayoutParams(WIDTH_MATCH_PARENT_HEIGHT_WRAP_CONTENT);

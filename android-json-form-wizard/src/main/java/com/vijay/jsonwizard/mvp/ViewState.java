@@ -10,6 +10,13 @@ public class ViewState implements Parcelable {
 
     private boolean mIsSavedInstance;
 
+    public ViewState() {
+    }
+
+    protected ViewState(Parcel in) {
+        this.mIsSavedInstance = in.readByte() != 0;
+    }
+
     public boolean isSavedInstance() {
         return mIsSavedInstance;
     }
@@ -26,13 +33,6 @@ public class ViewState implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeByte(mIsSavedInstance ? (byte) 1 : (byte) 0);
-    }
-
-    public ViewState() {
-    }
-
-    protected ViewState(Parcel in) {
-        this.mIsSavedInstance = in.readByte() != 0;
     }
 
 }

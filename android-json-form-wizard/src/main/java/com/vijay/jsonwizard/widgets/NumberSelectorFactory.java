@@ -48,101 +48,8 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         NumberSelectorFactory.receiver = new NumberSelectorFactoryReceiver();
     }
 
-    @SuppressLint("NewApi")
-    private static void setSelectedColor(Context context, CustomTextView customTextView, int item, int numberOfSelectors,
-                                         String textColor) {
-        if (customTextView != null && item > -1) {
-            customTextView.setBackgroundColor(context.getResources().getColor(R.color.native_number_selector_selected));
-            customTextView.setTextColor(Color.parseColor(textColor));
-            if (item == 0) {
-                if (numberOfSelectors == 1) {
-                    customTextView.setBackgroundResource(R.drawable.number_selector_rounded_background_selected);
-                } else {
-                    customTextView.setBackgroundResource(R.drawable.number_selector_left_rounded_background_selected);
-                }
-            } else if (item == (numberOfSelectors - 1)) {
-                customTextView.setBackgroundResource(R.drawable.number_selector_right_rounded_background_selected);
-            }
-        }
-        //Change background color (for first and last drawables) after it was reset by skip logic
-        if (customTextView != null && customTextView.getBackground() instanceof GradientDrawable) {
-            ((GradientDrawable) customTextView.getBackground()).setColor(context.getResources()
-                    .getColor(R.color.native_number_selector_selected));
-        }
-    }
-
-    @SuppressLint("NewApi")
-    private static void setDefaultColor(Context context, CustomTextView customTextView, int item, int numberOfSelectors,
-                                        String textColor) {
-        if (customTextView != null && item > -1) {
-            customTextView.setBackgroundColor(context.getResources().getColor(R.color.native_number_selector));
-            customTextView.setTextColor(Color.parseColor(textColor));
-            if (item == 0) {
-                if (numberOfSelectors == 1) {
-                    customTextView.setBackgroundResource(R.drawable.number_selector_rounded_background);
-                } else {
-                    customTextView.setBackgroundResource(R.drawable.number_selector_left_rounded_background);
-                }
-            } else if (item == numberOfSelectors - 1) {
-                customTextView.setBackgroundResource(R.drawable.number_selector_right_rounded_background);
-            }
-        }
-    }
-
-    /**
-     * Sets backgrounds the different backgrounds for the number selectors.
-     *
-     * @param textView {@link CustomTextView}
-     * @author dubdabasoduba
-     */
-    public static void setBackgrounds(CustomTextView textView) {
-        String defaultColor = (String) textView.getTag(R.id.number_selector_default_text_color);
-        String selectedColor = (String) textView.getTag(R.id.number_selector_selected_text_color);
-        int item = (int) textView.getTag(R.id.number_selector_item);
-        int numberOfSelectors = (int) textView.getTag(R.id.number_selector_number_of_selectors);
-
-        ViewParent textViewParent = textView.getParent();
-        int childCount = ((ViewGroup) textViewParent).getChildCount();
-        if (childCount > 0) {
-            for (int i = 0; i < numberOfSelectors; i++) {
-                CustomTextView customTextView = (CustomTextView) ((ViewGroup) textViewParent).getChildAt(i);
-                if (customTextView != null) {
-                    if ((customTextView.getId() == textView.getId())) {
-                        setSelectedColor(textView.getContext(), textView, item, numberOfSelectors, selectedColor);
-                    } else {
-                        int otherItem = (int) customTextView.getTag(R.id.number_selector_item);
-                        setDefaultColor(customTextView.getContext(), customTextView, otherItem, numberOfSelectors,
-                                defaultColor);
-                    }
-                }
-            }
-        }
-    }
-
-
-    public static void setSelectedTextViews(CustomTextView customTextView) {
-        selectedTextView = customTextView;
-        ((View) customTextView.getParent()).setTag(R.id.selected_number_value, customTextView.getText().toString());
-        customTextView.setError(null);
-    }
-
     public static CustomTextView getSelectedTextView() {
         return selectedTextView;
-    }
-
-    /**
-     * Get numbers to display in the number selector dialog
-     *
-     * @param jsonObject
-     */
-    private static List<String> getNumbersForNumberSelectorDialog(JSONObject jsonObject, int startNumber) {
-        int maxValue = jsonObject.optInt(JsonFormConstants.MAX_SELECTION_VALUE, 20);
-
-        List<String> numbers = new ArrayList<>();
-        for (int i = startNumber; i <= maxValue; i++) {
-            numbers.add(String.valueOf(i));
-        }
-        return numbers;
     }
 
     public static void setSelectedTextViewText(String viewText) {
@@ -195,6 +102,83 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         CommonListener listener = (CommonListener) textView.getTag(R.id.number_selector_listener);
         menu.setOnMenuItemClickListener(listener);
         menu.show();
+    }
+
+    /**
+     * Sets backgrounds the different backgrounds for the number selectors.
+     *
+     * @param textView {@link CustomTextView}
+     * @author dubdabasoduba
+     */
+    public static void setBackgrounds(CustomTextView textView) {
+        String defaultColor = (String) textView.getTag(R.id.number_selector_default_text_color);
+        String selectedColor = (String) textView.getTag(R.id.number_selector_selected_text_color);
+        int item = (int) textView.getTag(R.id.number_selector_item);
+        int numberOfSelectors = (int) textView.getTag(R.id.number_selector_number_of_selectors);
+
+        ViewParent textViewParent = textView.getParent();
+        int childCount = ((ViewGroup) textViewParent).getChildCount();
+        if (childCount > 0) {
+            for (int i = 0; i < numberOfSelectors; i++) {
+                CustomTextView customTextView = (CustomTextView) ((ViewGroup) textViewParent).getChildAt(i);
+                if (customTextView != null) {
+                    if ((customTextView.getId() == textView.getId())) {
+                        setSelectedColor(textView.getContext(), textView, item, numberOfSelectors, selectedColor);
+                    } else {
+                        int otherItem = (int) customTextView.getTag(R.id.number_selector_item);
+                        setDefaultColor(customTextView.getContext(), customTextView, otherItem, numberOfSelectors,
+                                defaultColor);
+                    }
+                }
+            }
+        }
+    }
+
+    public static void setSelectedTextViews(CustomTextView customTextView) {
+        selectedTextView = customTextView;
+        ((View) customTextView.getParent()).setTag(R.id.selected_number_value, customTextView.getText().toString());
+        customTextView.setError(null);
+    }
+
+    @SuppressLint("NewApi")
+    private static void setSelectedColor(Context context, CustomTextView customTextView, int item, int numberOfSelectors,
+                                         String textColor) {
+        if (customTextView != null && item > -1) {
+            customTextView.setBackgroundColor(context.getResources().getColor(R.color.native_number_selector_selected));
+            customTextView.setTextColor(Color.parseColor(textColor));
+            if (item == 0) {
+                if (numberOfSelectors == 1) {
+                    customTextView.setBackgroundResource(R.drawable.number_selector_rounded_background_selected);
+                } else {
+                    customTextView.setBackgroundResource(R.drawable.number_selector_left_rounded_background_selected);
+                }
+            } else if (item == (numberOfSelectors - 1)) {
+                customTextView.setBackgroundResource(R.drawable.number_selector_right_rounded_background_selected);
+            }
+        }
+        //Change background color (for first and last drawables) after it was reset by skip logic
+        if (customTextView != null && customTextView.getBackground() instanceof GradientDrawable) {
+            ((GradientDrawable) customTextView.getBackground()).setColor(context.getResources()
+                    .getColor(R.color.native_number_selector_selected));
+        }
+    }
+
+    @SuppressLint("NewApi")
+    private static void setDefaultColor(Context context, CustomTextView customTextView, int item, int numberOfSelectors,
+                                        String textColor) {
+        if (customTextView != null && item > -1) {
+            customTextView.setBackgroundColor(context.getResources().getColor(R.color.native_number_selector));
+            customTextView.setTextColor(Color.parseColor(textColor));
+            if (item == 0) {
+                if (numberOfSelectors == 1) {
+                    customTextView.setBackgroundResource(R.drawable.number_selector_rounded_background);
+                } else {
+                    customTextView.setBackgroundResource(R.drawable.number_selector_left_rounded_background);
+                }
+            } else if (item == numberOfSelectors - 1) {
+                customTextView.setBackgroundResource(R.drawable.number_selector_right_rounded_background);
+            }
+        }
     }
 
     @Override
@@ -305,13 +289,16 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         }
     }
 
-    public String getText(int item, int startSelectionNumber, int numberOfSelectors, int maxValue) {
-        String text = startSelectionNumber == 0 ? String.valueOf(item) : startSelectionNumber == 1 ? String
-                .valueOf(item + 1) : String.valueOf(startSelectionNumber + item);
-        if ((item == (numberOfSelectors - 1)) && (maxValue - 1) > Integer.parseInt(text)) {
-            text = text + "+";
+    private void addRequiredTag(View rootLayout, JSONObject jsonObject) throws JSONException {
+        JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
+        if (requiredObject != null) {
+            boolean requiredValue = requiredObject.getBoolean(JsonFormConstants.VALUE);
+            if (Boolean.TRUE.equals(requiredValue)) {
+                rootLayout.setTag(R.id.v_required, "true");
+                rootLayout.setTag(R.id.error, requiredObject.optString(JsonFormConstants.ERR, null));
+            }
         }
-        return text;
+
     }
 
     @SuppressLint("NewApi")
@@ -337,7 +324,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
 
         CustomTextView customTextView = FormUtils.getTextViewWith(context, Integer.parseInt(textSize), getText(item,
                 startSelectionNumber, numberOfSelectors, maxValue),
-                jsonObject.getString(JsonFormConstants.KEY) + JsonFormConstants.SUFFIX.TEXT_VIEW,
+                jsonObject.getString(JsonFormConstants.KEY) + JsonFormConstants.suffix.TEXT_VIEW,
                 jsonObject.getString(JsonFormConstants.TYPE), openMrsEntityParent, openMrsEntity, openMrsEntityId, "",
                 layoutParams, FormUtils.FONT_BOLD_PATH, 0, textColor);
 
@@ -362,6 +349,21 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         return customTextView;
     }
 
+    /**
+     * Get numbers to display in the number selector dialog
+     *
+     * @param jsonObject
+     */
+    private static List<String> getNumbersForNumberSelectorDialog(JSONObject jsonObject, int startNumber) {
+        int maxValue = jsonObject.optInt(JsonFormConstants.MAX_SELECTION_VALUE, 20);
+
+        List<String> numbers = new ArrayList<>();
+        for (int i = startNumber; i <= maxValue; i++) {
+            numbers.add(String.valueOf(i));
+        }
+        return numbers;
+    }
+
     private void showSelectedTextView(JSONObject jsonObject, CustomTextView customTextView) {
         String text = customTextView.getText().toString();
         String numberValue = jsonObject.optString(JsonFormConstants.VALUE);
@@ -383,6 +385,15 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         }
     }
 
+    public String getText(int item, int startSelectionNumber, int numberOfSelectors, int maxValue) {
+        String text = startSelectionNumber == 0 ? String.valueOf(item) : startSelectionNumber == 1 ? String
+                .valueOf(item + 1) : String.valueOf(startSelectionNumber + item);
+        if ((item == (numberOfSelectors - 1)) && (maxValue - 1) > Integer.parseInt(text)) {
+            text = text + "+";
+        }
+        return text;
+    }
+
     /**
      * Sets the value text on the text views & updates the color drawables
      *
@@ -395,19 +406,6 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         setBackgrounds(customTextView);
         setSelectedTextViews(customTextView);
     }
-
-    private void addRequiredTag(View rootLayout, JSONObject jsonObject) throws JSONException {
-        JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
-        if (requiredObject != null) {
-            boolean requiredValue = requiredObject.getBoolean(JsonFormConstants.VALUE);
-            if (Boolean.TRUE.equals(requiredValue)) {
-                rootLayout.setTag(R.id.v_required, "true");
-                rootLayout.setTag(R.id.error, requiredObject.optString(JsonFormConstants.ERR, null));
-            }
-        }
-
-    }
-
 
     public class NumberSelectorFactoryReceiver extends BroadcastReceiver {
 

@@ -679,7 +679,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
      * @throws JSONException
      */
     protected void extractOptionOpenMRSAttributes(JSONArray valueOpenMRSAttributes, JSONObject itemOption, String itemKey)
-    throws JSONException {
+            throws JSONException {
         if (itemOption.has(JsonFormConstants.OPENMRS_ENTITY_PARENT) && itemOption.has(JsonFormConstants.OPENMRS_ENTITY) &&
                 itemOption.has(JsonFormConstants.OPENMRS_ENTITY_ID)) {
             String openmrsEntityParent = itemOption.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);

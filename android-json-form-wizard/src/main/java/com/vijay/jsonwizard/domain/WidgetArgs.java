@@ -23,24 +23,48 @@ public class WidgetArgs {
         return stepName;
     }
 
+    public void setStepName(String stepName) {
+        this.stepName = stepName;
+    }
+
     public Context getContext() {
         return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
     }
 
     public JsonFormFragment getFormFragment() {
         return formFragment;
     }
 
+    public void setFormFragment(JsonFormFragment formFragment) {
+        this.formFragment = formFragment;
+    }
+
     public JSONObject getJsonObject() {
         return jsonObject;
+    }
+
+    public void setJsonObject(JSONObject jsonObject) {
+        this.jsonObject = jsonObject;
     }
 
     public CommonListener getListener() {
         return listener;
     }
 
+    public void setListener(CommonListener listener) {
+        this.listener = listener;
+    }
+
     public boolean isPopup() {
         return popup;
+    }
+
+    public void setPopup(boolean popup) {
+        this.popup = popup;
     }
 
     public WidgetArgs withStepName(String stepName) {
@@ -71,30 +95,5 @@ public class WidgetArgs {
     public WidgetArgs withPopup(boolean popup) {
         setPopup(popup);
         return this;
-    }
-
-
-    public void setStepName(String stepName) {
-        this.stepName = stepName;
-    }
-
-    public void setContext(Context context) {
-        this.context = context;
-    }
-
-    public void setFormFragment(JsonFormFragment formFragment) {
-        this.formFragment = formFragment;
-    }
-
-    public void setJsonObject(JSONObject jsonObject) {
-        this.jsonObject = jsonObject;
-    }
-
-    public void setListener(CommonListener listener) {
-        this.listener = listener;
-    }
-
-    public void setPopup(boolean popup) {
-        this.popup = popup;
     }
 }

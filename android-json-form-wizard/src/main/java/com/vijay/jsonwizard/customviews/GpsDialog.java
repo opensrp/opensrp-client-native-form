@@ -54,14 +54,14 @@ public class GpsDialog extends Dialog implements LocationListener, GoogleApiClie
                 disconnectGoogleApiClient();
             }
         });
-        Button okButton = (Button) this.findViewById(R.id.ok_button);
+        Button okButton = this.findViewById(R.id.ok_button);
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 saveAndDismiss();
             }
         });
-        Button cancelButton = (Button) this.findViewById(R.id.cancel_button);
+        Button cancelButton = this.findViewById(R.id.cancel_button);
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -69,7 +69,7 @@ public class GpsDialog extends Dialog implements LocationListener, GoogleApiClie
             }
         });
 
-        this.dialogAccuracyTV = (TextView) this.findViewById(R.id.accuracy);
+        this.dialogAccuracyTV = this.findViewById(R.id.accuracy);
 
         this.setOnShowListener(new OnShowListener() {
             @Override
@@ -77,6 +77,12 @@ public class GpsDialog extends Dialog implements LocationListener, GoogleApiClie
                 initGoogleApiClient();
             }
         });
+    }
+
+    private void disconnectGoogleApiClient() {
+        if (googleApiClient != null) {
+            googleApiClient.disconnect();
+        }
     }
 
     protected void saveAndDismiss() {
@@ -96,9 +102,15 @@ public class GpsDialog extends Dialog implements LocationListener, GoogleApiClie
         googleApiClient.connect();
     }
 
-    private void disconnectGoogleApiClient() {
-        if (googleApiClient != null) {
-            googleApiClient.disconnect();
+    private void updateLocationViews(Location location) {
+        if (location != null) {
+            location.getProvider();
+
+            latitudeTV.setText(String.format(context.getString(R.string.latitude), String.valueOf(location.getLatitude())));
+            longitudeTV.setText(String.format(context.getString(R.string.longitude), String.valueOf(location.getLongitude())));
+            altitudeTV.setText(String.format(context.getString(R.string.altitude), location.getAltitude() + " m"));
+            accuracyTV.setText(String.format(context.getString(R.string.accuracy), location.getAccuracy() + " m"));
+            dataView.setTag(R.id.raw_value, GpsFactory.constructString(location));
         }
     }
 
@@ -112,18 +124,6 @@ public class GpsDialog extends Dialog implements LocationListener, GoogleApiClie
         LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
 
         lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-    }
-
-    private void updateLocationViews(Location location) {
-        if (location != null) {
-            location.getProvider();
-
-            latitudeTV.setText(String.format(context.getString(R.string.latitude), String.valueOf(location.getLatitude())));
-            longitudeTV.setText(String.format(context.getString(R.string.longitude), String.valueOf(location.getLongitude())));
-            altitudeTV.setText(String.format(context.getString(R.string.altitude), String.valueOf(location.getAltitude()) + " m"));
-            accuracyTV.setText(String.format(context.getString(R.string.accuracy), String.valueOf(location.getAccuracy()) + " m"));
-            dataView.setTag(R.id.raw_value, GpsFactory.constructString(location));
-        }
     }
 
     @Override
@@ -140,7 +140,7 @@ public class GpsDialog extends Dialog implements LocationListener, GoogleApiClie
     @Override
     public void onLocationChanged(Location location) {
         if (location != null) {
-            dialogAccuracyTV.setText(String.format(context.getString(R.string.accuracy), String.valueOf(location.getAccuracy()) + " m"));
+            dialogAccuracyTV.setText(String.format(context.getString(R.string.accuracy), location.getAccuracy() + " m"));
         }
 
         lastLocation = location;

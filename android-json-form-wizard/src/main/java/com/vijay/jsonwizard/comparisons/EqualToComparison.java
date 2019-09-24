@@ -53,7 +53,7 @@ public class EqualToComparison extends Comparison {
                     try {
                         JSONArray aArray = new JSONArray(a);
                         JSONArray bArray = new JSONArray(b);
-                        
+
                         if (aArray.length() == bArray.length()) {
                             ArrayList<String> aList = new ArrayList<>();
                             for (int i = 0; i < aArray.length(); i++) {
