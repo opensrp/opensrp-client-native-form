@@ -153,7 +153,7 @@ public class JsonFormConstants {
     public static final String OPENMRS_ATTRIBUTES = "openmrs_attributes";
     public static final String VALUE_OPENMRS_ATTRIBUTES = "value_openmrs_attributes";
     public static final String OPENMRS_CHOICE_IDS = "openmrs_choice_ids";
-    public static final String ANC_RADIO_BUTTON = "anc_radio_button";
+    public static final String EXTENDED_RADIO_BUTTON = "extended_radio_button";
     public static final String TRUE = "true";
     public static final String IS_VISIBLE = "is_visible";
     public static final String VALIDATE_ON_SUBMIT = "validate_on_submit";
@@ -196,6 +196,13 @@ public class JsonFormConstants {
     public static final String DISPLAY_RECORD_BUTTON = "display_record_button";
     public static final String CONTACT_CONTAINER = "container";
     public static final String REQUIRED_FIELDS = "required_fields";
+    public static final String INDEX = "index";
+    public static final String ANC_TEST = "anc_test";
+    public static final String ANC_TEST_ENCOUNTER_TYPE = "Tests";
+    public static final String ANC_COUNSELLING_TREATMENT = "anc_counselling_treatment";
+    public static final String ANC_COUNSELLING_TREATMENT_ENCOUNTER_TYPE = "Counselling and Treatment";
+    public static final String DATE_TODAY_HIDDEN = "date_today_hidden";
+    public static final String FALSE = "false";
 
     public static class SuffixUtils {
         public static final String VALUE = "_value";

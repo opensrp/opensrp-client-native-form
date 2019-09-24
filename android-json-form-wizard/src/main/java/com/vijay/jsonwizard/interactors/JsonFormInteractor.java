@@ -7,6 +7,7 @@ import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
+import com.vijay.jsonwizard.widgets.ExtendedRadioButtonWidgetFactory;
 import com.vijay.jsonwizard.widgets.BarcodeFactory;
 import com.vijay.jsonwizard.widgets.ButtonFactory;
 import com.vijay.jsonwizard.widgets.CheckBoxFactory;
@@ -81,6 +82,7 @@ public class JsonFormInteractor {
         map.put(JsonFormConstants.RDT_CAPTURE, new RDTCaptureFactory());
         map.put(JsonFormConstants.COUNTDOWN_TIMER, new CountDownTimerFactory());
         map.put(JsonFormConstants.IMAGE_VIEW, new ImageViewFactory());
+        map.put(JsonFormConstants.EXTENDED_RADIO_BUTTON, new ExtendedRadioButtonWidgetFactory());
         map.put(JsonFormConstants.EXPANSION_PANEL, new ExpansionWidgetFactory());
     }
 
@@ -159,16 +161,12 @@ public class JsonFormInteractor {
                             String type, JSONObject jsonObject, CommonListener listener, Boolean popup) {
 
         try {
-            List<View> views = map
-                    .get(type)
-                    .getViewsFromJson(stepName, formFragment.getActivity(), formFragment, jsonObject, listener, popup);
+            List<View> views = map.get(type).getViewsFromJson(stepName, formFragment.getActivity(), formFragment, jsonObject, listener, popup);
             if (views.size() > 0) {
                 viewsFromJson.addAll(views);
             }
         } catch (Exception e) {
-            Log.e(TAG,
-                    "Exception occurred in making view : Exception is : "
-                            + e.getMessage());
+            Log.e(TAG, "Exception occurred in making view : Exception is : " + e.getMessage());
             e.printStackTrace();
         }
 

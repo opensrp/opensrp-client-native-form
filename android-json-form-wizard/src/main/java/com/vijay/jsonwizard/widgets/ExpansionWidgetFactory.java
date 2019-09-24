@@ -178,7 +178,7 @@ public class ExpansionWidgetFactory implements FormWidgetFactory {
         for (int i = 0; i < value.length(); i++) {
             if (!value.isNull(i)) {
                 JSONObject item = value.getJSONObject(i);
-                if (item.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.ANC_RADIO_BUTTON) ||
+                if (item.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.EXTENDED_RADIO_BUTTON) ||
                         item.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
 
                     JSONArray jsonArray = item.getJSONArray(JsonFormConstants.VALUES);
@@ -288,7 +288,7 @@ public class ExpansionWidgetFactory implements FormWidgetFactory {
         if (value.length() == 1) {
             JSONObject jsonObject = value.getJSONObject(0);
             if (jsonObject.has(JsonFormConstants.TYPE) &&
-                    JsonFormConstants.ANC_RADIO_BUTTON.equals(jsonObject.getString(JsonFormConstants.TYPE))) {
+                    JsonFormConstants.EXTENDED_RADIO_BUTTON.equals(jsonObject.getString(JsonFormConstants.TYPE))) {
                 JSONArray values = jsonObject.getJSONArray(JsonFormConstants.VALUES);
                 if (values.length() == 1) {
                     String object = values.getString(0);

@@ -324,7 +324,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
 
         CustomTextView customTextView = FormUtils.getTextViewWith(context, Integer.parseInt(textSize), getText(item,
                 startSelectionNumber, numberOfSelectors, maxValue),
-                jsonObject.getString(JsonFormConstants.KEY) + JsonFormConstants.suffix.TEXT_VIEW,
+                jsonObject.getString(JsonFormConstants.KEY) + JsonFormConstants.SuffixUtils.TEXT_VIEW,
                 jsonObject.getString(JsonFormConstants.TYPE), openMrsEntityParent, openMrsEntity, openMrsEntityId, "",
                 layoutParams, FormUtils.FONT_BOLD_PATH, 0, textColor);
 

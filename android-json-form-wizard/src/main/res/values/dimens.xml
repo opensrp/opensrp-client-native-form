@@ -61,4 +61,13 @@
     <dimen name="custom_dialog_margin">16dp</dimen>
 
     <dimen name="floating_label_top_spacing">4dp</dimen>
+    <dimen name="expansion_panel_dialog_padding">20dp</dimen>
+    <dimen name="accordion_content_margin">10dp</dimen>
+    <dimen name="referral_dialog_padding">20dp</dimen>
+    <dimen name="referral_dialog_title_text_size">22sp</dimen>
+    <dimen name="referral_dialog_text_size">16sp</dimen>
+    <dimen name="advanced_search_toolbar_padding">20dp</dimen>
+    <dimen name="advanced_search_toolbar_drawable_padding">10dp</dimen>
+    <dimen name="advanced_search_toolbar_text_size">20sp</dimen>
+    <dimen name="advanced_search_button_padding">20dp</dimen>
 </resources>

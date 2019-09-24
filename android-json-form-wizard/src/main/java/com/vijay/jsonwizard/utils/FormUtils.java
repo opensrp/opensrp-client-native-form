@@ -35,9 +35,11 @@ import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.CompoundButton;
+import com.vijay.jsonwizard.customviews.FullScreenGenericPopupDialog;
 import com.vijay.jsonwizard.customviews.GenericPopupDialog;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
+import com.vijay.jsonwizard.interfaces.GenericDialogInterface;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.model.ExpansionPanelItemModel;
 import com.vijay.jsonwizard.rules.RuleConstant;
@@ -91,6 +93,7 @@ public class FormUtils {
     private static final String TODAY_JAVAROSA_PROPERTY = "today";
     private static final String DEFAULT_FORM_IMAGES_FOLDER = "image/";
     private static final String TAG = FormUtils.class.getSimpleName();
+    private GenericDialogInterface genericDialogInterface;
 
     public static Point getViewLocationOnScreen(View view) {
         int[] location = new int[2];
@@ -873,7 +876,7 @@ public class FormUtils {
     public static String extractItemValue(JSONObject valueItem, JSONArray valueItemJSONArray) throws JSONException {
         String result;
         switch (valueItem.getString(JsonFormConstants.TYPE)) {
-            case JsonFormConstants.ANC_RADIO_BUTTON:
+            case JsonFormConstants.EXTENDED_RADIO_BUTTON:
             case JsonFormConstants.NATIVE_RADIO_BUTTON:
                 result = valueItemJSONArray.getString(0).split(":")[0];
                 break;
@@ -927,7 +930,7 @@ public class FormUtils {
         String selectedKeys;
         String selectedValues;
         switch (valueItem.getString(JsonFormConstants.TYPE)) {
-            case JsonFormConstants.ANC_RADIO_BUTTON:
+            case JsonFormConstants.EXTENDED_RADIO_BUTTON:
             case JsonFormConstants.NATIVE_RADIO_BUTTON:
                 selectedKeys = valueItemJSONArray.getString(0).split(":")[0];
                 selectedValues = valueItemJSONArray.getString(0).split(":")[1];
@@ -957,7 +960,7 @@ public class FormUtils {
             processCheckBoxSpecialWidget(widget, keyList, valueList);
 
         } else if (widgetType.equals(JsonFormConstants.NATIVE_RADIO_BUTTON) ||
-                widgetType.equals(JsonFormConstants.RADIO_BUTTON) || widgetType.equals(JsonFormConstants.ANC_RADIO_BUTTON)) {
+                widgetType.equals(JsonFormConstants.RADIO_BUTTON) || widgetType.equals(JsonFormConstants.EXTENDED_RADIO_BUTTON)) {
             processRadioButtonsSpecialWidget(widget, valueList);
         }
     }
@@ -1047,6 +1050,10 @@ public class FormUtils {
                         jsonObject.getString(JsonFormConstants.TEXT))));
 
 
+        assignRealSecondaryValue(jsonObject, jsonArray2);
+    }
+
+    private static void assignRealSecondaryValue(JSONObject jsonObject, JSONArray jsonArray2) throws JSONException {
         for (int j = 0; j < jsonArray2.length(); j++) {
             JSONObject secValue = jsonArray2.getJSONObject(j);
 
@@ -1247,7 +1254,7 @@ public class FormUtils {
 
                 if (jsonObject.has(JsonFormConstants.TYPE) && (JsonFormConstants.CHECK_BOX.equals(jsonObject.getString(JsonFormConstants.TYPE))
                         || JsonFormConstants.NATIVE_RADIO_BUTTON.equals(jsonObject.getString(JsonFormConstants.TYPE)) ||
-                        JsonFormConstants.ANC_RADIO_BUTTON.equals(jsonObject.getString(JsonFormConstants.TYPE)))) {
+                        JsonFormConstants.EXTENDED_RADIO_BUTTON.equals(jsonObject.getString(JsonFormConstants.TYPE)))) {
 
                     facts.put(expansionPanelItem.getKey(), expansionPanelItem.getSelectedKeys());
                     facts.put(expansionPanelItem.getKey() + JsonFormConstants.SuffixUtils.VALUE, expansionPanelItem.getSelectedValues());
@@ -1303,38 +1310,18 @@ public class FormUtils {
         String type = (String) view.getTag(R.id.type);
         CustomTextView customTextView = (CustomTextView) view.getTag(R.id.specify_textview);
         CustomTextView reasonsTextView = (CustomTextView) view.getTag(R.id.specify_reasons_textview);
-        String childKey;
 
         if (specifyContent != null) {
-            GenericPopupDialog genericPopupDialog = new GenericPopupDialog();
-            genericPopupDialog.setCommonListener(listener);
-            genericPopupDialog.setFormFragment(formFragment);
-            genericPopupDialog.setFormIdentity(specifyContent);
-            genericPopupDialog.setFormLocation(specifyContentForm);
-            genericPopupDialog.setStepName(stepName);
-            genericPopupDialog.setSecondaryValues(jsonArray);
-            genericPopupDialog.setParentKey(parentKey);
-            genericPopupDialog.setWidgetType(type);
-            genericPopupDialog.setContext(context);
-            if (customTextView != null && reasonsTextView != null) {
-                genericPopupDialog.setCustomTextView(customTextView);
-                genericPopupDialog.setPopupReasonsTextView(reasonsTextView);
+            if (type != null && JsonFormConstants.EXPANSION_PANEL.equals(type)) {
+                String toolbarHeader;
+                String container;
+                LinearLayout rootLayout = (LinearLayout) view.getTag(R.id.main_layout);
+                toolbarHeader = (String) view.getTag(R.id.header);
+                container = (String) view.getTag(R.id.contact_container);
+                showAncGenericDialog(view, context, specifyContent, specifyContentForm, stepName, listener, formFragment, jsonArray, parentKey, type, customTextView, reasonsTextView, toolbarHeader, container, rootLayout);
+            } else {
+                showGenericDialog(view, context, specifyContent, specifyContentForm, stepName, listener, formFragment, jsonArray, parentKey, type, customTextView, reasonsTextView);
             }
-            if (type.equals(JsonFormConstants.CHECK_BOX) || type
-                    .equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
-                childKey = (String) view.getTag(R.id.childKey);
-                genericPopupDialog.setChildKey(childKey);
-            }
-
-            Activity activity = (Activity) context;
-            FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
-            Fragment prev = activity.getFragmentManager().findFragmentByTag("GenericPopup");
-            if (prev != null) {
-                ft.remove(prev);
-            }
-
-            ft.addToBackStack(null);
-            genericPopupDialog.show(ft, "GenericPopup");
         } else {
             Toast.makeText(context, "Please specify the sub form to display ", Toast.LENGTH_LONG).show();
         }
@@ -1342,23 +1329,111 @@ public class FormUtils {
 
     }
 
+    private void showAncGenericDialog(View view, Context context, String specifyContent, String specifyContentForm, String stepName, CommonListener listener, JsonFormFragment formFragment, JSONArray jsonArray, String parentKey, String type, CustomTextView customTextView, CustomTextView reasonsTextView, String toolbarHeader, String container, LinearLayout rootLayout) {
+        String childKey;
+        FullScreenGenericPopupDialog genericPopupDialog = new FullScreenGenericPopupDialog();
+        genericPopupDialog.setCommonListener(listener);
+        genericPopupDialog.setFormFragment(formFragment);
+        genericPopupDialog.setFormIdentity(specifyContent);
+        genericPopupDialog.setFormLocation(specifyContentForm);
+        genericPopupDialog.setStepName(stepName);
+        genericPopupDialog.setSecondaryValues(jsonArray);
+        genericPopupDialog.setParentKey(parentKey);
+        genericPopupDialog.setLinearLayout(rootLayout);
+        genericPopupDialog.setContext(context);
+        if (type != null && type.equals(JsonFormConstants.EXPANSION_PANEL)) {
+            genericPopupDialog.setHeader(toolbarHeader);
+            genericPopupDialog.setContainer(container);
+        }
+        genericPopupDialog.setWidgetType(type);
+        if (customTextView != null && reasonsTextView != null) {
+            genericPopupDialog.setCustomTextView(customTextView);
+            genericPopupDialog.setPopupReasonsTextView(reasonsTextView);
+        }
+        if (type != null &&
+                (type.equals(JsonFormConstants.CHECK_BOX) || type.equals(JsonFormConstants.NATIVE_RADIO_BUTTON))) {
+            childKey = (String) view.getTag(com.vijay.jsonwizard.R.id.childKey);
+            genericPopupDialog.setChildKey(childKey);
+        }
+
+        Activity activity = (Activity) context;
+        FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
+        Fragment prev = activity.getFragmentManager().findFragmentByTag("ANCGenericPopup");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+
+        ft.addToBackStack(null);
+        genericPopupDialog.show(ft, "ANCGenericPopup");
+    }
+
+    private void showGenericDialog(View view, Context context, String specifyContent, String specifyContentForm, String stepName, CommonListener listener, JsonFormFragment formFragment, JSONArray jsonArray, String parentKey, String type, CustomTextView customTextView, CustomTextView reasonsTextView) {
+        String childKey;
+        GenericPopupDialog genericPopupDialog = new GenericPopupDialog();
+        genericPopupDialog.setCommonListener(listener);
+        genericPopupDialog.setFormFragment(formFragment);
+        genericPopupDialog.setFormIdentity(specifyContent);
+        genericPopupDialog.setFormLocation(specifyContentForm);
+        genericPopupDialog.setStepName(stepName);
+        genericPopupDialog.setSecondaryValues(jsonArray);
+        genericPopupDialog.setParentKey(parentKey);
+        genericPopupDialog.setWidgetType(type);
+        genericPopupDialog.setContext(context);
+        if (customTextView != null && reasonsTextView != null) {
+            genericPopupDialog.setCustomTextView(customTextView);
+            genericPopupDialog.setPopupReasonsTextView(reasonsTextView);
+        }
+        if (type.equals(JsonFormConstants.CHECK_BOX) || type
+                .equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
+            childKey = (String) view.getTag(R.id.childKey);
+            genericPopupDialog.setChildKey(childKey);
+        }
+
+        Activity activity = (Activity) context;
+        FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
+        Fragment prev = activity.getFragmentManager().findFragmentByTag("GenericPopup");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+
+        ft.addToBackStack(null);
+        genericPopupDialog.show(ft, "GenericPopup");
+    }
+
     public Map<String, String> addAssignedValue(String itemKey, String optionKey, String keyValue,
                                                 String itemType,
                                                 String itemText) {
         Map<String, String> value = new HashMap<>();
-        switch (itemType) {
+        if (genericDialogInterface != null && !TextUtils.isEmpty(genericDialogInterface.getWidgetType()) &&
+                genericDialogInterface.getWidgetType().equals(JsonFormConstants.EXPANSION_PANEL)) {
+            String[] labels = itemType.split(";");
+            String type = "";
+            if (labels.length >= 1) {
+                type = labels[0];
+            }
+            if (!TextUtils.isEmpty(type)) {
+                assignValues(itemKey, optionKey, keyValue, itemType, itemText, value, type);
+            }
+        } else {
+            assignValues(itemKey, optionKey, keyValue, itemType, itemText, value, itemType);
+        }
+
+        return value;
+    }
+
+    private void assignValues(String itemKey, String optionKey, String keyValue, String itemType, String itemText, Map<String, String> value, String type) {
+        switch (type) {
             case JsonFormConstants.CHECK_BOX:
                 value.put(itemKey, optionKey + ":" + itemText + ":" + keyValue + ";" + itemType);
                 break;
             case JsonFormConstants.NATIVE_RADIO_BUTTON:
+            case JsonFormConstants.EXTENDED_RADIO_BUTTON:
                 value.put(itemKey, keyValue + ":" + itemText + ";" + itemType);
                 break;
             default:
                 value.put(itemKey, keyValue + ";" + itemType);
                 break;
         }
-
-        return value;
     }
 
     public String getRadioButtonText(JSONObject item, String value) {
@@ -1590,4 +1665,76 @@ public class FormUtils {
             }
         }
     }
+
+    public static boolean isFieldRequired(JSONObject fieldObject) throws JSONException {
+        boolean isValueRequired = false;
+        if (fieldObject.has(JsonFormConstants.V_REQUIRED)) {
+            JSONObject valueRequired = fieldObject.getJSONObject(JsonFormConstants.V_REQUIRED);
+            String value = valueRequired.getString(JsonFormConstants.VALUE);
+            isValueRequired = Boolean.parseBoolean(value);
+        }
+        //Don't check required for hidden, toaster notes, spacer and label widgets
+        return (!fieldObject.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.LABEL) &&
+                !fieldObject.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.SPACER) &&
+                !fieldObject.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.TOASTER_NOTES) &&
+                !fieldObject.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.HIDDEN)) &&
+                isValueRequired;
+    }
+
+    public Facts getCheckBoxResults(JSONObject jsonObject) throws JSONException {
+        Facts result = new Facts();
+        JSONArray options = jsonObject.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
+        for (int j = 0; j < options.length(); j++) {
+            if (options.getJSONObject(j).has(JsonFormConstants.VALUE)) {
+                if (jsonObject.has(RuleConstant.IS_RULE_CHECK) && jsonObject.getBoolean(RuleConstant.IS_RULE_CHECK)) {
+                    if (Boolean.valueOf(options.getJSONObject(j)
+                            .getString(JsonFormConstants.VALUE))) {//Rules engine use only true values
+                        result.put(options.getJSONObject(j).getString(JsonFormConstants.KEY),
+                                options.getJSONObject(j).getString(JsonFormConstants.VALUE));
+                    }
+                } else {
+                    result.put(options.getJSONObject(j).getString(JsonFormConstants.KEY),
+                            options.getJSONObject(j).getString(JsonFormConstants.VALUE));
+                }
+            }
+
+            //Backward compatibility Fix
+            if (jsonObject.has(RuleConstant.IS_RULE_CHECK) && !jsonObject.getBoolean(RuleConstant.IS_RULE_CHECK)) {
+                if (options.getJSONObject(j).has(JsonFormConstants.VALUE)) {
+                    result.put(JsonFormConstants.VALUE, options.getJSONObject(j).getString(JsonFormConstants.VALUE));
+                } else {
+                    result.put(JsonFormConstants.VALUE, JsonFormConstants.FALSE);
+                }
+            }
+        }
+        return result;
+    }
+
+    public Facts getRadioButtonResults(Boolean multiRelevance, JSONObject jsonObject) throws JSONException {
+        Facts result = new Facts();
+        if (multiRelevance) {
+            JSONArray jsonArray = jsonObject.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
+            for (int j = 0; j < jsonArray.length(); j++) {
+                if (jsonObject.has(JsonFormConstants.VALUE)) {
+                    if (jsonObject.getString(JsonFormConstants.VALUE)
+                            .equals(jsonArray.getJSONObject(j).getString(JsonFormConstants.KEY))) {
+                        result.put(jsonArray.getJSONObject(j).getString(JsonFormConstants.KEY), String.valueOf(true));
+                    } else {
+                        if (!jsonObject.has(RuleConstant.IS_RULE_CHECK) ||
+                                !jsonObject.getBoolean(RuleConstant.IS_RULE_CHECK)) {
+                            result.put(jsonArray.getJSONObject(j).getString(JsonFormConstants.KEY), String.valueOf(false));
+                        }
+                    }
+                } else {
+                    Log.e(TAG, "option for Key " + jsonArray.getJSONObject(j).getString(JsonFormConstants.KEY) +
+                            " has NO value");
+                }
+            }
+        } else {
+            result.put(getKey(jsonObject), getValue(jsonObject));
+        }
+
+        return result;
+    }
+
 }

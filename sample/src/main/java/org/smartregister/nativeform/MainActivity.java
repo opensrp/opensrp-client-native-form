@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.numbers_selector_widget).setOnClickListener(this);
         findViewById(R.id.generic_dialog_button).setOnClickListener(this);
         findViewById(R.id.validation_form_button).setOnClickListener(this);
+        findViewById(R.id.native_expansion_panel).setOnClickListener(this);
     }
 
     @Override
@@ -268,6 +269,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case R.id.validation_form_button:
                     startForm(REQUEST_CODE_GET_JSON, "validation_form", null);
+                    break;
+                case R.id.native_expansion_panel:
+                    startForm(REQUEST_CODE_GET_JSON, "expansion_panel", null);
                     break;
                 default:
                     break;

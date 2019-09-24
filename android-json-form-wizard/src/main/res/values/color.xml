@@ -35,5 +35,11 @@
     <color name="customAppThemeBlue">#218CC5</color>
     <color name="button_navy_blue">#2539BC</color>
     <color name="text_color_primary">#737373</color>
+    <color name="lighter_grey">#e5e5e5</color>
+    <color name="lighter_grey_text">#737373</color>
+    <color name="status_bar_text_almost_white">#f5f5f5</color>
+    <color name="transparent">#00000000</color>
+    <color name="contact_tests_actionbar">#102E4F</color>
+    <color name="contact_counselling_actionbar">#5D9D52</color>
 
 </resources>

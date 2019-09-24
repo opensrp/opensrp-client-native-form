@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:paddingStart="?android:attr/expandableListPreferredChildPaddingLeft"
         android:paddingEnd="0dp"
-        android:textColor="@color/text_black"
+        android:textColor="@color/black"
         android:paddingBottom="5dp"
         android:layout_weight="1.3"/>
 

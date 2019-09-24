@@ -2,22 +2,21 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingTop="@dimen/expansion_panel_dialog_padding"
     android:paddingStart="@dimen/expansion_panel_dialog_padding"
+    android:paddingTop="@dimen/expansion_panel_dialog_padding"
     android:paddingEnd="@dimen/expansion_panel_dialog_padding"
     android:paddingBottom="10dp">
 
-    <org.smartregister.view.customcontrols.CustomFontTextView
+    <com.vijay.jsonwizard.views.CustomTextView
         android:id="@+id/txt_title_label"
-        style="@style/CustomFontTextViewStyle.ClientList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="30dp"
-        android:maxLines="3"
         android:layout_marginLeft="@dimen/accordion_content_margin"
         android:layout_marginRight="@dimen/accordion_content_margin"
+        android:layout_marginBottom="30dp"
+        android:maxLines="3"
         android:text="@string/undo_test_result"
-        android:textColor="@color/text_black"
+        android:textColor="@color/black"
         android:textSize="@dimen/referral_dialog_title_text_size"
         android:textStyle="bold" />
 
