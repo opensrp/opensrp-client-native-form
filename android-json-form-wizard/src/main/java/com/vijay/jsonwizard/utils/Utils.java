@@ -1,6 +1,8 @@
 package com.vijay.jsonwizard.utils;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
 import android.support.v4.util.TimeUtils;
 import android.text.TextUtils;
@@ -19,6 +21,8 @@ public class Utils {
 
     private static final String TAG = Utils.class.getCanonicalName();
 
+    private static ProgressDialog progressDialog;
+
     public static void showToast(Context context, String message) {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show();
     }
@@ -28,11 +32,15 @@ public class Utils {
     }
 
     public static Date getDateFromString(String dtStart) {
-        try {
-            Date date = DatePickerFactory.DATE_FORMAT.parse(dtStart);
-            return date;
-        } catch (ParseException e) {
-            Log.e(TAG, e.getMessage(), e);
+        if (!"0".equals(dtStart)) {
+            try {
+                Date date = DatePickerFactory.DATE_FORMAT.parse(dtStart);
+                return date;
+            } catch (ParseException e) {
+                Log.e(TAG, e.getMessage(), e);
+                return null;
+            }
+        } else {
             return null;
         }
     }
@@ -80,18 +88,15 @@ public class Utils {
             StringBuilder builder = new StringBuilder();
             TimeUtils.formatDuration(timeDiff, builder);
             String duration = "";
-            if (timeDiff >= 0
-                    && timeDiff <= TimeUnit.MILLISECONDS.convert(13, TimeUnit.DAYS)) {
+            if (timeDiff >= 0 && timeDiff <= TimeUnit.MILLISECONDS.convert(13, TimeUnit.DAYS)) {
                 // Represent in days
                 long days = TimeUnit.DAYS.convert(timeDiff, TimeUnit.MILLISECONDS);
                 duration = days + "d";
-            } else if (timeDiff > TimeUnit.MILLISECONDS.convert(13, TimeUnit.DAYS)
-                    && timeDiff <= TimeUnit.MILLISECONDS.convert(97, TimeUnit.DAYS)) {
+            } else if (timeDiff > TimeUnit.MILLISECONDS.convert(13, TimeUnit.DAYS) &&
+                    timeDiff <= TimeUnit.MILLISECONDS.convert(97, TimeUnit.DAYS)) {
                 // Represent in weeks and days
-                int weeks = (int) Math.floor((float) timeDiff /
-                        TimeUnit.MILLISECONDS.convert(7, TimeUnit.DAYS));
-                int days = (int) Math.floor((float) (timeDiff -
-                        TimeUnit.MILLISECONDS.convert(weeks * 7, TimeUnit.DAYS)) /
+                int weeks = (int) Math.floor((float) timeDiff / TimeUnit.MILLISECONDS.convert(7, TimeUnit.DAYS));
+                int days = (int) Math.floor((float) (timeDiff - TimeUnit.MILLISECONDS.convert(weeks * 7, TimeUnit.DAYS)) /
                         TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS));
 
                 if (days >= 7) {
@@ -103,13 +108,11 @@ public class Utils {
                 if (days > 0) {
                     duration += " " + days + "d";
                 }
-            } else if (timeDiff > TimeUnit.MILLISECONDS.convert(97, TimeUnit.DAYS)
-                    && timeDiff <= TimeUnit.MILLISECONDS.convert(363, TimeUnit.DAYS)) {
+            } else if (timeDiff > TimeUnit.MILLISECONDS.convert(97, TimeUnit.DAYS) &&
+                    timeDiff <= TimeUnit.MILLISECONDS.convert(363, TimeUnit.DAYS)) {
                 // Represent in months and weeks
-                int months = (int) Math.floor((float) timeDiff
-                        / TimeUnit.MILLISECONDS.convert(30, TimeUnit.DAYS));
-                int weeks = (int) Math.floor((float) (timeDiff - TimeUnit.MILLISECONDS.convert(
-                        months * 30, TimeUnit.DAYS)) /
+                int months = (int) Math.floor((float) timeDiff / TimeUnit.MILLISECONDS.convert(30, TimeUnit.DAYS));
+                int weeks = (int) Math.floor((float) (timeDiff - TimeUnit.MILLISECONDS.convert(months * 30, TimeUnit.DAYS)) /
                         TimeUnit.MILLISECONDS.convert(7, TimeUnit.DAYS));
 
                 if (weeks >= 4) {
@@ -127,11 +130,10 @@ public class Utils {
                 }
             } else {
                 // Represent in years and months
-                int years = (int) Math.floor((float) timeDiff
-                        / TimeUnit.MILLISECONDS.convert(365, TimeUnit.DAYS));
-                int months = (int) Math.floor((float) (timeDiff -
-                        TimeUnit.MILLISECONDS.convert(years * 365, TimeUnit.DAYS)) /
-                        TimeUnit.MILLISECONDS.convert(30, TimeUnit.DAYS));
+                int years = (int) Math.floor((float) timeDiff / TimeUnit.MILLISECONDS.convert(365, TimeUnit.DAYS));
+                int months = (int) Math
+                        .floor((float) (timeDiff - TimeUnit.MILLISECONDS.convert(years * 365, TimeUnit.DAYS)) /
+                                TimeUnit.MILLISECONDS.convert(30, TimeUnit.DAYS));
 
                 if (months >= 12) {
                     months = 0;
@@ -147,5 +149,26 @@ public class Utils {
             return duration;
         }
         return null;
+    }
+
+    public static void showProgressDialog(@StringRes int title, @StringRes int message, Context context) {
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setCancelable(false);
+        progressDialog.setTitle(context.getString(title));
+        progressDialog.setMessage(context.getString(message));
+        progressDialog.show();
+    }
+
+    public static void hideProgressDialog() {
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+        }
+    }
+
+    public static int pixelToDp(int dpValue, Context context) {
+        float dpRatio = context.getResources().getDisplayMetrics().density;
+        float pixelForDp =  dpValue * dpRatio;
+
+        return (int) pixelForDp;
     }
 }

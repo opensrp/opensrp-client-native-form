@@ -2,7 +2,9 @@ package com.jsonwizard.comparisons;
 
 import com.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.comparisons.RegexComparison;
+
 import junit.framework.Assert;
+
 import org.junit.Test;
 import org.mockito.Mockito;
 

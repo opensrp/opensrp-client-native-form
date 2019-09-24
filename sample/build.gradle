@@ -28,6 +28,7 @@ android {
         targetSdkVersion androidTargetSdkVersion
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -46,6 +47,6 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     implementation('com.android.support:design:28.0.0') {
         exclude group: 'com.android.support', module: 'recyclerview-v7'
-
     }
+    implementation 'com.android.support:multidex:1.0.3'
 }

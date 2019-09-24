@@ -10,12 +10,16 @@
     <item name="canvas_ids" type="id" />
     <item name="after_look_up" type="id" />
     <item name="editable_view" type="id" />
+    <item name="repeating_group_item_count" type="id" />
+    <item name="repeating_group_label" type="id" />
+    <item name="repeating_group_key" type="id" />
 
     <item name="v_required" type="id" />
     <item name="error" type="id" />
     <item name="openmrs_entity_parent" type='id' />
     <item name="openmrs_entity" type='id' />
     <item name="openmrs_entity_id" type='id' />
+    <item name="keys" type='id' />
     <item name="relevance" type="id" />
     <item name="calculation" type="id" />
     <item name="constraints" type="id" />
@@ -36,6 +40,9 @@
     <item name="specify_fragment" type="id" />
     <item name="specify_context" type="id" />
     <item name="native_radio_button" type="id" />
+    <item name="native_radio_button_extra_info" type="id" />
+    <item name="native_radio_button_view_id" type="id" />
+    <item name="native_radio_button_layout_view_id" type="id" />
     <item name="number_selector_textview" type="id" />
     <item name="number_selector_item" type="id" />
     <item name="number_selector_number_of_selectors" type="id" />
@@ -46,7 +53,7 @@
     <item name="number_selector_selected_text_color" type="id" />
     <item name="number_selector_listener" type="id" />
     <item name="number_selector_start_selection_number" type="id" />
-    <item name="number_selector_spinner" type="id" />
+    <item name="number_selector_dialog_numbers" type="id" />
 
     <item name="extraRelCheck" type="id" />
     <item name="extraRelArray" type="id" />
@@ -60,4 +67,11 @@
     <item name="next_step" type="id" />
     <item name="is_number_selector_linear_layout" type="id" />
     <item name="selected_number_value" type="id" />
+    <item name="locale_independent_value" type="id" />
+    <item name="is_number_selector_dialog_textview" type="id" />
+    <item name="number_selector_dialog" type="id" />
+    <item name="number_selector_main_textview" type="id" />
+    <item name="submit" type="id" />
+    <item name="label_dialog_image_src" type="id"/>
+    <item name="error_textView" type="id" />
 </resources>

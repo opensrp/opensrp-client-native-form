@@ -9,6 +9,7 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.rey.material.util.ViewUtil;
@@ -70,8 +71,8 @@ public class LabelFactory implements FormWidgetFactory {
                 bottomMarginInt = FormUtils.getValueFromSpOrDpOrPx(bottomMargin, context);
             }
 
-            RelativeLayout.LayoutParams layoutParams = FormUtils
-                    .getRelativeLayoutParams(FormUtils.MATCH_PARENT, FormUtils.WRAP_CONTENT, 0,
+            LinearLayout.LayoutParams layoutParams = FormUtils
+                    .getLinearLayoutParams(FormUtils.MATCH_PARENT, FormUtils.WRAP_CONTENT, 0,
                             topMarginInt, 0, bottomMarginInt);
             constraintLayout.setLayoutParams(layoutParams);
 

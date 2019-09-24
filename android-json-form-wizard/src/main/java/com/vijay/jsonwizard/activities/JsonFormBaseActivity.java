@@ -3,7 +3,6 @@ package com.vijay.jsonwizard.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -29,14 +28,16 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-abstract class JsonFormBaseActivity extends AppCompatActivity implements OnFieldsInvalid {
+abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnFieldsInvalid {
     protected static final String TAG = JsonFormActivity.class.getSimpleName();
     protected static final String JSON_STATE = "jsonState";
     protected static final String FORM_STATE = "formState";
+    protected final HashSet<String> invisibleRequiredFields = new HashSet<>();
     protected JSONObject mJSONObject;
     protected PropertyManager propertyManager;
     protected Map<String, View> skipLogicViews;
@@ -48,11 +49,13 @@ abstract class JsonFormBaseActivity extends AppCompatActivity implements OnField
     protected String confirmCloseMessage;
     protected Form form;
     protected Map<String, String> globalValues = null;
+
     protected RulesEngineFactory rulesEngineFactory = null;
     protected LocalBroadcastManager localBroadcastManager;
     private Toolbar mToolbar;
     private Map<String, ValidationStatus> invalidFields = new HashMap<>();
 
+    protected boolean isFormFragmentInitialized;
 
     public void init(String json) {
         try {
@@ -94,6 +97,7 @@ abstract class JsonFormBaseActivity extends AppCompatActivity implements OnField
         onActivityResultListeners = new HashMap<>();
         onActivityRequestPermissionResultListeners = new HashMap<>();
         lifeCycleListeners = new ArrayList<>();
+        isFormFragmentInitialized = false;
         if (savedInstanceState == null) {
             init(getIntent().getStringExtra(JsonFormConstants.JSON_FORM_KEY.JSON));
             initializeFormFragment();
@@ -108,9 +112,10 @@ abstract class JsonFormBaseActivity extends AppCompatActivity implements OnField
         }
     }
 
-    public void initializeFormFragment() {
+    public synchronized void initializeFormFragment() {
+        isFormFragmentInitialized = true;
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.container, JsonFormFragment.getFormFragment(JsonFormConstants.FIRST_STEP_NAME)).commit();
+                .add(R.id.container, JsonFormFragment.getFormFragment(JsonFormConstants.FIRST_STEP_NAME)).commitAllowingStateLoss();
     }
 
     @Override
@@ -154,6 +159,7 @@ abstract class JsonFormBaseActivity extends AppCompatActivity implements OnField
             return null;
         }
     }
+
     public Map<String, ValidationStatus> getInvalidFields() {
         return invalidFields;
     }
@@ -166,5 +172,13 @@ abstract class JsonFormBaseActivity extends AppCompatActivity implements OnField
     @Override
     public Map<String, ValidationStatus> getPassedInvalidFields() {
         return getInvalidFields();
+    }
+
+    public RulesEngineFactory getRulesEngineFactory() {
+        return rulesEngineFactory;
+    }
+
+    public void setRulesEngineFactory(RulesEngineFactory rulesEngineFactory) {
+        this.rulesEngineFactory = rulesEngineFactory;
     }
 }

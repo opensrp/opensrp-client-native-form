@@ -50,6 +50,14 @@ public class SpinnerFactory implements FormWidgetFactory {
         return new ValidationStatus(true, null, formFragmentView, spinner);
     }
 
+    private static void setRequiredOnHint(MaterialSpinner spinner) {
+        if (!TextUtils.isEmpty(spinner.getHint())) {
+            SpannableString hint = new SpannableString(spinner.getHint() + " *");
+            hint.setSpan(new ForegroundColorSpan(Color.RED), hint.length() - 1, hint.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spinner.setHint(hint);
+        }
+    }
+
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
                                        JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
@@ -103,6 +111,12 @@ public class SpinnerFactory implements FormWidgetFactory {
             spinner.setFloatingLabelText(jsonObject.getString(JsonFormConstants.HINT));
         }
 
+        JSONArray keysJson = null;
+        if (jsonObject.has(JsonFormConstants.KEYS)) {
+            keysJson = jsonObject.getJSONArray(JsonFormConstants.KEYS);
+            spinner.setTag(R.id.keys, keysJson);
+        }
+
         setViewTags(jsonObject, canvasIds, stepName, popup, openMrsEntityParent, openMrsEntity, openMrsEntityId, spinner);
 
         addSkipLogicTags(context, relevance, constraints, calculations, spinner);
@@ -131,7 +145,9 @@ public class SpinnerFactory implements FormWidgetFactory {
             values = new String[valuesJson.length()];
             for (int i = 0; i < valuesJson.length(); i++) {
                 values[i] = valuesJson.optString(i);
-                if (valueToSelect.equals(values[i])) {
+                if (keysJson == null && valueToSelect.equals(values[i])) {
+                    indexToSelect = i;
+                } else if (keysJson != null && valueToSelect.equals(keysJson.optString(i))) {
                     indexToSelect = i;
                 }
             }
@@ -145,17 +161,9 @@ public class SpinnerFactory implements FormWidgetFactory {
         }
         ((JsonApi) context).addFormDataView(spinner);
 
-        FormUtils.showInfoIcon(stepName, jsonObject, listener, labelInfoText, labelInfoTitle, spinnerInfoIconImageView,
+        FormUtils.showInfoIcon(stepName, jsonObject, listener, FormUtils.getInfoDialogAttributes(jsonObject), spinnerInfoIconImageView,
                 canvasIds);
         spinner.setTag(R.id.canvas_ids, canvasIds.toString());
-    }
-
-    private static void setRequiredOnHint(MaterialSpinner spinner) {
-        if (!TextUtils.isEmpty(spinner.getHint())) {
-            SpannableString hint = new SpannableString(spinner.getHint() + " *");
-            hint.setSpan(new ForegroundColorSpan(Color.RED), hint.length() - 1, hint.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            spinner.setHint(hint);
-        }
     }
 
     private void setViewTags(JSONObject jsonObject, JSONArray canvasIds, String stepName, boolean popup,

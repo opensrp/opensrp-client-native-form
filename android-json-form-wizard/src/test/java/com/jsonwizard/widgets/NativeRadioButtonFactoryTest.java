@@ -2,6 +2,7 @@ package com.jsonwizard.widgets;
 
 import com.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.widgets.NativeRadioButtonFactory;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

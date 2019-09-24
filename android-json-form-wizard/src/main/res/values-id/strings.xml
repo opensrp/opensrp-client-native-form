@@ -1,0 +1,81 @@
+<resources>
+    <string name="app_name">jsonwizard</string>
+
+    <string name="hello_world">Halo Semua!</string>
+    <string name="action_settings">Pengaturan</string>
+    <string name="badly_formed_date">Tanggal tidak tercatat dengan baik</string>
+    <string name="badly_formed_time">Jam tidak tercatat dengan baik</string>
+    <string name="ic_check_circle_blank">&#xe03e;</string>
+    <string name="ic_keyboard_arrow_down">&#xe0c5;</string>
+    <string name="ic_keyboard_arrow_left">&#xe0c6;</string>
+    <string name="ic_keyboard_arrow_right">&#xe0c7;</string>
+    <string name="ic_keyboard_arrow_up">&#xe0c8;</string>
+    <string name="confirm_form_close">Konfirmasi penutupan formulir</string>
+    <string name="confirm_form_close_explanation">Apakah Anda yakin ingin kembali? Semua data yang telah dimasukkan dalam formulir ini akan dihapus</string>
+    <string name="yes">Ya</string>
+    <string name="no">Tidak</string>
+    <string name="cancel">Batalkan</string>
+    <string name="ok">OK</string>
+    <string name="record_location">Catat Lokasi</string>
+    <string name="latitude">Lintang: %s</string>
+    <string name="longitude">Garis bujur: %s</string>
+    <string name="altitude">Ketinggian: %s</string>
+    <string name="accuracy">Ketepatan: %s</string>
+    <string name="loading_location">Memuat Lokasi</string>
+    <string name="could_not_get_your_location">Tidak dapat memperoleh lokasi GPS Anda</string>
+    <string name="using_provider">Menggunakan%s penyedia</string>
+    <string name="unknown_gps_accuracy">Akurasi tidak diketahui</string>
+    <string name="required">*</string>
+    <string name="info_label">Label Info</string>
+    <string name="label_text_string">%1$s%2$s</string>
+    <string name="the_toaster_icon">Ikon info </string>
+    <string name="asterisks">*</string>
+    <string name="save">Simpan</string>
+    <string name="radio_button_tap_to_change">sentuh untuk merubah mengganti</string>
+    <string name="select_one">Pilih angka</string>
+    <string name="done">Selesai</string>
+    <string name="please_wait_title">Silakan tunggu</string>
+    <string name="creating_repeating_group_message">Membuat grup berulang</string>
+    <string name="launching_rdt_capture_message">Meluncurkan widget tangkapan RDT</string>
+    <string name="repeating_group_max_value_err_msg">Jumlah grup berulang tidak boleh lebih dari%1$d</string>
+    <string name="repeating_group_min_value_err_msg">Jumlah grup berulang harus angka lebih besar dari 0</string>
+    <string name="repeating_group_number_format_err_msg">Jumlah grup berulang harus menjadi nilai integer</string>
+    <string name="enter_number_of_repeating_group_items">Masukkan # item grup berulang</string>
+    <string name="repeating_group_item">Butir</string>
+    <string name="repeating_group_label">label_grup_berulang</string>
+
+    <string-array name="spinnerItems">
+        <item>butir1</item>
+        <item>butir2</item>
+        <item>butir3</item>
+        <item>butir4</item>
+    </string-array>
+
+    <string name="scan_qr_code_title">Pindai Kode QR</string>
+
+    <!--The barcode strings-->
+    <string name="permission_camera_rationale">Akses ke kamera diperlukan untuk deteksi</string>
+    <string name="no_camera_permission">Aplikasi ini tidak dapat berjalan karena tidak memiliki izin kamera. Aplikasi sekarang akan keluar.</string>
+    <string name="low_storage_error">Detektor wajah tidak dapat diunduh karena penyimpanan perangkat yang rendah</string>
+    <string name="title_activity_main">Contoh Pembaca Barcode</string>
+    <string name="barcode_header">Klik &quot;Baca Barcode&quot; membaca barcode</string>
+    <string name="read_barcode">Baca Barcode</string>
+    <string name="auto_focus">Fokus otomatis</string>
+    <string name="use_flash">Gunakan Flash</string>
+    <string name="barcode_success">Barcode berhasil dibaca</string>
+    <string name="barcode_failure">Tidak ada barcode yang ditangkap</string>
+    <string name="barcode_error">Kesalahan dalam membaca barcode: %1$s</string>
+    <string name="allow_camera_management">Anda harus mengizinkan aplikasi menggunakan kamera untuk memindai kode QR&#8230;</string>
+    <string name="please_specify_content">Silakan tentukan konten yang akan ditampilkan oleh pop up&#8230;</string>
+    <string name="previous">Sebelumnya</string>
+    <string name="next">Berikutnya</string>
+    <string name="submit">Submit</string>
+    <string name="the_extra_info_icon">Informasi extra ikon</string>
+    <string name="edit_button_label">Tombol Edit</string>
+    <string name="info_icon">Informasi Ikon</string>
+    <string name="attention">Perhatian</string>
+    <string name="json_form_error_msg" >Ditemukan %dkesalahan (s) dalam formulir. Harap perbaiki mereka untuk mengirim</string>
+    <string name="json_form_on_next_error_msg" >Harap perbaiki kesalahan (s) dalam formulir untuk melanjutkan</string>
+    <string name="go_to_step">Lanjutkan ke langkah</string>
+  <string name="shows_image_on_dialog">menampilkan Gambar pada dialog</string>
+</resources>

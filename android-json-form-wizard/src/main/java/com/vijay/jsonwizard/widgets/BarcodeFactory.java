@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -37,6 +36,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
 import static android.app.Activity.RESULT_OK;
 import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 
@@ -64,6 +65,7 @@ public class BarcodeFactory implements FormWidgetFactory {
         List<View> views = new ArrayList<>(1);
         try {
             String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
+            String calculation = jsonObject.optString(JsonFormConstants.CALCULATION);
             final String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
             String value = jsonObject.optString(JsonFormConstants.VALUE, null);
 
@@ -79,8 +81,7 @@ public class BarcodeFactory implements FormWidgetFactory {
             editText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    launchBarcodeScanner((Activity) context, editText,
-                            jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
+                    addOnClickActions(context, editText, jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
                 }
             });
 
@@ -92,32 +93,12 @@ public class BarcodeFactory implements FormWidgetFactory {
                 }
             });
 
-            if (context instanceof JsonApi) {
-                JsonApi jsonApi = (JsonApi) context;
-                jsonApi.addOnActivityResultListener(JsonFormConstants.BARCODE_CONSTANTS.BARCODE_REQUEST_CODE,
-                        new OnActivityResultListener() {
-                            @Override
-                            public void onActivityResult(int requestCode,
-                                                         int resultCode, Intent data) {
-                                if (requestCode == JsonFormConstants.BARCODE_CONSTANTS.BARCODE_REQUEST_CODE && resultCode == RESULT_OK) {
-                                    if (data != null) {
-                                        Barcode barcode = data.getParcelableExtra(JsonFormConstants.BARCODE_CONSTANTS.BARCODE_KEY);
-                                        Log.d("Scanned QR Code", barcode.displayValue);
-                                        editText.setText(barcode.displayValue);
-                                    } else
-                                        Log.i("", "NO RESULT FOR QR CODE");
-                                }
-                            }
-                        });
-            }
-
             GenericTextWatcher textWatcher = new GenericTextWatcher(stepName, formFragment, editText);
             textWatcher.addOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
                     if (hasFocus) {
-                        launchBarcodeScanner((Activity) context, editText,
-                                jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
+                        addOnClickActions(context, editText, jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
                     }
                 }
             });
@@ -133,6 +114,10 @@ public class BarcodeFactory implements FormWidgetFactory {
                 editText.setTag(R.id.constraints, constraints);
                 ((JsonApi) context).addConstrainedView(editText);
             }
+            if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
+                editText.setTag(R.id.calculation, calculation);
+                ((JsonApi) context).addCalculationLogicView(editText);
+            }
 
             ((JsonApi) context).addFormDataView(editText);
 
@@ -142,6 +127,32 @@ public class BarcodeFactory implements FormWidgetFactory {
         }
 
         return views;
+    }
+
+    private void addOnClickActions(Context context, MaterialEditText editText, String barcodeType) {
+        addOnBarCodeResultListeners(context, editText);
+        launchBarcodeScanner((Activity) context, editText, barcodeType);
+    }
+
+    protected void addOnBarCodeResultListeners(final Context context, final MaterialEditText editText) {
+        if (context instanceof JsonApi) {
+            JsonApi jsonApi = (JsonApi) context;
+            jsonApi.addOnActivityResultListener(JsonFormConstants.BARCODE_CONSTANTS.BARCODE_REQUEST_CODE,
+                    new OnActivityResultListener() {
+                        @Override
+                        public void onActivityResult(int requestCode,
+                                                     int resultCode, Intent data) {
+                            if (requestCode == JsonFormConstants.BARCODE_CONSTANTS.BARCODE_REQUEST_CODE && resultCode == RESULT_OK) {
+                                if (data != null) {
+                                    Barcode barcode = data.getParcelableExtra(JsonFormConstants.BARCODE_CONSTANTS.BARCODE_KEY);
+                                    Timber.d("Scanned QR Code %s ", barcode.displayValue);
+                                    editText.setText(barcode.displayValue);
+                                } else
+                                    Timber.i("NO RESULT FOR QR CODE");
+                            }
+                        }
+                    });
+        }
     }
 
     private MaterialEditText createEditText(RelativeLayout rootLayout, JSONObject jsonObject, int canvasId, String stepName, boolean popup) throws JSONException {
@@ -183,8 +194,7 @@ public class BarcodeFactory implements FormWidgetFactory {
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                launchBarcodeScanner((Activity) context, editText,
-                        jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
+                addOnClickActions(context, editText, jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
             }
         });
 
@@ -213,12 +223,10 @@ public class BarcodeFactory implements FormWidgetFactory {
             } catch (SecurityException e) {
                 Utils.showToast(activity, activity.getApplicationContext().getResources().getString(R.string.allow_camera_management));
             }
-
         }
     }
 
     private boolean checkValue(String value) {
         return value.contains("ABC");
     }
-
 }

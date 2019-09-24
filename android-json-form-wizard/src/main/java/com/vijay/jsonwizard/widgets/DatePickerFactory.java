@@ -5,16 +5,17 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
-import com.rengwuxian.materialedittext.validation.RegexpValidator;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
@@ -36,6 +37,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author Jason Rogena - jrogena@ona.io
@@ -44,6 +46,7 @@ import java.util.List;
 public class DatePickerFactory implements FormWidgetFactory {
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
     public static final String DATE_FORMAT_REGEX = "(^(((0[1-9]|1[0-9]|2[0-8])[-](0[1-9]|1[012]))|((29|30|31)[-](0[13578]|1[02]))|((29|30)[-](0[4,6,9]|11)))[-](19|[2-9][0-9])\\d\\d$)|(^29[-]02[-](19|[2-9][0-9])(00|04|08|12|16|20|24|28|32|36|40|44|48|52|56|60|64|68|72|76|80|84|88|92|96)$)|\\s*";
+    public static final SimpleDateFormat DATE_FORMAT_LOCALE_INDEPENDENT = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
     private static final String TAG = "DatePickerFactory";
 
     private static void updateDateText(MaterialEditText editText, TextView duration, String date) {
@@ -72,25 +75,35 @@ public class DatePickerFactory implements FormWidgetFactory {
         ft.addToBackStack(null);
 
         datePickerDialog.show(ft, TAG);
-        Calendar date = FormUtils.getDate(editText.getText().toString());
-        datePickerDialog.setDate(date.getTime());
+        String text = editText.getText().toString();
+        Calendar date = FormUtils.getDate(text);
+        if(text.isEmpty()){
+            Object defaultValue = datePickerDialog.getArguments().get(JsonFormConstants.DEFAULT);
+            if(defaultValue != null)
+                datePickerDialog.setDate(FormUtils.getDate(defaultValue.toString()).getTime());
+            else
+                datePickerDialog.setDate(date.getTime());
+        }
+        else{
+            datePickerDialog.setDate(date.getTime());
+        }
     }
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
                                        JSONObject jsonObject,
                                        CommonListener listener, boolean popup) {
-        return attachJson(stepName, context, formFragment, jsonObject, popup);
+        return attachJson(stepName, context, formFragment, jsonObject, popup, listener);
     }
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
                                        JSONObject jsonObject, CommonListener listener) throws Exception {
-        return attachJson(stepName, context, formFragment, jsonObject, false);
+        return attachJson(stepName, context, formFragment, jsonObject, false, listener);
     }
 
     protected List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject,
-                                    boolean popup) {
+                                    boolean popup, CommonListener listener) {
         List<View> views = new ArrayList<>(1);
         try {
 
@@ -111,6 +124,7 @@ public class DatePickerFactory implements FormWidgetFactory {
 
             ((JsonApi) context).addFormDataView(editText);
             views.add(dateViewRelativeLayout);
+            attachInfoIcon(stepName, jsonObject, dateViewRelativeLayout, canvasIds, listener);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -143,7 +157,6 @@ public class DatePickerFactory implements FormWidgetFactory {
             editText.setTag(R.id.json_object, jsonObject);
 
             final DatePickerDialog datePickerDialog = createDateDialog(context, duration, editText, jsonObject);
-
             if (jsonObject.has(JsonFormConstants.EXPANDED) && jsonObject.getBoolean(JsonFormConstants.EXPANDED)
                     && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                 datePickerDialog.setCalendarViewShown(true);
@@ -155,6 +168,9 @@ public class DatePickerFactory implements FormWidgetFactory {
                     editText, datePickerDialog);
             editText.addTextChangedListener(genericTextWatcher);
             addRefreshLogicView(context, editText, relevance, constraints, calculations);
+            Bundle datePickerArgs = new Bundle();
+            datePickerArgs.putString(JsonFormConstants.DEFAULT, jsonObject.optString(JsonFormConstants.DEFAULT));
+            datePickerDialog.setArguments(datePickerArgs);
             editText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -176,6 +192,15 @@ public class DatePickerFactory implements FormWidgetFactory {
 
     }
 
+    private void attachInfoIcon(String stepName, JSONObject jsonObject, RelativeLayout rootLayout, JSONArray canvasIds,
+                                CommonListener listener) throws JSONException {
+        if (jsonObject.has(JsonFormConstants.LABEL_INFO_TEXT)) {
+            ImageView infoIcon = rootLayout.findViewById(R.id.date_picker_info_icon);
+            FormUtils.showInfoIcon(stepName, jsonObject, listener, FormUtils.getInfoDialogAttributes(jsonObject), infoIcon, canvasIds);
+        }
+
+    }
+
     @NonNull
     private GenericTextWatcher getGenericTextWatcher(String stepName, final Activity context, JsonFormFragment formFragment,
                                                      final MaterialEditText editText,
@@ -185,6 +210,7 @@ public class DatePickerFactory implements FormWidgetFactory {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
+                    datePickerDialog.setArguments(new Bundle());
                     showDatePickerDialog(context, datePickerDialog, editText);
                 }
             }
@@ -212,6 +238,7 @@ public class DatePickerFactory implements FormWidgetFactory {
 
     private void updateEditText(MaterialEditText editText, JSONObject jsonObject, String stepName, Context context,
                                 TextView duration) throws JSONException {
+        SimpleDateFormat DATE_FORMAT_LOCALE = new SimpleDateFormat("dd-MM-yyyy", context.getResources().getConfiguration().locale);
 
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
@@ -226,6 +253,7 @@ public class DatePickerFactory implements FormWidgetFactory {
         editText.setTag(R.id.openmrs_entity, openMrsEntity);
         editText.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         editText.setTag(R.id.address, stepName + ":" + jsonObject.getString(KEY.KEY));
+        editText.setTag(R.id.locale_independent_value, jsonObject.optString(KEY.VALUE));
         if (jsonObject.has(JsonFormConstants.V_REQUIRED)) {
             JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
             boolean requiredValue = requiredObject.getBoolean(KEY.VALUE);
@@ -236,10 +264,7 @@ public class DatePickerFactory implements FormWidgetFactory {
         }
 
         if (!TextUtils.isEmpty(jsonObject.optString(KEY.VALUE))) {
-            updateDateText(editText, duration, jsonObject.optString(KEY.VALUE));
-        } else if (jsonObject.has(KEY.DEFAULT)) {
-            updateDateText(editText, duration,
-                    DATE_FORMAT.format(FormUtils.getDate(jsonObject.getString(KEY.DEFAULT)).getTime()));
+            updateDateText(editText, duration, DATE_FORMAT_LOCALE.format(FormUtils.getDate(jsonObject.optString(KEY.VALUE)).getTime()));
         }
 
         if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
@@ -247,10 +272,6 @@ public class DatePickerFactory implements FormWidgetFactory {
             editText.setEnabled(!readOnly);
             editText.setFocusable(!readOnly);
         }
-
-        editText.addValidator(new RegexpValidator(
-                context.getResources().getString(R.string.badly_formed_date),
-                DATE_FORMAT_REGEX));
     }
 
     private DatePickerDialog createDateDialog(Context context, final TextView duration, final MaterialEditText editText,
@@ -265,6 +286,9 @@ public class DatePickerFactory implements FormWidgetFactory {
                 calendarDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                 calendarDate.set(Calendar.MONTH, monthOfYear);
                 calendarDate.set(Calendar.YEAR, year);
+
+                editText.setTag(R.id.locale_independent_value, DATE_FORMAT_LOCALE_INDEPENDENT.format(calendarDate.getTime()));
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB
                         && calendarDate.getTimeInMillis() >= view.getMinDate()
                         && calendarDate.getTimeInMillis() <= view.getMaxDate()) {
