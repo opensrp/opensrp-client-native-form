@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.support.v4.content.FileProvider;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 import android.view.Display;
@@ -21,7 +22,7 @@ import java.io.InputStream;
 public class ImageUtils {
 
     private static LruCache<String, Bitmap> mBitmapLruCache = new LruCache<>(10000000);
-
+    public boolean SCALE_IMAGE = false;
     public static Bitmap loadBitmapFromFile(Context context, String path, int requiredWidth, int requiredHeight) {
         String key = path + ":" + requiredWidth + ":" + requiredHeight;
         Bitmap bitmap = mBitmapLruCache.get(key);
@@ -31,8 +32,8 @@ public class ImageUtils {
             return bitmap;
         }
         try {
-            Uri uri = Uri.fromFile(new File(path));
-            bitmap = decodeSampledBitmap(context, uri, requiredWidth, requiredHeight);
+            Uri photoURI = FileProvider.getUriForFile(context, context.getPackageName() + ".fileprovider", new File(path));
+            bitmap = decodeSampledBitmap(context, photoURI, requiredWidth, requiredHeight);
             mBitmapLruCache.put(key, bitmap);
         } catch (IOException e) {
             Log.e("ImagePickerFactory", Log.getStackTraceString(e));

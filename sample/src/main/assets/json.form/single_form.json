@@ -132,13 +132,40 @@
         "hint": "Child's home health facility",
         "tree": [
           {
-            "name": "Hilton",
-            "key": "hilton",
-            "level": "1",
+            "name": "SS1",
+            "key": "hilton1",
             "nodes": [
               {
-                "name": "Sarova",
-                "key": "sarova"
+                "name": "Village1:Ward",
+                "key": "sarova1",
+                "nodes": [
+                  {
+                    "name": "block 1",
+                    "key": "block 1"
+                  },
+                  {
+                    "name": "block 2",
+                    "key": "block 2"
+                  }
+                ]
+              },
+              {
+                "name": "Sarova2",
+                "key": "sarova2"
+              }
+            ]
+          },
+          {
+            "name": "Hilton2",
+            "key": "hilton2",
+            "nodes": [
+              {
+                "name": "Sarova3",
+                "key": "sarova3"
+              },
+              {
+                "name": "Sarova4",
+                "key": "sarova4"
               }
             ]
           },
@@ -147,7 +174,7 @@
             "key": "double_tree"
           }
         ],
-        "default": "Hilton",
+        "default": "Hilton1",
         "v_required": {
           "value": false,
           "err": "Please enter the child's home facility"
