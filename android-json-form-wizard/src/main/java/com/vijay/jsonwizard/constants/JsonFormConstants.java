@@ -195,6 +195,7 @@ public class JsonFormConstants {
     public static final String REQUIRED_FIELDS = "required_fields";
     public static final String INDEX = "index";
     public static final String DATE_TODAY_HIDDEN = "date_today_hidden";
+    public static final String FALSE = "false";
 
     public static class JsonFormConstantsUtils {
         public static final String CONTACT_CONTAINER = "container";

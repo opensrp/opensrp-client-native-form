@@ -1,15 +1,9 @@
 package com.vijay.jsonwizard.widgets;
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -18,12 +12,12 @@ import android.widget.RelativeLayout;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
-import com.vijay.jsonwizard.domain.ExpansionPanelItemModel;
-import com.vijay.jsonwizard.event.RefreshExpansionPanelEvent;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.listeners.ExpansionPanelRecordButtonClickListener;
+import com.vijay.jsonwizard.listeners.ExpansionPanelUndoButtonClickListener;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.views.CustomTextView;
@@ -33,12 +27,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public class ExpansionWidgetFactory implements FormWidgetFactory {
-    private RecordButtonClickListener recordButtonClickListener = new RecordButtonClickListener();
-    private UndoButtonClickListener undoButtonClickListener = new UndoButtonClickListener();
+    private ExpansionPanelRecordButtonClickListener expansionPanelRecordButtonClickListener = new ExpansionPanelRecordButtonClickListener();
+    private ExpansionPanelUndoButtonClickListener expansionPanelUndoButtonClickListener = new ExpansionPanelUndoButtonClickListener();
     private FormUtils formUtils = new FormUtils();
     private Utils utils = new Utils();
     private JsonApi jsonApi;
@@ -116,18 +109,18 @@ public class ExpansionWidgetFactory implements FormWidgetFactory {
         RelativeLayout expansionHeader = rootLayout.findViewById(R.id.expansionHeader);
         RelativeLayout expansion_header_layout = expansionHeader.findViewById(R.id.expansion_header_layout);
         addRecordViewTags(expansion_header_layout, jsonObject, stepName, commonListener, jsonFormFragment, context);
-        expansion_header_layout.setOnClickListener(recordButtonClickListener);
+        expansion_header_layout.setOnClickListener(expansionPanelRecordButtonClickListener);
 
         ImageView statusImage = expansion_header_layout.findViewById(R.id.statusImageView);
         addRecordViewTags(statusImage, jsonObject, stepName, commonListener, jsonFormFragment, context);
-        statusImage.setOnClickListener(recordButtonClickListener);
+        statusImage.setOnClickListener(expansionPanelRecordButtonClickListener);
 
         ImageView infoIcon = expansionHeader.findViewById(R.id.accordion_info_icon);
 
         CustomTextView headerText = expansion_header_layout.findViewById(R.id.topBarTextView);
         headerText.setText(accordionText);
         addRecordViewTags(headerText, jsonObject, stepName, commonListener, jsonFormFragment, context);
-        headerText.setOnClickListener(recordButtonClickListener);
+        headerText.setOnClickListener(expansionPanelRecordButtonClickListener);
 
         displayInfoIcon(jsonObject, commonListener, infoIcon);
         changeStatusIcon(statusImage, jsonObject, context);
@@ -219,7 +212,7 @@ public class ExpansionWidgetFactory implements FormWidgetFactory {
 
         Button recordButton = buttonSectionLayout.findViewById(R.id.ok_button);
         addRecordViewTags(recordButton, jsonObject, stepName, commonListener, jsonFormFragment, context);
-        recordButton.setOnClickListener(recordButtonClickListener);
+        recordButton.setOnClickListener(expansionPanelRecordButtonClickListener);
         if (showRecordButton) {
             recordButton.setVisibility(View.VISIBLE);
         }
@@ -229,7 +222,7 @@ public class ExpansionWidgetFactory implements FormWidgetFactory {
         undoButton.setTag(R.id.specify_context, context);
         undoButton.setTag(R.id.specify_step_name, stepName);
         undoButton.setTag(R.id.linearLayout, rootLayout);
-        undoButton.setOnClickListener(undoButtonClickListener);
+        undoButton.setOnClickListener(expansionPanelUndoButtonClickListener);
 
         if (jsonObject.has(JsonFormConstants.VALUE) && jsonObject.getJSONArray(JsonFormConstants.VALUE).length() > 0) {
             JSONArray value = jsonObject.optJSONArray(JsonFormConstants.VALUE);
@@ -300,156 +293,5 @@ public class ExpansionWidgetFactory implements FormWidgetFactory {
             }
         }
         return showHiddenViews;
-    }
-
-    /**
-     * Resets the global values for values that have been undone to empty
-     *
-     * @param previousSelectedValues values to be reset
-     * @throws JSONException JsonException thrown
-     */
-    private void resetClearedGlobalValues(JSONObject mainJson, List<String> previousSelectedValues) throws JSONException {
-        if (mainJson.has(JsonFormConstants.GLOBAL)) {
-            JSONObject globals = mainJson.getJSONObject(JsonFormConstants.GLOBAL);
-            for (String item : previousSelectedValues) {
-                if (globals.has(item)) {
-                    globals.put(item, "");
-                }
-            }
-        }
-    }
-
-    private List<String> getUndoneValues(JSONObject item) throws JSONException {
-        LinkedList<String> previousValues = new LinkedList<>();
-        if (item.has(JsonFormConstants.VALUE)) {
-            JSONArray valuesArray = item.getJSONArray(JsonFormConstants.VALUE);
-            for (int index = 0; index < valuesArray.length(); index++) {
-                ExpansionPanelItemModel expansionPanelItem = FormUtils.getExpansionPanelItem(
-                        valuesArray.getJSONObject(index).getString(JsonFormConstants.KEY), valuesArray);
-
-                previousValues.add(expansionPanelItem.getKey());
-            }
-
-        }
-        return previousValues;
-    }
-
-    private class RecordButtonClickListener implements View.OnClickListener {
-        @Override
-        public void onClick(View view) {
-            LinearLayout linearLayout;
-            if (view instanceof RelativeLayout) {
-                linearLayout = (LinearLayout) view.getParent().getParent();
-            } else if (view instanceof ImageView ||
-                    view instanceof CustomTextView) { // This caters for the different views that can be
-                // clicked to show the popup
-                linearLayout = (LinearLayout) view.getParent().getParent().getParent();
-            } else {
-                linearLayout = (LinearLayout) view.getParent().getParent().getParent();
-            }
-            view.setTag(R.id.main_layout, linearLayout);
-            String stepName = (String) view.getTag(R.id.specify_step_name);
-            String type = (String) view.getTag(R.id.type);
-            String key = (String) view.getTag(R.id.key);
-            Context context = (Context) view.getTag(R.id.specify_context);
-            JSONArray currentFields = formUtils.getFormFields(stepName, context);
-            JSONObject realTimeJsonObject = FormUtils.getFieldJSONObject(currentFields, key);
-
-            if (type != null) {
-                view.setTag(R.id.secondaryValues,
-                        formUtils.getSecondaryValues(realTimeJsonObject, type));
-            }
-
-            formUtils.showGenericDialog(view);
-        }
-    }
-
-    private class UndoButtonClickListener implements View.OnClickListener {
-        @Override
-        public void onClick(View view) {
-            String key = (String) view.getTag(R.id.key);
-            Context context = (Context) view.getTag(R.id.specify_context);
-            String stepName = (String) view.getTag(R.id.specify_step_name);
-            jsonApi = (JsonApi) context;
-            JSONObject mainJson = jsonApi.getmJSONObject();
-            if (mainJson != null) {
-                getExpansionPanel(mainJson, stepName, key, context, view);
-            }
-        }
-
-        private void getExpansionPanel(JSONObject mainJson, String stepName, String parentKey, Context context, View view) {
-            if (mainJson != null) {
-                JSONArray fields = formUtils.getFormFields(stepName, context);
-                try {
-                    if (fields.length() > 0) {
-                        for (int i = 0; i < fields.length(); i++) {
-                            JSONObject item = fields.getJSONObject(i);
-                            if (item != null && item.getString(JsonFormConstants.KEY).equals(parentKey) &&
-                                    item.has(JsonFormConstants.VALUE)) {
-                                displayUndoDialog(context, item, mainJson, view);
-                            }
-                        }
-                    }
-                } catch (JSONException e) {
-                    Log.i(TAG, Log.getStackTraceString(e));
-                }
-            }
-        }
-
-        private void displayUndoDialog(Context context, final JSONObject item, final JSONObject mainJson, final View view)
-                throws JSONException {
-            Activity activity = (Activity) context;
-            LayoutInflater inflater = activity.getLayoutInflater();
-            View dialogLayout = inflater.inflate(R.layout.expasion_panel_undo_dialog, null);
-
-            final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-            builder.setView(dialogLayout);
-
-            Button undo = dialogLayout.findViewById(R.id.undo_button);
-            final Button cancel = dialogLayout.findViewById(R.id.cancel_button);
-            CustomTextView headerTextView = dialogLayout.findViewById(R.id.txt_title_label);
-            String testHeader = item.getString(JsonFormConstants.TEXT);
-            headerTextView.setText(
-                    String.format(context.getResources().getString(R.string.undo_test_result), testHeader.toLowerCase()));
-
-            final AlertDialog dialog = builder.create();
-
-            Window window = dialog.getWindow();
-            if (window != null) {
-                WindowManager.LayoutParams param = window.getAttributes();
-                param.gravity = Gravity.CENTER | Gravity.CENTER_HORIZONTAL;
-                window.setAttributes(param);
-                window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-            }
-
-            undo.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    RefreshExpansionPanelEvent expansionPanelEvent = new RefreshExpansionPanelEvent(null,
-                            (LinearLayout) view.getTag(R.id.linearLayout));
-
-                    try {
-                        resetClearedGlobalValues(mainJson, getUndoneValues(item));
-                    } catch (JSONException e) {
-                        Log.e(TAG, "Error getting previous values: ", e);
-                    }
-
-                    item.remove(JsonFormConstants.VALUE);
-                    item.remove(JsonFormConstants.REQUIRED_FIELDS);
-                    jsonApi.setmJSONObject(mainJson);
-                    Utils.postEvent(expansionPanelEvent);
-                    dialog.dismiss();
-                }
-            });
-
-            cancel.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-                }
-            });
-
-            dialog.show();
-        }
     }
 }

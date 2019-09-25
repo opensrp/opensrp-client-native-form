@@ -54,54 +54,7 @@
   },
   "step1": {
     "title": "Expansion Panel",
-    "fields": [{
-      "key": "blood_type_test_status",
-      "openmrs_entity_parent": "300AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-      "openmrs_entity": "concept",
-      "openmrs_entity_id": "163725AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-      "label": "Blood type test",
-      "label_text_style": "bold",
-      "text_color": "#000000",
-      "type": "native_radio",
-      "options": [
-        {
-          "key": "done_today",
-          "text": "Done today",
-          "type": "done_today",
-          "openmrs_entity_parent": "",
-          "openmrs_entity": "concept",
-          "openmrs_entity_id": "165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-        },
-        {
-          "key": "done_earlier",
-          "text": "Done earlier",
-          "type": "done_earlier",
-          "openmrs_entity_parent": "",
-          "openmrs_entity": "concept",
-          "openmrs_entity_id": "165385AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-        },
-        {
-          "key": "ordered",
-          "text": "Ordered",
-          "type": "ordered",
-          "openmrs_entity_parent": "",
-          "openmrs_entity": "concept",
-          "openmrs_entity_id": "165384AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-        },
-        {
-          "key": "not_done",
-          "text": "Not done",
-          "type": "not_done",
-          "openmrs_entity_parent": "",
-          "openmrs_entity": "concept",
-          "openmrs_entity_id": "1118AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-        }
-      ],
-      "v_required": {
-        "value": true,
-        "err": "Blood type status is required"
-      }
-    },
+    "fields": [
       {
         "key": "accordion_blood_type",
         "openmrs_entity_parent": "",
@@ -110,12 +63,7 @@
         "text": "Blood Type test",
         "type": "expansion_panel",
         "content_form": "tests_blood_type_sub_form",
-        "container": "anc_test", "relevance": {
-        "step1:blood_type_test_status": {
-          "type": "string",
-          "ex": "equalTo(., \"done_today\")"
-        }
-      }
+        "container": "anc_test"
       }
     ]
   }
