@@ -1,0 +1,7 @@
+---
+name: step1_blood_type_test_date_today_hidden
+description: blood_type_test_date
+priority: 1
+condition: "step1_blood_type_test_status != '' && step1_blood_type_test_status == 'done_today'"
+actions:
+    - "calculation = helper.getDateToday()"

@@ -24,8 +24,10 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -53,6 +55,7 @@ import com.vijay.jsonwizard.customviews.GenericPopupDialog;
 import com.vijay.jsonwizard.customviews.MaterialSpinner;
 import com.vijay.jsonwizard.customviews.TextableView;
 import com.vijay.jsonwizard.domain.Form;
+import com.vijay.jsonwizard.event.RefreshExpansionPanelEvent;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.GenericDialogInterface;
 import com.vijay.jsonwizard.interfaces.JsonApi;
@@ -64,10 +67,14 @@ import com.vijay.jsonwizard.utils.ExObjectResult;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.PermissionUtils;
 import com.vijay.jsonwizard.utils.PropertyManager;
+import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.views.CustomTextView;
 import com.vijay.jsonwizard.widgets.CountDownTimerFactory;
 import com.vijay.jsonwizard.widgets.NumberSelectorFactory;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.jeasy.rules.api.Facts;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -108,24 +115,16 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private JSONArray extraFieldsWithValues;
     private Map<String, String> formValuesCacheMap = new HashMap<>();
     private TextView selectedTextView = null;
+    private Utils utils = new Utils();
 
     private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-
             String messageType = intent.getStringExtra(JsonFormConstants.INTENT_KEY.MESSAGE_TYPE);
-
-            switch (messageType) {
-                case JsonFormConstants.MESSAGE_TYPE.GLOBAL_VALUES:
-
-                    Map<String, String> map =
-                            (Map<String, String>) intent.getSerializableExtra(JsonFormConstants.INTENT_KEY.MESSAGE);
-                    globalValues.putAll(map);
-
-                    break;
-                default:
-                    break;
-
+            if (JsonFormConstants.MESSAGE_TYPE.GLOBAL_VALUES.equals(messageType)) {
+                Map<String, String> map =
+                        (Map<String, String>) intent.getSerializableExtra(JsonFormConstants.INTENT_KEY.MESSAGE);
+                globalValues.putAll(map);
             }
             // Log.d(TAG, "Received Broadcast Message Type " + messageType);
         }
@@ -797,6 +796,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         for (LifeCycleListener lifeCycleListener : lifeCycleListeners) {
             lifeCycleListener.onPause();
         }
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -817,6 +817,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 e.printStackTrace();
             }
         }
+        EventBus.getDefault().register(this);
     }
 
     protected void addRelevance(View view, boolean popup) {
@@ -2079,5 +2080,45 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     }
                 })
                 .show();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void refreshExpansionPanel(RefreshExpansionPanelEvent refreshExpansionPanelEvent) {
+        if (refreshExpansionPanelEvent != null) {
+            try {
+                List<String> values;
+
+                if (refreshExpansionPanelEvent.getValues() != null) {
+                    values = utils.createExpansionPanelChildren(refreshExpansionPanelEvent.getValues());
+                } else {
+                    values = new ArrayList<>();
+                }
+
+                LinearLayout linearLayout = refreshExpansionPanelEvent.getLinearLayout();
+                RelativeLayout layoutHeader = (RelativeLayout) linearLayout.getChildAt(0);
+                ImageView status = layoutHeader.findViewById(R.id.statusImageView);
+                formUtils.updateExpansionPanelRecyclerView(values, status, getApplicationContext());
+
+                LinearLayout contentLayout = (LinearLayout) linearLayout.getChildAt(1);
+                LinearLayout mainContentView = contentLayout.findViewById(R.id.contentView);
+                formUtils.addValuesDisplay(values, mainContentView, getApplicationContext());
+
+                LinearLayout buttonLayout = contentLayout.findViewById(R.id.accordion_bottom_navigation);
+                Button undoButton = buttonLayout.findViewById(R.id.undo_button);
+                if (values != null && values.size() > 0) {
+                    undoButton.setVisibility(View.VISIBLE);
+                    contentLayout.setVisibility(View.VISIBLE);
+                    buttonLayout.setVisibility(View.VISIBLE);
+                } else {
+                    undoButton.setVisibility(View.GONE);
+                    contentLayout.setVisibility(View.GONE);
+                    buttonLayout.setVisibility(View.GONE);
+                    status.setImageDrawable(this.getResources().getDrawable(R.drawable.icon_task_256));
+                }
+
+            } catch (JSONException e) {
+                Log.e(TAG, e.toString());
+            }
+        }
     }
 }
