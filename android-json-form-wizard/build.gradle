@@ -111,6 +111,7 @@ dependencies {
         exclude group: 'com.android.support.test.espresso', module: 'espresso-core'
     }
     implementation 'com.jakewharton.timber:timber:4.7.1'
+    implementation 'org.greenrobot:eventbus:3.1.1'
 
     // PowerMock
     def powerMockVersion = '1.7.1'
