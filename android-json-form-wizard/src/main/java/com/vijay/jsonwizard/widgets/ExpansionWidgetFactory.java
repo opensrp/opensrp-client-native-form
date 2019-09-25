@@ -34,8 +34,6 @@ public class ExpansionWidgetFactory implements FormWidgetFactory {
     private ExpansionPanelUndoButtonClickListener expansionPanelUndoButtonClickListener = new ExpansionPanelUndoButtonClickListener();
     private FormUtils formUtils = new FormUtils();
     private Utils utils = new Utils();
-    private JsonApi jsonApi;
-    private String TAG = this.getClass().getSimpleName();
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment jsonFormFragment,

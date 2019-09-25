@@ -44,6 +44,7 @@ import com.vijay.jsonwizard.rules.RuleConstant;
 import com.vijay.jsonwizard.views.CustomTextView;
 
 import org.jeasy.rules.api.Facts;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -872,46 +873,56 @@ public class FormUtils {
             toolbarHeader = (String) view.getTag(R.id.header);
             container = (String) view.getTag(R.id.contact_container);
         }
-        String childKey;
 
         if (specifyContent != null) {
-            FullScreenGenericPopupDialog genericPopupDialog = new FullScreenGenericPopupDialog();
-            genericPopupDialog.setCommonListener(listener);
-            genericPopupDialog.setFormFragment(formFragment);
-            genericPopupDialog.setFormIdentity(specifyContent);
-            genericPopupDialog.setFormLocation(specifyContentForm);
-            genericPopupDialog.setStepName(stepName);
-            genericPopupDialog.setSecondaryValues(jsonArray);
-            genericPopupDialog.setParentKey(parentKey);
-            genericPopupDialog.setLinearLayout(rootLayout);
-            genericPopupDialog.setContext(context);
-            if (type != null && type.equals(JsonFormConstants.EXPANSION_PANEL)) {
-                genericPopupDialog.setHeader(toolbarHeader);
-                genericPopupDialog.setContainer(container);
-            }
-            genericPopupDialog.setWidgetType(type);
-            if (customTextView != null && reasonsTextView != null) {
-                genericPopupDialog.setCustomTextView(customTextView);
-                genericPopupDialog.setPopupReasonsTextView(reasonsTextView);
-            }
-            if (type != null &&
-                    (type.equals(JsonFormConstants.CHECK_BOX) || type.equals(JsonFormConstants.NATIVE_RADIO_BUTTON))) {
-                childKey = (String) view.getTag(com.vijay.jsonwizard.R.id.childKey);
-                genericPopupDialog.setChildKey(childKey);
-            }
-
-            Activity activity = (Activity) context;
-            FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
-            Fragment prev = activity.getFragmentManager().findFragmentByTag("GenericPopup");
-            if (prev != null) {
-                ft.remove(prev);
-            }
-
-            ft.addToBackStack(null);
-            genericPopupDialog.show(ft, "GenericPopup");
+            displayGenericDialog(view, context, specifyContent, specifyContentForm, stepName, listener, formFragment, jsonArray, parentKey, type, customTextView, reasonsTextView, toolbarHeader, container, rootLayout);
         } else {
             Toast.makeText(context, "Please specify the sub form to display ", Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void displayGenericDialog(View view, Context context, String specifyContent, String specifyContentForm, String stepName, CommonListener listener, JsonFormFragment formFragment, JSONArray jsonArray, String parentKey, String type, CustomTextView customTextView, CustomTextView reasonsTextView, String toolbarHeader, String container, LinearLayout rootLayout) {
+        String childKey;
+        FullScreenGenericPopupDialog genericPopupDialog = new FullScreenGenericPopupDialog();
+        genericPopupDialog.setCommonListener(listener);
+        genericPopupDialog.setFormFragment(formFragment);
+        genericPopupDialog.setFormIdentity(specifyContent);
+        genericPopupDialog.setFormLocation(specifyContentForm);
+        genericPopupDialog.setStepName(stepName);
+        genericPopupDialog.setSecondaryValues(jsonArray);
+        genericPopupDialog.setParentKey(parentKey);
+        genericPopupDialog.setLinearLayout(rootLayout);
+        genericPopupDialog.setContext(context);
+        if (type != null && type.equals(JsonFormConstants.EXPANSION_PANEL)) {
+            genericPopupDialog.setHeader(toolbarHeader);
+            genericPopupDialog.setContainer(container);
+        }
+        genericPopupDialog.setWidgetType(type);
+        if (customTextView != null && reasonsTextView != null) {
+            genericPopupDialog.setCustomTextView(customTextView);
+            genericPopupDialog.setPopupReasonsTextView(reasonsTextView);
+        }
+        if (type != null &&
+                (type.equals(JsonFormConstants.CHECK_BOX) || type.equals(JsonFormConstants.NATIVE_RADIO_BUTTON))) {
+            childKey = (String) view.getTag(com.vijay.jsonwizard.R.id.childKey);
+            genericPopupDialog.setChildKey(childKey);
+        }
+
+        FragmentTransaction ft = getFragmentTransaction((Activity) context);
+        genericPopupDialog.show(ft, "GenericPopup");
+    }
+
+    @NotNull
+    private FragmentTransaction getFragmentTransaction(Activity context) {
+        Activity activity = context;
+        FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
+        Fragment prev = activity.getFragmentManager().findFragmentByTag("GenericPopup");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+
+        ft.addToBackStack(null);
+        return ft;
     }
 
     public Map<String, String> addAssignedValue(String itemKey, String optionKey, String keyValue, String itemType, String itemText) {
