@@ -1,6 +1,7 @@
 package com.vijay.jsonwizard.activities;
 
 import android.support.v7.app.AppCompatActivity;
+
 import com.vijay.jsonwizard.utils.NativeFormLangUtils;
 
 public class MultiLanguageActivity extends AppCompatActivity {

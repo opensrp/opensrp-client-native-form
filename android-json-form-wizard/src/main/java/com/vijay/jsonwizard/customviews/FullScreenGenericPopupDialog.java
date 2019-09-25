@@ -23,7 +23,6 @@ import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.ExpansionPanelValuesModel;
 import com.vijay.jsonwizard.event.RefreshExpansionPanelEvent;
-import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.SecondaryValueModel;
@@ -42,10 +41,8 @@ import timber.log.Timber;
 import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 
 public class FullScreenGenericPopupDialog extends GenericPopupDialog {
-    private static JsonFormInteractor jsonFormInteractor = JsonFormInteractor.getInstance();
     protected Toolbar mToolbar;
     protected String container;
-    private String TAG = this.getClass().getSimpleName();
     private Map<String, ExpansionPanelValuesModel> secondaryValuesMap = new HashMap<>();
     private FormUtils formUtils = new FormUtils();
     private Activity activity;

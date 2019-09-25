@@ -1,7 +1,6 @@
 package com.vijay.jsonwizard.utils;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -33,7 +32,6 @@ import android.widget.Toast;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
-import com.vijay.jsonwizard.customviews.CompoundButton;
 import com.vijay.jsonwizard.customviews.FullScreenGenericPopupDialog;
 import com.vijay.jsonwizard.domain.ExpansionPanelItemModel;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
@@ -44,7 +42,6 @@ import com.vijay.jsonwizard.rules.RuleConstant;
 import com.vijay.jsonwizard.views.CustomTextView;
 
 import org.jeasy.rules.api.Facts;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,7 +52,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -87,6 +83,7 @@ public class FormUtils {
     private static final String TODAY_JAVAROSA_PROPERTY = "today";
     private static final String DEFAULT_FORM_IMAGES_FOLDER = "image/";
     private static final String TAG = FormUtils.class.getSimpleName();
+    private Utils utils = new Utils();
     private GenericDialogInterface genericDialogInterface;
 
     public static Point getViewLocationOnScreen(View view) {
@@ -412,12 +409,10 @@ public class FormUtils {
             case JsonFormConstants.ITALIC:
                 view.setTypeface(null, Typeface.ITALIC);
                 break;
-            case JsonFormConstants.NORMAL:
-                view.setTypeface(null, Typeface.NORMAL);
-                break;
             case JsonFormConstants.BOLD_ITALIC:
                 view.setTypeface(null, Typeface.BOLD_ITALIC);
                 break;
+            case JsonFormConstants.NORMAL:
             default:
                 view.setTypeface(null, Typeface.NORMAL);
                 break;
@@ -497,7 +492,7 @@ public class FormUtils {
      * @param parent {@link ViewGroup}
      */
     public static void setRadioExclusiveClick(ViewGroup parent) {
-        final List<RadioButton> radioButtonList = getRadioButtons(parent);
+        final List<RadioButton> radioButtonList = Utils.getRadioButtons(parent);
         for (RadioButton radioButton : radioButtonList) {
             radioButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -507,7 +502,7 @@ public class FormUtils {
                         if (button.getId() != radioButtonView.getId()) {
                             button.setChecked(false);
                             try {
-                                resetRadioButtonsSpecifyText(button);
+                                Utils.resetRadioButtonsSpecifyText(button);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -515,61 +510,6 @@ public class FormUtils {
                     }
                 }
             });
-        }
-
-    }
-
-    /**
-     * Get the actual radio buttons on the parent view given
-     *
-     * @param parent {@link ViewGroup}
-     * @return radioButtonList
-     */
-    private static List<RadioButton> getRadioButtons(ViewGroup parent) {
-        List<RadioButton> radioButtonList = new ArrayList<>();
-        for (int i = 0; i < parent.getChildCount(); i++) {
-            View view = parent.getChildAt(i);
-            if (view instanceof RadioButton) {
-                radioButtonList.add((RadioButton) view);
-            } else if (view instanceof ViewGroup) {
-                List<RadioButton> nestedRadios = getRadioButtons((ViewGroup) view);
-                radioButtonList.addAll(nestedRadios);
-            }
-        }
-        return radioButtonList;
-    }
-
-    /**
-     * Resets the radio buttons specify text in another option is selected
-     *
-     * @param button {@link CompoundButton}
-     * @author kitoto
-     */
-    private static void resetRadioButtonsSpecifyText(RadioButton button) throws JSONException {
-        CustomTextView specifyText = (CustomTextView) button.getTag(R.id.specify_textview);
-        CustomTextView reasonsText = (CustomTextView) button.getTag(R.id.specify_reasons_textview);
-        CustomTextView extraInfoTextView = (CustomTextView) button
-                .getTag(R.id.specify_extra_info_textview);
-        JSONObject optionsJson = (JSONObject) button.getTag(R.id.option_json_object);
-        String radioButtonText = optionsJson.optString(JsonFormConstants.TEXT);
-        button.setText(radioButtonText);
-
-        if (specifyText != null && optionsJson.has(JsonFormConstants.CONTENT_INFO)) {
-            String specifyInfo = optionsJson.optString(JsonFormConstants.CONTENT_INFO);
-            String newText = "(" + specifyInfo + ")";
-            specifyText.setText(newText);
-            optionsJson.put(JsonFormConstants.SECONDARY_VALUE, "");
-        }
-
-        if (reasonsText != null) {
-            LinearLayout reasonTextViewParent = (LinearLayout) reasonsText.getParent();
-            LinearLayout radioButtonParent = (LinearLayout) button.getParent().getParent();
-            if (reasonTextViewParent.equals(radioButtonParent)) {
-                reasonsText.setVisibility(View.GONE);
-            }
-        }
-        if (extraInfoTextView != null) {
-            extraInfoTextView.setVisibility(View.VISIBLE);
         }
 
     }
@@ -875,54 +815,29 @@ public class FormUtils {
         }
 
         if (specifyContent != null) {
-            displayGenericDialog(view, context, specifyContent, specifyContentForm, stepName, listener, formFragment, jsonArray, parentKey, type, customTextView, reasonsTextView, toolbarHeader, container, rootLayout);
+            FullScreenGenericPopupDialog genericPopupDialog = new FullScreenGenericPopupDialog();
+            genericPopupDialog.setCommonListener(listener);
+            genericPopupDialog.setFormFragment(formFragment);
+            genericPopupDialog.setFormIdentity(specifyContent);
+            genericPopupDialog.setFormLocation(specifyContentForm);
+            genericPopupDialog.setStepName(stepName);
+            genericPopupDialog.setSecondaryValues(jsonArray);
+            genericPopupDialog.setParentKey(parentKey);
+            genericPopupDialog.setLinearLayout(rootLayout);
+            genericPopupDialog.setContext(context);
+            utils.setExpansionPanelDetails(type, toolbarHeader, container, genericPopupDialog);
+            genericPopupDialog.setWidgetType(type);
+            if (customTextView != null && reasonsTextView != null) {
+                genericPopupDialog.setCustomTextView(customTextView);
+                genericPopupDialog.setPopupReasonsTextView(reasonsTextView);
+            }
+            utils.setChildKey(view, type, genericPopupDialog);
+
+            FragmentTransaction ft = utils.getFragmentTransaction((Activity) context);
+            genericPopupDialog.show(ft, "GenericPopup");
         } else {
             Toast.makeText(context, "Please specify the sub form to display ", Toast.LENGTH_LONG).show();
         }
-    }
-
-    private void displayGenericDialog(View view, Context context, String specifyContent, String specifyContentForm, String stepName, CommonListener listener, JsonFormFragment formFragment, JSONArray jsonArray, String parentKey, String type, CustomTextView customTextView, CustomTextView reasonsTextView, String toolbarHeader, String container, LinearLayout rootLayout) {
-        String childKey;
-        FullScreenGenericPopupDialog genericPopupDialog = new FullScreenGenericPopupDialog();
-        genericPopupDialog.setCommonListener(listener);
-        genericPopupDialog.setFormFragment(formFragment);
-        genericPopupDialog.setFormIdentity(specifyContent);
-        genericPopupDialog.setFormLocation(specifyContentForm);
-        genericPopupDialog.setStepName(stepName);
-        genericPopupDialog.setSecondaryValues(jsonArray);
-        genericPopupDialog.setParentKey(parentKey);
-        genericPopupDialog.setLinearLayout(rootLayout);
-        genericPopupDialog.setContext(context);
-        if (type != null && type.equals(JsonFormConstants.EXPANSION_PANEL)) {
-            genericPopupDialog.setHeader(toolbarHeader);
-            genericPopupDialog.setContainer(container);
-        }
-        genericPopupDialog.setWidgetType(type);
-        if (customTextView != null && reasonsTextView != null) {
-            genericPopupDialog.setCustomTextView(customTextView);
-            genericPopupDialog.setPopupReasonsTextView(reasonsTextView);
-        }
-        if (type != null &&
-                (type.equals(JsonFormConstants.CHECK_BOX) || type.equals(JsonFormConstants.NATIVE_RADIO_BUTTON))) {
-            childKey = (String) view.getTag(com.vijay.jsonwizard.R.id.childKey);
-            genericPopupDialog.setChildKey(childKey);
-        }
-
-        FragmentTransaction ft = getFragmentTransaction((Activity) context);
-        genericPopupDialog.show(ft, "GenericPopup");
-    }
-
-    @NotNull
-    private FragmentTransaction getFragmentTransaction(Activity context) {
-        Activity activity = context;
-        FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
-        Fragment prev = activity.getFragmentManager().findFragmentByTag("GenericPopup");
-        if (prev != null) {
-            ft.remove(prev);
-        }
-
-        ft.addToBackStack(null);
-        return ft;
     }
 
     public Map<String, String> addAssignedValue(String itemKey, String optionKey, String keyValue, String itemType, String itemText) {
@@ -1295,6 +1210,13 @@ public class FormUtils {
         return result;
     }
 
+    /**
+     *
+     * @param multiRelevance {@link Boolean}
+     * @param object {@link JSONObject}
+     * @return result {@link Facts}
+     * @throws JSONException
+     */
     public Facts getRadioButtonResults(Boolean multiRelevance, JSONObject object) throws JSONException {
         Facts result = new Facts();
         if (multiRelevance) {
@@ -1313,62 +1235,10 @@ public class FormUtils {
                 }
             }
         } else {
-            result.put(getKey(object), getValue(object));
+            result.put(utils.getKey(object), utils.getValue(object));
         }
 
         return result;
-    }
-
-    protected String getKey(JSONObject object) throws JSONException {
-        return object.has(RuleConstant.IS_RULE_CHECK) && object.getBoolean(RuleConstant.IS_RULE_CHECK) ?
-                object.get(RuleConstant.STEP) + "_" + object.get(JsonFormConstants.KEY) : JsonFormConstants.VALUE;
-    }
-
-    protected Object getValue(JSONObject object) throws JSONException {
-        Object value;
-
-        if (object.has(JsonFormConstants.VALUE)) {
-
-            value = object.opt(JsonFormConstants.VALUE);
-
-            if (isNumberWidget(object)) {
-                value = TextUtils.isEmpty(object.optString(JsonFormConstants.VALUE)) ? 0 :
-                        processNumberValues(object.optString(JsonFormConstants.VALUE));
-            } else if (value != null && !TextUtils.isEmpty(object.getString(JsonFormConstants.VALUE)) &&
-                    canHaveNumber(object)) {
-                value = processNumberValues(value);
-            }
-
-        } else {
-            value = isNumberWidget(object) ? 0 : "";
-        }
-
-        return value;
-    }
-
-    protected boolean isNumberWidget(JSONObject object) throws JSONException {
-        return object.has(JsonFormConstants.EDIT_TYPE) &&
-                object.getString(JsonFormConstants.EDIT_TYPE).equals(JsonFormConstants.EDIT_TEXT_TYPE.NUMBER) ||
-                object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.NUMBER_SELECTOR);
-    }
-
-    protected Object processNumberValues(Object object) {
-        Object jsonObject = object;
-        try {
-            if (jsonObject.toString().contains(".")) {
-                jsonObject = String.valueOf((float) Math.round(Float.valueOf(jsonObject.toString()) * 100) / 100);
-            } else {
-                jsonObject = Integer.valueOf(jsonObject.toString());
-            }
-        } catch (NumberFormatException e) {
-            //Log.e(TAG, "Error trying to convert " + object + " to a number ", e);
-        }
-        return jsonObject;
-    }
-
-    protected boolean canHaveNumber(JSONObject object) throws JSONException {
-        return isNumberWidget(object) || object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.HIDDEN) ||
-                object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.SPINNER);
     }
 
 }

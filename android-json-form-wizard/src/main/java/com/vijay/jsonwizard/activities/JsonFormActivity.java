@@ -482,8 +482,9 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
      * supports constraints on views that store the value in {@link MaterialEditText} (ie TreeViews, DatePickers, and
      * EditTexts), and {@link CheckBox}
      *
-     * @param parentKey
-     * @param childKey
+     * @param parentKey {@link String}
+     * @param childKey  {@link String}
+     * @param popup     {@link Boolean}
      */
     @Override
     public void refreshConstraints(String parentKey, String childKey, boolean popup) {
@@ -1720,7 +1721,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
 
     private CharSequence getRenderText(String calculation, String textTemplate, boolean makeBold) {
-        Map<String, Object> valueMap = new Gson().fromJson(calculation, new TypeToken<HashMap<String, Object>>() {}.getType());
+        Map<String, Object> valueMap = new Gson().fromJson(calculation, new TypeToken<HashMap<String, Object>>() {
+        }.getType());
         return stringFormat(textTemplate, valueMap, makeBold);
     }
 
@@ -1744,7 +1746,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             value = object.opt(JsonFormConstants.VALUE);
 
             if (isNumberWidget(object)) {
-                value = TextUtils.isEmpty(object.optString(JsonFormConstants.VALUE)) ? 0 :processNumberValues(object.optString(JsonFormConstants.VALUE));
+                value = TextUtils.isEmpty(object.optString(JsonFormConstants.VALUE)) ? 0 : processNumberValues(object.optString(JsonFormConstants.VALUE));
             } else if (value != null && !TextUtils.isEmpty(object.getString(JsonFormConstants.VALUE)) && canHaveNumber(object)) {
                 value = processNumberValues(value);
             }

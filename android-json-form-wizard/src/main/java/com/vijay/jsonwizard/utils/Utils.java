@@ -1,5 +1,8 @@
 package com.vijay.jsonwizard.utils;
 
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.support.annotation.StringRes;
@@ -8,13 +11,22 @@ import android.support.v4.util.TimeUtils;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.Toast;
 
+import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.customviews.CompoundButton;
+import com.vijay.jsonwizard.customviews.FullScreenGenericPopupDialog;
 import com.vijay.jsonwizard.event.BaseEvent;
+import com.vijay.jsonwizard.rules.RuleConstant;
+import com.vijay.jsonwizard.views.CustomTextView;
 import com.vijay.jsonwizard.widgets.DatePickerFactory;
 
 import org.greenrobot.eventbus.EventBus;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -220,6 +232,141 @@ public class Utils {
     private String getValueFromSecondaryValues(String itemString) {
         String[] strings = itemString.split(":");
         return strings.length > 1 ? strings[1] : strings[0];
+    }
+
+    protected String getKey(JSONObject object) throws JSONException {
+        return object.has(RuleConstant.IS_RULE_CHECK) && object.getBoolean(RuleConstant.IS_RULE_CHECK) ?
+                object.get(RuleConstant.STEP) + "_" + object.get(JsonFormConstants.KEY) : JsonFormConstants.VALUE;
+    }
+
+    protected Object getValue(JSONObject object) throws JSONException {
+        Object value;
+
+        if (object.has(JsonFormConstants.VALUE)) {
+
+            value = object.opt(JsonFormConstants.VALUE);
+
+            if (isNumberWidget(object)) {
+                value = TextUtils.isEmpty(object.optString(JsonFormConstants.VALUE)) ? 0 :
+                        processNumberValues(object.optString(JsonFormConstants.VALUE));
+            } else if (value != null && !TextUtils.isEmpty(object.getString(JsonFormConstants.VALUE)) &&
+                    canHaveNumber(object)) {
+                value = processNumberValues(value);
+            }
+
+        } else {
+            value = isNumberWidget(object) ? 0 : "";
+        }
+
+        return value;
+    }
+
+    protected boolean isNumberWidget(JSONObject object) throws JSONException {
+        return object.has(JsonFormConstants.EDIT_TYPE) &&
+                object.getString(JsonFormConstants.EDIT_TYPE).equals(JsonFormConstants.EDIT_TEXT_TYPE.NUMBER) ||
+                object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.NUMBER_SELECTOR);
+    }
+
+    protected Object processNumberValues(Object object) {
+        Object jsonObject = object;
+        try {
+            if (jsonObject.toString().contains(".")) {
+                jsonObject = String.valueOf((float) Math.round(Float.valueOf(jsonObject.toString()) * 100) / 100);
+            } else {
+                jsonObject = Integer.valueOf(jsonObject.toString());
+            }
+        } catch (NumberFormatException e) {
+            //Log.e(TAG, "Error trying to convert " + object + " to a number ", e);
+        }
+        return jsonObject;
+    }
+
+    protected boolean canHaveNumber(JSONObject object) throws JSONException {
+        return isNumberWidget(object) || object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.HIDDEN) ||
+                object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.SPINNER);
+    }
+
+    /**
+     * Get the actual radio buttons on the parent view given
+     *
+     * @param parent {@link ViewGroup}
+     * @return radioButtonList
+     */
+    public static List<RadioButton> getRadioButtons(ViewGroup parent) {
+        List<RadioButton> radioButtonList = new ArrayList<>();
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            View view = parent.getChildAt(i);
+            if (view instanceof RadioButton) {
+                radioButtonList.add((RadioButton) view);
+            } else if (view instanceof ViewGroup) {
+                List<RadioButton> nestedRadios = getRadioButtons((ViewGroup) view);
+                radioButtonList.addAll(nestedRadios);
+            }
+        }
+        return radioButtonList;
+    }
+
+    /**
+     * Resets the radio buttons specify text in another option is selected
+     *
+     * @param button {@link CompoundButton}
+     * @author kitoto
+     */
+    public static void resetRadioButtonsSpecifyText(RadioButton button) throws JSONException {
+        CustomTextView specifyText = (CustomTextView) button.getTag(R.id.specify_textview);
+        CustomTextView reasonsText = (CustomTextView) button.getTag(R.id.specify_reasons_textview);
+        CustomTextView extraInfoTextView = (CustomTextView) button
+                .getTag(R.id.specify_extra_info_textview);
+        JSONObject optionsJson = (JSONObject) button.getTag(R.id.option_json_object);
+        String radioButtonText = optionsJson.optString(JsonFormConstants.TEXT);
+        button.setText(radioButtonText);
+
+        if (specifyText != null && optionsJson.has(JsonFormConstants.CONTENT_INFO)) {
+            String specifyInfo = optionsJson.optString(JsonFormConstants.CONTENT_INFO);
+            String newText = "(" + specifyInfo + ")";
+            specifyText.setText(newText);
+            optionsJson.put(JsonFormConstants.SECONDARY_VALUE, "");
+        }
+
+        if (reasonsText != null) {
+            LinearLayout reasonTextViewParent = (LinearLayout) reasonsText.getParent();
+            LinearLayout radioButtonParent = (LinearLayout) button.getParent().getParent();
+            if (reasonTextViewParent.equals(radioButtonParent)) {
+                reasonsText.setVisibility(View.GONE);
+            }
+        }
+        if (extraInfoTextView != null) {
+            extraInfoTextView.setVisibility(View.VISIBLE);
+        }
+
+    }
+
+    public void setChildKey(View view, String type, FullScreenGenericPopupDialog genericPopupDialog) {
+        String childKey;
+        if (type != null && (type.equals(JsonFormConstants.CHECK_BOX) || type.equals(JsonFormConstants.NATIVE_RADIO_BUTTON) || type.equals(JsonFormConstants.EXTENDED_RADIO_BUTTON))) {
+            childKey = (String) view.getTag(com.vijay.jsonwizard.R.id.childKey);
+            genericPopupDialog.setChildKey(childKey);
+        }
+    }
+
+    public void setExpansionPanelDetails(String type, String toolbarHeader, String container, FullScreenGenericPopupDialog genericPopupDialog) {
+        if (type != null && type.equals(JsonFormConstants.EXPANSION_PANEL)) {
+            genericPopupDialog.setHeader(toolbarHeader);
+            genericPopupDialog.setContainer(container);
+        }
+    }
+
+    @NotNull
+    public FragmentTransaction getFragmentTransaction(Activity context) {
+        Activity activity = context;
+        FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
+        Fragment prev = activity.getFragmentManager().findFragmentByTag("GenericPopup");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+
+        ft.addToBackStack(null);
+        return ft;
     }
 
 }
