@@ -1208,4 +1208,19 @@ public class FormUtils {
         }
     }
 
+    public static boolean isFieldRequired(JSONObject fieldObject) throws JSONException {
+        boolean isValueRequired = false;
+        if (fieldObject.has(JsonFormConstants.V_REQUIRED)) {
+            JSONObject valueRequired = fieldObject.getJSONObject(JsonFormConstants.V_REQUIRED);
+            String value = valueRequired.getString(JsonFormConstants.VALUE);
+            isValueRequired = Boolean.parseBoolean(value);
+        }
+        //Don't check required for hidden, toaster notes, spacer and label widgets
+        return (!fieldObject.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.LABEL) &&
+                !fieldObject.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.SPACER) &&
+                !fieldObject.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.TOASTER_NOTES) &&
+                !fieldObject.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.HIDDEN)) &&
+                isValueRequired;
+    }
+
 }

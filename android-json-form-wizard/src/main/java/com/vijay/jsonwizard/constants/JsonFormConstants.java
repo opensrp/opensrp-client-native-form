@@ -117,10 +117,8 @@ public class JsonFormConstants {
     public static final String BTN_TEXT_COLOR = "btn_text_color";
     public static final String BTN_TEXT_SIZE = "btn_text_size";
     public static final String BTN_BG_COLOR = "btn_bg_color";
-
     public static final String STEPNAME = "stepName";
     public static final String DISPLAY_BACK_BUTTON = "display_back_button";
-
     public static final String COUNT = "count";
     public static final String CALCULATION = "calculation";
     public static final String HIDDEN = "hidden";
@@ -195,9 +193,13 @@ public class JsonFormConstants {
     public static final String DISPLAY_RECORD_BUTTON = "display_record_button";
     public static final String GLOBAL = "global";
     public static final String REQUIRED_FIELDS = "required_fields";
+    public static final String INDEX = "index";
+    public static final String DATE_TODAY_HIDDEN = "date_today_hidden";
 
     public static class JsonFormConstantsUtils {
         public static final String CONTACT_CONTAINER = "container";
+        public static final String ANC_TEST = "anc_test";
+        public static final String ANC_COUNSELLING_TREATMENT = "anc_counselling_treatment";
     }
 
     public static class AncRadioButtonOptionTypesUtils {
