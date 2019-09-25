@@ -19,15 +19,15 @@ public class ExpansionPanelRecordButtonClickListener implements View.OnClickList
     @Override
     public void onClick(View view) {
         LinearLayout linearLayout;
+
         if (view instanceof RelativeLayout) {
             linearLayout = (LinearLayout) view.getParent().getParent();
-        } else if (view instanceof ImageView ||
-                view instanceof CustomTextView) { // This caters for the different views that can be
-            // clicked to show the popup
+        } else if (view instanceof ImageView || view instanceof CustomTextView) { // This caters for the different views that can be clicked to show the popup
             linearLayout = (LinearLayout) view.getParent().getParent().getParent();
         } else {
             linearLayout = (LinearLayout) view.getParent().getParent().getParent();
         }
+
         view.setTag(R.id.main_layout, linearLayout);
         String stepName = (String) view.getTag(R.id.specify_step_name);
         String type = (String) view.getTag(R.id.type);

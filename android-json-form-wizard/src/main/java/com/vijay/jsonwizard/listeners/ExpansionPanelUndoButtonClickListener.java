@@ -32,6 +32,7 @@ import timber.log.Timber;
 public class ExpansionPanelUndoButtonClickListener implements View.OnClickListener {
     private FormUtils formUtils = new FormUtils();
     private JsonApi jsonApi;
+
     public JsonApi getJsonApi() {
         return jsonApi;
     }
@@ -149,8 +150,7 @@ public class ExpansionPanelUndoButtonClickListener implements View.OnClickListen
         if (item.has(JsonFormConstants.VALUE)) {
             JSONArray valuesArray = item.getJSONArray(JsonFormConstants.VALUE);
             for (int index = 0; index < valuesArray.length(); index++) {
-                ExpansionPanelItemModel expansionPanelItem = FormUtils.getExpansionPanelItem(
-                        valuesArray.getJSONObject(index).getString(JsonFormConstants.KEY), valuesArray);
+                ExpansionPanelItemModel expansionPanelItem = FormUtils.getExpansionPanelItem(valuesArray.getJSONObject(index).getString(JsonFormConstants.KEY), valuesArray);
                 previousValues.add(expansionPanelItem.getKey());
             }
         }

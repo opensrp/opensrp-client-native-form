@@ -1572,24 +1572,17 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     @NonNull
     private String cleanToken(String conditionTokenRaw) {
-
         String conditionToken = conditionTokenRaw.trim();
 
-
         for (int i = 0; i < conditionToken.length(); i++) {
-
             if (JAVA_OPERATORS.contains(conditionToken.charAt(i))) {
-
                 if (i == 0) {
                     conditionToken = cleanToken(conditionToken.substring(1));
                 } else {
-
                     conditionToken = conditionToken.substring(0, conditionToken.indexOf(conditionToken.charAt(i)));
-
                     break;
                 }
             }
-
         }
 
         return conditionToken;
@@ -1606,17 +1599,14 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     //For now were only handling checkbox titles only
                     TextView checkboxLabel = ((View) view.getParent().getParent()).findViewById(R.id.label_text);
                     if (checkboxLabel != null) {
-                        checkboxLabel.setText(
-                                getRenderText(calculation, checkboxLabel.getTag(R.id.original_text).toString(), false));
+                        checkboxLabel.setText(getRenderText(calculation, checkboxLabel.getTag(R.id.original_text).toString(), false));
                     }
 
                 } else if (view instanceof TextableView) {
                     TextableView textView = ((TextableView) view);
                     if (!TextUtils.isEmpty(calculation)) {
-                        CharSequence spanned = calculation.charAt(0) == '{' ?
-                                getRenderText(calculation, textView.getTag(R.id.original_text).toString(), true) :
-                                (textView.getTag(R.id.original_text) != null && "0".equals(calculation)) ?
-                                        textView.getTag(R.id.original_text).toString() : calculation;
+                        CharSequence spanned = calculation.charAt(0) == '{' ? getRenderText(calculation, textView.getTag(R.id.original_text).toString(), true) :
+                                (textView.getTag(R.id.original_text) != null && "0".equals(calculation)) ? textView.getTag(R.id.original_text).toString() : calculation;
                         textView.setText(spanned);
                     }
                 } else if (view instanceof EditText) {
@@ -1670,10 +1660,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         renderView.setTag(R.id.original_text, renderView.getText());
                     }
                     if (!TextUtils.isEmpty(calculation)) {
-                        renderView.setText(calculation.charAt(0) == '{' ?
-                                getRenderText(calculation, renderView.getTag(R.id.original_text).toString(),
-                                        false) :
-                                calculation);
+                        renderView.setText(calculation.charAt(0) == '{' ? getRenderText(calculation, renderView.getTag(R.id.original_text).toString(), false) : calculation);
                     }
 
                     renderView.setVisibility(renderView.getText().toString().contains("{") ||
@@ -1733,9 +1720,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
 
     private CharSequence getRenderText(String calculation, String textTemplate, boolean makeBold) {
-        Map<String, Object> valueMap = new Gson().fromJson(calculation, new TypeToken<HashMap<String, Object>>() {
-        }.getType());
-
+        Map<String, Object> valueMap = new Gson().fromJson(calculation, new TypeToken<HashMap<String, Object>>() {}.getType());
         return stringFormat(textTemplate, valueMap, makeBold);
     }
 
@@ -1756,14 +1741,11 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         Object value;
 
         if (object.has(JsonFormConstants.VALUE)) {
-
             value = object.opt(JsonFormConstants.VALUE);
 
             if (isNumberWidget(object)) {
-                value = TextUtils.isEmpty(object.optString(JsonFormConstants.VALUE)) ? 0 :
-                        processNumberValues(object.optString(JsonFormConstants.VALUE));
-            } else if (value != null && !TextUtils.isEmpty(object.getString(JsonFormConstants.VALUE)) &&
-                    canHaveNumber(object)) {
+                value = TextUtils.isEmpty(object.optString(JsonFormConstants.VALUE)) ? 0 :processNumberValues(object.optString(JsonFormConstants.VALUE));
+            } else if (value != null && !TextUtils.isEmpty(object.getString(JsonFormConstants.VALUE)) && canHaveNumber(object)) {
                 value = processNumberValues(value);
             }
 
