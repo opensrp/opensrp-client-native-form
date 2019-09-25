@@ -56,13 +56,13 @@
     "title": "Expansion Panel",
     "fields": [
       {
-        "key": "accordion_blood_type",
+        "key": "accordion_panel_demo",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "text": "Blood Type test",
+        "text": "Expansion Panel Demo",
         "type": "expansion_panel",
-        "content_form": "tests_blood_type_sub_form",
+        "content_form": "expansion_panel_sub_form",
         "container": "anc_test"
       }
     ]
