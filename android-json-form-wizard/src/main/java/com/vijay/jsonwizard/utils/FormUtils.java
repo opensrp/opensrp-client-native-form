@@ -34,6 +34,7 @@ import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.CompoundButton;
+import com.vijay.jsonwizard.customviews.FullScreenGenericPopupDialog;
 import com.vijay.jsonwizard.customviews.GenericPopupDialog;
 import com.vijay.jsonwizard.domain.ExpansionPanelItemModel;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
@@ -859,10 +860,17 @@ public class FormUtils {
         String type = (String) view.getTag(R.id.type);
         CustomTextView customTextView = (CustomTextView) view.getTag(R.id.specify_textview);
         CustomTextView reasonsTextView = (CustomTextView) view.getTag(R.id.specify_reasons_textview);
+        String toolbarHeader = "";
+        String container = "";
+        LinearLayout rootLayout = (LinearLayout) view.getTag(R.id.main_layout);
+        if (type != null && type.equals(JsonFormConstants.EXPANSION_PANEL)) {
+            toolbarHeader = (String) view.getTag(R.id.header);
+            container = (String) view.getTag(R.id.contact_container);
+        }
         String childKey;
 
         if (specifyContent != null) {
-            GenericPopupDialog genericPopupDialog = new GenericPopupDialog();
+            FullScreenGenericPopupDialog genericPopupDialog = new FullScreenGenericPopupDialog();
             genericPopupDialog.setCommonListener(listener);
             genericPopupDialog.setFormFragment(formFragment);
             genericPopupDialog.setFormIdentity(specifyContent);
@@ -870,15 +878,20 @@ public class FormUtils {
             genericPopupDialog.setStepName(stepName);
             genericPopupDialog.setSecondaryValues(jsonArray);
             genericPopupDialog.setParentKey(parentKey);
-            genericPopupDialog.setWidgetType(type);
+            genericPopupDialog.setLinearLayout(rootLayout);
             genericPopupDialog.setContext(context);
+            if (type != null && type.equals(JsonFormConstants.EXPANSION_PANEL)) {
+                genericPopupDialog.setHeader(toolbarHeader);
+                genericPopupDialog.setContainer(container);
+            }
+            genericPopupDialog.setWidgetType(type);
             if (customTextView != null && reasonsTextView != null) {
                 genericPopupDialog.setCustomTextView(customTextView);
                 genericPopupDialog.setPopupReasonsTextView(reasonsTextView);
             }
-            if (type.equals(JsonFormConstants.CHECK_BOX) || type
-                    .equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
-                childKey = (String) view.getTag(R.id.childKey);
+            if (type != null &&
+                    (type.equals(JsonFormConstants.CHECK_BOX) || type.equals(JsonFormConstants.NATIVE_RADIO_BUTTON))) {
+                childKey = (String) view.getTag(com.vijay.jsonwizard.R.id.childKey);
                 genericPopupDialog.setChildKey(childKey);
             }
 
