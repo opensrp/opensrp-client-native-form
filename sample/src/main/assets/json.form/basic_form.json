@@ -66,7 +66,7 @@
         "uploadButtonText": "Take a photo of the child"
       },
       {
-        "key": "finger_print_one",
+        "key": "finger_print",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
@@ -85,7 +85,7 @@
         }
       },
       {
-        "key": "finger_print_two",
+        "key": "finger_print",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
