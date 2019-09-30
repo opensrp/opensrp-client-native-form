@@ -125,10 +125,8 @@ public class JsonFormConstants {
     public static final String BTN_TEXT_COLOR = "btn_text_color";
     public static final String BTN_TEXT_SIZE = "btn_text_size";
     public static final String BTN_BG_COLOR = "btn_bg_color";
-
     public static final String STEPNAME = "stepName";
     public static final String DISPLAY_BACK_BUTTON = "display_back_button";
-
     public static final String COUNT = "count";
     public static final String CALCULATION = "calculation";
     public static final String HIDDEN = "hidden";
@@ -163,7 +161,7 @@ public class JsonFormConstants {
     public static final String OPENMRS_ATTRIBUTES = "openmrs_attributes";
     public static final String VALUE_OPENMRS_ATTRIBUTES = "value_openmrs_attributes";
     public static final String OPENMRS_CHOICE_IDS = "openmrs_choice_ids";
-    public static final String ANC_RADIO_BUTTON = "anc_radio_button";
+    public static final String EXTENDED_RADIO_BUTTON = "extended_radio_button";
     public static final String TRUE = "true";
     public static final String IS_VISIBLE = "is_visible";
     public static final String VALIDATE_ON_SUBMIT = "validate_on_submit";
@@ -196,7 +194,40 @@ public class JsonFormConstants {
     public static final String INVISIBLE_REQUIRED_FIELDS = "invisible_required_fields";
     public static final String LABEL_INFO_HAS_IMAGE = "label_info_has_image";
     public static final String LABEL_INFO_IMAGE_SRC = "label_info_image_src";
+    public static final String ACCORDION_INFO_TEXT = "accordion_info_text";
+    public static final String ACCORDION_INFO_TITLE = "accordion_info_title";
+    public static final String DISPLAY_BOTTOM_SECTION = "display_bottom_section";
+    public static final String BOTTOM_SECTION = "bottom_section";
+    public static final String DISPLAY_RECORD_BUTTON = "display_record_button";
+    public static final String GLOBAL = "global";
+    public static final String REQUIRED_FIELDS = "required_fields";
+    public static final String INDEX = "index";
+    public static final String DATE_TODAY_HIDDEN = "date_today_hidden";
+    public static final String FALSE = "false";
 
+    public static class JsonFormConstantsUtils {
+        public static final String CONTACT_CONTAINER = "container";
+        public static final String ANC_TEST = "anc_test";
+        public static final String ANC_COUNSELLING_TREATMENT = "anc_counselling_treatment";
+    }
+
+    public static class AncRadioButtonOptionTypesUtils {
+        public static final String DONE_TODAY = "done_today";
+        public static final String DONE_EARLIER = "done_earlier";
+        public static final String ORDERED = "ordered";
+        public static final String NOT_DONE = "not_done";
+        public static final String DONE = "done";
+
+    }
+
+    public static class AncRadioButtonOptionTextUtils {
+        public static final String DONE_TODAY = "Done today";
+        public static final String DONE_EARLIER = "Done earlier";
+        public static final String ORDERED = "Ordered";
+        public static final String NOT_DONE = "Not done";
+        public static final String DONE = "Done";
+
+    }
     public static class JSON_FORM_KEY {
         public static final String EX_RULES = "ex-rules";
         public static final String EX_CHECKBOX = "ex-checkbox";
