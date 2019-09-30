@@ -63,10 +63,6 @@ import com.vijay.jsonwizard.widgets.SpinnerFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.smartregister.simprint.SimprintsConstant;
-import org.smartregister.simprint.SimprintsLibrary;
-import org.smartregister.simprint.SimprintsRegisterActivity;
-import org.smartregister.simprint.SimprintsRegistration;
 
 import java.io.File;
 import java.io.IOException;

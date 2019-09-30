@@ -76,7 +76,13 @@
         "module_id":"mpower",
         "finger_print_option":"register",
         "uploadButtonText": "Take finger print",
-        "image_file": ""
+        "image_file": "",
+        "relevance": {
+          "step1:user_first_name": {
+            "type": "string",
+            "ex": "equalTo(., \"test\")"
+          }
+        }
       },
       {
         "key": "finger_print",
@@ -124,6 +130,12 @@
         "v_regex": {
           "value": "[A-Za-z\\s\\.\\-]*",
           "err": "Please enter a valid name"
+        },
+        "relevance": {
+          "step1:user_first_name": {
+            "type": "string",
+            "ex": "equalTo(., \"test\")"
+          }
         }
       },
       {

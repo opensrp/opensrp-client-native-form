@@ -1,11 +1,13 @@
 package com.vijay.jsonwizard.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -24,6 +26,8 @@ import com.vijay.jsonwizard.utils.ValidationStatus;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.smartregister.simprint.SimPrintsConstantHelper;
+import org.smartregister.simprint.SimPrintsRegistration;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -124,10 +128,16 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
             onActivityResultListeners.get(requestCode).onActivityResult(requestCode, resultCode, data);
         } else {
             super.onActivityResult(requestCode, resultCode, data);
-//            if(resultCode == Activity.RESULT_OK && requestCode == JsonFormConstants.ACTIVITY_REQUEST_CODE.REQUEST_CODE_REGISTER){
-//                SimprintsRegistration registration = (SimprintsRegistration)data.getSerializableExtra(SimprintsConstant.INTENT_DATA);
-//                Log.v("SIMPRINT_SDK","onActivityResult base guid:"+registration.getGuid()+":status:"+registration.getCheckStatus());
-//            }
+            if(resultCode == Activity.RESULT_OK && requestCode == JsonFormConstants.ACTIVITY_REQUEST_CODE.REQUEST_CODE_REGISTER){
+                SimPrintsRegistration registration = (SimPrintsRegistration)data.getSerializableExtra(SimPrintsConstantHelper.INTENT_DATA);
+                if(registration !=null){
+                    Toast.makeText(this,"GUID:"+registration.getGuid(),Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(this,getString(R.string.simprints_guid),Toast.LENGTH_SHORT).show();
+
+                }
+                //Log.v("SIMPRINT_SDK","onActivityResult base guid:"+registration.getGuid()+":status:"+registration.getCheckStatus());
+            }
         }
     }
 

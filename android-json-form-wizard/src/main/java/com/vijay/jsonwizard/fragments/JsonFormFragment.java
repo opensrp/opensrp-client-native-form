@@ -43,9 +43,9 @@ import com.vijay.jsonwizard.viewstates.JsonFormFragmentViewState;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.smartregister.simprint.SimprintsLibrary;
-import org.smartregister.simprint.SimprintsRegisterActivity;
-import org.smartregister.simprint.SimprintsVerifyActivity;
+import org.smartregister.simprint.SimPrintsLibrary;
+import org.smartregister.simprint.SimPrintsRegisterActivity;
+import org.smartregister.simprint.SimPrintsVerifyActivity;
 
 import java.util.HashMap;
 import java.util.List;
@@ -508,22 +508,25 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     @Override
     public void startSimprintsRegistration(String projectId,String userId,String moduleId) {
         if(!TextUtils.isEmpty(projectId) && !TextUtils.isEmpty(userId) &&  !TextUtils.isEmpty(moduleId)){
-            SimprintsLibrary.init(getActivity(),projectId,userId);
-            SimprintsRegisterActivity.startSimprintsRegisterActivity(getActivity(),moduleId, JsonFormConstants.ACTIVITY_REQUEST_CODE.REQUEST_CODE_REGISTER);
+            SimPrintsLibrary.init(getActivity(),projectId,userId);
+            SimPrintsRegisterActivity.startSimprintsRegisterActivity(getActivity(),moduleId, JsonFormConstants.ACTIVITY_REQUEST_CODE.REQUEST_CODE_REGISTER);
 
         }else {
-            Toast.makeText(getActivity(),"Project Id or user id or module id should not be empty",Toast.LENGTH_LONG).show();
+            // SimprintsLibrary.init(getActivity(),"tZqJnw0ajK04LMYdZzyw","test_user");
+            Toast.makeText(getActivity(),getString(R.string.simprints_init_fail),Toast.LENGTH_LONG).show();
         }
     }
 
     @Override
     public void startSimprintsVerification(String projectId, String userId, String moduleId, String guId) {
         if(!TextUtils.isEmpty(projectId) && !TextUtils.isEmpty(userId) &&  !TextUtils.isEmpty(moduleId) && !TextUtils.isEmpty(guId) ){
-            SimprintsLibrary.init(getActivity(),projectId,userId);
-            SimprintsVerifyActivity.startSimprintsVerifyActivity(getActivity(),moduleId,guId, JsonFormConstants.ACTIVITY_REQUEST_CODE.REQUEST_CODE_VERIFY);
+            SimPrintsLibrary.init(getActivity(),projectId,userId);
+            SimPrintsVerifyActivity.startSimprintsVerifyActivity(getActivity(),moduleId,guId, JsonFormConstants.ACTIVITY_REQUEST_CODE.REQUEST_CODE_VERIFY);
 
         }else {
-            Toast.makeText(getActivity(),"Project Id or user id or module id should not be empty",Toast.LENGTH_LONG).show();
+            // SimprintsLibrary.init(getActivity(),"tZqJnw0ajK04LMYdZzyw","test_user");
+
+            Toast.makeText(getActivity(),getString(R.string.simprints_init_fail),Toast.LENGTH_LONG).show();
         }
     }
 
