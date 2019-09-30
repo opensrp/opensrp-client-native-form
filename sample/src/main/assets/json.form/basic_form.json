@@ -66,11 +66,11 @@
         "uploadButtonText": "Take a photo of the child"
       },
       {
-        "key": "finger_print",
+        "key": "finger_print_one",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "type": "choose_finger_print",
+        "type": "finger_print",
         "project_id":"tZqJnw0ajK04LMYdZzyw",
         "user_id":"test_user",
         "module_id":"mpower",
@@ -85,11 +85,11 @@
         }
       },
       {
-        "key": "finger_print",
+        "key": "finger_print_two",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "type": "choose_finger_print",
+        "type": "finger_print",
         "project_id":"tZqJnw0ajK04LMYdZzyw",
         "user_id":"test_user",
         "module_id":"mpower",

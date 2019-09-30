@@ -27,7 +27,7 @@ public class JsonFormConstants {
     public static final String LABEL_INFO_TITLE = "label_info_title";
     public static final String LABEL_NUMBER = "label_number";
     public static final String CHOOSE_IMAGE = "choose_image";
-    public static final String CHOOSE_FINGER_PRINT = "choose_finger_print";
+    public static final String FINGER_PRINT = "finger_print";
     public static final String IMAGE_FILE = "image_file";
     public static final String IMAGE_FOLDER = "image_folder";
     public static final String IMAGE_VIEW = "image_view";

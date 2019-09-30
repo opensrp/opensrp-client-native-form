@@ -30,7 +30,6 @@ import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
-import android.widget.Toast;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rey.material.widget.Button;
@@ -490,7 +489,7 @@ public class JsonFormFragmentPresenter extends
         key = (String) v.getTag(R.id.key);
         type = (String) v.getTag(R.id.type);
         switch (type) {
-            case JsonFormConstants.CHOOSE_FINGER_PRINT:
+            case JsonFormConstants.FINGER_PRINT:
                 openSimprints(v);
                 break;
             case JsonFormConstants.CHOOSE_IMAGE:

@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * Created by vijay on 24-05-2015.
  */
-public class FingerPrintViewFactory implements FormWidgetFactory {
+public class FingerPrintFactory implements FormWidgetFactory {
 
     public static int dp2px(Context context, float dp) {
         Resources r = context.getResources();
@@ -68,10 +68,9 @@ public class FingerPrintViewFactory implements FormWidgetFactory {
     }
 
     private List<View> attachJson(String stepName, Context context, JSONObject jsonObject, CommonListener listener, boolean popup) throws JSONException {
-        String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
-        String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
-        String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
+        String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
+        String calculation = jsonObject.optString(JsonFormConstants.CALCULATION);
         JSONArray canvasIds = new JSONArray();
 
         List<View> views = new ArrayList<>(1);
@@ -95,16 +94,7 @@ public class FingerPrintViewFactory implements FormWidgetFactory {
         uploadButton.setLayoutParams(FormUtils.getRelativeLayoutParams(FormUtils.MATCH_PARENT, FormUtils.WRAP_CONTENT, 0, 0, 0, (int) context
                 .getResources().getDimension(R.dimen.default_bottom_margin)));
         uploadButton.setOnClickListener(listener);
-        uploadButton.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
-        uploadButton.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
-        uploadButton.setTag(R.id.openmrs_entity, openMrsEntity);
-        uploadButton.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-        uploadButton.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
-        uploadButton.setTag(R.id.project_id,jsonObject.optString(JsonFormConstants.SIMPRINTS_PROJECT_ID));
-        uploadButton.setTag(R.id.user_id, jsonObject.optString(JsonFormConstants.SIMPRINTS_USER_ID));
-        uploadButton.setTag(R.id.module_id, jsonObject.optString(JsonFormConstants.SIMPRINTS_MODULE_ID));
-        uploadButton.setTag(R.id.guid, jsonObject.optString(JsonFormConstants.SIMPRINTS_MODULE_ID));
-        uploadButton.setTag(R.id.finger_print_option, jsonObject.optString(JsonFormConstants.SIMPRINTS_OPTION));
+        setViewTags(jsonObject, stepName, uploadButton, popup);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -123,39 +113,41 @@ public class FingerPrintViewFactory implements FormWidgetFactory {
             uploadButton.setFocusable(!readOnly);
         }
 
-        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
-            uploadButton.setTag(R.id.relevance, relevance);
-            ((JsonApi) context).addSkipLogicView(uploadButton);
-        }
+        setRefreshLOgic(context, relevance, constraints, calculation, uploadButton);
+
         return views;
     }
 
-    private void createImageView(Context context, JSONArray canvasIds, JSONObject jsonObject, boolean popup, String stepName, CommonListener listener, List<View> views) throws JSONException {
+    private void setViewTags(JSONObject jsonObject, String stepName, View view, boolean popup) throws JSONException {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
+        view.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+        view.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
+        view.setTag(R.id.openmrs_entity, openMrsEntity);
+        view.setTag(R.id.openmrs_entity_id, openMrsEntityId);
+        view.setTag(R.id.extraPopup, popup);
+        view.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
+        view.setTag(R.id.project_id, jsonObject.optString(JsonFormConstants.SIMPRINTS_PROJECT_ID));
+        view.setTag(R.id.user_id, jsonObject.optString(JsonFormConstants.SIMPRINTS_USER_ID));
+        view.setTag(R.id.module_id, jsonObject.optString(JsonFormConstants.SIMPRINTS_MODULE_ID));
+        view.setTag(R.id.guid, jsonObject.optString(JsonFormConstants.SIMPRINTS_MODULE_ID));
+        view.setTag(R.id.finger_print_option, jsonObject.optString(JsonFormConstants.SIMPRINTS_OPTION));
+        view.setTag(com.vijay.jsonwizard.R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+    }
+
+    private void createImageView(Context context, JSONArray canvasIds, JSONObject jsonObject, boolean popup, String stepName, CommonListener listener, List<View> views) throws JSONException {
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
+        String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
+        String calculation = jsonObject.optString(JsonFormConstants.CALCULATION);
         ImageView imageView = new ImageView(context);
         imageView.setId(ViewUtil.generateViewId());
         canvasIds.put(imageView.getId());
         imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.finger_print));
-        imageView.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
-        imageView.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
-        imageView.setTag(R.id.extraPopup, popup);
-        imageView.setTag(R.id.openmrs_entity, openMrsEntity);
-        imageView.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-        imageView.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
-        imageView.setTag(R.id.project_id,jsonObject.optString(JsonFormConstants.SIMPRINTS_PROJECT_ID));
-        imageView.setTag(R.id.user_id, jsonObject.optString(JsonFormConstants.SIMPRINTS_USER_ID));
-        imageView.setTag(R.id.module_id, jsonObject.optString(JsonFormConstants.SIMPRINTS_MODULE_ID));
-        imageView.setTag(R.id.guid, jsonObject.optString(JsonFormConstants.SIMPRINTS_MODULE_ID));
-        imageView.setTag(R.id.finger_print_option, jsonObject.optString(JsonFormConstants.SIMPRINTS_OPTION));
+        setViewTags(jsonObject, stepName, imageView, popup);
 
         imageView.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
-        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
-            imageView.setTag(R.id.relevance, relevance);
-            ((JsonApi) context).addSkipLogicView(imageView);
-        }
+        setRefreshLOgic(context, relevance, constraints, calculation, imageView);
 
         JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
         if (requiredObject != null) {
@@ -181,5 +173,22 @@ public class FingerPrintViewFactory implements FormWidgetFactory {
         ((JsonApi) context).addFormDataView(imageView);
         imageView.setOnClickListener(listener);
         views.add(imageView);
+    }
+
+    private void setRefreshLOgic(Context context, String relevance, String constraints, String calculation, View view) {
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+            view.setTag(R.id.relevance, relevance);
+            ((JsonApi) context).addSkipLogicView(view);
+        }
+
+        if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
+            view.setTag(com.vijay.jsonwizard.R.id.constraints, constraints);
+            ((JsonApi) context).addConstrainedView(view);
+        }
+
+        if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
+            view.setTag(com.vijay.jsonwizard.R.id.calculation, calculation);
+            ((JsonApi) context).addCalculationLogicView(view);
+        }
     }
 }
