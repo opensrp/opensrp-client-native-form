@@ -66,6 +66,39 @@
         "uploadButtonText": "Take a photo of the child"
       },
       {
+        "key": "finger_print",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "finger_print",
+        "project_id":"tZqJnw0ajK04LMYdZzyw",
+        "user_id":"test_user",
+        "module_id":"mpower",
+        "finger_print_option":"register",
+        "uploadButtonText": "Take finger print",
+        "image_file": "",
+        "relevance": {
+          "step1:user_first_name": {
+            "type": "string",
+            "ex": "equalTo(., \"test\")"
+          }
+        }
+      },
+      {
+        "key": "finger_print",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "finger_print",
+        "project_id":"tZqJnw0ajK04LMYdZzyw",
+        "user_id":"test_user",
+        "module_id":"mpower",
+        "gu_id":"id",
+        "finger_print_option":"verify",
+        "uploadButtonText": "Verify finger print",
+        "image_file": ""
+      },
+      {
         "key": "user_first_name",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -97,6 +130,12 @@
         "v_regex": {
           "value": "[A-Za-z\\s\\.\\-]*",
           "err": "Please enter a valid name"
+        },
+        "relevance": {
+          "step1:user_first_name": {
+            "type": "string",
+            "ex": "equalTo(., \"test\")"
+          }
         }
       },
       {

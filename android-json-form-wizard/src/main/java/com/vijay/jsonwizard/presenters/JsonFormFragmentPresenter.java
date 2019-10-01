@@ -489,6 +489,9 @@ public class JsonFormFragmentPresenter extends
         key = (String) v.getTag(R.id.key);
         type = (String) v.getTag(R.id.type);
         switch (type) {
+            case JsonFormConstants.FINGER_PRINT:
+                openSimprints(v);
+                break;
             case JsonFormConstants.CHOOSE_IMAGE:
                 dispatchTakePictureIntent(key, type);
                 break;
@@ -541,6 +544,21 @@ public class JsonFormFragmentPresenter extends
 
                 break;
         }
+    }
+
+    private void openSimprints(View v) {
+        String projectId = (String) v.getTag(R.id.project_id);
+        String userId = (String) v.getTag(R.id.user_id);
+        String moduleId = (String) v.getTag(R.id.module_id);
+        String fingerPrintOption = (String) v.getTag(R.id.finger_print_option);
+        if(!TextUtils.isEmpty(fingerPrintOption) && fingerPrintOption.equalsIgnoreCase(JsonFormConstants.SIMPRINTS_OPTION_REGISTER)){
+            getView().startSimprintsRegistration(projectId,userId,moduleId);
+
+        }else if(!TextUtils.isEmpty(fingerPrintOption) && fingerPrintOption.equalsIgnoreCase(JsonFormConstants.SIMPRINTS_OPTION_VERIFY)){
+           String guId = (String) v.getTag(R.id.guid);
+            getView().startSimprintsVerification(projectId,userId,moduleId,guId);
+        }
+
     }
 
     protected void nativeRadioButtonClickActions(View view) {

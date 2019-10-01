@@ -16,6 +16,7 @@ import com.vijay.jsonwizard.widgets.DatePickerFactory;
 import com.vijay.jsonwizard.widgets.EditTextFactory;
 import com.vijay.jsonwizard.widgets.ExpansionWidgetFactory;
 import com.vijay.jsonwizard.widgets.ExtendedRadioButtonWidgetFactory;
+import com.vijay.jsonwizard.widgets.FingerPrintFactory;
 import com.vijay.jsonwizard.widgets.GpsFactory;
 import com.vijay.jsonwizard.widgets.HiddenTextFactory;
 import com.vijay.jsonwizard.widgets.HorizontalLineFactory;
@@ -69,6 +70,7 @@ public class JsonFormInteractor {
         map.put(JsonFormConstants.CHECK_BOX, new CheckBoxFactory());
         map.put(JsonFormConstants.RADIO_BUTTON, new RadioButtonFactory());
         map.put(JsonFormConstants.CHOOSE_IMAGE, new ImagePickerFactory());
+        map.put(JsonFormConstants.FINGER_PRINT, new FingerPrintFactory());
         map.put(JsonFormConstants.SPINNER, new SpinnerFactory());
         map.put(JsonFormConstants.DATE_PICKER, new DatePickerFactory());
         map.put(JsonFormConstants.TREE, new TreeViewFactory());

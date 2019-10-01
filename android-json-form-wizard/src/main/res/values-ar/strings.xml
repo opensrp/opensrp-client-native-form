@@ -78,4 +78,6 @@
     <string name="json_form_on_next_error_msg" >يرجى تصحيح الخطأ (الأخطاء) في الاستمارة للتقدم</string>
     <string name="go_to_step">اذهب إلى الخطوة</string>
   <string name="shows_image_on_dialog">shows Image on dialog</string>
+    <string name="simprints_guid">GUID not found</string>
+    <string name="simprints_init_fail">Project Id or user id or module id not found. can be use SimprintsLibrary.init</string>
 </resources>
