@@ -839,7 +839,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                             ok = ok && comparison;
                             if (!ok) break;
                         } catch (Exception e) {
-                            Timber.e(e, "JsonFormActivity --> addRelevance");
+                            Timber.e(e, "JsonFormActivity --> addRelevance --> comparison");
                         }
 
                     }
@@ -1276,7 +1276,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 fields = returnWithFormFields(parentJson, popup);
             }
         } catch (JSONException e) {
-
             Timber.e(e, "JsonFormActivity --> fetchFields");
         }
 
@@ -1399,6 +1398,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             JSONArray jsonArray = jsonObject.getJSONArray(JsonFormConstants.CONTENT_FORM);
             if (jsonArray != null && jsonArray.length() > 0) {
                 fieldArray = formUtils.concatArray(fields, jsonArray);
+
             }
 
         } catch (Exception e) {

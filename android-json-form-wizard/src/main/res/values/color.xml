@@ -10,7 +10,7 @@
     <color name="icons">#FFFFFF</color>
     <color name="divider">#B6B6B6</color>
     <color name="black">#000000</color>
-
+    <color name="green_overlay">#6600FF00</color>
     <color name="opensrp_primary">#358CB7</color>
     <color name="opensrp_primary_background">#ddf0fa</color>
     <color name="opensrp_primary_dark">#276C91</color>

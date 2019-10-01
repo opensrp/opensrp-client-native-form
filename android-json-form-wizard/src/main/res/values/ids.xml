@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <item name="project_id" type="id" />
+    <item name="user_id" type="id" />
+    <item name="module_id" type="id" />
+    <item name="guid" type="id" />
+    <item name="finger_print_option" type="id" />
     <item name="label" type="id" />
     <item name="key" type="id" />
     <item name="address" type="id" />

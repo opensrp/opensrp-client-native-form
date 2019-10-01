@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.AppCompatRadioButton;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -42,6 +43,9 @@ import com.vijay.jsonwizard.viewstates.JsonFormFragmentViewState;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.smartregister.simprint.SimPrintsLibrary;
+import org.smartregister.simprint.SimPrintsRegisterActivity;
+import org.smartregister.simprint.SimPrintsVerifyActivity;
 
 import java.util.HashMap;
 import java.util.List;
@@ -502,6 +506,31 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     }
 
     @Override
+    public void startSimprintsRegistration(String projectId,String userId,String moduleId) {
+        if(!TextUtils.isEmpty(projectId) && !TextUtils.isEmpty(userId) &&  !TextUtils.isEmpty(moduleId)){
+            SimPrintsLibrary.init(getActivity(),projectId,userId);
+            SimPrintsRegisterActivity.startSimprintsRegisterActivity(getActivity(),moduleId, JsonFormConstants.ACTIVITY_REQUEST_CODE.REQUEST_CODE_REGISTER);
+
+        }else {
+            // SimprintsLibrary.init(getActivity(),"tZqJnw0ajK04LMYdZzyw","test_user");
+            Toast.makeText(getActivity(),getString(R.string.simprints_init_fail),Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void startSimprintsVerification(String projectId, String userId, String moduleId, String guId) {
+        if(!TextUtils.isEmpty(projectId) && !TextUtils.isEmpty(userId) &&  !TextUtils.isEmpty(moduleId) && !TextUtils.isEmpty(guId) ){
+            SimPrintsLibrary.init(getActivity(),projectId,userId);
+            SimPrintsVerifyActivity.startSimprintsVerifyActivity(getActivity(),moduleId,guId, JsonFormConstants.ACTIVITY_REQUEST_CODE.REQUEST_CODE_VERIFY);
+
+        }else {
+            // SimprintsLibrary.init(getActivity(),"tZqJnw0ajK04LMYdZzyw","test_user");
+
+            Toast.makeText(getActivity(),getString(R.string.simprints_init_fail),Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
     public void finishWithResult(Intent returnIntent) {
         getActivity().setResult(Activity.RESULT_OK, returnIntent);
         getActivity().finish();
@@ -580,5 +609,6 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
             }
         }
     }
+
 
 }
