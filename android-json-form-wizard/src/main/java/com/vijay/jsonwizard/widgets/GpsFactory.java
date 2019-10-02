@@ -179,13 +179,6 @@ public class GpsFactory implements FormWidgetFactory {
         });
     }
 
-    protected void customizeViews(Button recordButton, Context context) {
-        recordButton.setBackgroundColor(context.getResources().getColor(R.color.primary));
-        recordButton.setMinHeight(0);
-        recordButton.setMinimumHeight(0);
-        recordButton.setId(ViewUtil.generateViewId());
-    }
-
     protected void addViewTags(Button recordButton, WidgetArgs widgetArgs, WidgetMetadata metadata, View rootLayout) throws JSONException {
 
         final JSONObject jsonObject = widgetArgs.getJsonObject();
@@ -223,6 +216,13 @@ public class GpsFactory implements FormWidgetFactory {
         accuracyTv.setText(String.format(context.getString(R.string.accuracy), accuracy));
 
         dataView.setTag(R.id.raw_value, constructString(latitude, longitude));
+    }
+
+    protected void customizeViews(Button recordButton, Context context) {
+        recordButton.setBackgroundColor(context.getResources().getColor(R.color.primary));
+        recordButton.setMinHeight(0);
+        recordButton.setMinimumHeight(0);
+        recordButton.setId(ViewUtil.generateViewId());
     }
 
     public void requestPermissionsForLocation(Context context) {

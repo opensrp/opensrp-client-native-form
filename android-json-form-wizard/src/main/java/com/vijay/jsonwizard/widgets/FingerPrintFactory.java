@@ -35,12 +35,6 @@ import java.util.List;
  */
 public class FingerPrintFactory implements FormWidgetFactory {
 
-    public static int dp2px(Context context, float dp) {
-        Resources r = context.getResources();
-        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
-        return Math.round(px);
-    }
-
     public static ValidationStatus validate(JsonFormFragmentView formFragmentView,
                                             ImageView imageView) {
         if (!(imageView.getTag(R.id.v_required) instanceof String) || !(imageView.getTag(R.id.error) instanceof String)) {
@@ -118,24 +112,6 @@ public class FingerPrintFactory implements FormWidgetFactory {
         return views;
     }
 
-    private void setViewTags(JSONObject jsonObject, String stepName, View view, boolean popup) throws JSONException {
-        String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
-        String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
-        String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
-        view.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
-        view.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
-        view.setTag(R.id.openmrs_entity, openMrsEntity);
-        view.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-        view.setTag(R.id.extraPopup, popup);
-        view.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
-        view.setTag(R.id.project_id, jsonObject.optString(JsonFormConstants.SIMPRINTS_PROJECT_ID));
-        view.setTag(R.id.user_id, jsonObject.optString(JsonFormConstants.SIMPRINTS_USER_ID));
-        view.setTag(R.id.module_id, jsonObject.optString(JsonFormConstants.SIMPRINTS_MODULE_ID));
-        view.setTag(R.id.guid, jsonObject.optString(JsonFormConstants.SIMPRINTS_MODULE_ID));
-        view.setTag(R.id.finger_print_option, jsonObject.optString(JsonFormConstants.SIMPRINTS_OPTION));
-        view.setTag(com.vijay.jsonwizard.R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
-    }
-
     private void createImageView(Context context, JSONArray canvasIds, JSONObject jsonObject, boolean popup, String stepName, CommonListener listener, List<View> views) throws JSONException {
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
         String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
@@ -173,6 +149,30 @@ public class FingerPrintFactory implements FormWidgetFactory {
         ((JsonApi) context).addFormDataView(imageView);
         imageView.setOnClickListener(listener);
         views.add(imageView);
+    }
+
+    private void setViewTags(JSONObject jsonObject, String stepName, View view, boolean popup) throws JSONException {
+        String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
+        String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
+        String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
+        view.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+        view.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
+        view.setTag(R.id.openmrs_entity, openMrsEntity);
+        view.setTag(R.id.openmrs_entity_id, openMrsEntityId);
+        view.setTag(R.id.extraPopup, popup);
+        view.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
+        view.setTag(R.id.project_id, jsonObject.optString(JsonFormConstants.SIMPRINTS_PROJECT_ID));
+        view.setTag(R.id.user_id, jsonObject.optString(JsonFormConstants.SIMPRINTS_USER_ID));
+        view.setTag(R.id.module_id, jsonObject.optString(JsonFormConstants.SIMPRINTS_MODULE_ID));
+        view.setTag(R.id.guid, jsonObject.optString(JsonFormConstants.SIMPRINTS_MODULE_ID));
+        view.setTag(R.id.finger_print_option, jsonObject.optString(JsonFormConstants.SIMPRINTS_OPTION));
+        view.setTag(com.vijay.jsonwizard.R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+    }
+
+    public static int dp2px(Context context, float dp) {
+        Resources r = context.getResources();
+        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
+        return Math.round(px);
     }
 
     private void setRefreshLOgic(Context context, String relevance, String constraints, String calculation, View view) {

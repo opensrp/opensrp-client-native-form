@@ -38,10 +38,10 @@ public class DatePickerUtils {
             final int idDay = Resources.getSystem().getIdentifier("day", "id", "android");
             final int idLayout = Resources.getSystem().getIdentifier("pickers", "id", "android");
 
-            final NumberPicker spinnerYear = (NumberPicker) datePicker.findViewById(idYear);
-            final NumberPicker spinnerMonth = (NumberPicker) datePicker.findViewById(idMonth);
-            final NumberPicker spinnerDay = (NumberPicker) datePicker.findViewById(idDay);
-            final LinearLayout layout = (LinearLayout) datePicker.findViewById(idLayout);
+            final NumberPicker spinnerYear = datePicker.findViewById(idYear);
+            final NumberPicker spinnerMonth = datePicker.findViewById(idMonth);
+            final NumberPicker spinnerDay = datePicker.findViewById(idDay);
+            final LinearLayout layout = datePicker.findViewById(idLayout);
 
             layout.removeAllViews();
             for (int i = 0; i < SPINNER_COUNT; i++) {
@@ -76,7 +76,7 @@ public class DatePickerUtils {
             imeOptions = EditorInfo.IME_ACTION_DONE;
         }
         int idPickerInput = Resources.getSystem().getIdentifier("numberpicker_input", "id", "android");
-        TextView input = (TextView) spinner.findViewById(idPickerInput);
+        TextView input = spinner.findViewById(idPickerInput);
         input.setImeOptions(imeOptions);
     }
 }

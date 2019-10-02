@@ -81,7 +81,7 @@ public class ExpansionPanelWidgetFactoryTest extends BaseTest {
     }
 
     @Test
-    @PrepareForTest ({LayoutInflater.class})
+    @PrepareForTest({LayoutInflater.class})
     public void testExpansionPanelWidgetFactoryInstantiatesViewsCorrectly() throws Exception {
         Assert.assertNotNull(factory);
         ExpansionWidgetFactory factorySpy = Mockito.spy(factory);

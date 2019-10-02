@@ -912,7 +912,7 @@ public class MainActivity extends AppCompatActivity {
     //.. Initialisation methods here
 
     public void startForm(int jsonFormActivityRequestCode,
-                              String formName, String entityId) throws Exception {
+                              String fieldType, String entityId) throws Exception {
 
         //Inject OpenMRS MetaData into the form here...
 

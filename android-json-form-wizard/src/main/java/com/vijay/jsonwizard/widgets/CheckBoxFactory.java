@@ -70,24 +70,16 @@ public class CheckBoxFactory implements FormWidgetFactory {
         return isChecked;
     }
 
-    private void showEditButton(JSONObject jsonObject, List<View> editableViews, ImageView editButton,
-                                CommonListener listener) throws JSONException {
-        editButton.setTag(R.id.editable_view, editableViews);
-        editButton.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
-        editButton.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
-        editButton.setOnClickListener(listener);
+    @Override
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
+                                       JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
+        return attachJson(stepName, context, jsonObject, listener, popup);
     }
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
                                        JSONObject jsonObject, CommonListener listener) throws Exception {
         return attachJson(stepName, context, jsonObject, listener, false);
-    }
-
-    @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
-                                       JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
-        return attachJson(stepName, context, jsonObject, listener, popup);
     }
 
     private List<View> attachJson(String stepName, Context context, JSONObject jsonObject, CommonListener listener,
@@ -146,30 +138,6 @@ public class CheckBoxFactory implements FormWidgetFactory {
         views.add(rootLayout);
         return views;
     }
-
-    private void attachRefreshLogic(JSONObject jsonObject, Context context, LinearLayout rootLayout) {
-        String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
-        String calculation = jsonObject.optString(JsonFormConstants.CALCULATION);
-        String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
-
-        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
-            rootLayout.setTag(R.id.relevance, relevance);
-            ((JsonApi) context).addSkipLogicView(rootLayout);
-        }
-
-        if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
-            rootLayout.setTag(R.id.constraints, constraints);
-            ((JsonApi) context).addConstrainedView(rootLayout);
-        }
-
-        if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
-            rootLayout.setTag(R.id.calculation, calculation);
-            ((JsonApi) context).addCalculationLogicView(rootLayout);
-        }
-
-        ((JsonApi) context).addFormDataView(rootLayout);
-    }
-
 
     protected int getLayout() {
         return R.layout.native_form_compound_button_parent;
@@ -257,6 +225,37 @@ public class CheckBoxFactory implements FormWidgetFactory {
         }
 
         return checkboxLayouts;
+    }
+
+    private void showEditButton(JSONObject jsonObject, List<View> editableViews, ImageView editButton,
+                                CommonListener listener) throws JSONException {
+        editButton.setTag(R.id.editable_view, editableViews);
+        editButton.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+        editButton.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
+        editButton.setOnClickListener(listener);
+    }
+
+    private void attachRefreshLogic(JSONObject jsonObject, Context context, LinearLayout rootLayout) {
+        String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
+        String calculation = jsonObject.optString(JsonFormConstants.CALCULATION);
+        String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
+
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+            rootLayout.setTag(R.id.relevance, relevance);
+            ((JsonApi) context).addSkipLogicView(rootLayout);
+        }
+
+        if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
+            rootLayout.setTag(R.id.constraints, constraints);
+            ((JsonApi) context).addConstrainedView(rootLayout);
+        }
+
+        if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
+            rootLayout.setTag(R.id.calculation, calculation);
+            ((JsonApi) context).addCalculationLogicView(rootLayout);
+        }
+
+        ((JsonApi) context).addFormDataView(rootLayout);
     }
 
     /**

@@ -12,7 +12,7 @@ import static junit.framework.TestCase.assertEquals;
 public class FormUtilsTest {
 
     @Test
-    public void testGetDate(){
+    public void testGetDate() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.WEEK_OF_MONTH, -1);

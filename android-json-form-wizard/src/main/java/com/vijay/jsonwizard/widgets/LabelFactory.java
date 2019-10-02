@@ -27,6 +27,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
 /**
  * Created by vijay on 24-05-2015.
  */
@@ -84,7 +86,7 @@ public class LabelFactory implements FormWidgetFactory {
             constraintLayout.setTag(R.id.extraPopup, popup);
             views.add(constraintLayout);
         } else {
-            Log.e(TAG, "A label requires a text. You cannot have a label with blank text");
+            Timber.e("A label requires a text. You cannot have a label with blank text");
         }
         return views;
     }
@@ -151,6 +153,25 @@ public class LabelFactory implements FormWidgetFactory {
         createNumberLabel(constraintLayout, labelNumber, jsonObject, labelTextSize, textStyle, context);
     }
 
+    /**
+     * Generates the spanned text to be passed to the label Custom TextView
+     *
+     * @param jsonObject
+     * @return
+     * @throws JSONException
+     */
+    private Spanned createLabelText(JSONObject jsonObject) throws JSONException {
+        String text = jsonObject.getString(JsonFormConstants.TEXT);
+        Boolean readOnly = jsonObject.optBoolean(JsonFormConstants.READ_ONLY);
+        String asterisks = getAsterisk(jsonObject);
+        String labelTextColor = readOnly ? "#737373" : jsonObject.optString(JsonFormConstants.TEXT_COLOR, null);
+        String combinedLabelText = getCombinedLabel(text, asterisks, labelTextColor);
+
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html
+                .fromHtml(combinedLabelText, Html.FROM_HTML_MODE_LEGACY) : Html
+                .fromHtml(combinedLabelText);
+    }
+
     private void createNumberLabel(ConstraintLayout constraintLayout, String labelNumber, JSONObject jsonObject,
                                    int labelTextSize,
                                    String textStyle, Context context) {
@@ -187,25 +208,6 @@ public class LabelFactory implements FormWidgetFactory {
                     FormUtils.getValueFromSpOrDpOrPx(rightPadding, context),
                     FormUtils.getValueFromSpOrDpOrPx(bottomPadding, context));
         }
-    }
-
-    /**
-     * Generates the spanned text to be passed to the label Custom TextView
-     *
-     * @param jsonObject
-     * @return
-     * @throws JSONException
-     */
-    private Spanned createLabelText(JSONObject jsonObject) throws JSONException {
-        String text = jsonObject.getString(JsonFormConstants.TEXT);
-        Boolean readOnly = jsonObject.optBoolean(JsonFormConstants.READ_ONLY);
-        String asterisks = getAsterisk(jsonObject);
-        String labelTextColor = readOnly ? "#737373" : jsonObject.optString(JsonFormConstants.TEXT_COLOR, null);
-        String combinedLabelText = getCombinedLabel(text, asterisks, labelTextColor);
-
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html
-                .fromHtml(combinedLabelText, Html.FROM_HTML_MODE_LEGACY) : Html
-                .fromHtml(combinedLabelText);
     }
 
     private String getAsterisk(JSONObject jsonObject) throws JSONException {

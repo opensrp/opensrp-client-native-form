@@ -40,32 +40,6 @@ import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 public class TreeViewFactory implements FormWidgetFactory {
     private static final String TAG = "TreeViewFactory";
 
-    private static void showTreeDialog(TreeViewDialog treeViewDialog) {
-        treeViewDialog.show();
-    }
-
-    private static void changeEditTextValue(EditText editText, String value, String name) {
-        String readableValue = "";
-        editText.setTag(R.id.raw_value, value);
-        if (!TextUtils.isEmpty(name)) {
-            try {
-                JSONArray nameArray = new JSONArray(name);
-                if (nameArray.length() > 0) {
-                    readableValue = nameArray.getString(nameArray.length() - 1);
-
-                    if (nameArray.length() > 1) {
-                        readableValue = readableValue + ", "
-                                + nameArray.getString(nameArray.length() - 2);
-                    }
-                }
-            } catch (JSONException e) {
-                Log.e(TAG, Log.getStackTraceString(e));
-            }
-        }
-
-        editText.setText(readableValue);
-    }
-
     @Override
     public List<View> getViewsFromJson(String stepName, final Context context, JsonFormFragment formFragment, JSONObject
             jsonObject, CommonListener listener, boolean popup) throws JSONException {
@@ -222,6 +196,32 @@ public class TreeViewFactory implements FormWidgetFactory {
 
 
         return editText;
+    }
+
+    private static void changeEditTextValue(EditText editText, String value, String name) {
+        String readableValue = "";
+        editText.setTag(R.id.raw_value, value);
+        if (!TextUtils.isEmpty(name)) {
+            try {
+                JSONArray nameArray = new JSONArray(name);
+                if (nameArray.length() > 0) {
+                    readableValue = nameArray.getString(nameArray.length() - 1);
+
+                    if (nameArray.length() > 1) {
+                        readableValue = readableValue + ", "
+                                + nameArray.getString(nameArray.length() - 2);
+                    }
+                }
+            } catch (JSONException e) {
+                Log.e(TAG, Log.getStackTraceString(e));
+            }
+        }
+
+        editText.setText(readableValue);
+    }
+
+    private static void showTreeDialog(TreeViewDialog treeViewDialog) {
+        treeViewDialog.show();
     }
 
 }

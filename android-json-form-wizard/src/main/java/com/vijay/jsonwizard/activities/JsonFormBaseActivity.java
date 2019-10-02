@@ -6,6 +6,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.vijay.jsonwizard.R;
@@ -20,8 +21,10 @@ import com.vijay.jsonwizard.rules.RulesEngineFactory;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.PropertyManager;
 import com.vijay.jsonwizard.utils.ValidationStatus;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;

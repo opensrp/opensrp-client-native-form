@@ -6,7 +6,7 @@ public class FormValuesModel implements Serializable {
     private String currentValue;
     private String stepName;
     private String previousValue;
-    private String formName;
+    private String fieldType;
     private String fieldKey;
 
     public String getCurrentValue() {
@@ -33,12 +33,12 @@ public class FormValuesModel implements Serializable {
         this.previousValue = previousValue;
     }
 
-    public String getFormName() {
-        return formName;
+    public String getFieldType() {
+        return fieldType;
     }
 
-    public void setFormName(String formName) {
-        this.formName = formName;
+    public void setFieldType(String fieldType) {
+        this.fieldType = fieldType;
     }
 
     public String getFieldKey() {
