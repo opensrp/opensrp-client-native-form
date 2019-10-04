@@ -28,6 +28,7 @@
                 android:background="@android:color/transparent"
                 android:paddingEnd="@dimen/form_container_small_padding"
                 android:paddingStart="@dimen/form_container_drawable_padding"
+                android:rotationY="@integer/locale_mirror_flip"
                 android:src="@drawable/ic_action_back" />
 
 
@@ -41,6 +42,7 @@
                 android:ellipsize="end"
                 android:gravity="center"
                 android:paddingEnd="@dimen/form_container_drawable_padding"
+                android:paddingStart="0dp"
                 android:singleLine="true"
                 android:textColor="@color/white"
                 android:textSize="@dimen/form_container_step_title_text_size" />
@@ -55,6 +57,7 @@
                 android:background="@android:color/transparent"
                 android:paddingEnd="@dimen/form_container_drawable_padding"
                 android:paddingStart="@dimen/form_container_small_padding"
+                android:rotationY="@integer/locale_mirror_flip"
                 android:src="@drawable/ic_action_next" />
 
 
