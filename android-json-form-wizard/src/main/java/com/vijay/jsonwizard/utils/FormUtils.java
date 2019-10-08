@@ -835,8 +835,25 @@ public class FormUtils {
 
             FragmentTransaction ft = utils.getFragmentTransaction((Activity) context);
             genericPopupDialog.show(ft, "GenericPopup");
+            resetFocus(context);
         } else {
             Toast.makeText(context, "Please specify the sub form to display ", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
+     * This clears the focus of the whole step when the popups are opened to avoid the scroll to the first edittext after
+     * the popup close
+     *
+     * @param context {@link Context}
+     */
+    private void resetFocus(Context context) {
+        if (context != null) {
+            Activity activity = (Activity) context;
+            LinearLayout mainLayout = activity.findViewById(R.id.main_layout);
+            mainLayout.clearFocus();
+        } else {
+            Timber.d("The context is empty");
         }
     }
 
@@ -1211,9 +1228,8 @@ public class FormUtils {
     }
 
     /**
-     *
      * @param multiRelevance {@link Boolean}
-     * @param object {@link JSONObject}
+     * @param object         {@link JSONObject}
      * @return result {@link Facts}
      * @throws JSONException
      */

@@ -2034,6 +2034,18 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 .show();
     }
 
+    /**
+     * if the display scroll bars attribute is set to true then the form shows scroll bars
+     *
+     * @return true/false {@link Boolean}
+     */
+    @Override
+    public boolean displayScrollBars() {
+        synchronized (getmJSONObject()) {
+            return getmJSONObject().optBoolean(JsonFormConstants.DISPLAY_SCROLL_BARS, false);
+        }
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void refreshExpansionPanel(RefreshExpansionPanelEvent refreshExpansionPanelEvent) {
         if (refreshExpansionPanelEvent != null) {

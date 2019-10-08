@@ -121,12 +121,21 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         }
 
         setupToolbarBackButton();
+        showScrollBars();
 
         JSONObject step = getStep(stepName);
         if (step.optBoolean(BOTTOM_NAVIGATION)) {
             initializeBottomNavigation(step, rootView);
         }
         return rootView;
+    }
+
+    protected void showScrollBars() {
+        boolean displayScrollBars = displayScrollBars();
+        if (displayScrollBars) {
+            mScrollView.setScrollbarFadingEnabled(false);
+            mScrollView.setScrollBarFadeDuration(0);
+        }
     }
 
     private void setupToolbarBackButton() {
@@ -475,7 +484,12 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     @Override
     public String getCount() {
-        return mJsonApi.getCount();
+        return getJsonApi().getCount();
+    }
+
+    @Override
+    public boolean displayScrollBars() {
+        return getJsonApi().displayScrollBars();
     }
 
     @Override
@@ -506,27 +520,27 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     }
 
     @Override
-    public void startSimprintsRegistration(String projectId,String userId,String moduleId) {
-        if(!TextUtils.isEmpty(projectId) && !TextUtils.isEmpty(userId) &&  !TextUtils.isEmpty(moduleId)){
-            SimPrintsLibrary.init(getActivity(),projectId,userId);
-            SimPrintsRegisterActivity.startSimprintsRegisterActivity(getActivity(),moduleId, JsonFormConstants.ACTIVITY_REQUEST_CODE.REQUEST_CODE_REGISTER);
+    public void startSimprintsRegistration(String projectId, String userId, String moduleId) {
+        if (!TextUtils.isEmpty(projectId) && !TextUtils.isEmpty(userId) && !TextUtils.isEmpty(moduleId)) {
+            SimPrintsLibrary.init(getActivity(), projectId, userId);
+            SimPrintsRegisterActivity.startSimprintsRegisterActivity(getActivity(), moduleId, JsonFormConstants.ACTIVITY_REQUEST_CODE.REQUEST_CODE_REGISTER);
 
-        }else {
+        } else {
             // SimprintsLibrary.init(getActivity(),"tZqJnw0ajK04LMYdZzyw","test_user");
-            Toast.makeText(getActivity(),getString(R.string.simprints_init_fail),Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), getString(R.string.simprints_init_fail), Toast.LENGTH_LONG).show();
         }
     }
 
     @Override
     public void startSimprintsVerification(String projectId, String userId, String moduleId, String guId) {
-        if(!TextUtils.isEmpty(projectId) && !TextUtils.isEmpty(userId) &&  !TextUtils.isEmpty(moduleId) && !TextUtils.isEmpty(guId) ){
-            SimPrintsLibrary.init(getActivity(),projectId,userId);
-            SimPrintsVerifyActivity.startSimprintsVerifyActivity(getActivity(),moduleId,guId, JsonFormConstants.ACTIVITY_REQUEST_CODE.REQUEST_CODE_VERIFY);
+        if (!TextUtils.isEmpty(projectId) && !TextUtils.isEmpty(userId) && !TextUtils.isEmpty(moduleId) && !TextUtils.isEmpty(guId)) {
+            SimPrintsLibrary.init(getActivity(), projectId, userId);
+            SimPrintsVerifyActivity.startSimprintsVerifyActivity(getActivity(), moduleId, guId, JsonFormConstants.ACTIVITY_REQUEST_CODE.REQUEST_CODE_VERIFY);
 
-        }else {
+        } else {
             // SimprintsLibrary.init(getActivity(),"tZqJnw0ajK04LMYdZzyw","test_user");
 
-            Toast.makeText(getActivity(),getString(R.string.simprints_init_fail),Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), getString(R.string.simprints_init_fail), Toast.LENGTH_LONG).show();
         }
     }
 
