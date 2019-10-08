@@ -2,6 +2,7 @@
   "encounter_type": "Birth Registration",
   "show_errors_on_submit": true,
   "count": "1",
+  "display_scroll_bars": true,
   "mother": {
     "encounter_type": "New Woman Registration"
   },
