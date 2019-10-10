@@ -78,6 +78,8 @@ public interface JsonFormFragmentView<V extends ViewState> extends MvpView {
 
     String getCount();
 
+    boolean displayScrollBars();
+
     void onFormStart();
 
     void onFormFinish();

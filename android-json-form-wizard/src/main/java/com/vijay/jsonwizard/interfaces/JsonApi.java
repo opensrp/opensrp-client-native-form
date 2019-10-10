@@ -111,4 +111,6 @@ public interface JsonApi {
     void setConfirmCloseTitle(String title);
 
     void showPermissionDeniedDialog();
+
+    boolean displayScrollBars();
 }
