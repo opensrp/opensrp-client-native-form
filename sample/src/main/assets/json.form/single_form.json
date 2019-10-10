@@ -205,6 +205,11 @@
         "v_regex": {
           "value": "[A-Za-z\\s\\.\\-]*",
           "err": "Please enter a valid name"
+        },
+        "v_max_length":{
+          "value":11,
+          "err":"length not more then 11",
+          "is_fixed_size":true
         }
       },
       {

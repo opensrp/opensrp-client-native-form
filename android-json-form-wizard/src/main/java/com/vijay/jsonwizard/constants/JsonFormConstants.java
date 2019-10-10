@@ -66,6 +66,7 @@ public class JsonFormConstants {
     public static final String V_REQUIRED = "v_required";
     public static final String V_MIN_LENGTH = "v_min_length";
     public static final String V_MAX_LENGTH = "v_max_length";
+    public static final String IS_FIXED_SIZE = "is_fixed_size";
     public static final String V_REGEX = "v_regex";
     public static final String V_EMAIL = "v_email";
     public static final String V_URL = "v_url";
