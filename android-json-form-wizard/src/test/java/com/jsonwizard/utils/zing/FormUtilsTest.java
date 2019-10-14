@@ -26,7 +26,7 @@ import org.powermock.reflect.Whitebox;
 import java.util.HashMap;
 import java.util.Map;
 
-@RunWith (PowerMockRunner.class)
+@RunWith(PowerMockRunner.class)
 public class FormUtilsTest extends BaseTest {
 
     private String optionKey = "";
@@ -50,7 +50,7 @@ public class FormUtilsTest extends BaseTest {
         formUtils = new FormUtils();
     }
 
-    @PrepareForTest ({TypedValue.class})
+    @PrepareForTest({TypedValue.class})
     @Test
     public void testSpToPx() {
         Application application = Mockito.spy(Application.class);
@@ -68,7 +68,7 @@ public class FormUtilsTest extends BaseTest {
         Assert.assertEquals(expected, px);
     }
 
-    @PrepareForTest ({TypedValue.class})
+    @PrepareForTest({TypedValue.class})
     @Test
     public void testDpToPx() {
         Application application = Mockito.spy(Application.class);
@@ -85,7 +85,7 @@ public class FormUtilsTest extends BaseTest {
         Assert.assertEquals(expected, px);
     }
 
-    @PrepareForTest ({TextUtils.class, TypedValue.class})
+    @PrepareForTest({TextUtils.class, TypedValue.class})
     @Test
     public void testGetValueFromSpOrDpOrPxWithAnSpInput() {
         Application application = Mockito.spy(Application.class);
@@ -105,7 +105,7 @@ public class FormUtilsTest extends BaseTest {
         Assert.assertEquals(expected, px);
     }
 
-    @PrepareForTest ({TextUtils.class, TypedValue.class, FormUtils.class})
+    @PrepareForTest({TextUtils.class, TypedValue.class, FormUtils.class})
     @Test
     public void testGetValueFromSpOrDpOrPxWithADpInput() {
         Application application = Mockito.spy(Application.class);
@@ -124,7 +124,7 @@ public class FormUtilsTest extends BaseTest {
         Assert.assertEquals(expected, px);
     }
 
-    @PrepareForTest ({TextUtils.class})
+    @PrepareForTest({TextUtils.class})
     @Test
     public void testGetValueFromSpOrDpOrPxWithAPxInput() {
         Application application = Mockito.spy(Application.class);
@@ -141,7 +141,7 @@ public class FormUtilsTest extends BaseTest {
         Assert.assertEquals(expected, px);
     }
 
-    @PrepareForTest ({TextUtils.class})
+    @PrepareForTest({TextUtils.class})
     @Test
     public void testGetValueFromSpOrDpOrPxWithAnyString() {
         Application application = Mockito.spy(Application.class);
@@ -158,7 +158,7 @@ public class FormUtilsTest extends BaseTest {
         Assert.assertEquals(expected, px);
     }
 
-    @PrepareForTest ({TextUtils.class})
+    @PrepareForTest({TextUtils.class})
     @Test
     public void testGetValueFromSpOrDpOrPxWithEmptyString() {
         Application application = Mockito.spy(Application.class);
@@ -173,7 +173,7 @@ public class FormUtilsTest extends BaseTest {
         Assert.assertEquals(expected, px);
     }
 
-    @PrepareForTest ({TextUtils.class})
+    @PrepareForTest({TextUtils.class})
     @Test
     public void testGetValueFromSpOrDPOrPxwithNull() {
         Application application = Mockito.spy(Application.class);

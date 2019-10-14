@@ -30,6 +30,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import timber.log.Timber;
+
 abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnFieldsInvalid {
     protected static final String TAG = JsonFormActivity.class.getSimpleName();
     protected static final String JSON_STATE = "jsonState";
@@ -79,7 +81,7 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
             localBroadcastManager = LocalBroadcastManager.getInstance(this);
 
         } catch (JSONException e) {
-            Log.e(TAG, "Initialization error. Json passed is invalid : " + e.getMessage(), e);
+            Timber.e(e, "Initialization error. Json passed is invalid");
         }
     }
 
@@ -121,16 +123,6 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
             onActivityResultListeners.get(requestCode).onActivityResult(requestCode, resultCode, data);
         } else {
             super.onActivityResult(requestCode, resultCode, data);
-            //Get simprint result
-//            if(resultCode == Activity.RESULT_OK && requestCode == JsonFormConstants.ACTIVITY_REQUEST_CODE.REQUEST_CODE_REGISTER){
-//                SimPrintsRegistration registration = (SimPrintsRegistration)data.getSerializableExtra(SimPrintsConstantHelper.INTENT_DATA);
-//                if(registration !=null){
-//                    Toast.makeText(this,"GUID:"+registration.getGuid(),Toast.LENGTH_SHORT).show();
-//                }else{
-//                    Toast.makeText(this,getString(R.string.simprints_guid),Toast.LENGTH_SHORT).show();
-//
-//                }
-//            }
         }
     }
 
