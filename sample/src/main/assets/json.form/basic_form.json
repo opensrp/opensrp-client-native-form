@@ -71,10 +71,10 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "finger_print",
-        "project_id":"tZqJnw0ajK04LMYdZzyw",
-        "user_id":"test_user",
-        "module_id":"mpower",
-        "finger_print_option":"register",
+        "project_id": "tZqJnw0ajK04LMYdZzyw",
+        "user_id": "test_user",
+        "module_id": "mpower",
+        "finger_print_option": "register",
         "uploadButtonText": "Take finger print",
         "image_file": "",
         "relevance": {
@@ -90,11 +90,11 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "finger_print",
-        "project_id":"tZqJnw0ajK04LMYdZzyw",
-        "user_id":"test_user",
-        "module_id":"mpower",
-        "gu_id":"id",
-        "finger_print_option":"verify",
+        "project_id": "tZqJnw0ajK04LMYdZzyw",
+        "user_id": "test_user",
+        "module_id": "mpower",
+        "gu_id": "id",
+        "finger_print_option": "verify",
         "uploadButtonText": "Verify finger print",
         "image_file": ""
       },
@@ -107,7 +107,7 @@
         "hint": "User First name",
         "edit_type": "name",
         "v_required": {
-          "value": "true",
+          "value": "false",
           "err": "Please enter the first name"
         },
         "v_regex": {
@@ -124,7 +124,7 @@
         "hint": "User Last name",
         "edit_type": "name",
         "v_required": {
-          "value": "true",
+          "value": "false",
           "err": "Please enter the last name"
         },
         "v_regex": {
@@ -165,7 +165,7 @@
         "hint": "User age",
         "edit_type": "number",
         "v_required": {
-          "value": "true",
+          "value": "false",
           "err": "Please enter the last name"
         },
         "v_regex": {
@@ -187,6 +187,74 @@
         "openmrs_entity": "concept",
         "openmrs_entity_id": "165260AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
         "type": "hidden"
+      },
+      {
+        "key": "user_first_name",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "User First name",
+        "edit_type": "name",
+        "v_required": {
+          "value": "false",
+          "err": "Please enter the first name"
+        },
+        "v_regex": {
+          "value": "[A-Za-z\\s\\.\\-]*",
+          "err": "Please enter a valid name"
+        }
+      },
+      {
+        "key": "user_first_name",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "User First name",
+        "edit_type": "name",
+        "v_required": {
+          "value": "false",
+          "err": "Please enter the first name"
+        },
+        "v_regex": {
+          "value": "[A-Za-z\\s\\.\\-]*",
+          "err": "Please enter a valid name"
+        }
+      },
+      {
+        "key": "user_first_name",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "User First name",
+        "edit_type": "name",
+        "v_required": {
+          "value": "false",
+          "err": "Please enter the first name"
+        },
+        "v_regex": {
+          "value": "[A-Za-z\\s\\.\\-]*",
+          "err": "Please enter a valid name"
+        }
+      },
+      {
+        "key": "user_first_name",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "date_picker",
+        "hint": "Test Date",
+        "edit_type": "name",
+        "v_required": {
+          "value": true,
+          "err": "Please enter the first name"
+        },
+        "v_regex": {
+          "value": "[A-Za-z\\s\\.\\-]*",
+          "err": "Please enter a valid name"
+        }
       }
     ]
   },
@@ -280,6 +348,122 @@
         "text": "User Info toaster",
         "toaster_info_text": "Procedure:\n- This shows the user the info.\n- Info toaster.",
         "toaster_type": "info"
+      },
+      {
+        "key": "user_select",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Do you want to select anything",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "label_info_text": "You can select every thing you want.",
+        "label_info_title": "User selection",
+        "options": [
+          {
+            "key": "yes",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "text": "No"
+          }
+        ]
+      },
+      {
+        "key": "user_select",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Do you want to select anything",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "label_info_text": "You can select every thing you want.",
+        "label_info_title": "User selection",
+        "options": [
+          {
+            "key": "yes",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "text": "No"
+          }
+        ]
+      },
+      {
+        "key": "user_select",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Do you want to select anything",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "label_info_text": "You can select every thing you want.",
+        "label_info_title": "User selection",
+        "options": [
+          {
+            "key": "yes",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "text": "No"
+          }
+        ]
+      },
+      {
+        "key": "user_select",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Do you want to select anything",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "label_info_text": "You can select every thing you want.",
+        "label_info_title": "User selection",
+        "options": [
+          {
+            "key": "yes",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Please enter the first name"
+        }
       }
     ]
   },
@@ -461,7 +645,7 @@
           }
         ],
         "v_required": {
-          "value": "false"
+          "value": "true"
         }
       }
     ]

@@ -78,6 +78,7 @@ public class NativeEditTextFactory implements FormWidgetFactory {
         addNumericValidator(jsonObject, editText);
         addNumericIntegerValidator(jsonObject, editText);
 
+        FormUtils.requestFocusForRequiredEmptyFields(jsonObject, editText);
         JSONArray canvasIds = new JSONArray();
         rootLayout.setId(ViewUtil.generateViewId());
         canvasIds.put(rootLayout.getId());

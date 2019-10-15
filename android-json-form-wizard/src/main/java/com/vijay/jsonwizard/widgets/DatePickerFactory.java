@@ -106,14 +106,9 @@ public class DatePickerFactory implements FormWidgetFactory {
                                     boolean popup, CommonListener listener) {
         List<View> views = new ArrayList<>(1);
         try {
-
-            RelativeLayout dateViewRelativeLayout = (RelativeLayout) LayoutInflater
-                    .from(context).inflate(getLayout(), null);
-
+            RelativeLayout dateViewRelativeLayout = (RelativeLayout) LayoutInflater.from(context).inflate(getLayout(), null);
             MaterialEditText editText = dateViewRelativeLayout.findViewById(R.id.edit_text);
-
             TextView duration = dateViewRelativeLayout.findViewById(R.id.duration);
-
             attachLayout(stepName, context, formFragment, jsonObject, editText, duration);
 
             JSONArray canvasIds = new JSONArray();
@@ -122,7 +117,9 @@ public class DatePickerFactory implements FormWidgetFactory {
             editText.setTag(R.id.canvas_ids, canvasIds.toString());
             editText.setTag(R.id.extraPopup, popup);
 
+            FormUtils.requestFocusForRequiredEmptyFields(jsonObject, editText);
             ((JsonApi) context).addFormDataView(editText);
+
             views.add(dateViewRelativeLayout);
             attachInfoIcon(stepName, jsonObject, dateViewRelativeLayout, canvasIds, listener);
 

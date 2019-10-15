@@ -44,6 +44,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import timber.log.Timber;
+
 /**
  * Created by vijay on 5/19/15.
  */
@@ -96,7 +98,6 @@ public class JsonFormInteractor {
                                         JSONObject parentJson, CommonListener listener, Boolean popup) {
         List<View> viewsFromJson = new ArrayList<>(5);
         try {
-
             if (parentJson.has(JsonFormConstants.SECTIONS) && parentJson
                     .get(JsonFormConstants.SECTIONS) instanceof JSONArray) {
                 JSONArray sections = parentJson.getJSONArray(JsonFormConstants.SECTIONS);
@@ -107,9 +108,8 @@ public class JsonFormInteractor {
                 JSONArray fields = parentJson.getJSONArray(JsonFormConstants.FIELDS);
                 fetchFields(viewsFromJson, stepName, formFragment, fields, listener, popup);
             }
-
         } catch (JSONException e) {
-            Log.e(TAG, "Json exception occurred : " + e.getMessage());
+            Timber.e(e, "JsonFormInteractor --> fetchFormElements");
         }
         return viewsFromJson;
     }
@@ -123,7 +123,6 @@ public class JsonFormInteractor {
 
             for (int i = 0; i < sections.length(); i++) {
                 JSONObject sectionJson = sections.getJSONObject(i);
-
                 if (sectionJson.has(JsonFormConstants.NAME)) {
                     fetchViews(viewsFromJson, stepName, formFragment, JsonFormConstants.SECTION_LABEL, sectionJson, listener,
                             popup);
@@ -133,17 +132,14 @@ public class JsonFormInteractor {
                     JSONArray fields = sectionJson.getJSONArray(JsonFormConstants.FIELDS);
                     fetchFields(viewsFromJson, stepName, formFragment, fields, listener, popup);
                 }
-
-
             }
         } catch (JSONException e) {
-            Log.e(TAG, "Json exception occurred : " + e.getMessage());
+            Timber.e(e, "JsonFormInteractor --> fetchSections");
         }
     }
 
     public void fetchFields(List<View> viewsFromJson, String stepName, JsonFormFragment formFragment,
                             JSONArray fields, CommonListener listener, Boolean popup) {
-
         try {
             if (fields == null || fields.length() == 0) {
                 return;
@@ -155,13 +151,12 @@ public class JsonFormInteractor {
                         listener, popup);
             }
         } catch (JSONException e) {
-            Log.e(TAG, "Json exception occurred : " + e.getMessage());
+            Timber.e(e, "JsonFormInteractor --> fetchFields");
         }
     }
 
     private void fetchViews(List<View> viewsFromJson, String stepName, JsonFormFragment formFragment,
                             String type, JSONObject jsonObject, CommonListener listener, Boolean popup) {
-
         try {
             List<View> views = map
                     .get(type)
@@ -170,10 +165,7 @@ public class JsonFormInteractor {
                 viewsFromJson.addAll(views);
             }
         } catch (Exception e) {
-            Log.e(TAG,
-                    "Exception occurred in making view : Exception is : "
-                            + e.getMessage());
-            e.printStackTrace();
+            Timber.e(e, "JsonFormInteractor --> fetchViews");
         }
 
     }

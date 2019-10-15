@@ -34,7 +34,6 @@ import java.util.List;
  * Created by vijay on 24-05-2015.
  */
 public class FingerPrintFactory implements FormWidgetFactory {
-
     public static int dp2px(Context context, float dp) {
         Resources r = context.getResources();
         float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
@@ -113,7 +112,7 @@ public class FingerPrintFactory implements FormWidgetFactory {
             uploadButton.setFocusable(!readOnly);
         }
 
-        setRefreshLOgic(context, relevance, constraints, calculation, uploadButton);
+        attachRefreshLogic(context, relevance, constraints, calculation, uploadButton);
 
         return views;
     }
@@ -147,7 +146,7 @@ public class FingerPrintFactory implements FormWidgetFactory {
         setViewTags(jsonObject, stepName, imageView, popup);
 
         imageView.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
-        setRefreshLOgic(context, relevance, constraints, calculation, imageView);
+        attachRefreshLogic(context, relevance, constraints, calculation, imageView);
 
         JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
         if (requiredObject != null) {
@@ -175,7 +174,7 @@ public class FingerPrintFactory implements FormWidgetFactory {
         views.add(imageView);
     }
 
-    private void setRefreshLOgic(Context context, String relevance, String constraints, String calculation, View view) {
+    private void attachRefreshLogic(Context context, String relevance, String constraints, String calculation, View view) {
         if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             view.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(view);

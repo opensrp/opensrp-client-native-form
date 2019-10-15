@@ -67,20 +67,7 @@ public class ExtendedRadioButtonWidgetFactory extends NativeRadioButtonFactory {
             radioGroup
                     .setTag(com.vijay.jsonwizard.R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
 
-            if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
-                radioGroup.setTag(com.vijay.jsonwizard.R.id.relevance, relevance);
-                ((JsonApi) context).addSkipLogicView(radioGroup);
-            }
-
-            if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
-                radioGroup.setTag(com.vijay.jsonwizard.R.id.constraints, constraints);
-                ((JsonApi) context).addConstrainedView(radioGroup);
-            }
-
-            if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
-                radioGroup.setTag(com.vijay.jsonwizard.R.id.calculation, calculation);
-                ((JsonApi) context).addCalculationLogicView(radioGroup);
-            }
+            attachRefreshLogic(context, relevance, constraints, calculation, radioGroup);
             addRadioButtons(stepName, context, jsonObject, commonListener, popup, radioGroup, readOnly, canvasIds);
             rootLayout.addView(radioGroup);
             views.add(rootLayout);
@@ -91,6 +78,8 @@ public class ExtendedRadioButtonWidgetFactory extends NativeRadioButtonFactory {
                 }
 
             }
+
+            FormUtils.requestFocusForRequiredEmptyFields(jsonObject, rootLayout);
         } else {
             return super.attachJson(stepName, context, formFragment, jsonObject, commonListener, popup);
         }

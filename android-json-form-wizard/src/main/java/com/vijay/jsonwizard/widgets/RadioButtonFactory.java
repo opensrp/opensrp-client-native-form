@@ -90,10 +90,7 @@ public class RadioButtonFactory implements FormWidgetFactory {
             radioButtons.add(radioButton);
 
             views.add(radioButton);
-            if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
-                radioButton.setTag(R.id.relevance, relevance);
-                ((JsonApi) context).addSkipLogicView(radioButton);
-            }
+            attachRefreshLogic(context, relevance, radioButton);
         }
 
         for (RadioButton radioButton : radioButtons) {
@@ -101,6 +98,13 @@ public class RadioButtonFactory implements FormWidgetFactory {
         }
 
         return views;
+    }
+
+    private void attachRefreshLogic(Context context, String relevance, RadioButton radioButton) {
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+            radioButton.setTag(R.id.relevance, relevance);
+            ((JsonApi) context).addSkipLogicView(radioButton);
+        }
     }
 
     @Override

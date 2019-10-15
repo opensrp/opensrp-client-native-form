@@ -46,6 +46,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import timber.log.Timber;
+
 import static com.vijay.jsonwizard.widgets.DatePickerFactory.DATE_FORMAT;
 
 
@@ -100,7 +102,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
                 }
 
             } catch (JSONException e) {
-                Log.e(TAG, e.getMessage(), e);
+                Timber.e(e, "NativeRadiButtonFactory --> showDateDialog");
             }
 
         }
@@ -156,7 +158,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
                                     assignHiddenDateValue(widget, calendarDate);
                                 }
                             } catch (JSONException e) {
-                                Log.i(TAG, Log.getStackTraceString(e));
+                                Timber.e(e, "NativeRadiButtonFactory --> setDate");
                             }
                         }
                     }
@@ -169,15 +171,15 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
     }
 
     private static void showDatePickerDialog(Activity context, DatePickerDialog datePickerDialog, RadioButton radioButton) {
-        FragmentTransaction ft = context.getFragmentManager().beginTransaction();
+        FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
         Fragment prev = context.getFragmentManager().findFragmentByTag(TAG);
         if (prev != null) {
-            ft.remove(prev);
+            fragmentTransaction.remove(prev);
         }
 
-        ft.addToBackStack(null);
+        fragmentTransaction.addToBackStack(null);
 
-        datePickerDialog.show(ft, TAG);
+        datePickerDialog.show(fragmentTransaction, TAG);
         Calendar calendar = getDate(radioButton);
         datePickerDialog.setDate(calendar.getTime());
     }
@@ -211,7 +213,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         try {
             widget.put(JsonFormConstants.VALUE, DATE_FORMAT.format(calendarDate.getTime()));
         } catch (Exception e) {
-            Log.i(TAG, Log.getStackTraceString(e));
+            Timber.e(e, "NativeRadiButtonFactory --> assignHiddenDateValue");
         }
     }
 
@@ -241,7 +243,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         try {
             item.put(JsonFormConstants.SECONDARY_VALUE, new JSONArray().put(valueObject));
         } catch (Exception e) {
-            Log.i(TAG, Log.getStackTraceString(e));
+            Timber.e(e, "NativeRadiButtonFactory --> addSecondaryValue");
         }
     }
 
@@ -352,6 +354,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             }
         }
         rootLayout.setTag(R.id.extraPopup, popup);
+        FormUtils.requestFocusForRequiredEmptyFields(jsonObject, rootLayout);
         views.add(rootLayout);
         return views;
     }
@@ -415,10 +418,10 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             radioGroupLayout.setTag(R.id.childKey, item.getString(JsonFormConstants.KEY));
             radioGroupLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
             radioGroupLayout.setTag(R.id.extraPopup, popup);
-            canvasIds.put(radioGroupLayout.getId());
             radioGroupLayout.setTag(R.id.native_radio_button_layout_view_id, radioGroupLayout.getId());
             radioGroupLayout.setTag(R.id.canvas_ids, canvasIds.toString());
 
+            canvasIds.put(radioGroupLayout.getId());
             //Showing optional info alert dialog on individual radio buttons
             ImageView imageView = radioGroupLayout.findViewById(R.id.info_icon);
             FormUtils.showInfoIcon(stepName, jsonObject, listener, FormUtils.getInfoDialogAttributes(item), imageView, canvasIds);
@@ -429,6 +432,19 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             ((JsonApi) context).addFormDataView(radioGroup);
         }
 
+        attachRefreshLogic(context, relevance, constraints, calculation, radioGroup);
+
+        FormUtils.setRadioExclusiveClick(radioGroup);
+        radioGroup.setLayoutParams(FormUtils.getLinearLayoutParams(FormUtils.MATCH_PARENT, FormUtils.WRAP_CONTENT, 0, 0, 0,
+                (int) context.getResources().getDimension(R.dimen.extra_bottom_margin)));
+        radioGroup.setTag(R.id.canvas_ids, canvasIds.toString());
+
+        linearLayout.addView(radioGroup);
+        return radioGroup;
+    }
+
+
+    protected void attachRefreshLogic(Context context, String relevance, String constraints, String calculation, RadioGroup radioGroup) {
         if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             radioGroup.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(radioGroup);
@@ -443,14 +459,6 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             radioGroup.setTag(R.id.calculation, calculation);
             ((JsonApi) context).addCalculationLogicView(radioGroup);
         }
-
-        FormUtils.setRadioExclusiveClick(radioGroup);
-        radioGroup.setLayoutParams(FormUtils.getLinearLayoutParams(FormUtils.MATCH_PARENT, FormUtils.WRAP_CONTENT, 0, 0, 0,
-                (int) context.getResources().getDimension(R.dimen.extra_bottom_margin)));
-        radioGroup.setTag(R.id.canvas_ids, canvasIds.toString());
-
-        linearLayout.addView(radioGroup);
-        return radioGroup;
     }
 
     private void addRequiredValidator(RadioGroup radioGroup, JSONObject jsonObject) throws JSONException {

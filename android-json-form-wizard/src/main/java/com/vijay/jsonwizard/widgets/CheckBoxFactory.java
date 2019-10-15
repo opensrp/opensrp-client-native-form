@@ -143,6 +143,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
         }
         attachRefreshLogic(jsonObject, context, rootLayout);
         rootLayout.setTag(R.id.canvas_ids, canvasIds.toString());
+        FormUtils.requestFocusForRequiredEmptyFields(jsonObject, rootLayout);
         views.add(rootLayout);
         return views;
     }

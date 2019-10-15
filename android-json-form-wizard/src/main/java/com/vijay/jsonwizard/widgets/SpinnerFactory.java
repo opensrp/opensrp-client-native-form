@@ -95,8 +95,6 @@ public class SpinnerFactory implements FormWidgetFactory {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
-        String labelInfoText = jsonObject.optString(JsonFormConstants.LABEL_INFO_TEXT, "");
-        String labelInfoTitle = jsonObject.optString(JsonFormConstants.LABEL_INFO_TITLE, "");
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
         String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
         String calculations = jsonObject.optString(JsonFormConstants.CALCULATION);
@@ -119,6 +117,7 @@ public class SpinnerFactory implements FormWidgetFactory {
 
         setViewTags(jsonObject, canvasIds, stepName, popup, openMrsEntityParent, openMrsEntity, openMrsEntityId, spinner);
 
+        FormUtils.requestFocusForRequiredEmptyFields(jsonObject, spinner);
         addSkipLogicTags(context, relevance, constraints, calculations, spinner);
 
         JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);

@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -34,6 +33,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import timber.log.Timber;
 
 public class NumberSelectorFactory implements FormWidgetFactory {
     public static final String TAG = NumberSelectorFactory.class.getCanonicalName();
@@ -137,7 +138,6 @@ public class NumberSelectorFactory implements FormWidgetFactory {
      */
     private static List<String> getNumbersForNumberSelectorDialog(JSONObject jsonObject, int startNumber) {
         int maxValue = jsonObject.optInt(JsonFormConstants.MAX_SELECTION_VALUE, 20);
-
         List<String> numbers = new ArrayList<>();
         for (int i = startNumber; i <= maxValue; i++) {
             numbers.add(String.valueOf(i));
@@ -150,7 +150,6 @@ public class NumberSelectorFactory implements FormWidgetFactory {
     }
 
     public static ValidationStatus validate(JsonFormFragmentView formFragmentView, ViewGroup childAt) {
-
         boolean isRequired = Boolean.valueOf((String) childAt.getTag(R.id.v_required));
         String errorMessage = (String) childAt.getTag(R.id.error);
         String selectedNumber = (String) childAt.getTag(R.id.selected_number_value);
@@ -158,7 +157,6 @@ public class NumberSelectorFactory implements FormWidgetFactory {
             return new ValidationStatus(false, errorMessage, formFragmentView, childAt);
         }
         return new ValidationStatus(true, null, formFragmentView, childAt);
-
     }
 
     public static NumberSelectorFactoryReceiver getNumberSelectorsReceiver() {
@@ -243,6 +241,21 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         rootLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
         canvasIds.put(rootLayout.getId());
         rootLayout.setTag(R.id.canvas_ids, canvasIds.toString());
+        attachRefreshLogic(context, relevance, constraints, calculations, rootLayout);
+        views.add(rootLayout);
+
+        FormUtils.requestFocusForRequiredEmptyFields(jsonObject, rootLayout);
+
+        createTextViews(context, jsonObject, rootLayout, listener, popup);
+        rootLayout.setTag(R.id.is_number_selector_linear_layout, true);
+        addRequiredTag(rootLayout, jsonObject);
+        ((JsonApi) context).addFormDataView(rootLayout);
+        rootLayoutMap.put(jsonObject.getString(JsonFormConstants.KEY), rootLayout);
+
+        return views;
+    }
+
+    private void attachRefreshLogic(Context context, String relevance, String constraints, String calculations, LinearLayout rootLayout) {
         if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             rootLayout.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(rootLayout);
@@ -257,14 +270,6 @@ public class NumberSelectorFactory implements FormWidgetFactory {
             rootLayout.setTag(R.id.calculation, calculations);
             ((JsonApi) context).addCalculationLogicView(rootLayout);
         }
-        views.add(rootLayout);
-        createTextViews(context, jsonObject, rootLayout, listener, popup);
-        rootLayout.setTag(R.id.is_number_selector_linear_layout, true);
-        addRequiredTag(rootLayout, jsonObject);
-        ((JsonApi) context).addFormDataView(rootLayout);
-        rootLayoutMap.put(jsonObject.getString(JsonFormConstants.KEY), rootLayout);
-
-        return views;
     }
 
     @SuppressLint("NewApi")
@@ -410,7 +415,6 @@ public class NumberSelectorFactory implements FormWidgetFactory {
 
 
     public class NumberSelectorFactoryReceiver extends BroadcastReceiver {
-
         @Override
         public void onReceive(Context contextInner, Intent intent) {
             try {
@@ -421,7 +425,6 @@ public class NumberSelectorFactory implements FormWidgetFactory {
 
                 if (jsonObject != null) {
                     jsonObject.put(JsonFormConstants.MAX_SELECTION_VALUE, maxValue);
-
                     if (jsonObject.has(JsonFormConstants.NUMBER_OF_SELECTORS_ORIGINAL)) {
                         jsonObject.put(JsonFormConstants.NUMBER_OF_SELECTORS, maxValue < jsonObject.getInt(JsonFormConstants
                                 .NUMBER_OF_SELECTORS_ORIGINAL) ? maxValue : jsonObject
@@ -439,7 +442,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
                 }
 
             } catch (JSONException e) {
-                Log.e(TAG, e.getMessage(), e);
+                Timber.e(e, "NumberSeletorFactory --> onReceive");
             }
         }
     }

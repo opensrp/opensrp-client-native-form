@@ -26,12 +26,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.customviews.CheckBox;
 import com.vijay.jsonwizard.customviews.FullScreenGenericPopupDialog;
 import com.vijay.jsonwizard.domain.ExpansionPanelItemModel;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
@@ -41,6 +43,7 @@ import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.rules.RuleConstant;
 import com.vijay.jsonwizard.views.CustomTextView;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jeasy.rules.api.Facts;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -1257,4 +1260,104 @@ public class FormUtils {
         return result;
     }
 
+    /**
+     * This method request focus for views of widgets that are required and have no values added yet.
+     *
+     * @param jsonObject {@link JSONObject}
+     * @param view       {@link View}
+     */
+    public static void requestFocusForRequiredEmptyFields(JSONObject jsonObject, View view) {
+        try {
+            JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
+
+            if (requiredObject != null) {
+                boolean requiredValue = requiredObject.getBoolean(JsonFormConstants.VALUE);
+                if (Boolean.TRUE.equals(requiredValue) && FormUtils.shouldRequestFocus(jsonObject)) {
+                    getViewFromCompoundWidgets(jsonObject, view);
+                }
+            }
+        } catch (JSONException e) {
+            Timber.e(e, "EditTextFactory --> requestFocusForRequiredEmptyFields");
+        }
+    }
+
+    private static void getViewFromCompoundWidgets(JSONObject field, View view) {
+        String type = field.optString(JsonFormConstants.TYPE, null);
+        if (view != null && type != null) {
+            if (JsonFormConstants.NATIVE_RADIO_BUTTON.equals(type) || JsonFormConstants.RADIO_BUTTON.equals(type) || JsonFormConstants.EXTENDED_RADIO_BUTTON.equals(type)) {
+                LinearLayout linearLayout = (LinearLayout) view;
+                RadioGroup radioGroup = (RadioGroup) linearLayout.getChildAt(1);
+                radioGroup.requestFocus();
+                radioGroup.requestFocusFromTouch();
+            } else if (JsonFormConstants.CHECK_BOX.equals(type)) {
+                LinearLayout linearLayout = (LinearLayout) view;
+                LinearLayout linearLayout1 = (LinearLayout) linearLayout.getChildAt(1);
+                CheckBox checkBox = (CheckBox) linearLayout1.getChildAt(0);
+                checkBox.requestFocus();
+                checkBox.requestFocusFromTouch();
+            } else {
+                view.requestFocus();
+                view.requestFocusFromTouch();
+            }
+        }
+    }
+
+    /**
+     * Checks if the field JSON object has a value
+     *
+     * @param formField {@link JSONObject}
+     * @return isValuePresent {@link Boolean}
+     */
+    private static boolean shouldRequestFocus(JSONObject formField) {
+        boolean isValuePresent = true;
+        try {
+            if (formField.has(JsonFormConstants.TYPE)) {
+                if (JsonFormConstants.EDIT_TEXT.equals(formField.getString(JsonFormConstants.KEY))
+                        || JsonFormConstants.EXTENDED_RADIO_BUTTON.equals(formField.getString(JsonFormConstants.KEY))
+                        || JsonFormConstants.NATIVE_RADIO_BUTTON.equals(formField.getString(JsonFormConstants.KEY))
+                        || JsonFormConstants.NUMBER_SELECTOR.equals(formField.getString(JsonFormConstants.KEY))) {
+                    isValuePresent = checkIfValueExists(formField);
+                } else if (JsonFormConstants.CHECK_BOX.equals(formField.getString(JsonFormConstants.KEY))) {
+                    if (formField.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
+                        JSONArray jsonArray = formField.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            if (checkIfValueExists(jsonObject)) {
+                                isValuePresent = false;
+                                break;
+                            }
+                        }
+                    }
+                } else if (JsonFormConstants.EXPANSION_PANEL.equals(formField.getString(JsonFormConstants.KEY))) {
+                    if (formField.has(JsonFormConstants.SECOND_VALUE)) {
+                        JSONArray values = formField.optJSONArray(JsonFormConstants.SECOND_VALUE);
+                        if (values != null && values.length() >= 0) {
+                            isValuePresent = false;
+                        }
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            Timber.e(e, "FormUtils --> shouldRequestFocus");
+        }
+        return isValuePresent;
+    }
+
+    /**
+     * Checks if the values exists and is not empty
+     *
+     * @param jsonObject {@link JSONObject}
+     * @return isValueFound {@link Boolean}
+     */
+    private static boolean checkIfValueExists(JSONObject jsonObject) {
+        boolean isValueFound = false;
+        try {
+            if (jsonObject.has(JsonFormConstants.VALUE) && StringUtils.isNotEmpty(jsonObject.getString(JsonFormConstants.KEY))) {
+                isValueFound = true;
+            }
+        } catch (JSONException e) {
+            Timber.e(e, "FormUtils --> checkIfValueExists");
+        }
+        return isValueFound;
+    }
 }

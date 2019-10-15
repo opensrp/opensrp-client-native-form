@@ -69,6 +69,7 @@ public class TimePickerFactory implements FormWidgetFactory {
             editText.setTag(R.id.canvas_ids, canvasIds.toString());
             editText.setTag(R.id.extraPopup, popup);
 
+            FormUtils.requestFocusForRequiredEmptyFields(jsonObject, editText);
             ((JsonApi) context).addFormDataView(editText);
             views.add(dateViewRelativeLayout);
 

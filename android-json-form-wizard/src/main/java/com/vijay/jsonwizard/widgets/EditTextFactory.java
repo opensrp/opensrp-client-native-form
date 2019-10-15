@@ -40,6 +40,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
 import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_CUMULATIVE_VALIDATION_ERR;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_RELATIVE_MAX_VALIDATION_ERR;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
@@ -152,6 +154,8 @@ public class EditTextFactory implements FormWidgetFactory {
         addNumericIntegerValidator(jsonObject, editText);
         addRelativeNumericIntegerValidator(jsonObject, formFragment, editText);
         addCumulativeTotalValidator(jsonObject, formFragment, editText, stepName, (JsonApi) context);
+
+        FormUtils.requestFocusForRequiredEmptyFields(jsonObject, editText);
         // edit type check
         String editType = jsonObject.optString(JsonFormConstants.EDIT_TYPE);
         if (!TextUtils.isEmpty(editType)) {

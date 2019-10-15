@@ -4,6 +4,8 @@
     android:id="@+id/native_form_text_and_image"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:baselineAligned="true"
     android:paddingBottom="@dimen/label_bottom_padding">
 

@@ -75,6 +75,10 @@ public class HiddenTextFactory implements FormWidgetFactory {
         hiddenText.setVisibility(View.GONE);
 
         hiddenText.addTextChangedListener(new GenericTextWatcher(stepName, formFragment, hiddenText));
+        attachRefreshLogic(context, hiddenText, relevance, constraints, calculation);
+    }
+
+    private void attachRefreshLogic(Context context, MaterialEditText hiddenText, String relevance, String constraints, String calculation) {
         if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             hiddenText.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(hiddenText);
