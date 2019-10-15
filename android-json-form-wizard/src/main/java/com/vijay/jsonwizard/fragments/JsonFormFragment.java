@@ -78,7 +78,6 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     private Button nextButton;
     private String stepName;
     private LinearLayout bottomNavigation;
-
     private BottomNavigationListener navigationListener;
 
     public static JsonFormFragment getFormFragment(String stepName) {
@@ -87,17 +86,6 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         bundle.putString(JsonFormConstants.JSON_FORM_KEY.STEPNAME, stepName);
         jsonFormFragment.setArguments(bundle);
         return jsonFormFragment;
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        mJsonApi = (JsonApi) activity;
-        super.onAttach(activity);
-        try {
-            onFieldsInvalid = (OnFieldsInvalid) getActivity();
-        } catch (ClassCastException ex) {
-            throw new ClassCastException("Error retrieving passed invalid fields");
-        }
     }
 
     @Override
@@ -130,14 +118,6 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         return rootView;
     }
 
-    protected void showScrollBars() {
-        boolean displayScrollBars = displayScrollBars();
-        if (displayScrollBars) {
-            mScrollView.setScrollbarFadingEnabled(false);
-            mScrollView.setScrollBarFadeDuration(0);
-        }
-    }
-
     private void setupToolbarBackButton() {
         if (getArguments() != null) {
             String stepName = getArguments().getString(STEPNAME);
@@ -147,6 +127,14 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
             }
         }
 
+    }
+
+    protected void showScrollBars() {
+        boolean displayScrollBars = displayScrollBars();
+        if (displayScrollBars) {
+            mScrollView.setScrollbarFadingEnabled(false);
+            mScrollView.setScrollBarFadeDuration(0);
+        }
     }
 
     protected void initializeBottomNavigation(JSONObject step, View rootView) {
@@ -201,16 +189,44 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        mJsonApi.clearFormDataViews();
-        presenter.addFormElements();
-        mJsonApi.invokeRefreshLogic(null, false, null, null);
+    public Context getContext() {
+        return getActivity();
     }
 
     @Override
-    protected JsonFormFragmentViewState createViewState() {
-        return new JsonFormFragmentViewState();
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        presenter.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+
+        presenter.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        setmJsonApi((JsonApi) activity);
+        super.onAttach(activity);
+        try {
+            onFieldsInvalid = (OnFieldsInvalid) getActivity();
+        } catch (ClassCastException ex) {
+            throw new ClassCastException("Error retrieving passed invalid fields");
+        }
+    }
+
+    public void setmJsonApi(JsonApi mJsonApi) {
+        this.mJsonApi = mJsonApi;
+    }
+
+    @Override
+    public void onDetach() {
+       setmJsonApi(null);
+        super.onDetach();
     }
 
     @Override
@@ -220,11 +236,6 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         menu.clear();
         inflater.inflate(R.menu.menu_toolbar, menu);
         presenter.setUpToolBar();
-    }
-
-    @Override
-    public void setActionBarTitle(String title) {
-        getSupportActionBar().setTitle(title);
     }
 
     @Override
@@ -248,6 +259,16 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         return super.onOptionsItemSelected(item);
     }
 
+    public boolean next() {
+        try {
+            return presenter.onNextClick(mMainView);
+        } catch (Exception e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        }
+
+        return false;
+    }
+
     public boolean save(boolean skipValidation) {
         try {
             mMainView.setTag(R.id.skip_validation, skipValidation);
@@ -260,40 +281,89 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         return false;
     }
 
-    public boolean next() {
-        try {
-            return presenter.onNextClick(mMainView);
-        } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+    public JsonApi getJsonApi() {
+        return mJsonApi;
+    }
+
+    @Override
+    protected JsonFormFragmentViewState createViewState() {
+        return new JsonFormFragmentViewState();
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mJsonApi.clearFormDataViews();
+        presenter.addFormElements();
+        mJsonApi.invokeRefreshLogic(null, false, null, null);
+    }
+
+    @Override
+    protected JsonFormFragmentPresenter createPresenter() {
+        return new JsonFormFragmentPresenter(this);
+    }
+
+    @Override
+    public void setActionBarTitle(String title) {
+        getSupportActionBar().setTitle(title);
+    }
+
+    @Override
+    public void showToast(String message) {
+        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showSnackBar(String message) {
+        Utils.showSnackBar(getMainView(), message);
+    }
+
+    @Override
+    public CommonListener getCommonListener() {
+        return this;
+    }
+
+    @Override
+    public void addFormElements(List<View> views) {
+        for (View view : views) {
+            mMainView.addView(view);
         }
-
-        return false;
+        mJsonApi.refreshHiddenViews(false);
+        mJsonApi.resetFocus();
     }
 
     @Override
-    public void onClick(View v) {
-        presenter.onClick(v);
+    public ActionBar getSupportActionBar() {
+        return ((JsonFormActivity) getActivity()).getSupportActionBar();
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        presenter.onActivityResult(requestCode, resultCode, data);
-        super.onActivityResult(requestCode, resultCode, data);
+    public Toolbar getToolbar() {
+        return ((JsonFormActivity) getActivity()).getToolbar();
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-
-        presenter.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-
+    public void setToolbarTitleColor(int colorId) {
+        getToolbar().setTitleTextColor(getContext().getResources().getColor(colorId));
     }
 
     @Override
-    public void onDetach() {
-        mJsonApi = null;
-        super.onDetach();
+    public void updateVisibilityOfNextAndSave(boolean next, boolean save) {
+        mMenu.findItem(R.id.action_next).setVisible(next);
+        mMenu.findItem(R.id.action_save).setVisible(save);
+    }
+
+    @Override
+    public void hideKeyBoard() {
+        super.hideSoftKeyboard();
+    }
+
+    @Override
+    public void transactThis(JsonFormFragment next) {
+        getActivity().getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left,
+                        R.anim.exit_to_right).replace(R.id.container, next).addToBackStack(next.getClass().getSimpleName())
+                .commitAllowingStateLoss(); // use https://stackoverflow.com/a/10261449/9782187
     }
 
     @Override
@@ -359,63 +429,14 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     }
 
     @Override
-    protected JsonFormFragmentPresenter createPresenter() {
-        return new JsonFormFragmentPresenter(this);
+    public void finishWithResult(Intent returnIntent) {
+        getActivity().setResult(Activity.RESULT_OK, returnIntent);
+        getActivity().finish();
     }
 
     @Override
-    public Context getContext() {
-        return getActivity();
-    }
-
-    @Override
-    public void showToast(String message) {
-        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void showSnackBar(String message) {
-        Utils.showSnackBar(getMainView(), message);
-    }
-
-    @Override
-    public CommonListener getCommonListener() {
-        return this;
-    }
-
-    @Override
-    public void addFormElements(List<View> views) {
-        for (View view : views) {
-            mMainView.addView(view);
-        }
-        mJsonApi.refreshHiddenViews(false);
-        mJsonApi.resetFocus();
-    }
-
-    @Override
-    public ActionBar getSupportActionBar() {
-        return ((JsonFormActivity) getActivity()).getSupportActionBar();
-    }
-
-    @Override
-    public Toolbar getToolbar() {
-        return ((JsonFormActivity) getActivity()).getToolbar();
-    }
-
-    @Override
-    public void setToolbarTitleColor(int colorId) {
-        getToolbar().setTitleTextColor(getContext().getResources().getColor(colorId));
-    }
-
-    @Override
-    public void updateVisibilityOfNextAndSave(boolean next, boolean save) {
-        mMenu.findItem(R.id.action_next).setVisible(next);
-        mMenu.findItem(R.id.action_save).setVisible(save);
-    }
-
-    @Override
-    public void hideKeyBoard() {
-        super.hideSoftKeyboard();
+    public void setUpBackButton() {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -438,15 +459,6 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
                     uncheckCheckbox(view, parentKey, childKey);
                 }
             }
-        }
-    }
-
-    private void uncheckCheckbox(View view, String parentKey, String childKey) {
-        CheckBox checkBox = view.findViewWithTag(JsonFormConstants.CHECK_BOX);
-        String parentKeyAtIndex = (String) checkBox.getTag(R.id.key);
-        String childKeyAtIndex = (String) checkBox.getTag(R.id.childKey);
-        if (checkBox.isChecked() && parentKeyAtIndex.equals(parentKey) && !childKeyAtIndex.equals(childKey)) {
-            checkBox.setChecked(false);
         }
     }
 
@@ -544,31 +556,30 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         }
     }
 
-    @Override
-    public void finishWithResult(Intent returnIntent) {
-        getActivity().setResult(Activity.RESULT_OK, returnIntent);
-        getActivity().finish();
+    private boolean isCheckbox(View view) {
+        return view instanceof LinearLayout && view.getTag(R.id.type).equals(JsonFormConstants.CHECK_BOX + "_parent");
+    }
+
+    private void uncheckCheckbox(View view, String parentKey, String childKey) {
+        CheckBox checkBox = view.findViewWithTag(JsonFormConstants.CHECK_BOX);
+        String parentKeyAtIndex = (String) checkBox.getTag(R.id.key);
+        String childKeyAtIndex = (String) checkBox.getTag(R.id.childKey);
+        if (checkBox.isChecked() && parentKeyAtIndex.equals(parentKey) && !childKeyAtIndex.equals(childKey)) {
+            checkBox.setChecked(false);
+        }
+    }
+
+    public LinearLayout getMainView() {
+        return mMainView;
     }
 
     @Override
-    public void setUpBackButton() {
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-
-    @Override
-    public void transactThis(JsonFormFragment next) {
-        getActivity().getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left,
-                        R.anim.exit_to_right).replace(R.id.container, next).addToBackStack(next.getClass().getSimpleName())
-                .commitAllowingStateLoss(); // use https://stackoverflow.com/a/10261449/9782187
+    public void onClick(View v) {
+        presenter.onClick(v);
     }
 
     public Menu getMenu() {
         return mMenu;
-    }
-
-    public JsonApi getJsonApi() {
-        return mJsonApi;
     }
 
     @Override
@@ -586,16 +597,8 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         Log.d("JsonFormFragment", "onNothingSelected called");
     }
 
-    public LinearLayout getMainView() {
-        return mMainView;
-    }
-
     public Map<String, List<View>> getLookUpMap() {
         return lookUpMap;
-    }
-
-    private boolean isCheckbox(View view) {
-        return view instanceof LinearLayout && view.getTag(R.id.type).equals(JsonFormConstants.CHECK_BOX + "_parent");
     }
 
     public JsonFormFragmentPresenter getPresenter() {
