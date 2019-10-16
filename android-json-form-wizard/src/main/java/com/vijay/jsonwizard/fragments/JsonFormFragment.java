@@ -41,6 +41,7 @@ import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 import com.vijay.jsonwizard.viewstates.JsonFormFragmentViewState;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -105,7 +106,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         showScrollBars();
 
         JSONObject step = getStep(stepName);
-        if (step.optBoolean(JsonFormConstants..BOTTOM_NAVIGATION)) {
+        if (step.optBoolean(JsonFormConstants.BOTTOM_NAVIGATION)) {
             initializeBottomNavigation(step, rootView);
         }
         return rootView;
@@ -215,11 +216,15 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     @Override
     public void onResume() {
         super.onResume();
-        JSONObject formStep = getStep(getArguments().getString(JsonFormConstants.STEPNAME));
-        String next = formStep.optString(JsonFormConstants.NEXT, "");
-        checkIfStepIsBlank(formStep);
-        if (shouldSkipStep()) {
-            next();
+        if (skipBlankSteps()) {
+            JSONObject formStep = getStep(getArguments().getString(JsonFormConstants.STEPNAME));
+            String next = formStep.optString(JsonFormConstants.NEXT, "");
+            if (StringUtils.isNotEmpty(next)) {
+                checkIfStepIsBlank(formStep);
+                if (shouldSkipStep()) {
+                    next();
+                }
+            }
         }
     }
 
@@ -533,6 +538,11 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     @Override
     public boolean displayScrollBars() {
         return getJsonApi().displayScrollBars();
+    }
+
+    @Override
+    public boolean skipBlankSteps() {
+        return getJsonApi().skipBlankSteps();
     }
 
     @Override

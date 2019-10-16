@@ -206,6 +206,7 @@ public class JsonFormConstants {
     public static final String DATE_TODAY_HIDDEN = "date_today_hidden";
     public static final String FALSE = "false";
     public static final String DISPLAY_SCROLL_BARS = "display_scroll_bars";
+    public static final String SKIP_BLANK_STEPS = "skip_blank_steps";
 
     public static class JsonFormConstantsUtils {
         public static final String CONTACT_CONTAINER = "container";
