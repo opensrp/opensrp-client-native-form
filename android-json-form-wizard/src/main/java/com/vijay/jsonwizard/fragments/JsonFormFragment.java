@@ -54,17 +54,6 @@ import java.util.Map;
 
 import timber.log.Timber;
 
-import static com.vijay.jsonwizard.constants.JsonFormConstants.BOTTOM_NAVIGATION;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.BOTTOM_NAVIGATION_ORIENTATION;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.NEXT;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.NEXT_LABEL;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.NEXT_TYPE;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.PREVIOUS;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.PREVIOUS_LABEL;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.STEPNAME;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.SUBMIT;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.SUBMIT_LABEL;
-
 /**
  * Created by vijay on 5/7/15.
  */
@@ -82,7 +71,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     private String stepName;
     private LinearLayout bottomNavigation;
     private BottomNavigationListener navigationListener;
-    private boolean shouldSkipStep = false;
+    private boolean shouldSkipStep = true;
 
     public static JsonFormFragment getFormFragment(String stepName) {
         JsonFormFragment jsonFormFragment = new JsonFormFragment();
@@ -109,59 +98,22 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         bottomNavigation = rootView.findViewById(R.id.bottom_navigation_layout);
         navigationListener = new BottomNavigationListener();
         if (getArguments() != null) {
-            stepName = getArguments().getString(STEPNAME);
+            stepName = getArguments().getString(JsonFormConstants.STEPNAME);
         }
 
         setupToolbarBackButton();
         showScrollBars();
 
         JSONObject step = getStep(stepName);
-        if (step.optBoolean(BOTTOM_NAVIGATION)) {
+        if (step.optBoolean(JsonFormConstants..BOTTOM_NAVIGATION)) {
             initializeBottomNavigation(step, rootView);
         }
         return rootView;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        checkIfStepIsBlank();
-        if (isShouldSkipStep()) {
-            next();
-        }
-    }
-
-    private void checkIfStepIsBlank() {
-        try {
-            JSONObject formStep = getStep(stepName);
-            if (formStep.has(JsonFormConstants.FIELDS)) {
-                JSONArray fields = formStep.getJSONArray(JsonFormConstants.FIELDS);
-                for (int i = 0; i < fields.length(); i++) {
-                    JSONObject field = fields.getJSONObject(i);
-                    if (field.has(JsonFormConstants.TYPE) && !JsonFormConstants.HIDDEN.equals(field.getString(JsonFormConstants.TYPE))) {
-                        boolean isVisible = field.optBoolean(JsonFormConstants.IS_VISIBLE, true);
-                        if (isVisible) {
-                            setShouldSkipStep(true);
-                        }
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            Timber.e(e, "%s --> checkIfStepIsBlank", this.getClass().getCanonicalName());
-        }
-    }
-
-    public boolean isShouldSkipStep() {
-        return shouldSkipStep;
-    }
-
-    public void setShouldSkipStep(boolean shouldSkipStep) {
-        this.shouldSkipStep = shouldSkipStep;
-    }
-
     private void setupToolbarBackButton() {
         if (getArguments() != null) {
-            String stepName = getArguments().getString(STEPNAME);
+            String stepName = getArguments().getString(JsonFormConstants.STEPNAME);
             if (getStep(stepName).optBoolean(JsonFormConstants.DISPLAY_BACK_BUTTON)) {
                 getSupportActionBar().setHomeAsUpIndicator(getHomeUpIndicator());
                 setUpBackButton();
@@ -179,35 +131,35 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     }
 
     protected void initializeBottomNavigation(JSONObject step, View rootView) {
-        if (step.has(PREVIOUS)) {
+        if (step.has(JsonFormConstants.PREVIOUS)) {
             previousButton.setVisibility(View.VISIBLE);
-            if (step.has(PREVIOUS_LABEL)) {
-                previousButton.setText(step.optString(PREVIOUS_LABEL));
+            if (step.has(JsonFormConstants.PREVIOUS_LABEL)) {
+                previousButton.setText(step.optString(JsonFormConstants.PREVIOUS_LABEL));
             }
         }
 
-        if (step.has(NEXT)) {
+        if (step.has(JsonFormConstants.NEXT)) {
             nextButton.setVisibility(View.VISIBLE);
-            if (step.has(NEXT_LABEL)) {
-                nextButton.setText(step.optString(NEXT_LABEL));
+            if (step.has(JsonFormConstants.NEXT_LABEL)) {
+                nextButton.setText(step.optString(JsonFormConstants.NEXT_LABEL));
             }
-        } else if (step.optString(NEXT_TYPE).equalsIgnoreCase(SUBMIT)) {
+        } else if (step.optString(JsonFormConstants.NEXT_TYPE).equalsIgnoreCase(JsonFormConstants.SUBMIT)) {
             nextButton.setTag(R.id.submit, true);
             nextButton.setVisibility(View.VISIBLE);
-            if (step.has(SUBMIT_LABEL)) {
-                nextButton.setText(step.optString(SUBMIT_LABEL));
+            if (step.has(JsonFormConstants.SUBMIT_LABEL)) {
+                nextButton.setText(step.optString(JsonFormConstants.SUBMIT_LABEL));
             } else {
                 nextButton.setText(R.string.submit);
             }
-        } else if (!step.has(NEXT)) {
+        } else if (!step.has(JsonFormConstants.NEXT)) {
             nextButton.setTag(R.id.submit, true);
             nextButton.setVisibility(View.VISIBLE);
             nextButton.setText(R.string.save);
         }
 
-        if (step.has(BOTTOM_NAVIGATION_ORIENTATION)) {
+        if (step.has(JsonFormConstants.BOTTOM_NAVIGATION_ORIENTATION)) {
             // layout orientation
-            int orientation = "vertical".equals(step.optString(BOTTOM_NAVIGATION_ORIENTATION)) ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL;
+            int orientation = "vertical".equals(step.optString(JsonFormConstants.BOTTOM_NAVIGATION_ORIENTATION)) ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL;
             bottomNavigation.setOrientation(orientation);
             bottomNavigation.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             bottomNavigation.removeView(previousButton);
@@ -251,7 +203,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     @Override
     public void onAttach(Activity activity) {
-        mJsonApi = (JsonApi) activity;
+        setmJsonApi((JsonApi) activity);
         super.onAttach(activity);
         try {
             onFieldsInvalid = (OnFieldsInvalid) getActivity();
@@ -261,8 +213,56 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        JSONObject formStep = getStep(getArguments().getString(JsonFormConstants.STEPNAME));
+        String next = formStep.optString(JsonFormConstants.NEXT, "");
+        checkIfStepIsBlank(formStep);
+        if (shouldSkipStep()) {
+            next();
+        }
+    }
+
+    private void checkIfStepIsBlank(JSONObject formStep) {
+        try {
+            if (formStep.has(JsonFormConstants.FIELDS)) {
+                JSONArray fields = formStep.getJSONArray(JsonFormConstants.FIELDS);
+                for (int i = 0; i < fields.length(); i++) {
+                    JSONObject field = fields.getJSONObject(i);
+                    if (field.has(JsonFormConstants.TYPE) && !JsonFormConstants.HIDDEN.equals(field.getString(JsonFormConstants.TYPE))) {
+                        boolean isVisible = field.optBoolean(JsonFormConstants.IS_VISIBLE, true);
+                        if (isVisible) {
+                            setShouldSkipStep(false);
+                        }
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            Timber.e(e, "%s --> checkIfStepIsBlank", this.getClass().getCanonicalName());
+        }
+    }
+
+    public boolean shouldSkipStep() {
+        return shouldSkipStep;
+    }
+
+    public void setShouldSkipStep(boolean shouldSkipStep) {
+        this.shouldSkipStep = shouldSkipStep;
+    }
+
+    public boolean next() {
+        try {
+            return presenter.onNextClick(mMainView);
+        } catch (Exception e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        }
+
+        return false;
+    }
+
+    @Override
     public void onDetach() {
-        mJsonApi = null;
+        setmJsonApi(null);
         super.onDetach();
     }
 
@@ -296,16 +296,6 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         return super.onOptionsItemSelected(item);
     }
 
-    public boolean next() {
-        try {
-            return presenter.onNextClick(mMainView);
-        } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
-        }
-
-        return false;
-    }
-
     public boolean save(boolean skipValidation) {
         try {
             mMainView.setTag(R.id.skip_validation, skipValidation);
@@ -316,6 +306,10 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         }
 
         return false;
+    }
+
+    public void setmJsonApi(JsonApi mJsonApi) {
+        this.mJsonApi = mJsonApi;
     }
 
     public JsonApi getJsonApi() {

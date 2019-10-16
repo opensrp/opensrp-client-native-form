@@ -257,6 +257,11 @@ public class JsonWizardFormFragment extends JsonFormFragment {
         return null;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
     public TextView getStepName() {
         return stepName;
     }

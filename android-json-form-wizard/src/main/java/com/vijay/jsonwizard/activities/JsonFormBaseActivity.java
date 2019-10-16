@@ -6,6 +6,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.vijay.jsonwizard.R;
@@ -20,8 +21,10 @@ import com.vijay.jsonwizard.rules.RulesEngineFactory;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.PropertyManager;
 import com.vijay.jsonwizard.utils.ValidationStatus;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,42 +49,11 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
     protected String confirmCloseMessage;
     protected Form form;
     protected Map<String, String> globalValues = null;
-
     protected RulesEngineFactory rulesEngineFactory = null;
     protected LocalBroadcastManager localBroadcastManager;
+    protected boolean isFormFragmentInitialized;
     private Toolbar mToolbar;
     private Map<String, ValidationStatus> invalidFields = new HashMap<>();
-
-    protected boolean isFormFragmentInitialized;
-
-    public void init(String json) {
-        try {
-            mJSONObject = new JSONObject(json);
-            if (!mJSONObject.has("encounter_type")) {
-                mJSONObject = new JSONObject();
-                throw new JSONException("Form encounter_type not set");
-            }
-
-            //populate them global values
-            if (mJSONObject.has(JsonFormConstants.JSON_FORM_KEY.GLOBAL)) {
-                globalValues = new Gson()
-                        .fromJson(mJSONObject.getJSONObject(JsonFormConstants.JSON_FORM_KEY.GLOBAL).toString(),
-                                new TypeToken<HashMap<String, String>>() {
-                                }.getType());
-            } else {
-                globalValues = new HashMap<>();
-            }
-
-            rulesEngineFactory = new RulesEngineFactory(this, globalValues);
-
-            confirmCloseTitle = getString(R.string.confirm_form_close);
-            confirmCloseMessage = getString(R.string.confirm_form_close_explanation);
-            localBroadcastManager = LocalBroadcastManager.getInstance(this);
-
-        } catch (JSONException e) {
-            Log.e(TAG, "Initialization error. Json passed is invalid : " + e.getMessage(), e);
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,33 +81,39 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
         }
     }
 
+    public void init(String json) {
+        try {
+            setmJSONObject(new JSONObject(json));
+            if (!mJSONObject.has("encounter_type")) {
+                mJSONObject = new JSONObject();
+                throw new JSONException("Form encounter_type not set");
+            }
+
+            //populate them global values
+            if (mJSONObject.has(JsonFormConstants.JSON_FORM_KEY.GLOBAL)) {
+                globalValues = new Gson()
+                        .fromJson(mJSONObject.getJSONObject(JsonFormConstants.JSON_FORM_KEY.GLOBAL).toString(),
+                                new TypeToken<HashMap<String, String>>() {
+                                }.getType());
+            } else {
+                globalValues = new HashMap<>();
+            }
+
+            rulesEngineFactory = new RulesEngineFactory(this, globalValues);
+
+            confirmCloseTitle = getString(R.string.confirm_form_close);
+            confirmCloseMessage = getString(R.string.confirm_form_close_explanation);
+            localBroadcastManager = LocalBroadcastManager.getInstance(this);
+
+        } catch (JSONException e) {
+            Log.e(TAG, "Initialization error. Json passed is invalid : " + e.getMessage(), e);
+        }
+    }
+
     public synchronized void initializeFormFragment() {
         isFormFragmentInitialized = true;
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.container, JsonFormFragment.getFormFragment(JsonFormConstants.FIRST_STEP_NAME)).commitAllowingStateLoss();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (onActivityResultListeners.containsKey(requestCode)) {
-            onActivityResultListeners.get(requestCode).onActivityResult(requestCode, resultCode, data);
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        if (onActivityRequestPermissionResultListeners.containsKey(requestCode)) {
-            onActivityRequestPermissionResultListeners.get(requestCode)
-                    .onRequestPermissionResult(requestCode, permissions, grantResults);
-        } else {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
-
-    public Toolbar getToolbar() {
-        return mToolbar;
     }
 
     public void onFormStart() {
@@ -157,8 +135,31 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
         }
     }
 
-    public Map<String, ValidationStatus> getInvalidFields() {
-        return invalidFields;
+    public void setmJSONObject(JSONObject mJSONObject) {
+        this.mJSONObject = mJSONObject;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (onActivityResultListeners.containsKey(requestCode)) {
+            onActivityResultListeners.get(requestCode).onActivityResult(requestCode, resultCode, data);
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (onActivityRequestPermissionResultListeners.containsKey(requestCode)) {
+            onActivityRequestPermissionResultListeners.get(requestCode)
+                    .onRequestPermissionResult(requestCode, permissions, grantResults);
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    public Toolbar getToolbar() {
+        return mToolbar;
     }
 
     @Override
@@ -169,6 +170,10 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
     @Override
     public Map<String, ValidationStatus> getPassedInvalidFields() {
         return getInvalidFields();
+    }
+
+    public Map<String, ValidationStatus> getInvalidFields() {
+        return invalidFields;
     }
 
     public RulesEngineFactory getRulesEngineFactory() {
