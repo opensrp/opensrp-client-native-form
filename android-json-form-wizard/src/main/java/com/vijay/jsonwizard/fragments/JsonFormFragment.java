@@ -11,7 +11,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.AppCompatRadioButton;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -41,6 +40,8 @@ import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 import com.vijay.jsonwizard.viewstates.JsonFormFragmentViewState;
 
+import org.apache.commons.lang3.StringUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.simprint.SimPrintsLibrary;
@@ -48,8 +49,11 @@ import org.smartregister.simprint.SimPrintsRegisterActivity;
 import org.smartregister.simprint.SimPrintsVerifyActivity;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+
+import timber.log.Timber;
 
 import static com.vijay.jsonwizard.constants.JsonFormConstants.BOTTOM_NAVIGATION;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.BOTTOM_NAVIGATION_ORIENTATION;
@@ -67,7 +71,7 @@ import static com.vijay.jsonwizard.constants.JsonFormConstants.SUBMIT_LABEL;
  */
 public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, JsonFormFragmentViewState>
         implements CommonListener, JsonFormFragmentView<JsonFormFragmentViewState> {
-    private static final String TAG = "JsonFormFragment";
+    protected final HashSet<String> stepKeyValues = new HashSet<String>();
     public OnFieldsInvalid onFieldsInvalid;
     protected LinearLayout mMainView;
     protected ScrollView mScrollView;
@@ -171,6 +175,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
             bottomNavigation.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             bottomNavigation.removeView(previousButton);
             bottomNavigation.addView(previousButton);
+
             // nav btn params
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             int layoutMargin = Utils.pixelToDp((int) getContext().getResources().getDimension(R.dimen.bottom_navigation_margin), getContext());
@@ -201,11 +206,8 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-
         presenter.onRequestPermissionsResult(requestCode, permissions, grantResults);
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-
     }
 
     @Override
@@ -225,7 +227,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     @Override
     public void onDetach() {
-       setmJsonApi(null);
+        setmJsonApi(null);
         super.onDetach();
     }
 
@@ -248,11 +250,10 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
             return next();
         } else if (item.getItemId() == R.id.action_save) {
             try {
-                boolean skipValidation = ((JsonFormActivity) mMainView.getContext()).getIntent()
-                        .getBooleanExtra(JsonFormConstants.SKIP_VALIDATION, false);
+                boolean skipValidation = ((JsonFormActivity) mMainView.getContext()).getIntent().getBooleanExtra(JsonFormConstants.SKIP_VALIDATION, false);
                 return save(skipValidation);
             } catch (Exception e) {
-                Log.e(TAG, e.getMessage());
+                Timber.e(e, "JsonFormFragment --> onOptionsItemSelected");
                 return save(false);
             }
         }
@@ -263,7 +264,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         try {
             return presenter.onNextClick(mMainView);
         } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Timber.e(e, "JsonFormFragment --> next");
         }
 
         return false;
@@ -275,7 +276,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
             presenter.onSaveClick(mMainView);
             return true;
         } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Timber.e(e, "JsonFormFragment --> save");
         }
 
         return false;
@@ -358,12 +359,17 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         super.hideSoftKeyboard();
     }
 
+    /**
+     * use https://stackoverflow.com/a/10261449/9782187
+     *
+     * @param next {@link JsonFormFragment}
+     */
     @Override
     public void transactThis(JsonFormFragment next) {
         getActivity().getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left,
                         R.anim.exit_to_right).replace(R.id.container, next).addToBackStack(next.getClass().getSimpleName())
-                .commitAllowingStateLoss(); // use https://stackoverflow.com/a/10261449/9782187
+                .commitAllowingStateLoss();
     }
 
     @Override
@@ -389,32 +395,26 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         try {
             mJsonApi.writeValue(stepName, key, selectedValue, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
         } catch (JSONException e) {
-            // TODO - handle
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e, "JsonFormFragment --> writeValue");
         }
     }
 
     @Override
     public void writeValue(String stepName, String prentKey, String childObjectKey, String childKey, String value,
                            String openMrsEntityParent, String openMrsEntity, String openMrsEntityId, boolean popup) {
-        // Log.d(CONST_REAL_TIME_VALIDATION, CONST_FRAGMENT_WRITEVALUE_CALLED);
         try {
-            mJsonApi.writeValue(stepName, prentKey, childObjectKey, childKey, value, openMrsEntityParent, openMrsEntity,
-                    openMrsEntityId, popup);
+            mJsonApi.writeValue(stepName, prentKey, childObjectKey, childKey, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
         } catch (JSONException e) {
-            // TODO - handle
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e, "JsonFormFragment --> writeValue");
         }
     }
 
     @Override
     public void writeMetaDataValue(String metaDataKey, Map<String, String> values) {
-        // Log.d(CONST_REAL_TIME_VALIDATION, CONST_FRAGMENT_WRITEVALUE_CALLED);
         try {
             mJsonApi.writeMetaDataValue(metaDataKey, values);
         } catch (JSONException e) {
-            // TODO - handle
-            e.printStackTrace();
+            Timber.e(e, "JsonFormFragment --> writeMetaDataValue");
         }
     }
 
@@ -536,9 +536,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         if (!TextUtils.isEmpty(projectId) && !TextUtils.isEmpty(userId) && !TextUtils.isEmpty(moduleId)) {
             SimPrintsLibrary.init(getActivity(), projectId, userId);
             SimPrintsRegisterActivity.startSimprintsRegisterActivity(getActivity(), moduleId, JsonFormConstants.ACTIVITY_REQUEST_CODE.REQUEST_CODE_REGISTER);
-
         } else {
-            // SimprintsLibrary.init(getActivity(),"tZqJnw0ajK04LMYdZzyw","test_user");
             Toast.makeText(getActivity(), getString(R.string.simprints_init_fail), Toast.LENGTH_LONG).show();
         }
     }
@@ -548,10 +546,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         if (!TextUtils.isEmpty(projectId) && !TextUtils.isEmpty(userId) && !TextUtils.isEmpty(moduleId) && !TextUtils.isEmpty(guId)) {
             SimPrintsLibrary.init(getActivity(), projectId, userId);
             SimPrintsVerifyActivity.startSimprintsVerifyActivity(getActivity(), moduleId, guId, JsonFormConstants.ACTIVITY_REQUEST_CODE.REQUEST_CODE_VERIFY);
-
         } else {
-            // SimprintsLibrary.init(getActivity(),"tZqJnw0ajK04LMYdZzyw","test_user");
-
             Toast.makeText(getActivity(), getString(R.string.simprints_init_fail), Toast.LENGTH_LONG).show();
         }
     }
@@ -594,7 +589,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-        Log.d("JsonFormFragment", "onNothingSelected called");
+        Timber.d("onNothingSelected called");
     }
 
     public Map<String, List<View>> getLookUpMap() {

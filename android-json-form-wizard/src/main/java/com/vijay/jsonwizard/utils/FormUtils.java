@@ -11,6 +11,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.Html;
@@ -1290,9 +1291,9 @@ public class FormUtils {
                 radioGroup.requestFocus();
                 radioGroup.requestFocusFromTouch();
             } else if (JsonFormConstants.CHECK_BOX.equals(type)) {
-                LinearLayout linearLayout = (LinearLayout) view;
-                LinearLayout linearLayout1 = (LinearLayout) linearLayout.getChildAt(1);
-                CheckBox checkBox = (CheckBox) linearLayout1.getChildAt(0);
+                LinearLayout mainLayout = (LinearLayout) view;
+                LinearLayout checkBoxParent = (LinearLayout) mainLayout.getChildAt(1);
+                AppCompatCheckBox checkBox = (AppCompatCheckBox) checkBoxParent.getChildAt(0);
                 checkBox.requestFocus();
                 checkBox.requestFocusFromTouch();
             } else {

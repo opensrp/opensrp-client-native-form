@@ -584,6 +584,39 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         this.confirmCloseTitle = confirmCloseTitle;
     }
 
+    @Override
+    public void showPermissionDeniedDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Permission Denied")
+                .setMessage("The app needs this permission to capture the device information required when submitting forms. " +
+                        "Without this permission the app will not function properly. " +
+                        "Are you sure you want to deny this permission?")
+                .setPositiveButton("NO", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        ActivityCompat.requestPermissions(JsonFormActivity.this, new String[]{
+                                Manifest.permission.READ_PHONE_STATE}, PermissionUtils.PHONE_STATE_PERMISSION);
+                    }
+                })
+                .setNegativeButton("YES", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+    }
+
+    /**
+     * if the display scroll bars attribute is set to true then the form shows scroll bars
+     *
+     * @return true/false {@link Boolean}
+     */
+    @Override
+    public boolean displayScrollBars() {
+        synchronized (getmJSONObject()) {
+            return getmJSONObject().optBoolean(JsonFormConstants.DISPLAY_SCROLL_BARS, false);
+        }
+    }
+
     private String getViewKey(View view) {
         String key = (String) view.getTag(R.id.key);
         if (view.getTag(R.id.childKey) != null) {
@@ -1719,7 +1752,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         }
     }
 
-
     private CharSequence getRenderText(String calculation, String textTemplate, boolean makeBold) {
         Map<String, Object> valueMap = new Gson().fromJson(calculation, new TypeToken<HashMap<String, Object>>() {
         }.getType());
@@ -1821,14 +1853,14 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 //Only keep track of required fields that are invisible
                 if (object.has(JsonFormConstants.V_REQUIRED) && object.getJSONObject(JsonFormConstants.V_REQUIRED)
                         .getBoolean(JsonFormConstants.VALUE)) {
-                    trackInvisibleFields(object, visible);
+                    trackInvisibleRequiredFields(object, visible);
                 }
             }
         }
     }
 
     @SuppressLint("StaticFieldLeak")
-    private void trackInvisibleFields(final JSONObject object, final boolean visible) {
+    private void trackInvisibleRequiredFields(final JSONObject object, final boolean visible) {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
@@ -1842,13 +1874,11 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         getmJSONObject().put(JsonFormConstants.INVISIBLE_REQUIRED_FIELDS, invisibleRequiredFields);
                     }
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    Timber.e(e, "%s --> trackInvisibleRequiredFields", this.getClass().getCanonicalName());
                 }
                 return null;
             }
-        }.
-
-                execute();
+        }.execute();
     }
 
     private void refreshViews(View childElement) {
@@ -2011,39 +2041,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         return object.has(JsonFormConstants.EDIT_TYPE) &&
                 object.getString(JsonFormConstants.EDIT_TYPE).equals(JsonFormConstants.EDIT_TEXT_TYPE.NUMBER) ||
                 object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.NUMBER_SELECTOR);
-    }
-
-    @Override
-    public void showPermissionDeniedDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle("Permission Denied")
-                .setMessage("The app needs this permission to capture the device information required when submitting forms. " +
-                        "Without this permission the app will not function properly. " +
-                        "Are you sure you want to deny this permission?")
-                .setPositiveButton("NO", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        ActivityCompat.requestPermissions(JsonFormActivity.this, new String[]{
-                                Manifest.permission.READ_PHONE_STATE}, PermissionUtils.PHONE_STATE_PERMISSION);
-                    }
-                })
-                .setNegativeButton("YES", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .show();
-    }
-
-    /**
-     * if the display scroll bars attribute is set to true then the form shows scroll bars
-     *
-     * @return true/false {@link Boolean}
-     */
-    @Override
-    public boolean displayScrollBars() {
-        synchronized (getmJSONObject()) {
-            return getmJSONObject().optBoolean(JsonFormConstants.DISPLAY_SCROLL_BARS, false);
-        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

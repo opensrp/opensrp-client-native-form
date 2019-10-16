@@ -172,9 +172,9 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
     private static void showDatePickerDialog(Activity context, DatePickerDialog datePickerDialog, RadioButton radioButton) {
         FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
-        Fragment prev = context.getFragmentManager().findFragmentByTag(TAG);
-        if (prev != null) {
-            fragmentTransaction.remove(prev);
+        Fragment fragmentByTag = context.getFragmentManager().findFragmentByTag(TAG);
+        if (fragmentByTag != null) {
+            fragmentTransaction.remove(fragmentByTag);
         }
 
         fragmentTransaction.addToBackStack(null);
