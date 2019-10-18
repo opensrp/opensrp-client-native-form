@@ -285,7 +285,6 @@
   },
   "step3": {
     "title": "Basic Form Threes",
-    "next": "step4",
     "fields": [
       {
         "key": "user_date",
@@ -464,53 +463,6 @@
           "value": "false"
         },
         "value": "[yes]"
-      }
-    ]
-  },
-  "step4": {
-    "title": "Capture RDT image",
-    "display_back_button": "true",
-    "next": "step5",
-    "fields": [
-      {
-        "key": "rdt_capture",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "rdt_capture"
-      }
-    ]
-  },
-  "step5": {
-    "title": "Select RDT reader result",
-    "display_back_button": "true",
-    "fields": [
-      {
-        "key": "rdt_result",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "Select RDT reader result",
-        "options": [
-          {
-            "key": "positive",
-            "text": "positive"
-          },
-          {
-            "key": "negative",
-            "text": "negative"
-          },
-          {
-            "key": "invalid",
-            "text": "invalid"
-          }
-        ],
-        "value": "negative",
-        "v_required": {
-          "value": "true",
-          "err": "Please select the RDT reader result"
-        }
       }
     ]
   }

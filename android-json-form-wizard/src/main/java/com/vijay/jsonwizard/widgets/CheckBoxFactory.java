@@ -41,6 +41,7 @@ import static com.vijay.jsonwizard.utils.FormUtils.showInfoIcon;
  * Created by vijay on 24-05-2015.
  */
 public class CheckBoxFactory implements FormWidgetFactory {
+    private FormUtils formUtils = new FormUtils();
 
     public static ValidationStatus validate(JsonFormFragmentView formFragmentView, LinearLayout checkboxLinearLayout) {
         String error = (String) checkboxLinearLayout.getTag(R.id.error);
@@ -134,6 +135,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
             }
 
         }
+        formUtils.updateValueToJSONArray(jsonObject, jsonObject.optString(JsonFormConstants.VALUE, ""));
         attachRefreshLogic(jsonObject, context, rootLayout);
         rootLayout.setTag(R.id.canvas_ids, canvasIds.toString());
         views.add(rootLayout);
@@ -164,8 +166,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
         if (jsonObject.has(JsonFormConstants.VALUE)) {
             String checkBoxValue = jsonObject.optString(JsonFormConstants.VALUE, "");
             if (StringUtils.isNotEmpty(checkBoxValue)) {
-                JSONArray values = new JSONArray(checkBoxValue);
-                checkBoxValues = values;
+                checkBoxValues = new JSONArray(checkBoxValue);
             }
         }
 
