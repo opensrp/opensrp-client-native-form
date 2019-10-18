@@ -71,10 +71,10 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "finger_print",
-        "project_id":"tZqJnw0ajK04LMYdZzyw",
-        "user_id":"test_user",
-        "module_id":"mpower",
-        "finger_print_option":"register",
+        "project_id": "tZqJnw0ajK04LMYdZzyw",
+        "user_id": "test_user",
+        "module_id": "mpower",
+        "finger_print_option": "register",
         "uploadButtonText": "Take finger print",
         "image_file": "",
         "relevance": {
@@ -90,11 +90,11 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "finger_print",
-        "project_id":"tZqJnw0ajK04LMYdZzyw",
-        "user_id":"test_user",
-        "module_id":"mpower",
-        "gu_id":"id",
-        "finger_print_option":"verify",
+        "project_id": "tZqJnw0ajK04LMYdZzyw",
+        "user_id": "test_user",
+        "module_id": "mpower",
+        "gu_id": "id",
+        "finger_print_option": "verify",
         "uploadButtonText": "Verify finger print",
         "image_file": ""
       },
@@ -462,7 +462,8 @@
         ],
         "v_required": {
           "value": "false"
-        }
+        },
+        "value": "[yes]"
       }
     ]
   },
