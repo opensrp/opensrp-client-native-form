@@ -2046,6 +2046,13 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         }
     }
 
+    @Override
+    public boolean skipBlankSteps() {
+        synchronized (getmJSONObject()) {
+            return getmJSONObject().optBoolean(JsonFormConstants.SKIP_BLANK_STEPS, false);
+        }
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void refreshExpansionPanel(RefreshExpansionPanelEvent refreshExpansionPanelEvent) {
         if (refreshExpansionPanelEvent != null) {

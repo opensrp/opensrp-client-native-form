@@ -113,4 +113,6 @@ public interface JsonApi {
     void showPermissionDeniedDialog();
 
     boolean displayScrollBars();
+
+    boolean skipBlankSteps();
 }
