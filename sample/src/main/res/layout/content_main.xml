@@ -92,5 +92,15 @@
             android:textColor="@android:color/white"
             android:theme="@style/AppTheme" />
 
+
+        <Button
+            android:id="@+id/repeating_group_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Repeating Group"
+            android:textColor="@android:color/white"
+            android:theme="@style/AppTheme" />
+
     </LinearLayout>
 </RelativeLayout>
