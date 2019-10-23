@@ -59,7 +59,7 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         alertDialog = setUpDialog(context, formFragment);
         updateSelectedData(prepareSelectedData());
         updateListData(prepareListData());
-        List<View> views = new ArrayList<>(2);
+        List<View> views = new ArrayList<>();
         Button button = createButton(context);
         button.setText(jsonObject.optString("buttonText"));
         button.setOnClickListener(new View.OnClickListener() {
@@ -116,13 +116,13 @@ public class MultiSelectListFactory implements FormWidgetFactory {
 
     public void updateSelectedData(List<MultiSelectItem> selectedData) {
         getSelectedData().clear();
-        this.selectedData.addAll(selectedData);
+        getSelectedData().addAll(selectedData);
     }
 
     public void updateListData(List<MultiSelectItem> listData) {
         getListData().clear();
-        this.listData.addAll(listData);
-        multiSelectListAdapter.notifyDataSetChanged();
+        getListData().addAll(listData);
+        getMultiSelectListAdapter().notifyDataSetChanged();
     }
 
     private void showListDataDialog() {
@@ -151,7 +151,7 @@ public class MultiSelectListFactory implements FormWidgetFactory {
             }
         });
 
-        multiSelectListAdapter = new MultiSelectListAdapter(getListData());
+        multiSelectListAdapter = getMultiSelectListAdapter();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(multiSelectListAdapter);
@@ -173,7 +173,7 @@ public class MultiSelectListFactory implements FormWidgetFactory {
                 int position = recyclerView.getChildLayoutPosition(view);
                 MultiSelectItem multiSelectItem = multiSelectListAdapter.getItemAt(position);
                 selectedData.add(multiSelectItem);
-                multiSelectListSelectedAdapter.notifyDataSetChanged();
+                getMultiSelectListSelectedAdapter().notifyDataSetChanged();
 //                try {
 //                    jsonFormFragment.getJsonApi().writeValue("step1","ff",multiSelectItem.toJson().toString(),"","","");
 //                } catch (JSONException e) {
@@ -186,7 +186,7 @@ public class MultiSelectListFactory implements FormWidgetFactory {
     }
 
     protected RecyclerView createSelectedRecylerView(Context context) {
-        multiSelectListSelectedAdapter = new MultiSelectListSelectedAdapter(selectedData);
+        multiSelectListSelectedAdapter = getMultiSelectListSelectedAdapter();
         RecyclerView recyclerView = new RecyclerView(context);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -229,5 +229,19 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         underBar.setMinimumHeight(2);
         underBar.setBackgroundResource(R.color.black);
         return underBar;
+    }
+
+    public MultiSelectListSelectedAdapter getMultiSelectListSelectedAdapter() {
+        if (multiSelectListSelectedAdapter == null) {
+            return new MultiSelectListSelectedAdapter(getSelectedData());
+        }
+        return multiSelectListSelectedAdapter;
+    }
+
+    public MultiSelectListAdapter getMultiSelectListAdapter() {
+        if (multiSelectListAdapter == null) {
+            return new MultiSelectListAdapter(getListData());
+        }
+        return multiSelectListAdapter;
     }
 }
