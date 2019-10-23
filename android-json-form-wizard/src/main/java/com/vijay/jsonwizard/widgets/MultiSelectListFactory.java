@@ -203,8 +203,6 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         button.setTextSize(TypedValue.COMPLEX_UNIT_PX, context.getResources()
                 .getDimension(R.dimen.button_text_size));
         button.setGravity(Gravity.START);
-        layoutParams.leftMargin = context.getResources()
-                .getDimensionPixelSize(R.dimen.extra_bottom_margin);
         button.setTextColor(context.getResources().getColor(R.color.opensrp_accent));
         button.setHeight(context.getResources().getDimensionPixelSize(R.dimen.button_height));
         button.setBackgroundResource(R.color.transparent);
@@ -220,10 +218,6 @@ public class MultiSelectListFactory implements FormWidgetFactory {
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams.bottomMargin = context.getResources()
-                .getDimensionPixelSize(R.dimen.extra_bottom_margin);
-        layoutParams.leftMargin = context.getResources()
-                .getDimensionPixelSize(R.dimen.extra_bottom_margin);
-        layoutParams.rightMargin = context.getResources()
                 .getDimensionPixelSize(R.dimen.extra_bottom_margin);
         underBar.setLayoutParams(layoutParams);
         underBar.setMinimumHeight(2);
