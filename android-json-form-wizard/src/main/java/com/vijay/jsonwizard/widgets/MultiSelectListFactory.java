@@ -53,7 +53,8 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         return attachJson(stepName, context, formFragment, jsonObject, listener, false);
     }
 
-    private List<View> attachJson(String stepName, final Context context, final JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws JSONException {
+    private List<View> attachJson(String stepName, final Context context, final JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) {
+        Timber.i("stepName %s popup %s listener %s", stepName, popup, listener);
         this.jsonObject = jsonObject;
         alertDialog = setUpDialog(context, formFragment);
         updateSelectedData(prepareSelectedData());
@@ -114,6 +115,7 @@ public class MultiSelectListFactory implements FormWidgetFactory {
     }
 
     public void updateSelectedData(List<MultiSelectItem> selectedData) {
+        getSelectedData().clear();
         this.selectedData.addAll(selectedData);
     }
 
@@ -191,7 +193,6 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         recyclerView.setAdapter(multiSelectListSelectedAdapter);
         return recyclerView;
     }
-
 
     protected Button createButton(Context context) {
         Button button = new Button(context);

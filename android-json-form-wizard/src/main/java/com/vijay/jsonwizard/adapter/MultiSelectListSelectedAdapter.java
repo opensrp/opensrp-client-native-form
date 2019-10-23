@@ -1,12 +1,10 @@
 package com.vijay.jsonwizard.adapter;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,7 +13,7 @@ import com.vijay.jsonwizard.domain.MultiSelectItem;
 
 import java.util.List;
 
-public class MultiSelectListSelectedAdapter extends RecyclerView.Adapter<MultiSelectListSelectedAdapter.MyViewHolder>{
+public class MultiSelectListSelectedAdapter extends RecyclerView.Adapter<MultiSelectListSelectedAdapter.MyViewHolder> {
     private List<MultiSelectItem> data;
     private static ClickListener clickListener;
 
@@ -33,7 +31,7 @@ public class MultiSelectListSelectedAdapter extends RecyclerView.Adapter<MultiSe
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
         MultiSelectItem multiSelectItem = data.get(position);
-        holder.edtSelectedDisease.setText(multiSelectItem.getKey());
+        holder.txtSelectedDisease.setText(multiSelectItem.getKey());
         holder.imgDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,11 +47,12 @@ public class MultiSelectListSelectedAdapter extends RecyclerView.Adapter<MultiSe
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView edtSelectedDisease;
-        ImageView imgDelete;
+        private TextView txtSelectedDisease;
+        private ImageView imgDelete;
+
         private MyViewHolder(View view) {
             super(view);
-            edtSelectedDisease = view.findViewById(R.id.multiSelectListTextView);
+            txtSelectedDisease = view.findViewById(R.id.multiSelectListTextView);
             imgDelete = view.findViewById(R.id.multiSelectListDelete);
             view.setOnClickListener(this);
         }

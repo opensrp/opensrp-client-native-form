@@ -91,7 +91,7 @@ public class MultiSelectListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     public class SectionViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtMultiSelectItem;
+        private TextView txtMultiSelectItem;
 
         private SectionViewHolder(View view) {
             super(view);
@@ -126,7 +126,7 @@ public class MultiSelectListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
     }
 
-    public MultiSelectItem getItemAt(int position){
+    public MultiSelectItem getItemAt(int position) {
         return data.get(position);
     }
 
