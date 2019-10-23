@@ -2,6 +2,7 @@ package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -223,6 +224,11 @@ public class EditTextFactory implements FormWidgetFactory {
                 maxLength = Integer.parseInt(maxLengthValue);
                 editText.addValidator(new MaxLengthValidator(maxLengthObject.getString(JsonFormConstants.ERR),
                         Integer.parseInt(maxLengthValue)));
+                boolean iSFixedSize = maxLengthObject.optBoolean(JsonFormConstants.IS_FIXED_SIZE,false);
+                if(iSFixedSize){
+                    editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
+                }
+
             }
         }
 

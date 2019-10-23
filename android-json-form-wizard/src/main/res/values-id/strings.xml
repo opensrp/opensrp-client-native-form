@@ -78,4 +78,6 @@
     <string name="json_form_on_next_error_msg" >Harap perbaiki kesalahan (s) dalam formulir untuk melanjutkan</string>
     <string name="go_to_step">Lanjutkan ke langkah</string>
   <string name="shows_image_on_dialog">menampilkan Gambar pada dialog</string>
+    <string name="simprints_guid">GUID not found</string>
+    <string name="simprints_init_fail">Project Id or user id or module id not found. can be use SimprintsLibrary.init</string>
 </resources>

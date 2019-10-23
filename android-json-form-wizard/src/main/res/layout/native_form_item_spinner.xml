@@ -19,7 +19,7 @@
         app:ms_arrowSize="@dimen/default_spinner_arrow_size"
         app:ms_baseColor="@color/text_hint_color"
         app:ms_dropDownHintView="@layout/native_form_simple_list_item_1"
-        app:ms_floatingLabelColor="@color/text_hint_color"
+        app:ms_floatingLabelColor="@color/floating_label_color"
         app:ms_hintView="@layout/spinner_prompt_text"
         app:ms_multiline="true"
         android:layout_toStartOf="@+id/spinner_edit_button" />
