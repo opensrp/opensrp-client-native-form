@@ -66,6 +66,103 @@
         "uploadButtonText": "Take a photo of the child"
       },
       {
+        "key": "user_dummy",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "buttonText": "+ Add disease code",
+        "dialogTitle": "Add disease code",
+        "searchHint": "Type Disease Name",
+        "value": [
+          {
+            "key": "Abortion",
+            "value": {
+              "presumed-id": "er",
+              "confirmed-id": "er"
+            }
+          },
+          {
+            "key": "Abortion",
+            "value": {
+              "presumed-id": "er",
+              "confirmed-id": "er"
+            }
+          }
+        ],
+        "options": [
+          {
+            "key": "A"
+          },
+          {
+            "key": "Abortion",
+            "value": {
+              "presumed-id": "er",
+              "confirmed-id": "er"
+            }
+          },
+          {
+            "key": "Abortion",
+            "value": {
+              "presumed-id": "er",
+              "confirmed-id": "er"
+            }
+          },
+          {
+            "key": "Abortion",
+            "value": {
+              "presumed-id": "er",
+              "confirmed-id": "er"
+            }
+          },
+          {
+            "key": "Abortion",
+            "value": {
+              "presumed-id": "er",
+              "confirmed-id": "er"
+            }
+          },
+          {
+            "key": "Abortion",
+            "value": {
+              "presumed-id": "er",
+              "confirmed-id": "er"
+            }
+          },
+          {
+            "key": "Abortion",
+            "value": {
+              "presumed-id": "er",
+              "confirmed-id": "er"
+            }
+          },
+          {
+            "key": "B"
+          },
+          {
+            "key": "BAbortion",
+            "value": {
+              "presumed-id": "er",
+              "confirmed-id": "er"
+            }
+          },
+          {
+            "key": "BAbortion",
+            "value": {
+              "presumed-id": "er",
+              "confirmed-id": "er"
+            }
+          },
+          {
+            "key": "BAbortion",
+            "value": {
+              "presumed-id": "er",
+              "confirmed-id": "er"
+            }
+          }
+        ],
+        "type": "multiselectlist"
+      },
+      {
         "key": "user_first_name",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
