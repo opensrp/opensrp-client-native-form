@@ -108,7 +108,7 @@ public class MultiSelectListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     public class SectionTitleViewHolder extends RecyclerView.ViewHolder {
-        TextView txtMultiSelectHeader;
+        private TextView txtMultiSelectHeader;
 
         private SectionTitleViewHolder(View view) {
             super(view);
