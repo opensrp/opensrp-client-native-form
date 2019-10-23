@@ -207,7 +207,7 @@ public class JsonFormConstants {
     public static final String FALSE = "false";
     public static final String DISPLAY_SCROLL_BARS = "display_scroll_bars";
     public static final String SKIP_BLANK_STEPS = "skip_blank_steps";
-    public static final String MULTISELECT_LIST ="multiselectlist" ;
+    public static final String MULTI_SELECT_LIST ="multi_select_list" ;
 
     public static class JsonFormConstantsUtils {
         public static final String CONTACT_CONTAINER = "container";

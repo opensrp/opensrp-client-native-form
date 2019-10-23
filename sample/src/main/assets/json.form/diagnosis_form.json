@@ -131,7 +131,7 @@
             }
           }
         ],
-        "type": "multiselectlist"
+        "type": "multi_select_list"
       }
     ]
   }
