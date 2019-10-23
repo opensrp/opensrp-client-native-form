@@ -169,7 +169,7 @@ public class MultiSelectListFactory implements FormWidgetFactory {
             @Override
             public void onItemClick(View view) {
                 int position = recyclerView.getChildLayoutPosition(view);
-                MultiSelectItem multiSelectItem = getListData().get(position);
+                MultiSelectItem multiSelectItem = multiSelectListAdapter.getItemAt(position);
                 selectedData.add(multiSelectItem);
                 multiSelectListSelectedAdapter.notifyDataSetChanged();
 //                try {

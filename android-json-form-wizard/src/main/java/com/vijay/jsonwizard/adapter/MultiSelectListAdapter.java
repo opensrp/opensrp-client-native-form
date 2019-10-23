@@ -126,6 +126,10 @@ public class MultiSelectListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
     }
 
+    public MultiSelectItem getItemAt(int position){
+        return data.get(position);
+    }
+
     public interface ClickListener {
         void onItemClick(View view);
     }
