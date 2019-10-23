@@ -31,7 +31,7 @@ public class MultiSelectItem {
         this.value = value;
     }
 
-    public JSONObject toJson(){
+    public JSONObject toJson() {
         JSONObject jsonObject = new JSONObject();
         try {
             return jsonObject.put(getKey(), getValue());
