@@ -207,6 +207,13 @@ public class JsonFormConstants {
     public static final String FALSE = "false";
     public static final String DISPLAY_SCROLL_BARS = "display_scroll_bars";
     public static final String SKIP_BLANK_STEPS = "skip_blank_steps";
+    public static final String FORM_VERSION = "form_version";
+
+    public static class Properties {
+        public static final String APP_VERSION_NAME = "appVersionName";
+        public static final String APP_FORM_VERSION = "formVersion";
+        public static final String DETAILS = "details";
+    }
 
     public static class JsonFormConstantsUtils {
         public static final String CONTACT_CONTAINER = "container";
@@ -231,6 +238,7 @@ public class JsonFormConstants {
         public static final String DONE = "Done";
 
     }
+
     public static class JSON_FORM_KEY {
         public static final String EX_RULES = "ex-rules";
         public static final String EX_CHECKBOX = "ex-checkbox";
@@ -274,6 +282,7 @@ public class JsonFormConstants {
     public static class MESSAGE_TYPE {
         public static final String GLOBAL_VALUES = "global_values";
     }
+
     public static class ACTIVITY_REQUEST_CODE {
         public static final int REQUEST_CODE_REGISTER = 1222;
         public static final int REQUEST_CODE_VERIFY = 1333;

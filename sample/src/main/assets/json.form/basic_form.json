@@ -71,10 +71,10 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "finger_print",
-        "project_id":"tZqJnw0ajK04LMYdZzyw",
-        "user_id":"test_user",
-        "module_id":"mpower",
-        "finger_print_option":"register",
+        "project_id": "tZqJnw0ajK04LMYdZzyw",
+        "user_id": "test_user",
+        "module_id": "mpower",
+        "finger_print_option": "register",
         "uploadButtonText": "Take finger print",
         "image_file": "",
         "relevance": {
@@ -90,11 +90,11 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "finger_print",
-        "project_id":"tZqJnw0ajK04LMYdZzyw",
-        "user_id":"test_user",
-        "module_id":"mpower",
-        "gu_id":"id",
-        "finger_print_option":"verify",
+        "project_id": "tZqJnw0ajK04LMYdZzyw",
+        "user_id": "test_user",
+        "module_id": "mpower",
+        "gu_id": "id",
+        "finger_print_option": "verify",
         "uploadButtonText": "Verify finger print",
         "image_file": ""
       },
@@ -285,7 +285,6 @@
   },
   "step3": {
     "title": "Basic Form Threes",
-    "next": "step4",
     "fields": [
       {
         "key": "user_date",
@@ -462,54 +461,8 @@
         ],
         "v_required": {
           "value": "false"
-        }
-      }
-    ]
-  },
-  "step4": {
-    "title": "Capture RDT image",
-    "display_back_button": "true",
-    "next": "step5",
-    "fields": [
-      {
-        "key": "rdt_capture",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "rdt_capture"
-      }
-    ]
-  },
-  "step5": {
-    "title": "Select RDT reader result",
-    "display_back_button": "true",
-    "fields": [
-      {
-        "key": "rdt_result",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "Select RDT reader result",
-        "options": [
-          {
-            "key": "positive",
-            "text": "positive"
-          },
-          {
-            "key": "negative",
-            "text": "negative"
-          },
-          {
-            "key": "invalid",
-            "text": "invalid"
-          }
-        ],
-        "value": "negative",
-        "v_required": {
-          "value": "true",
-          "err": "Please select the RDT reader result"
-        }
+        },
+        "value": "[yes]"
       }
     ]
   }
