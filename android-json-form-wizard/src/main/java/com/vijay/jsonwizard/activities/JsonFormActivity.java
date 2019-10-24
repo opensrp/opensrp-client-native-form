@@ -587,18 +587,16 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     @Override
     public void showPermissionDeniedDialog() {
         new AlertDialog.Builder(this)
-                .setTitle("Permission Denied")
-                .setMessage("The app needs this permission to capture the device information required when submitting forms. " +
-                        "Without this permission the app will not function properly. " +
-                        "Are you sure you want to deny this permission?")
-                .setPositiveButton("NO", new DialogInterface.OnClickListener() {
+                .setTitle(getString(R.string.permission_denied_title))
+                .setMessage(getString(R.string.permission_messege))
+                .setPositiveButton(getString(R.string.no), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         ActivityCompat.requestPermissions(JsonFormActivity.this, new String[]{
                                 Manifest.permission.READ_PHONE_STATE}, PermissionUtils.PHONE_STATE_PERMISSION);
                     }
                 })
-                .setNegativeButton("YES", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
