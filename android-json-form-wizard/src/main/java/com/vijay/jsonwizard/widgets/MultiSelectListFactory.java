@@ -41,7 +41,7 @@ import timber.log.Timber;
 public class MultiSelectListFactory implements FormWidgetFactory {
     private JSONObject jsonObject = new JSONObject();
     private JsonFormFragment jsonFormFragment;
-    private HashMap<String, MultiSelectListAccessory> stringAdapterHashMap = new HashMap<>();
+    private HashMap<String, MultiSelectListAccessory> multiSelectListAccessoryHashMap = new HashMap<>();
     private String currentAdapterKey;
 
     @Override
@@ -73,7 +73,7 @@ public class MultiSelectListFactory implements FormWidgetFactory {
                 showListDataDialog();
             }
         });
-        RecyclerView recyclerView = createSelectedRecylerView(context);
+        RecyclerView recyclerView = createSelectedRecyclerView(context);
         View underBar = createUnderBar(context);
         views.add(recyclerView);
         views.add(button);
@@ -98,7 +98,7 @@ public class MultiSelectListFactory implements FormWidgetFactory {
             Timber.e(e);
         }
 
-        updateMultiAccessorHashMap(multiSelectListAccessory);
+        updateMultiSelectListAccessoryHashMap(multiSelectListAccessory);
     }
 
     private List<MultiSelectItem> prepareSelectedData() {
@@ -140,7 +140,7 @@ public class MultiSelectListFactory implements FormWidgetFactory {
     }
 
     public void updateListData(boolean clearData) {
-        MultiSelectListAccessory multiSelectListAccessory = getStringAdapterHashMap().get(currentAdapterKey);
+        MultiSelectListAccessory multiSelectListAccessory = getMultiSelectListAccessoryHashMap().get(currentAdapterKey);
         if (clearData) {
             getMultiSelectListAdapter().getData().clear();
         }
@@ -205,37 +205,37 @@ public class MultiSelectListFactory implements FormWidgetFactory {
             }
         });
 
-        MultiSelectListAccessory multiSelectListAccessory = getStringAdapterHashMap().get(currentAdapterKey);
+        MultiSelectListAccessory multiSelectListAccessory = getMultiSelectListAccessoryHashMap().get(currentAdapterKey);
         multiSelectListAccessory.setAlertDialog(alertDialog);
-        updateMultiAccessorHashMap(multiSelectListAccessory);
+        updateMultiSelectListAccessoryHashMap(multiSelectListAccessory);
     }
 
-    public HashMap<String, MultiSelectListAccessory> getStringAdapterHashMap() {
-        return stringAdapterHashMap;
+    public HashMap<String, MultiSelectListAccessory> getMultiSelectListAccessoryHashMap() {
+        return multiSelectListAccessoryHashMap;
     }
 
-    private void updateMultiAccessorHashMap(MultiSelectListAccessory multiSelectListAccessory) {
-        getStringAdapterHashMap().put(currentAdapterKey, multiSelectListAccessory);
+    private void updateMultiSelectListAccessoryHashMap(MultiSelectListAccessory multiSelectListAccessory) {
+        getMultiSelectListAccessoryHashMap().put(currentAdapterKey, multiSelectListAccessory);
     }
 
     protected void handleClickEventOnListData(MultiSelectItem multiSelectItem) {
         try {
             jsonFormFragment.getJsonApi().writeValue(
-                    getStringAdapterHashMap().get(currentAdapterKey).getFormAttributes().optString(JsonFormConstants.STEPNAME), currentAdapterKey,
+                    getMultiSelectListAccessoryHashMap().get(currentAdapterKey).getFormAttributes().optString(JsonFormConstants.STEPNAME), currentAdapterKey,
                     multiSelectItem.toJson().toString(), "", "", "",
-                    getStringAdapterHashMap().get(currentAdapterKey).getFormAttributes().optBoolean(JsonFormConstants.IS_POPUP));
+                    getMultiSelectListAccessoryHashMap().get(currentAdapterKey).getFormAttributes().optBoolean(JsonFormConstants.IS_POPUP));
         } catch (JSONException e) {
             e.printStackTrace();
         }
         updateSelectedData(Arrays.asList(multiSelectItem), false);
     }
 
-    protected RecyclerView createSelectedRecylerView(Context context) {
+    protected RecyclerView createSelectedRecyclerView(Context context) {
         List<MultiSelectItem> multiSelectItems = prepareSelectedData();
         MultiSelectListSelectedAdapter multiSelectListSelectedAdapter = new MultiSelectListSelectedAdapter(multiSelectItems);
-        MultiSelectListAccessory multiSelectListAccessory = getStringAdapterHashMap().get(currentAdapterKey);
+        MultiSelectListAccessory multiSelectListAccessory = getMultiSelectListAccessoryHashMap().get(currentAdapterKey);
         multiSelectListAccessory.setSelectedAdapter(multiSelectListSelectedAdapter);
-        updateMultiAccessorHashMap(multiSelectListAccessory);
+        updateMultiSelectListAccessoryHashMap(multiSelectListAccessory);
         RecyclerView recyclerView = new RecyclerView(context);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -275,19 +275,19 @@ public class MultiSelectListFactory implements FormWidgetFactory {
     }
 
     public MultiSelectListSelectedAdapter getMultiSelectListSelectedAdapter() {
-        return getStringAdapterHashMap().get(currentAdapterKey).getSelectedAdapter();
+        return getMultiSelectListAccessoryHashMap().get(currentAdapterKey).getSelectedAdapter();
     }
 
     public AlertDialog getAlertDialog() {
-        return getStringAdapterHashMap().get(currentAdapterKey).getAlertDialog();
+        return getMultiSelectListAccessoryHashMap().get(currentAdapterKey).getAlertDialog();
     }
 
     public MultiSelectListAdapter getMultiSelectListAdapter() {
-        MultiSelectListAccessory multiSelectListAccessory = getStringAdapterHashMap().get(currentAdapterKey);
+        MultiSelectListAccessory multiSelectListAccessory = getMultiSelectListAccessoryHashMap().get(currentAdapterKey);
         if (multiSelectListAccessory.getListAdapter() == null) {
             List<MultiSelectItem> multiSelectItems = prepareListData();
             multiSelectListAccessory.setListAdapter(new MultiSelectListAdapter(multiSelectItems));
-            getStringAdapterHashMap().put(currentAdapterKey, multiSelectListAccessory);
+            getMultiSelectListAccessoryHashMap().put(currentAdapterKey, multiSelectListAccessory);
         }
         return multiSelectListAccessory.getListAdapter();
     }
