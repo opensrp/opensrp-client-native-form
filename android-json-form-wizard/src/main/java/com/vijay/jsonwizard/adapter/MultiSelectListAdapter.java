@@ -25,6 +25,14 @@ public class MultiSelectListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         this.origData = data;
     }
 
+    public List<MultiSelectItem> getData() {
+        return data;
+    }
+
+    public List<MultiSelectItem> getOrigData() {
+        return origData;
+    }
+
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

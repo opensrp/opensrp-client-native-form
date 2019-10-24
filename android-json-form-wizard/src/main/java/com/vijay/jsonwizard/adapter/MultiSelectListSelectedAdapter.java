@@ -21,6 +21,10 @@ public class MultiSelectListSelectedAdapter extends RecyclerView.Adapter<MultiSe
         this.data = data;
     }
 
+    public List<MultiSelectItem> getData() {
+        return data;
+    }
+
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -31,7 +35,7 @@ public class MultiSelectListSelectedAdapter extends RecyclerView.Adapter<MultiSe
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
         MultiSelectItem multiSelectItem = data.get(position);
-        holder.txtSelectedDisease.setText(multiSelectItem.getKey());
+        holder.multiSelectListTextView.setText(multiSelectItem.getKey());
         holder.imgDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -47,12 +51,12 @@ public class MultiSelectListSelectedAdapter extends RecyclerView.Adapter<MultiSe
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private TextView txtSelectedDisease;
+        private TextView multiSelectListTextView;
         private ImageView imgDelete;
 
         private MyViewHolder(View view) {
             super(view);
-            txtSelectedDisease = view.findViewById(R.id.multiSelectListTextView);
+            multiSelectListTextView = view.findViewById(R.id.multiSelectListTextView);
             imgDelete = view.findViewById(R.id.multiSelectListDelete);
             view.setOnClickListener(this);
         }

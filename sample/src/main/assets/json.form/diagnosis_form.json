@@ -58,6 +58,25 @@
     "next": "step2",
     "fields": [
       {
+        "key": "user_date",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "date_picker",
+        "hint": "User DOB",
+        "expanded": false,
+        "duration": {
+          "label": "Age"
+        },
+        "default": "12-12-2015",
+        "min_date": "today-5y",
+        "max_date": "today",
+        "v_required": {
+          "value": "true",
+          "err": "Please enter the date of birth"
+        }
+      },
+      {
         "key": "user_dummy",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -67,7 +86,7 @@
         "searchHint": "Type Disease Name",
         "value": [
           {
-            "key": "Abortion",
+            "key": "Abo00rtion",
             "value": {
               "presumed-id": "er",
               "confirmed-id": "er"
@@ -125,6 +144,82 @@
           },
           {
             "key": "Brucellosis",
+            "value": {
+              "presumed-id": "er",
+              "confirmed-id": "er"
+            }
+          }
+        ],
+        "type": "multi_select_list"
+      },
+      {
+        "key": "user_ddfummy",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "buttonText": "+ Add diserease code",
+        "dialogTitle": "Add diserease code",
+        "searchHint": "Type Diserease Name",
+        "value": [
+          {
+            "key": "Aboortion",
+            "value": {
+              "presumed-id": "er",
+              "confirmed-id": "er"
+            }
+          },
+          {
+            "key": "Abcess",
+            "value": {
+              "presumed-id": "er",
+              "confirmed-id": "er"
+            }
+          }
+        ],
+        "options": [
+          {
+            "key": "A"
+          },
+          {
+            "key": "Abortsdfion",
+            "value": {
+              "presumed-id": "er",
+              "confirmed-id": "er"
+            }
+          },
+          {
+            "key": "Absdfcess",
+            "value": {
+              "presumed-id": "er",
+              "confirmed-id": "er"
+            }
+          },
+          {
+            "key": "Anasdfemia",
+            "value": {
+              "presumed-id": "er",
+              "confirmed-id": "er"
+            }
+          },
+          {
+            "key": "B"
+          },
+          {
+            "key": "Bacsdfterial Meningitis",
+            "value": {
+              "presumed-id": "er",
+              "confirmed-id": "er"
+            }
+          },
+          {
+            "key": "Brsdfonchitis",
+            "value": {
+              "presumed-id": "er",
+              "confirmed-id": "er"
+            }
+          },
+          {
+            "key": "Brucdsfellosis",
             "value": {
               "presumed-id": "er",
               "confirmed-id": "er"

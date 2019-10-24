@@ -288,4 +288,8 @@ public class JsonFormConstants {
         public static final int REQUEST_CODE_REGISTER = 1222;
         public static final int REQUEST_CODE_VERIFY = 1333;
     }
+
+    public interface MultiSelectUtils {
+        String PROPERTY = "property";
+    }
 }
