@@ -134,9 +134,9 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     @Override
     public synchronized JSONObject getStep(String name) {
-        synchronized (mJSONObject) {
+        synchronized (getmJSONObject()) {
             try {
-                return mJSONObject.getJSONObject(name);
+                return getmJSONObject().getJSONObject(name);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -189,7 +189,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     @Override
     public void writeMetaDataValue(String metaDataKey, Map<String, String> values) throws JSONException {
-        synchronized (mJSONObject) {
+        synchronized (getmJSONObject()) {
             if (mJSONObject.has(FormUtils.METADATA_PROPERTY) && !values.isEmpty() &&
                     (mJSONObject.getJSONObject(FormUtils.METADATA_PROPERTY).has(metaDataKey))) {
                 JSONObject metaData = mJSONObject.getJSONObject(FormUtils.METADATA_PROPERTY).getJSONObject(metaDataKey);
@@ -206,15 +206,15 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     @Override
     public String currentJsonState() {
-        synchronized (mJSONObject) {
-            return mJSONObject.toString();
+        synchronized (getmJSONObject()) {
+            return getmJSONObject().toString();
         }
     }
 
     @Override
     public String getCount() {
-        synchronized (mJSONObject) {
-            return mJSONObject.optString("count");
+        synchronized (getmJSONObject()) {
+            return getmJSONObject().optString("count");
         }
     }
 
@@ -1499,7 +1499,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             JSONArray orArray = object.getJSONArray(JsonFormConstants.JSON_FORM_KEY.NOT);
 
             for (int i = 0; i < orArray.length(); i++) {
-
                 String curValue = curValueMap.get(orArray.getString(i));
 
                 if (curValue != null && !Boolean.valueOf(curValue)) {
@@ -1540,13 +1539,10 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     private List<String> getRules(String filename, String fieldKey) {
-
         List<String> rules = ruleKeys.get(filename + ":" + fieldKey);
-
 
         if (rules == null) {
             try {
-
                 Yaml yaml = new Yaml();
                 InputStreamReader inputStreamReader = new InputStreamReader(
                         this.getAssets().open((getRulesEngineFactory().getRulesFolderPath() + filename)));
@@ -1603,10 +1599,9 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         String[] conditionTokens = cleanString.split(" ");
         Map<String, Boolean> conditionKeys = new HashMap<>();
 
-        for (int i = 0; i < conditionTokens.length; i++) {
-
-            if (conditionTokens[i].contains(RuleConstant.STEP) || conditionTokens[i].contains(RuleConstant.PREFIX.GLOBAL)) {
-                String conditionToken = cleanToken(conditionTokens[i]);
+        for (String token : conditionTokens) {
+            if (token.contains(RuleConstant.STEP) || token.contains(RuleConstant.PREFIX.GLOBAL)) {
+                String conditionToken = cleanToken(token);
 
                 conditionKeys.put(conditionToken, true);
             }
@@ -1837,7 +1832,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             throws JSONException {
         for (int i = 0; i < canvasViewIds.length(); i++) {
             int curId = canvasViewIds.getInt(i);
-
             View curCanvasView = view.getRootView().findViewById(curId);
 
             if (curCanvasView == null) {
