@@ -33,7 +33,7 @@ description: fetal_heart_beat_rate_value
 priority: 1
 condition: "step2_fetal_heart_rate > 0 && (step2_fetal_heart_rate < 110 || step2_fetal_heart_rate > 160)"
 actions:
-    - "calculation = step2_fetal_heart_rate"
+    - "calculation = 81"
 ---
 name: step3_anaemic
 description: Anaemic
@@ -54,7 +54,7 @@ description: fetal_heart_rate
 priority: 1
 condition: "true"
 actions:
-    - "calculation = helper.getDateToday()"
+    - "calculation = 82"
 ---
 name: step2_test_date
 description: test_date
