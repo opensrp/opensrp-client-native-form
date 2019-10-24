@@ -87,14 +87,14 @@
         "value": [
           {
             "key": "Abo00rtion",
-            "value": {
+            "property": {
               "presumed-id": "er",
               "confirmed-id": "er"
             }
           },
           {
             "key": "Abcess",
-            "value": {
+            "property": {
               "presumed-id": "er",
               "confirmed-id": "er"
             }
@@ -106,21 +106,21 @@
           },
           {
             "key": "Abortion",
-            "value": {
+            "property": {
               "presumed-id": "er",
               "confirmed-id": "er"
             }
           },
           {
             "key": "Abcess",
-            "value": {
+            "property": {
               "presumed-id": "er",
               "confirmed-id": "er"
             }
           },
           {
             "key": "Anaemia",
-            "value": {
+            "property": {
               "presumed-id": "er",
               "confirmed-id": "er"
             }
@@ -130,21 +130,21 @@
           },
           {
             "key": "Bacterial Meningitis",
-            "value": {
+            "property": {
               "presumed-id": "er",
               "confirmed-id": "er"
             }
           },
           {
             "key": "Bronchitis",
-            "value": {
+            "property": {
               "presumed-id": "er",
               "confirmed-id": "er"
             }
           },
           {
             "key": "Brucellosis",
-            "value": {
+            "property": {
               "presumed-id": "er",
               "confirmed-id": "er"
             }
@@ -163,14 +163,14 @@
         "value": [
           {
             "key": "Aboortion",
-            "value": {
+            "property": {
               "presumed-id": "er",
               "confirmed-id": "er"
             }
           },
           {
             "key": "Abcess",
-            "value": {
+            "property": {
               "presumed-id": "er",
               "confirmed-id": "er"
             }
@@ -182,21 +182,21 @@
           },
           {
             "key": "Abortsdfion",
-            "value": {
+            "property": {
               "presumed-id": "er",
               "confirmed-id": "er"
             }
           },
           {
             "key": "Absdfcess",
-            "value": {
+            "property": {
               "presumed-id": "er",
               "confirmed-id": "er"
             }
           },
           {
             "key": "Anasdfemia",
-            "value": {
+            "property": {
               "presumed-id": "er",
               "confirmed-id": "er"
             }
@@ -206,21 +206,21 @@
           },
           {
             "key": "Bacsdfterial Meningitis",
-            "value": {
+            "property": {
               "presumed-id": "er",
               "confirmed-id": "er"
             }
           },
           {
             "key": "Brsdfonchitis",
-            "value": {
+            "property": {
               "presumed-id": "er",
               "confirmed-id": "er"
             }
           },
           {
             "key": "Brucdsfellosis",
-            "value": {
+            "property": {
               "presumed-id": "er",
               "confirmed-id": "er"
             }
