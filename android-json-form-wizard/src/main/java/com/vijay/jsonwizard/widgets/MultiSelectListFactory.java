@@ -31,6 +31,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import timber.log.Timber;
@@ -42,6 +43,8 @@ public class MultiSelectListFactory implements FormWidgetFactory {
     private List<MultiSelectItem> listData = new ArrayList<>();
     private JSONObject jsonObject = new JSONObject();
     private AlertDialog alertDialog;
+    private JsonFormFragment jsonFormFragment;
+    private String stepName;
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
@@ -56,9 +59,11 @@ public class MultiSelectListFactory implements FormWidgetFactory {
     private List<View> attachJson(String stepName, final Context context, final JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) {
         Timber.i("stepName %s popup %s listener %s", stepName, popup, listener);
         this.jsonObject = jsonObject;
-        alertDialog = setUpDialog(context, formFragment);
-        updateSelectedData(prepareSelectedData());
-        updateListData(prepareListData());
+        this.jsonFormFragment = formFragment;
+        this.stepName = stepName;
+        this.alertDialog = setUpDialog(context);
+        updateSelectedData(prepareSelectedData(), true);
+        updateListData(prepareListData(), true);
         List<View> views = new ArrayList<>();
         Button button = createButton(context);
         button.setText(jsonObject.optString("buttonText"));
@@ -114,13 +119,18 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         return new ArrayList<>();
     }
 
-    public void updateSelectedData(List<MultiSelectItem> selectedData) {
-        getSelectedData().clear();
+    public void updateSelectedData(List<MultiSelectItem> selectedData, boolean clearData) {
+        if (clearData) {
+            getSelectedData().clear();
+        }
         getSelectedData().addAll(selectedData);
+        getMultiSelectListSelectedAdapter().notifyDataSetChanged();
     }
 
-    public void updateListData(List<MultiSelectItem> listData) {
-        getListData().clear();
+    public void updateListData(List<MultiSelectItem> listData, boolean clearData) {
+        if (clearData) {
+            getListData().clear();
+        }
         getListData().addAll(listData);
         getMultiSelectListAdapter().notifyDataSetChanged();
     }
@@ -131,7 +141,10 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         }
     }
 
-    private AlertDialog setUpDialog(final Context context, final JsonFormFragment jsonFormFragment) {
+    private AlertDialog setUpDialog(final Context context) {
+        if (jsonFormFragment == null) {
+            return null;
+        }
         LayoutInflater inflater = jsonFormFragment.getLayoutInflater();
         View view = inflater.inflate(R.layout.multiselectlistdialog, null);
         ImageView imgClose = view.findViewById(R.id.multiSelectListCloseDialog);
@@ -172,17 +185,21 @@ public class MultiSelectListFactory implements FormWidgetFactory {
             public void onItemClick(View view) {
                 int position = recyclerView.getChildLayoutPosition(view);
                 MultiSelectItem multiSelectItem = multiSelectListAdapter.getItemAt(position);
-                selectedData.add(multiSelectItem);
-                getMultiSelectListSelectedAdapter().notifyDataSetChanged();
-//                try {
-//                    jsonFormFragment.getJsonApi().writeValue("step1","ff",multiSelectItem.toJson().toString(),"","","");
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
+                handleClickEventOnListData(multiSelectItem);
                 Utils.showToast(context, multiSelectItem.getKey() + " Added");
+                alertDialog.dismiss();
             }
         });
         return alertDialog;
+    }
+
+    protected void handleClickEventOnListData(MultiSelectItem multiSelectItem) {
+        try {
+            jsonFormFragment.getJsonApi().writeValue(stepName, jsonObject.optString(JsonFormConstants.KEY), multiSelectItem.toJson().toString(), "", "", "");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        updateSelectedData(Arrays.asList(multiSelectItem), false);
     }
 
     protected RecyclerView createSelectedRecylerView(Context context) {
