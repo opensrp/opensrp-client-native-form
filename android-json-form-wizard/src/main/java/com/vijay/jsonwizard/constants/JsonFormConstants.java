@@ -4,6 +4,13 @@ package com.vijay.jsonwizard.constants;
  * Created by vijay on 5/7/15.
  */
 public class JsonFormConstants {
+    public static final String SIMPRINTS_OPTION_REGISTER = "register";
+    public static final String SIMPRINTS_OPTION_VERIFY = "verify";
+    public static final String SIMPRINTS_PROJECT_ID = "project_id";
+    public static final String SIMPRINTS_USER_ID = "user_id";
+    public static final String SIMPRINTS_MODULE_ID = "module_id";
+    public static final String SIMPRINTS_GU_ID = "gu_id";
+    public static final String SIMPRINTS_OPTION = "finger_print_option";
     public static final String EDIT_TEXT_STYLE = "edit_text_style";
     public static final String BORDERED_EDIT_TEXT = "bordered";
     public static final String FIRST_STEP_NAME = "step1";
@@ -20,6 +27,7 @@ public class JsonFormConstants {
     public static final String LABEL_INFO_TITLE = "label_info_title";
     public static final String LABEL_NUMBER = "label_number";
     public static final String CHOOSE_IMAGE = "choose_image";
+    public static final String FINGER_PRINT = "finger_print";
     public static final String IMAGE_FILE = "image_file";
     public static final String IMAGE_FOLDER = "image_folder";
     public static final String IMAGE_VIEW = "image_view";
@@ -58,6 +66,7 @@ public class JsonFormConstants {
     public static final String V_REQUIRED = "v_required";
     public static final String V_MIN_LENGTH = "v_min_length";
     public static final String V_MAX_LENGTH = "v_max_length";
+    public static final String IS_FIXED_SIZE = "is_fixed_size";
     public static final String V_REGEX = "v_regex";
     public static final String V_EMAIL = "v_email";
     public static final String V_URL = "v_url";
@@ -196,6 +205,15 @@ public class JsonFormConstants {
     public static final String INDEX = "index";
     public static final String DATE_TODAY_HIDDEN = "date_today_hidden";
     public static final String FALSE = "false";
+    public static final String DISPLAY_SCROLL_BARS = "display_scroll_bars";
+    public static final String SKIP_BLANK_STEPS = "skip_blank_steps";
+    public static final String FORM_VERSION = "form_version";
+
+    public static class Properties {
+        public static final String APP_VERSION_NAME = "appVersionName";
+        public static final String APP_FORM_VERSION = "formVersion";
+        public static final String DETAILS = "details";
+    }
 
     public static class JsonFormConstantsUtils {
         public static final String CONTACT_CONTAINER = "container";
@@ -220,6 +238,7 @@ public class JsonFormConstants {
         public static final String DONE = "Done";
 
     }
+
     public static class JSON_FORM_KEY {
         public static final String EX_RULES = "ex-rules";
         public static final String EX_CHECKBOX = "ex-checkbox";
@@ -262,5 +281,10 @@ public class JsonFormConstants {
 
     public static class MESSAGE_TYPE {
         public static final String GLOBAL_VALUES = "global_values";
+    }
+
+    public static class ACTIVITY_REQUEST_CODE {
+        public static final int REQUEST_CODE_REGISTER = 1222;
+        public static final int REQUEST_CODE_VERIFY = 1333;
     }
 }
