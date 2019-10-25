@@ -51,7 +51,7 @@ import java.util.Map;
 public class JsonFormInteractor {
 
     private static final String TAG = "JsonFormInteractor";
-    private static final JsonFormInteractor INSTANCE = new JsonFormInteractor();
+    protected static JsonFormInteractor INSTANCE = new JsonFormInteractor();
     public Map<String, FormWidgetFactory> map;
 
     public JsonFormInteractor() {
