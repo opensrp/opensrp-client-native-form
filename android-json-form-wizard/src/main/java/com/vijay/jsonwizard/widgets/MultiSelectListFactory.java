@@ -222,7 +222,7 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         try {
             jsonFormFragment.getJsonApi().writeValue(
                     getMultiSelectListAccessoryHashMap().get(currentAdapterKey).getFormAttributes().optString(JsonFormConstants.STEPNAME), currentAdapterKey,
-                    multiSelectItem.toJson().toString(), "", "", "",
+                    multiSelectItem.toJson(getMultiSelectListSelectedAdapter().getData()).toString(), "", "", "",
                     getMultiSelectListAccessoryHashMap().get(currentAdapterKey).getFormAttributes().optBoolean(JsonFormConstants.IS_POPUP));
         } catch (JSONException e) {
             e.printStackTrace();

@@ -3,6 +3,8 @@ package com.vijay.jsonwizard.domain;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
+
 public class MultiSelectItem {
     private String key;
     private String value;
@@ -31,9 +33,12 @@ public class MultiSelectItem {
         this.value = value;
     }
 
-    public JSONObject toJson() {
+    public JSONObject toJson(List<MultiSelectItem> multiSelectItems) {
         JSONObject jsonObject = new JSONObject();
         try {
+            for (MultiSelectItem multiSelectItem : multiSelectItems) {
+                jsonObject.put(multiSelectItem.getKey(), multiSelectItem.getValue());
+            }
             return jsonObject.put(getKey(), getValue());
         } catch (JSONException e) {
             e.printStackTrace();
