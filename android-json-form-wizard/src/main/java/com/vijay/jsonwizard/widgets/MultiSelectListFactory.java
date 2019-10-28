@@ -311,6 +311,7 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         final RelativeLayout relativeLayout = (RelativeLayout) layoutInflater.inflate(R.layout.multi_select_list_action_layout, null);
         relativeLayout.setTag(R.id.key, currentAdapterKey);
         Button btn_multi_select_action = relativeLayout.findViewById(R.id.btn_multi_select_action);
+        btn_multi_select_action.setText(jsonObject.optString("buttonText"));
         btn_multi_select_action.setTypeface(Typeface.DEFAULT);
         btn_multi_select_action.setTag(R.id.maxSelectable, jsonObject.optString(JsonFormConstants.MultiSelectUtils.MAX_SELECTABLE));
         btn_multi_select_action.setOnClickListener(new View.OnClickListener() {
