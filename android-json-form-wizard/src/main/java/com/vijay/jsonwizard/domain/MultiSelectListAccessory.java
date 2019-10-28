@@ -66,4 +66,8 @@ public class MultiSelectListAccessory {
     public void setItemList(List<MultiSelectItem> itemList) {
         this.itemList = itemList;
     }
+
+    public List<MultiSelectItem> getSelectedItemList() {
+        return selectedItemList;
+    }
 }
