@@ -67,4 +67,6 @@
     <string name="json_form_error_msg" >%d Erreur(s) ont été retrouvés dans le formulaire. Veuillez les corriger avant de pouvoir le soumettre.</string>
     <string name="json_form_on_next_error_msg" >Veuillez corriger le(s) erreur(s) dans le formulaire avant de procéder</string>
     <string name="go_to_step">Aller à l\'étape</string>
+    <string name="simprints_guid">GUID not found</string>
+    <string name="simprints_init_fail">Project Id or user id or module id not found. can be use SimprintsLibrary.init</string>
 </resources>
