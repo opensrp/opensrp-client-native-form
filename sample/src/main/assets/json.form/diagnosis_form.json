@@ -58,48 +58,15 @@
     "next": "step2",
     "fields": [
       {
-        "key": "user_date",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "date_picker",
-        "hint": "User DOB",
-        "expanded": false,
-        "duration": {
-          "label": "Age"
-        },
-        "default": "12-12-2015",
-        "min_date": "today-5y",
-        "max_date": "today",
-        "v_required": {
-          "value": "true",
-          "err": "Please enter the date of birth"
-        }
-      },
-      {
         "key": "user_dummy",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
+        "maxSelectable": 2,
         "buttonText": "+ Add disease code",
         "dialogTitle": "Add disease code",
         "searchHint": "Type Disease Name",
-        "value": [
-          {
-            "key": "Abo00rtion",
-            "property": {
-              "presumed-id": "er",
-              "confirmed-id": "er"
-            }
-          },
-          {
-            "key": "Abcess",
-            "property": {
-              "presumed-id": "er",
-              "confirmed-id": "er"
-            }
-          }
-        ],
+        "value": "[{\"key\":\"Bacterial Meningitis\",\"property\":{\"presumed-id\":\"er\",\"confirmed-id\":\"er\"}}]",
         "options": [
           {
             "key": "A"

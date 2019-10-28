@@ -62,4 +62,8 @@ public class MultiSelectListAccessory {
     public void setFormAttributes(JSONObject formAttributes) {
         this.formAttributes = formAttributes;
     }
+
+    public void setItemList(List<MultiSelectItem> itemList) {
+        this.itemList = itemList;
+    }
 }

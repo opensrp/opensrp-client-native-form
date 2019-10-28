@@ -291,5 +291,6 @@ public class JsonFormConstants {
 
     public interface MultiSelectUtils {
         String PROPERTY = "property";
+        String MAX_SELECTABLE = "maxSelectable";
     }
 }

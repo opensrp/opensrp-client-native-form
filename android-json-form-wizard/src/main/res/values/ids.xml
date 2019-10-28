@@ -79,4 +79,5 @@
     <item name="submit" type="id" />
     <item name="label_dialog_image_src" type="id"/>
     <item name="error_textView" type="id" />
+    <item name="maxSelectable" type="id"/>
 </resources>

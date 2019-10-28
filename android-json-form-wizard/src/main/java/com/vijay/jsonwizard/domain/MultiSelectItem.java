@@ -1,5 +1,8 @@
 package com.vijay.jsonwizard.domain;
 
+import com.vijay.jsonwizard.constants.JsonFormConstants;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -33,16 +36,18 @@ public class MultiSelectItem {
         this.value = value;
     }
 
-    public JSONObject toJson(List<MultiSelectItem> multiSelectItems) {
-        JSONObject jsonObject = new JSONObject();
+    public JSONArray toJson(List<MultiSelectItem> multiSelectItems) {
+        JSONArray jsonArray = new JSONArray();
         try {
             for (MultiSelectItem multiSelectItem : multiSelectItems) {
-                jsonObject.put(multiSelectItem.getKey(), multiSelectItem.getValue());
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put(JsonFormConstants.KEY, multiSelectItem.getKey());
+                jsonObject.put(JsonFormConstants.MultiSelectUtils.PROPERTY, new JSONObject(multiSelectItem.getValue()));
+                jsonArray.put(jsonObject);
             }
-            return jsonObject.put(getKey(), getValue());
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return null;
+        return jsonArray;
     }
 }
