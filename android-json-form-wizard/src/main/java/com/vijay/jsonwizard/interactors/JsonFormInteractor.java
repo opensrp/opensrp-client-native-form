@@ -13,6 +13,7 @@ import com.vijay.jsonwizard.widgets.CheckBoxFactory;
 import com.vijay.jsonwizard.widgets.ComponentSpacerFactory;
 import com.vijay.jsonwizard.widgets.CountDownTimerFactory;
 import com.vijay.jsonwizard.widgets.DatePickerFactory;
+import com.vijay.jsonwizard.widgets.MultiSelectListFactory;
 import com.vijay.jsonwizard.widgets.EditTextFactory;
 import com.vijay.jsonwizard.widgets.ExpansionWidgetFactory;
 import com.vijay.jsonwizard.widgets.ExtendedRadioButtonWidgetFactory;
@@ -50,7 +51,7 @@ import java.util.Map;
 public class JsonFormInteractor {
 
     private static final String TAG = "JsonFormInteractor";
-    private static final JsonFormInteractor INSTANCE = new JsonFormInteractor();
+    protected static JsonFormInteractor INSTANCE = new JsonFormInteractor();
     public Map<String, FormWidgetFactory> map;
 
     public JsonFormInteractor() {
@@ -90,6 +91,8 @@ public class JsonFormInteractor {
         map.put(JsonFormConstants.IMAGE_VIEW, new ImageViewFactory());
         map.put(JsonFormConstants.EXTENDED_RADIO_BUTTON, new ExtendedRadioButtonWidgetFactory());
         map.put(JsonFormConstants.EXPANSION_PANEL, new ExpansionWidgetFactory());
+        map.put(JsonFormConstants.MULTI_SELECT_LIST, new MultiSelectListFactory());
+
     }
 
     public List<View> fetchFormElements(String stepName, JsonFormFragment formFragment,

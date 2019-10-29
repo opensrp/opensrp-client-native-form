@@ -87,4 +87,6 @@
     <string name="simprints_init_fail">Project Id or user id or module id not found. can be use SimprintsLibrary.init</string>
     <string name="permission_denied_title">Permission Denied</string>
     <string name="permission_messege">The app needs this permission to capture the device information required when submitting forms.Without this permission the app will not function properly. Are you sure you want to deny this permission?</string>
+    <string name="multiselect_msg_on_item_added">Added</string>
+    <string name="loading_multi_select_list">Loading</string>
 </resources>

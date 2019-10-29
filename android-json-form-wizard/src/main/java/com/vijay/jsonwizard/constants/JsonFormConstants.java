@@ -207,6 +207,7 @@ public class JsonFormConstants {
     public static final String FALSE = "false";
     public static final String DISPLAY_SCROLL_BARS = "display_scroll_bars";
     public static final String SKIP_BLANK_STEPS = "skip_blank_steps";
+    public static final String MULTI_SELECT_LIST ="multi_select_list" ;
     public static final String FORM_VERSION = "form_version";
 
     public static class Properties {
@@ -286,5 +287,15 @@ public class JsonFormConstants {
     public static class ACTIVITY_REQUEST_CODE {
         public static final int REQUEST_CODE_REGISTER = 1222;
         public static final int REQUEST_CODE_VERIFY = 1333;
+    }
+
+    public interface MultiSelectUtils {
+        String PROPERTY = "property";
+        String MAX_SELECTABLE = "maxSelectable";
+        String META = "meta";
+        String INFO = "info";
+        String BUTTON_TEXT = "buttonText";
+        String DIALOG_TITLE = "dialogTitle";
+        String SEARCH_HINT = "searchHint";
     }
 }
