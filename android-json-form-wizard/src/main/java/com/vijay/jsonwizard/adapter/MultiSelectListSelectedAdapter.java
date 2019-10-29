@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.vijay.jsonwizard.R;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.MultiSelectItem;
 
 import org.json.JSONException;
@@ -52,10 +53,10 @@ public class MultiSelectListSelectedAdapter extends RecyclerView.Adapter<MultiSe
         String value = multiSelectItem.getValue();
         try{
             JSONObject jsonObject = new JSONObject(value);
-            if(jsonObject.has("meta")){
+            if(jsonObject.has(JsonFormConstants.MultiSelectUtils.META)){
                 holder.multiSelectListTextViewAdditionalInfo.setVisibility(View.VISIBLE);
                 holder.multiSelectListTextViewAdditionalInfo.setTypeface(Typeface.DEFAULT);
-                holder.multiSelectListTextViewAdditionalInfo.setText(jsonObject.optJSONObject("meta").getString("info"));
+                holder.multiSelectListTextViewAdditionalInfo.setText(jsonObject.optJSONObject(JsonFormConstants.MultiSelectUtils.META).getString(JsonFormConstants.MultiSelectUtils.INFO));
             }
         }catch (JSONException e){
             Timber.e(e);

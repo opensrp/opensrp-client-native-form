@@ -67,8 +67,10 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         this.jsonObject = jsonObject;
         this.currentAdapterKey = jsonObject.optString(JsonFormConstants.KEY);
         this.context = context;
-
-        prepareMultiSelectHashMap(stepName, popup);
+        String openMrsEntityParent = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
+        String openMrsEntity = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY);
+        String openMrsEntityId = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_ID);
+        prepareMultiSelectHashMap(stepName, popup, openMrsEntity, openMrsEntityParent, openMrsEntityId);
 
         setUpDialog(context);
 
@@ -76,7 +78,7 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         RecyclerView recyclerView = createSelectedRecyclerView(context);
         List<View> views = new ArrayList<View>(Arrays.asList(recyclerView, actionView));
 
-        populateTags(actionView, stepName, popup);
+        populateTags(actionView, stepName, popup, openMrsEntity, openMrsEntityParent, openMrsEntityId);
 
         prepareViewChecks(actionView, context);
         return views;
@@ -103,35 +105,34 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         }
     }
 
-    private void populateTags(@NonNull View view, @NonNull String stepName, boolean popUp) {
+    private void populateTags(@NonNull View view, @NonNull String stepName, boolean popUp, String openmrsEntity, String openmrsEntityParent, String openmrsEntityId) {
         JSONArray canvasIds = new JSONArray();
         view.setId(ViewUtil.generateViewId());
         canvasIds.put(view.getId());
-        String openMrsEntityParent = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
-        String openMrsEntity = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY);
-        String openMrsEntityId = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_ID);
         view.setTag(R.id.canvas_ids, canvasIds.toString());
         view.setTag(R.id.key, jsonObject.optString(JsonFormConstants.KEY));
-        view.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
-        view.setTag(R.id.openmrs_entity, openMrsEntity);
-        view.setTag(R.id.openmrs_entity_id, openMrsEntityId);
+        view.setTag(R.id.openmrs_entity_parent, openmrsEntityParent);
+        view.setTag(R.id.openmrs_entity, openmrsEntity);
+        view.setTag(R.id.openmrs_entity_id, openmrsEntityId);
         view.setTag(R.id.type, jsonObject.optString(JsonFormConstants.TYPE));
         view.setTag(R.id.extraPopup, popUp);
         view.setTag(R.id.address, stepName + ":" + jsonObject.optString(JsonFormConstants.KEY));
     }
 
-    private void prepareMultiSelectHashMap(@NonNull String stepName, boolean popup) {
+    private void prepareMultiSelectHashMap(@NonNull String stepName, boolean popup, String openmrsEntity, String openmrsEntityParent, String openmrsEntityId) {
         MultiSelectListAccessory multiSelectListAccessory = new MultiSelectListAccessory(
                 new MultiSelectListSelectedAdapter(new ArrayList<MultiSelectItem>()),
                 new MultiSelectListAdapter(prepareListData()),
                 null,
                 new ArrayList<MultiSelectItem>(),
                 new ArrayList<MultiSelectItem>());
-
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put(JsonFormConstants.STEPNAME, stepName);
             jsonObject.put(JsonFormConstants.IS_POPUP, popup);
+            jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_PARENT, openmrsEntityParent);
+            jsonObject.put(JsonFormConstants.OPENMRS_ENTITY, openmrsEntity);
+            jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_ID, openmrsEntityId);
             multiSelectListAccessory.setFormAttributes(jsonObject);
         } catch (JSONException e) {
             Timber.e(e);
@@ -194,9 +195,9 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         View view = inflater.inflate(R.layout.multiselectlistdialog, null);
         ImageView imgClose = view.findViewById(R.id.multiSelectListCloseDialog);
         TextView txtMultiSelectListDialogTitle = view.findViewById(R.id.multiSelectListDialogTitle);
-        txtMultiSelectListDialogTitle.setText(jsonObject.optString("dialogTitle"));
+        txtMultiSelectListDialogTitle.setText(jsonObject.optString(JsonFormConstants.MultiSelectUtils.DIALOG_TITLE));
         SearchView searchViewMultiSelect = view.findViewById(R.id.multiSelectListSearchView);
-        searchViewMultiSelect.setQueryHint(jsonObject.optString("searchHint"));
+        searchViewMultiSelect.setQueryHint(jsonObject.optString(JsonFormConstants.MultiSelectUtils.SEARCH_HINT));
         final RecyclerView recyclerView = view.findViewById(R.id.multiSelectListRecyclerView);
         AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.FullScreenDialogStyle);
         builder.setView(view);
@@ -250,16 +251,20 @@ public class MultiSelectListFactory implements FormWidgetFactory {
     protected void handleClickEventOnListData(@NonNull MultiSelectItem multiSelectItem, @NonNull Context context) {
         updateSelectedData(Arrays.asList(multiSelectItem), false);
         writeToForm(multiSelectItem);
-        Utils.showToast(context, multiSelectItem.getKey() + " " + context.getString(R.string.item_added));
+        Utils.showToast(context, multiSelectItem.getKey() + " " + context.getString(R.string.multiselect_msg_on_item_added));
         getAlertDialog().dismiss();
     }
 
     protected void writeToForm(@NonNull MultiSelectItem multiSelectItem) {
         try {
+            MultiSelectListAccessory multiSelectListAccessory = getMultiSelectListAccessoryHashMap().get(currentAdapterKey);
             jsonFormFragment.getJsonApi().writeValue(
-                    getMultiSelectListAccessoryHashMap().get(currentAdapterKey).getFormAttributes().optString(JsonFormConstants.STEPNAME), currentAdapterKey,
-                    multiSelectItem.toJson(getMultiSelectListSelectedAdapter().getData()).toString(), "", "", "",
-                    getMultiSelectListAccessoryHashMap().get(currentAdapterKey).getFormAttributes().optBoolean(JsonFormConstants.IS_POPUP));
+                    multiSelectListAccessory.getFormAttributes().optString(JsonFormConstants.STEPNAME), currentAdapterKey,
+                    multiSelectItem.toJson(getMultiSelectListSelectedAdapter().getData()).toString(),
+                    multiSelectListAccessory.getFormAttributes().optString(JsonFormConstants.OPENMRS_ENTITY_PARENT),
+                    multiSelectListAccessory.getFormAttributes().optString(JsonFormConstants.OPENMRS_ENTITY),
+                    multiSelectListAccessory.getFormAttributes().optString(JsonFormConstants.OPENMRS_ENTITY_ID),
+                    multiSelectListAccessory.getFormAttributes().optBoolean(JsonFormConstants.IS_POPUP));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -312,7 +317,7 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         final RelativeLayout relativeLayout = (RelativeLayout) layoutInflater.inflate(R.layout.multi_select_list_action_layout, null);
         relativeLayout.setTag(R.id.key, currentAdapterKey);
         Button btn_multi_select_action = relativeLayout.findViewById(R.id.btn_multi_select_action);
-        btn_multi_select_action.setText(jsonObject.optString("buttonText"));
+        btn_multi_select_action.setText(jsonObject.optString(JsonFormConstants.MultiSelectUtils.BUTTON_TEXT));
         btn_multi_select_action.setTypeface(Typeface.DEFAULT);
         btn_multi_select_action.setTag(R.id.maxSelectable, jsonObject.optString(JsonFormConstants.MultiSelectUtils.MAX_SELECTABLE));
         btn_multi_select_action.setOnClickListener(new View.OnClickListener() {

@@ -25,6 +25,7 @@ public class MultiSelectListAccessory {
         this.alertDialog = alertDialog;
         this.selectedItemList = selectedItemList;
         this.itemList = itemList;
+        this.formAttributes = new JSONObject();
     }
 
     public MultiSelectListSelectedAdapter getSelectedAdapter() {
