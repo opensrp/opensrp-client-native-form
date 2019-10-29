@@ -76,7 +76,7 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         RecyclerView recyclerView = createSelectedRecyclerView(context);
         List<View> views = new ArrayList<View>(Arrays.asList(recyclerView, actionView));
 
-        populateTags(actionView, stepName);
+        populateTags(actionView, stepName, popup);
 
         prepareViewChecks(actionView, context);
         return views;
@@ -103,7 +103,7 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         }
     }
 
-    private void populateTags(@NonNull View view, @NonNull String stepName) {
+    private void populateTags(@NonNull View view, @NonNull String stepName, boolean popUp) {
         JSONArray canvasIds = new JSONArray();
         view.setId(ViewUtil.generateViewId());
         canvasIds.put(view.getId());
@@ -116,6 +116,7 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         view.setTag(R.id.openmrs_entity, openMrsEntity);
         view.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         view.setTag(R.id.type, jsonObject.optString(JsonFormConstants.TYPE));
+        view.setTag(R.id.extraPopup, popUp);
         view.setTag(R.id.address, stepName + ":" + jsonObject.optString(JsonFormConstants.KEY));
     }
 
