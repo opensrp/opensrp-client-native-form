@@ -11,9 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -32,9 +30,6 @@ public class MultiSelectListFactoryTest {
 
     @Mock
     private JSONObject jsonObject;
-
-    @Rule
-    ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void setUp() {
