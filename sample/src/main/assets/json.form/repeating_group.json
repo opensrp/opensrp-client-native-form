@@ -1,0 +1,393 @@
+{
+  "count": "1",
+  "encounter_type": "larval_dipping",
+  "entity_id": "",
+  "metadata": {
+    "start": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "start",
+      "openmrs_entity_id": "163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "end": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "end",
+      "openmrs_entity_id": "163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "today": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "encounter",
+      "openmrs_entity_id": "encounter_date"
+    },
+    "deviceid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "deviceid",
+      "openmrs_entity_id": "163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "subscriberid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "subscriberid",
+      "openmrs_entity_id": "163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "simserial": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "simserial",
+      "openmrs_entity_id": "163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "phonenumber": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "phonenumber",
+      "openmrs_entity_id": "163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "encounter_location": ""
+  },
+  "step1": {
+    "title": "Larval Dipping Details",
+    "display_back_button": "true",
+    "fields": [
+      {
+        "key": "task_business_status",
+        "label": "Status",
+        "type": "native_radio",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "options": [
+          {
+            "key": "In Progress",
+            "text": "In Progress"
+          },
+          {
+            "key": "Incomplete",
+            "text": "Incomplete"
+          },
+          {
+            "key": "Not Eligible",
+            "text": "Not Eligible"
+          },
+          {
+            "key": "Complete",
+            "text": "Complete"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Please specify the task status"
+        }
+      },
+      {
+        "key": "occurred_date",
+        "type": "date_picker",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "hint": "Date larval dipping was done",
+        "max_date": "today",
+        "v_required": {
+          "value": true,
+          "err": "Please specify the date larval dipping was done"
+        }
+      },
+      {
+        "key": "dips",
+        "type": "repeating_group",
+        "reference_edit_text_hint":"# of dips",
+        "repeating_group_label": "dip",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "v_required": {
+          "value": true,
+          "err": "Please specify the # of dips"
+        },
+        "value": [
+          {
+            "key": "larvae_total",
+            "type": "edit_text",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "hint": "# of larvae collected",
+            "v_numeric_integer": {
+              "value": "true",
+              "err": "Must be a rounded number"
+            },
+            "v_required": {
+              "value": true,
+              "err": "Please specify the total # of larvae collected"
+            }
+          },
+          {
+            "key": "larvae_1_total",
+            "type": "edit_text",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "hint": "# of stage 1-2 larvae collected",
+            "v_numeric_integer": {
+              "value": "true",
+              "err": "Must be a rounded number"
+            },
+            "v_relative_max": {
+              "value": "larvae_total",
+              "err": "# of stage 1-2 larvae cannot be greater than the total # of larvae collected"
+            }
+          },
+          {
+            "key": "larvae_3_total",
+            "type": "edit_text",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "hint": "# of stage 3-4 larvae collected",
+            "v_numeric_integer": {
+              "value": "true",
+              "err": "Must be a rounded number"
+            },
+            "v_relative_max": {
+              "value": "larvae_total",
+              "err": "# of stage 3-4 larvae cannot be greater than the total # of larvae collected"
+            }
+          },
+          {
+            "key": "moz_type",
+            "label": "Larvae species found",
+            "type": "check_box",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "options": [
+              {
+                "key": "An. gambiae",
+                "text": "An. gambiae",
+                "value": false
+              },
+              {
+                "key": "An. funestus",
+                "text": "An. funestus",
+                "value": false
+              },
+              {
+                "key": "An. minimus",
+                "text": "An. minimus",
+                "value": false
+              },
+              {
+                "key": "An. dirus",
+                "text": "An. dirus",
+                "value": false
+              },
+              {
+                "key": "An. maximus",
+                "text": "An. maximus",
+                "value": false
+              },
+              {
+                "key": "An. other",
+                "text": "An. other",
+                "value": false
+              },
+              {
+                "key": "Culex",
+                "text": "Culex",
+                "value": false
+              }
+            ],
+            "v_required": {
+              "value": true,
+              "err": "Please specify the larvae species collected"
+            }
+          },
+          {
+            "key": "An. gambiae",
+            "type": "edit_text",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "hint": "# of An. gambiae larvae collected",
+            "relevance": {
+              "step1:moz_type": {
+                "ex-checkbox": [
+                  {
+                    "or": ["An. gambiae"]
+                  }
+                ]
+              }
+            },
+            "v_numeric_integer": {
+              "value": "true",
+              "err": "Must be a rounded number"
+            },
+            "v_required": {
+              "value": true,
+              "err": "Please specify the number of larvae of this species collected"
+            }
+          },
+          {
+            "key": "An. funestus",
+            "type": "edit_text",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "hint": "# of An. funestus larvae collected",
+            "relevance": {
+              "step1:moz_type": {
+                "ex-checkbox": [
+                  {
+                    "or": ["An. funestus"]
+                  }
+                ]
+              }
+            },
+            "v_numeric_integer": {
+              "value": "true",
+              "err": "Must be a rounded number"
+            },
+            "v_required": {
+              "value": true,
+              "err": "Please specify the number of larvae of this species collected"
+            }
+          },
+          {
+            "key": "An. minimus",
+            "type": "edit_text",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "hint": "# of An. minimus larvae collected",
+            "relevance": {
+              "step1:moz_type": {
+                "ex-checkbox": [
+                  {
+                    "or": ["An. minimus"]
+                  }
+                ]
+              }
+            },
+            "v_numeric_integer": {
+              "value": "true",
+              "err": "Must be a rounded number"
+            },
+            "v_required": {
+              "value": true,
+              "err": "Please specify the number of larvae of this species collected"
+            }
+          },
+          {
+            "key": "An. dirus",
+            "type": "edit_text",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "hint": "# of An. dirus larvae collected",
+            "relevance": {
+              "step1:moz_type": {
+                "ex-checkbox": [
+                  {
+                    "or": ["An. dirus"]
+                  }
+                ]
+              }
+            },
+            "v_numeric_integer": {
+              "value": "true",
+              "err": "Must be a rounded number"
+            },
+            "v_required": {
+              "value": true,
+              "err": "Please specify the number of larvae of this species collected"
+            }
+          },
+          {
+            "key": "An. maximus",
+            "type": "edit_text",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "hint": "# of An. maximus larvae collected",
+            "relevance": {
+              "step1:moz_type": {
+                "ex-checkbox": [
+                  {
+                    "or": ["An. maximus"]
+                  }
+                ]
+              }
+            },
+            "v_numeric_integer": {
+              "value": "true",
+              "err": "Must be a rounded number"
+            },
+            "v_required": {
+              "value": true,
+              "err": "Please specify the number of larvae of this species collected"
+            }
+          },
+          {
+            "key": "An. other",
+            "type": "edit_text",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "hint": "# of An. other larvae collected",
+            "relevance": {
+              "step1:moz_type": {
+                "ex-checkbox": [
+                  {
+                    "or": ["An. other"]
+                  }
+                ]
+              }
+            },
+            "v_numeric_integer": {
+              "value": "true",
+              "err": "Must be a rounded number"
+            },
+            "v_required": {
+              "value": true,
+              "err": "Please specify the number of larvae of this species collected"
+            }
+          },
+          {
+            "key": "Culex",
+            "type": "edit_text",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "hint": "# of Culex larvae collected",
+            "relevance": {
+              "step1:moz_type": {
+                "ex-checkbox": [
+                  {
+                    "or": ["Culex"]
+                  }
+                ]
+              }
+            },
+            "v_numeric_integer": {
+              "value": "true",
+              "err": "Must be a rounded number"
+            },
+            "v_required": {
+              "value": true,
+              "err": "Please specify the number of larvae of this species collected"
+            }
+          },
+          {
+            "key": "comment",
+            "type": "edit_text",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "hint": "Add a comment"
+          }
+        ]
+      }
+    ]
+  }
+}
