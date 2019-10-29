@@ -140,6 +140,7 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:2.8.47'
     testImplementation('com.squareup:fest-android:1.0.8') { exclude module: 'support-v4' }
     testImplementation 'org.robolectric:robolectric:3.8'
+    testImplementation "org.json:json:20190722"
 }
 
 task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
