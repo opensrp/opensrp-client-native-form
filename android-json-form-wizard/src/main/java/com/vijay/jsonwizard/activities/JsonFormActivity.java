@@ -287,7 +287,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     @Override
     public void refreshSkipLogic(String parentKey, String childKey, boolean popup) {
         initComparisons();
-        for (View curView : skipLogicViews.values()) {
+       for (View curView : skipLogicViews.values()) {
             addRelevance(curView, popup);
         }
     }
@@ -868,7 +868,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     protected void addRelevance(View view, boolean popup) {
         String relevanceTag = (String) view.getTag(R.id.relevance);
-        if (relevanceTag != null && relevanceTag.length() > 0) {
+        boolean widgetDisplay = (boolean) view.getTag(R.id.extraPopup);
+        if ((relevanceTag != null && relevanceTag.length() > 0) && (widgetDisplay == popup)) {
             try {
                 boolean isPopup = popup;
                 JSONObject relevance = new JSONObject(relevanceTag);

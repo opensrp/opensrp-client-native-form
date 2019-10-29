@@ -244,7 +244,12 @@
             "text": "No",
             "value": false,
             "openmrs_entity": "",
-            "openmrs_entity_id": ""
+            "openmrs_entity_id": "",
+            "specify_info": "specify fetal heart rate (bpm)...",
+            "specify_widget": "check_box",
+            "specify_info_color": "#8C8C8C",
+            "content_form": "fetal_heartbeat_sub_form"
+
           }
         ],
         "v_required": {
