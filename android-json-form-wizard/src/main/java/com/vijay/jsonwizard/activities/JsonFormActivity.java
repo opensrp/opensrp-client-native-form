@@ -72,6 +72,7 @@ import com.vijay.jsonwizard.views.CustomTextView;
 import com.vijay.jsonwizard.widgets.CountDownTimerFactory;
 import com.vijay.jsonwizard.widgets.NumberSelectorFactory;
 
+import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -785,7 +786,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             }
 
             if (checkboxObject != null && checkboxOptions != null) {
-                if (checkboxObject.has(JsonFormConstants.VALUE)) {
+                if (checkboxObject.has(JsonFormConstants.VALUE) && StringUtils.isNotEmpty(checkboxObject.getString(JsonFormConstants.VALUE))) {
                     currentValues.addAll(getCurrentCheckboxValues(checkboxObject.getJSONArray(JsonFormConstants.VALUE)));
                 }
 

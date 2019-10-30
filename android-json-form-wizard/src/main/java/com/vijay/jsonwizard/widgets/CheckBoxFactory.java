@@ -204,7 +204,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
             checkboxLayout.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE) + JsonFormConstants.SUFFIX.PARENT);
             canvasIds.put(checkboxLayout.getId());
 
-            if (!TextUtils.isEmpty(item.optString(JsonFormConstants.VALUE))) {
+            if (StringUtils.isNotEmpty(item.optString(JsonFormConstants.VALUE))) {
                 checkBox.setChecked(Boolean.valueOf(item.optString(JsonFormConstants.VALUE)));
             }
 
