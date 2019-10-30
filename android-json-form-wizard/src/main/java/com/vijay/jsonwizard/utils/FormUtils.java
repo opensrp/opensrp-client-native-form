@@ -283,11 +283,10 @@ public class FormUtils {
         }
     }
 
-    public static Map<String, View> createRadioButtonAndCheckBoxLabel(String stepName,
-                                                                      LinearLayout linearLayout,
+    public static Map<String, View> createRadioButtonAndCheckBoxLabel(String stepName, LinearLayout linearLayout,
                                                                       JSONObject jsonObject, Context context,
                                                                       JSONArray canvasIds, Boolean readOnly,
-                                                                      CommonListener listener) throws JSONException {
+                                                                      CommonListener listener, boolean popup) throws JSONException {
         Map<String, View> createdViewsMap = new HashMap<>();
         String label = jsonObject.optString(JsonFormConstants.LABEL, "");
         if (!TextUtils.isEmpty(label)) {
@@ -299,11 +298,10 @@ public class FormUtils {
             String labelTextColor = jsonObject
                     .optString(JsonFormConstants.LABEL_TEXT_COLOR, JsonFormConstants.DEFAULT_TEXT_COLOR);
             JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
-            ConstraintLayout labelConstraintLayout = createLabelLinearLayout(stepName, canvasIds,
-                    jsonObject, context,
-                    listener);
-
+            ConstraintLayout labelConstraintLayout = createLabelLinearLayout(stepName, canvasIds, jsonObject, context, listener);
+            labelConstraintLayout.setTag(R.id.extraPopup, popup);
             CustomTextView labelText = labelConstraintLayout.findViewById(R.id.label_text);
+            labelText.setTag(R.id.extraPopup, popup);
             ImageView editButton = labelConstraintLayout.findViewById(R.id.label_edit_button);
             if (requiredObject != null) {
                 String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
