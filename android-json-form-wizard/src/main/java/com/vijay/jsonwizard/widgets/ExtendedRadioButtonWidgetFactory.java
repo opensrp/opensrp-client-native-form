@@ -43,7 +43,7 @@ public class ExtendedRadioButtonWidgetFactory extends NativeRadioButtonFactory {
             LinearLayout rootLayout = (LinearLayout) LayoutInflater.from(context).inflate(getLayout(), null);
             Map<String, View> labelViews = FormUtils
                     .createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly,
-                            commonListener);
+                            commonListener, popup);
             String openMrsEntityParent = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
             String openMrsEntity = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY);
             String openMrsEntityId = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_ID);
@@ -67,20 +67,7 @@ public class ExtendedRadioButtonWidgetFactory extends NativeRadioButtonFactory {
             radioGroup
                     .setTag(com.vijay.jsonwizard.R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
 
-            if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
-                radioGroup.setTag(com.vijay.jsonwizard.R.id.relevance, relevance);
-                ((JsonApi) context).addSkipLogicView(radioGroup);
-            }
-
-            if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
-                radioGroup.setTag(com.vijay.jsonwizard.R.id.constraints, constraints);
-                ((JsonApi) context).addConstrainedView(radioGroup);
-            }
-
-            if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
-                radioGroup.setTag(com.vijay.jsonwizard.R.id.calculation, calculation);
-                ((JsonApi) context).addCalculationLogicView(radioGroup);
-            }
+            attachRefreshLogic(context, relevance, constraints, calculation, radioGroup);
             addRadioButtons(stepName, context, jsonObject, commonListener, popup, radioGroup, readOnly, canvasIds);
             rootLayout.addView(radioGroup);
             views.add(rootLayout);
@@ -100,6 +87,23 @@ public class ExtendedRadioButtonWidgetFactory extends NativeRadioButtonFactory {
 
     private RadioGroup getRootLayout(Context context) {
         return (RadioGroup) LayoutInflater.from(context).inflate(R.layout.extended_radio_button, null);
+    }
+
+    private void attachRefreshLogic(Context context, String relevance, String constraints, String calculation, RadioGroup radioGroup) {
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+            radioGroup.setTag(com.vijay.jsonwizard.R.id.relevance, relevance);
+            ((JsonApi) context).addSkipLogicView(radioGroup);
+        }
+
+        if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
+            radioGroup.setTag(com.vijay.jsonwizard.R.id.constraints, constraints);
+            ((JsonApi) context).addConstrainedView(radioGroup);
+        }
+
+        if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
+            radioGroup.setTag(com.vijay.jsonwizard.R.id.calculation, calculation);
+            ((JsonApi) context).addCalculationLogicView(radioGroup);
+        }
     }
 
     private void addRadioButtons(String stepName, Context context, JSONObject jsonObject, CommonListener commonListener,
