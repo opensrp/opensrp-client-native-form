@@ -119,7 +119,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
         canvasIds.put(rootLayout.getId());
         addRequiredValidator(rootLayout, jsonObject);
 
-        Map<String, View> labelViews = createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly, listener);
+        Map<String, View> labelViews = createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly, listener, popup);
 
 
         ArrayList<View> editableCheckBoxes = addCheckBoxOptionsElements(jsonObject, context, readOnly, canvasIds, stepName,
@@ -129,6 +129,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
             editButton = (ImageView) labelViews.get(JsonFormConstants.EDIT_BUTTON);
             if (editButton != null) {
                 showEditButton(jsonObject, editableCheckBoxes, editButton, listener);
+                editButton.setTag(R.id.extraPopup, popup);
                 if (editable) {
                     editButton.setVisibility(View.VISIBLE);
                 }

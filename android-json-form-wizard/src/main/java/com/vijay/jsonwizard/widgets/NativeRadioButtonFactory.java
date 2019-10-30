@@ -335,7 +335,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
         LinearLayout rootLayout = (LinearLayout) LayoutInflater.from(context).inflate(getLayout(), null);
         Map<String, View> labelViews = FormUtils
-                .createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly, listener);
+                .createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly, listener, popup);
         View radioGroup =
                 addRadioButtonOptionsElements(jsonObject, context, stepName, rootLayout, listener,
                         popup);

@@ -287,7 +287,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     @Override
     public void refreshSkipLogic(String parentKey, String childKey, boolean popup) {
         initComparisons();
-       for (View curView : skipLogicViews.values()) {
+        for (View curView : skipLogicViews.values()) {
             addRelevance(curView, popup);
         }
     }
@@ -867,37 +867,41 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     protected void addRelevance(View view, boolean popup) {
-        String relevanceTag = (String) view.getTag(R.id.relevance);
-        boolean widgetDisplay = (boolean) view.getTag(R.id.extraPopup);
-        if ((relevanceTag != null && relevanceTag.length() > 0) && (widgetDisplay == popup)) {
-            try {
-                boolean isPopup = popup;
-                JSONObject relevance = new JSONObject(relevanceTag);
-                Iterator<String> keys = relevance.keys();
-                boolean ok = true;
-                while (keys.hasNext()) {
-                    String curKey = keys.next();
-                    JSONObject curRelevance = relevance.has(curKey) ? relevance.getJSONObject(curKey) : null;
+        try {
+            String relevanceTag = (String) view.getTag(R.id.relevance);
+            boolean widgetDisplay = (boolean) view.getTag(R.id.extraPopup);
+            if ((relevanceTag != null && relevanceTag.length() > 0) && (widgetDisplay == popup)) {
+                try {
+                    boolean isPopup = popup;
+                    JSONObject relevance = new JSONObject(relevanceTag);
+                    Iterator<String> keys = relevance.keys();
+                    boolean ok = true;
+                    while (keys.hasNext()) {
+                        String curKey = keys.next();
+                        JSONObject curRelevance = relevance.has(curKey) ? relevance.getJSONObject(curKey) : null;
 
-                    String[] address = getAddress(view, curKey, curRelevance);
-                    isPopup = checkPopUpValidity(address, popup);
-                    if (address.length > 1) {
-                        Facts curValueMap = getValueFromAddress(address, isPopup);
-                        try {
-                            boolean comparison = isRelevant(curValueMap, curRelevance);
+                        String[] address = getAddress(view, curKey, curRelevance);
+                        isPopup = checkPopUpValidity(address, popup);
+                        if (address.length > 1) {
+                            Facts curValueMap = getValueFromAddress(address, isPopup);
+                            try {
+                                boolean comparison = isRelevant(curValueMap, curRelevance);
 
-                            ok = ok && comparison;
-                            if (!ok) break;
-                        } catch (Exception e) {
-                            Timber.e(e, "JsonFormActivity --> addRelevance --> comparison");
+                                ok = ok && comparison;
+                                if (!ok) break;
+                            } catch (Exception e) {
+                                Timber.e(e, "JsonFormActivity --> addRelevance --> comparison");
+                            }
+
                         }
-
                     }
+                    toggleViewVisibility(view, ok, isPopup);
+                } catch (Exception e) {
+                    Timber.e(e, "JsonFormActivity --> addRelevance");
                 }
-                toggleViewVisibility(view, ok, isPopup);
-            } catch (Exception e) {
-                Timber.e(e, "JsonFormActivity --> addRelevance");
             }
+        } catch (Exception e) {
+            Timber.e(e, "%s --> Main function", this.getClass().getCanonicalName());
         }
     }
 
