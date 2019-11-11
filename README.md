@@ -1942,3 +1942,43 @@ The example below shows how to include the widget in a json form:
   }
 }
 ```
+### Date picker change year,month,date position programatically
+At DatePickerDialog added a method to set the ymdOrder called setYmdOrder.First at app side need to create a class which extend
+DatePickerFactory and override the method createDateDialog.Then set the order at method setYmdOrder()
+Example as below:
+  ````
+  public class CustomDatePickerFactory extends DatePickerFactory {
+    @Override
+    protected DatePickerDialog createDateDialog(Context context, TextView duration, MaterialEditText editText, JSONObject jsonObject) throws JSONException {
+        DatePickerDialog datePickerDialog = super.createDateDialog(context, duration, editText, jsonObject);
+        datePickerDialog.setYmdOrder(new char[]{'y', 'm', 'd'} );
+        return datePickerDialog;
+    }
+}
+and initialize this to create a CustomJsonFormInteractor extend JsonFormInteractor
+public class CustomJsonFormInteractor extends JsonFormInteractor {
+
+    private static final JsonFormInteractor INSTANCE = new CustomJsonFormInteractor();
+    private CustomJsonFormInteractor(){
+        super();
+    }
+
+    @Override
+    protected void registerWidgets() {
+        super.registerWidgets();
+        map.put(JsonFormConstants.DATE_PICKER, new CustomDatePickerFactory());
+    }
+
+    public static JsonFormInteractor getInstance() {
+        return INSTANCE;
+    }
+}
+adding this
+public class CustomJsonFormFragment extends JsonWizardFormFragment {
+.......
+@Override
+    protected JsonFormFragmentPresenter createPresenter() {
+        return new JsonFormFragmentPresenter(this, CustomJsonFormInteractor.getInstance());
+    }
+    .....
+ }
