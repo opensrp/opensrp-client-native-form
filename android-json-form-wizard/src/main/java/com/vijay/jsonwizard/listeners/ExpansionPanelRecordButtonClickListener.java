@@ -28,6 +28,9 @@ public class ExpansionPanelRecordButtonClickListener implements View.OnClickList
             linearLayout = (LinearLayout) view.getParent().getParent().getParent();
         }
 
+        linearLayout.setClickable(false);
+        linearLayout.setEnabled(false);
+
         view.setTag(R.id.main_layout, linearLayout);
         String stepName = (String) view.getTag(R.id.specify_step_name);
         String type = (String) view.getTag(R.id.type);

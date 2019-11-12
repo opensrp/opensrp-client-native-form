@@ -2064,6 +2064,9 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 }
 
                 LinearLayout linearLayout = refreshExpansionPanelEvent.getLinearLayout();
+                linearLayout.setClickable(true);
+                linearLayout.setEnabled(true);
+
                 RelativeLayout layoutHeader = (RelativeLayout) linearLayout.getChildAt(0);
                 ImageView status = layoutHeader.findViewById(R.id.statusImageView);
                 formUtils.updateExpansionPanelRecyclerView(values, status, getApplicationContext());

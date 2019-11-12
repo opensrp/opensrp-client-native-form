@@ -75,6 +75,18 @@ public class ExpansionWidgetFactory implements FormWidgetFactory {
         rootLayout.setTag(com.vijay.jsonwizard.R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
         rootLayout.setTag(com.vijay.jsonwizard.R.id.canvas_ids, canvasIds.toString());
 
+        attachRefreshLogic(context, relevance, constraints, calculation, rootLayout);
+        attachLayout(stepName, context, jsonFormFragment, jsonObject, commonListener, rootLayout);
+
+        views.add(rootLayout);
+        return views;
+    }
+
+    public LinearLayout getRootLayout(Context context) {
+        return (LinearLayout) LayoutInflater.from(context).inflate(R.layout.native_expansion_panel, null);
+    }
+
+    private void attachRefreshLogic(Context context, String relevance, String constraints, String calculation, LinearLayout rootLayout) {
         if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             rootLayout.setTag(com.vijay.jsonwizard.R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(rootLayout);
@@ -89,15 +101,6 @@ public class ExpansionWidgetFactory implements FormWidgetFactory {
             rootLayout.setTag(com.vijay.jsonwizard.R.id.calculation, calculation);
             ((JsonApi) context).addCalculationLogicView(rootLayout);
         }
-
-        attachLayout(stepName, context, jsonFormFragment, jsonObject, commonListener, rootLayout);
-
-        views.add(rootLayout);
-        return views;
-    }
-
-    public LinearLayout getRootLayout(Context context) {
-        return (LinearLayout) LayoutInflater.from(context).inflate(R.layout.native_expansion_panel, null);
     }
 
     private void attachLayout(String stepName, final Context context, JsonFormFragment jsonFormFragment,
