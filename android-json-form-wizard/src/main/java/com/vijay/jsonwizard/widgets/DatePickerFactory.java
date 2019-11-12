@@ -274,7 +274,7 @@ public class DatePickerFactory implements FormWidgetFactory {
         }
     }
 
-    private DatePickerDialog createDateDialog(Context context, final TextView duration, final MaterialEditText editText,
+    protected DatePickerDialog createDateDialog(Context context, final TextView duration, final MaterialEditText editText,
                                               JSONObject jsonObject) throws JSONException {
         final DatePickerDialog datePickerDialog = new DatePickerDialog();
         datePickerDialog.setContext(context);
