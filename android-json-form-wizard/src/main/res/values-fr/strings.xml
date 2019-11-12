@@ -48,15 +48,15 @@
     <string name="no_camera_permission">L\'application ne peut pas fonctionner sans permission d\'utiliser le caméra. l\'application va quitter.</string>
     <string name="low_storage_error">Impossible de télécharger les dépendences pour le détecteur de visages à cause d\'une manque d\'éspace dans l\'appareil.</string>
     <string name="title_activity_main">Échantillon lecteur code de barre</string>
-    <string name="barcode_header">Cliquez &quot;Lire code de barre&quot; pour lire code de barre</string>
+    <string name="barcode_header">Cliquez &quot;Lire code de barre&quot; pour lire code de barre.</string>
     <string name="read_barcode">Lire code de barre</string>
     <string name="auto_focus">Auto focus</string>
     <string name="use_flash">Employer flash</string>
     <string name="barcode_success">Code de barre réussi</string>
     <string name="barcode_failure">Aucun code de barre capturé</string>
     <string name="barcode_error">Erreure dans la lecture du code de barre: %1$s</string>
-    <string name="allow_camera_management">Vous avez besoin de permettre à l\'application d\'utliser le caméra pour scanner les codes barres&#8230;</string>
-    <string name="please_specify_content">Veuillez spécifier les informations que vous voulez afficher dans la fenêtre&#8230;</string>
+    <string name="allow_camera_management">Vous avez besoin de permettre à l\'application d\'utliser le caméra pour scanner les codes barres&#8230;.</string>
+    <string name="please_specify_content">Veuillez spécifier les informations que vous voulez afficher dans la fenêtre&#8230;.</string>
     <string name="previous">Dernier</string>
     <string name="next">Prochain</string>
     <string name="submit">Envoyer</string>
@@ -65,8 +65,8 @@
     <string name="info_icon">l\'icône d\'info</string>
     <string name="attention">Attention</string>
     <string name="json_form_error_msg" >%d Erreur(s) ont été retrouvés dans le formulaire. Veuillez les corriger avant de pouvoir le soumettre.</string>
-    <string name="json_form_on_next_error_msg" >Veuillez corriger le(s) erreur(s) dans le formulaire avant de procéder</string>
+    <string name="json_form_on_next_error_msg" >Veuillez corriger le(s) erreur(s) dans le formulaire avant de procéder.</string>
     <string name="go_to_step">Aller à l\'étape</string>
-    <string name="simprints_guid">GUID not found</string>
-    <string name="simprints_init_fail">Project Id or user id or module id not found. can be use SimprintsLibrary.init</string>
+    <string name="simprints_guid">GUID non trouvé</string>
+    <string name="simprints_init_fail">Project id ou user id ou module id non trouvé. Veuillez utiliser SimprintsLibrary.init</string>
 </resources>
