@@ -1,5 +1,6 @@
 package com.vijay.jsonwizard.interactors;
 
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 
@@ -13,7 +14,6 @@ import com.vijay.jsonwizard.widgets.CheckBoxFactory;
 import com.vijay.jsonwizard.widgets.ComponentSpacerFactory;
 import com.vijay.jsonwizard.widgets.CountDownTimerFactory;
 import com.vijay.jsonwizard.widgets.DatePickerFactory;
-import com.vijay.jsonwizard.widgets.MultiSelectListFactory;
 import com.vijay.jsonwizard.widgets.EditTextFactory;
 import com.vijay.jsonwizard.widgets.ExpansionWidgetFactory;
 import com.vijay.jsonwizard.widgets.ExtendedRadioButtonWidgetFactory;
@@ -24,6 +24,7 @@ import com.vijay.jsonwizard.widgets.HorizontalLineFactory;
 import com.vijay.jsonwizard.widgets.ImagePickerFactory;
 import com.vijay.jsonwizard.widgets.ImageViewFactory;
 import com.vijay.jsonwizard.widgets.LabelFactory;
+import com.vijay.jsonwizard.widgets.MultiSelectListFactory;
 import com.vijay.jsonwizard.widgets.NativeEditTextFactory;
 import com.vijay.jsonwizard.widgets.NativeRadioButtonFactory;
 import com.vijay.jsonwizard.widgets.NumberSelectorFactory;
@@ -51,15 +52,33 @@ import java.util.Map;
 public class JsonFormInteractor {
 
     private static final String TAG = "JsonFormInteractor";
-    protected static JsonFormInteractor INSTANCE = new JsonFormInteractor();
+    protected static JsonFormInteractor INSTANCE;
     public Map<String, FormWidgetFactory> map;
 
     public JsonFormInteractor() {
+        this(null);
+    }
+
+    public JsonFormInteractor(@Nullable Map<String, FormWidgetFactory> additionalWidgetsMap) {
         registerWidgets();
+        if (additionalWidgetsMap != null) {
+            for (Map.Entry<String, FormWidgetFactory> widgetFactoryEntry : additionalWidgetsMap.entrySet()) {
+                map.put(widgetFactoryEntry.getKey(), widgetFactoryEntry.getValue());
+            }
+        }
+    }
+
+
+    public static JsonFormInteractor getInstance(@Nullable Map<String, FormWidgetFactory> additionalWidgetsMap) {
+        if (INSTANCE == null) {
+            INSTANCE = new JsonFormInteractor(additionalWidgetsMap);
+        }
+
+        return INSTANCE;
     }
 
     public static JsonFormInteractor getInstance() {
-        return INSTANCE;
+        return getInstance(null);
     }
 
     protected void registerWidgets() {
