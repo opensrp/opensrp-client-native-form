@@ -13,8 +13,6 @@ import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.domain.MultiSelectItem;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 public class MultiSelectListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {

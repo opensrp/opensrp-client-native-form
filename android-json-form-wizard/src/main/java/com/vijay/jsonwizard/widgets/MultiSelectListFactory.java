@@ -32,6 +32,7 @@ import com.vijay.jsonwizard.task.MultiSelectListLoadTask;
 import com.vijay.jsonwizard.utils.MultiSelectListUtils;
 import com.vijay.jsonwizard.utils.Utils;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -355,6 +356,6 @@ public class MultiSelectListFactory implements FormWidgetFactory {
     }
 
     protected List<MultiSelectItem> fetchData(@NonNull String currentAdapterKey) {
-        throw new NullPointerException("Implement Your Own Logic");
+        throw new NotImplementedException("Implement Your Own Logic");
     }
 }
