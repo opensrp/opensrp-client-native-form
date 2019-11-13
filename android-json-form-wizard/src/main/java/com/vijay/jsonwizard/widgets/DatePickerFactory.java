@@ -277,6 +277,8 @@ public class DatePickerFactory implements FormWidgetFactory {
     protected DatePickerDialog createDateDialog(Context context, final TextView duration, final MaterialEditText editText,
                                               JSONObject jsonObject) throws JSONException {
         final DatePickerDialog datePickerDialog = new DatePickerDialog();
+
+        Locale.setDefault(new Locale("en"));
         datePickerDialog.setContext(context);
 
         datePickerDialog.setOnDateSetListener(new android.app.DatePickerDialog.OnDateSetListener() {
