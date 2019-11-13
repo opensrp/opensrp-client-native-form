@@ -62,7 +62,6 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "maxSelectable": 2,
         "buttonText": "+ Add disease code",
         "dialogTitle": "Add disease code",
         "searchHint": "Type Disease Name",
