@@ -1,5 +1,6 @@
 package com.vijay.jsonwizard.widgets;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -34,6 +35,7 @@ public class ExpansionWidgetFactory implements FormWidgetFactory {
     private ExpansionPanelUndoButtonClickListener expansionPanelUndoButtonClickListener = new ExpansionPanelUndoButtonClickListener();
     private FormUtils formUtils = new FormUtils();
     private Utils utils = new Utils();
+    private ProgressDialog progressDialog;
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment jsonFormFragment,
@@ -108,17 +110,17 @@ public class ExpansionWidgetFactory implements FormWidgetFactory {
             throws JSONException {
         String accordionText = jsonObject.optString(JsonFormConstants.TEXT, "");
         RelativeLayout expansionHeader = rootLayout.findViewById(R.id.expansionHeader);
-        RelativeLayout expansion_header_layout = expansionHeader.findViewById(R.id.expansion_header_layout);
-        addRecordViewTags(expansion_header_layout, jsonObject, stepName, commonListener, jsonFormFragment, context);
-        expansion_header_layout.setOnClickListener(expansionPanelRecordButtonClickListener);
+        RelativeLayout expansionHeaderLayout = expansionHeader.findViewById(R.id.expansion_header_layout);
+        addRecordViewTags(expansionHeaderLayout, jsonObject, stepName, commonListener, jsonFormFragment, context);
+        expansionHeaderLayout.setOnClickListener(expansionPanelRecordButtonClickListener);
 
-        ImageView statusImage = expansion_header_layout.findViewById(R.id.statusImageView);
+        ImageView statusImage = expansionHeaderLayout.findViewById(R.id.statusImageView);
         addRecordViewTags(statusImage, jsonObject, stepName, commonListener, jsonFormFragment, context);
         statusImage.setOnClickListener(expansionPanelRecordButtonClickListener);
 
         ImageView infoIcon = expansionHeader.findViewById(R.id.accordion_info_icon);
 
-        CustomTextView headerText = expansion_header_layout.findViewById(R.id.topBarTextView);
+        CustomTextView headerText = expansionHeaderLayout.findViewById(R.id.topBarTextView);
         headerText.setText(accordionText);
         addRecordViewTags(headerText, jsonObject, stepName, commonListener, jsonFormFragment, context);
         headerText.setOnClickListener(expansionPanelRecordButtonClickListener);
@@ -128,6 +130,7 @@ public class ExpansionWidgetFactory implements FormWidgetFactory {
         attachContent(rootLayout, context, jsonObject);
         addBottomSection(stepName, context, jsonFormFragment, jsonObject, commonListener, rootLayout);
     }
+
 
     private void addRecordViewTags(View recordView, JSONObject jsonObject, String stepName, CommonListener commonListener,
                                    JsonFormFragment jsonFormFragment, Context context) throws JSONException {
@@ -295,4 +298,5 @@ public class ExpansionWidgetFactory implements FormWidgetFactory {
         }
         return showHiddenViews;
     }
+
 }

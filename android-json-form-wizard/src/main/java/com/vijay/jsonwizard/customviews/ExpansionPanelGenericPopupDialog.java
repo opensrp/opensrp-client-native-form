@@ -3,6 +3,7 @@ package com.vijay.jsonwizard.customviews;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -40,7 +41,7 @@ import timber.log.Timber;
 
 import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 
-public class FullScreenGenericPopupDialog extends GenericPopupDialog {
+public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
     protected Toolbar mToolbar;
     protected String container;
     private Map<String, ExpansionPanelValuesModel> secondaryValuesMap = new HashMap<>();
@@ -49,6 +50,7 @@ public class FullScreenGenericPopupDialog extends GenericPopupDialog {
     private Context context;
     private String header;
     private LinearLayout linearLayout;
+    private ProgressDialog progressDialog;
 
     @Override
     public void onAttach(Context context) {
@@ -145,7 +147,7 @@ public class FullScreenGenericPopupDialog extends GenericPopupDialog {
                     } else {
                         Utils.showToast(activity, activity.getApplicationContext().getResources()
                                 .getString(com.vijay.jsonwizard.R.string.please_specify_content));
-                        FullScreenGenericPopupDialog.this.dismiss();
+                        ExpansionPanelGenericPopupDialog.this.dismiss();
                     }
                 } catch (JSONException e) {
                     Timber.e(e, "FullScreenGenericPopupDialog --> loadSubForms");
@@ -193,6 +195,7 @@ public class FullScreenGenericPopupDialog extends GenericPopupDialog {
         } else {
             super.addFormValues(formValues);
         }
+
         return formValues;
     }
 
@@ -237,7 +240,8 @@ public class FullScreenGenericPopupDialog extends GenericPopupDialog {
                     setFormLocation(null);
                     setContext(null);
                     getJsonApi().setGenericPopup(null);
-                    FullScreenGenericPopupDialog.this.dismissAllowingStateLoss();
+                    dismissProgressDialog();
+                    ExpansionPanelGenericPopupDialog.this.dismissAllowingStateLoss();
                 }
             });
 
@@ -248,7 +252,7 @@ public class FullScreenGenericPopupDialog extends GenericPopupDialog {
                     passData();
                     getJsonApi().setGenericPopup(null);
                     getJsonApi().updateGenericPopupSecondaryValues(new JSONArray());
-                    FullScreenGenericPopupDialog.this.dismissAllowingStateLoss();
+                    ExpansionPanelGenericPopupDialog.this.dismissAllowingStateLoss();
                 }
             });
             if (getDialog().getWindow() != null) {
@@ -292,6 +296,7 @@ public class FullScreenGenericPopupDialog extends GenericPopupDialog {
 
     @Override
     protected void passData() {
+        dismissProgressDialog();
         if (!TextUtils.isEmpty(getWidgetType()) && getWidgetType().equals(JsonFormConstants.EXPANSION_PANEL)) {
             onDataPass(getParentKey(), getChildKey());
         } else {
@@ -408,6 +413,12 @@ public class FullScreenGenericPopupDialog extends GenericPopupDialog {
                 default:
                     break;
             }
+        }
+    }
+
+    private void dismissProgressDialog() {
+        if (progressDialog.isShowing()) {
+            progressDialog.dismiss();
         }
     }
 
@@ -554,6 +565,10 @@ public class FullScreenGenericPopupDialog extends GenericPopupDialog {
     private void setGenericPopUpDialog() {
         JsonApi ancJsonApi = (JsonApi) activity;
         ancJsonApi.setGenericPopup(this);
+    }
+
+    public void setProgressDialog(ProgressDialog progressDialog) {
+        this.progressDialog = progressDialog;
     }
 
     @Override
