@@ -3,6 +3,7 @@ package com.vijay.jsonwizard.widgets;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,12 +29,12 @@ import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.task.MultiSelectListLoadTask;
+import com.vijay.jsonwizard.utils.MultiSelectListUtils;
 import com.vijay.jsonwizard.utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -149,7 +150,11 @@ public class MultiSelectListFactory implements FormWidgetFactory {
                 List<MultiSelectItem> multiSelectItems = new ArrayList<>();
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                    multiSelectItems.add(new MultiSelectItem(jsonObject1.getString(JsonFormConstants.KEY), jsonObject1.has(JsonFormConstants.MultiSelectUtils.PROPERTY) ? jsonObject1.getJSONObject(JsonFormConstants.MultiSelectUtils.PROPERTY).toString() : null));
+                    multiSelectItems.add(
+                            new MultiSelectItem(jsonObject1.getString(JsonFormConstants.KEY),
+                                    jsonObject1.getString(JsonFormConstants.MultiSelectUtils.TEXT),
+                                    jsonObject1.has(JsonFormConstants.MultiSelectUtils.PROPERTY) ?
+                                            jsonObject1.getJSONObject(JsonFormConstants.MultiSelectUtils.PROPERTY).toString() : null));
                 }
                 return multiSelectItems;
             }
@@ -162,6 +167,14 @@ public class MultiSelectListFactory implements FormWidgetFactory {
     protected List<MultiSelectItem> prepareListData() {
         new MultiSelectListLoadTask(this).execute();
         return new ArrayList<>();
+    }
+
+    public List<MultiSelectItem> loadListItems(@Nullable String source) {
+        if (source == null) {
+            return MultiSelectListUtils.loadOptionsFromJsonForm(jsonObject);
+        } else {
+            return fetchData(currentAdapterKey);
+        }
     }
 
     public void updateSelectedData(@NonNull List<MultiSelectItem> selectedData, boolean clearData) {
@@ -251,7 +264,7 @@ public class MultiSelectListFactory implements FormWidgetFactory {
     protected void handleClickEventOnListData(@NonNull MultiSelectItem multiSelectItem, @NonNull Context context) {
         updateSelectedData(Arrays.asList(multiSelectItem), false);
         writeToForm(multiSelectItem);
-        Utils.showToast(context, multiSelectItem.getKey() + " " + context.getString(R.string.multiselect_msg_on_item_added));
+        Utils.showToast(context, multiSelectItem.getText() + " " + context.getString(R.string.multiselect_msg_on_item_added));
         getAlertDialog().dismiss();
     }
 
@@ -339,5 +352,9 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         });
 
         return relativeLayout;
+    }
+
+    protected List<MultiSelectItem> fetchData(@NonNull String currentAdapterKey) {
+        throw new NullPointerException("Implement Your Own Logic");
     }
 }

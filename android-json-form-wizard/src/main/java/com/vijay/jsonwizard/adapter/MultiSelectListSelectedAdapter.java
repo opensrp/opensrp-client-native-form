@@ -42,7 +42,7 @@ public class MultiSelectListSelectedAdapter extends RecyclerView.Adapter<MultiSe
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
         MultiSelectItem multiSelectItem = data.get(position);
-        holder.multiSelectListTextView.setText(multiSelectItem.getKey());
+        holder.multiSelectListTextView.setText(multiSelectItem.getText());
         holder.imgDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

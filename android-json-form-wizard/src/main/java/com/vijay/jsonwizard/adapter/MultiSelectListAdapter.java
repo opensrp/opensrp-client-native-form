@@ -13,6 +13,8 @@ import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.domain.MultiSelectItem;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class MultiSelectListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
@@ -51,10 +53,10 @@ public class MultiSelectListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         MultiSelectItem multiSelectItem = data.get(position);
         if (multiSelectItem.getValue() != null) {
             SectionViewHolder sectionViewHolder = (SectionViewHolder) holder;
-            sectionViewHolder.txtMultiSelectItem.setText(multiSelectItem.getKey());
+            sectionViewHolder.txtMultiSelectItem.setText(multiSelectItem.getText());
         } else {
             SectionTitleViewHolder sectionViewHolder = (SectionTitleViewHolder) holder;
-            sectionViewHolder.txtMultiSelectHeader.setText(multiSelectItem.getKey());
+            sectionViewHolder.txtMultiSelectHeader.setText(multiSelectItem.getText());
         }
     }
 
@@ -89,7 +91,7 @@ public class MultiSelectListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 List<MultiSelectItem> results = new ArrayList<>();
 
                 for (MultiSelectItem item : origData) {
-                    if (item.getKey().toLowerCase().contains(constraint)) {
+                    if (item.getText().toLowerCase().contains(constraint)) {
                         results.add(item);
                     }
                 }
