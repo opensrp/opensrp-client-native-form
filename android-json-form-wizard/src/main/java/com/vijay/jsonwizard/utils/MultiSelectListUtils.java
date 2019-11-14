@@ -43,15 +43,21 @@ public class MultiSelectListUtils {
     public static List<MultiSelectItem> processOptionsJsonArray(@NonNull JSONArray jsonArray) throws JSONException {
         List<MultiSelectItem> multiSelectItems = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-            multiSelectItems.add(new MultiSelectItem(jsonObject1.getString(JsonFormConstants.KEY), jsonObject1.getString(JsonFormConstants.TEXT), jsonObject1.has(JsonFormConstants.MultiSelectUtils.PROPERTY) ? jsonObject1.getString(JsonFormConstants.MultiSelectUtils.PROPERTY) : null));
+            JSONObject jsonDataObject = jsonArray.getJSONObject(i);
+            multiSelectItems.add(new MultiSelectItem(
+                    jsonDataObject.getString(JsonFormConstants.KEY), 
+                    jsonDataObject.getString(JsonFormConstants.TEXT),
+                    jsonDataObject.optString(JsonFormConstants.OPENMRS_ENTITY),
+                    jsonDataObject.optString(JsonFormConstants.OPENMRS_ENTITY_ID),
+                    jsonDataObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT),
+                    jsonDataObject.has(JsonFormConstants.MultiSelectUtils.PROPERTY) ? jsonDataObject.getString(JsonFormConstants.MultiSelectUtils.PROPERTY) : null));
         }
         return multiSelectItems;
     }
 
     public static void addGroupings(@NonNull List<MultiSelectItem> unsortedMultiSelectItems, @NonNull JSONArray jsonGroupingsArray) {
         for (int i = 0; i < jsonGroupingsArray.length(); i++) {
-            MultiSelectItem multiSelectItem = new MultiSelectItem(jsonGroupingsArray.optString(i), jsonGroupingsArray.optString(i), null);
+            MultiSelectItem multiSelectItem = new MultiSelectItem(jsonGroupingsArray.optString(i), jsonGroupingsArray.optString(i), null, null,null,null);
             unsortedMultiSelectItems.add(multiSelectItem);
         }
     }
