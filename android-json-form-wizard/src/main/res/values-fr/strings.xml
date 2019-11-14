@@ -3,14 +3,15 @@
 
     <string name="hello_world">Salut le monde!</string>
     <string name="action_settings">Paramètres</string>
-    <string name="badly_formed_date">Date mal conçu</string>
+    <string name="badly_formed_date">Date mal conçue</string>
+    <string name="badly_formed_time">Temps mal conçue</string>
     <string name="ic_check_circle_blank">&#xe03e;</string>
     <string name="ic_keyboard_arrow_down">&#xe0c5;</string>
     <string name="ic_keyboard_arrow_left">&#xe0c6;</string>
     <string name="ic_keyboard_arrow_right">&#xe0c7;</string>
     <string name="ic_keyboard_arrow_up">&#xe0c8;</string>
     <string name="confirm_form_close">Confirmer la clôture du formulaire</string>
-    <string name="confirm_form_close_explanation">Êtes-vous certain que vous voulez retourner? Tous les données que vous avez entré à date seront éffacés.</string>
+    <string name="confirm_form_close_explanation">Êtes vous sûr de vouloir retourner? Toutes les données que vous avez entrées dans ce formulaire seront éffacées</string>
     <string name="yes">Oui</string>
     <string name="no">Non</string>
     <string name="cancel">Annuler</string>
@@ -21,8 +22,8 @@
     <string name="altitude">Altitude: %s</string>
     <string name="accuracy">Précision: %s</string>
     <string name="loading_location">Chargement de coordonnées</string>
-    <string name="could_not_get_your_location">Coordonnées GPS échoués</string>
-    <string name="using_provider">Utilisant prestataire %s </string>
+    <string name="could_not_get_your_location">Votre position GPS n\'a pu être obtenue</string>
+    <string name="using_provider">Utilisant le prestataire %s </string>
     <string name="unknown_gps_accuracy">Niveau de précision inconnu</string>
     <string name="required">*</string>
     <string name="info_label">Étiquette d\'info</string>
@@ -30,9 +31,18 @@
     <string name="the_toaster_icon">L\'icône grille-pain</string>
     <string name="asterisks">*</string>
     <string name="save">Sauvegarder</string>
-    <string name="radio_button_tap_to_change">Touchez pour modifier</string>
+    <string name="radio_button_tap_to_change">touchez pour modifier</string>
     <string name="select_one">Choisir un numéro</string>
     <string name="done">Fait</string>
+    <string name="please_wait_title">Veuillez patienter</string>
+    <string name="creating_repeating_group_message">Création du groupe répeté</string>
+    <string name="launching_rdt_capture_message">Lancement du widget de capture RDT</string>
+    <string name="repeating_group_max_value_err_msg">Le nombre de groupes répétés ne peut êtres supérieur à %1$d</string>
+    <string name="repeating_group_min_value_err_msg">Le nombre de groupes répétés doit être un nombre supérieur à 0</string>
+    <string name="repeating_group_number_format_err_msg">Le nombre de groupes répétés doit être un entier</string>
+    <string name="enter_number_of_repeating_group_items">Entrer le nombre de groupes répétés</string>
+    <string name="repeating_group_item">Item</string>
+    <string name="repeating_group_label">repeating_group_label</string>
 
     <string-array name="spinnerItems">
         <item>item1</item>
@@ -41,32 +51,42 @@
         <item>item4</item>
     </string-array>
 
-    <string name="scan_qr_code_title">Scanner le QR code</string>
+    <string name="scan_qr_code_title">Scanner le code QR</string>
 
     <!--The barcode strings-->
-    <string name="permission_camera_rationale">Accès au caméra requise pour la détection</string>
-    <string name="no_camera_permission">L\'application ne peut pas fonctionner sans permission d\'utiliser le caméra. l\'application va quitter.</string>
-    <string name="low_storage_error">Impossible de télécharger les dépendences pour le détecteur de visages à cause d\'une manque d\'éspace dans l\'appareil.</string>
-    <string name="title_activity_main">Échantillon lecteur code de barre</string>
-    <string name="barcode_header">Cliquez &quot;Lire code de barre&quot; pour lire code de barre.</string>
-    <string name="read_barcode">Lire code de barre</string>
+    <string name="permission_camera_rationale">Accès à la caméra requise pour la détection</string>
+    <string name="no_camera_permission">L\'application ne peut pas fonctionner sans permission d\'utiliser la caméra. l\'application va quitter.</string>
+    <string name="low_storage_error">Impossible de télécharger les dépendences pour le détecteur de visages à cause d\'une manque d\'espace dans l\'appareil.</string>
+    <string name="title_activity_main">Échantillon lecteur code barre</string>
+    <string name="barcode_header">Cliquez &quot;Lire code de barre&quot; pour lire code barre</string>
+    <string name="read_barcode">Lire code barre</string>
     <string name="auto_focus">Auto focus</string>
-    <string name="use_flash">Employer flash</string>
-    <string name="barcode_success">Code de barre réussi</string>
-    <string name="barcode_failure">Aucun code de barre capturé</string>
-    <string name="barcode_error">Erreure dans la lecture du code de barre: %1$s</string>
-    <string name="allow_camera_management">Vous avez besoin de permettre à l\'application d\'utliser le caméra pour scanner les codes barres&#8230;.</string>
-    <string name="please_specify_content">Veuillez spécifier les informations que vous voulez afficher dans la fenêtre&#8230;.</string>
-    <string name="previous">Dernier</string>
+    <string name="use_flash">Utiliser le flash</string>
+    <string name="barcode_success">Lecture du code barre réussi</string>
+    <string name="barcode_failure">Aucun code barre capturé</string>
+    <string name="barcode_error">Erreur dans la lecture du code barre: %1$s</string>
+    <string name="allow_camera_management">Vous avez besoin de permettre à l\'application d\'utliser la caméra pour scanner les codes barres&#8230;</string>
+    <string name="please_specify_content">Veuillez spécifier les informations que vous voulez afficher dans la fenêtre&#8230;</string>
+    <string name="previous">Précédent</string>
     <string name="next">Prochain</string>
-    <string name="submit">Envoyer</string>
-    <string name="the_extra_info_icon">l\'icône d\'info supplémentaire</string>
+    <string name="submit">Soumettre</string>
+    <string name="the_extra_info_icon">Icône d\'info supplémentaire</string>
     <string name="edit_button_label">bouton éditer</string>
-    <string name="info_icon">l\'icône d\'info</string>
+    <string name="info_icon">Icône d\'info</string>
     <string name="attention">Attention</string>
-    <string name="json_form_error_msg" >%d Erreur(s) ont été retrouvés dans le formulaire. Veuillez les corriger avant de pouvoir le soumettre.</string>
-    <string name="json_form_on_next_error_msg" >Veuillez corriger le(s) erreur(s) dans le formulaire avant de procéder.</string>
+    <string name="json_form_error_msg">Trouvé %d erreur(s) dans le formulaire. Veuillez les corriger avant de pouvoir le soumettre.</string>
+    <string name="json_form_on_next_error_msg">Veuillez corriger le(s) erreur(s) dans le formulaire avant de procéder</string>
     <string name="go_to_step">Aller à l\'étape</string>
+    <string name="shows_image_on_dialog">shows Image on dialog</string>
+    <string name="undo_test_result">Annuler le résultat %1$s?</string>
+    <string name="record">Enregistrer</string>
+    <string name="undo">Annuler</string>
+    <string name="info_icon_display">l\'affichage de l\'icône plus d\'informations</string>
+    <string name="status_icon_display">l\'affichage de l\'icône d\'état</string>
     <string name="simprints_guid">GUID non trouvé</string>
-    <string name="simprints_init_fail">Project id ou user id ou module id non trouvé. Veuillez utiliser SimprintsLibrary.init</string>
+    <string name="simprints_init_fail">ID projet ou ID utilisateur ou ID module introuvable. peut être utilisé avec SimprintsLibrary.init</string>
+    <string name="permission_denied_title">Autorisation refusée</string>
+    <string name="permission_messege">L\'application a besoin de cette autorisation pour capturer les informations requises lors de la soumission des formulaires, sans quoi l\'application ne fonctionnera pas correctement. Vous êtes sûr de vouloir refuser cette permission ?</string>
+    <string name="multiselect_msg_on_item_added">Ajouté</string>
+    <string name="loading_multi_select_list">Chargement</string>
 </resources>
