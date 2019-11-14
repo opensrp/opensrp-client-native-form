@@ -11,7 +11,7 @@ import org.json.JSONObject;
 
 import timber.log.Timber;
 
-public class MultiSelectCsvFileProcessorImpl implements MultiSelectCsvFileProcessor {
+public class MultiSelectListCsvFileProcessorImpl implements MultiSelectListFileProcessor {
 
     @Override
     public Object process(@NonNull String content) {

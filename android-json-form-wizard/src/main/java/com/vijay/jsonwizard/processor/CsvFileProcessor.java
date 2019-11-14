@@ -4,5 +4,4 @@ import android.support.annotation.NonNull;
 
 public interface  CsvFileProcessor {
     Object process(@NonNull String data);
-
 }

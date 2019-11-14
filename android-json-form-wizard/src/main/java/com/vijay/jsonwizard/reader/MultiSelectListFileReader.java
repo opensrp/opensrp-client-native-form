@@ -1,5 +1,5 @@
 package com.vijay.jsonwizard.reader;
 
-public interface FileReader {
+public interface MultiSelectListFileReader {
     String read(String fileName);
 }

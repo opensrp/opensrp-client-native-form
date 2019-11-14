@@ -1,16 +1,16 @@
 package com.vijay.jsonwizard.reader;
 
-import com.vijay.jsonwizard.processor.MultiSelectCsvFileProcessor;
+import com.vijay.jsonwizard.processor.MultiSelectListFileProcessor;
 
-public abstract class MultiSelectFileReader {
+public abstract class MultiSelectListFileReaderAndProcessor {
 
     protected String fileName;
-    private FileReader fileReader;
-    private MultiSelectCsvFileProcessor processor;
+    private MultiSelectListFileReader fileReader;
+    private MultiSelectListFileProcessor fileProcessor;
 
-    public MultiSelectFileReader(FileReader fileReader, MultiSelectCsvFileProcessor processor) {
+    public MultiSelectListFileReaderAndProcessor(MultiSelectListFileReader fileReader, MultiSelectListFileProcessor fileProcessor) {
         this.fileReader = fileReader;
-        this.processor = processor;
+        this.fileProcessor = fileProcessor;
     }
 
     public void initMultiSelectFileReader(String fileName) {
@@ -28,7 +28,7 @@ public abstract class MultiSelectFileReader {
     }
 
     public Object process(String content) {
-        return processor.process(content);
+        return fileProcessor.process(content);
     }
 
     protected abstract void save(Object processedContent);

@@ -11,12 +11,12 @@ import java.io.InputStreamReader;
 
 import timber.log.Timber;
 
-public class AssetFileReaderImpl implements AssetFileReader {
+public class AssetMultiSelectListFileReaderImpl implements AssetMultiSelectListFileReader {
 
     private Context context;
     private String directory;
 
-    public AssetFileReaderImpl(Context context, String directory) {
+    public AssetMultiSelectListFileReaderImpl(Context context, String directory) {
         this.context = context;
         this.directory = directory;
     }

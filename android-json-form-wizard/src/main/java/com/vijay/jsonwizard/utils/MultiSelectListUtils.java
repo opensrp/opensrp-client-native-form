@@ -7,7 +7,7 @@ import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.MultiSelectItem;
 import com.vijay.jsonwizard.domain.MultiSelectListAccessory;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
-import com.vijay.jsonwizard.reader.MultiSelectFileReader;
+import com.vijay.jsonwizard.reader.MultiSelectListFileReaderAndProcessor;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,11 +22,11 @@ import timber.log.Timber;
 
 public class MultiSelectListUtils {
 
-    public static void saveMultiSelectListOptions(@NonNull Context context, @NonNull MultiSelectFileReader multiSelectFileReader) throws IOException {
+    public static void saveMultiSelectListOptions(@NonNull Context context, @NonNull MultiSelectListFileReaderAndProcessor multiSelectListFileReaderAndProcessor) throws IOException {
         String[] files = context.getAssets().list(JsonFormConstants.MultiSelectUtils.FILES_LOCATION);
         if (files != null) {
             for (String file : files) {
-                multiSelectFileReader.initMultiSelectFileReader(file);
+                multiSelectListFileReaderAndProcessor.initMultiSelectFileReader(file);
             }
         }
     }
