@@ -33,6 +33,7 @@ import com.vijay.jsonwizard.utils.MultiSelectListUtils;
 import com.vijay.jsonwizard.utils.Utils;
 
 import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -171,18 +172,24 @@ public class MultiSelectListFactory implements FormWidgetFactory {
     }
 
     public List<MultiSelectItem> loadListItems(@Nullable String source) {
-        if (source == null) {
+        if (StringUtils.isBlank(source)) {
             return MultiSelectListUtils.loadOptionsFromJsonForm(jsonObject);
         } else {
-            return fetchData(currentAdapterKey);
+            return fetchData();
         }
     }
 
-    public void updateSelectedData(@NonNull List<MultiSelectItem> selectedData, boolean clearData) {
+    public void updateSelectedData(@NonNull MultiSelectItem selectedData, boolean clearData) {
         if (clearData) {
             getMultiSelectListSelectedAdapter().getData().clear();
         }
-        getMultiSelectListSelectedAdapter().getData().addAll(selectedData);
+        List<MultiSelectItem> multiSelectItems = getMultiSelectListSelectedAdapter().getData();
+        if(multiSelectItems.contains(selectedData)){
+            Utils.showToast(context, String.format(context.getString(R.string.multiselect_already_added_msg), selectedData.getText()));
+            return;
+        }
+        Utils.showToast(context, selectedData.getText() + " " + context.getString(R.string.multiselect_msg_on_item_added));
+        getMultiSelectListSelectedAdapter().getData().add(selectedData);
         getMultiSelectListSelectedAdapter().notifyDataSetChanged();
     }
 
@@ -263,9 +270,8 @@ public class MultiSelectListFactory implements FormWidgetFactory {
     }
 
     protected void handleClickEventOnListData(@NonNull MultiSelectItem multiSelectItem, @NonNull Context context) {
-        updateSelectedData(Arrays.asList(multiSelectItem), false);
+        updateSelectedData(multiSelectItem, false);
         writeToForm(multiSelectItem);
-        Utils.showToast(context, multiSelectItem.getText() + " " + context.getString(R.string.multiselect_msg_on_item_added));
         getAlertDialog().dismiss();
     }
 
@@ -355,7 +361,7 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         return relativeLayout;
     }
 
-    protected List<MultiSelectItem> fetchData(@NonNull String currentAdapterKey) {
+    protected List<MultiSelectItem> fetchData() {
         throw new NotImplementedException("Implement Your Own Logic");
     }
 }

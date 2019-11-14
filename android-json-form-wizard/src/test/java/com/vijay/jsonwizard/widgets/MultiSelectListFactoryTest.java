@@ -66,9 +66,7 @@ public class MultiSelectListFactoryTest {
 
         Whitebox.invokeMethod(multiSelectListFactory, "updateMultiSelectListAccessoryHashMap", multiSelectListAccessory);
         try {
-            List<MultiSelectItem> multiSelectItems = new ArrayList<>();
-            multiSelectItems.add(new MultiSelectItem());
-            multiSelectListFactory.updateSelectedData(multiSelectItems, true);
+            multiSelectListFactory.updateSelectedData(new MultiSelectItem(), true);
         } catch (NullPointerException e) {
             //this exception catches call on notifyDataSetChanged since no recylclerview has been attached to the adapter;
         }

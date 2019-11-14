@@ -89,4 +89,5 @@
     <string name="permission_messege">The app needs this permission to capture the device information required when submitting forms.Without this permission the app will not function properly. Are you sure you want to deny this permission?</string>
     <string name="multiselect_msg_on_item_added">Added</string>
     <string name="loading_multi_select_list">Loading</string>
+    <string name="multiselect_already_added_msg">%s is already added</string>
 </resources>

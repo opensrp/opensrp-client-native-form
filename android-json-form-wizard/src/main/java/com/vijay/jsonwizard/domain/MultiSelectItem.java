@@ -1,5 +1,7 @@
 package com.vijay.jsonwizard.domain;
 
+import android.support.annotation.Nullable;
+
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 
 import org.json.JSONArray;
@@ -60,5 +62,15 @@ public class MultiSelectItem {
             e.printStackTrace();
         }
         return jsonArray;
+    }
+
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if(obj == null){
+            return false;
+        }
+        String key = ((MultiSelectItem)obj).getKey();
+        return this.getKey().equals(key);
     }
 }

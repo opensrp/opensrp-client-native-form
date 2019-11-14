@@ -89,7 +89,7 @@ public class MultiSelectListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 List<MultiSelectItem> results = new ArrayList<>();
 
                 for (MultiSelectItem item : origData) {
-                    if (item.getText().toLowerCase().contains(constraint)) {
+                    if (item.getText().toLowerCase().contains(constraint.toLowerCase())) {
                         results.add(item);
                     }
                 }
