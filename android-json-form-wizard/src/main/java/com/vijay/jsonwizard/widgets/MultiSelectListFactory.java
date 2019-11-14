@@ -37,6 +37,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -124,7 +125,7 @@ public class MultiSelectListFactory implements FormWidgetFactory {
 
     private void prepareMultiSelectHashMap(@NonNull String stepName, boolean popup, String openmrsEntity, String openmrsEntityParent, String openmrsEntityId) {
         MultiSelectListAccessory multiSelectListAccessory = new MultiSelectListAccessory(
-                new MultiSelectListSelectedAdapter(new ArrayList<MultiSelectItem>()),
+                new MultiSelectListSelectedAdapter(new ArrayList<MultiSelectItem>(), this),
                 new MultiSelectListAdapter(prepareListData()),
                 null,
                 new ArrayList<MultiSelectItem>(),
@@ -175,7 +176,7 @@ public class MultiSelectListFactory implements FormWidgetFactory {
             getMultiSelectListSelectedAdapter().getData().clear();
         }
         List<MultiSelectItem> multiSelectItems = getMultiSelectListSelectedAdapter().getData();
-        if(multiSelectItems.contains(selectedData)){
+        if (multiSelectItems.contains(selectedData)) {
             Utils.showToast(context, String.format(context.getString(R.string.multiselect_already_added_msg), selectedData.getText()));
             return;
         }
@@ -243,7 +244,7 @@ public class MultiSelectListFactory implements FormWidgetFactory {
             @Override
             public void onItemClick(View view) {
                 int position = recyclerView.getChildLayoutPosition(view);
-                handleClickEventOnListData(getMultiSelectListAdapter().getItemAt(position), context);
+                handleClickEventOnListData(getMultiSelectListAdapter().getItemAt(position));
             }
         });
 
@@ -260,25 +261,14 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         getMultiSelectListAccessoryHashMap().put(currentAdapterKey, multiSelectListAccessory);
     }
 
-    protected void handleClickEventOnListData(@NonNull MultiSelectItem multiSelectItem, @NonNull Context context) {
+    protected void handleClickEventOnListData(@NonNull MultiSelectItem multiSelectItem) {
         updateSelectedData(multiSelectItem, false);
-        writeToForm(multiSelectItem);
+        writeToForm();
         getAlertDialog().dismiss();
     }
 
-    protected void writeToForm(@NonNull MultiSelectItem multiSelectItem) {
-        try {
-            MultiSelectListAccessory multiSelectListAccessory = getMultiSelectListAccessoryHashMap().get(currentAdapterKey);
-            jsonFormFragment.getJsonApi().writeValue(
-                    multiSelectListAccessory.getFormAttributes().optString(JsonFormConstants.STEPNAME), currentAdapterKey,
-                    multiSelectItem.toJson(getMultiSelectListSelectedAdapter().getData()).toString(),
-                    multiSelectListAccessory.getFormAttributes().optString(JsonFormConstants.OPENMRS_ENTITY_PARENT),
-                    multiSelectListAccessory.getFormAttributes().optString(JsonFormConstants.OPENMRS_ENTITY),
-                    multiSelectListAccessory.getFormAttributes().optString(JsonFormConstants.OPENMRS_ENTITY_ID),
-                    multiSelectListAccessory.getFormAttributes().optBoolean(JsonFormConstants.IS_POPUP));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    public void writeToForm() {
+        MultiSelectListUtils.writeToForm(currentAdapterKey, jsonFormFragment, getMultiSelectListAccessoryHashMap());
     }
 
     public MultiSelectListSelectedAdapter getMultiSelectListSelectedAdapter() {
@@ -307,11 +297,14 @@ public class MultiSelectListFactory implements FormWidgetFactory {
 
     protected RecyclerView createSelectedRecyclerView(@NonNull Context context) {
         List<MultiSelectItem> multiSelectItems = prepareSelectedData();
-        MultiSelectListSelectedAdapter multiSelectListSelectedAdapter = new MultiSelectListSelectedAdapter(multiSelectItems);
+        MultiSelectListSelectedAdapter multiSelectListSelectedAdapter = new MultiSelectListSelectedAdapter(multiSelectItems, this);
 
         MultiSelectListAccessory multiSelectListAccessory = getMultiSelectListAccessoryHashMap().get(currentAdapterKey);
         multiSelectListAccessory.setSelectedAdapter(multiSelectListSelectedAdapter);
         updateMultiSelectListAccessoryHashMap(multiSelectListAccessory);
+
+        writeToForm();
+
         final RecyclerView recyclerView = new RecyclerView(context);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);

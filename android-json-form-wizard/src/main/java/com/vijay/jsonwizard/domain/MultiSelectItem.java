@@ -54,25 +54,6 @@ public class MultiSelectItem {
         this.value = value;
     }
 
-    public JSONArray toJson(List<MultiSelectItem> multiSelectItems) {
-        JSONArray jsonArray = new JSONArray();
-        try {
-            for (MultiSelectItem multiSelectItem : multiSelectItems) {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put(JsonFormConstants.KEY, multiSelectItem.getKey());
-                jsonObject.put(JsonFormConstants.MultiSelectUtils.TEXT, multiSelectItem.getText());
-                jsonObject.put(JsonFormConstants.OPENMRS_ENTITY, multiSelectItem.getOpenmrsEntity());
-                jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_ID, multiSelectItem.getOpenmrsEntityId());
-                jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_PARENT, multiSelectItem.getOpenmrsEntityParent());
-                jsonObject.put(JsonFormConstants.MultiSelectUtils.PROPERTY, new JSONObject(multiSelectItem.getValue()));
-                jsonArray.put(jsonObject);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return jsonArray;
-    }
-
     public String getOpenmrsEntity() {
         return openmrsEntity;
     }

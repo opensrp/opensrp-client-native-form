@@ -54,7 +54,7 @@ public class MultiSelectListFactoryTest {
     public void updateSelectedData() throws Exception {
         HashMap<String, MultiSelectListAccessory> accessoryHashMap = new HashMap<>();
         Whitebox.setInternalState(multiSelectListFactory, "multiSelectListAccessoryHashMap", accessoryHashMap);
-        MultiSelectListSelectedAdapter multiSelectListAdapter = new MultiSelectListSelectedAdapter(new ArrayList<MultiSelectItem>());
+        MultiSelectListSelectedAdapter multiSelectListAdapter = new MultiSelectListSelectedAdapter(new ArrayList<MultiSelectItem>(), multiSelectListFactory);
 
         MultiSelectListAccessory multiSelectListAccessory = new MultiSelectListAccessory(
                 multiSelectListAdapter,
@@ -78,7 +78,7 @@ public class MultiSelectListFactoryTest {
     public void updateListData() throws Exception {
         HashMap<String, MultiSelectListAccessory> accessoryHashMap = new HashMap<>();
         Whitebox.setInternalState(multiSelectListFactory, "multiSelectListAccessoryHashMap", accessoryHashMap);
-        MultiSelectListSelectedAdapter multiSelectListAdapter = new MultiSelectListSelectedAdapter(new ArrayList<MultiSelectItem>());
+        MultiSelectListSelectedAdapter multiSelectListAdapter = new MultiSelectListSelectedAdapter(new ArrayList<MultiSelectItem>(), multiSelectListFactory);
 
         MultiSelectListAccessory multiSelectListAccessory = new MultiSelectListAccessory(
                 multiSelectListAdapter,

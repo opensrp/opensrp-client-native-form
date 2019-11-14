@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.MultiSelectItem;
+import com.vijay.jsonwizard.widgets.MultiSelectListFactory;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,9 +24,11 @@ import timber.log.Timber;
 public class MultiSelectListSelectedAdapter extends RecyclerView.Adapter<MultiSelectListSelectedAdapter.MyViewHolder> {
     private List<MultiSelectItem> data;
     private static ClickListener clickListener;
+    private MultiSelectListFactory multiSelectListFactory;
 
-    public MultiSelectListSelectedAdapter(List<MultiSelectItem> data) {
+    public MultiSelectListSelectedAdapter(List<MultiSelectItem> data, MultiSelectListFactory multiSelectListFactory) {
         this.data = data;
+        this.multiSelectListFactory = multiSelectListFactory;
     }
 
     public List<MultiSelectItem> getData() {
@@ -48,17 +51,19 @@ public class MultiSelectListSelectedAdapter extends RecyclerView.Adapter<MultiSe
             public void onClick(View v) {
                 data.remove(position);
                 notifyDataSetChanged();
+
+                multiSelectListFactory.writeToForm();
             }
         });
         String value = multiSelectItem.getValue();
-        try{
+        try {
             JSONObject jsonObject = new JSONObject(value);
-            if(jsonObject.has(JsonFormConstants.MultiSelectUtils.META)){
+            if (jsonObject.has(JsonFormConstants.MultiSelectUtils.META)) {
                 holder.multiSelectListTextViewAdditionalInfo.setVisibility(View.VISIBLE);
                 holder.multiSelectListTextViewAdditionalInfo.setTypeface(Typeface.DEFAULT);
                 holder.multiSelectListTextViewAdditionalInfo.setText(jsonObject.optJSONObject(JsonFormConstants.MultiSelectUtils.META).getString(JsonFormConstants.MultiSelectUtils.INFO));
             }
-        }catch (JSONException e){
+        } catch (JSONException e) {
             Timber.e(e);
         }
     }
