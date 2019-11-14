@@ -11,7 +11,7 @@ import java.io.InputStreamReader;
 
 import timber.log.Timber;
 
-public class AssetMultiSelectListFileReaderImpl implements AssetMultiSelectListFileReader {
+public class AssetMultiSelectListFileReaderImpl implements MultiSelectListFileReader {
 
     private Context context;
     private String directory;
