@@ -240,7 +240,7 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
                     setFormLocation(null);
                     setContext(null);
                     getJsonApi().setGenericPopup(null);
-                    dismissProgressDialog();
+                    Utils.hideProgressDialog();
                     ExpansionPanelGenericPopupDialog.this.dismissAllowingStateLoss();
                 }
             });
@@ -296,7 +296,7 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
 
     @Override
     protected void passData() {
-        dismissProgressDialog();
+        Utils.hideProgressDialog();
         if (!TextUtils.isEmpty(getWidgetType()) && getWidgetType().equals(JsonFormConstants.EXPANSION_PANEL)) {
             onDataPass(getParentKey(), getChildKey());
         } else {
@@ -413,12 +413,6 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
                 default:
                     break;
             }
-        }
-    }
-
-    private void dismissProgressDialog() {
-        if (progressDialog.isShowing()) {
-            progressDialog.dismiss();
         }
     }
 
