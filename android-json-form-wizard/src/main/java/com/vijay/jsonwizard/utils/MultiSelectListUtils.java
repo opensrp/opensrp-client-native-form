@@ -45,19 +45,19 @@ public class MultiSelectListUtils {
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonDataObject = jsonArray.getJSONObject(i);
             multiSelectItems.add(new MultiSelectItem(
-                    jsonDataObject.getString(JsonFormConstants.KEY), 
+                    jsonDataObject.getString(JsonFormConstants.KEY),
                     jsonDataObject.getString(JsonFormConstants.TEXT),
+                    jsonDataObject.has(JsonFormConstants.MultiSelectUtils.PROPERTY) ? jsonDataObject.getString(JsonFormConstants.MultiSelectUtils.PROPERTY) : null,
                     jsonDataObject.optString(JsonFormConstants.OPENMRS_ENTITY),
                     jsonDataObject.optString(JsonFormConstants.OPENMRS_ENTITY_ID),
-                    jsonDataObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT),
-                    jsonDataObject.has(JsonFormConstants.MultiSelectUtils.PROPERTY) ? jsonDataObject.getString(JsonFormConstants.MultiSelectUtils.PROPERTY) : null));
+                    jsonDataObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT)));
         }
         return multiSelectItems;
     }
 
     public static void addGroupings(@NonNull List<MultiSelectItem> unsortedMultiSelectItems, @NonNull JSONArray jsonGroupingsArray) {
         for (int i = 0; i < jsonGroupingsArray.length(); i++) {
-            MultiSelectItem multiSelectItem = new MultiSelectItem(jsonGroupingsArray.optString(i), jsonGroupingsArray.optString(i), null, null,null,null);
+            MultiSelectItem multiSelectItem = new MultiSelectItem(jsonGroupingsArray.optString(i), jsonGroupingsArray.optString(i), null, null, null, null);
             unsortedMultiSelectItems.add(multiSelectItem);
         }
     }

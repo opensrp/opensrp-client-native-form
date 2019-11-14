@@ -51,7 +51,7 @@ public class MultiSelectListLoadTask extends AsyncTask<Void, Void, List<MultiSel
         List<MultiSelectItem> multiSelectItems = multiSelectListFactory.loadListItems(source);
         String strGroupingsArray = jsonObject.optString(JsonFormConstants.MultiSelectUtils.GROUPINGS);
         boolean sort = jsonObject.optBoolean(JsonFormConstants.MultiSelectUtils.SORT);
-        if (strGroupingsArray != null && sort) {//no grouping without sorting
+        if (!StringUtils.isBlank(strGroupingsArray) && sort) {//no grouping without sorting
             JSONArray jsonArray = null;
             try {
                 jsonArray = new JSONArray(strGroupingsArray);

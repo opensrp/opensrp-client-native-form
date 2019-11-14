@@ -8,6 +8,6 @@ public class MultiSelectListAlphabetComparator implements Comparator<MultiSelect
 
     @Override
     public int compare(MultiSelectItem o1, MultiSelectItem o2) {
-        return o1.getKey().compareTo(o2.getKey());
+        return o1.getKey().toLowerCase().compareTo(o2.getKey().toLowerCase());
     }
 }
