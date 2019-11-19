@@ -17,7 +17,7 @@ public class MultiSelectListCsvFileProcessorImpl implements MultiSelectListFileP
     public Object process(@NonNull String content) {
         try {
             if (!StringUtils.isBlank(content)) {
-                JSONArray jsonArray = new JSONArray();
+                JSONArray jsonOptionsArray = new JSONArray();
                 String[] lines = content.split("\n");
                 String[] headers = lines[0].split(",");
                 String[] property = new String[headers.length - 5];
@@ -27,23 +27,23 @@ public class MultiSelectListCsvFileProcessorImpl implements MultiSelectListFileP
 
                 for (int i = 1; i < lines.length; i++) {
                     String[] segments = lines[i].split(",");
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put(JsonFormConstants.KEY, segments[0]);
-                    jsonObject.put(JsonFormConstants.MultiSelectUtils.TEXT, segments[1]);
-                    jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_PARENT, resolveEmptySlots(2, segments));
-                    jsonObject.put(JsonFormConstants.OPENMRS_ENTITY, resolveEmptySlots(3, segments));
-                    jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_ID, resolveEmptySlots(4, segments));
-                    jsonObject.put(JsonFormConstants.MultiSelectUtils.IS_HEADER, false);
+                    JSONObject jsonOptionObject = new JSONObject();
+                    jsonOptionObject.put(JsonFormConstants.KEY, segments[0]);
+                    jsonOptionObject.put(JsonFormConstants.MultiSelectUtils.TEXT, segments[1]);
+                    jsonOptionObject.put(JsonFormConstants.OPENMRS_ENTITY_PARENT, resolveEmptySlots(2, segments));
+                    jsonOptionObject.put(JsonFormConstants.OPENMRS_ENTITY, resolveEmptySlots(3, segments));
+                    jsonOptionObject.put(JsonFormConstants.OPENMRS_ENTITY_ID, resolveEmptySlots(4, segments));
+                    jsonOptionObject.put(JsonFormConstants.MultiSelectUtils.IS_HEADER, false);
 
                     JSONObject jsonPropertyObject = new JSONObject();
                     for (int k = 0; k < property.length; k++) {
                         jsonPropertyObject.put(property[k], resolveEmptySlots((k + 5), segments));
                     }
 
-                    jsonObject.put(JsonFormConstants.MultiSelectUtils.PROPERTY, jsonPropertyObject);
-                    jsonArray.put(jsonObject);
+                    jsonOptionObject.put(JsonFormConstants.MultiSelectUtils.PROPERTY, jsonPropertyObject);
+                    jsonOptionsArray.put(jsonOptionObject);
                 }
-                return jsonArray;
+                return jsonOptionsArray;
             }
 
         } catch (JSONException e) {

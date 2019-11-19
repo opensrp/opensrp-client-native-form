@@ -90,4 +90,5 @@
     <string name="multiselect_msg_on_item_added">Added</string>
     <string name="loading_multi_select_list">Loading</string>
     <string name="multiselect_already_added_msg">%s is already added</string>
+    <string name="multi_select_list_msg_data_source_invalid">External DataSource not found or processed</string>
 </resources>

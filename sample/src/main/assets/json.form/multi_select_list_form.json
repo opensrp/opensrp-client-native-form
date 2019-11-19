@@ -64,10 +64,9 @@
         "openmrs_entity_id": "",
         "buttonText": "+ Add disease code",
         "sort": true,
+        "groupings": "[A,B]",
         "dialogTitle": "Add disease code",
-        "searchHint": "Type Disease Name",
-        "value": "[{\"key\":\"bacterial_meningitis\",\"text\":\"Bacterial Meningitis\",\"property\":{\"presumed-id\":\"er\",\"confirmed-id\":\"er\"}}]",
-        "options": [
+        "value": [
           {
             "key": "abortion",
             "text": "Abortion",
@@ -75,7 +74,11 @@
               "presumed-id": "er",
               "confirmed-id": "er"
             }
-          },
+          }
+        ],
+        "searchHint": "Type Disease Name",
+        "options": [
+
           {
             "key": "Bbcess",
             "text": "BAbcess",
@@ -87,6 +90,14 @@
           {
             "key": "bacterial_meningitis",
             "text": "Bacterial Meningitis",
+            "property": {
+              "presumed-id": "er",
+              "confirmed-id": "er"
+            }
+          },
+          {
+            "key": "abortion",
+            "text": "Abortion",
             "property": {
               "presumed-id": "er",
               "confirmed-id": "er"

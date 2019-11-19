@@ -147,10 +147,9 @@ public class MultiSelectListFactory implements FormWidgetFactory {
 
     protected List<MultiSelectItem> prepareSelectedData() {
         try {
-            String strJsonArray = jsonObject.has(JsonFormConstants.VALUE) ? jsonObject.getString(JsonFormConstants.VALUE) : null;
-            if (strJsonArray != null) {
-                JSONArray jsonArray = new JSONArray(strJsonArray);
-                return MultiSelectListUtils.processOptionsJsonArray(jsonArray);
+            JSONArray jsonValueArray = jsonObject.has(JsonFormConstants.VALUE) ? jsonObject.getJSONArray(JsonFormConstants.VALUE) : null;
+            if (jsonValueArray != null) {
+                return MultiSelectListUtils.processOptionsJsonArray(jsonValueArray);
             }
         } catch (JSONException e) {
             Timber.e(e);
@@ -167,7 +166,12 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         if (StringUtils.isBlank(source)) {
             return MultiSelectListUtils.loadOptionsFromJsonForm(jsonObject);
         } else {
-            return fetchData();
+            List<MultiSelectItem> fetchedMultiSelectItems = fetchData();
+            if(fetchedMultiSelectItems == null || fetchedMultiSelectItems.isEmpty()){
+                Utils.showToast(context, context.getString(R.string.multi_select_list_msg_data_source_invalid));
+                return null;
+            }
+            return fetchedMultiSelectItems;
         }
     }
 

@@ -49,6 +49,9 @@ public class MultiSelectListLoadTask extends AsyncTask<Void, Void, List<MultiSel
     protected List<MultiSelectItem> doInBackground(Void... voids) {
         String source = jsonObject.optString(JsonFormConstants.MultiSelectUtils.SOURCE);
         List<MultiSelectItem> multiSelectItems = multiSelectListFactory.loadListItems(source);
+        if (multiSelectItems == null) {
+            return null;
+        }
         String strGroupingsArray = jsonObject.optString(JsonFormConstants.MultiSelectUtils.GROUPINGS);
         boolean sort = jsonObject.optBoolean(JsonFormConstants.MultiSelectUtils.SORT);
         if (!StringUtils.isBlank(strGroupingsArray) && sort) {//no grouping without sorting
@@ -56,7 +59,7 @@ public class MultiSelectListLoadTask extends AsyncTask<Void, Void, List<MultiSel
             try {
                 jsonArray = new JSONArray(strGroupingsArray);
             } catch (JSONException e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
             MultiSelectListUtils.addGroupings(multiSelectItems, jsonArray);
         }
@@ -82,8 +85,10 @@ public class MultiSelectListLoadTask extends AsyncTask<Void, Void, List<MultiSel
     @Override
     protected void onPostExecute(List<MultiSelectItem> multiSelectItems) {
         progressBar.dismiss();
-        MultiSelectListAccessory multiSelectListAccessory = multiSelectListFactory.getMultiSelectListAccessoryHashMap().get(currentAdapterKey);
-        multiSelectListAccessory.setItemList(multiSelectItems);
-        multiSelectListFactory.updateListData(true);
+        if (multiSelectItems != null) {
+            MultiSelectListAccessory multiSelectListAccessory = multiSelectListFactory.getMultiSelectListAccessoryHashMap().get(currentAdapterKey);
+            multiSelectListAccessory.setItemList(multiSelectItems);
+            multiSelectListFactory.updateListData(true);
+        }
     }
 }
