@@ -33,7 +33,6 @@ import com.vijay.jsonwizard.task.MultiSelectListLoadTask;
 import com.vijay.jsonwizard.utils.MultiSelectListUtils;
 import com.vijay.jsonwizard.utils.Utils;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -172,7 +171,7 @@ public class MultiSelectListFactory implements FormWidgetFactory {
                 Class<?> aClass = Class.forName(strRepositoryClass);
                 MultiSelectListRepository multiSelectListRepository = (MultiSelectListRepository) aClass.newInstance();
                 List<MultiSelectItem> fetchedMultiSelectItems = multiSelectListRepository.fetchData();
-                if(fetchedMultiSelectItems == null || fetchedMultiSelectItems.isEmpty()){
+                if (fetchedMultiSelectItems == null || fetchedMultiSelectItems.isEmpty()) {
                     Utils.showToast(context, context.getString(R.string.multi_select_list_msg_data_source_invalid));
                     return null;
                 }
