@@ -20,7 +20,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -329,10 +328,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                             }
 
 
-                            if (address.length > 2 && RuleConstant.RULES_ENGINE.equals(address[0]) &&
-                                    (!JsonFormConstants.TOASTER_NOTES.equals(curView.getTag(R.id.type)) &&
-                                            !JsonFormConstants.NATIVE_RADIO_BUTTON.equals(curView.getTag(R.id.type)))) {
-
+                            if (RuleConstant.RULES_ENGINE.equals(address[0]) && !JsonFormConstants.TOASTER_NOTES.equals(curView.getTag(R.id.type)) && !JsonFormConstants.NATIVE_RADIO_BUTTON.equals(curView.getTag(R.id.type))) {
                                 //check for integrity of values
                                 updateCalculation(curValueMap, curView, address[1]);
                             } else {
@@ -342,7 +338,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     }
 
                 } catch (Exception e) {
-                    Log.e(TAG, e.getMessage(), e);
+                    Timber.e(e, "%s refreshCalculationLogic()", this.getClass().getCanonicalName());
 
                 }
             }
@@ -469,7 +465,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     }
                 }
             } catch (Exception e) {
-                Log.e(TAG, "", e);
+                Timber.e(e, "%s getObjectUsingAddress()", this.getClass().getCanonicalName());
             }
         } else {
             getObjectUsingAddress(address, popup);
