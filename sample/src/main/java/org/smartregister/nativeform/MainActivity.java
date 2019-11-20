@@ -85,17 +85,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return super.onOptionsItemSelected(item);
     }
 
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            String jsonString = data.getStringExtra("json");
-            Log.i(getClass().getName(), "Result json String !!!! " + jsonString);
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-
     public void startForm(int jsonFormActivityRequestCode,
                           String formName, String entityId) throws Exception {
 
@@ -220,7 +209,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-
     public JSONObject getFormJson(String formIdentity) {
 
         try {
@@ -234,39 +222,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 stringBuilder.append(jsonString);
             }
             inputStream.close();
-
             String rawJsonString = stringBuilder.toString();
 
             return translateJson(rawJsonString);
         } catch (IOException e) {
             Log.e(TAG, e.getMessage(), e);
-            ;
         } catch (JSONException e) {
             Log.e(TAG, e.getMessage(), e);
         }
         return null;
     }
 
+    /**
+     * This parses the json texts represented as keys on the form.
+     *
+     * @param rawJsonString {@link String}
+     * @return forMObject {@link JSONObject}
+     * @throws JSONException
+     */
     private JSONObject translateJson(String rawJsonString) throws JSONException {
-
-        String result = null;
-
         JSONObject json = new JSONObject(rawJsonString);
 
-        JSONArray array = json.getJSONObject(JsonFormConstants.STEP1).getJSONArray(JsonFormConstants.FIELDS);
+        JSONArray array = json.getJSONObject(JsonFormConstants.STEP1).getJSONArray(JsonFormConstants.FIELDS); // the steps here will be made dynamic after the POC demo to the team.
 
         for (int i = 0; i < array.length(); i++) {
-
             JSONObject innerJson = array.getJSONObject(i);
-
             JSONObject clone = new JSONObject(innerJson.toString());
-
             Iterator<String> iter = clone.keys();
             while (iter.hasNext()) {
                 String key = iter.next();
                 try {
                     String value = clone.getString(key);
-
                     if (value.startsWith("@")) {
                         String strKey = value.substring(1);
                         strKey = strKey.substring(0, value.length() - 2);
@@ -283,21 +269,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                             innerJson.put(key, jo);
                         }
-
                     }
 
                     Log.d("MLSDEBUG", value);
-
                 } catch (JSONException e) {
                     // Something went wrong!
                 }
             }
-
         }
 
-
         return json;
+    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            String jsonString = data.getStringExtra("json");
+            Log.i(getClass().getName(), "Result json String !!!! " + jsonString);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

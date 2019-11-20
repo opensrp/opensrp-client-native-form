@@ -178,6 +178,13 @@ public class Utils {
         return (int) pixelForDp;
     }
 
+    /**
+     * Loads the strings property files used to keep the strings to be displayed on the forms
+     *
+     * @param key     {@link String}
+     * @param context {@link Context}
+     * @return property {@link String}
+     */
     public static String getProperty(String key, Context context) {
         Properties properties = new Properties();
         AssetManager assetManager = context.getAssets();
