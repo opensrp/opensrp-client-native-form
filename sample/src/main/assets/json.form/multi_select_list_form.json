@@ -63,53 +63,57 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "buttonText": "+ Add disease code",
+        "sort": true,
+        "groupings": "[A,B]",
         "dialogTitle": "Add disease code",
+        "value": [
+          {
+            "key": "abortion",
+            "text": "Abortion",
+            "property": {
+              "presumed-id": "er",
+              "confirmed-id": "er"
+            }
+          }
+        ],
         "searchHint": "Type Disease Name",
-        "value": "[{\"key\":\"Bacterial Meningitis\",\"property\":{\"presumed-id\":\"er\",\"confirmed-id\":\"er\"}}]",
         "options": [
+
           {
-            "key": "A"
-          },
-          {
-            "key": "Abortion",
+            "key": "Bbcess",
+            "text": "BAbcess",
             "property": {
               "presumed-id": "er",
               "confirmed-id": "er"
             }
           },
           {
-            "key": "Abcess",
+            "key": "bacterial_meningitis",
+            "text": "Bacterial Meningitis",
             "property": {
               "presumed-id": "er",
               "confirmed-id": "er"
             }
           },
           {
-            "key": "Anaemia",
+            "key": "abortion",
+            "text": "Abortion",
             "property": {
               "presumed-id": "er",
               "confirmed-id": "er"
             }
           },
           {
-            "key": "B"
-          },
-          {
-            "key": "Bacterial Meningitis",
+            "key": "bronchitis",
+            "text": "Bronchitis",
             "property": {
               "presumed-id": "er",
               "confirmed-id": "er"
             }
           },
           {
-            "key": "Bronchitis",
-            "property": {
-              "presumed-id": "er",
-              "confirmed-id": "er"
-            }
-          },
-          {
-            "key": "Brucellosis",
+            "key": "arucellosis",
+            "text": "arucellosis",
             "property": {
               "presumed-id": "er",
               "confirmed-id": "er"

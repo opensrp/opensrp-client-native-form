@@ -3,6 +3,7 @@ package com.vijay.jsonwizard.widgets;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,8 +29,11 @@ import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.task.MultiSelectListLoadTask;
+import com.vijay.jsonwizard.utils.MultiSelectListUtils;
 import com.vijay.jsonwizard.utils.Utils;
 
+import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -121,7 +125,7 @@ public class MultiSelectListFactory implements FormWidgetFactory {
 
     private void prepareMultiSelectHashMap(@NonNull String stepName, boolean popup, String openmrsEntity, String openmrsEntityParent, String openmrsEntityId) {
         MultiSelectListAccessory multiSelectListAccessory = new MultiSelectListAccessory(
-                new MultiSelectListSelectedAdapter(new ArrayList<MultiSelectItem>()),
+                new MultiSelectListSelectedAdapter(new ArrayList<MultiSelectItem>(), this),
                 new MultiSelectListAdapter(prepareListData()),
                 null,
                 new ArrayList<MultiSelectItem>(),
@@ -143,15 +147,9 @@ public class MultiSelectListFactory implements FormWidgetFactory {
 
     protected List<MultiSelectItem> prepareSelectedData() {
         try {
-            String strJsonArray = jsonObject.has(JsonFormConstants.VALUE) ? jsonObject.getString(JsonFormConstants.VALUE) : null;
-            if (strJsonArray != null) {
-                JSONArray jsonArray = new JSONArray(strJsonArray);
-                List<MultiSelectItem> multiSelectItems = new ArrayList<>();
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                    multiSelectItems.add(new MultiSelectItem(jsonObject1.getString(JsonFormConstants.KEY), jsonObject1.has(JsonFormConstants.MultiSelectUtils.PROPERTY) ? jsonObject1.getJSONObject(JsonFormConstants.MultiSelectUtils.PROPERTY).toString() : null));
-                }
-                return multiSelectItems;
+            JSONArray jsonValueArray = jsonObject.has(JsonFormConstants.VALUE) ? jsonObject.getJSONArray(JsonFormConstants.VALUE) : null;
+            if (jsonValueArray != null) {
+                return MultiSelectListUtils.processOptionsJsonArray(jsonValueArray);
             }
         } catch (JSONException e) {
             Timber.e(e);
@@ -164,11 +162,30 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         return new ArrayList<>();
     }
 
-    public void updateSelectedData(@NonNull List<MultiSelectItem> selectedData, boolean clearData) {
+    public List<MultiSelectItem> loadListItems(@Nullable String source) {
+        if (StringUtils.isBlank(source)) {
+            return MultiSelectListUtils.loadOptionsFromJsonForm(jsonObject);
+        } else {
+            List<MultiSelectItem> fetchedMultiSelectItems = fetchData();
+            if(fetchedMultiSelectItems == null || fetchedMultiSelectItems.isEmpty()){
+                Utils.showToast(context, context.getString(R.string.multi_select_list_msg_data_source_invalid));
+                return null;
+            }
+            return fetchedMultiSelectItems;
+        }
+    }
+
+    public void updateSelectedData(@NonNull MultiSelectItem selectedData, boolean clearData) {
         if (clearData) {
             getMultiSelectListSelectedAdapter().getData().clear();
         }
-        getMultiSelectListSelectedAdapter().getData().addAll(selectedData);
+        List<MultiSelectItem> multiSelectItems = getMultiSelectListSelectedAdapter().getData();
+        if (multiSelectItems.contains(selectedData)) {
+            Utils.showToast(context, String.format(context.getString(R.string.multiselect_already_added_msg), selectedData.getText()));
+            return;
+        }
+        Utils.showToast(context, selectedData.getText() + " " + context.getString(R.string.multiselect_msg_on_item_added));
+        getMultiSelectListSelectedAdapter().getData().add(selectedData);
         getMultiSelectListSelectedAdapter().notifyDataSetChanged();
     }
 
@@ -231,7 +248,7 @@ public class MultiSelectListFactory implements FormWidgetFactory {
             @Override
             public void onItemClick(View view) {
                 int position = recyclerView.getChildLayoutPosition(view);
-                handleClickEventOnListData(getMultiSelectListAdapter().getItemAt(position), context);
+                handleClickEventOnListData(getMultiSelectListAdapter().getItemAt(position));
             }
         });
 
@@ -248,26 +265,14 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         getMultiSelectListAccessoryHashMap().put(currentAdapterKey, multiSelectListAccessory);
     }
 
-    protected void handleClickEventOnListData(@NonNull MultiSelectItem multiSelectItem, @NonNull Context context) {
-        updateSelectedData(Arrays.asList(multiSelectItem), false);
-        writeToForm(multiSelectItem);
-        Utils.showToast(context, multiSelectItem.getKey() + " " + context.getString(R.string.multiselect_msg_on_item_added));
+    protected void handleClickEventOnListData(@NonNull MultiSelectItem multiSelectItem) {
+        updateSelectedData(multiSelectItem, false);
+        writeToForm();
         getAlertDialog().dismiss();
     }
 
-    protected void writeToForm(@NonNull MultiSelectItem multiSelectItem) {
-        try {
-            MultiSelectListAccessory multiSelectListAccessory = getMultiSelectListAccessoryHashMap().get(currentAdapterKey);
-            jsonFormFragment.getJsonApi().writeValue(
-                    multiSelectListAccessory.getFormAttributes().optString(JsonFormConstants.STEPNAME), currentAdapterKey,
-                    multiSelectItem.toJson(getMultiSelectListSelectedAdapter().getData()).toString(),
-                    multiSelectListAccessory.getFormAttributes().optString(JsonFormConstants.OPENMRS_ENTITY_PARENT),
-                    multiSelectListAccessory.getFormAttributes().optString(JsonFormConstants.OPENMRS_ENTITY),
-                    multiSelectListAccessory.getFormAttributes().optString(JsonFormConstants.OPENMRS_ENTITY_ID),
-                    multiSelectListAccessory.getFormAttributes().optBoolean(JsonFormConstants.IS_POPUP));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    public void writeToForm() {
+        MultiSelectListUtils.writeToForm(currentAdapterKey, jsonFormFragment, getMultiSelectListAccessoryHashMap());
     }
 
     public MultiSelectListSelectedAdapter getMultiSelectListSelectedAdapter() {
@@ -296,11 +301,14 @@ public class MultiSelectListFactory implements FormWidgetFactory {
 
     protected RecyclerView createSelectedRecyclerView(@NonNull Context context) {
         List<MultiSelectItem> multiSelectItems = prepareSelectedData();
-        MultiSelectListSelectedAdapter multiSelectListSelectedAdapter = new MultiSelectListSelectedAdapter(multiSelectItems);
+        MultiSelectListSelectedAdapter multiSelectListSelectedAdapter = new MultiSelectListSelectedAdapter(multiSelectItems, this);
 
         MultiSelectListAccessory multiSelectListAccessory = getMultiSelectListAccessoryHashMap().get(currentAdapterKey);
         multiSelectListAccessory.setSelectedAdapter(multiSelectListSelectedAdapter);
         updateMultiSelectListAccessoryHashMap(multiSelectListAccessory);
+
+        writeToForm();
+
         final RecyclerView recyclerView = new RecyclerView(context);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
@@ -339,5 +347,9 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         });
 
         return relativeLayout;
+    }
+
+    protected List<MultiSelectItem> fetchData() {
+        throw new NotImplementedException("Implement Your Own Logic");
     }
 }
