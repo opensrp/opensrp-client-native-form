@@ -1,5 +1,6 @@
 package com.vijay.jsonwizard.widgets;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
@@ -172,7 +173,15 @@ public class MultiSelectListFactory implements FormWidgetFactory {
                 MultiSelectListRepository multiSelectListRepository = (MultiSelectListRepository) aClass.newInstance();
                 List<MultiSelectItem> fetchedMultiSelectItems = multiSelectListRepository.fetchData();
                 if (fetchedMultiSelectItems == null || fetchedMultiSelectItems.isEmpty()) {
-                    Utils.showToast(context, context.getString(R.string.multi_select_list_msg_data_source_invalid));
+                    Activity activity = jsonFormFragment.getActivity();
+                    if (activity != null) {
+                        jsonFormFragment.getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Utils.showToast(context, context.getString(R.string.multi_select_list_msg_data_source_invalid));
+                            }
+                        });
+                    }
                     return null;
                 }
                 return fetchedMultiSelectItems;
