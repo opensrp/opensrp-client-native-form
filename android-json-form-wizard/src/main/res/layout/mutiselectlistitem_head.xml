@@ -8,6 +8,7 @@
         android:id="@+id/txtMultiSelectHeader"
         android:textColor="@color/primary_text"
         android:textSize="24sp"
+        android:textStyle="bold"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 </LinearLayout>
