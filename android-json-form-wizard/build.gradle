@@ -139,7 +139,7 @@ dependencies {
     testImplementation 'org.apache.maven:maven-ant-tasks:2.1.3'
     testImplementation 'org.mockito:mockito-core:2.28.2'
     testImplementation('com.squareup:fest-android:1.0.8') { exclude module: 'support-v4' }
-    testImplementation 'org.robolectric:robolectric:4.3'
+    testImplementation 'org.robolectric:robolectric:4.3.1'
     testImplementation "org.json:json:20190722"
 }
 

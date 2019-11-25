@@ -315,10 +315,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         }
 
                         String[] address = getAddressFromMap(widgetKey, stepName, JsonFormConstants.CALCULATION);
-                        if (address == null) {
-                            if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_RULES)) {
-                                address = getRulesEngineAddress(curKey, curRelevance, curView, JsonFormConstants.CALCULATION);
-                            }
+                        if (address == null && curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_RULES)) {
+                            address = getRulesEngineAddress(curKey, curRelevance, curView, JsonFormConstants.CALCULATION);
                         }
 
                         if (address != null) {
