@@ -119,7 +119,7 @@ dependencies {
     implementation 'org.greenrobot:eventbus:3.1.1'
 
     // PowerMock
-    def powerMockVersion = '1.7.1'
+    def powerMockVersion = '2.0.4'
     testImplementation "org.powermock:powermock-module-junit4:$powerMockVersion"
     testImplementation "org.powermock:powermock-module-junit4-rule:$powerMockVersion"
     testImplementation "org.powermock:powermock-api-mockito2:$powerMockVersion"
@@ -137,7 +137,7 @@ dependencies {
 
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.apache.maven:maven-ant-tasks:2.1.3'
-    testImplementation 'org.mockito:mockito-core:2.23.0'
+    testImplementation 'org.mockito:mockito-core:2.28.2'
     testImplementation('com.squareup:fest-android:1.0.8') { exclude module: 'support-v4' }
     testImplementation 'org.robolectric:robolectric:4.3'
     testImplementation "org.json:json:20190722"

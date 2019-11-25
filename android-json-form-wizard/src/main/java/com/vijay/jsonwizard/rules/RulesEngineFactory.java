@@ -82,6 +82,9 @@ public class RulesEngineFactory implements RuleListener {
         } catch (IOException e) {
             Timber.e(e, "%s getRulesFromAsset", this.getClass().getCanonicalName());
             return null;
+        } catch (Exception e) {
+            Timber.e(e, "%s getRulesFromAsset", this.getClass().getCanonicalName());
+            return null;
         }
     }
 
