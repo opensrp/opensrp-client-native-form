@@ -75,9 +75,7 @@ public class RulesEngineFactory implements RuleListener {
     private Rules getRulesFromAsset(String fileName) {
         try {
             if (!ruleMap.containsKey(fileName)) {
-
-                BufferedReader bufferedReader = new BufferedReader(
-                        new InputStreamReader(context.getAssets().open(fileName)));
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(context.getAssets().open(fileName)));
                 ruleMap.put(fileName, MVELRuleFactory.createRulesFrom(bufferedReader));
             }
             return ruleMap.get(fileName);
@@ -95,7 +93,6 @@ public class RulesEngineFactory implements RuleListener {
         String rawValue = value.trim();
         if (isList(rawValue)) {
             return gson.fromJson(rawValue, ArrayList.class);
-
         } else if ("true".equals(rawValue) || "false".equals(rawValue)) {
             return Boolean.valueOf(rawValue);
         } else {
