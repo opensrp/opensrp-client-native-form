@@ -279,7 +279,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     startForm(REQUEST_CODE_GET_JSON, "repeating_group", null);
                     break;
                 case R.id.multiselect_list:
-                    startForm(REQUEST_CODE_GET_JSON, "diagnosis_form", null);
+                    startForm(REQUEST_CODE_GET_JSON, "multi_select_list_form", null);
                     break;
                 default:
                     break;
