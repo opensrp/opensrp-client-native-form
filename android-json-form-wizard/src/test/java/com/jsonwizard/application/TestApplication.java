@@ -1,4 +1,4 @@
-package com.jsonwizard.utils;
+package com.jsonwizard.application;
 
 import android.app.Application;
 
