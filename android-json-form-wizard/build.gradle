@@ -143,29 +143,31 @@ dependencies {
     testImplementation "org.json:json:20190722"
 }
 
-task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
+task jacocoTestReport(type: JacocoReport,  dependsOn: ['testDebugUnitTest'],  group: 'Test Reporting') {
+    description = 'Generates aggregate report from all subprojects.'
+
+    def includeFilter = ['**/build/intermediates/javac/**/classes/**/*.class']
+    def excludeFilter = ['**/build/intermediates/javac/*Test/**/*.class']
+    def classTree = fileTree(dir: "${rootProject.projectDir}", includes: includeFilter, excludes: excludeFilter)
+    def sourceTree = fileTree(dir: "${rootProject.projectDir}", includes: ['**/src/main/java/**/*.*'])
+    def executionTree = fileTree(dir: "${rootProject.projectDir}", includes: ['**/build/jacoco/*.exec'])
+
+    classDirectories.from = files([classTree])
+    sourceDirectories.from = files([sourceTree])
+    executionData.from = files([executionTree])
 
     reports {
-        xml.enabled = true
-        html.enabled = true
+        xml.enabled true
+        html.enabled true
     }
 
-    getReports().getXml().setDestination(file("${buildDir}/reports/jacoco/jacocoRootReport/merged.xml"))
-    getReports().getHtml().setDestination(file("${buildDir}/reports/jacoco/jacocoRootReport/html"))
-
-    def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*', '**/*$ViewBinder*.*']
-    def debugTree = fileTree(dir: "$project.buildDir/intermediates/classes/debug", excludes: fileFilter)
-    def mainSrc = "$project.projectDir/src/main/java"
-
-    sourceDirectories = files([mainSrc])
-    classDirectories = files([debugTree])
-    executionData = fileTree(dir: project.buildDir, includes: [
-            'jacoco/testDebugUnitTest.exec', 'outputs/code-coverage/connected/*coverage.ec'
-    ])
+    getReports().getXml().setDestination(file("${project.buildDir}/reports/jacoco/jacocoTestReport/merged.xml"))
+    getReports().getHtml().setDestination(file("${project.buildDir}/reports/jacoco/jacocoTestReport/html"))
 }
 
 coveralls {
-    jacocoReportPath = "${buildDir}/reports/jacoco/jacocoRootReport/merged.xml"
+    jacocoReportPath = "${project.buildDir}/reports/jacoco/jacocoTestReport/merged.xml"
+    sourceDirs += ["opensrp-client-native-form/src/main/java", "android-json-form-wizard/src/main/java"]
 }
 
 
