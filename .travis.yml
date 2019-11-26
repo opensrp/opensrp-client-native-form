@@ -46,7 +46,7 @@ script:
   # Enable the line below once we get all the test passing, currently most of the tests are failing 
   # so we'll just if the project compiles
   #Run All tests Unit and Instrumentation
-  - travis_wait ./gradlew :android-json-form-wizard:jacocoTestReport coveralls --stacktrace -debug
+  - travis_wait ./gradlew :android-json-form-wizard:jacocoTestReport coveralls --stacktrace --debug
 
 notifications:
   slack:
