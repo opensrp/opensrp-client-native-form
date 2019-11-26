@@ -161,14 +161,12 @@ task jacocoTestReport(type: JacocoReport,  dependsOn: ['testDebugUnitTest'],  gr
         html.enabled true
     }
 
-    getReports().getXml().setDestination(file("${project.buildDir}/reports/jacoco/jacocoTestReport/merged.xml"))
-    getReports().getHtml().setDestination(file("${project.buildDir}/reports/jacoco/jacocoTestReport/html"))
+    getReports().getXml().setDestination(file("${rootProject.projectDir}/build/reports/jacoco/jacocoTestReport/merged.xml"))
+    getReports().getHtml().setDestination(file("${rootProject.projectDir}/build/reports/jacoco/jacocoTestReport/html"))
 }
 
 coveralls {
-    jacocoReportPath = "${project.buildDir}/reports/jacoco/jacocoTestReport/merged.xml"
-    sourceDirs += ["opensrp-client-native-form/src/main/java", "android-json-form-wizard/src/main/java"]
+    jacocoReportPath = "${rootProject.projectDir}/build/reports/jacoco/jacocoTestReport/merged.xml"
 }
-
 
 apply from: '../maven.gradle'
