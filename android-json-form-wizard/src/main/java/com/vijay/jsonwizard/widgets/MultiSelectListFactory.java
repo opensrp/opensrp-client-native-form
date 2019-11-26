@@ -205,8 +205,8 @@ public class MultiSelectListFactory implements FormWidgetFactory {
             Utils.showToast(context, String.format(context.getString(R.string.multiselect_already_added_msg), selectedData.getText()));
             return;
         }
-        Utils.showToast(context, selectedData.getText() + " " + context.getString(R.string.multiselect_msg_on_item_added));
         getMultiSelectListSelectedAdapter().getData().add(selectedData);
+        Utils.showToast(context, selectedData.getText() + " " + context.getString(R.string.multiselect_msg_on_item_added));
         getMultiSelectListSelectedAdapter().notifyDataSetChanged();
     }
 

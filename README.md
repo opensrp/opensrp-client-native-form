@@ -2000,13 +2000,6 @@ Add the following field in you form
 >         "openmrs_entity_id": "",
 >         "sort": true,
 >         "groupings": "[A,B,C,D,E,W,X,Y,Z]",
->         "sortClass": "<fqn of sorting comparator class>"       
->         "key": "disease_code",
->         "openmrs_entity_parent": "",
->         "openmrs_entity": "concept",
->         "openmrs_entity_id": "",
->         "sort": true,
->         "groupings": "[A,B,C,D,E,W,X,Y,Z]",
 >         "sortClass": "<fqn of sorting comparator class>",
 >         "type": "multi_select_list",
 >         "buttonText": "+ Add disease code",
@@ -2014,7 +2007,7 @@ Add the following field in you form
 >         "searchHint": "Type Disease Name"
 >       }
 
-    sort - default false, if true data will be sorted
+    sort - default false, if true keys of the jsonObject will be sorted alphabetically
     
     source - if specified repository class will be used to fetch data otherwise options data will be used
      
@@ -2043,4 +2036,6 @@ Must not specify the `source` feld
 Create a class implementing [MultiSelectListRepository]([https://github.com/OpenSRP/opensrp-client-native-form/blob/add-repository-class/android-json-form-wizard/src/main/java/com/vijay/jsonwizard/interfaces/MultiSelectListRepository.java](https://github.com/OpenSRP/opensrp-client-native-form/blob/add-repository-class/android-json-form-wizard/src/main/java/com/vijay/jsonwizard/interfaces/MultiSelectListRepository.java))  then add it the field json object in place of  `fqn of sorting repository class`
 
 > `"repositoryClass": "<fqn of sorting repository class>"`
+
+
  ![Sample Form Screenshot] (https://user-images.githubusercontent.com/2793306/68639670-7c959100-052f-11ea-8cc9-e5ddf2c288ff.png)
