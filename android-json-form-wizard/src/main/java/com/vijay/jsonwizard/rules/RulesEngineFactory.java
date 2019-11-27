@@ -12,6 +12,7 @@ import org.jeasy.rules.api.RulesEngine;
 import org.jeasy.rules.core.DefaultRulesEngine;
 import org.jeasy.rules.core.RulesEngineParameters;
 import org.jeasy.rules.mvel.MVELRuleFactory;
+import org.jeasy.rules.support.YamlRuleDefinitionReader;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -34,6 +35,7 @@ public class RulesEngineFactory implements RuleListener {
     private Gson gson;
     private Map<String, String> globalValues;
     private RulesEngineHelper rulesEngineHelper;
+    private MVELRuleFactory mvelRuleFactory;
 
     public RulesEngineFactory(Context context, Map<String, String> globalValues) {
         this.context = context;
@@ -44,7 +46,8 @@ public class RulesEngineFactory implements RuleListener {
         gson = new Gson();
         this.globalValues = globalValues;
         this.rulesEngineHelper = new RulesEngineHelper();
-
+        YamlRuleDefinitionReader yamlRuleDefinitionReader = new YamlRuleDefinitionReader();
+        mvelRuleFactory = new MVELRuleFactory(yamlRuleDefinitionReader);
     }
 
     public RulesEngineFactory() {
@@ -76,7 +79,7 @@ public class RulesEngineFactory implements RuleListener {
         try {
             if (!ruleMap.containsKey(fileName)) {
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(context.getAssets().open(fileName)));
-                ruleMap.put(fileName, MVELRuleFactory.createRulesFrom(bufferedReader));
+                ruleMap.put(fileName, mvelRuleFactory.createRules(bufferedReader));
             }
             return ruleMap.get(fileName);
         } catch (IOException e) {
