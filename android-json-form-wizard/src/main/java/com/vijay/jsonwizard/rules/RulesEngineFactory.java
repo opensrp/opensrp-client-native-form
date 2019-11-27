@@ -11,7 +11,9 @@ import org.jeasy.rules.api.Rules;
 import org.jeasy.rules.api.RulesEngine;
 import org.jeasy.rules.core.DefaultRulesEngine;
 import org.jeasy.rules.core.RulesEngineParameters;
+import org.jeasy.rules.mvel.MVELRule;
 import org.jeasy.rules.mvel.MVELRuleFactory;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -50,11 +52,52 @@ public class RulesEngineFactory implements RuleListener {
     public RulesEngineFactory() {
     }
 
+    private Rules getDynamicRulesFromString(String strDynamicRule) {
+        try {
+            JSONObject dynamicRuleJsonObject = new JSONObject(strDynamicRule);
+            String key = dynamicRuleJsonObject.optString("key");
+            JSONArray jsonArray = dynamicRuleJsonObject.optJSONArray("value");
+            Rules rules = new Rules();
+            if (!ruleMap.containsKey(key)) {
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.optJSONObject(i);
+                    MVELRule mvelRule1 = new MVELRule();
+                    mvelRule1.setDescription(jsonObject.optString("description"));
+                    mvelRule1.setPriority(jsonObject.optInt("priority"));
+                    mvelRule1.when("'B'.startsWith('B')");
+                    mvelRule1.then(jsonObject.optString("action"));
+                    mvelRule1.name(jsonObject.optString("name"));
+                    rules.register(mvelRule1);
+                }
+                ruleMap.put(key, rules);
+            }
+            return ruleMap.get(key);
+        } catch (Exception e) {
+            Timber.e(e);
+            return null;
+        }
+    }
+
     public boolean getRelevance(Facts relevanceFact, String ruleFilename) {
         Facts facts = initializeFacts(relevanceFact);
         facts.put(RuleConstant.IS_RELEVANT, false);
         rules = getRulesFromAsset(RULE_FOLDER_PATH + ruleFilename);
         processDefaultRules(rules, facts);
+
+        return facts.get(RuleConstant.IS_RELEVANT);
+    }
+
+    public boolean getSomeRelevance(String rulesStrObject) {
+
+        Facts facts = new Facts();
+
+        facts.put(RuleConstant.IS_RELEVANT, false);
+
+        rules = getDynamicRulesFromString(rulesStrObject);
+
+        RulesEngine rulesEngine = new DefaultRulesEngine();
+
+        rulesEngine.fire(rules, facts);
 
         return facts.get(RuleConstant.IS_RELEVANT);
     }
@@ -80,9 +123,6 @@ public class RulesEngineFactory implements RuleListener {
             }
             return ruleMap.get(fileName);
         } catch (IOException e) {
-            Timber.e(e, "%s getRulesFromAsset", this.getClass().getCanonicalName());
-            return null;
-        } catch (Exception e) {
             Timber.e(e, "%s getRulesFromAsset", this.getClass().getCanonicalName());
             return null;
         }

@@ -372,37 +372,50 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     @Override
     public JSONObject getObjectUsingAddress(String[] address, boolean popup) throws JSONException {
         if (address != null && address.length > 1) {
-            if (RuleConstant.RULES_ENGINE.equals(address[0])) {
+            if(RuleConstant.RULES_ENGINE.equals(address[0]) && address[1].equals("rules-dynamic")){
+                //get conditions from
+                return new JSONObject();
+            }
+            else if (RuleConstant.RULES_ENGINE.equals(address[0])) {
+
                 String fieldKey = address[2];
 
                 List<String> rulesList = getRules(address[1], fieldKey);
+
                 if (rulesList != null) {
 
-                    JSONObject result = new JSONObject();
-                    JSONArray rulesArray = new JSONArray();
+                    return fillFieldsWithValues(rulesList, popup);
 
-                    for (Integer h = 1; h < getmJSONObject().getInt(JsonFormConstants.COUNT) + 1; h++) {
-                        JSONArray fields = fetchFields(getmJSONObject().getJSONObject(RuleConstant.STEP + h), popup);
-                        for (int i = 0; i < fields.length(); i++) {
-                            if (rulesList.contains(RuleConstant.STEP + h + "_" +
-                                    fields.getJSONObject(i).getString(JsonFormConstants.KEY))) {
-
-                                JSONObject fieldObject = fields.getJSONObject(i);
-                                fieldObject.put(RuleConstant.STEP, RuleConstant.STEP + h);
-                                rulesArray.put(fieldObject);
-                            }
-                        }
-                    }
-                    result.put(RuleConstant.RESULT, rulesArray);
-                    return result;
                 }
 
             } else {
+
                 return getRelevanceReferencedObject(address[0], address[1], popup);
+
             }
         }
 
         return null;
+    }
+
+    private JSONObject fillFieldsWithValues(List<String> rulesList, boolean popup) throws JSONException {
+        JSONObject result = new JSONObject();
+        JSONArray rulesArray = new JSONArray();
+
+        for (Integer h = 1; h < getmJSONObject().getInt(JsonFormConstants.COUNT) + 1; h++) {
+            JSONArray fields = fetchFields(getmJSONObject().getJSONObject(RuleConstant.STEP + h), popup);
+            for (int i = 0; i < fields.length(); i++) {
+                if (rulesList.contains(RuleConstant.STEP + h + "_" +
+                        fields.getJSONObject(i).getString(JsonFormConstants.KEY))) {
+
+                    JSONObject fieldObject = fields.getJSONObject(i);
+                    fieldObject.put(RuleConstant.STEP, RuleConstant.STEP + h);
+                    rulesArray.put(fieldObject);
+                }
+            }
+        }
+        result.put(RuleConstant.RESULT, rulesArray);
+        return result;
     }
 
     @Override
@@ -916,6 +929,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
                         isPopup = checkPopUpValidity(address, popup);
                         if (address.length > 1) {
+
                             Facts curValueMap = getValueFromAddress(address, isPopup);
                             try {
                                 boolean comparison = isRelevant(curValueMap, curRelevance);
@@ -1502,9 +1516,10 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private boolean isRelevant(Facts curValueMap, JSONObject curRelevance) throws Exception {
         if (curRelevance != null) {
             if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_RULES)) {
+
                 return curValueMap.asMap().size() != 0 && getRulesEngineFactory().getRelevance(curValueMap,
-                        curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES)
-                                .getString(RuleConstant.RULES_FILE));
+                        curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getString(RuleConstant.RULES_FILE));
+
             } else if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_CHECKBOX)) {
                 JSONArray exArray = curRelevance.getJSONArray(JsonFormConstants.JSON_FORM_KEY.EX_CHECKBOX);
 
@@ -1518,6 +1533,25 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
                 }
                 return false;
+            } else if (curRelevance.has("dynamic-rules")) {
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("key", "key");
+                    JSONArray jsonArray = new JSONArray();
+                    JSONObject jsonObject1 = new JSONObject();
+                    jsonObject1.put("name", "step1_user_other");
+                    jsonObject1.put("description", "user_other");
+                    jsonObject1.put("priority", 1);
+                    jsonObject1.put("condition", "step1_user_name.startsWith('B')");
+                    jsonObject1.put("action", "isRelevant = true");
+                    jsonArray.put(jsonObject1);
+                    jsonObject.put("value", jsonArray);
+                    curRelevance.put("dynamic-data", jsonObject);
+//                    Facts entries = new Facts();
+//                    entries.
+                    //generate mvel rules
+                    return curValueMap.asMap().size() != 0 && getRulesEngineFactory()
+                            .getSomeRelevance(curRelevance.getJSONObject("dynamic-data").toString());
+
             } else {
                 String curValue = String.valueOf(curValueMap.get(JsonFormConstants.VALUE));
                 return doComparison(curValue != null ? curValue : "", curRelevance);
