@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">jsonwizard</string>
-
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="badly_formed_date">Badly formed date</string>
@@ -74,8 +73,8 @@
     <string name="edit_button_label">Edit Button</string>
     <string name="info_icon">Info icon</string>
     <string name="attention">Attention</string>
-    <string name="json_form_error_msg" >Found %d error(s) in the form. Please correct them to submit.</string>
-    <string name="json_form_on_next_error_msg" >Please correct the error(s) in the form to proceed.</string>
+    <string name="json_form_error_msg">Found %d error(s) in the form. Please correct them to submit.</string>
+    <string name="json_form_on_next_error_msg">Please correct the error(s) in the form to proceed.</string>
     <string name="go_to_step">Go to Step</string>
     <string name="shows_image_on_dialog">Shows image on dialog</string>
     <string name="undo_test_result">Undo the %1$s result?</string>
@@ -92,4 +91,6 @@
     <string name="loading">Loading</string>
     <string name="loading_form_message">Please wait as we load your form...</string>
     <string name="opening_forms">Opening forms...</string>
+    <string name="multiselect_already_added_msg">%s is already added</string>
+    <string name="multi_select_list_msg_data_source_invalid">External DataSource not found or processed</string>
 </resources>

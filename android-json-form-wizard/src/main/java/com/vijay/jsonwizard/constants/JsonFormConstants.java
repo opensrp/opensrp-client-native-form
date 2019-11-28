@@ -212,6 +212,8 @@ public class JsonFormConstants {
     public static final String LABEL_CONSTRAINT_LAYOUT = "label_constraint_layout";
 
     public interface MultiSelectUtils {
+        String IS_HEADER = "isHeader";
+        String TEXT = "text";
         String PROPERTY = "property";
         String MAX_SELECTABLE = "maxSelectable";
         String META = "meta";
@@ -219,6 +221,13 @@ public class JsonFormConstants {
         String BUTTON_TEXT = "buttonText";
         String DIALOG_TITLE = "dialogTitle";
         String SEARCH_HINT = "searchHint";
+        String SOURCE = "source";
+        String GROUPINGS = "groupings";
+        String SORT = "sort";
+        String SORTING_CLASS = "sortClass";
+        String ALPHABET_SORTING = "com.vijay.jsonwizard.comparator.MultiSelectListAlphabetComparator";
+        String FILES_LOCATION = "native.form/multiselectlist";
+        String REPOSITORY_CLASS = "repositoryClass";
     }
 
     public static class Properties {

@@ -20,7 +20,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -119,6 +118,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private Map<String, String> formValuesCacheMap = new HashMap<>();
     private TextView selectedTextView = null;
     private Utils utils = new Utils();
+    private HashMap<String, String[]> addressMap = new HashMap<>();
 
     private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
         @Override
@@ -298,6 +298,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         Collection<View> views = calculationLogicViews.values();
         for (View curView : views) {
             String calculationTag = (String) curView.getTag(R.id.calculation);
+            String widgetKey = (String) curView.getTag(R.id.key);
+            String stepName = ((String) curView.getTag(R.id.address)).split(":")[0];
             if (calculationTag != null && calculationTag.length() > 0) {
                 try {
                     JSONObject calculation = new JSONObject(calculationTag);
@@ -312,12 +314,9 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                             valueSource = calculation.getJSONObject(JsonFormConstants.SRC);
                         }
 
-                        String[] address = null;
-                        if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_RULES)) {
-                            address = new String[]{curKey,
-                                    curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getString(
-                                            RuleConstant.RULES_FILE),
-                                    curView.getTag(R.id.address).toString().replace(':', '_')};
+                        String[] address = getAddressFromMap(widgetKey, stepName, JsonFormConstants.CALCULATION);
+                        if (address == null && curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_RULES)) {
+                            address = getRulesEngineAddress(curKey, curRelevance, curView, JsonFormConstants.CALCULATION);
                         }
 
                         if (address != null) {
@@ -329,10 +328,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                             }
 
 
-                            if (address.length > 2 && RuleConstant.RULES_ENGINE.equals(address[0]) &&
-                                    (!JsonFormConstants.TOASTER_NOTES.equals(curView.getTag(R.id.type)) &&
-                                            !JsonFormConstants.NATIVE_RADIO_BUTTON.equals(curView.getTag(R.id.type)))) {
-
+                            if (RuleConstant.RULES_ENGINE.equals(address[0]) && !JsonFormConstants.TOASTER_NOTES.equals(curView.getTag(R.id.type)) && !JsonFormConstants.NATIVE_RADIO_BUTTON.equals(curView.getTag(R.id.type))) {
                                 //check for integrity of values
                                 updateCalculation(curValueMap, curView, address[1]);
                             } else {
@@ -342,7 +338,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     }
 
                 } catch (Exception e) {
-                    Log.e(TAG, e.getMessage(), e);
+                    Timber.e(e, "%s refreshCalculationLogic()", this.getClass().getCanonicalName());
 
                 }
             }
@@ -377,7 +373,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     public JSONObject getObjectUsingAddress(String[] address, boolean popup) throws JSONException {
         if (address != null && address.length > 1) {
             if (RuleConstant.RULES_ENGINE.equals(address[0])) {
-
                 String fieldKey = address[2];
 
                 List<String> rulesList = getRules(address[1], fieldKey);
@@ -386,8 +381,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     JSONObject result = new JSONObject();
                     JSONArray rulesArray = new JSONArray();
 
-                    for (Integer h = 1; h < mJSONObject.getInt(JsonFormConstants.COUNT) + 1; h++) {
-                        JSONArray fields = fetchFields(mJSONObject.getJSONObject(RuleConstant.STEP + h), popup);
+                    for (Integer h = 1; h < getmJSONObject().getInt(JsonFormConstants.COUNT) + 1; h++) {
+                        JSONArray fields = fetchFields(getmJSONObject().getJSONObject(RuleConstant.STEP + h), popup);
                         for (int i = 0; i < fields.length(); i++) {
                             if (rulesList.contains(RuleConstant.STEP + h + "_" +
                                     fields.getJSONObject(i).getString(JsonFormConstants.KEY))) {
@@ -422,17 +417,14 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             try {
                 if (address != null && address.length > 1) {
                     if (RuleConstant.RULES_ENGINE.equals(address[0])) {
-
                         String fieldKey = address[2];
 
                         List<String> rulesList = getRules(address[1], fieldKey);
                         if (rulesList != null) {
-
                             JSONObject result = new JSONObject();
                             JSONArray rulesArray = new JSONArray();
 
                             JSONObject mainWidget = FormUtils.getFieldFromForm(mJSONObject, key);
-
                             if (mainWidget.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
                                 JSONArray options = mainWidget.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
                                 for (int i = 0; i < options.length(); i++) {
@@ -455,7 +447,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                                                     option.getJSONArray(JsonFormConstants.SECONDARY_VALUE);
                                             getFieldObject(stepName, rulesList, rulesArray, secondaryValue);
                                         }
-
                                     }
                                 }
                             }
@@ -463,13 +454,12 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                             result.put(RuleConstant.RESULT, rulesArray);
                             return result;
                         }
-
                     } else {
                         return getRelevanceReferencedObject(address[0], address[1], popup);
                     }
                 }
             } catch (Exception e) {
-                Log.e(TAG, "", e);
+                Timber.e(e, "%s getObjectUsingAddress()", this.getClass().getCanonicalName());
             }
         } else {
             getObjectUsingAddress(address, popup);
@@ -632,6 +622,42 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         }
 
         return key;
+    }
+
+    private void addToAddressMap(String key, String stepName, String type, String[] address) {
+        addressMap.put(stepName + "_" + key + "_" + type, address);
+    }
+
+    private String[] getAddressFromMap(String key, String stepName, String type) {
+        return addressMap.get(stepName + "_" + key + "_" + type);
+    }
+
+    private String[] getAddress(View view, String curKey, JSONObject curRelevance, String type) {
+        String[] address;
+        if (curKey.contains(":")) {
+            address = curKey.split(":");
+
+            String[] viewAddress = view.getTag(R.id.address).toString().split(":");
+            addToAddressMap(viewAddress[1], viewAddress[0], type, address);
+        } else {
+            address = getRulesEngineAddress(curKey, curRelevance, view, type);
+        }
+        return address;
+    }
+
+    private String[] getRulesEngineAddress(String curKey, JSONObject curRelevance, View view, String type) {
+        String[] address = new String[0];
+        try {
+            address = new String[]{curKey,
+                    curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getString(RuleConstant.RULES_FILE),
+                    view.getTag(R.id.address).toString().replace(':', '_')};
+
+            String[] viewAddress = view.getTag(R.id.address).toString().split(":");
+            addToAddressMap(viewAddress[0], viewAddress[1], type, address);
+        } catch (JSONException e) {
+            Timber.e(e, "%s getRulesEngineAddress()", this.getClass().getCanonicalName());
+        }
+        return address;
     }
 
     private JSONObject getRelevanceReferencedObject(String stepName, String key, boolean popup) {
@@ -870,6 +896,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     protected void addRelevance(View view, boolean popup) {
         try {
             String relevanceTag = (String) view.getTag(R.id.relevance);
+            String widgetKey = (String) view.getTag(R.id.key);
+            String stepName = ((String) view.getTag(R.id.address)).split(":")[0];
             boolean widgetDisplay = (boolean) view.getTag(R.id.extraPopup);
             if ((relevanceTag != null && relevanceTag.length() > 0) && (widgetDisplay == popup)) {
                 try {
@@ -881,7 +909,11 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         String curKey = keys.next();
                         JSONObject curRelevance = relevance.has(curKey) ? relevance.getJSONObject(curKey) : null;
 
-                        String[] address = getAddress(view, curKey, curRelevance);
+                        String[] address = getAddressFromMap(widgetKey, stepName, JsonFormConstants.RELEVANCE);
+                        if (address == null) {
+                            address = getAddress(view, curKey, curRelevance, JsonFormConstants.RELEVANCE);
+                        }
+
                         isPopup = checkPopUpValidity(address, popup);
                         if (address.length > 1) {
                             Facts curValueMap = getValueFromAddress(address, isPopup);
@@ -904,12 +936,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         } catch (Exception e) {
             Timber.e(e, "%s --> Main function", this.getClass().getCanonicalName());
         }
-    }
-
-    private String[] getAddress(View view, String curKey, JSONObject curRelevance) throws JSONException {
-        return curKey.contains(":") ? curKey.split(":") : new String[]{curKey,
-                curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getString(RuleConstant.RULES_FILE),
-                view.getTag(R.id.address).toString().replace(':', '_')};
     }
 
     protected void toggleViewVisibility(View view, boolean visible, boolean popup) {
@@ -966,6 +992,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     private void checkViewConstraints(View curView, boolean popup) {
         String constraintTag = (String) curView.getTag(R.id.constraints);
+        String widgetKey = (String) curView.getTag(R.id.key);
+        String stepName = ((String) curView.getTag(R.id.address)).split(":")[0];
         if (constraintTag != null && constraintTag.length() > 0) {
             try {
 
@@ -992,15 +1020,15 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     Iterator<String> keys = constraint.keys();
                     while (keys.hasNext()) {
                         String curKey = keys.next();
-
                         JSONObject curConstraint = constraint.getJSONObject(curKey);
 
-                        address = getAddress(curView, curKey, curConstraint);
 
+                        address = getAddressFromMap(widgetKey, stepName, JsonFormConstants.CONSTRAINTS);
+                        if (address == null) {
+                            address = getAddress(curView, curKey, curConstraint, JsonFormConstants.CONSTRAINTS);
+                        }
                         Facts curValueMap = getValueFromAddress(address, popup);
-
                         errorMessage = enforceConstraint(curValueMap, curConstraint);
-
                         if (errorMessage != null) break;
                     }
                 }
@@ -1590,10 +1618,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 Timber.e(e, "JsonFormActivity --> getRules");
             }
 
-
             return ruleKeys.get(filename + ":" + fieldKey);
         } else {
-
             return rules;
         }
     }

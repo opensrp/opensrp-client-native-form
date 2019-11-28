@@ -51,10 +51,10 @@ public class MultiSelectListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         MultiSelectItem multiSelectItem = data.get(position);
         if (multiSelectItem.getValue() != null) {
             SectionViewHolder sectionViewHolder = (SectionViewHolder) holder;
-            sectionViewHolder.txtMultiSelectItem.setText(multiSelectItem.getKey());
+            sectionViewHolder.txtMultiSelectItem.setText(multiSelectItem.getText());
         } else {
             SectionTitleViewHolder sectionViewHolder = (SectionTitleViewHolder) holder;
-            sectionViewHolder.txtMultiSelectHeader.setText(multiSelectItem.getKey());
+            sectionViewHolder.txtMultiSelectHeader.setText(multiSelectItem.getText());
         }
     }
 
@@ -89,7 +89,7 @@ public class MultiSelectListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 List<MultiSelectItem> results = new ArrayList<>();
 
                 for (MultiSelectItem item : origData) {
-                    if (item.getKey().toLowerCase().contains(constraint)) {
+                    if (item.getText().toLowerCase().contains(constraint.toLowerCase())) {
                         results.add(item);
                     }
                 }

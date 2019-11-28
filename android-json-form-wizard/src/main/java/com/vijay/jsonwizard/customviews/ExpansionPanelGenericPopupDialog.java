@@ -360,10 +360,10 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
                 JSONArray values = new JSONArray();
                 if (JsonFormConstants.CHECK_BOX.equals(field.getString(JsonFormConstants.TYPE)) && field.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
                     values = getOptionsValueCheckBox(field.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME));
-                    getOptionsOpenMRSAttributes(field, valueOpenMRSAttributes);
+                    formUtils.getOptionsOpenMRSAttributes(field, valueOpenMRSAttributes);
                 } else if ((JsonFormConstants.EXTENDED_RADIO_BUTTON.equals(field.getString(JsonFormConstants.TYPE)) || JsonFormConstants.NATIVE_RADIO_BUTTON.equals(field.getString(JsonFormConstants.TYPE))) && field.has(JsonFormConstants.OPTIONS_FIELD_NAME) && field.has(JsonFormConstants.VALUE)) {
                     values.put(getOptionsValueRadioButton(field.optString(JsonFormConstants.VALUE), field.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME)));
-                    getOptionsOpenMRSAttributes(field, valueOpenMRSAttributes);
+                    formUtils.getOptionsOpenMRSAttributes(field, valueOpenMRSAttributes);
                 } else if (JsonFormConstants.SPINNER.equals(field.getString(JsonFormConstants.TYPE)) && field.has(JsonFormConstants.VALUE)) {
                     values.put(field.optString(JsonFormConstants.VALUE));
                     getSpinnerValueOpenMRSAttributes(field, valueOpenMRSAttributes);
