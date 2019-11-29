@@ -32,6 +32,7 @@ import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.presenters.JsonFormFragmentPresenter;
 import com.vijay.jsonwizard.utils.FormUtils;
+import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.validators.edittext.MaxNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.MinNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
@@ -215,7 +216,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                 diff = numRepeatingGroups - currNumRepeatingGroups;
                 for (int i = 0; i < diff; i++) {
                     try {
-                        repeatingGroups.add(buildRepeatingGroupLayout(parent, widgetArgs));
+                        repeatingGroups.add(buildRepeatingGroupLayout(parent, widgetArgs, String.valueOf(i)));
                     } catch (Exception e) {
                         Log.e(TAG, e.getStackTrace().toString());
                     }
@@ -264,7 +265,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         new AttachRepeatingGroupTask().execute();
     }
 
-    private LinearLayout buildRepeatingGroupLayout(ViewParent parent, WidgetArgs widgetArgs) throws Exception {
+    private LinearLayout buildRepeatingGroupLayout(ViewParent parent, WidgetArgs widgetArgs, String groupIndex) throws Exception {
         Context context = widgetArgs.getContext();
 
         LinearLayout repeatingGroup = new LinearLayout(context);
@@ -278,12 +279,12 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         repeatingGroup.addView(repeatingGroupLabel);
 
         JSONArray repeatingGroupJson = new JSONArray(repeatingGroupLayouts.get(((LinearLayout) parent).getId()));
-        String uniqueId = UUID.randomUUID().toString();
+
         for (int i = 0; i < repeatingGroupJson.length(); i++) {
             JSONObject element = repeatingGroupJson.getJSONObject(i);
             String elementType = element.optString(TYPE, null);
             if (elementType != null) {
-                addUniqueIdentifiers(element, uniqueId);
+                addUniqueIdentifiers(element, groupIndex);
                 FormWidgetFactory factory =  widgetArgs.getFormFragment().getPresenter().getInteractor().map.get(elementType);
                 List<View> widgetViews = factory.getViewsFromJson(widgetArgs.getStepName(), context, widgetArgs.getFormFragment(), element, widgetArgs.getListener(), widgetArgs.isPopup());
                 for (View view : widgetViews) {
@@ -295,7 +296,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                 step.getJSONArray(FIELDS).put(element);
             }
         }
-        repeatingGroup.setTag(R.id.repeating_group_key, uniqueId);
+        repeatingGroup.setTag(R.id.repeating_group_key, groupIndex);
 
         return repeatingGroup;
     }
@@ -318,20 +319,54 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         currKey += ("_" + uniqueId);
         element.put(KEY, currKey);
         // modify relevance to reflect changes in unique key name
-        JSONObject relevance = element.optJSONObject(RELEVANCE);
-        if (relevance != null) {
-            String currRelevanceKey = relevance.keys().next();
-            JSONObject relevanceObj = relevance.getJSONObject(currRelevanceKey);
-            String newRelevanceKey = currRelevanceKey + "_" + uniqueId;
-            relevance.remove(currRelevanceKey);
-            relevance.put(newRelevanceKey, relevanceObj);
-        }
+        buildRelevanceWithUniqueIds(element, uniqueId);
         // modify relative max validator to reflect changes in unique key name
         JSONObject relativeMaxValidator = element.optJSONObject(V_RELATIVE_MAX);
         if (relativeMaxValidator != null) {
             String currRelativeMaxValidatorValue = relativeMaxValidator.getString(VALUE);
             String newRelativeMaxValidatorValue = currRelativeMaxValidatorValue + "_" + uniqueId;
             relativeMaxValidator.put(VALUE, newRelativeMaxValidatorValue);
+        }
+    }
+
+    private void buildRelevanceWithUniqueIds(JSONObject element, String uniqueId) throws JSONException {
+        JSONObject relevance = element.optJSONObject(RELEVANCE);
+        if (relevance != null) {
+            if (relevance.has("rules-engine")) {
+                //build that from json object
+                /*
+                     "rules-engine": {
+                        "ex-rules": {
+                          "rules-dynamic": {
+                            "condition": "step1_user_name.startsWith('B')",
+                            "uuid": "",
+                            "priority": "1",
+                            "name": "user_other",
+                            "description": "user other",
+                            "action": "isRelevant = true"
+                          }
+                        }
+                      }
+                 */
+                JSONObject jsonRulesEngineObject = relevance.optJSONObject("rules-engine");
+                JSONObject jsonExRules = jsonRulesEngineObject.optJSONObject("ex-rules");
+                JSONObject jsonRulesDynamicObject = jsonExRules.optJSONObject("rules-dynamic");
+                String strCondition = jsonRulesDynamicObject.optString("condition");
+                List<String>  stringList = Utils.getConditionKeys(strCondition);
+                for(String s : stringList){
+                    strCondition = strCondition.replace(s, s + "_" + uniqueId);
+                }
+//                String strCondition = jsonRulesDynamicObject.optString("condition").replace(element.getString(KEY), element.getString(KEY).concat("_").concat(uniqueId));
+                jsonRulesDynamicObject.put("uuid", uniqueId);
+                jsonRulesDynamicObject.put("condition", strCondition);
+
+            } else {
+                String currRelevanceKey = relevance.keys().next();
+                JSONObject relevanceObj = relevance.getJSONObject(currRelevanceKey);
+                String newRelevanceKey = currRelevanceKey + "_" + uniqueId;
+                relevance.remove(currRelevanceKey);
+                relevance.put(newRelevanceKey, relevanceObj);
+            }
         }
     }
 

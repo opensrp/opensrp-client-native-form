@@ -13,7 +13,6 @@ import org.jeasy.rules.core.DefaultRulesEngine;
 import org.jeasy.rules.core.RulesEngineParameters;
 import org.jeasy.rules.mvel.MVELRule;
 import org.jeasy.rules.mvel.MVELRuleFactory;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -52,23 +51,18 @@ public class RulesEngineFactory implements RuleListener {
     public RulesEngineFactory() {
     }
 
-    private Rules getDynamicRulesFromString(String strDynamicRule) {
+    private Rules getDynamicRulesFromJsonObject(JSONObject jsonObjectDynamicRule) {
         try {
-            JSONObject dynamicRuleJsonObject = new JSONObject(strDynamicRule);
-            String key = dynamicRuleJsonObject.optString("key");
-            JSONArray jsonArray = dynamicRuleJsonObject.optJSONArray("value");
+            String key = jsonObjectDynamicRule.optString("uuid");
             Rules rules = new Rules();
             if (!ruleMap.containsKey(key)) {
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject jsonObject = jsonArray.optJSONObject(i);
-                    MVELRule mvelRule1 = new MVELRule();
-                    mvelRule1.setDescription(jsonObject.optString("description"));
-                    mvelRule1.setPriority(jsonObject.optInt("priority"));
-                    mvelRule1.when("'B'.startsWith('B')");
-                    mvelRule1.then(jsonObject.optString("action"));
-                    mvelRule1.name(jsonObject.optString("name"));
-                    rules.register(mvelRule1);
-                }
+                MVELRule mvelRule1 = new MVELRule();
+                mvelRule1.setDescription(jsonObjectDynamicRule.optString("description"));
+                mvelRule1.setPriority(jsonObjectDynamicRule.optInt("priority"));
+                mvelRule1.when(jsonObjectDynamicRule.optString("condition"));
+                mvelRule1.then(jsonObjectDynamicRule.optString("action"));
+                mvelRule1.name(jsonObjectDynamicRule.optString("name").concat("_").concat(key));
+                rules.register(mvelRule1);
                 ruleMap.put(key, rules);
             }
             return ruleMap.get(key);
@@ -87,13 +81,13 @@ public class RulesEngineFactory implements RuleListener {
         return facts.get(RuleConstant.IS_RELEVANT);
     }
 
-    public boolean getSomeRelevance(String rulesStrObject) {
+    public boolean getDynamicRelevance(Facts facts, JSONObject rulesStrObject) {
 
-        Facts facts = new Facts();
+//        Facts facts = initializeFacts(currentFacts);
 
         facts.put(RuleConstant.IS_RELEVANT, false);
 
-        rules = getDynamicRulesFromString(rulesStrObject);
+        rules = getDynamicRulesFromJsonObject(rulesStrObject);
 
         RulesEngine rulesEngine = new DefaultRulesEngine();
 
@@ -103,6 +97,7 @@ public class RulesEngineFactory implements RuleListener {
     }
 
     protected Facts initializeFacts(Facts facts) {
+
         if (globalValues != null) {
             for (Map.Entry<String, String> entry : globalValues.entrySet()) {
                 facts.put(RuleConstant.PREFIX.GLOBAL + entry.getKey(), getValue(entry.getValue()));
@@ -124,6 +119,9 @@ public class RulesEngineFactory implements RuleListener {
             return ruleMap.get(fileName);
         } catch (IOException e) {
             Timber.e(e, "%s getRulesFromAsset", this.getClass().getCanonicalName());
+            return null;
+        } catch (Exception e) {
+            Timber.e(e);
             return null;
         }
     }
