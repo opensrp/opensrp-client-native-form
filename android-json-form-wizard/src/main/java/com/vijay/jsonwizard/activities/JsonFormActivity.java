@@ -370,9 +370,9 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     @Override
     public JSONObject getObjectUsingAddress(String[] address, boolean popup) throws JSONException {
         if (address != null && address.length > 1) {
-            if(RuleConstant.RULES_ENGINE.equals(address[0]) && address[1].contains("uuid")){
+            if(RuleConstant.RULES_ENGINE.equals(address[0]) && address[1].contains(RuleConstant.CONDITION)){
                 JSONObject jsonObject = new JSONObject(address[1]);
-                List<String>  keysList = Utils.getConditionKeys(jsonObject.optString("condition"));
+                List<String>  keysList = Utils.getConditionKeys(jsonObject.optString(RuleConstant.CONDITION));
                 return fillFieldsWithValues(keysList, popup);
             }
             else if (RuleConstant.RULES_ENGINE.equals(address[0])) {
@@ -1539,13 +1539,19 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private boolean isRelevant(Facts curValueMap, JSONObject curRelevance) throws Exception {
         if (curRelevance != null) {
             if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_RULES)) {
+
                 JSONObject exRulesObject = curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES);
+
                 if(exRulesObject.has(RuleConstant.RULES_FILE)) {
+
                     return curValueMap.asMap().size() != 0 && getRulesEngineFactory().getRelevance(curValueMap,
                             curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getString(RuleConstant.RULES_FILE));
-                } else if (exRulesObject.has("rules-dynamic")) {
+
+                } else if (exRulesObject.has(RuleConstant.DYNAMIC)) {
+
                     return curValueMap.asMap().size() != 0 && getRulesEngineFactory()
-                            .getDynamicRelevance(curValueMap, exRulesObject.optJSONObject("rules-dynamic"));
+                            .getDynamicRelevance(curValueMap, exRulesObject.optJSONObject(RuleConstant.DYNAMIC));
+
                 }
 
             } else if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_CHECKBOX)) {

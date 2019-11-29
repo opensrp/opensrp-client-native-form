@@ -16,6 +16,9 @@ public abstract class RuleConstant {
     public static final String CALCULATION = "calculation";
     public static final String CONSTRAINT = "constraint";
     public static final String ACTIONS = "actions";
+    public static final String DYNAMIC = "rules-dynamic";
+    public static final String PRIORITY = "priority";
+    public static final String DESCRIPTION = "description";
 
     public static class PREFIX {
         public static final String GLOBAL = "global_";

@@ -1,8 +1,10 @@
 package com.vijay.jsonwizard.rules;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.google.gson.Gson;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
 
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rule;
@@ -53,15 +55,15 @@ public class RulesEngineFactory implements RuleListener {
 
     private Rules getDynamicRulesFromJsonObject(JSONObject jsonObjectDynamicRule) {
         try {
-            String key = jsonObjectDynamicRule.optString("uuid");
+            String key = jsonObjectDynamicRule.optString(JsonFormConstants.JSON_FORM_KEY.ID);
             Rules rules = new Rules();
             if (!ruleMap.containsKey(key)) {
                 MVELRule mvelRule1 = new MVELRule();
-                mvelRule1.setDescription(jsonObjectDynamicRule.optString("description"));
-                mvelRule1.setPriority(jsonObjectDynamicRule.optInt("priority"));
-                mvelRule1.when(jsonObjectDynamicRule.optString("condition"));
-                mvelRule1.then(jsonObjectDynamicRule.optString("action"));
-                mvelRule1.name(jsonObjectDynamicRule.optString("name").concat("_").concat(key));
+                mvelRule1.setDescription(jsonObjectDynamicRule.optString(RuleConstant.DESCRIPTION).concat(" ").concat(key));
+                mvelRule1.setPriority(jsonObjectDynamicRule.optInt(RuleConstant.PRIORITY));
+                mvelRule1.when(jsonObjectDynamicRule.optString(RuleConstant.CONDITION));
+                mvelRule1.then(jsonObjectDynamicRule.optString(RuleConstant.ACTIONS));
+                mvelRule1.name(jsonObjectDynamicRule.optString(RuleConstant.NAME).concat("_").concat(key));
                 rules.register(mvelRule1);
                 ruleMap.put(key, rules);
             }
@@ -73,17 +75,19 @@ public class RulesEngineFactory implements RuleListener {
     }
 
     public boolean getRelevance(Facts relevanceFact, String ruleFilename) {
+
         Facts facts = initializeFacts(relevanceFact);
+
         facts.put(RuleConstant.IS_RELEVANT, false);
+
         rules = getRulesFromAsset(RULE_FOLDER_PATH + ruleFilename);
+
         processDefaultRules(rules, facts);
 
         return facts.get(RuleConstant.IS_RELEVANT);
     }
 
-    public boolean getDynamicRelevance(Facts facts, JSONObject rulesStrObject) {
-
-//        Facts facts = initializeFacts(currentFacts);
+    public boolean getDynamicRelevance(@NonNull Facts facts, @NonNull JSONObject rulesStrObject) {
 
         facts.put(RuleConstant.IS_RELEVANT, false);
 

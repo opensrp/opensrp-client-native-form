@@ -271,6 +271,7 @@ public class JsonFormConstants {
         public static final String JSON = "json";
         public static final String FORM = "form";
         public static final String STEPNAME = "stepName";
+        public static final String ID = "id";
     }
 
     public static class BARCODE_CONSTANTS {

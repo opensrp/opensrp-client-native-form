@@ -31,6 +31,7 @@ import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.presenters.JsonFormFragmentPresenter;
+import com.vijay.jsonwizard.rules.RuleConstant;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.validators.edittext.MaxNumericValidator;
@@ -332,33 +333,17 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
     private void buildRelevanceWithUniqueIds(JSONObject element, String uniqueId) throws JSONException {
         JSONObject relevance = element.optJSONObject(RELEVANCE);
         if (relevance != null) {
-            if (relevance.has("rules-engine")) {
-                //build that from json object
-                /*
-                     "rules-engine": {
-                        "ex-rules": {
-                          "rules-dynamic": {
-                            "condition": "step1_user_name.startsWith('B')",
-                            "uuid": "",
-                            "priority": "1",
-                            "name": "user_other",
-                            "description": "user other",
-                            "action": "isRelevant = true"
-                          }
-                        }
-                      }
-                 */
-                JSONObject jsonRulesEngineObject = relevance.optJSONObject("rules-engine");
-                JSONObject jsonExRules = jsonRulesEngineObject.optJSONObject("ex-rules");
-                JSONObject jsonRulesDynamicObject = jsonExRules.optJSONObject("rules-dynamic");
-                String strCondition = jsonRulesDynamicObject.optString("condition");
+            if (relevance.has(RuleConstant.RULES_ENGINE)) {
+                JSONObject jsonRulesEngineObject = relevance.optJSONObject(RuleConstant.RULES_ENGINE);
+                JSONObject jsonExRules = jsonRulesEngineObject.optJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES);
+                JSONObject jsonRulesDynamicObject = jsonExRules.optJSONObject(RuleConstant.DYNAMIC);
+                String strCondition = jsonRulesDynamicObject.optString(RuleConstant.CONDITION);
                 List<String>  stringList = Utils.getConditionKeys(strCondition);
                 for(String s : stringList){
                     strCondition = strCondition.replace(s, s + "_" + uniqueId);
                 }
-//                String strCondition = jsonRulesDynamicObject.optString("condition").replace(element.getString(KEY), element.getString(KEY).concat("_").concat(uniqueId));
-                jsonRulesDynamicObject.put("uuid", uniqueId);
-                jsonRulesDynamicObject.put("condition", strCondition);
+                jsonRulesDynamicObject.put(JsonFormConstants.JSON_FORM_KEY.ID, uniqueId);
+                jsonRulesDynamicObject.put(RuleConstant.CONDITION, strCondition);
 
             } else {
                 String currRelevanceKey = relevance.keys().next();
