@@ -14,7 +14,6 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Html;
@@ -83,7 +82,6 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -685,7 +683,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         String[] address = new String[0];
         try {
             address = new String[]{curKey,
-                    curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getJSONObject("rules-dynamic").toString(),
+                    curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getJSONObject(RuleConstant.DYNAMIC).toString(),
                     view.getTag(R.id.address).toString().replace(':', '_')};
 
             String[] viewAddress = view.getTag(R.id.address).toString().split(":");

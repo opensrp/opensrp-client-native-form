@@ -217,7 +217,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                 diff = numRepeatingGroups - currNumRepeatingGroups;
                 for (int i = 0; i < diff; i++) {
                     try {
-                        repeatingGroups.add(buildRepeatingGroupLayout(parent, widgetArgs, String.valueOf(i)));
+                        repeatingGroups.add(buildRepeatingGroupLayout(parent, widgetArgs));
                     } catch (Exception e) {
                         Log.e(TAG, e.getStackTrace().toString());
                     }
@@ -266,7 +266,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         new AttachRepeatingGroupTask().execute();
     }
 
-    private LinearLayout buildRepeatingGroupLayout(ViewParent parent, WidgetArgs widgetArgs, String groupIndex) throws Exception {
+    private LinearLayout buildRepeatingGroupLayout(ViewParent parent, WidgetArgs widgetArgs) throws Exception {
         Context context = widgetArgs.getContext();
 
         LinearLayout repeatingGroup = new LinearLayout(context);
@@ -280,12 +280,12 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         repeatingGroup.addView(repeatingGroupLabel);
 
         JSONArray repeatingGroupJson = new JSONArray(repeatingGroupLayouts.get(((LinearLayout) parent).getId()));
-
+        String groupUniqueId = UUID.randomUUID().toString().replace("-","");
         for (int i = 0; i < repeatingGroupJson.length(); i++) {
             JSONObject element = repeatingGroupJson.getJSONObject(i);
             String elementType = element.optString(TYPE, null);
             if (elementType != null) {
-                addUniqueIdentifiers(element, groupIndex);
+                addUniqueIdentifiers(element, groupUniqueId);
                 FormWidgetFactory factory =  widgetArgs.getFormFragment().getPresenter().getInteractor().map.get(elementType);
                 List<View> widgetViews = factory.getViewsFromJson(widgetArgs.getStepName(), context, widgetArgs.getFormFragment(), element, widgetArgs.getListener(), widgetArgs.isPopup());
                 for (View view : widgetViews) {
@@ -297,7 +297,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                 step.getJSONArray(FIELDS).put(element);
             }
         }
-        repeatingGroup.setTag(R.id.repeating_group_key, groupIndex);
+        repeatingGroup.setTag(R.id.repeating_group_key, groupUniqueId);
 
         return repeatingGroup;
     }
