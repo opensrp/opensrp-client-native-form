@@ -152,6 +152,13 @@
             "v_relative_max": {
               "value": "larvae_total",
               "err": "# of stage 3-4 larvae cannot be greater than the total # of larvae collected"
+            },
+            "relevance": {
+              "rules-engine": {
+                "ex-rules": {
+                  "rules-dynamic": "simple-rules.yml"
+                }
+              }
             }
           },
           {

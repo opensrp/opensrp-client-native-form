@@ -26,13 +26,15 @@ import com.vijay.jsonwizard.rules.RuleConstant;
 import com.vijay.jsonwizard.views.CustomTextView;
 import com.vijay.jsonwizard.widgets.DatePickerFactory;
 
-import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.yaml.snakeyaml.Yaml;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,6 +46,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import timber.log.Timber;
 
 public class Utils {
 
@@ -425,6 +429,18 @@ public class Utils {
         }
 
         return conditionToken;
+    }
+
+    public static Iterable<Object> readYamlFile(String fileName, Context context){
+        Yaml yaml = new Yaml();
+        InputStreamReader inputStreamReader = null;
+        try {
+            inputStreamReader = new InputStreamReader(context.getAssets().open(fileName));
+            return yaml.loadAll(inputStreamReader);
+        } catch (IOException e) {
+            Timber.e(e);
+            return null;
+        }
     }
 }
 

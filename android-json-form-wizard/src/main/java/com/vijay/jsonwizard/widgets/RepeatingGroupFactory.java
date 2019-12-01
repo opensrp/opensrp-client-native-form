@@ -77,6 +77,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
     protected final int REPEATING_GROUP_LABEL_TEXT_COLOR = R.color.black;
 
     private ImageButton doneButton;
+    private WidgetArgs widgetArgs;
 
     @Override
     public List<View> getViewsFromJson(final String stepName, final Context context, final JsonFormFragment formFragment, final JSONObject jsonObject, final CommonListener listener, final boolean popup) throws Exception {
@@ -280,13 +281,14 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         repeatingGroup.addView(repeatingGroupLabel);
 
         JSONArray repeatingGroupJson = new JSONArray(repeatingGroupLayouts.get(((LinearLayout) parent).getId()));
-        String groupUniqueId = UUID.randomUUID().toString().replace("-","");
+        String groupUniqueId = UUID.randomUUID().toString().replace("-", "");
         for (int i = 0; i < repeatingGroupJson.length(); i++) {
             JSONObject element = repeatingGroupJson.getJSONObject(i);
             String elementType = element.optString(TYPE, null);
             if (elementType != null) {
+                this.widgetArgs = widgetArgs;
                 addUniqueIdentifiers(element, groupUniqueId);
-                FormWidgetFactory factory =  widgetArgs.getFormFragment().getPresenter().getInteractor().map.get(elementType);
+                FormWidgetFactory factory = widgetArgs.getFormFragment().getPresenter().getInteractor().map.get(elementType);
                 List<View> widgetViews = factory.getViewsFromJson(widgetArgs.getStepName(), context, widgetArgs.getFormFragment(), element, widgetArgs.getListener(), widgetArgs.isPopup());
                 for (View view : widgetViews) {
                     view.setLayoutParams(WIDTH_MATCH_PARENT_HEIGHT_WRAP_CONTENT);
@@ -334,16 +336,31 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         JSONObject relevance = element.optJSONObject(RELEVANCE);
         if (relevance != null) {
             if (relevance.has(RuleConstant.RULES_ENGINE)) {
-                JSONObject jsonRulesEngineObject = relevance.optJSONObject(RuleConstant.RULES_ENGINE);
-                JSONObject jsonExRules = jsonRulesEngineObject.optJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES);
-                JSONObject jsonRulesDynamicObject = jsonExRules.optJSONObject(RuleConstant.DYNAMIC);
-                String strCondition = jsonRulesDynamicObject.optString(RuleConstant.CONDITION);
-                List<String>  stringList = Utils.getConditionKeys(strCondition);
-                for(String s : stringList){
-                    strCondition = strCondition.replace(s, s + "_" + uniqueId);
+                if (widgetArgs != null) {
+                    JSONObject jsonRulesEngineObject = relevance.optJSONObject(RuleConstant.RULES_ENGINE);
+                    JSONObject jsonExRules = jsonRulesEngineObject.optJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES);
+                    String fileName = "rule/" + jsonExRules.optString(RuleConstant.DYNAMIC);
+                    Iterable<Object> objectIterable = Utils.readYamlFile(fileName, widgetArgs.getContext());
+                    if (objectIterable != null) {
+                        //Needs only the relevance for this field, hence it expects only one relevance rules object
+                        Map<String, Object> map = objectIterable.iterator().hasNext() ? ((Map<String, Object>) objectIterable.iterator().next()) : null;
+                        if(map != null) {
+                            JSONObject jsonRulesDynamicObject = new JSONObject();
+                            String strCondition = (String) map.get(RuleConstant.CONDITION);
+                            List<String> stringList = Utils.getConditionKeys(strCondition);
+                            for (String s : stringList) {
+                                strCondition = strCondition.replace(s, s + "_" + uniqueId);
+                            }
+                            jsonRulesDynamicObject.put(RuleConstant.NAME, String.valueOf(map.get(RuleConstant.NAME)));
+                            jsonRulesDynamicObject.put(RuleConstant.DESCRIPTION, String.valueOf(map.get(RuleConstant.DESCRIPTION)));
+                            jsonRulesDynamicObject.put(RuleConstant.PRIORITY, map.get(RuleConstant.PRIORITY));
+                            jsonRulesDynamicObject.put(RuleConstant.ACTIONS, ((ArrayList<String>)map.get(RuleConstant.ACTIONS)).get(0));
+                            jsonRulesDynamicObject.put(JsonFormConstants.JSON_FORM_KEY.ID, uniqueId);
+                            jsonRulesDynamicObject.put(RuleConstant.CONDITION, String.valueOf(strCondition));
+                            jsonExRules.put(RuleConstant.DYNAMIC, jsonRulesDynamicObject);
+                        }
+                    }
                 }
-                jsonRulesDynamicObject.put(JsonFormConstants.JSON_FORM_KEY.ID, uniqueId);
-                jsonRulesDynamicObject.put(RuleConstant.CONDITION, strCondition);
 
             } else {
                 String currRelevanceKey = relevance.keys().next();
