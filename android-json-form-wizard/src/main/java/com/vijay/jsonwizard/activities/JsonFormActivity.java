@@ -2085,7 +2085,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     public void refreshExpansionPanel(RefreshExpansionPanelEvent refreshExpansionPanelEvent) {
         if (refreshExpansionPanelEvent != null) {
             try {
-                List<String> values = getValues(refreshExpansionPanelEvent);
+                List<String> values = getExpansionPanelValues(refreshExpansionPanelEvent);
                 LinearLayout linearLayout = refreshExpansionPanelEvent.getLinearLayout();
 
                 RelativeLayout layoutHeader = (RelativeLayout) linearLayout.getChildAt(0);
@@ -2116,13 +2116,13 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     /**
-     * Get the expansion panel values
+     * Get the expansion panel values from the Refresh Expansion panel event {@link RefreshExpansionPanelEvent}
      *
      * @param refreshExpansionPanelEvent {@link RefreshExpansionPanelEvent}
      * @return values {@link List<String>}
      * @throws JSONException
      */
-    private List<String> getValues(RefreshExpansionPanelEvent refreshExpansionPanelEvent) throws JSONException {
+    private List<String> getExpansionPanelValues(RefreshExpansionPanelEvent refreshExpansionPanelEvent) throws JSONException {
         List<String> values;
         if (refreshExpansionPanelEvent.getValues() != null) {
             values = utils.createExpansionPanelChildren(refreshExpansionPanelEvent.getValues());

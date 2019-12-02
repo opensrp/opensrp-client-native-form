@@ -1,6 +1,5 @@
 package com.vijay.jsonwizard.widgets;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -35,7 +34,6 @@ public class ExpansionWidgetFactory implements FormWidgetFactory {
     private ExpansionPanelUndoButtonClickListener expansionPanelUndoButtonClickListener = new ExpansionPanelUndoButtonClickListener();
     private FormUtils formUtils = new FormUtils();
     private Utils utils = new Utils();
-    private ProgressDialog progressDialog;
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment jsonFormFragment,
@@ -119,6 +117,8 @@ public class ExpansionWidgetFactory implements FormWidgetFactory {
         statusImage.setOnClickListener(expansionPanelRecordButtonClickListener);
 
         ImageView infoIcon = expansionHeader.findViewById(R.id.accordion_info_icon);
+        addRecordViewTags(infoIcon, jsonObject, stepName, commonListener, jsonFormFragment, context);
+        infoIcon.setOnClickListener(expansionPanelRecordButtonClickListener);
 
         CustomTextView headerText = expansionHeaderLayout.findViewById(R.id.topBarTextView);
         headerText.setText(accordionText);

@@ -659,7 +659,7 @@ public class FormUtils {
                 }
             }
         } catch (JSONException e) {
-            Log.e(TAG, "", e);
+            Timber.e(e, " --> getMultiStepFormFields()");
         }
         return fields;
     }
@@ -674,7 +674,7 @@ public class FormUtils {
             return stepJSONObject.has(JsonFormConstants.FIELDS) ? stepJSONObject
                     .getJSONArray(JsonFormConstants.FIELDS) : null;
         } catch (JSONException e) {
-            Log.e(TAG, "", e);
+            Timber.e(e, " -->  fields()");
         }
         return null;
     }
@@ -886,12 +886,10 @@ public class FormUtils {
         CustomTextView reasonsTextView = (CustomTextView) view.getTag(R.id.specify_reasons_textview);
         String toolbarHeader = "";
         String container = "";
-        ProgressDialog progressDialog = null;
         LinearLayout rootLayout = (LinearLayout) view.getTag(R.id.main_layout);
         if (type != null && type.equals(JsonFormConstants.EXPANSION_PANEL)) {
             toolbarHeader = (String) view.getTag(R.id.header);
             container = (String) view.getTag(R.id.contact_container);
-            progressDialog = (ProgressDialog) view.getTag(R.id.progress_dialog);
         }
 
         if (specifyContent != null) {
@@ -912,14 +910,10 @@ public class FormUtils {
                 genericPopupDialog.setPopupReasonsTextView(reasonsTextView);
             }
 
-
-            if (type != null && type.equals(JsonFormConstants.EXPANSION_PANEL)) {
-                genericPopupDialog.setProgressDialog(progressDialog);
-            }
             utils.setChildKey(view, type, genericPopupDialog);
 
-            FragmentTransaction ft = utils.getFragmentTransaction((Activity) context);
-            genericPopupDialog.show(ft, "GenericPopup");
+            FragmentTransaction fragmentTransaction = utils.getFragmentTransaction((Activity) context);
+            genericPopupDialog.show(fragmentTransaction, "GenericPopup");
             resetFocus(context);
         } else {
             Toast.makeText(context, "Please specify the sub form to display ", Toast.LENGTH_LONG).show();
