@@ -23,7 +23,7 @@
             android:layout_gravity="center"
             android:text="BIRTH REGISTER"
             android:textColor="@android:color/white"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/NativeFormsAppTheme" />
 
         <Button
             android:id="@+id/wizard_form"
@@ -33,7 +33,7 @@
             android:layout_gravity="center"
             android:text="WIZARD (MULTI-STEP FORM)"
             android:textColor="@android:color/white"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/NativeFormsAppTheme" />
 
         <Button
             android:id="@+id/rules_engine_skip_logic"
@@ -42,7 +42,7 @@
             android:layout_gravity="center"
             android:text="RULES ENGINE LOGIC"
             android:textColor="@android:color/white"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/NativeFormsAppTheme" />
 
         <Button
             android:id="@+id/numbers_selector_widget"
@@ -52,7 +52,7 @@
             android:layout_gravity="center"
             android:text="CONSTRAINTS"
             android:textColor="@android:color/white"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/NativeFormsAppTheme" />
 
         <Button
             android:id="@+id/generic_dialog_button"
@@ -61,7 +61,7 @@
             android:layout_gravity="center"
             android:text="GENERIC POPUP"
             android:textColor="@android:color/white"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/NativeFormsAppTheme" />
 
         <Button
             android:id="@+id/validation_form_button"
@@ -71,7 +71,7 @@
             android:layout_gravity="center"
             android:text="FORM VALIDATION"
             android:textColor="@android:color/white"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/NativeFormsAppTheme" />
 
         <Button
             android:id="@+id/native_form_basic"
@@ -80,7 +80,7 @@
             android:layout_gravity="center"
             android:text="Basic Form"
             android:textColor="@android:color/white"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/NativeFormsAppTheme" />
 
         <Button
             android:id="@+id/expansion_panel_button"
@@ -90,7 +90,7 @@
             android:layout_gravity="center"
             android:text="Expansion Panel"
             android:textColor="@android:color/white"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/NativeFormsAppTheme" />
 
         <Button
             android:id="@+id/repeating_group_button"
@@ -99,7 +99,7 @@
             android:layout_gravity="center"
             android:text="Repeating Group"
             android:textColor="@android:color/white"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/NativeFormsAppTheme" />
 
         <Button
             android:id="@+id/multiselect_list"
@@ -109,7 +109,7 @@
             android:layout_gravity="center"
             android:text="MultiSelect List"
             android:textColor="@android:color/white"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/NativeFormsAppTheme" />
 
     </LinearLayout>
 </RelativeLayout>
