@@ -7,7 +7,7 @@ import com.vijay.jsonwizard.R;
 public class TestApplication extends Application {
     @Override
     public void onCreate() {
-        setTheme(R.style.NativeFormsAppTheme);
+        setTheme(R.style.AppTheme);
         super.onCreate();
     }
 }
