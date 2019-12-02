@@ -89,7 +89,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -101,8 +100,6 @@ import static com.vijay.jsonwizard.utils.FormUtils.getCurrentCheckboxValues;
 
 public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
-    private final Set<Character> JAVA_OPERATORS = Utils.JAVA_OPERATORS;
-    private final List<String> PREFICES_OF_INTEREST = Utils.PREFICES_OF_INTEREST;
     private FormUtils formUtils = new FormUtils();
     private Map<String, View> constrainedViews;
     private Map<String, View> formDataViews = new HashMap<>();
