@@ -757,7 +757,7 @@ public class JsonFormFragmentPresenter extends
         String dialogString = (String) view.getTag(R.id.label_dialog_info);
         if (StringUtils.isNotBlank(dialogString)) {
             TextView dialogText = dialog.findViewById(R.id.dialogText);
-            dialogText.setText(titleString);
+            dialogText.setText(dialogString);
             dialogText.setVisibility(View.VISIBLE);
         }
 
