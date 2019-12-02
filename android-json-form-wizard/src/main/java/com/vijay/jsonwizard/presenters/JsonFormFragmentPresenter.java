@@ -30,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rey.material.widget.Button;
@@ -59,6 +60,7 @@ import com.vijay.jsonwizard.widgets.NativeRadioButtonFactory;
 import com.vijay.jsonwizard.widgets.NumberSelectorFactory;
 import com.vijay.jsonwizard.widgets.SpinnerFactory;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -742,6 +744,21 @@ public class JsonFormFragmentPresenter extends
             params.width = (int) (view.getContext().getResources().getDisplayMetrics().widthPixels
                     * 0.90);
             params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        }
+
+
+        String titleString = (String) view.getTag(R.id.label_dialog_title);
+        if (StringUtils.isNotBlank(titleString)) {
+            TextView dialogTitle = dialog.findViewById(R.id.dialogTitle);
+            dialogTitle.setText(titleString);
+            dialogTitle.setVisibility(View.VISIBLE);
+        }
+
+        String dialogString = (String) view.getTag(R.id.label_dialog_info);
+        if (StringUtils.isNotBlank(dialogString)) {
+            TextView dialogText = dialog.findViewById(R.id.dialogText);
+            dialogText.setText(dialogString);
+            dialogText.setVisibility(View.VISIBLE);
         }
 
         ImageView dialogImage = dialog.findViewById(R.id.dialogImage);

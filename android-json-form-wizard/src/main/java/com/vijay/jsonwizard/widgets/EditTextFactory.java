@@ -162,7 +162,7 @@ public class EditTextFactory implements FormWidgetFactory {
 
     private void attachInfoIcon(String stepName, JSONObject jsonObject, RelativeLayout rootLayout, JSONArray canvasIds,
                                 CommonListener listener) throws JSONException {
-        if (jsonObject.has(JsonFormConstants.LABEL_INFO_TEXT)) {
+        if (jsonObject.has(JsonFormConstants.LABEL_INFO_TEXT) || jsonObject.has(JsonFormConstants.LABEL_INFO_HAS_IMAGE)) {
             ImageView infoIcon = rootLayout.findViewById(R.id.info_icon);
             FormUtils.showInfoIcon(stepName, jsonObject, listener, FormUtils.getInfoDialogAttributes(jsonObject), infoIcon, canvasIds);
         }
@@ -200,8 +200,8 @@ public class EditTextFactory implements FormWidgetFactory {
                 maxLength = Integer.parseInt(maxLengthValue);
                 editText.addValidator(new MaxLengthValidator(maxLengthObject.getString(JsonFormConstants.ERR),
                         Integer.parseInt(maxLengthValue)));
-                boolean iSFixedSize = maxLengthObject.optBoolean(JsonFormConstants.IS_FIXED_SIZE,false);
-                if(iSFixedSize){
+                boolean iSFixedSize = maxLengthObject.optBoolean(JsonFormConstants.IS_FIXED_SIZE, false);
+                if (iSFixedSize) {
                     editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
                 }
 
