@@ -365,9 +365,12 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     @Override
     public JSONObject getObjectUsingAddress(String[] address, boolean popup) throws JSONException {
         if (address != null && address.length > 1) {
-            if(RuleConstant.RULES_ENGINE.equals(address[0]) && address[1].contains(RuleConstant.CONDITION)){
+            if(RuleConstant.RULES_ENGINE.equals(address[0]) && !address[1].endsWith(".yml")){
+
                 JSONObject jsonObject = new JSONObject(address[1]);
+
                 List<String>  keysList = Utils.getConditionKeys(jsonObject.optString(RuleConstant.CONDITION));
+
                 return fillFieldsWithValues(keysList, popup);
             }
             else if (RuleConstant.RULES_ENGINE.equals(address[0])) {
@@ -648,7 +651,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             addToAddressMap(viewAddress[1], viewAddress[0], type, address);
         } else {
             try {
-                if(curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).has("rules-dynamic")){
+                if(curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).has(RuleConstant.DYNAMIC)){
                     return getDynamicRulesEngineAddress(curKey, curRelevance, view, type);
                 } else {
                     address = getRulesEngineAddress(curKey, curRelevance, view, type);
