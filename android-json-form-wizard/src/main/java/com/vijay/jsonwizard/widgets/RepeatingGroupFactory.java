@@ -355,7 +355,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                             jsonRulesDynamicObject.put(RuleConstant.DESCRIPTION, String.valueOf(map.get(RuleConstant.DESCRIPTION)));
                             jsonRulesDynamicObject.put(RuleConstant.PRIORITY, map.get(RuleConstant.PRIORITY));
                             jsonRulesDynamicObject.put(RuleConstant.ACTIONS, ((ArrayList<String>)map.get(RuleConstant.ACTIONS)).get(0));
-                            jsonRulesDynamicObject.put(JsonFormConstants.JSON_FORM_KEY.ID, uniqueId);
+                            jsonRulesDynamicObject.put(JsonFormConstants.JSON_FORM_KEY.ID, UUID.randomUUID().toString());
                             jsonRulesDynamicObject.put(RuleConstant.CONDITION, String.valueOf(strCondition));
                             jsonExRules.put(RuleConstant.DYNAMIC, jsonRulesDynamicObject);
                         }
