@@ -3,7 +3,7 @@
     <item
         android:width="250dp">
         <shape android:shape="rectangle">
-            <solid android:color="@color/green_overlay">
+            <solid android:color="@color/toaster_note_blue">
 
             </solid>
         </shape>
@@ -13,6 +13,6 @@
         android:height="48dp"
         >
         <bitmap
-            android:src="@drawable/ic_checked_blue" />
+            android:src="@drawable/finger_print_img" />
     </item>
 </layer-list>
