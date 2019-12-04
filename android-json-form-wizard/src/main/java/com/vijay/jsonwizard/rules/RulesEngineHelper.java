@@ -1,7 +1,5 @@
 package com.vijay.jsonwizard.rules;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.List;
 
 /**
@@ -85,8 +83,10 @@ public class RulesEngineHelper {
 
     public String getNonBlankValue(List<String> values) {
         if (values != null){
-            for (String s : values) {
-                if (StringUtils.isNotBlank(s)) return s;
+            for (String value : values) {
+                if (value != null && !value.isEmpty()) {
+                    return value;
+                }
             }
         }
         return "";
