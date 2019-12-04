@@ -1,5 +1,9 @@
 package com.vijay.jsonwizard.rules;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
+
 /**
  * Created by ndegwamartin on 17/12/2018.
  * This class is used by the rules engine while it parses configurations written in teh yaml.
@@ -77,6 +81,15 @@ public class RulesEngineHelper {
 
     public String ifNull(String value, String defaultIfNull) {
         return value == null || value.isEmpty() ? defaultIfNull : value;
+    }
+
+    public String getNonBlankValue(List<String> values) {
+        if (values != null){
+            for (String s : values) {
+                if (StringUtils.isNotBlank(s)) return s;
+            }
+        }
+        return "";
     }
 
 }
