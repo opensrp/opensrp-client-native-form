@@ -3,7 +3,7 @@
     <item
         android:width="250dp">
         <shape android:shape="rectangle">
-            <solid android:color="@color/green_overlay">
+            <solid android:color="#ff0000">
 
             </solid>
         </shape>
@@ -13,6 +13,6 @@
         android:height="48dp"
         >
         <bitmap
-            android:src="@drawable/ic_checked_blue" />
+            android:src="@drawable/ic_action_close" />
     </item>
 </layer-list>
