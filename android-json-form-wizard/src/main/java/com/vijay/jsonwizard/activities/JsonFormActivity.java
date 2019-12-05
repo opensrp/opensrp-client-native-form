@@ -365,15 +365,15 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     @Override
     public JSONObject getObjectUsingAddress(String[] address, boolean popup) throws JSONException {
         if (address != null && address.length > 1) {
-            if(RuleConstant.RULES_ENGINE.equals(address[0]) && !address[1].endsWith(".yml")){
-
-                JSONObject jsonObject = new JSONObject(address[1]);
-
-                List<String>  keysList = Utils.getConditionKeys(jsonObject.optString(RuleConstant.CONDITION));
-
+            if (RuleConstant.RULES_ENGINE.equals(address[0]) && !address[1].endsWith(".yml")) {
+                JSONArray jsonArray = new JSONArray(address[1]);
+                List<String> keysList = new ArrayList<>();
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.optJSONObject(i);
+                    keysList.addAll(Utils.getConditionKeys(jsonObject.optString(RuleConstant.CONDITION)));
+                }
                 return fillFieldsWithValues(keysList, popup);
-            }
-            else if (RuleConstant.RULES_ENGINE.equals(address[0])) {
+            } else if (RuleConstant.RULES_ENGINE.equals(address[0])) {
 
                 String fieldKey = address[2];
 
@@ -646,12 +646,11 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         String[] address;
         if (curKey.contains(":")) {
             address = curKey.split(":");
-
             String[] viewAddress = view.getTag(R.id.address).toString().split(":");
             addToAddressMap(viewAddress[1], viewAddress[0], type, address);
         } else {
             try {
-                if(curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).has(RuleConstant.DYNAMIC)){
+                if (curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).has(RuleConstant.DYNAMIC)) {
                     return getDynamicRulesEngineAddress(curKey, curRelevance, view, type);
                 } else {
                     address = getRulesEngineAddress(curKey, curRelevance, view, type);
@@ -665,25 +664,18 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     private String[] getRulesEngineAddress(String curKey, JSONObject curRelevance, View view, String type) {
-        String[] address = new String[0];
-        try {
-            address = new String[]{curKey,
-                    curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getString(RuleConstant.RULES_FILE),
-                    view.getTag(R.id.address).toString().replace(':', '_')};
-
-            String[] viewAddress = view.getTag(R.id.address).toString().split(":");
-            addToAddressMap(viewAddress[0], viewAddress[1], type, address);
-        } catch (JSONException e) {
-            Timber.e(e, "%s getRulesEngineAddress()", this.getClass().getCanonicalName());
-        }
-        return address;
+        return getRulesEngineAddress(curKey, curRelevance, view, type, RuleConstant.RULES_ENGINE);
     }
 
     private String[] getDynamicRulesEngineAddress(String curKey, JSONObject curRelevance, View view, String type) {
+        return getRulesEngineAddress(curKey, curRelevance, view, type, RuleConstant.DYNAMIC);
+    }
+
+    private String[] getRulesEngineAddress(String curKey, JSONObject curRelevance, View view, String type, String ruleType) {
         String[] address = new String[0];
         try {
             address = new String[]{curKey,
-                    curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getJSONObject(RuleConstant.DYNAMIC).toString(),
+                    curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getString(ruleType),
                     view.getTag(R.id.address).toString().replace(':', '_')};
 
             String[] viewAddress = view.getTag(R.id.address).toString().split(":");
@@ -1540,15 +1532,15 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
                 JSONObject exRulesObject = curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES);
 
-                if(exRulesObject.has(RuleConstant.RULES_FILE)) {
+                if (exRulesObject.has(RuleConstant.RULES_FILE)) {
 
                     return curValueMap.asMap().size() != 0 && getRulesEngineFactory().getRelevance(curValueMap,
-                            curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getString(RuleConstant.RULES_FILE));
+                            exRulesObject.getString(RuleConstant.RULES_FILE));
 
                 } else if (exRulesObject.has(RuleConstant.DYNAMIC)) {
 
                     return curValueMap.asMap().size() != 0 && getRulesEngineFactory()
-                            .getDynamicRelevance(curValueMap, exRulesObject.optJSONObject(RuleConstant.DYNAMIC));
+                            .getDynamicRelevance(curValueMap, exRulesObject.optJSONArray(RuleConstant.DYNAMIC));
 
                 }
 

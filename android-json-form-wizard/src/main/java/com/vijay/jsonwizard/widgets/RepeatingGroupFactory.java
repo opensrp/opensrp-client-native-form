@@ -78,6 +78,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
 
     private ImageButton doneButton;
     private WidgetArgs widgetArgs;
+    private Map<String, JSONArray> readFileMap = new HashMap<>();
 
     @Override
     public List<View> getViewsFromJson(final String stepName, final Context context, final JsonFormFragment formFragment, final JSONObject jsonObject, final CommonListener listener, final boolean popup) throws Exception {
@@ -100,6 +101,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                 .withListener(listener)
                 .withPopup(popup);
 
+        this.widgetArgs = widgetArgs;
 
         final MaterialEditText referenceEditText = rootLayout.findViewById(R.id.reference_edit_text);
         final String referenceEditTextHint = jsonObject.optString(REFERENCE_EDIT_TEXT_HINT, context.getString(R.string.enter_number_of_repeating_group_items));
@@ -286,7 +288,6 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
             JSONObject element = repeatingGroupJson.getJSONObject(i);
             String elementType = element.optString(TYPE, null);
             if (elementType != null) {
-                this.widgetArgs = widgetArgs;
                 addUniqueIdentifiers(element, groupUniqueId);
                 FormWidgetFactory factory = widgetArgs.getFormFragment().getPresenter().getInteractor().map.get(elementType);
                 List<View> widgetViews = factory.getViewsFromJson(widgetArgs.getStepName(), context, widgetArgs.getFormFragment(), element, widgetArgs.getListener(), widgetArgs.isPopup());
@@ -340,26 +341,33 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                     JSONObject jsonRulesEngineObject = relevance.optJSONObject(RuleConstant.RULES_ENGINE);
                     JSONObject jsonExRules = jsonRulesEngineObject.optJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES);
                     String fileName = "rule/" + jsonExRules.optString(RuleConstant.DYNAMIC);
-                    Iterable<Object> objectIterable = Utils.readYamlFile(fileName, widgetArgs.getContext());
-                    if (objectIterable != null) {
-                        //Needs only the relevance for this field, hence it expects only one relevance rules object
-                        Map<String, Object> map = objectIterable.iterator().hasNext() ? ((Map<String, Object>) objectIterable.iterator().next()) : null;
-                        if(map != null) {
-                            JSONObject jsonRulesDynamicObject = new JSONObject();
-                            String strCondition = (String) map.get(RuleConstant.CONDITION);
-                            List<String> stringList = Utils.getConditionKeys(strCondition);
-                            for (String s : stringList) {
-                                strCondition = strCondition.replace(s, s + "_" + uniqueId);
+                    if (!readFileMap.containsKey(fileName)) {
+                        Iterable<Object> objectIterable = Utils.readYamlFile(fileName, widgetArgs.getContext());
+                        JSONArray jsonArrayRules = new JSONArray();
+                        if (objectIterable != null) {
+                            while (objectIterable.iterator().hasNext()) {
+                                Map<String, Object> map = (Map<String, Object>) objectIterable.iterator().next();
+                                if (map != null) {
+                                    JSONObject jsonRulesDynamicObject = new JSONObject();
+                                    String strCondition = (String) map.get(RuleConstant.CONDITION);
+                                    List<String> stringList = Utils.getConditionKeys(strCondition);
+                                    for (String s : stringList) {
+                                        strCondition = strCondition.replace(s, s + "_" + uniqueId);
+                                    }
+                                    jsonRulesDynamicObject.put(RuleConstant.NAME, String.valueOf(map.get(RuleConstant.NAME)));
+                                    jsonRulesDynamicObject.put(RuleConstant.DESCRIPTION, String.valueOf(map.get(RuleConstant.DESCRIPTION)));
+                                    jsonRulesDynamicObject.put(RuleConstant.PRIORITY, map.get(RuleConstant.PRIORITY));
+                                    jsonRulesDynamicObject.put(RuleConstant.ACTIONS, ((ArrayList<String>) map.get(RuleConstant.ACTIONS)).get(0));
+                                    jsonRulesDynamicObject.put(JsonFormConstants.JSON_FORM_KEY.ID, UUID.randomUUID().toString());
+                                    jsonRulesDynamicObject.put(RuleConstant.CONDITION, String.valueOf(strCondition));
+                                    jsonArrayRules.put(jsonRulesDynamicObject);
+                                }
                             }
-                            jsonRulesDynamicObject.put(RuleConstant.NAME, String.valueOf(map.get(RuleConstant.NAME)));
-                            jsonRulesDynamicObject.put(RuleConstant.DESCRIPTION, String.valueOf(map.get(RuleConstant.DESCRIPTION)));
-                            jsonRulesDynamicObject.put(RuleConstant.PRIORITY, map.get(RuleConstant.PRIORITY));
-                            jsonRulesDynamicObject.put(RuleConstant.ACTIONS, ((ArrayList<String>)map.get(RuleConstant.ACTIONS)).get(0));
-                            jsonRulesDynamicObject.put(JsonFormConstants.JSON_FORM_KEY.ID, UUID.randomUUID().toString());
-                            jsonRulesDynamicObject.put(RuleConstant.CONDITION, String.valueOf(strCondition));
-                            jsonExRules.put(RuleConstant.DYNAMIC, jsonRulesDynamicObject);
+
                         }
+                        readFileMap.put(fileName, jsonArrayRules);
                     }
+                    jsonExRules.put(RuleConstant.DYNAMIC, readFileMap.get(fileName));
                 }
 
             } else {

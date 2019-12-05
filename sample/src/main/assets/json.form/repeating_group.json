@@ -116,10 +116,6 @@
             "v_numeric_integer": {
               "value": "true",
               "err": "Must be a rounded number"
-            },
-            "v_required": {
-              "value": true,
-              "err": "Please specify the total # of larvae collected"
             }
           },
           {
@@ -132,10 +128,6 @@
             "v_numeric_integer": {
               "value": "true",
               "err": "Must be a rounded number"
-            },
-            "v_relative_max": {
-              "value": "larvae_total",
-              "err": "# of stage 1-2 larvae cannot be greater than the total # of larvae collected"
             }
           },
           {
