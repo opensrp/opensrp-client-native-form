@@ -7,7 +7,7 @@ import com.vijay.jsonwizard.R;
 public class TestApplication extends Application {
     @Override
     public void onCreate() {
-        setTheme(R.style.AppTheme);
         super.onCreate();
+        setTheme(R.style.Theme_AppCompat);
     }
 }

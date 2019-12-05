@@ -134,6 +134,12 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     };
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.AppTheme);
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public synchronized JSONObject getStep(String name) {
         synchronized (getmJSONObject()) {
             try {

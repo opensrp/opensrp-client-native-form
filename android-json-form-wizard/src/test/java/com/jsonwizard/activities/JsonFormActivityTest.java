@@ -15,7 +15,6 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.android.controller.ActivityController;
 
 public class JsonFormActivityTest extends BaseActivityTest {
-
     private JsonFormActivity activity;
     private ActivityController<JsonFormActivity> controller;
 
@@ -28,14 +27,11 @@ public class JsonFormActivityTest extends BaseActivityTest {
         activity = controller.get();
 
         Assert.assertNotNull(activity);
-
-
     }
 
     @Test
     public void testSetConfirmationTitleUpdatesConfirmationTitleCorrectly() {
         Assert.assertNotNull(activity.getConfirmCloseTitle());
-
         //default message
         Assert.assertEquals(RuntimeEnvironment.application.getString(R.string.confirm_form_close), activity.getConfirmCloseTitle());
         activity.setConfirmCloseTitle(DUMMY_TEST_STRING);
