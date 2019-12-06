@@ -368,7 +368,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             if (RuleConstant.RULES_ENGINE.equals(address[0]) && !address[1].endsWith(".yml")) {
                 JSONArray jsonArray = new JSONArray(address[1]);
                 List<String> keysList = new ArrayList<>();
-                for (int i = 0; i < jsonArray.length(); i++) {
+                //index 0 has the key
+                for (int i = 1; i < jsonArray.length(); i++) {
                     JSONObject jsonObject = jsonArray.optJSONObject(i);
                     keysList.addAll(Utils.getConditionKeys(jsonObject.optString(RuleConstant.CONDITION)));
                 }

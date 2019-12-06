@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.google.gson.Gson;
-import com.vijay.jsonwizard.constants.JsonFormConstants;
 
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rule;
@@ -57,9 +56,9 @@ public class RulesEngineFactory implements RuleListener {
     private Rules getDynamicRulesFromJsonArray(JSONArray jsonArray) {
         try {
             Rules rules = new Rules();
-            String key = String.valueOf(jsonArray.hashCode());
+            String key = jsonArray.optString(0);
             if (!ruleMap.containsKey(key)) {
-                for (int i = 0; i < jsonArray.length(); i++) {
+                for (int i = 1; i < jsonArray.length(); i++) {
                     JSONObject jsonRuleObject = jsonArray.optJSONObject(i);
                     if (jsonRuleObject != null) {
                         MVELRule rule = getDynamicRulesFromJsonObject(jsonRuleObject);
@@ -79,14 +78,13 @@ public class RulesEngineFactory implements RuleListener {
 
     private MVELRule getDynamicRulesFromJsonObject(JSONObject jsonObjectDynamicRule) {
         try {
-            String key = jsonObjectDynamicRule.optString(JsonFormConstants.JSON_FORM_KEY.ID);
-            MVELRule mvelRule1 = new MVELRule();
-            mvelRule1.setDescription(jsonObjectDynamicRule.optString(RuleConstant.DESCRIPTION).concat(" ").concat(key));
-            mvelRule1.setPriority(jsonObjectDynamicRule.optInt(RuleConstant.PRIORITY));
-            mvelRule1.when(jsonObjectDynamicRule.optString(RuleConstant.CONDITION));
-            mvelRule1.then(jsonObjectDynamicRule.optString(RuleConstant.ACTIONS));
-            mvelRule1.name(jsonObjectDynamicRule.optString(RuleConstant.NAME).concat("_").concat(key));
-            return mvelRule1;
+            MVELRule dynamicMvelRule = new MVELRule();
+            dynamicMvelRule.setDescription(jsonObjectDynamicRule.optString(RuleConstant.DESCRIPTION));
+            dynamicMvelRule.setPriority(jsonObjectDynamicRule.optInt(RuleConstant.PRIORITY));
+            dynamicMvelRule.when(jsonObjectDynamicRule.optString(RuleConstant.CONDITION));
+            dynamicMvelRule.then(jsonObjectDynamicRule.optString(RuleConstant.ACTIONS));
+            dynamicMvelRule.name(jsonObjectDynamicRule.optString(RuleConstant.NAME));
+            return dynamicMvelRule;
         } catch (Exception e) {
             Timber.e(e);
             return null;
@@ -106,15 +104,15 @@ public class RulesEngineFactory implements RuleListener {
         return facts.get(RuleConstant.IS_RELEVANT);
     }
 
-    public boolean getDynamicRelevance(@NonNull Facts facts, @NonNull JSONArray rulesStrObject) {
+    public boolean getDynamicRelevance(@NonNull Facts relevanceFact, @NonNull JSONArray rulesStrObject) {
+
+        Facts facts = initializeFacts(relevanceFact);
 
         facts.put(RuleConstant.IS_RELEVANT, false);
 
         rules = getDynamicRulesFromJsonArray(rulesStrObject);
 
-        RulesEngine rulesEngine = new DefaultRulesEngine();
-
-        rulesEngine.fire(rules, facts);
+        processDefaultRules(rules, facts);
 
         return facts.get(RuleConstant.IS_RELEVANT);
     }

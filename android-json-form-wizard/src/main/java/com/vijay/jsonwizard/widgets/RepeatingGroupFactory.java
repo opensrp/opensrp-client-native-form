@@ -50,6 +50,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import timber.log.Timber;
+
 import static com.vijay.jsonwizard.constants.JsonFormConstants.FIELDS;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.RELEVANCE;
@@ -78,7 +80,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
 
     private ImageButton doneButton;
     private WidgetArgs widgetArgs;
-    private Map<String, JSONArray> readFileMap = new HashMap<>();
+    private Map<String, List<Map<String, Object>>> readFileListMap = new HashMap<>();
 
     @Override
     public List<View> getViewsFromJson(final String stepName, final Context context, final JsonFormFragment formFragment, final JSONObject jsonObject, final CommonListener listener, final boolean popup) throws Exception {
@@ -222,7 +224,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                     try {
                         repeatingGroups.add(buildRepeatingGroupLayout(parent, widgetArgs));
                     } catch (Exception e) {
-                        Log.e(TAG, e.getStackTrace().toString());
+                        Timber.e(e);
                     }
                 }
                 return repeatingGroups;
@@ -340,36 +342,39 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                 JSONObject jsonRulesEngineObject = relevance.optJSONObject(RuleConstant.RULES_ENGINE);
                 JSONObject jsonExRules = jsonRulesEngineObject.optJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES);
                 String fileName = "rule/" + jsonExRules.optString(RuleConstant.DYNAMIC);
-                if (!readFileMap.containsKey(fileName)) {
+
+                if (!readFileListMap.containsKey(fileName)) {
                     Iterable<Object> objectIterable = Utils.readYamlFile(fileName, widgetArgs.getContext());
-                    JSONArray jsonArrayRules = new JSONArray();
-                    if (objectIterable != null) {
-                        while (objectIterable.iterator().hasNext()) {
-                            Map<String, Object> map = (Map<String, Object>) objectIterable.iterator().next();
-                            if (map != null) {
-                                JSONObject jsonRulesDynamicObject = new JSONObject();
-                                String strCondition = (String) map.get(RuleConstant.CONDITION);
-                                List<String> stringList = Utils.getConditionKeys(strCondition);
-                                for (String s : stringList) {
-                                    strCondition = strCondition.replace(s, s + "_" + uniqueId);
-                                }
-                                jsonRulesDynamicObject.put(RuleConstant.NAME, String.valueOf(map.get(RuleConstant.NAME)));
-                                jsonRulesDynamicObject.put(RuleConstant.DESCRIPTION, String.valueOf(map.get(RuleConstant.DESCRIPTION)));
-                                jsonRulesDynamicObject.put(RuleConstant.PRIORITY, map.get(RuleConstant.PRIORITY));
-                                jsonRulesDynamicObject.put(RuleConstant.ACTIONS, ((ArrayList<String>) map.get(RuleConstant.ACTIONS)).get(0));
-                                jsonRulesDynamicObject.put(JsonFormConstants.JSON_FORM_KEY.ID, UUID.randomUUID().toString());
-                                jsonRulesDynamicObject.put(RuleConstant.CONDITION, String.valueOf(strCondition));
-                                jsonArrayRules.put(jsonRulesDynamicObject);
-                            }
+                    List<Map<String, Object>> arrayList = new ArrayList<>();
+                    while (objectIterable.iterator().hasNext()) {
+                        Map<String, Object> map = (Map<String, Object>) objectIterable.iterator().next();
+                        if (map != null) {
+                            arrayList.add(map);
                         }
-
                     }
-
-                    readFileMap.put(fileName, jsonArrayRules);
-
+                    readFileListMap.put(fileName, arrayList);
                 }
 
-                jsonExRules.put(RuleConstant.DYNAMIC, readFileMap.get(fileName));
+                List<Map<String, Object>> mapArrayList = readFileListMap.get(fileName);
+
+                JSONArray jsonArrayRules = new JSONArray();
+                jsonArrayRules.put(uniqueId);
+                for (Map<String, Object> map : mapArrayList) {
+                    JSONObject jsonRulesDynamicObject = new JSONObject();
+                    String strCondition = (String) map.get(RuleConstant.CONDITION);
+                    List<String> stringList = Utils.getConditionKeys(strCondition);
+                    for (String s : stringList) {
+                        strCondition = strCondition.replace(s, s + "_" + uniqueId);
+                    }
+                    jsonRulesDynamicObject.put(RuleConstant.NAME, String.valueOf(map.get(RuleConstant.NAME)).concat("_").concat(uniqueId));
+                    jsonRulesDynamicObject.put(RuleConstant.DESCRIPTION, String.valueOf(map.get(RuleConstant.DESCRIPTION)).concat("_").concat(uniqueId));
+                    jsonRulesDynamicObject.put(RuleConstant.PRIORITY, map.get(RuleConstant.PRIORITY));
+                    jsonRulesDynamicObject.put(RuleConstant.ACTIONS, ((ArrayList<String>) map.get(RuleConstant.ACTIONS)).get(0));
+                    jsonRulesDynamicObject.put(RuleConstant.CONDITION, String.valueOf(strCondition));
+                    jsonArrayRules.put(jsonRulesDynamicObject);
+                }
+
+                jsonExRules.put(RuleConstant.DYNAMIC, jsonArrayRules);
 
             } else {
                 String currRelevanceKey = relevance.keys().next();

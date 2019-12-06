@@ -205,7 +205,7 @@ public class Utils {
 
     public static int pixelToDp(int dpValue, Context context) {
         float dpRatio = context.getResources().getDisplayMetrics().density;
-        float pixelForDp =  dpValue * dpRatio;
+        float pixelForDp = dpValue * dpRatio;
 
         return (int) pixelForDp;
     }
@@ -431,16 +431,18 @@ public class Utils {
         return conditionToken;
     }
 
-    public static Iterable<Object> readYamlFile(String fileName, Context context){
+    public static Iterable<Object> readYamlFile(String fileName, Context context) {
         Yaml yaml = new Yaml();
-        InputStreamReader inputStreamReader = null;
+        InputStreamReader inputStreamReader;
+        Iterable<Object> objectIterable = null;
         try {
             inputStreamReader = new InputStreamReader(context.getAssets().open(fileName));
-            return yaml.loadAll(inputStreamReader);
+            objectIterable = yaml.loadAll(inputStreamReader);
         } catch (IOException e) {
             Timber.e(e);
-            return null;
         }
+
+        return objectIterable;
     }
 }
 
