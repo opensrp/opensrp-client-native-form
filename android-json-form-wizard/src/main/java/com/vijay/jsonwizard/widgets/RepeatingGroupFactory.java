@@ -95,15 +95,13 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         JSONArray repeatingGroupLayout = jsonObject.getJSONArray(VALUE);
         repeatingGroupLayouts.put(rootLayoutId, repeatingGroupLayout.toString());
 
-        final WidgetArgs widgetArgs = new WidgetArgs();
+        this.widgetArgs = new WidgetArgs();
         widgetArgs.withStepName(stepName)
                 .withContext(context)
                 .withFormFragment(formFragment)
                 .withJsonObject(jsonObject)
                 .withListener(listener)
                 .withPopup(popup);
-
-        this.widgetArgs = widgetArgs;
 
         final MaterialEditText referenceEditText = rootLayout.findViewById(R.id.reference_edit_text);
         final String referenceEditTextHint = jsonObject.optString(REFERENCE_EDIT_TEXT_HINT, context.getString(R.string.enter_number_of_repeating_group_items));
