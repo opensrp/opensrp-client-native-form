@@ -29,7 +29,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExpansionWidgetFactory implements FormWidgetFactory {
+public class ExpansionPanelFactory implements FormWidgetFactory {
     private ExpansionPanelRecordButtonClickListener expansionPanelRecordButtonClickListener = new ExpansionPanelRecordButtonClickListener();
     private ExpansionPanelUndoButtonClickListener expansionPanelUndoButtonClickListener = new ExpansionPanelUndoButtonClickListener();
     private FormUtils formUtils = new FormUtils();

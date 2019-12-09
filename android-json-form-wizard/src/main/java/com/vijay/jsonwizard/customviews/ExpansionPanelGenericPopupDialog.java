@@ -24,7 +24,6 @@ import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.ExpansionPanelValuesModel;
 import com.vijay.jsonwizard.event.RefreshExpansionPanelEvent;
 import com.vijay.jsonwizard.interfaces.JsonApi;
-import com.vijay.jsonwizard.task.ExpansionPanelGenericPopupDialogTask;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.SecondaryValueModel;
 import com.vijay.jsonwizard.utils.Utils;
@@ -50,6 +49,7 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
     private Context context;
     private String header;
     private LinearLayout linearLayout;
+    private Utils utils = new Utils();
 
     @Override
     public void onAttach(Context context) {
@@ -68,10 +68,18 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
         }
 
         this.activity = (Activity) context;
-        setJsonApi((JsonApi) activity);
-
-        new ExpansionPanelGenericPopupDialogTask(this, context).execute();
-
+        try {
+            setJsonApi((JsonApi) activity);
+            setMainFormFields(formUtils.getFormFields(getStepName(), context));
+            getJsonApi().setGenericPopup(this);
+            setGenericPopUpDialog();
+            loadPartialSecondaryValues();
+            createSecondaryValuesMap();
+            loadSubForms();
+            getJsonApi().updateGenericPopupSecondaryValues(getSpecifyContent());
+        } catch (JSONException e) {
+            Timber.e(e, "ExpansionPanelGenericPopupDialogTask --> doInBackground");
+        }
         setStyle(DialogFragment.STYLE_NORMAL, R.style.FullScreenDialogStyle);
     }
 
@@ -191,6 +199,7 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         if (!TextUtils.isEmpty(getWidgetType()) && getWidgetType().equals(JsonFormConstants.EXPANSION_PANEL)) {
             ViewGroup dialogView = (ViewGroup) inflater.inflate(R.layout.fragment_generic_dialog, container, false);
             mToolbar = dialogView.findViewById(R.id.generic_toolbar);
@@ -201,7 +210,7 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
                 toolBar.setText(header);
             }
 
-            onDialogShow();
+            attachDialogShowListener();
 
             List<View> viewList = initiateViews();
             LinearLayout genericDialogContent = dialogView.findViewById(R.id.generic_dialog_content);
@@ -237,7 +246,7 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
     }
 
     private void attachCancelDialogButton(ViewGroup dialogView) {
-        AppCompatImageButton cancelButton;
+        final AppCompatImageButton cancelButton;
         cancelButton = dialogView.findViewById(R.id.generic_dialog_cancel_button);
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -249,11 +258,12 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
                 setContext(null);
                 getJsonApi().setGenericPopup(null);
                 ExpansionPanelGenericPopupDialog.this.dismissAllowingStateLoss();
+                utils.enableExpansionPanelViews(linearLayout);
             }
         });
     }
 
-    private void onDialogShow() {
+    private void attachDialogShowListener() {
         new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
@@ -569,6 +579,7 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
             int height = ViewGroup.LayoutParams.MATCH_PARENT;
             dialog.getWindow().setLayout(width, height);
         }
+        // Utils.hideProgressDialog();
     }
 
     public void setHeader(String header) {

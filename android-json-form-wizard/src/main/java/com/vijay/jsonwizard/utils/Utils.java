@@ -12,8 +12,11 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.vijay.jsonwizard.R;
@@ -367,6 +370,32 @@ public class Utils {
 
         ft.addToBackStack(null);
         return ft;
+    }
+
+    /**
+     * Enabling the expansion panel views after they were disabled on sub form opening.
+     *
+     * @param linearLayout {@link LinearLayout}
+     */
+    public void enableExpansionPanelViews(LinearLayout linearLayout) {
+        RelativeLayout layoutHeader = (RelativeLayout) linearLayout.getChildAt(0);
+        RelativeLayout expansionHeaderLayout = layoutHeader.findViewById(R.id.expansion_header_layout);
+        expansionHeaderLayout.setEnabled(true);
+        expansionHeaderLayout.setClickable(true);
+
+        ImageView statusImageView = expansionHeaderLayout.findViewById(R.id.statusImageView);
+        statusImageView.setEnabled(true);
+        statusImageView.setClickable(true);
+
+        CustomTextView topBarTextView = expansionHeaderLayout.findViewById(R.id.topBarTextView);
+        topBarTextView.setClickable(true);
+        topBarTextView.setEnabled(true);
+
+        LinearLayout contentLayout = (LinearLayout) linearLayout.getChildAt(1);
+        LinearLayout buttonLayout = contentLayout.findViewById(R.id.accordion_bottom_navigation);
+        Button okButton = buttonLayout.findViewById(R.id.ok_button);
+        okButton.setEnabled(true);
+        okButton.setClickable(true);
     }
 
 }

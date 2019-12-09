@@ -928,7 +928,7 @@ public class FormUtils {
      *
      * @param context {@link Context}
      */
-    private void resetFocus(Context context) {
+    public void resetFocus(Context context) {
         if (context != null) {
             Activity activity = (Activity) context;
             LinearLayout mainLayout = activity.findViewById(R.id.main_layout);
