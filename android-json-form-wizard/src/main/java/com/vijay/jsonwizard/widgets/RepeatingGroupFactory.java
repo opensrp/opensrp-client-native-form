@@ -95,8 +95,8 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         JSONArray repeatingGroupLayout = jsonObject.getJSONArray(VALUE);
         repeatingGroupLayouts.put(rootLayoutId, repeatingGroupLayout.toString());
 
-        this.widgetArgs = new WidgetArgs();
-        widgetArgs.withStepName(stepName)
+        this.widgetArgs = new WidgetArgs()
+                .withStepName(stepName)
                 .withContext(context)
                 .withFormFragment(formFragment)
                 .withJsonObject(jsonObject)
@@ -106,14 +106,14 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         final MaterialEditText referenceEditText = rootLayout.findViewById(R.id.reference_edit_text);
         final String referenceEditTextHint = jsonObject.optString(REFERENCE_EDIT_TEXT_HINT, context.getString(R.string.enter_number_of_repeating_group_items));
         final String repeatingGroupLabel = jsonObject.optString(REPEATING_GROUP_LABEL, context.getString(R.string.repeating_group_item));
-        setUpReferenceEditText(referenceEditText, widgetArgs, referenceEditTextHint, repeatingGroupLabel);
+        setUpReferenceEditText(referenceEditText, referenceEditTextHint, repeatingGroupLabel);
 
         doneButton = rootLayout.findViewById(R.id.btn_repeating_group_done);
 
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addOnDoneAction(referenceEditText, widgetArgs);
+                addOnDoneAction(referenceEditText);
             }
         });
 
@@ -122,13 +122,13 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         return views;
     }
 
-    private void setUpReferenceEditText(final MaterialEditText referenceEditText, final WidgetArgs widgetArgs, String referenceEditTextHint, String repeatingGroupLabel) throws JSONException {
+    private void setUpReferenceEditText(final MaterialEditText referenceEditText, String referenceEditTextHint, String repeatingGroupLabel) throws JSONException {
         Context context = widgetArgs.getContext();
         referenceEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    addOnDoneAction(v, widgetArgs);
+                    addOnDoneAction(v);
                     return true;
                 }
                 return false;
@@ -187,18 +187,18 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         return getViewsFromJson(stepName, context, formFragment, jsonObject, listener, false);
     }
 
-    private void addOnDoneAction(TextView textView, WidgetArgs widgetArgs) {
+    private void addOnDoneAction(TextView textView) {
         try {
             InputMethodManager inputMethodManager = (InputMethodManager) widgetArgs.getFormFragment().getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0);
             textView.clearFocus();
-            attachRepeatingGroup(textView.getParent().getParent(), Integer.parseInt(textView.getText().toString()), widgetArgs);
+            attachRepeatingGroup(textView.getParent().getParent(), Integer.parseInt(textView.getText().toString()));
         } catch (Exception e) {
             Log.e(TAG, e.getStackTrace().toString());
         }
     }
 
-    private void attachRepeatingGroup(final ViewParent parent, final int numRepeatingGroups, final WidgetArgs widgetArgs) {
+    private void attachRepeatingGroup(final ViewParent parent, final int numRepeatingGroups) {
 
         if (numRepeatingGroups > MAX_NUM_REPEATING_GROUPS) {
             return;
@@ -220,7 +220,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                 diff = numRepeatingGroups - currNumRepeatingGroups;
                 for (int i = 0; i < diff; i++) {
                     try {
-                        repeatingGroups.add(buildRepeatingGroupLayout(parent, widgetArgs));
+                        repeatingGroups.add(buildRepeatingGroupLayout(parent));
                     } catch (Exception e) {
                         Timber.e(e);
                     }
@@ -269,7 +269,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         new AttachRepeatingGroupTask().execute();
     }
 
-    private LinearLayout buildRepeatingGroupLayout(ViewParent parent, WidgetArgs widgetArgs) throws Exception {
+    private LinearLayout buildRepeatingGroupLayout(ViewParent parent) throws Exception {
         Context context = widgetArgs.getContext();
 
         LinearLayout repeatingGroup = new LinearLayout(context);
