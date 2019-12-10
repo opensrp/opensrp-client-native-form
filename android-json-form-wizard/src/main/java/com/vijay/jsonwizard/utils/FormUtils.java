@@ -435,14 +435,15 @@ public class FormUtils {
 
         //Display custom dialog if has image is true otherwise normal alert dialog is enough
         if (imageAttributes.get(JsonFormConstants.LABEL_INFO_HAS_IMAGE) != null &&
-                Boolean.parseBoolean(imageAttributes.get(JsonFormConstants.LABEL_INFO_HAS_IMAGE)) &&
-                imageAttributes.get(JsonFormConstants.LABEL_INFO_IMAGE_SRC) != null) {
+                Boolean.parseBoolean(imageAttributes.get(JsonFormConstants.LABEL_INFO_HAS_IMAGE))) {
 
             imageView.setTag(R.id.label_dialog_image_src,
                     imageAttributes.get(JsonFormConstants.LABEL_INFO_IMAGE_SRC));
             imageView.setVisibility(View.VISIBLE);
 
-        } else if (imageAttributes.get(JsonFormConstants.LABEL_INFO_TEXT) != null) {
+        }
+
+        if (imageAttributes.get(JsonFormConstants.LABEL_INFO_TEXT) != null) {
 
             imageView
                     .setTag(R.id.label_dialog_info, imageAttributes.get(JsonFormConstants.LABEL_INFO_TEXT));
