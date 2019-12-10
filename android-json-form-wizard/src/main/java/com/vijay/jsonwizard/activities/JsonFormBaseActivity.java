@@ -54,6 +54,7 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
     protected boolean isFormFragmentInitialized;
     private Toolbar mToolbar;
     private Map<String, ValidationStatus> invalidFields = new HashMap<>();
+    private boolean isPreviousPressed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,8 +152,7 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (onActivityRequestPermissionResultListeners.containsKey(requestCode)) {
-            onActivityRequestPermissionResultListeners.get(requestCode)
-                    .onRequestPermissionResult(requestCode, permissions, grantResults);
+            onActivityRequestPermissionResultListeners.get(requestCode).onRequestPermissionResult(requestCode, permissions, grantResults);
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
@@ -165,6 +165,14 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
     @Override
     public void passInvalidFields(Map<String, ValidationStatus> invalidFields) {
         this.invalidFields = invalidFields;
+    }
+
+    public boolean isPreviousPressed() {
+        return isPreviousPressed;
+    }
+
+    public void setPreviousPressed(boolean previousPressed) {
+        isPreviousPressed = previousPressed;
     }
 
     @Override
