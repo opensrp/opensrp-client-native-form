@@ -214,14 +214,13 @@ public class Utils {
         EventBus.getDefault().post(event);
     }
 
-    public static JSONObject getFieldFromJsonArray(String key, JSONArray jsonArray) {
-        JSONObject jsonObject = new JSONObject();
+    public static JSONObject getJsonObjectFromJsonArray(String key, JSONArray jsonArray) {
+        JSONObject jsonObject = null;
         for (int i = 0; i < jsonArray.length(); i++) {
-            jsonObject = jsonArray.optJSONObject(i);
-            if (jsonObject != null) {
-                if (jsonObject.has(key)) {
-                    break;
-                }
+            JSONObject tempJsonObject = jsonArray.optJSONObject(i);
+            if (tempJsonObject != null && tempJsonObject.has(key)) {
+                jsonObject = tempJsonObject;
+                break;
             }
         }
         return jsonObject;

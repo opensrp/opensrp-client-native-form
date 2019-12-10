@@ -58,21 +58,24 @@ public class RulesEngineFactory implements RuleListener {
     private Rules getDynamicRulesFromJsonArray(JSONArray jsonArray) {
         try {
             Rules rules = new Rules();
-            JSONObject keyJsonObject = Utils.getFieldFromJsonArray(JsonFormConstants.KEY, jsonArray);
-            String key = keyJsonObject.optString(JsonFormConstants.KEY);
-            if (!ruleMap.containsKey(key)) {
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject jsonRuleObject = jsonArray.optJSONObject(i);
-                    if (jsonRuleObject != null && !jsonRuleObject.has(JsonFormConstants.KEY)) {
-                        MVELRule rule = getDynamicRulesFromJsonObject(jsonRuleObject);
-                        if (rule != null) {
-                            rules.register(rule);
+            JSONObject keyJsonObject = Utils.getJsonObjectFromJsonArray(JsonFormConstants.KEY, jsonArray);
+            if(keyJsonObject != null) {
+                String key = keyJsonObject.optString(JsonFormConstants.KEY);
+                if (!ruleMap.containsKey(key)) {
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonRuleObject = jsonArray.optJSONObject(i);
+                        if (jsonRuleObject != null && !jsonRuleObject.has(JsonFormConstants.KEY)) {
+                            MVELRule rule = getDynamicRulesFromJsonObject(jsonRuleObject);
+                            if (rule != null) {
+                                rules.register(rule);
+                            }
                         }
                     }
+                    ruleMap.put(key, rules);
                 }
-                ruleMap.put(key, rules);
+                return ruleMap.get(key);
             }
-            return ruleMap.get(key);
+            return null;
         } catch (Exception e) {
             Timber.e(e);
             return null;
