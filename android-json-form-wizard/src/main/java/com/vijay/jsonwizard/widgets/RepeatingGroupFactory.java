@@ -80,7 +80,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
 
     private ImageButton doneButton;
     private WidgetArgs widgetArgs;
-    private Map<String, List<Map<String, Object>>> readFileListMap = new HashMap<>();
+    private Map<String, List<Map<String, Object>>> rulesFileMap = new HashMap<>();
 
     @Override
     public List<View> getViewsFromJson(final String stepName, final Context context, final JsonFormFragment formFragment, final JSONObject jsonObject, final CommonListener listener, final boolean popup) throws Exception {
@@ -341,7 +341,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                 JSONObject jsonExRules = jsonRulesEngineObject.optJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES);
                 String fileName = "rule/" + jsonExRules.optString(RuleConstant.DYNAMIC);
 
-                if (!readFileListMap.containsKey(fileName)) {
+                if (!rulesFileMap.containsKey(fileName)) {
                     Iterable<Object> objectIterable = Utils.readYamlFile(fileName, widgetArgs.getContext());
                     List<Map<String, Object>> arrayList = new ArrayList<>();
                     while (objectIterable.iterator().hasNext()) {
@@ -350,10 +350,10 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                             arrayList.add(map);
                         }
                     }
-                    readFileListMap.put(fileName, arrayList);
+                    rulesFileMap.put(fileName, arrayList);
                 }
 
-                List<Map<String, Object>> mapArrayList = readFileListMap.get(fileName);
+                List<Map<String, Object>> mapArrayList = rulesFileMap.get(fileName);
 
                 JSONArray jsonArrayRules = new JSONArray();
                 JSONObject keyJsonObject = new JSONObject();

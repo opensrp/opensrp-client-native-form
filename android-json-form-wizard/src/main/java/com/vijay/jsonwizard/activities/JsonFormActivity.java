@@ -365,14 +365,17 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     @Override
     public JSONObject getObjectUsingAddress(String[] address, boolean popup) throws JSONException {
         if (address != null && address.length > 1) {
-            if (RuleConstant.RULES_ENGINE.equals(address[0]) && !address[1].endsWith(".yml")) {
+            if (RuleConstant.DYNAMIC.equals(address[0])) {
                 JSONArray jsonArray = new JSONArray(address[1]);
                 List<String> keysList = new ArrayList<>();
 
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonObject = jsonArray.optJSONObject(i);
-                    if(!jsonObject.has(JsonFormConstants.KEY)) {
-                        keysList.addAll(Utils.getConditionKeys(jsonObject.optString(RuleConstant.CONDITION)));
+                    if (!jsonObject.has(JsonFormConstants.KEY)) {
+                        String condition = jsonObject.optString(RuleConstant.CONDITION);
+                        if (StringUtils.isNotBlank(condition)) {
+                            keysList.addAll(Utils.getConditionKeys(condition));
+                        }
                     }
                 }
                 return fillFieldsWithValues(keysList, popup);
@@ -677,7 +680,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private String[] getRulesEngineAddress(String curKey, JSONObject curRelevance, View view, String type, String ruleType) {
         String[] address = new String[0];
         try {
-            address = new String[]{curKey,
+            String currentKey = RuleConstant.DYNAMIC.equals(ruleType) ? ruleType : curKey;
+            address = new String[]{currentKey,
                     curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).getString(ruleType),
                     view.getTag(R.id.address).toString().replace(':', '_')};
 
