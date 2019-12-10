@@ -210,6 +210,7 @@ public class JsonFormConstants {
     public static final String MULTI_SELECT_LIST ="multi_select_list" ;
     public static final String FORM_VERSION = "form_version";
     public static final String LABEL_CONSTRAINT_LAYOUT = "label_constraint_layout";
+    public static final String STEP = "step";
 
     public interface MultiSelectUtils {
         String IS_HEADER = "isHeader";
