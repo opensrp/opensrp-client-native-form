@@ -11,7 +11,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.AppCompatRadioButton;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -195,7 +194,6 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-
         presenter.onRequestPermissionsResult(requestCode, permissions, grantResults);
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
@@ -213,56 +211,13 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         }
     }
 
+    public void setmJsonApi(JsonApi mJsonApi) {
+        this.mJsonApi = mJsonApi;
+    }
+
     @Override
     public void onResume() {
         super.onResume();
-        if (skipBlankSteps()) {
-            JSONObject formStep = getStep(getArguments().getString(JsonFormConstants.STEPNAME));
-            String next = formStep.optString(JsonFormConstants.NEXT, "");
-            if (StringUtils.isNotEmpty(next)) {
-                checkIfStepIsBlank(formStep);
-                if (shouldSkipStep()) {
-                    next();
-                }
-            }
-        }
-    }
-
-    private void checkIfStepIsBlank(JSONObject formStep) {
-        try {
-            if (formStep.has(JsonFormConstants.FIELDS)) {
-                JSONArray fields = formStep.getJSONArray(JsonFormConstants.FIELDS);
-                for (int i = 0; i < fields.length(); i++) {
-                    JSONObject field = fields.getJSONObject(i);
-                    if (field.has(JsonFormConstants.TYPE) && !JsonFormConstants.HIDDEN.equals(field.getString(JsonFormConstants.TYPE))) {
-                        boolean isVisible = field.optBoolean(JsonFormConstants.IS_VISIBLE, true);
-                        if (isVisible) {
-                            setShouldSkipStep(false);
-                        }
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            Timber.e(e, "%s --> checkIfStepIsBlank", this.getClass().getCanonicalName());
-        }
-    }
-
-    public boolean shouldSkipStep() {
-        return shouldSkipStep;
-    }
-
-    public void setShouldSkipStep(boolean shouldSkipStep) {
-        this.shouldSkipStep = shouldSkipStep;
-    }
-
-    public boolean next() {
-        try {
-            return presenter.onNextClick(mMainView);
-        } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
-        }
-
-        return false;
     }
 
     @Override
@@ -294,7 +249,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
                         .getBooleanExtra(JsonFormConstants.SKIP_VALIDATION, false);
                 return save(skipValidation);
             } catch (Exception e) {
-                Log.e(TAG, e.getMessage());
+                Timber.e(e, " --> onOptionsItemSelected");
                 return save(false);
             }
         }
@@ -307,14 +262,28 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
             presenter.onSaveClick(mMainView);
             return true;
         } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Timber.e(e, " --> save");
         }
 
         return false;
     }
 
-    public void setmJsonApi(JsonApi mJsonApi) {
-        this.mJsonApi = mJsonApi;
+    public boolean shouldSkipStep() {
+        return shouldSkipStep;
+    }
+
+    public boolean next() {
+        try {
+            return presenter.onNextClick(mMainView);
+        } catch (Exception e) {
+            Timber.e(e, " --> next");
+        }
+
+        return false;
+    }
+
+    public void setShouldSkipStep(boolean shouldSkipStep) {
+        this.shouldSkipStep = shouldSkipStep;
     }
 
     public JsonApi getJsonApi() {
@@ -425,32 +394,27 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         try {
             mJsonApi.writeValue(stepName, key, selectedValue, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
         } catch (JSONException e) {
-            // TODO - handle
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e, " --> writeValue");
         }
     }
 
     @Override
     public void writeValue(String stepName, String prentKey, String childObjectKey, String childKey, String value,
                            String openMrsEntityParent, String openMrsEntity, String openMrsEntityId, boolean popup) {
-        // Log.d(CONST_REAL_TIME_VALIDATION, CONST_FRAGMENT_WRITEVALUE_CALLED);
         try {
             mJsonApi.writeValue(stepName, prentKey, childObjectKey, childKey, value, openMrsEntityParent, openMrsEntity,
                     openMrsEntityId, popup);
         } catch (JSONException e) {
-            // TODO - handle
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e, " --> writeValue");
         }
     }
 
     @Override
     public void writeMetaDataValue(String metaDataKey, Map<String, String> values) {
-        // Log.d(CONST_REAL_TIME_VALIDATION, CONST_FRAGMENT_WRITEVALUE_CALLED);
         try {
             mJsonApi.writeMetaDataValue(metaDataKey, values);
         } catch (JSONException e) {
-            // TODO - handle
-            e.printStackTrace();
+            Timber.e(e, " --> writeMetaDataValue");
         }
     }
 
@@ -482,7 +446,6 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     @Override
     public void unCheckAllExcept(String parentKey, String childKey, CompoundButton compoundButton) {
-
         ViewGroup mMainView = null;
         if (compoundButton instanceof CheckBox) {
             mMainView = (ViewGroup) compoundButton.getParent().getParent();
@@ -500,7 +463,6 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     @Override
     public void unCheck(String parentKey, String exclusiveKey, CompoundButton compoundButton) {
-
         ViewGroup mMainView = compoundButton instanceof CheckBox ? (ViewGroup) compoundButton.getParent().getParent() :
                 (ViewGroup) compoundButton.getParent().getParent().getParent();
         if (mMainView != null) {
@@ -635,7 +597,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-        Log.d("JsonFormFragment", "onNothingSelected called");
+        Timber.d("onNothingSelected called");
     }
 
     public Map<String, List<View>> getLookUpMap() {
@@ -651,10 +613,8 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         return presenter.onMenuItemClick(item);
     }
 
-
     protected class BottomNavigationListener implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
+        @Override public void onClick(View v) {
             if (v.getId() == R.id.next_button) {
                 Object isSubmit = v.getTag(R.id.submit);
                 if (isSubmit != null && Boolean.valueOf(isSubmit.toString())) {
@@ -667,6 +627,4 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
             }
         }
     }
-
-
 }

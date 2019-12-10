@@ -115,4 +115,8 @@ public interface JsonApi {
     boolean displayScrollBars();
 
     boolean skipBlankSteps();
+
+    boolean isPreviousPressed();
+
+    void setPreviousPressed(boolean previousPressed);
 }
