@@ -33,7 +33,7 @@ import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.BuildConfig;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
-import com.vijay.jsonwizard.customviews.FullScreenGenericPopupDialog;
+import com.vijay.jsonwizard.customviews.ExpansionPanelGenericPopupDialog;
 import com.vijay.jsonwizard.domain.ExpansionPanelItemModel;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
@@ -52,6 +52,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -612,7 +613,7 @@ public class FormUtils {
         StringBuilder stringBuilder = new StringBuilder();
         InputStream inputStream = context.getAssets()
                 .open(defaultSubFormLocation + "/" + formIdentity + ".json");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
         String jsonString;
         while ((jsonString = reader.readLine()) != null) {
@@ -658,7 +659,7 @@ public class FormUtils {
                 }
             }
         } catch (JSONException e) {
-            Log.e(TAG, "", e);
+            Timber.e(e, " --> getMultiStepFormFields()");
         }
         return fields;
     }
@@ -673,7 +674,7 @@ public class FormUtils {
             return stepJSONObject.has(JsonFormConstants.FIELDS) ? stepJSONObject
                     .getJSONArray(JsonFormConstants.FIELDS) : null;
         } catch (JSONException e) {
-            Log.e(TAG, "", e);
+            Timber.e(e, " -->  fields()");
         }
         return null;
     }
@@ -892,7 +893,7 @@ public class FormUtils {
         }
 
         if (specifyContent != null) {
-            FullScreenGenericPopupDialog genericPopupDialog = new FullScreenGenericPopupDialog();
+            ExpansionPanelGenericPopupDialog genericPopupDialog = new ExpansionPanelGenericPopupDialog();
             genericPopupDialog.setCommonListener(listener);
             genericPopupDialog.setFormFragment(formFragment);
             genericPopupDialog.setFormIdentity(specifyContent);
@@ -908,13 +909,15 @@ public class FormUtils {
                 genericPopupDialog.setCustomTextView(customTextView);
                 genericPopupDialog.setPopupReasonsTextView(reasonsTextView);
             }
+
             utils.setChildKey(view, type, genericPopupDialog);
 
-            FragmentTransaction ft = utils.getFragmentTransaction((Activity) context);
-            genericPopupDialog.show(ft, "GenericPopup");
+            FragmentTransaction fragmentTransaction = utils.getFragmentTransaction((Activity) context);
+            genericPopupDialog.show(fragmentTransaction, "GenericPopup");
             resetFocus(context);
         } else {
             Toast.makeText(context, "Please specify the sub form to display ", Toast.LENGTH_LONG).show();
+            Timber.e("No sub form specified. Please specify one in order to use the expansion panel.");
         }
     }
 
@@ -924,7 +927,7 @@ public class FormUtils {
      *
      * @param context {@link Context}
      */
-    private void resetFocus(Context context) {
+    public void resetFocus(Context context) {
         if (context != null) {
             Activity activity = (Activity) context;
             LinearLayout mainLayout = activity.findViewById(R.id.main_layout);

@@ -11,4 +11,5 @@
     <item name="header" type="id"/>
     <item name="main_layout" type="id"/>
     <item name="contact_container" type="id"/>
+    <item name="progress_dialog" type="id" />
 </resources>
