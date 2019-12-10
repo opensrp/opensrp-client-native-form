@@ -4,6 +4,8 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.google.gson.Gson;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.utils.Utils;
 
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rule;
@@ -56,11 +58,12 @@ public class RulesEngineFactory implements RuleListener {
     private Rules getDynamicRulesFromJsonArray(JSONArray jsonArray) {
         try {
             Rules rules = new Rules();
-            String key = jsonArray.optString(0);
+            JSONObject keyJsonObject = Utils.getFieldFromJsonArray(JsonFormConstants.KEY, jsonArray);
+            String key = keyJsonObject.optString(JsonFormConstants.KEY);
             if (!ruleMap.containsKey(key)) {
-                for (int i = 1; i < jsonArray.length(); i++) {
+                for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonRuleObject = jsonArray.optJSONObject(i);
-                    if (jsonRuleObject != null) {
+                    if (jsonRuleObject != null && !jsonRuleObject.has(JsonFormConstants.KEY)) {
                         MVELRule rule = getDynamicRulesFromJsonObject(jsonRuleObject);
                         if (rule != null) {
                             rules.register(rule);

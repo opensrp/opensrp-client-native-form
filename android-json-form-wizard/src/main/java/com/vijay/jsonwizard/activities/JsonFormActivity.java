@@ -368,10 +368,12 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             if (RuleConstant.RULES_ENGINE.equals(address[0]) && !address[1].endsWith(".yml")) {
                 JSONArray jsonArray = new JSONArray(address[1]);
                 List<String> keysList = new ArrayList<>();
-                //index 0 has the key
-                for (int i = 1; i < jsonArray.length(); i++) {
+
+                for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonObject = jsonArray.optJSONObject(i);
-                    keysList.addAll(Utils.getConditionKeys(jsonObject.optString(RuleConstant.CONDITION)));
+                    if(!jsonObject.has(JsonFormConstants.KEY)) {
+                        keysList.addAll(Utils.getConditionKeys(jsonObject.optString(RuleConstant.CONDITION)));
+                    }
                 }
                 return fillFieldsWithValues(keysList, popup);
             } else if (RuleConstant.RULES_ENGINE.equals(address[0])) {
@@ -665,7 +667,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     private String[] getRulesEngineAddress(String curKey, JSONObject curRelevance, View view, String type) {
-        return getRulesEngineAddress(curKey, curRelevance, view, type, RuleConstant.RULES_ENGINE);
+        return getRulesEngineAddress(curKey, curRelevance, view, type, RuleConstant.RULES_FILE);
     }
 
     private String[] getDynamicRulesEngineAddress(String curKey, JSONObject curRelevance, View view, String type) {

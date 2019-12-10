@@ -356,7 +356,9 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                 List<Map<String, Object>> mapArrayList = readFileListMap.get(fileName);
 
                 JSONArray jsonArrayRules = new JSONArray();
-                jsonArrayRules.put(uniqueId);
+                JSONObject keyJsonObject = new JSONObject();
+                keyJsonObject.put(KEY, uniqueId);
+                jsonArrayRules.put(keyJsonObject);
                 for (Map<String, Object> map : mapArrayList) {
                     JSONObject jsonRulesDynamicObject = new JSONObject();
                     String strCondition = (String) map.get(RuleConstant.CONDITION);

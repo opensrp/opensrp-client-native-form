@@ -214,6 +214,19 @@ public class Utils {
         EventBus.getDefault().post(event);
     }
 
+    public static JSONObject getFieldFromJsonArray(String key, JSONArray jsonArray) {
+        JSONObject jsonObject = new JSONObject();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            jsonObject = jsonArray.optJSONObject(i);
+            if (jsonObject != null) {
+                if (jsonObject.has(key)) {
+                    break;
+                }
+            }
+        }
+        return jsonObject;
+    }
+
     public List<String> createExpansionPanelChildren(JSONArray jsonArray) throws JSONException {
         List<String> stringList = new ArrayList<>();
         String label;
