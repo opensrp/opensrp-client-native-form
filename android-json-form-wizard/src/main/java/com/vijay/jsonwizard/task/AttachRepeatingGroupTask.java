@@ -55,7 +55,7 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
     private final ViewGroup.LayoutParams WIDTH_MATCH_PARENT_HEIGHT_WRAP_CONTENT = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     protected final int REPEATING_GROUP_LABEL_TEXT_COLOR = R.color.black;
     private Map<String, List<Map<String, Object>>> rulesFileMap = new HashMap<>();
-    private static Map<Integer, String> repeatingGroupLayouts;
+    private Map<Integer, String> repeatingGroupLayouts;
 
     public AttachRepeatingGroupTask(final ViewParent parent, int numRepeatingGroups, Map<Integer, String> repeatingGroupLayouts,WidgetArgs widgetArgs,ImageButton doneButton) {
         this.rootLayout = (LinearLayout) parent;
@@ -63,7 +63,7 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         this.numRepeatingGroups = numRepeatingGroups;
         this.widgetArgs = widgetArgs;
         this.doneButton = doneButton;
-        AttachRepeatingGroupTask.repeatingGroupLayouts = repeatingGroupLayouts;
+        this.repeatingGroupLayouts = repeatingGroupLayouts;
     }
 
     @Override
