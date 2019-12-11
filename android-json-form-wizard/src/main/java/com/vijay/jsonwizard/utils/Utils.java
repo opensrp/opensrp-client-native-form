@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
 import android.support.v4.util.TimeUtils;
@@ -33,19 +34,35 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.yaml.snakeyaml.Yaml;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import timber.log.Timber;
 
 public class Utils {
 
     private static final String TAG = Utils.class.getCanonicalName();
 
     private static ProgressDialog progressDialog;
+
+    public final static List<String> PREFICES_OF_INTEREST = Arrays.asList(RuleConstant.PREFIX.GLOBAL, RuleConstant.STEP);
+
+    public final static Set<Character> JAVA_OPERATORS = new HashSet<>(
+            Arrays.asList('(', '!', ',', '?', '+', '-', '*', '/', '%', '+', '-', '.', '^', ')', '<', '>', '=', '{', '}', ':',
+                    ';', '[', ']'));
 
     public static void showToast(Context context, String message) {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show();
@@ -191,13 +208,25 @@ public class Utils {
 
     public static int pixelToDp(int dpValue, Context context) {
         float dpRatio = context.getResources().getDisplayMetrics().density;
-        float pixelForDp =  dpValue * dpRatio;
+        float pixelForDp = dpValue * dpRatio;
 
         return (int) pixelForDp;
     }
 
     public static void postEvent(BaseEvent event) {
         EventBus.getDefault().post(event);
+    }
+
+    public static JSONObject getJsonObjectFromJsonArray(String key, JSONArray jsonArray) {
+        JSONObject jsonObject = null;
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject tempJsonObject = jsonArray.optJSONObject(i);
+            if (tempJsonObject != null && tempJsonObject.has(key)) {
+                jsonObject = tempJsonObject;
+                break;
+            }
+        }
+        return jsonObject;
     }
 
     /**
@@ -398,4 +427,65 @@ public class Utils {
         okButton.setClickable(true);
     }
 
+
+    @NonNull
+    private static String cleanToken(String conditionTokenRaw) {
+        String conditionToken = conditionTokenRaw.trim();
+
+        for (int i = 0; i < conditionToken.length(); i++) {
+            if (JAVA_OPERATORS.contains(conditionToken.charAt(i))) {
+                if (i == 0) {
+                    conditionToken = cleanToken(conditionToken.substring(1));
+                } else {
+                    conditionToken = conditionToken.substring(0, conditionToken.indexOf(conditionToken.charAt(i)));
+                    break;
+                }
+            }
+        }
+
+        return conditionToken;
+    }
+
+    public static List<String> getConditionKeys(String condition) {
+        String cleanString = cleanConditionString(condition);
+        String[] conditionTokens = cleanString.split(" ");
+        Map<String, Boolean> conditionKeys = new HashMap<>();
+
+        for (String token : conditionTokens) {
+            if (token.contains(RuleConstant.STEP) || token.contains(RuleConstant.PREFIX.GLOBAL)) {
+                String conditionToken = cleanToken(token);
+                conditionKeys.put(conditionToken, true);
+            }
+        }
+
+        return new ArrayList<>(conditionKeys.keySet());
+    }
+
+
+    private static String cleanConditionString(String conditionStringRaw) {
+        String conditionString = conditionStringRaw;
+
+        for (String token : PREFICES_OF_INTEREST) {
+
+            conditionString = conditionString.replaceAll(token, " " + token);
+        }
+
+        return conditionString.replaceAll("  ", " ");
+    }
+
+    public static Iterable<Object> readYamlFile(String fileName, Context context) {
+        Yaml yaml = new Yaml();
+        InputStreamReader inputStreamReader;
+        Iterable<Object> objectIterable = null;
+        try {
+            inputStreamReader = new InputStreamReader(context.getAssets().open(fileName));
+            objectIterable = yaml.loadAll(inputStreamReader);
+        } catch (IOException e) {
+            Timber.e(e);
+        }
+
+        return objectIterable;
+    }
 }
+
+

@@ -211,6 +211,8 @@ public class JsonFormConstants {
     public static final String FORM_VERSION = "form_version";
     public static final String LABEL_CONSTRAINT_LAYOUT = "label_constraint_layout";
     public static final String STEP = "step";
+    public static final String RULE = "rule/";
+    public static final String REFERENCE_EDIT_TEXT = "reference_edit_text";
 
     public interface MultiSelectUtils {
         String IS_HEADER = "isHeader";
@@ -272,6 +274,7 @@ public class JsonFormConstants {
         public static final String JSON = "json";
         public static final String FORM = "form";
         public static final String STEPNAME = "stepName";
+        public static final String ID = "id";
     }
 
     public static class BARCODE_CONSTANTS {

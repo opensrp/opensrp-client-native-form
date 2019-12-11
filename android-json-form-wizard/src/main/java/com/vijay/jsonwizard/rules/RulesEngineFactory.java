@@ -1,8 +1,11 @@
 package com.vijay.jsonwizard.rules;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.google.gson.Gson;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.utils.Utils;
 
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rule;
@@ -11,7 +14,9 @@ import org.jeasy.rules.api.Rules;
 import org.jeasy.rules.api.RulesEngine;
 import org.jeasy.rules.core.DefaultRulesEngine;
 import org.jeasy.rules.core.RulesEngineParameters;
+import org.jeasy.rules.mvel.MVELRule;
 import org.jeasy.rules.mvel.MVELRuleFactory;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -50,16 +55,76 @@ public class RulesEngineFactory implements RuleListener {
     public RulesEngineFactory() {
     }
 
+    private Rules getDynamicRulesFromJsonArray(JSONArray jsonArray) {
+        try {
+            Rules rules = new Rules();
+            JSONObject keyJsonObject = Utils.getJsonObjectFromJsonArray(JsonFormConstants.KEY, jsonArray);
+            if(keyJsonObject != null) {
+                String key = keyJsonObject.optString(JsonFormConstants.KEY);
+                if (!ruleMap.containsKey(key)) {
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonRuleObject = jsonArray.optJSONObject(i);
+                        if (jsonRuleObject != null && !jsonRuleObject.has(JsonFormConstants.KEY)) {
+                            MVELRule rule = getDynamicRulesFromJsonObject(jsonRuleObject);
+                            if (rule != null) {
+                                rules.register(rule);
+                            }
+                        }
+                    }
+                    ruleMap.put(key, rules);
+                }
+                return ruleMap.get(key);
+            }
+            return null;
+        } catch (Exception e) {
+            Timber.e(e);
+            return null;
+        }
+    }
+
+    private MVELRule getDynamicRulesFromJsonObject(JSONObject jsonObjectDynamicRule) {
+        try {
+            MVELRule dynamicMvelRule = new MVELRule();
+            dynamicMvelRule.setDescription(jsonObjectDynamicRule.optString(RuleConstant.DESCRIPTION));
+            dynamicMvelRule.setPriority(jsonObjectDynamicRule.optInt(RuleConstant.PRIORITY));
+            dynamicMvelRule.when(jsonObjectDynamicRule.optString(RuleConstant.CONDITION));
+            dynamicMvelRule.then(jsonObjectDynamicRule.optString(RuleConstant.ACTIONS));
+            dynamicMvelRule.name(jsonObjectDynamicRule.optString(RuleConstant.NAME));
+            return dynamicMvelRule;
+        } catch (Exception e) {
+            Timber.e(e);
+            return null;
+        }
+    }
+
     public boolean getRelevance(Facts relevanceFact, String ruleFilename) {
+
         Facts facts = initializeFacts(relevanceFact);
+
         facts.put(RuleConstant.IS_RELEVANT, false);
+
         rules = getRulesFromAsset(RULE_FOLDER_PATH + ruleFilename);
+
+        processDefaultRules(rules, facts);
+
+        return facts.get(RuleConstant.IS_RELEVANT);
+    }
+
+    public boolean getDynamicRelevance(@NonNull Facts relevanceFact, @NonNull JSONArray rulesStrObject) {
+
+        Facts facts = initializeFacts(relevanceFact);
+
+        facts.put(RuleConstant.IS_RELEVANT, false);
+
+        rules = getDynamicRulesFromJsonArray(rulesStrObject);
+
         processDefaultRules(rules, facts);
 
         return facts.get(RuleConstant.IS_RELEVANT);
     }
 
     protected Facts initializeFacts(Facts facts) {
+
         if (globalValues != null) {
             for (Map.Entry<String, String> entry : globalValues.entrySet()) {
                 facts.put(RuleConstant.PREFIX.GLOBAL + entry.getKey(), getValue(entry.getValue()));
@@ -83,7 +148,7 @@ public class RulesEngineFactory implements RuleListener {
             Timber.e(e, "%s getRulesFromAsset", this.getClass().getCanonicalName());
             return null;
         } catch (Exception e) {
-            Timber.e(e, "%s getRulesFromAsset", this.getClass().getCanonicalName());
+            Timber.e(e);
             return null;
         }
     }
