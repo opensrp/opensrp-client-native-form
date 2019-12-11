@@ -75,6 +75,15 @@
             "text": "Complete"
           }
         ],
+        "relevance": {
+          "step1:moz_type": {
+            "ex-checkbox": [
+              {
+                "or": ["An. funestus"]
+              }
+            ]
+          }
+        },
         "v_required": {
           "value": true,
           "err": "Please specify the task status"
@@ -148,7 +157,7 @@
             "relevance": {
               "rules-engine": {
                 "ex-rules": {
-                  "rules-dynamic": "simple-rules.yml"
+                  "rules-dynamic": "repeating-groups-rules.yml"
                 }
               }
             }
@@ -385,7 +394,16 @@
             "openmrs_entity_id": "",
             "hint": "Add a comment"
           }
-        ]
+        ],
+        "relevance": {
+          "step1:moz_type": {
+            "ex-checkbox": [
+              {
+                "or": ["An. funestus"]
+              }
+            ]
+          }
+        }
       }
     ]
   }

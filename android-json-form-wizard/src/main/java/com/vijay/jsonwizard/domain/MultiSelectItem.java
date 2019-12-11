@@ -2,14 +2,6 @@ package com.vijay.jsonwizard.domain;
 
 import android.support.annotation.Nullable;
 
-import com.vijay.jsonwizard.constants.JsonFormConstants;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.List;
-
 public class MultiSelectItem {
     private String key;
     private String text;
