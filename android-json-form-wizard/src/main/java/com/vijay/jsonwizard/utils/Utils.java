@@ -13,14 +13,17 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.CompoundButton;
-import com.vijay.jsonwizard.customviews.FullScreenGenericPopupDialog;
+import com.vijay.jsonwizard.customviews.ExpansionPanelGenericPopupDialog;
 import com.vijay.jsonwizard.event.BaseEvent;
 import com.vijay.jsonwizard.rules.RuleConstant;
 import com.vijay.jsonwizard.views.CustomTextView;
@@ -226,6 +229,61 @@ public class Utils {
         return jsonObject;
     }
 
+    /**
+     * Get the actual radio buttons on the parent view given
+     *
+     * @param parent {@link ViewGroup}
+     * @return radioButtonList
+     */
+    public static List<RadioButton> getRadioButtons(ViewGroup parent) {
+        List<RadioButton> radioButtonList = new ArrayList<>();
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            View view = parent.getChildAt(i);
+            if (view instanceof RadioButton) {
+                radioButtonList.add((RadioButton) view);
+            } else if (view instanceof ViewGroup) {
+                List<RadioButton> nestedRadios = getRadioButtons((ViewGroup) view);
+                radioButtonList.addAll(nestedRadios);
+            }
+        }
+        return radioButtonList;
+    }
+
+    /**
+     * Resets the radio buttons specify text in another option is selected
+     *
+     * @param button {@link CompoundButton}
+     * @author kitoto
+     */
+    public static void resetRadioButtonsSpecifyText(RadioButton button) throws JSONException {
+        CustomTextView specifyText = (CustomTextView) button.getTag(R.id.specify_textview);
+        CustomTextView reasonsText = (CustomTextView) button.getTag(R.id.specify_reasons_textview);
+        CustomTextView extraInfoTextView = (CustomTextView) button
+                .getTag(R.id.specify_extra_info_textview);
+        JSONObject optionsJson = (JSONObject) button.getTag(R.id.option_json_object);
+        String radioButtonText = optionsJson.optString(JsonFormConstants.TEXT);
+        button.setText(radioButtonText);
+
+        if (specifyText != null && optionsJson.has(JsonFormConstants.CONTENT_INFO)) {
+            String specifyInfo = optionsJson.optString(JsonFormConstants.CONTENT_INFO);
+            String newText = "(" + specifyInfo + ")";
+            specifyText.setText(newText);
+            optionsJson.put(JsonFormConstants.SECONDARY_VALUE, "");
+        }
+
+        if (reasonsText != null) {
+            LinearLayout reasonTextViewParent = (LinearLayout) reasonsText.getParent();
+            LinearLayout radioButtonParent = (LinearLayout) button.getParent().getParent();
+            if (reasonTextViewParent.equals(radioButtonParent)) {
+                reasonsText.setVisibility(View.GONE);
+            }
+        }
+        if (extraInfoTextView != null) {
+            extraInfoTextView.setVisibility(View.VISIBLE);
+        }
+
+    }
+
     public List<String> createExpansionPanelChildren(JSONArray jsonArray) throws JSONException {
         List<String> stringList = new ArrayList<>();
         String label;
@@ -315,62 +373,7 @@ public class Utils {
                 object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.SPINNER);
     }
 
-    /**
-     * Get the actual radio buttons on the parent view given
-     *
-     * @param parent {@link ViewGroup}
-     * @return radioButtonList
-     */
-    public static List<RadioButton> getRadioButtons(ViewGroup parent) {
-        List<RadioButton> radioButtonList = new ArrayList<>();
-        for (int i = 0; i < parent.getChildCount(); i++) {
-            View view = parent.getChildAt(i);
-            if (view instanceof RadioButton) {
-                radioButtonList.add((RadioButton) view);
-            } else if (view instanceof ViewGroup) {
-                List<RadioButton> nestedRadios = getRadioButtons((ViewGroup) view);
-                radioButtonList.addAll(nestedRadios);
-            }
-        }
-        return radioButtonList;
-    }
-
-    /**
-     * Resets the radio buttons specify text in another option is selected
-     *
-     * @param button {@link CompoundButton}
-     * @author kitoto
-     */
-    public static void resetRadioButtonsSpecifyText(RadioButton button) throws JSONException {
-        CustomTextView specifyText = (CustomTextView) button.getTag(R.id.specify_textview);
-        CustomTextView reasonsText = (CustomTextView) button.getTag(R.id.specify_reasons_textview);
-        CustomTextView extraInfoTextView = (CustomTextView) button
-                .getTag(R.id.specify_extra_info_textview);
-        JSONObject optionsJson = (JSONObject) button.getTag(R.id.option_json_object);
-        String radioButtonText = optionsJson.optString(JsonFormConstants.TEXT);
-        button.setText(radioButtonText);
-
-        if (specifyText != null && optionsJson.has(JsonFormConstants.CONTENT_INFO)) {
-            String specifyInfo = optionsJson.optString(JsonFormConstants.CONTENT_INFO);
-            String newText = "(" + specifyInfo + ")";
-            specifyText.setText(newText);
-            optionsJson.put(JsonFormConstants.SECONDARY_VALUE, "");
-        }
-
-        if (reasonsText != null) {
-            LinearLayout reasonTextViewParent = (LinearLayout) reasonsText.getParent();
-            LinearLayout radioButtonParent = (LinearLayout) button.getParent().getParent();
-            if (reasonTextViewParent.equals(radioButtonParent)) {
-                reasonsText.setVisibility(View.GONE);
-            }
-        }
-        if (extraInfoTextView != null) {
-            extraInfoTextView.setVisibility(View.VISIBLE);
-        }
-
-    }
-
-    public void setChildKey(View view, String type, FullScreenGenericPopupDialog genericPopupDialog) {
+    public void setChildKey(View view, String type, ExpansionPanelGenericPopupDialog genericPopupDialog) {
         String childKey;
         if (type != null && (type.equals(JsonFormConstants.CHECK_BOX) || type.equals(JsonFormConstants.NATIVE_RADIO_BUTTON) || type.equals(JsonFormConstants.EXTENDED_RADIO_BUTTON))) {
             childKey = (String) view.getTag(com.vijay.jsonwizard.R.id.childKey);
@@ -378,7 +381,7 @@ public class Utils {
         }
     }
 
-    public void setExpansionPanelDetails(String type, String toolbarHeader, String container, FullScreenGenericPopupDialog genericPopupDialog) {
+    public void setExpansionPanelDetails(String type, String toolbarHeader, String container, ExpansionPanelGenericPopupDialog genericPopupDialog) {
         if (type != null && type.equals(JsonFormConstants.EXPANSION_PANEL)) {
             genericPopupDialog.setHeader(toolbarHeader);
             genericPopupDialog.setContainer(container);
@@ -396,6 +399,51 @@ public class Utils {
 
         ft.addToBackStack(null);
         return ft;
+    }
+
+    /**
+     * Enabling the expansion panel views after they were disabled on sub form opening.
+     *
+     * @param linearLayout {@link LinearLayout}
+     */
+    public void enableExpansionPanelViews(LinearLayout linearLayout) {
+        RelativeLayout layoutHeader = (RelativeLayout) linearLayout.getChildAt(0);
+        RelativeLayout expansionHeaderLayout = layoutHeader.findViewById(R.id.expansion_header_layout);
+        expansionHeaderLayout.setEnabled(true);
+        expansionHeaderLayout.setClickable(true);
+
+        ImageView statusImageView = expansionHeaderLayout.findViewById(R.id.statusImageView);
+        statusImageView.setEnabled(true);
+        statusImageView.setClickable(true);
+
+        CustomTextView topBarTextView = expansionHeaderLayout.findViewById(R.id.topBarTextView);
+        topBarTextView.setClickable(true);
+        topBarTextView.setEnabled(true);
+
+        LinearLayout contentLayout = (LinearLayout) linearLayout.getChildAt(1);
+        LinearLayout buttonLayout = contentLayout.findViewById(R.id.accordion_bottom_navigation);
+        Button okButton = buttonLayout.findViewById(R.id.ok_button);
+        okButton.setEnabled(true);
+        okButton.setClickable(true);
+    }
+
+
+    @NonNull
+    private static String cleanToken(String conditionTokenRaw) {
+        String conditionToken = conditionTokenRaw.trim();
+
+        for (int i = 0; i < conditionToken.length(); i++) {
+            if (JAVA_OPERATORS.contains(conditionToken.charAt(i))) {
+                if (i == 0) {
+                    conditionToken = cleanToken(conditionToken.substring(1));
+                } else {
+                    conditionToken = conditionToken.substring(0, conditionToken.indexOf(conditionToken.charAt(i)));
+                    break;
+                }
+            }
+        }
+
+        return conditionToken;
     }
 
     public static List<String> getConditionKeys(String condition) {
@@ -423,24 +471,6 @@ public class Utils {
         }
 
         return conditionString.replaceAll("  ", " ");
-    }
-
-    @NonNull
-    private static String cleanToken(String conditionTokenRaw) {
-        String conditionToken = conditionTokenRaw.trim();
-
-        for (int i = 0; i < conditionToken.length(); i++) {
-            if (JAVA_OPERATORS.contains(conditionToken.charAt(i))) {
-                if (i == 0) {
-                    conditionToken = cleanToken(conditionToken.substring(1));
-                } else {
-                    conditionToken = conditionToken.substring(0, conditionToken.indexOf(conditionToken.charAt(i)));
-                    break;
-                }
-            }
-        }
-
-        return conditionToken;
     }
 
     public static Iterable<Object> readYamlFile(String fileName, Context context) {

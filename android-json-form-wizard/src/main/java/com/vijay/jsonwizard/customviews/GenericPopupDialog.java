@@ -335,9 +335,25 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup dialogView = (ViewGroup) inflater.inflate(R.layout.native_form_generic_dialog, container, false);
 
-        Button cancelButton;
-        Button okButton;
+        attachOnShowListener();
 
+        List<View> viewList = initiateViews();
+        LinearLayout genericDialogContent = dialogView.findViewById(R.id.generic_dialog_content);
+        for (View view : viewList) {
+            genericDialogContent.addView(view);
+        }
+
+        attachDialogCancelButton(dialogView);
+        attachDialogOkButton(dialogView);
+
+        if (getDialog().getWindow() != null) {
+            getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        }
+        getJsonApi().invokeRefreshLogic(null, true, null, null);
+        return dialogView;
+    }
+
+    private void attachOnShowListener() {
         new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
@@ -347,13 +363,24 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
                         .hideSoftInputFromWindow(((Activity) context).getCurrentFocus().getWindowToken(), HIDE_NOT_ALWAYS);
             }
         };
+    }
 
-        List<View> viewList = initiateViews();
-        LinearLayout genericDialogContent = dialogView.findViewById(R.id.generic_dialog_content);
-        for (View view : viewList) {
-            genericDialogContent.addView(view);
-        }
+    private void attachDialogOkButton(ViewGroup dialogView) {
+        Button okButton;
+        okButton = dialogView.findViewById(R.id.generic_dialog_done_button);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                passData();
+                getJsonApi().setGenericPopup(null);
+                getJsonApi().updateGenericPopupSecondaryValues(null);
+                GenericPopupDialog.this.dismiss();
+            }
+        });
+    }
 
+    private void attachDialogCancelButton(ViewGroup dialogView) {
+        Button cancelButton;
         cancelButton = dialogView.findViewById(R.id.generic_dialog_cancel_button);
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -367,22 +394,6 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
                 GenericPopupDialog.this.dismiss();
             }
         });
-
-        okButton = dialogView.findViewById(R.id.generic_dialog_done_button);
-        okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                passData();
-                getJsonApi().setGenericPopup(null);
-                getJsonApi().updateGenericPopupSecondaryValues(null);
-                GenericPopupDialog.this.dismiss();
-            }
-        });
-        if (getDialog().getWindow() != null) {
-            getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-        }
-        getJsonApi().invokeRefreshLogic(null, true, null, null);
-        return dialogView;
     }
 
     @Override
@@ -408,8 +419,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
 
     protected List<View> initiateViews() {
         List<View> listOfViews = new ArrayList<>();
-        jsonFormInteractor
-                .fetchFields(listOfViews, getStepName(), getFormFragment(), getSpecifyContent(), getCommonListener(), true);
+        jsonFormInteractor.fetchFields(listOfViews, getStepName(), getFormFragment(), getSpecifyContent(), getCommonListener(), true);
         return listOfViews;
     }
 

@@ -2089,15 +2089,10 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     public void refreshExpansionPanel(RefreshExpansionPanelEvent refreshExpansionPanelEvent) {
         if (refreshExpansionPanelEvent != null) {
             try {
-                List<String> values;
-
-                if (refreshExpansionPanelEvent.getValues() != null) {
-                    values = utils.createExpansionPanelChildren(refreshExpansionPanelEvent.getValues());
-                } else {
-                    values = new ArrayList<>();
-                }
-
+                List<String> values = getExpansionPanelValues(refreshExpansionPanelEvent);
                 LinearLayout linearLayout = refreshExpansionPanelEvent.getLinearLayout();
+                utils.enableExpansionPanelViews(linearLayout);
+
                 RelativeLayout layoutHeader = (RelativeLayout) linearLayout.getChildAt(0);
                 ImageView status = layoutHeader.findViewById(R.id.statusImageView);
                 formUtils.updateExpansionPanelRecyclerView(values, status, getApplicationContext());
@@ -2108,7 +2103,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
                 LinearLayout buttonLayout = contentLayout.findViewById(R.id.accordion_bottom_navigation);
                 Button undoButton = buttonLayout.findViewById(R.id.undo_button);
-                if (values != null && values.size() > 0) {
+                if (values.size() > 0) {
                     undoButton.setVisibility(View.VISIBLE);
                     contentLayout.setVisibility(View.VISIBLE);
                     buttonLayout.setVisibility(View.VISIBLE);
@@ -2123,5 +2118,22 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 Timber.e(e, "JsonFormActivity --> refreshExpansionPanel");
             }
         }
+    }
+
+    /**
+     * Get the expansion panel values from the Refresh Expansion panel event {@link RefreshExpansionPanelEvent}
+     *
+     * @param refreshExpansionPanelEvent {@link RefreshExpansionPanelEvent}
+     * @return values {@link List<String>}
+     * @throws JSONException
+     */
+    private List<String> getExpansionPanelValues(RefreshExpansionPanelEvent refreshExpansionPanelEvent) throws JSONException {
+        List<String> values;
+        if (refreshExpansionPanelEvent.getValues() != null) {
+            values = utils.createExpansionPanelChildren(refreshExpansionPanelEvent.getValues());
+        } else {
+            values = new ArrayList<>();
+        }
+        return values;
     }
 }
