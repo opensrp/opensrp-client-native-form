@@ -1,0 +1,92 @@
+<resources>
+    <string name="app_name">jsonwizard</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Mipangilio</string>
+    <string name="badly_formed_date">Badly formed date</string>
+    <string name="badly_formed_time">Badly formed time</string>
+    <string name="ic_check_circle_blank">&#xe03e;</string>
+    <string name="ic_keyboard_arrow_down">&#xe0c5;</string>
+    <string name="ic_keyboard_arrow_left">&#xe0c6;</string>
+    <string name="ic_keyboard_arrow_right">&#xe0c7;</string>
+    <string name="ic_keyboard_arrow_up">&#xe0c8;</string>
+    <string name="confirm_form_close">Thibitisha kufunga fomu</string>
+    <string name="confirm_form_close_explanation">Una uhakika unataka kurudi nyuma? Takwimu zote ulizoingiza kwenye fomu hii zitafutika na kupotea.</string>
+    <string name="yes">Ndiyo</string>
+    <string name="no">Hapana</string>
+    <string name="cancel">Ghairi</string>
+    <string name="ok">OK</string>
+    <string name="record_location">Rekodi eneo</string>
+    <string name="latitude">Latitudo: %s</string>
+    <string name="longitude">Longitudo: %s</string>
+    <string name="altitude">Urefu toka usawa wa bahari: %s</string>
+    <string name="accuracy">Usahihi: %s</string>
+    <string name="loading_location">Eneo linarekodiwa</string>
+    <string name="could_not_get_your_location">Haijafanikiwa kupata GPS ya eneo</string>
+    <string name="using_provider">Kutumia %s mtoa huduma</string>
+    <string name="unknown_gps_accuracy">Usahihi haujulikani</string>
+    <string name="required">*</string>
+    <string name="info_label">Info Label</string>
+    <string name="label_text_string">%1$s %2$s</string>
+    <string name="the_toaster_icon">The toaster icon</string>
+    <string name="asterisks">*</string>
+    <string name="save">Hifadhi</string>
+    <string name="radio_button_tap_to_change">gusa ili kubadilisha</string>
+    <string name="select_one">Chagua namba</string>
+    <string name="done">Imefanyika</string>
+    <string name="please_wait_title">Tafadhali subiri</string>
+    <string name="creating_repeating_group_message">Tengeneza kundi linalojirudia</string>
+    <string name="launching_rdt_capture_message">Launching RDT capture widget</string>
+    <string name="repeating_group_max_value_err_msg">Namba ya makundi yanayojirudia hayawezi kuwa zaidi ya %1$d</string>
+    <string name="repeating_group_min_value_err_msg">Namba ya makundi yanayojirudia lazima iwe zaidi ya 0</string>
+    <string name="repeating_group_number_format_err_msg">Number of repeating groups must be an integer value</string>
+    <string name="enter_number_of_repeating_group_items">Enter # of repeating group items</string>
+    <string name="repeating_group_item">Item</string>
+    <string name="repeating_group_label">lebo_kundi_linalojirudia</string>
+
+    <string-array name="spinnerItems">
+        <item>item1</item>
+        <item>item2</item>
+        <item>item3</item>
+        <item>item4</item>
+    </string-array>
+
+    <string name="scan_qr_code_title">Scan msimbo wa QR</string>
+
+    <!--The barcode strings-->
+    <string name="permission_camera_rationale">Kamera inahitajika ili kuchukua picha</string>
+    <string name="no_camera_permission">Mfumo hauwezi kuendelea sababu hauruhusu upatikanaji wa kamera. Mfumo utafunga sasa.</string>
+    <string name="low_storage_error">Face detector dependencies cannot be downloaded due to low device storage</string>
+    <string name="title_activity_main">Barcode Reader Sample</string>
+    <string name="barcode_header">Click &quot;Soma Barcode&quot; kusoma barcode</string>
+    <string name="read_barcode">Soma Barcode</string>
+    <string name="auto_focus">Auto Focus</string>
+    <string name="use_flash">Tumia flash</string>
+    <string name="barcode_success">Usomaji wa Barcode umefanikiwa</string>
+    <string name="barcode_failure">Hakuna barcode iliyochukuliwa</string>
+    <string name="barcode_error">Kosa wakati wa usomaji wa barcode: %1$s</string>
+    <string name="allow_camera_management">Unatakiwa kuruhusu mfumo kutumia kamera ili kuscan QR codes&#8230;</string>
+    <string name="please_specify_content">Please specify content to be displayed by the pop up&#8230;</string>
+    <string name="previous">Iliyotangulia</string>
+    <string name="next">Inayofuata</string>
+    <string name="submit">Tuma</string>
+    <string name="the_extra_info_icon">The extra info Icon</string>
+    <string name="edit_button_label">Kitufe cha kuhariri</string>
+    <string name="info_icon">Info Icon</string>
+    <string name="attention">Attention</string>
+    <string name="json_form_error_msg" >%d kosa (makosa) limepatikana kwenye fomu. Tafadhali sahihisha halafu tuma.</string>
+    <string name="json_form_on_next_error_msg" >Tafadhali rekebisha kosa (makosa) kwenye fomu ili kuendelea</string>
+    <string name="go_to_step">Nenda kwenye hatua</string>
+    <string name="shows_image_on_dialog">onesha picha kwenye majadiliano</string>
+    <string name="undo_test_result">Rudisho mwanza kwa matokeo ya %1$s?</string>
+    <string name="record">Rekodi</string>
+    <string name="undo">Rudisha mwanzo</string>
+    <string name="info_icon_display">onyesho la icon ya taarifa zaidi</string>
+    <string name="status_icon_display">kuonyesha icon ya hali</string>
+    <string name="simprints_guid">GUID haipatikani</string>
+    <string name="simprints_init_fail">Kitambulisho cha mradi au kitambulisho cha mtumiaji au kitambulisho cha moduli hakijapatikana. Inaweza kutumia SimprintsLibrary.init</string>
+    <string name="permission_denied_title">Ruhusa imekataliwa</string>
+    <string name="permission_messege">App inahitaji ruhusa hiyo ya kukamata habari ya kifaa kinachohitajika wakati wa kuwasilisha fomu. Bila ruhusa hiyo, appK haitafanya kazi vizuri. Je, una uhakika unataka kukataa ruhusa hiyo? </string>
+    <string name="multiselect_msg_on_item_added">Ongezwa</string>
+    <string name="loading_multi_select_list">Inapakia</string>
+</resources>

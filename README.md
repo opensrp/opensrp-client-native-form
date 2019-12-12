@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/OpenSRP/opensrp-client-native-form.svg?branch=master)](https://travis-ci.org/OpenSRP/opensrp-client-native-form) [![Coverage Status](https://coveralls.io/repos/github/OpenSRP/opensrp-client-native-form/badge.svg?branch=master)](https://coveralls.io/github/OpenSRP/opensrp-client-native-form?branch=master) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/73c9d3b1fd9140fda8397ebe518825bc)](https://www.codacy.com/app/OpenSRP/opensrp-client-native-form?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=OpenSRP/opensrp-client-native-form&amp;utm_campaign=Badge_Grade)
+[![Build Status](https://travis-ci.org/OpenSRP/opensrp-client-native-form.svg?branch=master)](https://travis-ci.org/OpenSRP/opensrp-client-native-form) [![Coverage Status](https://coveralls.io/repos/github/OpenSRP/opensrp-client-native-form/badge.svg?branch=master)](https://coveralls.io/github/OpenSRP/opensrp-client-native-form?branch=master) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/bf52b1d28f8e4cd39243cff5f13ec395)](https://www.codacy.com/manual/OpenSRP/opensrp-client-native-form?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=OpenSRP/opensrp-client-native-form&amp;utm_campaign=Badge_Grade)
 
 [![Dristhi](https://raw.githubusercontent.com/OpenSRP/opensrp-client/master/opensrp-app/res/drawable-mdpi/login_logo.png)](https://smartregister.atlassian.net/wiki/dashboard.action)
 
@@ -1942,3 +1942,100 @@ The example below shows how to include the widget in a json form:
   }
 }
 ```
+### Date picker change year,month,date position programatically
+At DatePickerDialog added a method to set the ymdOrder called setYmdOrder.First at app side need to create a class which extend
+DatePickerFactory and override the method createDateDialog.Then set the order at method setYmdOrder()
+Example as below:
+  ````
+      public class CustomDatePickerFactory extends DatePickerFactory {
+        @Override
+        protected DatePickerDialog createDateDialog(Context context, TextView duration, MaterialEditText editText, JSONObject jsonObject) throws JSONException {
+            DatePickerDialog datePickerDialog = super.createDateDialog(context, duration, editText, jsonObject);
+            datePickerDialog.setYmdOrder(new char[]{'y', 'm', 'd'} );
+            return datePickerDialog;
+        }
+    }
+````
+and initialize this to create a CustomJsonFormInteractor extend JsonFormInteractor
+````
+    public class CustomJsonFormInteractor extends JsonFormInteractor {
+
+        private static final JsonFormInteractor INSTANCE = new CustomJsonFormInteractor();
+        private CustomJsonFormInteractor(){
+            super();
+        }
+
+        @Override
+        protected void registerWidgets() {
+            super.registerWidgets();
+            map.put(JsonFormConstants.DATE_PICKER, new CustomDatePickerFactory());
+        }
+
+        public static JsonFormInteractor getInstance() {
+            return INSTANCE;
+        }
+    }
+````
+and a your customjsonform fragment class initialize this interactor from createPresenter()
+````
+    public class CustomJsonFormFragment extends JsonWizardFormFragment {
+    .......
+    @Override
+        protected JsonFormFragmentPresenter createPresenter() {
+            return new JsonFormFragmentPresenter(this, CustomJsonFormInteractor.getInstance());
+        }
+        .....
+     }
+ ````
+ 
+ ### MultiSelectList Widget
+
+Getting started
+Add the following field in you form
+
+>       {
+>         "key": "disease_code",
+>         "openmrs_entity_parent": "",
+>         "openmrs_entity": "concept",
+>         "openmrs_entity_id": "",
+>         "sort": true,
+>         "groupings": "[A,B,C,D,E,W,X,Y,Z]",
+>         "sortClass": "<fqn of sorting comparator class>",
+>         "type": "multi_select_list",
+>         "buttonText": "+ Add disease code",
+>         "dialogTitle": "Add disease code",
+>         "searchHint": "Type Disease Name"
+>       }
+
+    sort - default false, if true keys of the jsonObject will be sorted alphabetically
+    
+    source - if specified repository class will be used to fetch data otherwise options data will be used
+     
+    sortClass - provide a class implementing Comparator<MultiSelectItem> then in it specify your sorting preference
+
+## Ways of loading data to the widget
+
+ 1. Using options attribute
+Must not specify the `source` feld
+>      "options": [
+>     				{
+>     					"key": "key1",
+>     					"text": "text1",
+>                         "openmrsentityparent":  "",
+>                         "openmrsentityid":  "",
+>                         "openmrsentity":  "",
+>     					"property": {
+>     						"property1": "er",
+>     						"property2":"er"
+>     					}
+>     				} 
+>     			]
+
+ 2. Using repository class
+ Must specify `source` field
+Create a class implementing [MultiSelectListRepository]([https://github.com/OpenSRP/opensrp-client-native-form/blob/add-repository-class/android-json-form-wizard/src/main/java/com/vijay/jsonwizard/interfaces/MultiSelectListRepository.java](https://github.com/OpenSRP/opensrp-client-native-form/blob/add-repository-class/android-json-form-wizard/src/main/java/com/vijay/jsonwizard/interfaces/MultiSelectListRepository.java))  then add it the field json object in place of  `fqn of sorting repository class`
+
+> `"repositoryClass": "<fqn of sorting repository class>"`
+
+
+ ![Sample Form Screenshot] (https://user-images.githubusercontent.com/2793306/68639670-7c959100-052f-11ea-8cc9-e5ddf2c288ff.png)

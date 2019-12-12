@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="NEXT_STATE" type="id" />
+    <item name="accordion_jsonObject" type="id" />
+    <item name="accordion_step_name" type="id"/>
+    <item name="accordion_listener" type="id"/>
+    <item name="accordion_context" type="id"/>
+    <item name="accordion_info_text" type="id"/>
+    <item name="accordion_info_title" type="id"/>
+    <item name="test_results" type="id"/>
+    <item name="header" type="id"/>
+    <item name="main_layout" type="id"/>
+    <item name="contact_container" type="id"/>
+    <item name="progress_dialog" type="id" />
 </resources>

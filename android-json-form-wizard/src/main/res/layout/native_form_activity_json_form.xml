@@ -1,31 +1,32 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
-                android:background="@color/white"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+    android:background="@color/white"
+    android:theme="@style/NativeFormsAppTheme">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/tb_top"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:paddingEnd="20dp"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
+        android:paddingEnd="20dp"
         app:theme="@style/AppTheme.DarkToolbar"/>
 
     <EditText
         android:id="@+id/default_focus_view"
         android:layout_width="1dp"
         android:layout_height="1dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true" />
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
                  android:id="@+id/container"
-                 android:layout_below="@+id/tb_top"
                  android:layout_width="match_parent"
-                 android:layout_height="match_parent" />
+                 android:layout_height="match_parent"
+                 android:layout_below="@+id/tb_top" />
 </RelativeLayout>

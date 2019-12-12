@@ -11,6 +11,8 @@ import com.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.utils.FormUtils;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,7 +28,7 @@ import org.powermock.reflect.Whitebox;
 import java.util.HashMap;
 import java.util.Map;
 
-@RunWith (PowerMockRunner.class)
+@RunWith(PowerMockRunner.class)
 public class FormUtilsTest extends BaseTest {
 
     private String optionKey = "";
@@ -50,7 +52,7 @@ public class FormUtilsTest extends BaseTest {
         formUtils = new FormUtils();
     }
 
-    @PrepareForTest ({TypedValue.class})
+    @PrepareForTest({TypedValue.class})
     @Test
     public void testSpToPx() {
         Application application = Mockito.spy(Application.class);
@@ -68,7 +70,7 @@ public class FormUtilsTest extends BaseTest {
         Assert.assertEquals(expected, px);
     }
 
-    @PrepareForTest ({TypedValue.class})
+    @PrepareForTest({TypedValue.class})
     @Test
     public void testDpToPx() {
         Application application = Mockito.spy(Application.class);
@@ -85,7 +87,7 @@ public class FormUtilsTest extends BaseTest {
         Assert.assertEquals(expected, px);
     }
 
-    @PrepareForTest ({TextUtils.class, TypedValue.class})
+    @PrepareForTest({TextUtils.class, TypedValue.class})
     @Test
     public void testGetValueFromSpOrDpOrPxWithAnSpInput() {
         Application application = Mockito.spy(Application.class);
@@ -105,7 +107,7 @@ public class FormUtilsTest extends BaseTest {
         Assert.assertEquals(expected, px);
     }
 
-    @PrepareForTest ({TextUtils.class, TypedValue.class, FormUtils.class})
+    @PrepareForTest({TextUtils.class, TypedValue.class, FormUtils.class})
     @Test
     public void testGetValueFromSpOrDpOrPxWithADpInput() {
         Application application = Mockito.spy(Application.class);
@@ -124,7 +126,7 @@ public class FormUtilsTest extends BaseTest {
         Assert.assertEquals(expected, px);
     }
 
-    @PrepareForTest ({TextUtils.class})
+    @PrepareForTest({TextUtils.class})
     @Test
     public void testGetValueFromSpOrDpOrPxWithAPxInput() {
         Application application = Mockito.spy(Application.class);
@@ -141,7 +143,7 @@ public class FormUtilsTest extends BaseTest {
         Assert.assertEquals(expected, px);
     }
 
-    @PrepareForTest ({TextUtils.class})
+    @PrepareForTest({TextUtils.class})
     @Test
     public void testGetValueFromSpOrDpOrPxWithAnyString() {
         Application application = Mockito.spy(Application.class);
@@ -158,7 +160,7 @@ public class FormUtilsTest extends BaseTest {
         Assert.assertEquals(expected, px);
     }
 
-    @PrepareForTest ({TextUtils.class})
+    @PrepareForTest({TextUtils.class})
     @Test
     public void testGetValueFromSpOrDpOrPxWithEmptyString() {
         Application application = Mockito.spy(Application.class);
@@ -173,7 +175,7 @@ public class FormUtilsTest extends BaseTest {
         Assert.assertEquals(expected, px);
     }
 
-    @PrepareForTest ({TextUtils.class})
+    @PrepareForTest({TextUtils.class})
     @Test
     public void testGetValueFromSpOrDPOrPxwithNull() {
         Application application = Mockito.spy(Application.class);
@@ -188,9 +190,13 @@ public class FormUtilsTest extends BaseTest {
 
     }
 
+    @PrepareForTest({TextUtils.class})
     @Test
     public void testAddAssignedValueForCheckBox() {
         String itemType = "check_box";
+
+        PowerMockito.mockStatic(TextUtils.class);
+        PowerMockito.when(!TextUtils.isEmpty(null)).thenReturn(true);
         Map<String, String> value = formUtils.addAssignedValue(itemKey, optionKey, keyValue, itemType, itemText);
         Assert.assertNotNull(value);
 
@@ -201,9 +207,13 @@ public class FormUtilsTest extends BaseTest {
 
     }
 
+    @PrepareForTest({TextUtils.class})
     @Test
     public void testAddAssignedValueForNativeRadio() {
         String itemType = "native_radio";
+
+        PowerMockito.mockStatic(TextUtils.class);
+        PowerMockito.when(!TextUtils.isEmpty(null)).thenReturn(true);
         Map<String, String> value = formUtils.addAssignedValue(itemKey, optionKey, keyValue, itemType, itemText);
         Assert.assertNotNull(value);
 
@@ -214,9 +224,13 @@ public class FormUtilsTest extends BaseTest {
 
     }
 
+    @PrepareForTest({TextUtils.class})
     @Test
     public void testAddAssignedValueForOtherWidget() {
         String itemType = "date_picker";
+
+        PowerMockito.mockStatic(TextUtils.class);
+        PowerMockito.when(!TextUtils.isEmpty(null)).thenReturn(true);
         Map<String, String> value = formUtils.addAssignedValue(itemKey, optionKey, keyValue, itemType, itemText);
         Assert.assertNotNull(value);
 
@@ -224,6 +238,25 @@ public class FormUtilsTest extends BaseTest {
         expectedValue.put(itemKey, keyValue + ";" + itemType);
 
         Assert.assertEquals(expectedValue, value);
+
+    }
+
+    @Test
+    public void testExtractOptionOpenMRSAttributes() throws Exception {
+        String optionItem = "\n" +
+                "        {\n" +
+                "          \"key\": \"1\",\n" +
+                "          \"text\": \"Not done\",\n" +
+                "          \"openmrs_entity_parent\": \"\",\n" +
+                "          \"openmrs_entity\": \"concept\",\n" +
+                "          \"openmrs_entity_id\": \"165269AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+                "        },";
+        JSONObject optionItemJson = new JSONObject(optionItem);
+        JSONArray valuesArray = new JSONArray();
+        String itemKey = "respiratory_exam_radio_button";
+
+        Whitebox.invokeMethod(formUtils, "extractOptionOpenMRSAttributes", valuesArray, optionItemJson, itemKey);
+        Assert.assertEquals(valuesArray.length(), 1);
 
     }
 }

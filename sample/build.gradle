@@ -4,9 +4,9 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'
-        classpath 'org.apache.commons:commons-lang3:3.3.2'
-        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1'
+        classpath 'com.android.tools.build:gradle:3.5.3'
+        classpath 'org.apache.commons:commons-lang3:3.9'
+        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.2'
     }
 }
 
@@ -49,4 +49,6 @@ dependencies {
         exclude group: 'com.android.support', module: 'recyclerview-v7'
     }
     implementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+    implementation 'org.greenrobot:eventbus:3.1.1'
 }

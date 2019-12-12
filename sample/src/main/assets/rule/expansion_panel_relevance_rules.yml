@@ -1,0 +1,28 @@
+---
+name: step1_blood_type_test_date
+description: blood_type_test_date
+priority: 1
+condition: "(step1_blood_type_test_status == 'done_earlier')"
+actions:
+- "isRelevant = true"
+---
+name: step1_blood_type
+description: blood_type
+priority: 1
+condition: "(step1_blood_type_test_status == 'done_today' || step1_blood_type_test_status == 'done_earlier')"
+actions:
+- "isRelevant = true"
+---
+name: step1_rh_factor
+description: rh_factor
+priority: 1
+condition: "(step1_blood_type_test_status == 'done_today' || step1_blood_type_test_status == 'done_earlier')"
+actions:
+- "isRelevant = true"
+---
+name: step1_rh_factor_toaster
+description: rh_factor
+priority: 1
+condition: "(step1_rh_factor != '' && step1_rh_factor == 'negative')"
+actions:
+- "isRelevant = true"

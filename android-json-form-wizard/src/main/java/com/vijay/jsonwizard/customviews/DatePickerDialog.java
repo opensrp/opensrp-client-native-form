@@ -34,6 +34,7 @@ public class DatePickerDialog extends DialogFragment {
     private long maxDate;
     private boolean calendarViewShown;
     private Context context;
+    private char[] ymdOrder = new char[]{'d', 'm', 'y'};
 
     public DatePickerDialog() {
         this.minDate = -1;
@@ -91,7 +92,7 @@ public class DatePickerDialog extends DialogFragment {
             calendar.setTime(date);
             setDate(calendar);
         }
-        DatePickerUtils.themeDatePicker(datePicker, new char[]{'d', 'm', 'y'});
+        DatePickerUtils.themeDatePicker(datePicker, ymdOrder);
 
         cancelButton = dialogView.findViewById(R.id.cancel_button);
         cancelButton.setOnClickListener(new View.OnClickListener() {
@@ -126,6 +127,10 @@ public class DatePickerDialog extends DialogFragment {
 
     public void setCalendarViewShown(boolean calendarViewShown) {
         this.calendarViewShown = calendarViewShown;
+    }
+
+    public void setYmdOrder(char[] ymdOrder) {
+        this.ymdOrder = ymdOrder;
     }
 
     public void setDate(Date date) {

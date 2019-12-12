@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -36,6 +35,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import timber.log.Timber;
 
 import static android.app.Activity.RESULT_OK;
 import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
@@ -80,8 +81,7 @@ public class BarcodeFactory implements FormWidgetFactory {
             editText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    launchBarcodeScanner((Activity) context, editText,
-                            jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
+                    addOnClickActions(context, editText, jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
                 }
             });
 
@@ -93,15 +93,12 @@ public class BarcodeFactory implements FormWidgetFactory {
                 }
             });
 
-            addOnBarCodeResultListeners(context, editText);
-
             GenericTextWatcher textWatcher = new GenericTextWatcher(stepName, formFragment, editText);
             textWatcher.addOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
                     if (hasFocus) {
-                        launchBarcodeScanner((Activity) context, editText,
-                                jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
+                        addOnClickActions(context, editText, jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
                     }
                 }
             });
@@ -132,6 +129,11 @@ public class BarcodeFactory implements FormWidgetFactory {
         return views;
     }
 
+    private void addOnClickActions(Context context, MaterialEditText editText, String barcodeType) {
+        addOnBarCodeResultListeners(context, editText);
+        launchBarcodeScanner((Activity) context, editText, barcodeType);
+    }
+
     protected void addOnBarCodeResultListeners(final Context context, final MaterialEditText editText) {
         if (context instanceof JsonApi) {
             JsonApi jsonApi = (JsonApi) context;
@@ -143,10 +145,10 @@ public class BarcodeFactory implements FormWidgetFactory {
                             if (requestCode == JsonFormConstants.BARCODE_CONSTANTS.BARCODE_REQUEST_CODE && resultCode == RESULT_OK) {
                                 if (data != null) {
                                     Barcode barcode = data.getParcelableExtra(JsonFormConstants.BARCODE_CONSTANTS.BARCODE_KEY);
-                                    Log.d("Scanned QR Code", barcode.displayValue);
+                                    Timber.d("Scanned QR Code %s ", barcode.displayValue);
                                     editText.setText(barcode.displayValue);
                                 } else
-                                    Log.i("", "NO RESULT FOR QR CODE");
+                                    Timber.i("NO RESULT FOR QR CODE");
                             }
                         }
                     });
@@ -192,8 +194,7 @@ public class BarcodeFactory implements FormWidgetFactory {
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                launchBarcodeScanner((Activity) context, editText,
-                        jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
+                addOnClickActions(context, editText, jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
             }
         });
 
@@ -222,12 +223,10 @@ public class BarcodeFactory implements FormWidgetFactory {
             } catch (SecurityException e) {
                 Utils.showToast(activity, activity.getApplicationContext().getResources().getString(R.string.allow_camera_management));
             }
-
         }
     }
 
     private boolean checkValue(String value) {
         return value.contains("ABC");
     }
-
 }

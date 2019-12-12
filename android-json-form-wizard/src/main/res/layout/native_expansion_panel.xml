@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/expansionHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp">
+
+        <RelativeLayout
+            android:id="@+id/expansion_header_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@+id/accordion_info_icon"
+            android:layout_toLeftOf="@+id/accordion_info_icon">
+
+            <ImageView
+                android:id="@+id/statusImageView"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="5dp"
+                android:contentDescription="@string/status_icon_display"
+                android:gravity="start|center_vertical"
+                android:padding="1dp"
+                android:src="@drawable/icon_task_256" />
+
+            <com.vijay.jsonwizard.views.CustomTextView
+                android:id="@+id/topBarTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_margin="5dp"
+                android:layout_toEndOf="@+id/statusImageView"
+                android:layout_toRightOf="@+id/statusImageView"
+                android:gravity="start|center_vertical"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp"
+                android:text=""
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+        </RelativeLayout>
+
+
+        <ImageView
+            android:id="@+id/accordion_info_icon"
+            android:layout_width="21dp"
+            android:layout_height="21dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@string/info_icon_display"
+            android:src="@drawable/ic_icon_info_filled"
+            android:visibility="gone" />
+    </RelativeLayout>
+    <LinearLayout
+        android:id="@+id/contentLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/contentView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/accordion_bottom_navigation"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_gravity="end"
+            android:layout_marginLeft="@dimen/accordion_content_margin"
+            android:layout_marginRight="@dimen/accordion_content_margin"
+            android:layout_marginBottom="5dp"
+            android:gravity="end"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/undo_button"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="15dp"
+                android:background="@null"
+                android:text="@string/undo"
+                android:textAllCaps="true"
+                android:textColor="@color/dialog_button_blue_color"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/ok_button"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:text="@string/record"
+                android:textAllCaps="true"
+                android:textColor="@color/dialog_button_blue_color"
+                android:visibility="gone" />
+        </LinearLayout>
+
+    </LinearLayout>
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@color/lighter_grey" />
+</LinearLayout>

@@ -1,4 +1,4 @@
-package com.jsonwizard.utils;
+package com.jsonwizard.application;
 
 import android.app.Application;
 
@@ -7,7 +7,7 @@ import com.vijay.jsonwizard.R;
 public class TestApplication extends Application {
     @Override
     public void onCreate() {
+        setTheme(R.style.NativeFormsAppTheme);
         super.onCreate();
-        setTheme(R.style.AppTheme);
     }
 }
