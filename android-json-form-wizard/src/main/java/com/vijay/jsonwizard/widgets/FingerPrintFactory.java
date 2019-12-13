@@ -3,6 +3,7 @@ package com.vijay.jsonwizard.widgets;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.text.TextUtils;
 import android.util.TypedValue;
@@ -86,7 +87,7 @@ public class FingerPrintFactory implements FormWidgetFactory {
                             if (requestCode == JsonFormConstants.ACTIVITY_REQUEST_CODE.REQUEST_CODE_REGISTER && resultCode == RESULT_OK) {
                                 if (data != null) {
 
-                                    SimPrintsRegistration registration = (SimPrintsRegistration)data.getSerializableExtra(SimPrintsConstantHelper.INTENT_DATA);
+                                    SimPrintsRegistration registration = (SimPrintsRegistration) data.getSerializableExtra(SimPrintsConstantHelper.INTENT_DATA);
                                     imageView.setTag(R.id.simprints_guid, registration.getGuid());
                                     setFingerprintDrawable(context, imageView, registration.getGuid(), true);
                                     Timber.d("Scanned Fingerprint GUID %s ", registration.getGuid());
@@ -101,16 +102,16 @@ public class FingerPrintFactory implements FormWidgetFactory {
     }
 
     private void setFingerprintDrawable(final Context context, final ImageView imageView,
-                                        String fingerprintValue, boolean isFromScan){
+                                        String fingerprintValue, boolean isFromScan) {
 
 
-        if (isFromScan && TextUtils.isEmpty(fingerprintValue)){
+        if (isFromScan && TextUtils.isEmpty(fingerprintValue)) {
             //From scanning fingerprint and no result has not been received
             imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.finger_print_failed));
-        }else if (isFromScan && !TextUtils.isEmpty(fingerprintValue)
-                || (!isFromScan && !TextUtils.isEmpty(fingerprintValue))){
+        } else if (isFromScan && !TextUtils.isEmpty(fingerprintValue)
+                || (!isFromScan && !TextUtils.isEmpty(fingerprintValue))) {
             imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.finger_print_done));
-        }else {
+        } else {
             imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.finger_print));
         }
 
@@ -215,7 +216,9 @@ public class FingerPrintFactory implements FormWidgetFactory {
         String imagePath = jsonObject.optString(JsonFormConstants.VALUE);
         if (!TextUtils.isEmpty(imagePath)) {
             imageView.setTag(R.id.imagePath, imagePath);
-            imageView.setImageBitmap(ImageUtils.loadBitmapFromFile(context, imagePath, ImageUtils.getDeviceWidth(context), FormUtils.dpToPixels(context, 200)));
+            Bitmap bitmap = ImageUtils.loadBitmapFromFile(context, imagePath, ImageUtils.getDeviceWidth(context), FormUtils.dpToPixels(context, 200));
+            if (bitmap != null)
+                imageView.setImageBitmap(bitmap);
         }
         setFingerprintDrawable(context, imageView, imagePath, false);
 
