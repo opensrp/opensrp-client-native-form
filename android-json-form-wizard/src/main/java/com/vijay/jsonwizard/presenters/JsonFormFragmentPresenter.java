@@ -874,8 +874,10 @@ public class JsonFormFragmentPresenter extends
                 Log.e(TAG, e.toString());
             }
         }
-        getView().writeValue(mStepName, parentKey, value, openMrsEntityParent, openMrsEntity,
-                openMrsEntityId, popup);
+        if (getView() != null) {
+            getView().writeValue(mStepName, parentKey, value, openMrsEntityParent, openMrsEntity,
+                    openMrsEntityId, popup);
+        }
     }
 
     private void createNumberSelector(View view) {
