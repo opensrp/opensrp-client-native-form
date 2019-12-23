@@ -37,7 +37,9 @@ import timber.log.Timber;
 
 import static com.vijay.jsonwizard.constants.JsonFormConstants.FIELDS;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.PARENT_REPEATING_GROUP;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.RELEVANCE;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.REPEATING_GROUP;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.TYPE;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUE;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.V_RELATIVE_MAX;
@@ -140,6 +142,9 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         for (int i = 0; i < repeatingGroupJson.length(); i++) {
             JSONObject element = repeatingGroupJson.getJSONObject(i);
             String elementType = element.optString(TYPE, null);
+            if(widgetArgs.getJsonObject().has(KEY)) {
+                element.put(PARENT_REPEATING_GROUP, widgetArgs.getJsonObject().get(KEY));
+            }
             if (elementType != null) {
                 addUniqueIdentifiers(element, groupUniqueId);
                 FormWidgetFactory factory = widgetArgs.getFormFragment().getPresenter().getInteractor().map.get(elementType);
@@ -150,7 +155,24 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
                 }
                 // add element to json form object to be written into
                 JSONObject step = ((JsonApi) widgetArgs.getContext()).getmJSONObject().getJSONObject(widgetArgs.getStepName());
-                step.getJSONArray(FIELDS).put(element);
+                JSONArray fields = step.getJSONArray(FIELDS);
+                int repeatingGroupIndex = 0;
+                JSONArray updatedFields = new JSONArray();
+                String repeatingGroupKey = widgetArgs.getJsonObject().getString(KEY);
+                for(int fieldIndex = 0; fieldIndex < fields.length(); fieldIndex++) {
+                    JSONObject fieldObject = fields.getJSONObject(fieldIndex);
+                    updatedFields.put(fieldObject);
+                    if(fieldObject.has(KEY) && fieldObject.getString(KEY).equals(repeatingGroupKey)) {
+                        repeatingGroupIndex = fieldIndex;
+                        break;
+                    }
+                }
+                updatedFields.put(element);
+                for(int fieldIndex = repeatingGroupIndex + 1; fieldIndex < fields.length(); fieldIndex++) {
+                    JSONObject fieldObject = fields.getJSONObject(fieldIndex);
+                    updatedFields.put(fieldObject);
+                }
+                step.put(FIELDS, updatedFields);
             }
         }
         repeatingGroup.setTag(R.id.repeating_group_key, groupUniqueId);

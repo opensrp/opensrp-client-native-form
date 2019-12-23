@@ -86,6 +86,7 @@ public class JsonFormConstants {
     public static final String MAX_SELECTION_VALUE = "max_value";
     public static final String EDIT_TYPE = "edit_type";
     public static final String TEXT = "text";
+    public static final String PARENT_REPEATING_GROUP = "parent_repeating_group";
     public static final String TEXT_SIZE = "text_size";
     public static final String TEXT_COLOR = "text_color";
     public static final String NUMBER_SELECTOR_SELCTED_TEXT_COLOR = "selected_text_color";
