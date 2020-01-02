@@ -57,7 +57,7 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
     private Map<String, List<Map<String, Object>>> rulesFileMap = new HashMap<>();
     private Map<Integer, String> repeatingGroupLayouts;
 
-    public AttachRepeatingGroupTask(final ViewParent parent, int numRepeatingGroups, Map<Integer, String> repeatingGroupLayouts,WidgetArgs widgetArgs,ImageButton doneButton) {
+    public AttachRepeatingGroupTask(final ViewParent parent, int numRepeatingGroups, Map<Integer, String> repeatingGroupLayouts, WidgetArgs widgetArgs, ImageButton doneButton) {
         this.rootLayout = (LinearLayout) parent;
         this.parent = parent;
         this.numRepeatingGroups = numRepeatingGroups;
@@ -122,7 +122,7 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         doneButton.setImageResource(R.drawable.ic_done_green);
     }
 
-    private LinearLayout buildRepeatingGroupLayout(ViewParent parent) throws Exception {
+    private LinearLayout buildRepeatingGroupLayout(final ViewParent parent) throws Exception {
         Context context = widgetArgs.getContext();
 
         LinearLayout repeatingGroup = new LinearLayout(context);
@@ -133,7 +133,21 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         EditText referenceEditText = (EditText) rootLayout.getChildAt(0);
         TextView repeatingGroupLabel = new TextView(context);
         formatRepeatingGroupLabelText(referenceEditText, repeatingGroupLabel, context);
+//        //delete btn
+//        Button  buttonDel = new Button(context);
+//        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(60, 60);
+//        layoutParams.gravity = Gravity.CENTER;
+//        buttonDel.setLayoutParams(layoutParams);
+//
+//        buttonDel.setBackgroundResource(R.drawable.ic_action_close_red);
+//        buttonDel.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                ((LinearLayout)parent).removeView((LinearLayout) v.getParent());
+//            }
+//        });
         repeatingGroup.addView(repeatingGroupLabel);
+
 
         JSONArray repeatingGroupJson = new JSONArray(repeatingGroupLayouts.get(((LinearLayout) parent).getId()));
         String groupUniqueId = UUID.randomUUID().toString().replace("-", "");
