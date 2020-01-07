@@ -213,6 +213,7 @@ public class JsonFormConstants {
     public static final String STEP = "step";
     public static final String RULE = "rule/";
     public static final String REFERENCE_EDIT_TEXT = "reference_edit_text";
+    public static final String DISPLAY_LABEL = "display_label";
 
     public interface MultiSelectUtils {
         String IS_HEADER = "isHeader";
