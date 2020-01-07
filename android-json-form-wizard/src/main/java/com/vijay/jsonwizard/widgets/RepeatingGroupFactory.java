@@ -73,7 +73,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
 
         }
 
-        api = (JsonApi) formFragment.getContext();
+        //api = (JsonApi) widgetArgs.getContext();
 
         repeatingGroupLayouts.put(rootLayoutId, repeatingGroupLayout.toString());
 
@@ -153,11 +153,15 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                 doneButton.setImageResource(R.drawable.ic_done_grey);
                 JsonFormFragmentPresenter.validate(widgetArgs.getFormFragment(), referenceEditText, false);
                 JSONObject repeatingObject = widgetArgs.getJsonObject();
+                /*
+                For repeating group, If need to know user selected value add text field in json form.
+                It is necessary to check if repeating group contain TEXT field, so that it shouldn't update
+                values field. As according to writeValues working.
+                */
                 if(repeatingObject.has(JsonFormConstants.TEXT)) {
                     try {
                         repeatingObject.put(JsonFormConstants.TEXT,s.toString());
-                        widgetArgs.setJsonObject(repeatingObject);
-                        api.writeValue(widgetArgs.getStepName(), widgetArgs.getJsonObject().getString(KEY),s.toString(),"", "", "", widgetArgs.isPopup());
+                        ((JsonApi) widgetArgs.getContext()).writeValue(widgetArgs.getStepName(), widgetArgs.getJsonObject().getString(KEY),s.toString(),"", "", "", widgetArgs.isPopup());
 
                     } catch (JSONException e) {
                         e.printStackTrace();

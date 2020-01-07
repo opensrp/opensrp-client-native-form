@@ -155,6 +155,14 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
                 }
                 // add element to json form object to be written into
                 JSONObject step = ((JsonApi) widgetArgs.getContext()).getmJSONObject().getJSONObject(widgetArgs.getStepName());
+                /*
+                Required to add Repeating group section just after repeating group
+                So that when you comeback to repeated group section step, all child sections
+                should be visible after that Repeating group. i.e. should add all child just after
+                repeating group field.
+                FIXED: Should add repeating group sections after repeating group field, not at end of
+                step.
+                 */
                 JSONArray fields = step.getJSONArray(FIELDS);
                 int repeatingGroupIndex = 0;
                 JSONArray updatedFields = new JSONArray();
