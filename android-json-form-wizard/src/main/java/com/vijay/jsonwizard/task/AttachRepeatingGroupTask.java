@@ -39,7 +39,6 @@ import static com.vijay.jsonwizard.constants.JsonFormConstants.FIELDS;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.PARENT_REPEATING_GROUP;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.RELEVANCE;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.REPEATING_GROUP;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.TYPE;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUE;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.V_RELATIVE_MAX;

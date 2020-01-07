@@ -4,7 +4,6 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
@@ -181,13 +180,13 @@ public class JsonFormInteractor {
 
             for (int i = 0; i < fields.length(); i++) {
                 JSONObject childJson = fields.getJSONObject(i);
-                List<View> views = fetchViews(viewsFromJson, stepName, formFragment, childJson.getString(JsonFormConstants.TYPE), childJson,
+                List<View> views = fetchViews(viewsFromJson, stepName, formFragment, childJson.getString(TYPE), childJson,
                         listener, popup);
                 if (childJson.get(TYPE).equals(REPEATING_GROUP)) {
                     for (int j = i + 1; j < fields.length(); j++) {
                         JSONObject repeatingChildJson = fields.getJSONObject(j);
                         if (repeatingChildJson.has(PARENT_REPEATING_GROUP) && repeatingChildJson.getString(PARENT_REPEATING_GROUP).equals(childJson.getString(KEY))) {
-                            List<View> childViews = fetchViews(viewsFromJson, stepName, formFragment, repeatingChildJson.getString(JsonFormConstants.TYPE), repeatingChildJson,
+                            List<View> childViews = fetchViews(viewsFromJson, stepName, formFragment, repeatingChildJson.getString(TYPE), repeatingChildJson,
                                     listener, popup);
 
                             final int childCount = childViews.size();

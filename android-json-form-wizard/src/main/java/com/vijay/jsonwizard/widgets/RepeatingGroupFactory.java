@@ -41,7 +41,6 @@ import java.util.Map;
 
 import timber.log.Timber;
 
-import static com.vijay.jsonwizard.constants.JsonFormConstants.COUNT;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUE;
 
@@ -53,7 +52,6 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
     private final String REFERENCE_EDIT_TEXT_HINT = "reference_edit_text_hint";
     private final String REPEATING_GROUP_LABEL = "repeating_group_label";
     private static Map<Integer, String> repeatingGroupLayouts = new HashMap<>();
-    private JsonApi api;
     private ImageButton doneButton;
     private WidgetArgs widgetArgs;
 
