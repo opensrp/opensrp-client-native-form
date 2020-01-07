@@ -152,10 +152,23 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                 JsonFormFragmentPresenter.validate(widgetArgs.getFormFragment(), referenceEditText, false);
                 JSONObject repeatingObject = widgetArgs.getJsonObject();
                 /*
-                For repeating group, If need to know user selected value add text field in json form.
-                It is necessary to check if repeating group contain TEXT field, so that it shouldn't update
-                values field. As according to writeValues working.
+                For repeating group, If you need to know selected repeating group count value,
+                 add text field in JSON form.
+
+                 It is necessary to check if repeating the group contains the TEXT field so that it
+                 shouldn't update the values field. According to write Values working.
                 */
+
+                /*
+                e.g
+                {
+                    "key": "dips",
+                    "type": "repeating_group",
+                    "text": "0",
+                    ...
+                    ...
+                 It will update text field with the user selected count.
+                 */
                 if(repeatingObject.has(JsonFormConstants.TEXT)) {
                     try {
                         repeatingObject.put(JsonFormConstants.TEXT,s.toString());
