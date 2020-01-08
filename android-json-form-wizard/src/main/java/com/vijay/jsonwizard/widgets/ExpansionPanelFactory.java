@@ -12,6 +12,8 @@ import android.widget.RelativeLayout;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.event.ExpansionPanelInflateEvent;
+import com.vijay.jsonwizard.event.RefreshExpansionPanelEvent;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
@@ -79,6 +81,7 @@ public class ExpansionPanelFactory implements FormWidgetFactory {
         attachLayout(stepName, context, jsonFormFragment, jsonObject, commonListener, rootLayout);
 
         views.add(rootLayout);
+        Utils.postEvent(new ExpansionPanelInflateEvent(jsonObject, rootLayout));
         return views;
     }
 
