@@ -81,6 +81,7 @@ public class ExpansionPanelFactory implements FormWidgetFactory {
         attachLayout(stepName, context, jsonFormFragment, jsonObject, commonListener, rootLayout);
 
         views.add(rootLayout);
+        //Inform user regarding expansion panel update. So that can perform any business logic based on it.
         Utils.postEvent(new ExpansionPanelInflateEvent(jsonObject, rootLayout));
         return views;
     }
