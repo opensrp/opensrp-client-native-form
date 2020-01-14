@@ -169,7 +169,7 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         formattedLabel.setSpan(new StyleSpan(Typeface.ITALIC), 0, formattedLabel.length(), 0);
         repeatingGroupLabel.setText(formattedLabel);
         repeatingGroupLabel.setTextSize(context.getResources().getInteger(R.integer.repeating_group_label_text_size));
-        repeatingGroupLabel.setTextColor(context.getColor(REPEATING_GROUP_LABEL_TEXT_COLOR));
+        repeatingGroupLabel.setTextColor(context.getResources().getColor(REPEATING_GROUP_LABEL_TEXT_COLOR));
         referenceEditText.setTag(R.id.repeating_group_item_count, repeatingGroupItemCount + 1);
     }
 
