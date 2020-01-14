@@ -148,10 +148,16 @@ public class MultiSelectListFactory implements FormWidgetFactory {
 
     protected List<MultiSelectItem> prepareSelectedData() {
         try {
-            JSONArray jsonValueArray = jsonObject.has(JsonFormConstants.VALUE) ? jsonObject.getJSONArray(JsonFormConstants.VALUE) : null;
+            JSONArray jsonValueArray = jsonObject.has(JsonFormConstants.VALUE) ? jsonObject.optJSONArray(JsonFormConstants.VALUE) : null;
             if (jsonValueArray != null) {
                 return MultiSelectListUtils.processOptionsJsonArray(jsonValueArray);
             }
+
+            jsonValueArray = jsonObject.has(JsonFormConstants.VALUE) ? new JSONArray(jsonObject.optString(JsonFormConstants.VALUE)) : null;
+            if (jsonValueArray != null) {
+                return MultiSelectListUtils.processOptionsJsonArray(jsonValueArray);
+            }
+
         } catch (JSONException e) {
             Timber.e(e);
         }
