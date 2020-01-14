@@ -132,22 +132,11 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         LinearLayout rootLayout = (LinearLayout) ((LinearLayout) parent).getChildAt(0);
         EditText referenceEditText = (EditText) rootLayout.getChildAt(0);
         TextView repeatingGroupLabel = new TextView(context);
-        formatRepeatingGroupLabelText(referenceEditText, repeatingGroupLabel, context);
-//        //delete btn
-//        Button  buttonDel = new Button(context);
-//        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(60, 60);
-//        layoutParams.gravity = Gravity.CENTER;
-//        buttonDel.setLayoutParams(layoutParams);
-//
-//        buttonDel.setBackgroundResource(R.drawable.ic_action_close_red);
-//        buttonDel.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                ((LinearLayout)parent).removeView((LinearLayout) v.getParent());
-//            }
-//        });
-        repeatingGroup.addView(repeatingGroupLabel);
+        if (widgetArgs.getJsonObject().optBoolean(JsonFormConstants.RepeatingGroupFactory.SHOW_GROUP_LABEL, true)) {
+            formatRepeatingGroupLabelText(referenceEditText, repeatingGroupLabel, context);
+        }
 
+        repeatingGroup.addView(repeatingGroupLabel);
 
         JSONArray repeatingGroupJson = new JSONArray(repeatingGroupLayouts.get(((LinearLayout) parent).getId()));
         String groupUniqueId = UUID.randomUUID().toString().replace("-", "");
