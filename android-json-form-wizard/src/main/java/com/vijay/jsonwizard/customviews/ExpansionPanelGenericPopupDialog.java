@@ -28,6 +28,7 @@ import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.SecondaryValueModel;
 import com.vijay.jsonwizard.utils.Utils;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -365,7 +366,12 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
                 JSONObject openMRSAttributes = getFieldOpenMRSAttributes(field);
                 String key = field.getString(JsonFormConstants.KEY);
                 String type = field.getString(JsonFormConstants.TYPE);
-                String label = JsonFormConstants.HIDDEN.equals(type) ? JsonFormConstants.HIDDEN : getWidgetLabel(field);
+                String label;
+                if (JsonFormConstants.HIDDEN.equals(type)) {
+                    label = JsonFormConstants.HIDDEN;
+                } else {
+                    label = getWidgetLabel(field);
+                }
                 JSONArray values = new JSONArray();
                 if (JsonFormConstants.CHECK_BOX.equals(field.getString(JsonFormConstants.TYPE)) && field.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
                     values = getOptionsValueCheckBox(field.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME));
@@ -523,6 +529,10 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
         }
     }
 
+    /*
+    This Native radio block caters for situations where the radio button used has no label provide but is required to be displayed on the answers on the expansion panel content.
+     Display label will be used and the label when the answers are display.
+     */
     private String getWidgetLabel(JSONObject jsonObject) throws JSONException {
         String label = "";
         String widgetType = jsonObject.getString(JsonFormConstants.TYPE);
@@ -531,6 +541,13 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
                 case JsonFormConstants.EDIT_TEXT:
                 case JsonFormConstants.DATE_PICKER:
                     label = jsonObject.optString(JsonFormConstants.HINT, "");
+                    break;
+                case JsonFormConstants.NATIVE_RADIO_BUTTON:
+                    if (StringUtils.isNotBlank(jsonObject.optString(JsonFormConstants.DISPLAY_LABEL))) {
+                        label = jsonObject.optString(JsonFormConstants.DISPLAY_LABEL, "");
+                    } else {
+                        label = jsonObject.optString(JsonFormConstants.LABEL, "");
+                    }
                     break;
                 default:
                     label = jsonObject.optString(JsonFormConstants.LABEL, "");

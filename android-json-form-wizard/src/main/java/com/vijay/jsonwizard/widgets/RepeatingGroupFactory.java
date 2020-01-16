@@ -162,7 +162,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         return getViewsFromJson(stepName, context, formFragment, jsonObject, listener, false);
     }
 
-    private void addOnDoneAction(TextView textView) {
+    protected void addOnDoneAction(TextView textView) {
         try {
             InputMethodManager inputMethodManager = (InputMethodManager) widgetArgs.getFormFragment().getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0);

@@ -11,7 +11,6 @@ import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
 import android.support.v4.util.TimeUtils;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -34,6 +33,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -58,13 +58,8 @@ import java.util.concurrent.TimeUnit;
 import timber.log.Timber;
 
 public class Utils {
-
-    private static final String TAG = Utils.class.getCanonicalName();
-
     private static ProgressDialog progressDialog;
-
     public final static List<String> PREFICES_OF_INTEREST = Arrays.asList(RuleConstant.PREFIX.GLOBAL, RuleConstant.STEP);
-
     public final static Set<Character> JAVA_OPERATORS = new HashSet<>(
             Arrays.asList('(', '!', ',', '?', '+', '-', '*', '/', '%', '+', '-', '.', '^', ')', '<', '>', '=', '{', '}', ':',
                     ';', '[', ']'));
@@ -78,12 +73,11 @@ public class Utils {
     }
 
     public static Date getDateFromString(String dtStart) {
-        if (!"0".equals(dtStart)) {
+        if (StringUtils.isNotBlank(dtStart) && !"0".equals(dtStart)) {
             try {
-                Date date = DatePickerFactory.DATE_FORMAT.parse(dtStart);
-                return date;
+                return DatePickerFactory.DATE_FORMAT.parse(dtStart);
             } catch (ParseException e) {
-                Log.e(TAG, e.getMessage(), e);
+                Timber.e(e, " --> getDateFromString");
                 return null;
             }
         } else {
@@ -95,7 +89,7 @@ public class Utils {
         try {
             return DatePickerFactory.DATE_FORMAT.format(date);
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e, " --> getStringFromDate");
             return null;
         }
     }
@@ -122,7 +116,7 @@ public class Utils {
                 try {
                     now = FormUtils.getDate(endDate);
                 } catch (Exception e) {
-                    Log.e(TAG, e.getMessage(), e);
+                    Timber.e(e, " --> getDuration");
                 }
             }
             now.set(Calendar.HOUR_OF_DAY, 0);

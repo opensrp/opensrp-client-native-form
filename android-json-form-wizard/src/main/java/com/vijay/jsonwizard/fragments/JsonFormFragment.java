@@ -378,7 +378,8 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
                 ImageView imageView = (ImageView) view;
                 String key = (String) imageView.getTag(R.id.key);
                 if (key.equals(currentKey)) {
-                    imageView.setImageBitmap(bitmap);
+                    if (bitmap != null)
+                        imageView.setImageBitmap(bitmap);
                     imageView.setVisibility(View.VISIBLE);
                     imageView.setTag(R.id.imagePath, imagePath);
                 }
@@ -612,7 +613,8 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     }
 
     protected class BottomNavigationListener implements View.OnClickListener {
-        @Override public void onClick(View v) {
+        @Override
+        public void onClick(View v) {
             if (v.getId() == R.id.next_button) {
                 Object isSubmit = v.getTag(R.id.submit);
                 if (isSubmit != null && Boolean.valueOf(isSubmit.toString())) {

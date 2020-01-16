@@ -57,7 +57,7 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
     private Map<String, List<Map<String, Object>>> rulesFileMap = new HashMap<>();
     private Map<Integer, String> repeatingGroupLayouts;
 
-    public AttachRepeatingGroupTask(final ViewParent parent, int numRepeatingGroups, Map<Integer, String> repeatingGroupLayouts,WidgetArgs widgetArgs,ImageButton doneButton) {
+    public AttachRepeatingGroupTask(final ViewParent parent, int numRepeatingGroups, Map<Integer, String> repeatingGroupLayouts, WidgetArgs widgetArgs, ImageButton doneButton) {
         this.rootLayout = (LinearLayout) parent;
         this.parent = parent;
         this.numRepeatingGroups = numRepeatingGroups;
@@ -122,7 +122,7 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         doneButton.setImageResource(R.drawable.ic_done_green);
     }
 
-    private LinearLayout buildRepeatingGroupLayout(ViewParent parent) throws Exception {
+    private LinearLayout buildRepeatingGroupLayout(final ViewParent parent) throws Exception {
         Context context = widgetArgs.getContext();
 
         LinearLayout repeatingGroup = new LinearLayout(context);
@@ -132,7 +132,10 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         LinearLayout rootLayout = (LinearLayout) ((LinearLayout) parent).getChildAt(0);
         EditText referenceEditText = (EditText) rootLayout.getChildAt(0);
         TextView repeatingGroupLabel = new TextView(context);
-        formatRepeatingGroupLabelText(referenceEditText, repeatingGroupLabel, context);
+        if (widgetArgs.getJsonObject().optBoolean(JsonFormConstants.RepeatingGroupFactory.SHOW_GROUP_LABEL, true)) {
+            formatRepeatingGroupLabelText(referenceEditText, repeatingGroupLabel, context);
+        }
+
         repeatingGroup.addView(repeatingGroupLabel);
 
         JSONArray repeatingGroupJson = new JSONArray(repeatingGroupLayouts.get(((LinearLayout) parent).getId()));
@@ -166,7 +169,7 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         formattedLabel.setSpan(new StyleSpan(Typeface.ITALIC), 0, formattedLabel.length(), 0);
         repeatingGroupLabel.setText(formattedLabel);
         repeatingGroupLabel.setTextSize(context.getResources().getInteger(R.integer.repeating_group_label_text_size));
-        repeatingGroupLabel.setTextColor(context.getColor(REPEATING_GROUP_LABEL_TEXT_COLOR));
+        repeatingGroupLabel.setTextColor(context.getResources().getColor(REPEATING_GROUP_LABEL_TEXT_COLOR));
         referenceEditText.setTag(R.id.repeating_group_item_count, repeatingGroupItemCount + 1);
     }
 
