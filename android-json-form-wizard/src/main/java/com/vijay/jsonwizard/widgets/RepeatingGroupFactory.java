@@ -1,8 +1,10 @@
 package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -16,6 +18,7 @@ import android.widget.TextView;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rengwuxian.materialedittext.validation.RegexpValidator;
+import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.WidgetArgs;
@@ -90,8 +93,43 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         });
 
         ((JsonApi) context).addFormDataView(referenceEditText);
+        setWidgetArgsTags(rootLayout);
+        prepareViewChecks(rootLayout, context);
 
         return views;
+    }
+
+    private void setWidgetArgsTags(@NonNull LinearLayout rootLayout) {
+        JSONArray canvasIds = new JSONArray();
+        rootLayout.setId(ViewUtil.generateViewId());
+        canvasIds.put(rootLayout.getId());
+        rootLayout.setTag(R.id.canvas_ids, canvasIds.toString());
+        rootLayout.setTag(R.id.key, widgetArgs.getJsonObject().optString(JsonFormConstants.KEY));
+        rootLayout.setTag(R.id.type, widgetArgs.getJsonObject().optString(JsonFormConstants.TYPE));
+        rootLayout.setTag(R.id.extraPopup, widgetArgs.isPopup());
+        rootLayout.setTag(R.id.address, widgetArgs.getStepName() + ":" + widgetArgs.getJsonObject().optString(JsonFormConstants.KEY));
+    }
+
+    private void prepareViewChecks(@NonNull LinearLayout view, @NonNull Context context) {
+        String relevance = widgetArgs.getJsonObject().optString(JsonFormConstants.RELEVANCE);
+        String constraints = widgetArgs.getJsonObject().optString(JsonFormConstants.CONSTRAINTS);
+        String calculation = widgetArgs.getJsonObject().optString(JsonFormConstants.CALCULATION);
+
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+            view.setTag(R.id.relevance, relevance);
+            ((JsonApi) context).addSkipLogicView(view);
+        }
+
+        if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
+            view.setTag(R.id.constraints, constraints);
+            ((JsonApi) context).addConstrainedView(view);
+        }
+
+        if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
+            view.setTag(R.id.calculation, calculation);
+            ((JsonApi) context).addCalculationLogicView(view);
+        }
+
     }
 
     private void setUpReferenceEditText(final MaterialEditText referenceEditText, String referenceEditTextHint, String repeatingGroupLabel) throws JSONException {
