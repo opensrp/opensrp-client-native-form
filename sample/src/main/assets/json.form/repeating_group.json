@@ -75,6 +75,15 @@
             "text": "Complete"
           }
         ],
+        "relevance": {
+          "step1:moz_type": {
+            "ex-checkbox": [
+              {
+                "or": ["An. funestus"]
+              }
+            ]
+          }
+        },
         "v_required": {
           "value": true,
           "err": "Please specify the task status"
@@ -116,10 +125,6 @@
             "v_numeric_integer": {
               "value": "true",
               "err": "Must be a rounded number"
-            },
-            "v_required": {
-              "value": true,
-              "err": "Please specify the total # of larvae collected"
             }
           },
           {
@@ -132,10 +137,6 @@
             "v_numeric_integer": {
               "value": "true",
               "err": "Must be a rounded number"
-            },
-            "v_relative_max": {
-              "value": "larvae_total",
-              "err": "# of stage 1-2 larvae cannot be greater than the total # of larvae collected"
             }
           },
           {
@@ -152,6 +153,13 @@
             "v_relative_max": {
               "value": "larvae_total",
               "err": "# of stage 3-4 larvae cannot be greater than the total # of larvae collected"
+            },
+            "relevance": {
+              "rules-engine": {
+                "ex-rules": {
+                  "rules-dynamic": "repeating-groups-rules.yml"
+                }
+              }
             }
           },
           {
@@ -386,7 +394,16 @@
             "openmrs_entity_id": "",
             "hint": "Add a comment"
           }
-        ]
+        ],
+        "relevance": {
+          "step1:moz_type": {
+            "ex-checkbox": [
+              {
+                "or": ["An. funestus"]
+              }
+            ]
+          }
+        }
       }
     ]
   }

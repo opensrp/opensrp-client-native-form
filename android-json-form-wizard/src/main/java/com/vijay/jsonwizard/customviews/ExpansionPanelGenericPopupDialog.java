@@ -28,6 +28,7 @@ import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.SecondaryValueModel;
 import com.vijay.jsonwizard.utils.Utils;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,7 +41,7 @@ import timber.log.Timber;
 
 import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 
-public class FullScreenGenericPopupDialog extends GenericPopupDialog {
+public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
     protected Toolbar mToolbar;
     protected String container;
     private Map<String, ExpansionPanelValuesModel> secondaryValuesMap = new HashMap<>();
@@ -49,6 +50,7 @@ public class FullScreenGenericPopupDialog extends GenericPopupDialog {
     private Context context;
     private String header;
     private LinearLayout linearLayout;
+    private Utils utils = new Utils();
 
     @Override
     public void onAttach(Context context) {
@@ -67,9 +69,8 @@ public class FullScreenGenericPopupDialog extends GenericPopupDialog {
         }
 
         this.activity = (Activity) context;
-        setJsonApi((JsonApi) activity);
-
         try {
+            setJsonApi((JsonApi) activity);
             setMainFormFields(formUtils.getFormFields(getStepName(), context));
             getJsonApi().setGenericPopup(this);
             setGenericPopUpDialog();
@@ -78,14 +79,13 @@ public class FullScreenGenericPopupDialog extends GenericPopupDialog {
             loadSubForms();
             getJsonApi().updateGenericPopupSecondaryValues(getSpecifyContent());
         } catch (JSONException e) {
-            Timber.e(e, "FullScreenGenericPopupDialog --> onCreate");
+            Timber.e(e, "ExpansionPanelGenericPopupDialogTask --> doInBackground");
         }
-
         setStyle(DialogFragment.STYLE_NORMAL, R.style.FullScreenDialogStyle);
     }
 
     @Override
-    protected void loadPartialSecondaryValues() throws JSONException {
+    public void loadPartialSecondaryValues() throws JSONException {
         if (!TextUtils.isEmpty(getWidgetType()) && getWidgetType().equals(JsonFormConstants.EXPANSION_PANEL)) {
             if (getMainFormFields() != null && getMainFormFields().length() > 0) {
                 for (int i = 0; i < getMainFormFields().length(); i++) {
@@ -101,7 +101,7 @@ public class FullScreenGenericPopupDialog extends GenericPopupDialog {
     }
 
     @Override
-    protected void createSecondaryValuesMap() {
+    public void createSecondaryValuesMap() {
         JSONObject jsonObject;
         if (!TextUtils.isEmpty(getWidgetType()) && getWidgetType().equals(JsonFormConstants.EXPANSION_PANEL)) {
             if (getSecondaryValues() != null) {
@@ -134,7 +134,7 @@ public class FullScreenGenericPopupDialog extends GenericPopupDialog {
     }
 
     @Override
-    protected void loadSubForms() {
+    public void loadSubForms() {
         if (!TextUtils.isEmpty(getFormIdentity())) {
             JSONObject subForm = getSubForm();
             if (subForm != null) {
@@ -145,7 +145,7 @@ public class FullScreenGenericPopupDialog extends GenericPopupDialog {
                     } else {
                         Utils.showToast(activity, activity.getApplicationContext().getResources()
                                 .getString(com.vijay.jsonwizard.R.string.please_specify_content));
-                        FullScreenGenericPopupDialog.this.dismiss();
+                        ExpansionPanelGenericPopupDialog.this.dismiss();
                     }
                 } catch (JSONException e) {
                     Timber.e(e, "FullScreenGenericPopupDialog --> loadSubForms");
@@ -193,12 +193,14 @@ public class FullScreenGenericPopupDialog extends GenericPopupDialog {
         } else {
             super.addFormValues(formValues);
         }
+
         return formValues;
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         if (!TextUtils.isEmpty(getWidgetType()) && getWidgetType().equals(JsonFormConstants.EXPANSION_PANEL)) {
             ViewGroup dialogView = (ViewGroup) inflater.inflate(R.layout.fragment_generic_dialog, container, false);
             mToolbar = dialogView.findViewById(R.id.generic_toolbar);
@@ -208,18 +210,8 @@ public class FullScreenGenericPopupDialog extends GenericPopupDialog {
             if (!TextUtils.isEmpty(header)) {
                 toolBar.setText(header);
             }
-            AppCompatImageButton cancelButton;
-            Button okButton;
 
-            new DialogInterface.OnShowListener() {
-                @Override
-                public void onShow(DialogInterface dialog) {
-                    InputMethodManager inputManager =
-                            (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-                    inputManager.hideSoftInputFromWindow(((Activity) context).getCurrentFocus().getWindowToken(),
-                            HIDE_NOT_ALWAYS);
-                }
-            };
+            attachDialogShowListener();
 
             List<View> viewList = initiateViews();
             LinearLayout genericDialogContent = dialogView.findViewById(R.id.generic_dialog_content);
@@ -227,30 +219,9 @@ public class FullScreenGenericPopupDialog extends GenericPopupDialog {
                 genericDialogContent.addView(view);
             }
 
-            cancelButton = dialogView.findViewById(R.id.generic_dialog_cancel_button);
-            cancelButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    getJsonApi().updateGenericPopupSecondaryValues(new JSONArray());
-                    setFormFragment(null);
-                    setFormIdentity(null);
-                    setFormLocation(null);
-                    setContext(null);
-                    getJsonApi().setGenericPopup(null);
-                    FullScreenGenericPopupDialog.this.dismissAllowingStateLoss();
-                }
-            });
+            attachCancelDialogButton(dialogView);
+            attachOkDialogButton(dialogView);
 
-            okButton = dialogView.findViewById(R.id.generic_dialog_done_button);
-            okButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    passData();
-                    getJsonApi().setGenericPopup(null);
-                    getJsonApi().updateGenericPopupSecondaryValues(new JSONArray());
-                    FullScreenGenericPopupDialog.this.dismissAllowingStateLoss();
-                }
-            });
             if (getDialog().getWindow() != null) {
                 getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
             }
@@ -259,6 +230,50 @@ public class FullScreenGenericPopupDialog extends GenericPopupDialog {
         } else {
             return super.onCreateView(inflater, container, savedInstanceState);
         }
+    }
+
+    private void attachOkDialogButton(ViewGroup dialogView) {
+        Button okButton;
+        okButton = dialogView.findViewById(R.id.generic_dialog_done_button);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                passData();
+                getJsonApi().setGenericPopup(null);
+                getJsonApi().updateGenericPopupSecondaryValues(new JSONArray());
+                ExpansionPanelGenericPopupDialog.this.dismissAllowingStateLoss();
+            }
+        });
+    }
+
+    private void attachCancelDialogButton(ViewGroup dialogView) {
+        final AppCompatImageButton cancelButton;
+        cancelButton = dialogView.findViewById(R.id.generic_dialog_cancel_button);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getJsonApi().updateGenericPopupSecondaryValues(new JSONArray());
+                setFormFragment(null);
+                setFormIdentity(null);
+                setFormLocation(null);
+                setContext(null);
+                getJsonApi().setGenericPopup(null);
+                ExpansionPanelGenericPopupDialog.this.dismissAllowingStateLoss();
+                utils.enableExpansionPanelViews(linearLayout);
+            }
+        });
+    }
+
+    private void attachDialogShowListener() {
+        new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                InputMethodManager inputManager =
+                        (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputManager.hideSoftInputFromWindow(((Activity) context).getCurrentFocus().getWindowToken(),
+                        HIDE_NOT_ALWAYS);
+            }
+        };
     }
 
     @Override
@@ -351,7 +366,12 @@ public class FullScreenGenericPopupDialog extends GenericPopupDialog {
                 JSONObject openMRSAttributes = getFieldOpenMRSAttributes(field);
                 String key = field.getString(JsonFormConstants.KEY);
                 String type = field.getString(JsonFormConstants.TYPE);
-                String label = JsonFormConstants.HIDDEN.equals(type) ? JsonFormConstants.HIDDEN : getWidgetLabel(field);
+                String label;
+                if (JsonFormConstants.HIDDEN.equals(type)) {
+                    label = JsonFormConstants.HIDDEN;
+                } else {
+                    label = getWidgetLabel(field);
+                }
                 JSONArray values = new JSONArray();
                 if (JsonFormConstants.CHECK_BOX.equals(field.getString(JsonFormConstants.TYPE)) && field.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
                     values = getOptionsValueCheckBox(field.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME));
@@ -509,6 +529,10 @@ public class FullScreenGenericPopupDialog extends GenericPopupDialog {
         }
     }
 
+    /*
+    This Native radio block caters for situations where the radio button used has no label provide but is required to be displayed on the answers on the expansion panel content.
+     Display label will be used and the label when the answers are display.
+     */
     private String getWidgetLabel(JSONObject jsonObject) throws JSONException {
         String label = "";
         String widgetType = jsonObject.getString(JsonFormConstants.TYPE);
@@ -517,6 +541,13 @@ public class FullScreenGenericPopupDialog extends GenericPopupDialog {
                 case JsonFormConstants.EDIT_TEXT:
                 case JsonFormConstants.DATE_PICKER:
                     label = jsonObject.optString(JsonFormConstants.HINT, "");
+                    break;
+                case JsonFormConstants.NATIVE_RADIO_BUTTON:
+                    if (StringUtils.isNotBlank(jsonObject.optString(JsonFormConstants.DISPLAY_LABEL))) {
+                        label = jsonObject.optString(JsonFormConstants.DISPLAY_LABEL, "");
+                    } else {
+                        label = jsonObject.optString(JsonFormConstants.LABEL, "");
+                    }
                     break;
                 default:
                     label = jsonObject.optString(JsonFormConstants.LABEL, "");
@@ -551,7 +582,7 @@ public class FullScreenGenericPopupDialog extends GenericPopupDialog {
         this.container = container;
     }
 
-    private void setGenericPopUpDialog() {
+    public void setGenericPopUpDialog() {
         JsonApi ancJsonApi = (JsonApi) activity;
         ancJsonApi.setGenericPopup(this);
     }
@@ -565,6 +596,7 @@ public class FullScreenGenericPopupDialog extends GenericPopupDialog {
             int height = ViewGroup.LayoutParams.MATCH_PARENT;
             dialog.getWindow().setLayout(width, height);
         }
+        // Utils.hideProgressDialog();
     }
 
     public void setHeader(String header) {

@@ -9,12 +9,14 @@ import android.net.Uri;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
-
 import androidx.collection.LruCache;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+
+import timber.log.Timber;
 
 /**
  * Created by vijay.rawat01 on 7/29/15.
@@ -23,6 +25,7 @@ public class ImageUtils {
 
     private static LruCache<String, Bitmap> mBitmapLruCache = new LruCache<>(10000000);
 
+    @Nullable
     public static Bitmap loadBitmapFromFile(Context context, String path, int requiredWidth, int requiredHeight) {
         String key = path + ":" + requiredWidth + ":" + requiredHeight;
         Bitmap bitmap = mBitmapLruCache.get(key);
@@ -36,7 +39,10 @@ public class ImageUtils {
             bitmap = decodeSampledBitmap(context, uri, requiredWidth, requiredHeight);
             mBitmapLruCache.put(key, bitmap);
         } catch (IOException e) {
-            Log.e("ImagePickerFactory", Log.getStackTraceString(e));
+            Timber.e(Log.getStackTraceString(e));
+        } catch (NullPointerException e){
+            // prevent activity crashing when bitmap is not found on disk
+            Timber.e(e);
         }
         return bitmap;
     }

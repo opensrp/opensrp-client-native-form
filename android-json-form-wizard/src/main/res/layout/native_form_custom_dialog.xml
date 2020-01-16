@@ -4,21 +4,40 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent">
 
-  <LinearLayout
-    android:id="@+id/customDialogMainLayout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_margin="@dimen/custom_dialog_margin"
-    android:orientation="vertical"
-    >
-    <ImageView
-      android:id="@+id/dialogImage"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:contentDescription="@string/shows_image_on_dialog"
-      android:adjustViewBounds="true"
-      android:scaleType="fitXY"
-      android:visibility="gone"/>
+    <LinearLayout
+        android:id="@+id/customDialogMainLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/custom_dialog_margin"
+        android:orientation="vertical">
+
+        <com.vijay.jsonwizard.views.CustomTextView
+            android:id="@+id/dialogTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/dialogText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="6dp"
+            android:textSize="18sp"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/dialogImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/shows_image_on_dialog"
+            android:scaleType="fitXY"
+            android:visibility="gone" />
 
     <androidx.appcompat.widget.AppCompatButton
       android:text="@string/ok"

@@ -14,7 +14,7 @@ import com.vijay.jsonwizard.activities.JsonFormActivity;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.views.CustomTextView;
-import com.vijay.jsonwizard.widgets.ExpansionWidgetFactory;
+import com.vijay.jsonwizard.widgets.ExpansionPanelFactory;
 
 import org.json.JSONObject;
 import org.junit.Assert;
@@ -28,7 +28,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import java.util.List;
 
 public class ExpansionPanelWidgetFactoryTest extends BaseTest {
-    private ExpansionWidgetFactory factory;
+    private ExpansionPanelFactory factory;
     @Mock
     private JsonFormActivity context;
 
@@ -77,14 +77,14 @@ public class ExpansionPanelWidgetFactoryTest extends BaseTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        factory = new ExpansionWidgetFactory();
+        factory = new ExpansionPanelFactory();
     }
 
     @Test
     @PrepareForTest ({LayoutInflater.class})
     public void testExpansionPanelWidgetFactoryInstantiatesViewsCorrectly() throws Exception {
         Assert.assertNotNull(factory);
-        ExpansionWidgetFactory factorySpy = Mockito.spy(factory);
+        ExpansionPanelFactory factorySpy = Mockito.spy(factory);
         Assert.assertNotNull(factorySpy);
 
         Mockito.doReturn(rootLayout).when(factorySpy).getRootLayout(context);
