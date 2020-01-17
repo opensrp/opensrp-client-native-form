@@ -18,7 +18,6 @@ import android.widget.TextView;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rengwuxian.materialedittext.validation.RegexpValidator;
-import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.WidgetArgs;
@@ -93,15 +92,14 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         });
 
         ((JsonApi) context).addFormDataView(referenceEditText);
-        setWidgetArgsTags(rootLayout);
+        setViewTags(rootLayout);
         prepareViewChecks(rootLayout, context);
 
         return views;
     }
 
-    private void setWidgetArgsTags(@NonNull LinearLayout rootLayout) {
+    private void setViewTags(@NonNull LinearLayout rootLayout) {
         JSONArray canvasIds = new JSONArray();
-        rootLayout.setId(ViewUtil.generateViewId());
         canvasIds.put(rootLayout.getId());
         rootLayout.setTag(R.id.canvas_ids, canvasIds.toString());
         rootLayout.setTag(R.id.key, widgetArgs.getJsonObject().optString(JsonFormConstants.KEY));
