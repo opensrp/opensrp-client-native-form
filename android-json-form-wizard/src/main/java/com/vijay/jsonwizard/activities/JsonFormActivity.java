@@ -309,7 +309,12 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
                         String[] address = getAddressFromMap(widgetKey, stepName, JsonFormConstants.CALCULATION);
                         if (address == null && curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_RULES)) {
-                            address = getRulesEngineAddress(curKey, curRelevance, curView, JsonFormConstants.CALCULATION);
+                            JSONObject ex_rules = curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES);
+                            if (ex_rules.has(RuleConstant.RULES_DYNAMIC)) {
+                                address = getDynamicRulesEngineAddress(curKey, curRelevance, curView, JsonFormConstants.CALCULATION);
+                            } else {
+                                address = getRulesEngineAddress(curKey, curRelevance, curView, JsonFormConstants.CALCULATION);
+                            }
                         }
 
                         if (address != null) {
@@ -320,13 +325,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                                 curValueMap = getValueFromAddress(address, popup);
                             }
 
+                            updateCalculation(curValueMap, curView, address);
 
-                            if (RuleConstant.RULES_ENGINE.equals(address[0]) && !JsonFormConstants.TOASTER_NOTES.equals(curView.getTag(R.id.type)) && !JsonFormConstants.NATIVE_RADIO_BUTTON.equals(curView.getTag(R.id.type))) {
-                                //check for integrity of values
-                                updateCalculation(curValueMap, curView, address[1]);
-                            } else {
-                                updateCalculation(curValueMap, curView, address[1]);
-                            }
                         }
                     }
 
@@ -1665,11 +1665,14 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         return Utils.getConditionKeys(condition);
     }
 
-    private void updateCalculation(Facts valueMap, View view, String rulesFile) {
-
+    private void updateCalculation(Facts valueMap, View view, String[] rulesFile) {
+        String calculation;
         try {
-
-            String calculation = getRulesEngineFactory().getCalculation(valueMap, rulesFile);
+            if (rulesFile[0].equals(RuleConstant.RULES_DYNAMIC)) {
+                calculation = getRulesEngineFactory().getDynamicCalculation(valueMap, new JSONArray(rulesFile[1]));
+            } else {
+                calculation = getRulesEngineFactory().getCalculation(valueMap, rulesFile[1]);
+            }
 
             if (calculation != null) {
                 if (view instanceof CheckBox) {
