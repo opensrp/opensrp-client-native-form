@@ -35,6 +35,7 @@ import java.util.UUID;
 
 import timber.log.Timber;
 
+import static com.vijay.jsonwizard.constants.JsonFormConstants.CALCULATION;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.FIELDS;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.RELEVANCE;
@@ -179,7 +180,8 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         currKey += ("_" + uniqueId);
         element.put(KEY, currKey);
         // modify relevance to reflect changes in unique key name
-        buildRelevanceWithUniqueIds(element, uniqueId);
+        buildRelevanceWithUniqueId(element, uniqueId);
+        buildCalculationWithUniqueId(element, uniqueId);
         // modify relative max validator to reflect changes in unique key name
         JSONObject relativeMaxValidator = element.optJSONObject(V_RELATIVE_MAX);
         if (relativeMaxValidator != null) {
@@ -189,7 +191,7 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         }
     }
 
-    private void buildRelevanceWithUniqueIds(JSONObject element, String uniqueId) throws JSONException {
+    private void buildRelevanceWithUniqueId(JSONObject element, String uniqueId) throws JSONException {
         JSONObject relevance = element.optJSONObject(RELEVANCE);
         if (relevance != null) {
             if (relevance.has(RuleConstant.RULES_ENGINE) && widgetArgs != null) {
@@ -238,6 +240,60 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
                 String newRelevanceKey = currRelevanceKey + "_" + uniqueId;
                 relevance.remove(currRelevanceKey);
                 relevance.put(newRelevanceKey, relevanceObj);
+            }
+        }
+
+    }
+
+    private void buildCalculationWithUniqueId(JSONObject element, String uniqueId) throws JSONException {
+        JSONObject calculation = element.optJSONObject(CALCULATION);
+        if (calculation != null) {
+            if (calculation.has(RuleConstant.RULES_ENGINE) && widgetArgs != null) {
+                JSONObject jsonRulesEngineObject = calculation.optJSONObject(RuleConstant.RULES_ENGINE);
+                JSONObject jsonExRules = jsonRulesEngineObject.optJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES);
+                String fileName = JsonFormConstants.RULE + jsonExRules.optString(RuleConstant.RULES_DYNAMIC);
+
+                if (!rulesFileMap.containsKey(fileName)) {
+                    Iterable<Object> objectIterable = Utils.readYamlFile(fileName, widgetArgs.getContext());
+                    List<Map<String, Object>> arrayList = new ArrayList<>();
+                    while (objectIterable.iterator().hasNext()) {
+                        Map<String, Object> map = (Map<String, Object>) objectIterable.iterator().next();
+                        if (map != null) {
+                            arrayList.add(map);
+                        }
+                    }
+                    rulesFileMap.put(fileName, arrayList);
+                }
+
+                List<Map<String, Object>> mapArrayList = rulesFileMap.get(fileName);
+
+                JSONArray jsonArrayRules = new JSONArray();
+                JSONObject keyJsonObject = new JSONObject();
+                keyJsonObject.put(KEY, uniqueId);
+                jsonArrayRules.put(keyJsonObject);
+                for (Map<String, Object> map : mapArrayList) {
+                    JSONObject jsonRulesDynamicObject = new JSONObject();
+                    String strCondition = (String) map.get(RuleConstant.CONDITION);
+                    List<String> conditionKeys = Utils.getConditionKeys(strCondition);
+                    for (String conditionKey : conditionKeys) {
+                        strCondition = strCondition.replace(conditionKey, conditionKey + "_" + uniqueId);
+                    }
+                    jsonRulesDynamicObject.put(RuleConstant.NAME, String.valueOf(map.get(RuleConstant.NAME)).concat("_").concat(uniqueId));
+                    jsonRulesDynamicObject.put(RuleConstant.DESCRIPTION, String.valueOf(map.get(RuleConstant.DESCRIPTION)).concat("_").concat(uniqueId));
+                    jsonRulesDynamicObject.put(RuleConstant.PRIORITY, map.get(RuleConstant.PRIORITY));
+                    jsonRulesDynamicObject.put(RuleConstant.ACTIONS, ((ArrayList<String>) map.get(RuleConstant.ACTIONS)).get(0));
+                    jsonRulesDynamicObject.put(RuleConstant.CONDITION, String.valueOf(strCondition));
+                    jsonArrayRules.put(jsonRulesDynamicObject);
+                }
+
+                jsonExRules.put(RuleConstant.RULES_DYNAMIC, jsonArrayRules);
+
+            } else {
+                String currRelevanceKey = calculation.keys().next();
+                JSONObject relevanceObj = calculation.getJSONObject(currRelevanceKey);
+                String newRelevanceKey = currRelevanceKey + "_" + uniqueId;
+                calculation.remove(currRelevanceKey);
+                calculation.put(newRelevanceKey, relevanceObj);
             }
         }
 
