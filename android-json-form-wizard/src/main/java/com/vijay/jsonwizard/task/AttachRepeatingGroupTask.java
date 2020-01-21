@@ -289,11 +289,11 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
                 jsonExRules.put(RuleConstant.RULES_DYNAMIC, jsonArrayRules);
 
             } else {
-                String currRelevanceKey = calculation.keys().next();
-                JSONObject relevanceObj = calculation.getJSONObject(currRelevanceKey);
-                String newRelevanceKey = currRelevanceKey + "_" + uniqueId;
-                calculation.remove(currRelevanceKey);
-                calculation.put(newRelevanceKey, relevanceObj);
+                String currCalculationKey = calculation.keys().next();
+                JSONObject calculationObj = calculation.getJSONObject(currCalculationKey);
+                String newRelevanceKey = currCalculationKey + "_" + uniqueId;
+                calculation.remove(currCalculationKey);
+                calculation.put(newRelevanceKey, calculationObj);
             }
         }
 
