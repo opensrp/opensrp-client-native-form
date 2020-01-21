@@ -1341,4 +1341,23 @@ public class FormUtils {
         }
     }
 
+    public boolean checkValuesContent(JSONArray value) throws JSONException {
+        boolean showHiddenViews = true;
+        if (value.length() == 1) {
+            JSONObject jsonObject = value.getJSONObject(0);
+            if (jsonObject.has(JsonFormConstants.TYPE) &&
+                    JsonFormConstants.EXTENDED_RADIO_BUTTON.equals(jsonObject.getString(JsonFormConstants.TYPE))) {
+                JSONArray values = jsonObject.getJSONArray(JsonFormConstants.VALUES);
+                if (values.length() == 1) {
+                    String object = values.getString(0);
+                    if (object.contains(JsonFormConstants.AncRadioButtonOptionTextUtils.DONE_EARLIER) ||
+                            object.contains(JsonFormConstants.AncRadioButtonOptionTextUtils.DONE_TODAY)) {
+                        showHiddenViews = false;
+                    }
+                }
+            }
+        }
+        return showHiddenViews;
+    }
+
 }
