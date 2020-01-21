@@ -301,19 +301,19 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     while (keys.hasNext()) {
                         String curKey = keys.next();
 
-                        JSONObject curRelevance = calculation.getJSONObject(curKey);
+                        JSONObject curCalculation = calculation.getJSONObject(curKey);
                         JSONObject valueSource = new JSONObject();
                         if (calculation.has(JsonFormConstants.SRC)) {
                             valueSource = calculation.getJSONObject(JsonFormConstants.SRC);
                         }
 
                         String[] address = getAddressFromMap(widgetKey, stepName, JsonFormConstants.CALCULATION);
-                        if (address == null && curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_RULES)) {
-                            JSONObject ex_rules = curRelevance.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES);
-                            if (ex_rules.has(RuleConstant.RULES_DYNAMIC)) {
-                                address = getDynamicRulesEngineAddress(curKey, curRelevance, curView, JsonFormConstants.CALCULATION);
+                        if (address == null && curCalculation.has(JsonFormConstants.JSON_FORM_KEY.EX_RULES)) {
+                            JSONObject exRulesObject = curCalculation.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES);
+                            if (exRulesObject.has(RuleConstant.RULES_DYNAMIC)) {
+                                address = getDynamicRulesEngineAddress(curKey, curCalculation, curView, JsonFormConstants.CALCULATION);
                             } else {
-                                address = getRulesEngineAddress(curKey, curRelevance, curView, JsonFormConstants.CALCULATION);
+                                address = getRulesEngineAddress(curKey, curCalculation, curView, JsonFormConstants.CALCULATION);
                             }
                         }
 
@@ -1665,13 +1665,13 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         return Utils.getConditionKeys(condition);
     }
 
-    private void updateCalculation(Facts valueMap, View view, String[] rulesFile) {
+    private void updateCalculation(Facts valueMap, View view, String[] address) {
         String calculation;
         try {
-            if (rulesFile[0].equals(RuleConstant.RULES_DYNAMIC)) {
-                calculation = getRulesEngineFactory().getDynamicCalculation(valueMap, new JSONArray(rulesFile[1]));
+            if (address[0].equals(RuleConstant.RULES_DYNAMIC)) {
+                calculation = getRulesEngineFactory().getDynamicCalculation(valueMap, new JSONArray(address[1]));
             } else {
-                calculation = getRulesEngineFactory().getCalculation(valueMap, rulesFile[1]);
+                calculation = getRulesEngineFactory().getCalculation(valueMap, address[1]);
             }
 
             if (calculation != null) {
