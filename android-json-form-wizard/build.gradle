@@ -30,6 +30,7 @@ android {
         versionCode Integer.parseInt(project.VERSION_CODE)
         versionName project.VERSION_NAME
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -48,6 +49,11 @@ android {
         unitTests {
             includeAndroidResources = true
         }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
