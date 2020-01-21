@@ -1,0 +1,7 @@
+---
+name: step1_date_larvae_collection
+description: date_larvae_collection
+priority: 1
+condition: "step1_larvae_total != ''"
+actions:
+    - "calculation = helper.getDateToday()"
