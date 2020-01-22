@@ -102,10 +102,10 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         JSONArray canvasIds = new JSONArray();
         canvasIds.put(rootLayout.getId());
         rootLayout.setTag(R.id.canvas_ids, canvasIds.toString());
-        rootLayout.setTag(R.id.key, widgetArgs.getJsonObject().optString(JsonFormConstants.KEY));
+        rootLayout.setTag(R.id.key, widgetArgs.getJsonObject().optString(KEY));
         rootLayout.setTag(R.id.type, widgetArgs.getJsonObject().optString(JsonFormConstants.TYPE));
         rootLayout.setTag(R.id.extraPopup, widgetArgs.isPopup());
-        rootLayout.setTag(R.id.address, widgetArgs.getStepName() + ":" + widgetArgs.getJsonObject().optString(JsonFormConstants.KEY));
+        rootLayout.setTag(R.id.address, widgetArgs.getStepName() + ":" + widgetArgs.getJsonObject().optString(KEY));
     }
 
     private void prepareViewChecks(@NonNull LinearLayout view, @NonNull Context context) {
