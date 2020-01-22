@@ -53,15 +53,11 @@
     "fields": [
       {
         "key": "larval_count",
-        "hint": "Larval count",
+        "hint": "Optional Larval count used in repeating groups",
         "type": "edit_text",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "v_required": {
-          "value": true,
-          "err": "Please specify the number of larval"
-        }
+        "openmrs_entity_id": ""
       }
     ]
   },

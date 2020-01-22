@@ -1,6 +1,8 @@
 package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -90,12 +92,33 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         String remoteReferenceEditText = jsonObject.optString(REFERENCE_EDIT_TEXT);
 
         // Enables us to fetch this value from a previous edit_text & disable this one
-        if (!TextUtils.isEmpty(remoteReferenceEditText) && remoteReferenceEditText.contains(":")) {
-            remoteReferenceEditText = remoteReferenceEditText.trim();
-            String[] addressSections = remoteReferenceEditText.split(":");
+        retrieveRepeatingGroupCountFromRemoteReferenceEditText((JsonApi) context, referenceEditText, remoteReferenceEditText);
+        setUpReferenceEditText(referenceEditText, referenceEditTextHint, repeatingGroupLabel);
+
+        // Disable the done button if the reference edit text being used is remote & has a valid value
+        if (isRemoteReferenceValueUsed) {
+            doneButton.setVisibility(View.GONE);
+        } else {
+            doneButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    addOnDoneAction(referenceEditText);
+                }
+            });
+        }
+
+        ((JsonApi) context).addFormDataView(referenceEditText);
+
+        return views;
+    }
+
+    private void retrieveRepeatingGroupCountFromRemoteReferenceEditText(@NonNull JsonApi context, @NonNull MaterialEditText referenceEditText, @Nullable String remoteReferenceEditTextAddress) throws JSONException {
+        if (!TextUtils.isEmpty(remoteReferenceEditTextAddress) && remoteReferenceEditTextAddress.contains(":")) {
+            remoteReferenceEditTextAddress = remoteReferenceEditTextAddress.trim();
+            String[] addressSections = remoteReferenceEditTextAddress.split(":");
             String remoteReferenceEditTextStep = addressSections[0];
             String remoteReferenceEditTextKey = addressSections[1];
-            JSONObject stepJsonObject = ((JsonApi) context).getmJSONObject().optJSONObject(remoteReferenceEditTextStep);
+            JSONObject stepJsonObject = context.getmJSONObject().optJSONObject(remoteReferenceEditTextStep);
 
             if (stepJsonObject != null) {
                 JSONArray fields = stepJsonObject.optJSONArray(FIELDS);
@@ -120,31 +143,13 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                 }
             }
         }
-
-        setUpReferenceEditText(referenceEditText, referenceEditTextHint, repeatingGroupLabel);
-
-        // Disable the done button if the reference edit text being used is remote & has a valid value
-        if (isRemoteReferenceValueUsed) {
-            doneButton.setVisibility(View.GONE);
-        } else {
-            doneButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    addOnDoneAction(referenceEditText);
-                }
-            });
-        }
-
-        ((JsonApi) context).addFormDataView(referenceEditText);
-
-        return views;
     }
 
     private void setUpReferenceEditText(final MaterialEditText referenceEditText, String referenceEditTextHint, String repeatingGroupLabel) throws JSONException {
         // We should disable this edit_text if another referenced edit text is being used
         Context context = widgetArgs.getContext();
         if (isRemoteReferenceValueUsed) {
-            referenceEditText.setVisibility(View.INVISIBLE);
+            referenceEditText.setVisibility(View.GONE);
         } else {
             referenceEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
