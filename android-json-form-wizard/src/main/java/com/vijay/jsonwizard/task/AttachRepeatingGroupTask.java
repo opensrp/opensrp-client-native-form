@@ -291,9 +291,9 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
             } else {
                 String currCalculationKey = calculation.keys().next();
                 JSONObject calculationObj = calculation.getJSONObject(currCalculationKey);
-                String newRelevanceKey = currCalculationKey + "_" + uniqueId;
+                String newCalculationKey = currCalculationKey + "_" + uniqueId;
                 calculation.remove(currCalculationKey);
-                calculation.put(newRelevanceKey, calculationObj);
+                calculation.put(newCalculationKey, calculationObj);
             }
         }
 
