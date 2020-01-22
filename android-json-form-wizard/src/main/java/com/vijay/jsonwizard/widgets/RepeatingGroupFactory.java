@@ -114,8 +114,8 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
 
     private void retrieveRepeatingGroupCountFromRemoteReferenceEditText(@NonNull JsonApi context, @NonNull MaterialEditText referenceEditText, @Nullable String remoteReferenceEditTextAddress) throws JSONException {
         if (!TextUtils.isEmpty(remoteReferenceEditTextAddress) && remoteReferenceEditTextAddress.contains(":")) {
-            remoteReferenceEditTextAddress = remoteReferenceEditTextAddress.trim();
-            String[] addressSections = remoteReferenceEditTextAddress.split(":");
+            String finalRemoteReferenceEditTextAddress = remoteReferenceEditTextAddress.trim();
+            String[] addressSections = finalRemoteReferenceEditTextAddress.split(":");
             String remoteReferenceEditTextStep = addressSections[0];
             String remoteReferenceEditTextKey = addressSections[1];
             JSONObject stepJsonObject = context.getmJSONObject().optJSONObject(remoteReferenceEditTextStep);
