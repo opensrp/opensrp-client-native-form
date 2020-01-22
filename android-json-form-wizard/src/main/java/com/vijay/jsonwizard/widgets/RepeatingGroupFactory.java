@@ -117,27 +117,30 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         if (!TextUtils.isEmpty(remoteReferenceEditTextAddress) && remoteReferenceEditTextAddress.contains(":")) {
             String finalRemoteReferenceEditTextAddress = remoteReferenceEditTextAddress.trim();
             String[] addressSections = finalRemoteReferenceEditTextAddress.split(":");
-            String remoteReferenceEditTextStep = addressSections[0];
-            String remoteReferenceEditTextKey = addressSections[1];
-            JSONObject stepJsonObject = context.getmJSONObject().optJSONObject(remoteReferenceEditTextStep);
 
-            if (stepJsonObject != null) {
-                JSONArray fields = stepJsonObject.optJSONArray(FIELDS);
+            if (addressSections.length > 1) {
+                String remoteReferenceEditTextStep = addressSections[0];
+                String remoteReferenceEditTextKey = addressSections[1];
+                JSONObject stepJsonObject = context.getmJSONObject().optJSONObject(remoteReferenceEditTextStep);
 
-                for (int i = 0; i < fields.length(); i++) {
-                    JSONObject stepField = fields.optJSONObject(i);
-                    if (stepField != null && stepField.has(KEY) && stepField.getString(KEY).equals(remoteReferenceEditTextKey)) {
-                        String fieldValue = stepField.optString(VALUE);
+                if (stepJsonObject != null) {
+                    JSONArray fields = stepJsonObject.optJSONArray(FIELDS);
 
-                        if (!StringUtils.isEmpty(fieldValue)) {
-                            try {
-                                remoteReferenceValue = Integer.parseInt(fieldValue);
-                                isRemoteReferenceValueUsed = true;
+                    for (int i = 0; i < fields.length(); i++) {
+                        JSONObject stepField = fields.optJSONObject(i);
+                        if (stepField != null && stepField.has(KEY) && stepField.getString(KEY).equals(remoteReferenceEditTextKey)) {
+                            String fieldValue = stepField.optString(VALUE);
 
-                                // Start the repeating groups
-                                attachRepeatingGroup(referenceEditText.getParent().getParent(), remoteReferenceValue);
-                            } catch (NumberFormatException ex) {
-                                Timber.e(ex);
+                            if (!StringUtils.isEmpty(fieldValue)) {
+                                try {
+                                    remoteReferenceValue = Integer.parseInt(fieldValue);
+                                    isRemoteReferenceValueUsed = true;
+
+                                    // Start the repeating groups
+                                    attachRepeatingGroup(referenceEditText.getParent().getParent(), remoteReferenceValue);
+                                } catch (NumberFormatException ex) {
+                                    Timber.e(ex);
+                                }
                             }
                         }
                     }
