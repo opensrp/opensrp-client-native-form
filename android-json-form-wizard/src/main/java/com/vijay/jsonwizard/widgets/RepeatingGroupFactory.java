@@ -33,6 +33,7 @@ import com.vijay.jsonwizard.validators.edittext.MaxNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.MinNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -128,7 +129,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                     if (stepField != null && stepField.has(KEY) && stepField.getString(KEY).equals(remoteReferenceEditTextKey)) {
                         String fieldValue = stepField.optString(VALUE);
 
-                        if (!TextUtils.isEmpty(fieldValue)) {
+                        if (!StringUtils.isEmpty(fieldValue)) {
                             try {
                                 remoteReferenceValue = Integer.parseInt(fieldValue);
                                 isRemoteReferenceValueUsed = true;
@@ -153,9 +154,9 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         } else {
             referenceEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
-                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                public boolean onEditorAction(TextView focusTextView, int actionId, KeyEvent event) {
                     if (actionId == EditorInfo.IME_ACTION_DONE) {
-                        addOnDoneAction(v);
+                        addOnDoneAction(focusTextView);
                         return true;
                     }
                     return false;
