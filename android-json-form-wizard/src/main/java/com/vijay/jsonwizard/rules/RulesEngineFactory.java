@@ -190,9 +190,9 @@ public class RulesEngineFactory implements RuleListener {
         return formatCalculationReturnValue(facts.get(RuleConstant.CALCULATION));
     }
 
-    public String getDynamicCalculation(@NonNull Facts relevanceFact, @NonNull JSONArray rulesStrObject) {
+    public String getDynamicCalculation(@NonNull Facts calculationFact, @NonNull JSONArray rulesStrObject) {
 
-        Facts facts = initializeFacts(relevanceFact);
+        Facts facts = initializeFacts(calculationFact);
 
         facts.put(RuleConstant.CALCULATION, false);
 
