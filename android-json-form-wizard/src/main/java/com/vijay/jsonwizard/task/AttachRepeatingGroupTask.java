@@ -46,6 +46,7 @@ import static com.vijay.jsonwizard.utils.Utils.hideProgressDialog;
 import static com.vijay.jsonwizard.utils.Utils.showProgressDialog;
 
 public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> {
+
     private LinearLayout rootLayout;
     private final ViewParent parent;
     private List<View> repeatingGroups = new ArrayList<>();
@@ -57,6 +58,7 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
     protected final int REPEATING_GROUP_LABEL_TEXT_COLOR = R.color.black;
     private Map<String, List<Map<String, Object>>> rulesFileMap = new HashMap<>();
     private Map<Integer, String> repeatingGroupLayouts;
+    private int currNumRepeatingGroups;
 
     public AttachRepeatingGroupTask(final ViewParent parent, int numRepeatingGroups, Map<Integer, String> repeatingGroupLayouts, WidgetArgs widgetArgs, ImageButton doneButton) {
         this.rootLayout = (LinearLayout) parent;
@@ -65,6 +67,7 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         this.widgetArgs = widgetArgs;
         this.doneButton = doneButton;
         this.repeatingGroupLayouts = repeatingGroupLayouts;
+        currNumRepeatingGroups = ((ViewGroup) parent).getChildCount() - 1;
     }
 
     @Override
@@ -74,7 +77,6 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
 
     @Override
     protected List<View> doInBackground(Void... voids) {
-        int currNumRepeatingGroups = ((ViewGroup) parent).getChildCount() - 1;
         diff = numRepeatingGroups - currNumRepeatingGroups;
         for (int i = 0; i < diff; i++) {
             try {

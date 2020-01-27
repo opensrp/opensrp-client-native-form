@@ -1416,7 +1416,27 @@ a form layout once, using the normal Json Forms syntax, and the layout can be re
 times as specified by the user.
 
 The repeating group comprises of an edit text field (henceforth referred to as the `reference edit text`) 
-that is used to specify the number of repeating group elements the user would like to generate and the repeating group layout definition defined in Json.
+that is used to specify the number of repeating group elements the user would like to generate and the 
+repeating group layout definition defined in Json. In cases where you want to use a value from another edit_text, 
+specify the address of edit text on the optional property `reference_edit_text` eg. 
+
+```json
+
+  ....
+      {
+        "key": "dips",
+        "type": "repeating_group",
+        "reference_edit_text": "step1:larval_count",
+        "reference_edit_text_hint":"# of dips",
+        "repeating_group_label": "dip",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+  ...
+```
+
+The embedded edit text field is the default in case this property is defined, the address is incorrect or the
+edit_text referenced in the property does not have a valid value.
 
 To specify the repeating group layout, add its Json definition to the value field in the repeating group widget.
 
