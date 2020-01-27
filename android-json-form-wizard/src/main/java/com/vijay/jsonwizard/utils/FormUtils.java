@@ -1509,7 +1509,7 @@ public class FormUtils {
                     jsonObject.put(JsonFormConstants.VALUE_OPENMRS_ATTRIBUTES, valueOpenMRSAttributes);
                 }
             }
-        } catch (Exception e) {
+        } catch (JSONException e) {
             Timber.e(e, " --> createValueObject");
 
         }
@@ -1537,7 +1537,7 @@ public class FormUtils {
                     jsonObject.put(JsonFormConstants.VALUE_OPENMRS_ATTRIBUTES, valueOpenMRSAttributes);
                 }
             }
-        } catch (Exception e) {
+        } catch (JSONException e) {
             Timber.e(e, " --> createSecondaryValueObject");
 
         }
