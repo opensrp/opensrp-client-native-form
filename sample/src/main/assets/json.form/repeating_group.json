@@ -428,14 +428,10 @@
           }
         ],
         "relevance": {
-          "step2:moz_type": {
-            "ex-checkbox": [
-              {
-                "or": [
-                  "An. funestus"
-                ]
-              }
-            ]
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "repeating_group_relevance_rules.yml"
+            }
           }
         }
       }
