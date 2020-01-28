@@ -30,6 +30,7 @@ android {
         versionCode Integer.parseInt(project.VERSION_CODE)
         versionName project.VERSION_NAME
     }
+
     buildTypes {
         release {
             minifyEnabled false
