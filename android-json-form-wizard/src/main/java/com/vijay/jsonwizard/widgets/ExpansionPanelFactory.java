@@ -195,7 +195,7 @@ public class ExpansionPanelFactory implements FormWidgetFactory {
         LinearLayout contentLayout = rootLayout.findViewById(R.id.contentLayout);
         if (jsonObject.has(JsonFormConstants.VALUE)) {
             values = jsonObject.getJSONArray(JsonFormConstants.VALUE);
-            if (checkValuesContent(values)) {
+            if (formUtils.checkValuesContent(values)) {
                 contentLayout.setVisibility(View.VISIBLE);
             }
         }
@@ -230,7 +230,7 @@ public class ExpansionPanelFactory implements FormWidgetFactory {
 
         if (jsonObject.has(JsonFormConstants.VALUE) && jsonObject.getJSONArray(JsonFormConstants.VALUE).length() > 0) {
             JSONArray value = jsonObject.optJSONArray(JsonFormConstants.VALUE);
-            if (checkValuesContent(value)) {
+            if (formUtils.checkValuesContent(value)) {
                 if (showButtons) {
                     buttonSectionLayout.setVisibility(View.VISIBLE);
                 }
@@ -279,24 +279,4 @@ public class ExpansionPanelFactory implements FormWidgetFactory {
         }
         return false;
     }
-
-    private boolean checkValuesContent(JSONArray value) throws JSONException {
-        boolean showHiddenViews = true;
-        if (value.length() == 1) {
-            JSONObject jsonObject = value.getJSONObject(0);
-            if (jsonObject.has(JsonFormConstants.TYPE) &&
-                    JsonFormConstants.EXTENDED_RADIO_BUTTON.equals(jsonObject.getString(JsonFormConstants.TYPE))) {
-                JSONArray values = jsonObject.getJSONArray(JsonFormConstants.VALUES);
-                if (values.length() == 1) {
-                    String object = values.getString(0);
-                    if (object.contains(JsonFormConstants.AncRadioButtonOptionTextUtils.DONE_EARLIER) ||
-                            object.contains(JsonFormConstants.AncRadioButtonOptionTextUtils.DONE_TODAY)) {
-                        showHiddenViews = false;
-                    }
-                }
-            }
-        }
-        return showHiddenViews;
-    }
-
 }

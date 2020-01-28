@@ -35,6 +35,7 @@ import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.ExpansionPanelGenericPopupDialog;
 import com.vijay.jsonwizard.domain.ExpansionPanelItemModel;
+import com.vijay.jsonwizard.domain.ExpansionPanelValuesModel;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.GenericDialogInterface;
@@ -58,6 +59,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -1292,6 +1294,146 @@ public class FormUtils {
         return form;
     }
 
+    public boolean checkValuesContent(JSONArray value) throws JSONException {
+        boolean showHiddenViews = true;
+        if (value.length() == 1) {
+            JSONObject jsonObject = value.getJSONObject(0);
+            if (jsonObject.has(JsonFormConstants.TYPE) &&
+                    JsonFormConstants.EXTENDED_RADIO_BUTTON.equals(jsonObject.getString(JsonFormConstants.TYPE))) {
+                JSONArray values = jsonObject.getJSONArray(JsonFormConstants.VALUES);
+                if (values.length() == 1) {
+                    String object = values.getString(0);
+                    if (object.contains(JsonFormConstants.AncRadioButtonOptionTextUtils.DONE_EARLIER) ||
+                            object.contains(JsonFormConstants.AncRadioButtonOptionTextUtils.DONE_TODAY)) {
+                        showHiddenViews = false;
+                    }
+                }
+            }
+        }
+        return showHiddenViews;
+    }
+
+    public JSONArray createExpansionPanelValues(JSONArray formFields) {
+        JSONArray selectedValues = new JSONArray();
+        try {
+            String dateField = "";
+            for (int i = 0; i < formFields.length(); i++) {
+                JSONObject field = formFields.getJSONObject(i);
+                if (field != null && field.has(JsonFormConstants.TYPE) &&
+                        !JsonFormConstants.LABEL.equals(field.getString(JsonFormConstants.TYPE)) &&
+                        !JsonFormConstants.SECTIONS.equals(field.getString(JsonFormConstants.TYPE)) &&
+                        !JsonFormConstants.SPACER.equals(field.getString(JsonFormConstants.TYPE)) &&
+                        !JsonFormConstants.TOASTER_NOTES.equals(field.getString(JsonFormConstants.TYPE))) {
+                    JSONArray valueOpenMRSAttributes = new JSONArray();
+                    JSONObject openMRSAttributes = getFieldOpenMRSAttributes(field);
+                    String key = field.getString(JsonFormConstants.KEY);
+                    String type = field.getString(JsonFormConstants.TYPE);
+                    String label;
+                    if (JsonFormConstants.HIDDEN.equals(type)) {
+                        label = JsonFormConstants.HIDDEN;
+                    } else {
+                        label = getWidgetLabel(field);
+                    }
+                    JSONArray values = new JSONArray();
+                    if (JsonFormConstants.CHECK_BOX.equals(field.getString(JsonFormConstants.TYPE)) && field.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
+                        values = getOptionsValueCheckBox(field.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME));
+                        getOptionsOpenMRSAttributes(field, valueOpenMRSAttributes);
+                    } else if ((JsonFormConstants.EXTENDED_RADIO_BUTTON.equals(field.getString(JsonFormConstants.TYPE)) || JsonFormConstants.NATIVE_RADIO_BUTTON.equals(field.getString(JsonFormConstants.TYPE))) && field.has(JsonFormConstants.OPTIONS_FIELD_NAME) && field.has(JsonFormConstants.VALUE)) {
+                        values.put(getOptionsValueRadioButton(field.optString(JsonFormConstants.VALUE), field.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME)));
+                        getOptionsOpenMRSAttributes(field, valueOpenMRSAttributes);
+                    } else if (JsonFormConstants.SPINNER.equals(field.getString(JsonFormConstants.TYPE)) && field.has(JsonFormConstants.VALUE)) {
+                        values.put(field.optString(JsonFormConstants.VALUE));
+                        getSpinnerValueOpenMRSAttributes(field, valueOpenMRSAttributes);
+                    } else {
+                        if (field.has(JsonFormConstants.VALUE)) {
+                            values.put(field.optString(JsonFormConstants.VALUE));
+                            if (JsonFormConstants.HIDDEN.equals(type) && key.contains(JsonFormConstants.DATE_TODAY_HIDDEN)) {
+                                dateField = key + ":" + field.optString(JsonFormConstants.VALUE);
+                            }
+                        } else {
+                            if (JsonFormConstants.DATE_PICKER.equals(type) && dateField.contains(key)) {
+                                String[] datePickerValues = dateField.split(":");
+                                if (datePickerValues.length > 1 && !datePickerValues[1].equals("0")) {
+                                    values.put(datePickerValues[1]);
+                                }
+                            }
+                        }
+                    }
+
+                    if (values.length() > 0) {
+                        if (!TextUtils.isEmpty(label) && field.has(JsonFormConstants.INDEX)) {
+                            int index = field.optInt(JsonFormConstants.INDEX);
+                            if (JsonFormConstants.HIDDEN.equals(type)) {
+                                label = "";
+                            }
+                            selectedValues.put(createValueObject(key, type, label, index, values, openMRSAttributes,
+                                    valueOpenMRSAttributes));
+                        } else {
+                            selectedValues.put(createSecondaryValueObject(key, type, values, openMRSAttributes,
+                                    valueOpenMRSAttributes));
+                        }
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            Timber.e(e, " --> createExpansionPanelValues");
+        }
+
+        return selectedValues;
+    }
+
+    public JSONObject getFieldOpenMRSAttributes(JSONObject item) throws JSONException {
+        JSONObject openMRSAttribute = new JSONObject();
+        openMRSAttribute
+                .put(JsonFormConstants.OPENMRS_ENTITY_PARENT, item.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT));
+        openMRSAttribute.put(JsonFormConstants.OPENMRS_ENTITY, item.getString(JsonFormConstants.OPENMRS_ENTITY));
+        openMRSAttribute.put(JsonFormConstants.OPENMRS_ENTITY_ID, item.getString(JsonFormConstants.OPENMRS_ENTITY_ID));
+        return openMRSAttribute;
+    }
+
+    /**
+     * This Native radio block caters for situations where the radio button used has no label provide but is required to be displayed on the answers on the expansion panel content.
+     * Display label will be used and the label when the answers are display.
+     */
+    private String getWidgetLabel(JSONObject jsonObject) throws JSONException {
+        String label = "";
+        String widgetType = jsonObject.getString(JsonFormConstants.TYPE);
+        if (!TextUtils.isEmpty(widgetType)) {
+            switch (widgetType) {
+                case JsonFormConstants.EDIT_TEXT:
+                case JsonFormConstants.DATE_PICKER:
+                    label = jsonObject.optString(JsonFormConstants.HINT, "");
+                    break;
+                case JsonFormConstants.NATIVE_RADIO_BUTTON:
+                    if (StringUtils.isNotBlank(jsonObject.optString(JsonFormConstants.DISPLAY_LABEL))) {
+                        label = jsonObject.optString(JsonFormConstants.DISPLAY_LABEL, "");
+                    } else {
+                        label = jsonObject.optString(JsonFormConstants.LABEL, "");
+                    }
+                    break;
+                default:
+                    label = jsonObject.optString(JsonFormConstants.LABEL, "");
+                    break;
+            }
+        }
+        return label;
+    }
+
+    public JSONArray getOptionsValueCheckBox(JSONArray options) throws JSONException {
+        JSONArray secondaryValues = new JSONArray();
+        for (int i = 0; i < options.length(); i++) {
+            JSONObject option = options.getJSONObject(i);
+            if (option.has(JsonFormConstants.KEY) && option.has(JsonFormConstants.VALUE) &&
+                    JsonFormConstants.TRUE.equals(option.getString(JsonFormConstants.VALUE))) {
+                String key = option.getString(JsonFormConstants.KEY);
+                String text = option.getString(JsonFormConstants.TEXT);
+                String secondaryValue = key + ":" + text + ":" + JsonFormConstants.TRUE;
+                secondaryValues.put(secondaryValue);
+            }
+        }
+        return secondaryValues;
+    }
+
     public void getOptionsOpenMRSAttributes(JSONObject item, JSONArray valueOpenMRSAttributes) throws JSONException {
         JSONArray options = item.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
         if (options.length() > 0) {
@@ -1313,6 +1455,93 @@ public class FormUtils {
                 }
             }
         }
+    }
+
+    public String getOptionsValueRadioButton(String value, JSONArray options) throws JSONException {
+        String secondaryValue = "";
+        if (!TextUtils.isEmpty(value)) {
+            for (int i = 0; i < options.length(); i++) {
+                JSONObject option = options.getJSONObject(i);
+                if (option.has(JsonFormConstants.KEY) && value.equals(option.getString(JsonFormConstants.KEY))) {
+                    String key = option.getString(JsonFormConstants.KEY);
+                    String text = option.getString(JsonFormConstants.TEXT);
+                    secondaryValue = key + ":" + text;
+                }
+            }
+        }
+        return secondaryValue;
+    }
+
+    public void getSpinnerValueOpenMRSAttributes(JSONObject item, JSONArray valueOpenMRSAttributes) throws JSONException {
+        if (item != null && item.equals(JsonFormConstants.SPINNER) && item.has(JsonFormConstants.OPENMRS_CHOICE_IDS)) {
+            JSONObject openMRSChoiceIds = item.getJSONObject(JsonFormConstants.OPENMRS_CHOICE_IDS);
+            String value = item.getString(JsonFormConstants.VALUE);
+            Iterator<String> keys = openMRSChoiceIds.keys();
+            while (keys.hasNext()) {
+                String key = keys.next();
+                if (value.equals(key)) {
+                    JSONObject jsonObject = new JSONObject();
+                    String optionOpenMRSConceptId = openMRSChoiceIds.get(key).toString();
+                    jsonObject.put(JsonFormConstants.KEY, item.getString(JsonFormConstants.KEY));
+                    jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_PARENT,
+                            item.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT));
+                    jsonObject.put(JsonFormConstants.OPENMRS_ENTITY, item.getString(JsonFormConstants.OPENMRS_ENTITY));
+                    jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_ID, optionOpenMRSConceptId);
+
+                    valueOpenMRSAttributes.put(jsonObject);
+                }
+
+            }
+        }
+    }
+
+    private JSONObject createValueObject(String key, String type, String label, int index, JSONArray values, JSONObject openMRSAttributes, JSONArray valueOpenMRSAttributes) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            if (values.length() > 0) {
+                jsonObject.put(JsonFormConstants.KEY, key);
+                jsonObject.put(JsonFormConstants.TYPE, type);
+                jsonObject.put(JsonFormConstants.LABEL, label);
+                jsonObject.put(JsonFormConstants.INDEX, index);
+                jsonObject.put(JsonFormConstants.VALUES, values);
+                jsonObject.put(JsonFormConstants.OPENMRS_ATTRIBUTES, openMRSAttributes);
+                if (valueOpenMRSAttributes.length() > 0) {
+                    jsonObject.put(JsonFormConstants.VALUE_OPENMRS_ATTRIBUTES, valueOpenMRSAttributes);
+                }
+            }
+        } catch (JSONException e) {
+            Timber.e(e, " --> createValueObject");
+
+        }
+        return jsonObject;
+    }
+
+    /**
+     * @param key
+     * @param type
+     * @param values
+     * @param openMRSAttributes
+     * @param valueOpenMRSAttributes
+     * @return
+     */
+    public JSONObject createSecondaryValueObject(String key, String type, JSONArray values, JSONObject openMRSAttributes,
+                                                 JSONArray valueOpenMRSAttributes) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            if (values.length() > 0) {
+                jsonObject.put(JsonFormConstants.KEY, key);
+                jsonObject.put(JsonFormConstants.TYPE, type);
+                jsonObject.put(JsonFormConstants.VALUES, values);
+                jsonObject.put(JsonFormConstants.OPENMRS_ATTRIBUTES, openMRSAttributes);
+                if (valueOpenMRSAttributes.length() > 0) {
+                    jsonObject.put(JsonFormConstants.VALUE_OPENMRS_ATTRIBUTES, valueOpenMRSAttributes);
+                }
+            }
+        } catch (JSONException e) {
+            Timber.e(e, " --> createSecondaryValueObject");
+
+        }
+        return jsonObject;
     }
 
     /**
@@ -1341,4 +1570,177 @@ public class FormUtils {
         }
     }
 
+    /**
+     * Loads the values from the expansion panel
+     *
+     * @param formFields {@link JSONArray} -- The form values mostly the accordion widgets
+     * @param parentKey  {@link String} -- the accordion widget key
+     * @return values {@link JSONArray} -- the extracted accordion values
+     */
+    public JSONArray loadExpansionPanelValues(JSONArray formFields, String parentKey) {
+        JSONArray values = new JSONArray();
+        try {
+            if (formFields != null && formFields.length() > 0) {
+                for (int i = 0; i < formFields.length(); i++) {
+                    JSONObject item = formFields.getJSONObject(i);
+                    if (item.has(JsonFormConstants.KEY) && item.getString(JsonFormConstants.KEY).equals(parentKey) && item.has(JsonFormConstants.VALUE)) {
+                        values = item.getJSONArray(JsonFormConstants.VALUE);
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            Timber.e(e, " --> loadExpansionPanelValues");
+        }
+        return values;
+    }
+
+    /**
+     * Creates the expasnion panel secondary values maps
+     *
+     * @param secondaryValues {@link JSONArray}
+     * @return expansionPanelValuesMap {@link Map<>}
+     */
+    public Map<String, ExpansionPanelValuesModel> createSecondaryValuesMap(JSONArray secondaryValues) {
+        Map<String, ExpansionPanelValuesModel> expansionPanelValuesModelMap = new HashMap<>();
+        if (secondaryValues != null && secondaryValues.length() > 0) {
+            for (int i = 0; i < secondaryValues.length(); i++) {
+                if (!secondaryValues.isNull(i)) {
+                    try {
+                        JSONObject jsonObject = secondaryValues.getJSONObject(i);
+                        String key = jsonObject.getString(JsonFormConstants.KEY);
+                        String type = jsonObject.getString(JsonFormConstants.TYPE);
+                        String label = jsonObject.getString(JsonFormConstants.LABEL);
+                        JSONArray values = jsonObject.getJSONArray(JsonFormConstants.VALUES);
+                        int index = jsonObject.optInt(JsonFormConstants.INDEX);
+
+                        JSONObject openmrsAttributes = getSecondaryOpenMRSAttributes(jsonObject);
+                        JSONArray valueOpenMRSAttributes = getValueOpenMRSAttributes(jsonObject);
+
+                        expansionPanelValuesModelMap.put(key,
+                                new ExpansionPanelValuesModel(key, type, label, index, values, openmrsAttributes,
+                                        valueOpenMRSAttributes));
+                    } catch (JSONException e) {
+                        Timber.e(e, " --> createSecondaryValuesMap");
+                    }
+                }
+            }
+        }
+
+        return expansionPanelValuesModelMap;
+    }
+
+    /**
+     * Gets the expansion secondary values openmrs attributtes
+     *
+     * @param jsonObject {@link JSONObject} -- expansion panel value item.
+     * @return openmrsAttributtes {@link JSONObject}
+     * @throws JSONException
+     */
+    public JSONObject getSecondaryOpenMRSAttributes(JSONObject jsonObject) throws JSONException {
+        JSONObject openmrsAttributes = new JSONObject();
+        if (jsonObject.has(JsonFormConstants.OPENMRS_ATTRIBUTES)) {
+            openmrsAttributes = jsonObject.getJSONObject(JsonFormConstants.OPENMRS_ATTRIBUTES);
+        }
+        return openmrsAttributes;
+    }
+
+    /**
+     * Gets the expansion secondary values, value openmrs attributes
+     *
+     * @param jsonObject {@link JSONObject} -- expansion panel value item.
+     * @return valueOpenmrsAttributes {@link JSONObject}
+     * @throws JSONException
+     */
+    public JSONArray getValueOpenMRSAttributes(JSONObject jsonObject) throws JSONException {
+        JSONArray valueOpenMRSAttributes = new JSONArray();
+        if (jsonObject.has(JsonFormConstants.VALUE_OPENMRS_ATTRIBUTES)) {
+            valueOpenMRSAttributes = jsonObject.getJSONArray(JsonFormConstants.VALUE_OPENMRS_ATTRIBUTES);
+        }
+        return valueOpenMRSAttributes;
+    }
+
+    /**
+     * Assigns each subform widget its value from the expansion panels values attributte
+     *
+     * @param fields                       {@link JSONArray} -- subforms fields.
+     * @param expansionPanelValuesModelMap {@link Map} -- secondary values map
+     * @return fields {@link JSONArray} -- all the sub form fields
+     */
+    public JSONArray addExpansionPanelFormValues(JSONArray fields, Map<String, ExpansionPanelValuesModel> expansionPanelValuesModelMap) {
+        if (fields != null && expansionPanelValuesModelMap != null) {
+            for (int i = 0; i < fields.length(); i++) {
+                JSONObject formValue;
+                try {
+                    formValue = fields.getJSONObject(i);
+                    String key = formValue.getString(JsonFormConstants.KEY);
+                    formValue.put(JsonFormConstants.INDEX, String.valueOf(i));
+                    if (expansionPanelValuesModelMap.containsKey(key)) {
+                        SecondaryValueModel secondaryValueModel = expansionPanelValuesModelMap.get(key);
+                        String type = secondaryValueModel.getType();
+                        if (type != null && (type.equals(JsonFormConstants.CHECK_BOX))) {
+                            if (formValue.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
+                                JSONArray options = formValue.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
+                                JSONArray values = secondaryValueModel.getValues();
+                                setCompoundButtonValues(options, values);
+                            }
+                        } else {
+                            JSONArray values = secondaryValueModel.getValues();
+                            if (type != null && (type.equals(JsonFormConstants.NATIVE_RADIO_BUTTON) ||
+                                    type.equals(JsonFormConstants.EXTENDED_RADIO_BUTTON))) {
+                                for (int k = 0; k < values.length(); k++) {
+                                    formValue.put(JsonFormConstants.VALUE, getValueKey(values.getString(k)));
+                                }
+                            } else {
+                                formValue.put(JsonFormConstants.VALUE, setValues(values, type));
+                            }
+                        }
+                    }
+                } catch (JSONException e) {
+                    Timber.e(e, " --> loadSubForms");
+                }
+            }
+        }
+        return fields;
+    }
+
+    public void setCompoundButtonValues(JSONArray options, JSONArray secondValues) {
+        for (int i = 0; i < options.length(); i++) {
+            JSONObject jsonObject;
+            try {
+                jsonObject = options.getJSONObject(i);
+                String mainKey = jsonObject.getString(JsonFormConstants.KEY);
+                for (int j = 0; j < secondValues.length(); j++) {
+                    String key = getValueKey(secondValues.getString(j));
+                    if (mainKey.equals(key)) {
+                        jsonObject.put(JsonFormConstants.VALUE, true);
+                    }
+                }
+            } catch (JSONException e) {
+                Timber.e(e, " --> setCompoundButtonValues");
+            }
+        }
+    }
+
+    public String getValueKey(String value) {
+        String key = "";
+        String[] strings = value.split(":");
+        if (strings.length > 0) {
+            key = strings[0];
+        }
+        return key;
+    }
+
+    public String setValues(JSONArray jsonArray, String type) {
+        FormUtils formUtils = new FormUtils();
+        String value = "";
+        for (int i = 0; i < jsonArray.length(); i++) {
+            try {
+                value = formUtils.getValueFromSecondaryValues(type, jsonArray.getString(i));
+            } catch (JSONException e) {
+                Timber.e(e, " --> setValues");
+            }
+        }
+
+        return value.replaceAll(", $", "");
+    }
 }

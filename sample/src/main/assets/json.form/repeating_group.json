@@ -1,5 +1,5 @@
 {
-  "count": "1",
+  "count": "2",
   "encounter_type": "larval_dipping",
   "entity_id": "",
   "metadata": {
@@ -47,6 +47,21 @@
     "encounter_location": ""
   },
   "step1": {
+    "title": "Larval Details",
+    "next": "step2",
+    "display_back_button": "true",
+    "fields": [
+      {
+        "key": "larval_count",
+        "hint": "Optional Larval count used in repeating groups",
+        "type": "edit_text",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": ""
+      }
+    ]
+  },
+  "step2": {
     "title": "Larval Dipping Details",
     "display_back_button": "true",
     "fields": [
@@ -76,7 +91,7 @@
           }
         ],
         "relevance": {
-          "step1:moz_type": {
+          "step2:moz_type": {
             "ex-checkbox": [
               {
                 "or": ["An. funestus"]
@@ -105,6 +120,7 @@
       {
         "key": "dips",
         "type": "repeating_group",
+        "reference_edit_text": "step1:larval_count",
         "reference_edit_text_hint":"# of dips",
         "repeating_group_label": "dip",
         "openmrs_entity_parent": "",
@@ -219,7 +235,7 @@
             "openmrs_entity_id": "",
             "hint": "# of An. gambiae larvae collected",
             "relevance": {
-              "step1:moz_type": {
+              "step2:moz_type": {
                 "ex-checkbox": [
                   {
                     "or": ["An. gambiae"]
@@ -244,7 +260,7 @@
             "openmrs_entity_id": "",
             "hint": "# of An. funestus larvae collected",
             "relevance": {
-              "step1:moz_type": {
+              "step2:moz_type": {
                 "ex-checkbox": [
                   {
                     "or": ["An. funestus"]
@@ -269,7 +285,7 @@
             "openmrs_entity_id": "",
             "hint": "# of An. minimus larvae collected",
             "relevance": {
-              "step1:moz_type": {
+              "step2:moz_type": {
                 "ex-checkbox": [
                   {
                     "or": ["An. minimus"]
@@ -294,7 +310,7 @@
             "openmrs_entity_id": "",
             "hint": "# of An. dirus larvae collected",
             "relevance": {
-              "step1:moz_type": {
+              "step2:moz_type": {
                 "ex-checkbox": [
                   {
                     "or": ["An. dirus"]
@@ -319,7 +335,7 @@
             "openmrs_entity_id": "",
             "hint": "# of An. maximus larvae collected",
             "relevance": {
-              "step1:moz_type": {
+              "step2:moz_type": {
                 "ex-checkbox": [
                   {
                     "or": ["An. maximus"]
@@ -344,7 +360,7 @@
             "openmrs_entity_id": "",
             "hint": "# of An. other larvae collected",
             "relevance": {
-              "step1:moz_type": {
+              "step2:moz_type": {
                 "ex-checkbox": [
                   {
                     "or": ["An. other"]
@@ -369,7 +385,7 @@
             "openmrs_entity_id": "",
             "hint": "# of Culex larvae collected",
             "relevance": {
-              "step1:moz_type": {
+              "step2:moz_type": {
                 "ex-checkbox": [
                   {
                     "or": ["Culex"]
@@ -396,7 +412,7 @@
           }
         ],
         "relevance": {
-          "step1:moz_type": {
+          "step2:moz_type": {
             "ex-checkbox": [
               {
                 "or": ["An. funestus"]
