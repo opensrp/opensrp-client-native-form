@@ -33,7 +33,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -93,7 +92,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
             loadSubForms();
             getJsonApi().updateGenericPopupSecondaryValues(specifyContent);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Timber.e(e, " --> onCreate");
         }
 
         setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Light_Dialog);
@@ -133,8 +132,8 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
                     String type = jsonObject.getString(JsonFormConstants.TYPE);
                     JSONArray values = jsonObject.getJSONArray(JsonFormConstants.VALUES);
 
-                    JSONObject openmrsAttributes = getOpenMRSAttributes(jsonObject);
-                    JSONArray valueOpenMRSAttributes = getValueOpenMRSAttributes(jsonObject);
+                    JSONObject openmrsAttributes = formUtils.getSecondaryOpenMRSAttributes(jsonObject);
+                    JSONArray valueOpenMRSAttributes = formUtils.getValueOpenMRSAttributes(jsonObject);
 
                     getSecondaryValuesMap().put(key, new SecondaryValueModel(key, type, values, openmrsAttributes, valueOpenMRSAttributes));
                     setPopAssignedValue(getSecondaryValuesMap());
@@ -181,22 +180,6 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         return secondaryValues;
     }
 
-    protected JSONObject getOpenMRSAttributes(JSONObject jsonObject) throws JSONException {
-        JSONObject openmrsAttributes = new JSONObject();
-        if (jsonObject.has(JsonFormConstants.OPENMRS_ATTRIBUTES)) {
-            openmrsAttributes = jsonObject.getJSONObject(JsonFormConstants.OPENMRS_ATTRIBUTES);
-        }
-        return openmrsAttributes;
-    }
-
-    protected JSONArray getValueOpenMRSAttributes(JSONObject jsonObject) throws JSONException {
-        JSONArray valueOpenMRSAttributes = new JSONArray();
-        if (jsonObject.has(JsonFormConstants.VALUE_OPENMRS_ATTRIBUTES)) {
-            valueOpenMRSAttributes = jsonObject.getJSONArray(JsonFormConstants.VALUE_OPENMRS_ATTRIBUTES);
-        }
-        return valueOpenMRSAttributes;
-    }
-
     public Map<String, SecondaryValueModel> getSecondaryValuesMap() {
         return secondaryValuesMap;
     }
@@ -226,16 +209,16 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
                         if (formValue.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
                             JSONArray options = formValue.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
                             JSONArray values = secondaryValueModel.getValues();
-                            setCompoundButtonValues(options, values);
+                            formUtils.setCompoundButtonValues(options, values);
                         }
                     } else {
                         JSONArray values = secondaryValueModel.getValues();
                         if (type != null && type.equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
                             for (int k = 0; k < values.length(); k++) {
-                                formValue.put(JsonFormConstants.VALUE, getValueKey(values.getString(k)));
+                                formValue.put(JsonFormConstants.VALUE, formUtils.getValueKey(values.getString(k)));
                             }
                         } else {
-                            formValue.put(JsonFormConstants.VALUE, setValues(values, type));
+                            formValue.put(JsonFormConstants.VALUE, formUtils.setValues(values, type));
                         }
                     }
                 }
@@ -253,47 +236,6 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
 
     public String getFormLocation() {
         return formLocation;
-    }
-
-    protected void setCompoundButtonValues(JSONArray options, JSONArray secondValues) {
-        for (int i = 0; i < options.length(); i++) {
-            JSONObject jsonObject;
-            try {
-                jsonObject = options.getJSONObject(i);
-                String mainKey = jsonObject.getString(JsonFormConstants.KEY);
-                for (int j = 0; j < secondValues.length(); j++) {
-                    String key = getValueKey(secondValues.getString(j));
-                    if (mainKey.equals(key)) {
-                        jsonObject.put(JsonFormConstants.VALUE, true);
-                    }
-                }
-            } catch (JSONException e) {
-                Timber.e(e, "GenericPopupDialog --> setCompoundButtonValues");
-            }
-        }
-    }
-
-    protected String getValueKey(String value) {
-        String key = "";
-        String[] strings = value.split(":");
-        if (strings.length > 0) {
-            key = strings[0];
-        }
-        return key;
-    }
-
-    protected String setValues(JSONArray jsonArray, String type) {
-        FormUtils formUtils = new FormUtils();
-        String value = "";
-        for (int i = 0; i < jsonArray.length(); i++) {
-            try {
-                value = formUtils.getValueFromSecondaryValues(type, jsonArray.getString(i));
-            } catch (JSONException e) {
-                Timber.e(e, "GenericPopupDialog --> setValues");
-            }
-        }
-
-        return value.replaceAll(", $", "");
     }
 
     @Override
@@ -365,18 +307,10 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         };
     }
 
-    private void attachDialogOkButton(ViewGroup dialogView) {
-        Button okButton;
-        okButton = dialogView.findViewById(R.id.generic_dialog_done_button);
-        okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                passData();
-                getJsonApi().setGenericPopup(null);
-                getJsonApi().updateGenericPopupSecondaryValues(null);
-                GenericPopupDialog.this.dismiss();
-            }
-        });
+    protected List<View> initiateViews() {
+        List<View> listOfViews = new ArrayList<>();
+        jsonFormInteractor.fetchFields(listOfViews, getStepName(), getFormFragment(), getSpecifyContent(), getCommonListener(), true);
+        return listOfViews;
     }
 
     private void attachDialogCancelButton(ViewGroup dialogView) {
@@ -396,39 +330,18 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         });
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        WindowManager.LayoutParams params = getDialog().getWindow().getAttributes();
-        params.width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.90);
-        params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        getDialog().getWindow().setAttributes(params);
-
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        destroyVariables();
-    }
-
-    private void destroyVariables() {
-        setPopAssignedValue(new HashMap<String, SecondaryValueModel>());
-        setSecondaryValuesMap(new HashMap<String, SecondaryValueModel>());
-    }
-
-    protected List<View> initiateViews() {
-        List<View> listOfViews = new ArrayList<>();
-        jsonFormInteractor.fetchFields(listOfViews, getStepName(), getFormFragment(), getSpecifyContent(), getCommonListener(), true);
-        return listOfViews;
-    }
-
-    public void setContext(Context context) throws IllegalStateException {
-        this.context = context;
-    }
-
-    protected void passData() {
-        onGenericDataPass(getParentKey(), getChildKey());
+    private void attachDialogOkButton(ViewGroup dialogView) {
+        Button okButton;
+        okButton = dialogView.findViewById(R.id.generic_dialog_done_button);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                passData();
+                getJsonApi().setGenericPopup(null);
+                getJsonApi().updateGenericPopupSecondaryValues(null);
+                GenericPopupDialog.this.dismiss();
+            }
+        });
     }
 
     public JsonFormFragment getFormFragment() {
@@ -441,6 +354,14 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
 
     public CommonListener getCommonListener() {
         return commonListener;
+    }
+
+    public void setContext(Context context) throws IllegalStateException {
+        this.context = context;
+    }
+
+    protected void passData() {
+        onGenericDataPass(getParentKey(), getChildKey());
     }
 
     /**
@@ -551,24 +472,24 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
                     .equals(field.getString(JsonFormConstants.TYPE)) && !JsonFormConstants.SECTIONS
                     .equals(field.getString(JsonFormConstants.TYPE))) {
                 JSONArray valueOpenMRSAttributes = new JSONArray();
-                JSONObject openMRSAttributes = getFieldOpenMRSAttributes(field);
+                JSONObject openMRSAttributes = formUtils.getFieldOpenMRSAttributes(field);
                 String key = field.getString(JsonFormConstants.KEY);
                 String type = field.getString(JsonFormConstants.TYPE);
                 JSONArray values = new JSONArray();
                 if (JsonFormConstants.CHECK_BOX.equals(field.getString(JsonFormConstants.TYPE)) &&
                         field.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
-                    values = getOptionsValueCheckBox(field.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME));
+                    values = formUtils.getOptionsValueCheckBox(field.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME));
                     formUtils.getOptionsOpenMRSAttributes(field, valueOpenMRSAttributes);
                 } else if ((JsonFormConstants.EXTENDED_RADIO_BUTTON.equals(field.getString(JsonFormConstants.TYPE)) ||
                         JsonFormConstants.NATIVE_RADIO_BUTTON.equals(field.getString(JsonFormConstants.TYPE))) &&
                         field.has(JsonFormConstants.OPTIONS_FIELD_NAME) && field.has(JsonFormConstants.VALUE)) {
-                    values.put(getOptionsValueRadioButton(field.optString(JsonFormConstants.VALUE),
+                    values.put(formUtils.getOptionsValueRadioButton(field.optString(JsonFormConstants.VALUE),
                             field.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME)));
                     formUtils.getOptionsOpenMRSAttributes(field, valueOpenMRSAttributes);
                 } else if (JsonFormConstants.SPINNER.equals(field.getString(JsonFormConstants.TYPE)) && field
                         .has(JsonFormConstants.VALUE)) {
                     values.put(field.optString(JsonFormConstants.VALUE));
-                    getSpinnerValueOpenMRSAttributes(field, valueOpenMRSAttributes);
+                    formUtils.getSpinnerValueOpenMRSAttributes(field, valueOpenMRSAttributes);
                 } else {
                     if (field.has(JsonFormConstants.VALUE)) {
                         values.put(field.optString(JsonFormConstants.VALUE));
@@ -577,7 +498,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
 
                 if (values.length() > 0) {
                     selectedValues
-                            .put(createSecondaryValueObject(key, type, values, openMRSAttributes, valueOpenMRSAttributes));
+                            .put(formUtils.createSecondaryValueObject(key, type, values, openMRSAttributes, valueOpenMRSAttributes));
                 }
             }
         }
@@ -587,96 +508,6 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
 
     public JSONArray getSubFormsFields() {
         return subFormsFields;
-    }
-
-    protected JSONObject getFieldOpenMRSAttributes(JSONObject item) throws JSONException {
-        JSONObject openMRSAttribute = new JSONObject();
-        openMRSAttribute
-                .put(JsonFormConstants.OPENMRS_ENTITY_PARENT, item.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT));
-        openMRSAttribute.put(JsonFormConstants.OPENMRS_ENTITY, item.getString(JsonFormConstants.OPENMRS_ENTITY));
-        openMRSAttribute.put(JsonFormConstants.OPENMRS_ENTITY_ID, item.getString(JsonFormConstants.OPENMRS_ENTITY_ID));
-        return openMRSAttribute;
-    }
-
-    protected JSONArray getOptionsValueCheckBox(JSONArray options) throws JSONException {
-        JSONArray secondaryValues = new JSONArray();
-        for (int i = 0; i < options.length(); i++) {
-            JSONObject option = options.getJSONObject(i);
-            if (option.has(JsonFormConstants.KEY) && option.has(JsonFormConstants.VALUE) &&
-                    JsonFormConstants.TRUE.equals(option.getString(JsonFormConstants.VALUE))) {
-                String key = option.getString(JsonFormConstants.KEY);
-                String text = option.getString(JsonFormConstants.TEXT);
-                String secondaryValue = key + ":" + text + ":" + JsonFormConstants.TRUE;
-                secondaryValues.put(secondaryValue);
-            }
-        }
-        return secondaryValues;
-    }
-
-    protected String getOptionsValueRadioButton(String value, JSONArray options) throws JSONException {
-        String secondaryValue = "";
-        if (!TextUtils.isEmpty(value)) {
-            for (int i = 0; i < options.length(); i++) {
-                JSONObject option = options.getJSONObject(i);
-                if (option.has(JsonFormConstants.KEY) && value.equals(option.getString(JsonFormConstants.KEY))) {
-                    String key = option.getString(JsonFormConstants.KEY);
-                    String text = option.getString(JsonFormConstants.TEXT);
-                    secondaryValue = key + ":" + text;
-                }
-            }
-        }
-        return secondaryValue;
-    }
-
-    protected void getSpinnerValueOpenMRSAttributes(JSONObject item, JSONArray valueOpenMRSAttributes) throws JSONException {
-        if (item.equals(JsonFormConstants.SPINNER) && item.has(JsonFormConstants.OPENMRS_CHOICE_IDS)) {
-            JSONObject openMRSChoiceIds = item.getJSONObject(JsonFormConstants.OPENMRS_CHOICE_IDS);
-            String value = item.getString(JsonFormConstants.VALUE);
-            Iterator<String> keys = openMRSChoiceIds.keys();
-            while (keys.hasNext()) {
-                String key = keys.next();
-                if (value.equals(key)) {
-                    JSONObject jsonObject = new JSONObject();
-                    String optionOpenMRSConceptId = openMRSChoiceIds.get(key).toString();
-                    jsonObject.put(JsonFormConstants.KEY, item.getString(JsonFormConstants.KEY));
-                    jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_PARENT,
-                            item.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT));
-                    jsonObject.put(JsonFormConstants.OPENMRS_ENTITY, item.getString(JsonFormConstants.OPENMRS_ENTITY));
-                    jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_ID, optionOpenMRSConceptId);
-
-                    valueOpenMRSAttributes.put(jsonObject);
-                }
-
-            }
-        }
-    }
-
-    /**
-     * @param key
-     * @param type
-     * @param values
-     * @param openMRSAttributes
-     * @param valueOpenMRSAttributes
-     * @return
-     */
-    protected JSONObject createSecondaryValueObject(String key, String type, JSONArray values, JSONObject openMRSAttributes,
-                                                    JSONArray valueOpenMRSAttributes) {
-        JSONObject jsonObject = new JSONObject();
-        try {
-            if (values.length() > 0) {
-                jsonObject.put(JsonFormConstants.KEY, key);
-                jsonObject.put(JsonFormConstants.TYPE, type);
-                jsonObject.put(JsonFormConstants.VALUES, values);
-                jsonObject.put(JsonFormConstants.OPENMRS_ATTRIBUTES, openMRSAttributes);
-                if (valueOpenMRSAttributes.length() > 0) {
-                    jsonObject.put(JsonFormConstants.VALUE_OPENMRS_ATTRIBUTES, valueOpenMRSAttributes);
-                }
-            }
-        } catch (Exception e) {
-            Timber.e(e, "GenericPopupDialog --> createSecondaryValueObject");
-
-        }
-        return jsonObject;
     }
 
     public void setSubFormsFields(JSONArray subFormsFields) {
@@ -693,6 +524,27 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
 
     public void setCommonListener(CommonListener commonListener) {
         this.commonListener = commonListener;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        WindowManager.LayoutParams params = getDialog().getWindow().getAttributes();
+        params.width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.90);
+        params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        getDialog().getWindow().setAttributes(params);
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        destroyVariables();
+    }
+
+    private void destroyVariables() {
+        setPopAssignedValue(new HashMap<String, SecondaryValueModel>());
+        setSecondaryValuesMap(new HashMap<String, SecondaryValueModel>());
     }
 
     protected String[] getWidgetType(String value) {
