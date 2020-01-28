@@ -62,4 +62,4 @@ deploy:
   github_token: $GITHUB_TOKEN
   local_dir: android-json-form-wizard/build/docs/javadoc/
   on:
-    branch: travis-deploy-javadoc
+    branch: master
