@@ -11,6 +11,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewParent;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
@@ -93,7 +94,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         String remoteReferenceEditText = jsonObject.optString(REFERENCE_EDIT_TEXT);
 
         // Enables us to fetch this value from a previous edit_text & disable this one
-        retrieveRepeatingGroupCountFromRemoteReferenceEditText((JsonApi) context, referenceEditText, remoteReferenceEditText);
+        retrieveRepeatingGroupCountFromRemoteReferenceEditText(rootLayout, (JsonApi) context, referenceEditText, remoteReferenceEditText);
         setUpReferenceEditText(referenceEditText, referenceEditTextHint, repeatingGroupLabel);
 
         // Disable the done button if the reference edit text being used is remote & has a valid value
@@ -146,7 +147,9 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         }
     }
 
-    private void retrieveRepeatingGroupCountFromRemoteReferenceEditText(@NonNull JsonApi context, @NonNull MaterialEditText referenceEditText, @Nullable String remoteReferenceEditTextAddress) throws JSONException {
+    private void retrieveRepeatingGroupCountFromRemoteReferenceEditText(final @NonNull View rootLayout, @NonNull JsonApi context, @NonNull final MaterialEditText referenceEditText, @Nullable String remoteReferenceEditTextAddress) throws JSONException {
+        isRemoteReferenceValueUsed = false;
+        remoteReferenceValue = 0;
         if (!TextUtils.isEmpty(remoteReferenceEditTextAddress) && remoteReferenceEditTextAddress.contains(":")) {
             String finalRemoteReferenceEditTextAddress = remoteReferenceEditTextAddress.trim();
             String[] addressSections = finalRemoteReferenceEditTextAddress.split(":");
@@ -170,7 +173,23 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                                     isRemoteReferenceValueUsed = true;
 
                                     // Start the repeating groups
-                                    attachRepeatingGroup(referenceEditText.getParent().getParent(), remoteReferenceValue);
+                                    Object visibilityTag = rootLayout.getTag(R.id.relevance_decided);;
+                                    if (visibilityTag != null && (boolean) visibilityTag) {
+                                        attachRepeatingGroup(referenceEditText.getParent().getParent(), remoteReferenceValue);
+                                    } else {
+                                        rootLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+
+                                            @Override
+                                            public void onGlobalLayout() {
+                                                Object visibilityTag = rootLayout.getTag(R.id.relevance_decided);;
+                                                if (visibilityTag != null && (boolean) visibilityTag) {
+                                                    attachRepeatingGroup(referenceEditText.getParent().getParent(), remoteReferenceValue);
+
+                                                    rootLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                                                }
+                                            }
+                                        });
+                                    }
                                 } catch (NumberFormatException ex) {
                                     Timber.e(ex);
                                 }

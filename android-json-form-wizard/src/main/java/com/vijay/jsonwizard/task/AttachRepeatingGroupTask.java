@@ -119,7 +119,11 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
             }
         }
 
-        ((JsonApi) widgetArgs.getContext()).invokeRefreshLogic(null, false, null, null);
+        try {
+            ((JsonApi) widgetArgs.getContext()).invokeRefreshLogic(null, false, null, null);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
         hideProgressDialog();
         doneButton.setImageResource(R.drawable.ic_done_green);
     }
