@@ -985,6 +985,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
             updateCanvas(view, visible, canvasViewIds, addressString, object);
             setReadOnlyAndFocus(view, visible, popup);
+
         } catch (Exception e) {
             Timber.e(view.toString());
             Timber.e(e, "JsonFormActivity --> toggleViewVisibility");
@@ -1893,6 +1894,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 refreshViews(curCanvasView);
             }
 
+            curCanvasView.setTag(R.id.relevance_decided, visible);
+
             if (object != null) {
                 object.put(JsonFormConstants.IS_VISIBLE, visible);
                 //Only keep track of required fields that are invisible
@@ -1923,9 +1926,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 }
                 return null;
             }
-        }.
-
-                execute();
+        }.execute();
     }
 
     private void refreshViews(View childElement) {
