@@ -173,7 +173,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                                     isRemoteReferenceValueUsed = true;
 
                                     // Start the repeating groups
-                                    Object visibilityTag = rootLayout.getTag(R.id.relevance_decided);;
+                                    Object visibilityTag = rootLayout.getTag(R.id.relevance_decided);
                                     if (visibilityTag != null && (boolean) visibilityTag) {
                                         attachRepeatingGroup(referenceEditText.getParent().getParent(), remoteReferenceValue);
                                     } else {
@@ -181,7 +181,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
 
                                             @Override
                                             public void onGlobalLayout() {
-                                                Object visibilityTag = rootLayout.getTag(R.id.relevance_decided);;
+                                                Object visibilityTag = rootLayout.getTag(R.id.relevance_decided);
                                                 if (visibilityTag != null && (boolean) visibilityTag) {
                                                     attachRepeatingGroup(referenceEditText.getParent().getParent(), remoteReferenceValue);
 
