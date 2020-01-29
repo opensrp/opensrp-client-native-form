@@ -301,15 +301,20 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     while (keys.hasNext()) {
                         String curKey = keys.next();
 
-                        JSONObject curRelevance = calculation.getJSONObject(curKey);
+                        JSONObject curCalculation = calculation.getJSONObject(curKey);
                         JSONObject valueSource = new JSONObject();
                         if (calculation.has(JsonFormConstants.SRC)) {
                             valueSource = calculation.getJSONObject(JsonFormConstants.SRC);
                         }
 
                         String[] address = getAddressFromMap(widgetKey, stepName, JsonFormConstants.CALCULATION);
-                        if (address == null && curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_RULES)) {
-                            address = getRulesEngineAddress(curKey, curRelevance, curView, JsonFormConstants.CALCULATION);
+                        if (address == null && curCalculation.has(JsonFormConstants.JSON_FORM_KEY.EX_RULES)) {
+                            JSONObject exRulesObject = curCalculation.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES);
+                            if (exRulesObject.has(RuleConstant.RULES_DYNAMIC)) {
+                                address = getDynamicRulesEngineAddress(curKey, curCalculation, curView, JsonFormConstants.CALCULATION);
+                            } else {
+                                address = getRulesEngineAddress(curKey, curCalculation, curView, JsonFormConstants.CALCULATION);
+                            }
                         }
 
                         if (address != null) {
@@ -320,13 +325,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                                 curValueMap = getValueFromAddress(address, popup);
                             }
 
+                            updateCalculation(curValueMap, curView, address);
 
-                            if (RuleConstant.RULES_ENGINE.equals(address[0]) && !JsonFormConstants.TOASTER_NOTES.equals(curView.getTag(R.id.type)) && !JsonFormConstants.NATIVE_RADIO_BUTTON.equals(curView.getTag(R.id.type))) {
-                                //check for integrity of values
-                                updateCalculation(curValueMap, curView, address[1]);
-                            } else {
-                                updateCalculation(curValueMap, curView, address[1]);
-                            }
                         }
                     }
 
@@ -985,6 +985,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
             updateCanvas(view, visible, canvasViewIds, addressString, object);
             setReadOnlyAndFocus(view, visible, popup);
+
         } catch (Exception e) {
             Timber.e(view.toString());
             Timber.e(e, "JsonFormActivity --> toggleViewVisibility");
@@ -1665,11 +1666,14 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         return Utils.getConditionKeys(condition);
     }
 
-    private void updateCalculation(Facts valueMap, View view, String rulesFile) {
-
+    private void updateCalculation(Facts valueMap, View view, String[] address) {
+        String calculation;
         try {
-
-            String calculation = getRulesEngineFactory().getCalculation(valueMap, rulesFile);
+            if (address[0].equals(RuleConstant.RULES_DYNAMIC)) {
+                calculation = getRulesEngineFactory().getDynamicCalculation(valueMap, new JSONArray(address[1]));
+            } else {
+                calculation = getRulesEngineFactory().getCalculation(valueMap, address[1]);
+            }
 
             if (calculation != null) {
                 if (view instanceof CheckBox) {
@@ -1890,6 +1894,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 refreshViews(curCanvasView);
             }
 
+            curCanvasView.setTag(R.id.relevance_decided, visible);
+
             if (object != null) {
                 object.put(JsonFormConstants.IS_VISIBLE, visible);
                 //Only keep track of required fields that are invisible
@@ -1920,9 +1926,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 }
                 return null;
             }
-        }.
-
-                execute();
+        }.execute();
     }
 
     private void refreshViews(View childElement) {
