@@ -30,7 +30,6 @@ public class ExpansionPanelGenericPopupDialogTask extends AsyncTask<Void, Void, 
     public ExpansionPanelGenericPopupDialogTask(View view) {
         this.view = view;
     }
-
     @Override
     protected Void doInBackground(Void... voids) {
         Context context = (Context) view.getTag(R.id.specify_context);

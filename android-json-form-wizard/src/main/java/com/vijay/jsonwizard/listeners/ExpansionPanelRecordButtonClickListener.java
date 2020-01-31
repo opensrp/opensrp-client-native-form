@@ -10,6 +10,7 @@ import android.widget.RelativeLayout;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.task.ExpansionPanelGenericPopupDialogTask;
 import com.vijay.jsonwizard.utils.FormUtils;
+import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.views.CustomTextView;
 
 import org.json.JSONArray;
@@ -21,6 +22,7 @@ public class ExpansionPanelRecordButtonClickListener implements View.OnClickList
     @Override
     public void onClick(View view) {
         Context context = (Context) view.getTag(R.id.specify_context);
+        Utils.showProgressDialog(R.string.loading, R.string.loading_form_message,context);
 
         LinearLayout linearLayout = getLinearLayout(view);
         disableExpansionPanelViews(linearLayout);
