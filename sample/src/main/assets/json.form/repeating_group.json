@@ -130,6 +130,7 @@
           "value": true,
           "err": "Please specify the # of dips"
         },
+
         "value": [
           {
             "key": "larvae_total",
@@ -141,6 +142,21 @@
             "v_numeric_integer": {
               "value": "true",
               "err": "Must be a rounded number"
+            }
+          },
+          {
+            "key": "date_larvae_collection",
+            "type": "edit_text",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "hint": "Date of larvae collection",
+            "calculation": {
+              "rules-engine": {
+                "ex-rules": {
+                  "rules-dynamic": "repeating_groups_calculation_rules.yml"
+                }
+              }
             }
           },
           {
@@ -412,12 +428,10 @@
           }
         ],
         "relevance": {
-          "step2:moz_type": {
-            "ex-checkbox": [
-              {
-                "or": ["An. funestus"]
-              }
-            ]
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "repeating_group_relevance_rules.yml"
+            }
           }
         }
       }
