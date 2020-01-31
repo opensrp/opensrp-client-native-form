@@ -2,6 +2,7 @@ package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -114,6 +115,12 @@ public class ToasterNotesFactory implements FormWidgetFactory {
             default:
                 break;
         }
+
+        toasterNoteImageView.setVisibility(jsonObject.optBoolean(JsonFormConstants.ICON_VISIBLE, true) ? View.VISIBLE : View.GONE);
+
+        if (jsonObject.has(JsonFormConstants.BACKGROUND_COLOR))
+            ((GradientDrawable) toasterRelativeLayout.getBackground()).setColor(Color.parseColor(jsonObject.getString(JsonFormConstants.BACKGROUND_COLOR)));
+
         toasterNotesTextView.setText(text);
         linearLayout.setTag(R.id.original_text, text);
         toasterNotesTextView.setTextColor(Color.parseColor(textColor));

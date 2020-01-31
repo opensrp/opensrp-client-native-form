@@ -106,6 +106,8 @@ public class JsonFormConstants {
     public static final String DEFAULT_TEXT_COLOR = "#212121";
     public static final String DEFAULT_HINT_TEXT_COLOR = "#808080";
     public static final String DEFAULT_NUMBER_SELECTOR_TEXT_COLOR = "#ffffff";
+    public static final String ICON_VISIBLE = "icon_visible";
+    public static final String BACKGROUND_COLOR = "background_color";
     public static final String TOASTER_NOTES = "toaster_notes";
     public static final String TOASTER_TYPE = "toaster_type";
     public static final String TOASTER_INFO_TEXT = "toaster_info_text";
