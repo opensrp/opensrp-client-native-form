@@ -1,9 +1,11 @@
 package com.vijay.jsonwizard.rules;
 
 import android.content.Context;
-import android.util.Log;
+import android.support.annotation.NonNull;
 
 import com.google.gson.Gson;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.utils.Utils;
 
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rule;
@@ -12,7 +14,9 @@ import org.jeasy.rules.api.Rules;
 import org.jeasy.rules.api.RulesEngine;
 import org.jeasy.rules.core.DefaultRulesEngine;
 import org.jeasy.rules.core.RulesEngineParameters;
+import org.jeasy.rules.mvel.MVELRule;
 import org.jeasy.rules.mvel.MVELRuleFactory;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -21,6 +25,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import timber.log.Timber;
 
 public class RulesEngineFactory implements RuleListener {
     public final String TAG = RulesEngineFactory.class.getCanonicalName();
@@ -49,24 +55,46 @@ public class RulesEngineFactory implements RuleListener {
     public RulesEngineFactory() {
     }
 
-    private Rules getRulesFromAsset(String fileName) {
+    private Rules getDynamicRulesFromJsonArray(JSONArray jsonArray) {
         try {
-            if (!ruleMap.containsKey(fileName)) {
-
-                BufferedReader bufferedReader = new BufferedReader(
-                        new InputStreamReader(context.getAssets().open(fileName)));
-                ruleMap.put(fileName, MVELRuleFactory.createRulesFrom(bufferedReader));
+            Rules rules = new Rules();
+            JSONObject keyJsonObject = Utils.getJsonObjectFromJsonArray(JsonFormConstants.KEY, jsonArray);
+            if(keyJsonObject != null) {
+                String key = keyJsonObject.optString(JsonFormConstants.KEY);
+                if (!ruleMap.containsKey(key)) {
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonRuleObject = jsonArray.optJSONObject(i);
+                        if (jsonRuleObject != null && !jsonRuleObject.has(JsonFormConstants.KEY)) {
+                            MVELRule rule = getDynamicRulesFromJsonObject(jsonRuleObject);
+                            if (rule != null) {
+                                rules.register(rule);
+                            }
+                        }
+                    }
+                    ruleMap.put(key, rules);
+                }
+                return ruleMap.get(key);
             }
-            return ruleMap.get(fileName);
-        } catch (IOException e) {
-            Log.e(TAG, e.getMessage(), e);
+            return null;
+        } catch (Exception e) {
+            Timber.e(e);
             return null;
         }
     }
 
-    protected void processDefaultRules(Rules rules, Facts facts) {
-
-        defaultRulesEngine.fire(rules, facts);
+    private MVELRule getDynamicRulesFromJsonObject(JSONObject jsonObjectDynamicRule) {
+        try {
+            MVELRule dynamicMvelRule = new MVELRule();
+            dynamicMvelRule.setDescription(jsonObjectDynamicRule.optString(RuleConstant.DESCRIPTION));
+            dynamicMvelRule.setPriority(jsonObjectDynamicRule.optInt(RuleConstant.PRIORITY));
+            dynamicMvelRule.when(jsonObjectDynamicRule.optString(RuleConstant.CONDITION));
+            dynamicMvelRule.then(jsonObjectDynamicRule.optString(RuleConstant.ACTIONS));
+            dynamicMvelRule.name(jsonObjectDynamicRule.optString(RuleConstant.NAME));
+            return dynamicMvelRule;
+        } catch (Exception e) {
+            Timber.e(e);
+            return null;
+        }
     }
 
     public boolean getRelevance(Facts relevanceFact, String ruleFilename) {
@@ -82,89 +110,122 @@ public class RulesEngineFactory implements RuleListener {
         return facts.get(RuleConstant.IS_RELEVANT);
     }
 
-    public String getCalculation(Facts calculationFact, String ruleFilename) {
+    public boolean getDynamicRelevance(@NonNull Facts relevanceFact, @NonNull JSONArray rulesStrObject) {
 
+        Facts facts = initializeFacts(relevanceFact);
+
+        facts.put(RuleConstant.IS_RELEVANT, false);
+
+        rules = getDynamicRulesFromJsonArray(rulesStrObject);
+
+        processDefaultRules(rules, facts);
+
+        return facts.get(RuleConstant.IS_RELEVANT);
+    }
+
+    protected Facts initializeFacts(Facts facts) {
+
+        if (globalValues != null) {
+            for (Map.Entry<String, String> entry : globalValues.entrySet()) {
+                facts.put(RuleConstant.PREFIX.GLOBAL + entry.getKey(), getValue(entry.getValue()));
+            }
+
+            facts.asMap().putAll(globalValues);
+        }
+        selectedRuleName = facts.get(RuleConstant.SELECTED_RULE);
+        facts.put("helper", rulesEngineHelper);
+        return facts;
+    }
+
+    private Rules getRulesFromAsset(String fileName) {
+        try {
+            if (!ruleMap.containsKey(fileName)) {
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(context.getAssets().open(fileName)));
+                ruleMap.put(fileName, MVELRuleFactory.createRulesFrom(bufferedReader));
+            }
+            return ruleMap.get(fileName);
+        } catch (IOException e) {
+            Timber.e(e, "%s getRulesFromAsset", this.getClass().getCanonicalName());
+            return null;
+        } catch (Exception e) {
+            Timber.e(e);
+            return null;
+        }
+    }
+
+    protected void processDefaultRules(Rules rules, Facts facts) {
+        defaultRulesEngine.fire(rules, facts);
+    }
+
+    protected Object getValue(String value) {
+        String rawValue = value.trim();
+        if (isList(rawValue)) {
+            return gson.fromJson(rawValue, ArrayList.class);
+        } else if ("true".equals(rawValue) || "false".equals(rawValue)) {
+            return Boolean.valueOf(rawValue);
+        } else {
+            try {
+                return Integer.valueOf(rawValue);
+            } catch (NumberFormatException e) {
+                try {
+                    return Float.valueOf(rawValue);
+                } catch (NumberFormatException e2) {
+                    return rawValue;
+                }
+            }
+        }
+    }
+
+    private boolean isList(String value) {
+        return !value.isEmpty() && value.charAt(0) == '[';
+    }
+
+    public String getCalculation(Facts calculationFact, String ruleFilename) {
         //need to clean curValue map as constraint depend on valid values, empties wont do
+        Facts facts = initializeFacts(calculationFact);
+        facts.put(RuleConstant.CALCULATION, "");
+        rules = getRulesFromAsset(RULE_FOLDER_PATH + ruleFilename);
+        processDefaultRules(rules, facts);
+
+        return formatCalculationReturnValue(facts.get(RuleConstant.CALCULATION));
+    }
+
+    public String getDynamicCalculation(@NonNull Facts calculationFact, @NonNull JSONArray rulesStrObject) {
 
         Facts facts = initializeFacts(calculationFact);
 
-        facts.put(RuleConstant.CALCULATION, "");
+        facts.put(RuleConstant.CALCULATION, false);
 
-        rules = getRulesFromAsset(RULE_FOLDER_PATH + ruleFilename);
+        rules = getDynamicRulesFromJsonArray(rulesStrObject);
 
         processDefaultRules(rules, facts);
 
         return formatCalculationReturnValue(facts.get(RuleConstant.CALCULATION));
     }
 
+    private String formatCalculationReturnValue(Object rawValue) {
+        String value = String.valueOf(rawValue).trim();
+        if (value.isEmpty()) {
+            return "";
+        } else if (rawValue instanceof Map) {
+            return new JSONObject((Map<String, String>) rawValue).toString();
+        } else if (value.contains(".")) {
+            try {
+                value = String.valueOf((float) Math.round(Float.valueOf(value) * 100) / 100);
+            } catch (NumberFormatException e) {
+                Timber.e(e, "%s formatCalculationReturnValue", this.getClass().getCanonicalName());
+            }
+        }
+        return value;
+    }
+
     public String getConstraint(Facts constraintFact, String ruleFilename) {
-
         Facts facts = initializeFacts(constraintFact);
-
         facts.put(RuleConstant.CONSTRAINT, "0");
-
         rules = getRulesFromAsset(RULE_FOLDER_PATH + ruleFilename);
-
         processDefaultRules(rules, facts);
 
         return formatCalculationReturnValue(facts.get(RuleConstant.CONSTRAINT));
-    }
-
-    protected Facts initializeFacts(Facts facts) {
-
-        if (globalValues != null) {
-
-            for (Map.Entry<String, String> entry : globalValues.entrySet()) {
-
-                facts.put(RuleConstant.PREFIX.GLOBAL + entry.getKey(), getValue(entry.getValue()));
-            }
-
-
-            facts.asMap().putAll(globalValues);
-        }
-
-        selectedRuleName = facts.get(RuleConstant.SELECTED_RULE);
-
-        facts.put("helper", rulesEngineHelper);
-        return facts;
-    }
-
-    protected Object getValue(String value) {
-
-        String rawValue = value.trim();
-
-        if (isList(rawValue)) {
-
-            return gson.fromJson(rawValue, ArrayList.class);
-
-        } else if ("true".equals(rawValue) || "false".equals(rawValue)) {
-
-            return Boolean.valueOf(rawValue);
-
-        } else {
-
-            try {
-
-                return Integer.valueOf(rawValue);
-
-            } catch (NumberFormatException e) {
-
-                try {
-
-                    return Float.valueOf(rawValue);
-
-                } catch (NumberFormatException e2) {
-
-                    return rawValue;
-                }
-            }
-
-        }
-
-    }
-
-    private boolean isList(String value) {
-        return !value.isEmpty() && value.charAt(0) == '[';
     }
 
     @Override
@@ -198,24 +259,6 @@ public class RulesEngineFactory implements RuleListener {
 
     public void setRulesFolderPath(String path) {
         RULE_FOLDER_PATH = path;
-    }
-
-    private String formatCalculationReturnValue(Object rawValue) {
-        String value = String.valueOf(rawValue).trim();
-        if (value.isEmpty()) {
-            return "";
-        } else if (rawValue instanceof Map) {
-
-            return new JSONObject((Map<String, String>) rawValue).toString();
-
-        } else if (value.contains(".")) {
-            try {
-                value = String.valueOf((float) Math.round(Float.valueOf(value) * 100) / 100);
-            } catch (NumberFormatException e) {
-
-            }
-        }
-        return value;
     }
 
 }

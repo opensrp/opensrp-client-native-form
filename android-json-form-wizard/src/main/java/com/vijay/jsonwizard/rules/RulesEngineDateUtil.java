@@ -22,35 +22,26 @@ import java.util.concurrent.TimeUnit;
 public class RulesEngineDateUtil {
 
     public long getDifferenceDays(String dateString) {
-
         Date date = Utils.getDateFromString(dateString);
 
         if (date != null) {
-
             long msDiff = Calendar.getInstance().getTimeInMillis() - date.getTime();
-
             return Math.abs(TimeUnit.MILLISECONDS.toDays(msDiff));
         } else {
             return 0;
         }
-
     }
 
     public long getDifferenceDays(String dateString, String dateString2) {
-
         Date date = Utils.getDateFromString(dateString);
-
         Date date2 = Utils.getDateFromString(dateString2);
 
         if (date != null && date2 != null) {
-
             long msDiff = date.getTime() - date2.getTime();
-
             return Math.abs(TimeUnit.MILLISECONDS.toDays(msDiff));
         } else {
             return 0;
         }
-
     }
 
     public String getDOBFromAge(Integer age) {
@@ -63,36 +54,92 @@ public class RulesEngineDateUtil {
     }
 
     /**
+     * Returns a formatted age string from startdate to provided end date
+     *
+     * @param date
+     * @param endDate
+     * @return String
+     */
+    public String getDuration(String date, String endDate) {
+        return Utils.getDuration(date, endDate);
+    }
+
+    public String getWeeksAndDaysFromDays(Integer days) {
+        double weeks = Math.round(Math.floor(days / 7));
+        Integer dayz = days % 7;
+
+        return String.format("%.0f weeks %d days", weeks, dayz);
+    }
+
+    public String formatDate(String dateString, String duration) {
+        LocalDate date = new LocalDate(Utils.reverseDateString(dateString, "-"));
+        int result = 0;
+        String cleanDuration = duration.trim().toLowerCase();
+
+        if (cleanDuration.length() == 1) {
+            switch (cleanDuration) {
+                case "d":
+                    result = Days.daysBetween(date, LocalDate.now()).getDays();
+                    break;
+                case "w":
+                    result = Weeks.weeksBetween(date, LocalDate.now()).getWeeks();
+                    break;
+                case "m":
+                    result = Months.monthsBetween(date, LocalDate.now()).getMonths();
+                    break;
+                case "y":
+                    result = Years.yearsBetween(date, LocalDate.now()).getYears();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        return "wd".equals(cleanDuration) ? getDuration(dateString).replace("w", " weeks").replace("d", " days") : String.valueOf(Math.abs(result));
+    }
+
+    /**
+     * Returns a formatted age string from given date till today
+     *
+     * @param date
+     * @return String date
+     */
+    public String getDuration(String date) {
+        return Utils.getDuration(date);
+    }
+
+    /**
+     * @param durationString
+     * @return String with date
+     */
+    public String addDuration(String durationString) {
+        return addDuration((new LocalDate()).toString(FormUtils.NATIIVE_FORM_DATE_FORMAT_PATTERN), durationString);
+    }
+
+    /**
      * @param dateString
      * @param durationString
      * @return String with date
      */
     public String addDuration(String dateString, String durationString) {
-
         LocalDate date = new LocalDate(Utils.reverseDateString(dateString, "-"));
-
         String[] durationArr = getDurationArray(durationString);
 
-        for (int i = 0; i < durationArr.length; i++) {
-
-            char suffix = durationArr[i].charAt(durationArr[i].length() - 1);
+        for (String duration : durationArr) {
+            char suffix = duration.charAt(duration.length() - 1);
             switch (suffix) {
                 case 'd':
-                    date = date.plusDays(getDurationValue(durationArr[i]));
-
+                    date = date.plusDays(getDurationValue(duration));
                     break;
                 case 'w':
-                    date = date.plusWeeks(getDurationValue(durationArr[i]));
-
+                    date = date.plusWeeks(getDurationValue(duration));
                     break;
                 case 'm':
-                    date = date.plusMonths(getDurationValue(durationArr[i]));
-
+                    date = date.plusMonths(getDurationValue(duration));
                     break;
                 case 'y':
-                    date = date.plusYears(getDurationValue(durationArr[i]));
+                    date = date.plusYears(getDurationValue(duration));
                     break;
-
                 default:
                     break;
 
@@ -109,6 +156,17 @@ public class RulesEngineDateUtil {
         return cleanDurationString.contains("-") ? cleanDurationString.trim().split("-") : new String[]{cleanDurationString};
     }
 
+    private Integer getDurationValue(String s) {
+        return Integer.valueOf(s.substring(0, s.length() - 1));
+    }
+
+    /**
+     * @param durationString
+     * @return String with date
+     */
+    public String subtractDuration(String durationString) {
+        return subtractDuration((new LocalDate()).toString(FormUtils.NATIIVE_FORM_DATE_FORMAT_PATTERN), durationString);
+    }
 
     /**
      * @param dateString
@@ -121,120 +179,28 @@ public class RulesEngineDateUtil {
 
         String[] durationArr = getDurationArray(durationString);
 
-        for (int i = 0; i < durationArr.length; i++) {
+        for (String duration : durationArr) {
 
-            char suffix = durationArr[i].charAt(durationArr[i].length() - 1);
+            char suffix = duration.charAt(duration.length() - 1);
             switch (suffix) {
                 case 'd':
-                    date = date.minusDays(getDurationValue(durationArr[i]));
-
+                    date = date.minusDays(getDurationValue(duration));
                     break;
                 case 'w':
-                    date = date.minusWeeks(getDurationValue(durationArr[i]));
-
+                    date = date.minusWeeks(getDurationValue(duration));
                     break;
                 case 'm':
-                    date = date.minusMonths(getDurationValue(durationArr[i]));
-
+                    date = date.minusMonths(getDurationValue(duration));
                     break;
                 case 'y':
-                    date = date.minusYears(getDurationValue(durationArr[i]));
+                    date = date.minusYears(getDurationValue(duration));
                     break;
-
                 default:
                     break;
-
             }
-
         }
 
         return date.toString(FormUtils.NATIIVE_FORM_DATE_FORMAT_PATTERN);
-    }
-
-    /**
-     * Returns a formatted age string from given date till today
-     *
-     * @param date
-     * @return String date
-     */
-    public String getDuration(String date) {
-        return Utils.getDuration(date);
-    }
-
-    /**
-     * Returns a formatted age string from startdate to provided end date
-     *
-     * @param date
-     * @param endDate
-     * @return String
-     */
-    public String getDuration(String date, String endDate) {
-        return Utils.getDuration(date, endDate);
-    }
-
-    public String getWeeksAndDaysFromDays(Integer days) {
-
-        double weeks = Math.round(Math.floor(days / 7));
-        Integer dayz = days % 7;
-
-        return String.format("%.0f weeks %d days", weeks, dayz);
-    }
-
-    public String formatDate(String dateString, String duration) {
-
-        LocalDate date = new LocalDate(Utils.reverseDateString(dateString, "-"));
-        int result = 0;
-
-        String cleanDuration = duration.trim().toLowerCase();
-
-        if (cleanDuration.length() == 1) {
-
-            switch (cleanDuration) {
-                case "d":
-                    result = Days.daysBetween(date, LocalDate.now()).getDays();
-
-                    break;
-                case "w":
-                    result = Weeks.weeksBetween(date, LocalDate.now()).getWeeks();
-
-                    break;
-                case "m":
-                    result = Months.monthsBetween(date, LocalDate.now()).getMonths();
-
-                    break;
-                case "y":
-                    result = Years.yearsBetween(date, LocalDate.now()).getYears();
-                    break;
-
-                default:
-                    break;
-
-            }
-        }
-
-        return "wd".equals(cleanDuration) ? getDuration(dateString).replace("w", " weeks").replace("d", " days") : String
-                .valueOf(Math.abs(result));
-
-    }
-
-    /**
-     * @param durationString
-     * @return String with date
-     */
-    public String addDuration(String durationString) {
-        return addDuration((new LocalDate()).toString(FormUtils.NATIIVE_FORM_DATE_FORMAT_PATTERN), durationString);
-    }
-
-    /**
-     * @param durationString
-     * @return String with date
-     */
-    public String subtractDuration(String durationString) {
-        return subtractDuration((new LocalDate()).toString(FormUtils.NATIIVE_FORM_DATE_FORMAT_PATTERN), durationString);
-    }
-
-    private Integer getDurationValue(String s) {
-        return Integer.valueOf(s.substring(0, s.length() - 1));
     }
 
     public String minDate(String minimumDate) {

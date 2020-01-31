@@ -13,6 +13,7 @@
     <item name="imagePath" type="id" />
     <item name="raw_value" type="id" />
     <item name="canvas_ids" type="id" />
+    <item name="relevance_decided" type="id"/>
     <item name="after_look_up" type="id" />
     <item name="editable_view" type="id" />
     <item name="repeating_group_item_count" type="id" />
@@ -80,4 +81,7 @@
     <item name="label_dialog_image_src" type="id"/>
     <item name="error_textView" type="id" />
     <item name="maxSelectable" type="id"/>
+
+    <item name="simprints_guid" type="id" />
+
 </resources>

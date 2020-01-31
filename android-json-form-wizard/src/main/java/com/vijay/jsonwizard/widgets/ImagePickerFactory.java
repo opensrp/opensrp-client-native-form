@@ -2,6 +2,7 @@ package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.text.TextUtils;
 import android.util.TypedValue;
@@ -163,7 +164,9 @@ public class ImagePickerFactory implements FormWidgetFactory {
         String imagePath = jsonObject.optString(JsonFormConstants.VALUE);
         if (!TextUtils.isEmpty(imagePath)) {
             imageView.setTag(R.id.imagePath, imagePath);
-            imageView.setImageBitmap(ImageUtils.loadBitmapFromFile(context, imagePath, ImageUtils.getDeviceWidth(context), FormUtils.dpToPixels(context, 200)));
+            Bitmap bitmap = ImageUtils.loadBitmapFromFile(context, imagePath, ImageUtils.getDeviceWidth(context), FormUtils.dpToPixels(context, 200));
+            if (bitmap != null)
+                imageView.setImageBitmap(bitmap);
         }
 
 

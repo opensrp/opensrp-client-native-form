@@ -50,7 +50,7 @@ public class MultiSelectListUtils {
             multiSelectItems.add(new MultiSelectItem(
                     jsonDataObject.getString(JsonFormConstants.KEY),
                     jsonDataObject.getString(JsonFormConstants.TEXT),
-                    jsonDataObject.has(JsonFormConstants.MultiSelectUtils.PROPERTY) ? jsonDataObject.getString(JsonFormConstants.MultiSelectUtils.PROPERTY) : null,
+                    jsonDataObject.has(JsonFormConstants.MultiSelectUtils.PROPERTY) ? jsonDataObject.getJSONObject(JsonFormConstants.MultiSelectUtils.PROPERTY).toString() : null,
                     jsonDataObject.optString(JsonFormConstants.OPENMRS_ENTITY),
                     jsonDataObject.optString(JsonFormConstants.OPENMRS_ENTITY_ID),
                     jsonDataObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT)));

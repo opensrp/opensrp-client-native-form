@@ -30,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rey.material.widget.Button;
@@ -42,6 +43,7 @@ import com.vijay.jsonwizard.fragments.JsonFormErrorFragment;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 import com.vijay.jsonwizard.mvp.MvpBasePresenter;
+import com.vijay.jsonwizard.task.ExpansionPanelGenericPopupDialogTask;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ImageUtils;
 import com.vijay.jsonwizard.utils.PermissionUtils;
@@ -59,6 +61,7 @@ import com.vijay.jsonwizard.widgets.NativeRadioButtonFactory;
 import com.vijay.jsonwizard.widgets.NumberSelectorFactory;
 import com.vijay.jsonwizard.widgets.SpinnerFactory;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -73,6 +76,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+
+import timber.log.Timber;
 
 import static com.vijay.jsonwizard.utils.FormUtils.dpToPixels;
 
@@ -638,14 +643,12 @@ public class JsonFormFragmentPresenter extends
     protected void nativeRadioButtonClickActions(View view) {
         String type = (String) view.getTag(R.id.specify_type);
         String specifyWidget = (String) view.getTag(R.id.specify_widget);
-        Log.i(TAG, "The dialog content widget is this: " + specifyWidget);
+        Timber.i("The dialog content widget is this: " + specifyWidget);
         if (JsonFormConstants.CONTENT_INFO.equals(type) && specifyWidget
                 .equals(JsonFormConstants.DATE_PICKER)) {
             NativeRadioButtonFactory.showDateDialog(view);
-        } else if (JsonFormConstants.CONTENT_INFO.equals(type) && !specifyWidget
-                .equals(JsonFormConstants.DATE_PICKER)) {
-            FormUtils formUtils = new FormUtils();
-            formUtils.showGenericDialog(view);
+        } else if (JsonFormConstants.CONTENT_INFO.equals(type) && !specifyWidget.equals(JsonFormConstants.DATE_PICKER)) {
+            new ExpansionPanelGenericPopupDialogTask(view).execute();
         } else if (view.getId() == R.id.label_edit_button) {
             setRadioViewsEditable(view);
         } else {
@@ -742,6 +745,21 @@ public class JsonFormFragmentPresenter extends
             params.width = (int) (view.getContext().getResources().getDisplayMetrics().widthPixels
                     * 0.90);
             params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        }
+
+
+        String titleString = (String) view.getTag(R.id.label_dialog_title);
+        if (StringUtils.isNotBlank(titleString)) {
+            TextView dialogTitle = dialog.findViewById(R.id.dialogTitle);
+            dialogTitle.setText(titleString);
+            dialogTitle.setVisibility(View.VISIBLE);
+        }
+
+        String dialogString = (String) view.getTag(R.id.label_dialog_info);
+        if (StringUtils.isNotBlank(dialogString)) {
+            TextView dialogText = dialog.findViewById(R.id.dialogText);
+            dialogText.setText(dialogString);
+            dialogText.setVisibility(View.VISIBLE);
         }
 
         ImageView dialogImage = dialog.findViewById(R.id.dialogImage);
@@ -856,8 +874,10 @@ public class JsonFormFragmentPresenter extends
                 Log.e(TAG, e.toString());
             }
         }
-        getView().writeValue(mStepName, parentKey, value, openMrsEntityParent, openMrsEntity,
-                openMrsEntityId, popup);
+        if (getView() != null) {
+            getView().writeValue(mStepName, parentKey, value, openMrsEntityParent, openMrsEntity,
+                    openMrsEntityId, popup);
+        }
     }
 
     private void createNumberSelector(View view) {

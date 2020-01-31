@@ -1,5 +1,6 @@
 package com.vijay.jsonwizard.widgets;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
@@ -28,11 +29,11 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.interfaces.MultiSelectListRepository;
 import com.vijay.jsonwizard.task.MultiSelectListLoadTask;
 import com.vijay.jsonwizard.utils.MultiSelectListUtils;
 import com.vijay.jsonwizard.utils.Utils;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -147,10 +148,16 @@ public class MultiSelectListFactory implements FormWidgetFactory {
 
     protected List<MultiSelectItem> prepareSelectedData() {
         try {
-            JSONArray jsonValueArray = jsonObject.has(JsonFormConstants.VALUE) ? jsonObject.getJSONArray(JsonFormConstants.VALUE) : null;
+            JSONArray jsonValueArray = jsonObject.has(JsonFormConstants.VALUE) ? jsonObject.optJSONArray(JsonFormConstants.VALUE) : null;
             if (jsonValueArray != null) {
                 return MultiSelectListUtils.processOptionsJsonArray(jsonValueArray);
             }
+
+            jsonValueArray = jsonObject.has(JsonFormConstants.VALUE) ? new JSONArray(jsonObject.optString(JsonFormConstants.VALUE)) : null;
+            if (jsonValueArray != null) {
+                return MultiSelectListUtils.processOptionsJsonArray(jsonValueArray);
+            }
+
         } catch (JSONException e) {
             Timber.e(e);
         }
@@ -166,12 +173,32 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         if (StringUtils.isBlank(source)) {
             return MultiSelectListUtils.loadOptionsFromJsonForm(jsonObject);
         } else {
-            List<MultiSelectItem> fetchedMultiSelectItems = fetchData();
-            if(fetchedMultiSelectItems == null || fetchedMultiSelectItems.isEmpty()){
-                Utils.showToast(context, context.getString(R.string.multi_select_list_msg_data_source_invalid));
-                return null;
+            try {
+                String strRepositoryClass = jsonObject.optString(JsonFormConstants.MultiSelectUtils.REPOSITORY_CLASS);
+                Class<?> aClass = Class.forName(strRepositoryClass);
+                MultiSelectListRepository multiSelectListRepository = (MultiSelectListRepository) aClass.newInstance();
+                List<MultiSelectItem> fetchedMultiSelectItems = multiSelectListRepository.fetchData();
+                if (fetchedMultiSelectItems == null || fetchedMultiSelectItems.isEmpty()) {
+                    Activity activity = jsonFormFragment.getActivity();
+                    if (activity != null) {
+                        jsonFormFragment.getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Utils.showToast(context, context.getString(R.string.multi_select_list_msg_data_source_invalid));
+                            }
+                        });
+                    }
+                    return null;
+                }
+                return fetchedMultiSelectItems;
+            } catch (IllegalAccessException e) {
+                Timber.e(e);
+            } catch (InstantiationException e) {
+                Timber.e(e);
+            } catch (ClassNotFoundException e) {
+                Timber.e(e);
             }
-            return fetchedMultiSelectItems;
+            return null;
         }
     }
 
@@ -184,8 +211,8 @@ public class MultiSelectListFactory implements FormWidgetFactory {
             Utils.showToast(context, String.format(context.getString(R.string.multiselect_already_added_msg), selectedData.getText()));
             return;
         }
-        Utils.showToast(context, selectedData.getText() + " " + context.getString(R.string.multiselect_msg_on_item_added));
         getMultiSelectListSelectedAdapter().getData().add(selectedData);
+        Utils.showToast(context, selectedData.getText() + " " + context.getString(R.string.multiselect_msg_on_item_added));
         getMultiSelectListSelectedAdapter().notifyDataSetChanged();
     }
 
@@ -347,9 +374,5 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         });
 
         return relativeLayout;
-    }
-
-    protected List<MultiSelectItem> fetchData() {
-        throw new NotImplementedException("Implement Your Own Logic");
     }
 }
