@@ -1,4 +1,4 @@
-package com.vijay.jsonwizard.edittext;
+package com.vijay.jsonwizard.validators.edittext;
 
 import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.validators.edittext.MinLengthValidator;
