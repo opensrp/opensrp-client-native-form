@@ -4,7 +4,7 @@ import com.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.validators.edittext.MaxNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.MinNumericValidator;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.Test;
 
