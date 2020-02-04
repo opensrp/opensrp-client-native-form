@@ -35,6 +35,7 @@
     <string name="select_one">اختر رقم</string>
     <string name="done">موافق</string>
     <string name="please_wait_title">ارجوك انتظر</string>
+    <string name="creating_repeating_group_title">ارجوك انتظر</string>
     <string name="creating_repeating_group_message">جارى انشاء المجموعا المتكررة</string>
     <string name="launching_rdt_capture_message">Launching RDT capture widget</string>
     <string name="repeating_group_max_value_err_msg">لا يمكن أن يكون عدد المجموعات المتكررة أكبر من %1$d</string>

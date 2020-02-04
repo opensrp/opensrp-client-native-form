@@ -207,10 +207,10 @@
           "value": "[A-Za-z\\s\\.\\-]*",
           "err": "Please enter a valid name"
         },
-        "v_max_length":{
-          "value":11,
-          "err":"length not more then 11",
-          "is_fixed_size":true
+        "v_max_length": {
+          "value": 11,
+          "err": "length not more then 11",
+          "is_fixed_size": true
         }
       },
       {
@@ -396,7 +396,8 @@
           "label": "Age"
         },
         "min_date": "01-01-1900",
-        "max_date": "today-10y"
+        "max_date": "today-10y",
+        "value": "02-08-2012"
       },
       {
         "key": "Mother_Guardian_NRC",
@@ -516,7 +517,7 @@
         "openmrs_entity_id": "163531AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
         "openmrs_data_type": "text",
         "type": "tree",
-        "hint": "Which health facility was the child born in? *",
+        "hint": "Which health facility was the child born in?",
         "tree": [
         ],
         "v_required": {
