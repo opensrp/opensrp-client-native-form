@@ -2059,3 +2059,13 @@ Create a class implementing [MultiSelectListRepository]([https://github.com/Open
 
 
  ![Sample Form Screenshot] (https://user-images.githubusercontent.com/2793306/68639670-7c959100-052f-11ea-8cc9-e5ddf2c288ff.png)
+
+## Configurability
+
+By placing a file named `app.properties` in your implementation assets folder (See sample app) , one can configure certain aspects of the app
+
+### Configurable Settings
+
+| Configuration                         | Type    | Default | Description                                             |
+| --------------------------------------| ------- | ------- | --------------------------------------------------------|          |
+| `widget.datepicker.is.numeric`        | Boolean | false    | Use numeric date picker instead of Android default     |

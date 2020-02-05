@@ -26,6 +26,7 @@ import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
+import com.vijay.jsonwizard.utils.NativeFormsProperties;
 import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
 
@@ -77,14 +78,13 @@ public class DatePickerFactory implements FormWidgetFactory {
         datePickerDialog.show(ft, TAG);
         String text = editText.getText().toString();
         Calendar date = FormUtils.getDate(text);
-        if(text.isEmpty()){
+        if (text.isEmpty()) {
             Object defaultValue = datePickerDialog.getArguments().get(JsonFormConstants.DEFAULT);
-            if(defaultValue != null)
+            if (defaultValue != null)
                 datePickerDialog.setDate(FormUtils.getDate(defaultValue.toString()).getTime());
             else
                 datePickerDialog.setDate(date.getTime());
-        }
-        else{
+        } else {
             datePickerDialog.setDate(date.getTime());
         }
     }
@@ -157,6 +157,8 @@ public class DatePickerFactory implements FormWidgetFactory {
             editText.setTag(R.id.json_object, jsonObject);
 
             final DatePickerDialog datePickerDialog = createDateDialog(context, duration, editText, jsonObject);
+            datePickerDialog.setNumericDatePicker(formFragment.getNativeFormProperties().isTrue(NativeFormsProperties.KEY.WIDGET_DATEPICKER_IS_NUMERIC));
+
             if (jsonObject.has(JsonFormConstants.EXPANDED) && jsonObject.getBoolean(JsonFormConstants.EXPANDED)
                     && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                 datePickerDialog.setCalendarViewShown(true);
@@ -275,7 +277,7 @@ public class DatePickerFactory implements FormWidgetFactory {
     }
 
     protected DatePickerDialog createDateDialog(Context context, final TextView duration, final MaterialEditText editText,
-                                              JSONObject jsonObject) throws JSONException {
+                                                JSONObject jsonObject) throws JSONException {
         final DatePickerDialog datePickerDialog = new DatePickerDialog();
         datePickerDialog.setContext(context);
 

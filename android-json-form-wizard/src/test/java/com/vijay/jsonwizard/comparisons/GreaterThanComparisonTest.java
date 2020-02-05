@@ -1,5 +1,6 @@
 package com.vijay.jsonwizard.comparisons;
 
+
 import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.TestConstants;
 
