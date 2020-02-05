@@ -36,6 +36,7 @@ import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.interfaces.OnFieldsInvalid;
 import com.vijay.jsonwizard.mvp.MvpFragment;
 import com.vijay.jsonwizard.presenters.JsonFormFragmentPresenter;
+import com.vijay.jsonwizard.utils.NativeFormsProperties;
 import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 import com.vijay.jsonwizard.viewstates.JsonFormFragmentViewState;
@@ -70,12 +71,21 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     private LinearLayout bottomNavigation;
     private BottomNavigationListener navigationListener;
     private boolean shouldSkipStep = true;
+    private static NativeFormsProperties nativeFormProperties;
 
     public static JsonFormFragment getFormFragment(String stepName) {
+        return getFormFragment(stepName, null);
+    }
+
+    public static JsonFormFragment getFormFragment(String stepName, Context context) {
         JsonFormFragment jsonFormFragment = new JsonFormFragment();
         Bundle bundle = new Bundle();
         bundle.putString(JsonFormConstants.JSON_FORM_KEY.STEPNAME, stepName);
         jsonFormFragment.setArguments(bundle);
+
+        if (context != null) {
+            nativeFormProperties = Utils.getProperties(context);
+        }
         return jsonFormFragment;
     }
 
@@ -626,5 +636,12 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
                 getFragmentManager().popBackStack();
             }
         }
+    }
+
+    /**
+     * Getter for native form properties
+     */
+    public static NativeFormsProperties getNativeFormProperties() {
+        return nativeFormProperties;
     }
 }

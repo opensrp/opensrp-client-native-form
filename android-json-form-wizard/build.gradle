@@ -16,6 +16,7 @@ apply plugin: 'com.github.kt3k.coveralls'
 
 jacoco {
     toolVersion = "0.8.3"
+    reportsDir = file("$buildDir/reports/jacoco")
 }
 
 android {
@@ -29,6 +30,8 @@ android {
         targetSdkVersion androidTargetSdkVersion
         versionCode Integer.parseInt(project.VERSION_CODE)
         versionName project.VERSION_NAME
+        multiDexEnabled true
+        testInstrumentationRunner "com.android.test.runner.MultiDexTestRunner"
     }
 
     buildTypes {
@@ -37,7 +40,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
-            testCoverageEnabled false
+            testCoverageEnabled true
         }
     }
 
@@ -49,6 +52,10 @@ android {
         unitTests {
             includeAndroidResources = true
         }
+    }
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
     }
 }
 
@@ -118,6 +125,7 @@ dependencies {
     }
     implementation 'com.jakewharton.timber:timber:4.7.1'
     implementation 'org.greenrobot:eventbus:3.1.1'
+    implementation 'com.android.support:multidex:1.0.3'
 
     // PowerMock
     def powerMockVersion = '2.0.4'
@@ -129,12 +137,21 @@ dependencies {
         exclude group: 'com.android.support', module: 'appcompat-v7'
 
     }
-}
 
-dependencies {
     androidTestImplementation 'com.jayway.android.robotium:robotium-solo:5.6.3'
     androidTestImplementation 'com.google.dexmaker:dexmaker-mockito:1.2'
     androidTestImplementation 'junit:junit:4.12'
+    androidTestImplementation("com.android.support.test:runner:1.0.2") {
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+
+    }
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+    androidTestImplementation('com.android.support.test:rules:1.0.2') {
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+
+    }
 
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.apache.maven:maven-ant-tasks:2.1.3'
@@ -144,23 +161,24 @@ dependencies {
     testImplementation "org.json:json:20190722"
 }
 
-task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'createDebugCoverageReport']) {
 
     reports {
-        xml.enabled = true
-        html.enabled = true
-    }
 
-    getReports().getXml().setDestination(file("${buildDir}/reports/jacoco/jacocoRootReport/merged.xml"))
-    getReports().getHtml().setDestination(file("${buildDir}/reports/jacoco/jacocoRootReport/html"))
+        xml.enabled = true
+        xml.destination = file("${buildDir}/reports/jacoco/jacocoRootReport/merged.xml")
+
+        html.enabled = true
+        html.destination file("${buildDir}/reports/jacoco/jacocoRootReport/html")
+    }
 
     def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*', '**/*$ViewBinder*.*']
     def debugTree = fileTree(dir: "$project.buildDir/intermediates/javac/debug/classes/", excludes: fileFilter)
     def mainSrc = "$project.projectDir/src/main/java"
 
-    sourceDirectories = files([mainSrc])
-    classDirectories = files([debugTree])
-    executionData = fileTree(dir: project.buildDir, includes: [
+    sourceDirectories.from = files([mainSrc])
+    classDirectories.from = files([debugTree])
+    executionData.from = fileTree(dir: project.buildDir, includes: [
             'jacoco/testDebugUnitTest.exec', 'outputs/code-coverage/connected/*coverage.ec'
     ])
 }

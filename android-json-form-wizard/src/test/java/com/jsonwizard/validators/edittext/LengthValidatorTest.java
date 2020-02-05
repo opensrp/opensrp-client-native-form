@@ -3,7 +3,7 @@ package com.jsonwizard.validators.edittext;
 import com.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.validators.edittext.LengthValidator;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.Test;
 

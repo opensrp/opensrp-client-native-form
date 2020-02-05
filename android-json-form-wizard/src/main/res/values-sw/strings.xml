@@ -35,6 +35,7 @@
     <string name="select_one">Chagua namba</string>
     <string name="done">Imefanyika</string>
     <string name="please_wait_title">Tafadhali subiri</string>
+    <string name="creating_repeating_group_title">Tafadhali subiri</string>
     <string name="creating_repeating_group_message">Tengeneza kundi linalojirudia</string>
     <string name="launching_rdt_capture_message">Launching RDT capture widget</string>
     <string name="repeating_group_max_value_err_msg">Namba ya makundi yanayojirudia hayawezi kuwa zaidi ya %1$d</string>

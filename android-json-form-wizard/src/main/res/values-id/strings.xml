@@ -35,6 +35,7 @@
     <string name="select_one">Pilih angka</string>
     <string name="done">Selesai</string>
     <string name="please_wait_title">Silakan tunggu</string>
+    <string name="creating_repeating_group_title">Silakan tunggu</string>
     <string name="creating_repeating_group_message">Membuat grup berulang</string>
     <string name="launching_rdt_capture_message">Meluncurkan widget tangkapan RDT</string>
     <string name="repeating_group_max_value_err_msg">Jumlah grup berulang tidak boleh lebih dari%1$d</string>

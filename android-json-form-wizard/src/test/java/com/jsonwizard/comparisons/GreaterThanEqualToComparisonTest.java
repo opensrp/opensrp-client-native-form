@@ -4,7 +4,7 @@ import com.jsonwizard.BaseTest;
 import com.jsonwizard.TestConstants;
 import com.vijay.jsonwizard.comparisons.GreaterThanEqualToComparison;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.Test;
 
