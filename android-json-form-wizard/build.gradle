@@ -16,6 +16,7 @@ apply plugin: 'com.github.kt3k.coveralls'
 
 jacoco {
     toolVersion = "0.8.3"
+    reportsDir = file("$buildDir/reports/jacoco")
 }
 
 android {
@@ -147,7 +148,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
-    androidTestImplementation ('com.android.support.test:rules:1.0.2') {
+    androidTestImplementation('com.android.support.test:rules:1.0.2') {
         exclude group: 'com.android.support', module: 'appcompat-v7'
 
     }
@@ -163,20 +164,21 @@ dependencies {
 task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'createDebugCoverageReport']) {
 
     reports {
-        xml.enabled = true
-        html.enabled = true
-    }
 
-    getReports().getXml().setDestination(file("${buildDir}/reports/jacoco/jacocoRootReport/merged.xml"))
-    getReports().getHtml().setDestination(file("${buildDir}/reports/jacoco/jacocoRootReport/html"))
+        xml.enabled = true
+        xml.destination = file("${buildDir}/reports/jacoco/jacocoRootReport/merged.xml")
+
+        html.enabled = true
+        html.destination file("${buildDir}/reports/jacoco/jacocoRootReport/html")
+    }
 
     def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*', '**/*$ViewBinder*.*']
     def debugTree = fileTree(dir: "$project.buildDir/intermediates/javac/debug/classes/", excludes: fileFilter)
     def mainSrc = "$project.projectDir/src/main/java"
 
-    sourceDirectories = files([mainSrc])
-    classDirectories = files([debugTree])
-    executionData = fileTree(dir: project.buildDir, includes: [
+    sourceDirectories.from = files([mainSrc])
+    classDirectories.from = files([debugTree])
+    executionData.from = fileTree(dir: project.buildDir, includes: [
             'jacoco/testDebugUnitTest.exec', 'outputs/code-coverage/connected/*coverage.ec'
     ])
 }

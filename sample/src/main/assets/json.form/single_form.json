@@ -396,8 +396,7 @@
           "label": "Age"
         },
         "min_date": "01-01-1900",
-        "max_date": "today-10y",
-        "value": "02-08-2012"
+        "max_date": "today-10y"
       },
       {
         "key": "Mother_Guardian_NRC",

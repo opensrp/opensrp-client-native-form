@@ -42,7 +42,7 @@ public class NumericDatePicker extends DatePicker {
     private int maxMonth;
     private int maxYear;
 
-    NumberPicker.OnValueChangeListener onValueChangeListener =
+    private final NumberPicker.OnValueChangeListener onValueChangeListener =
             new NumberPicker.OnValueChangeListener() {
                 @Override
                 public void onValueChange(NumberPicker numberPicker, int oldValue, int newValue) {
@@ -54,6 +54,19 @@ public class NumericDatePicker extends DatePicker {
                     }
                 }
             };
+
+    private final NumberPicker.Formatter pickerDigitFormatter = new NumberPicker.Formatter() {
+        final StringBuilder stringBuilder = new StringBuilder();
+        final Formatter formatter = new Formatter(stringBuilder, Locale.ENGLISH);
+        final Object[] arguments = new Object[1];
+
+        public String format(int value) {
+            arguments[0] = value;
+            stringBuilder.delete(0, stringBuilder.length());
+            formatter.format("%02d", arguments);
+            return formatter.toString();
+        }
+    };
 
     public NumericDatePicker(Context context) {
         super(context);
@@ -147,19 +160,6 @@ public class NumericDatePicker extends DatePicker {
         setDateConstraints(numberPicker, maxDateValue, true);
 
     }
-
-    final NumberPicker.Formatter pickerDigitFormatter = new NumberPicker.Formatter() {
-        final StringBuilder stringBuilder = new StringBuilder();
-        final Formatter formatter = new Formatter(stringBuilder, Locale.ENGLISH);
-        final Object[] arguments = new Object[1];
-
-        public String format(int value) {
-            arguments[0] = value;
-            stringBuilder.delete(0, stringBuilder.length());
-            formatter.format("%02d", arguments);
-            return formatter.toString();
-        }
-    };
 
     /**
      * Resets widgets to correct state
@@ -397,10 +397,8 @@ public class NumericDatePicker extends DatePicker {
     }
 
     public void checkConstraintsConstraint() {
-        if (minDate > 0 && maxDate > 0) {
-            if (minDate > maxDate) {
-                throw new IllegalStateException("Min constrained date is greater than the Max constraint date");
-            }
+        if (minDate != 0 && maxDate != 0 && new Date(minDate).after(new Date(maxDate))) {
+            throw new IllegalStateException("Min constrained date is greater than the Max constraint date");
         }
     }
 
