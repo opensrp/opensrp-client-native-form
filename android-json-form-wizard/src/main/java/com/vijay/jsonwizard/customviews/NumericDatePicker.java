@@ -171,105 +171,113 @@ public class NumericDatePicker extends DatePicker {
         if (getMinDate() != 0 || getMaxDate() != 0) {
 
 
-            if (getMaxDate() != 0) {
+            processResetPickersMaxDate();
 
-                //cache min values
-                int cacheMinDay = dayPicker.getMinValue();
-                int cacheMinMonth = monthPicker.getMinValue();
-                int cacheMinYear = yearPicker.getMinValue();
-
-                yearPicker.setDisplayedValues(null);
-                monthPicker.setDisplayedValues(null);
-                dayPicker.setDisplayedValues(null);
-
-
-                yearPicker.setMaxValue(maxYear);
-                yearPicker.setWrapSelectorWheel(false);
-
-                //reinstate minValues
-                dayPicker.setMinValue(cacheMinDay);
-                monthPicker.setMinValue(cacheMinMonth);
-                yearPicker.setMinValue(cacheMinYear);
-
-
-                if (maxYear == getYear() && maxMonth == getMonth()) {
-                    monthPicker.setMaxValue(maxMonth + 1);
-                    monthPicker.setValue(maxMonth + 1);
-                    monthPicker.setWrapSelectorWheel(false);
-
-                    if (getDayOfMonth() >= maxDay) {
-                        dayPicker.setMaxValue(maxDay);
-                        dayPicker.setValue(maxDay);
-                        dayPicker.setWrapSelectorWheel(false);
-                    } else {
-                        dayPicker.setMaxValue(NumericDatePickerHelper.getDaysInMonth(getMonth(), NumericDatePickerHelper.isLeapYear(getYear())));
-                        dayPicker.setWrapSelectorWheel(true);
-
-                    }
-
-                } else {
-                    monthPicker.setMaxValue(12);
-                    monthPicker.setWrapSelectorWheel(true);
-                    dayPicker.setMaxValue(NumericDatePickerHelper.getDaysInMonth(getMonth(), NumericDatePickerHelper.isLeapYear(getYear())));
-                    dayPicker.setWrapSelectorWheel(true);
-                }
-
-
-            }
-
-            if (getMinDate() != 0) {
-
-                //Cache max values
-                int cacheMaxDay = dayPicker.getMaxValue();
-                int cacheMaxMonth = monthPicker.getMaxValue();
-                int cacheMaxYear = yearPicker.getMaxValue();
-
-
-                yearPicker.setDisplayedValues(null);
-                monthPicker.setDisplayedValues(null);
-                dayPicker.setDisplayedValues(null);
-
-                yearPicker.setMinValue(minYear);
-                yearPicker.setWrapSelectorWheel(false);
-
-
-                //reinstate minValues
-                dayPicker.setMaxValue(cacheMaxDay);
-                monthPicker.setMaxValue(cacheMaxMonth);
-                yearPicker.setMaxValue(cacheMaxYear);
-
-
-                if (minYear == getYear() && minMonth == getMonth()) {
-                    monthPicker.setMinValue(minMonth + 1);
-                    monthPicker.setValue(minMonth + 1);
-                    monthPicker.setWrapSelectorWheel(false);
-
-                    if (getDayOfMonth() <= minDay) {
-                        dayPicker.setMinValue(minDay);
-                        dayPicker.setValue(minDay);
-                        dayPicker.setMaxValue(dayPicker.getMaxValue() > minDay ? minDay : dayPicker.getMaxValue());
-                        dayPicker.setWrapSelectorWheel(false);
-                    } else {
-                        dayPicker.setMinValue(1);
-                        dayPicker.setMaxValue(dayPicker.getMaxValue());
-                        dayPicker.setWrapSelectorWheel(getMaxDate() == 0 ? true : dayPicker.getWrapSelectorWheel());
-                    }
-
-                } else {
-                    monthPicker.setMinValue(1);
-                    monthPicker.setMaxValue(monthPicker.getMaxValue());
-                    monthPicker.setWrapSelectorWheel(getMaxDate() == 0 ? true : monthPicker.getWrapSelectorWheel());
-
-                    dayPicker.setMinValue(1);
-                    dayPicker.setMaxValue(dayPicker.getMaxValue());
-                    dayPicker.setWrapSelectorWheel(getMaxDate() == 0 ? true : dayPicker.getWrapSelectorWheel());
-
-                    yearPicker.setMaxValue(yearPicker.getMaxValue());
-                }
-            }
+            processResetPickersMinDate();
         }
 
         fixWeirdNumberPickerBug(dayPicker);
+    }
+
+    private void processResetPickersMinDate() {
+        if (getMinDate() != 0) {
+
+            //Cache max values
+            int cacheMaxDay = dayPicker.getMaxValue();
+            int cacheMaxMonth = monthPicker.getMaxValue();
+            int cacheMaxYear = yearPicker.getMaxValue();
+
+
+            yearPicker.setDisplayedValues(null);
+            monthPicker.setDisplayedValues(null);
+            dayPicker.setDisplayedValues(null);
+
+            yearPicker.setMinValue(minYear);
+            yearPicker.setWrapSelectorWheel(false);
+
+
+            //reinstate minValues
+            dayPicker.setMaxValue(cacheMaxDay);
+            monthPicker.setMaxValue(cacheMaxMonth);
+            yearPicker.setMaxValue(cacheMaxYear);
+
+
+            if (minYear == getYear() && minMonth == getMonth()) {
+                monthPicker.setMinValue(minMonth + 1);
+                monthPicker.setValue(minMonth + 1);
+                monthPicker.setWrapSelectorWheel(false);
+
+                if (getDayOfMonth() <= minDay) {
+                    dayPicker.setMinValue(minDay);
+                    dayPicker.setValue(minDay);
+                    dayPicker.setMaxValue(dayPicker.getMaxValue() > minDay ? minDay : dayPicker.getMaxValue());
+                    dayPicker.setWrapSelectorWheel(false);
+                } else {
+                    dayPicker.setMinValue(1);
+                    dayPicker.setMaxValue(dayPicker.getMaxValue());
+                    dayPicker.setWrapSelectorWheel(getMaxDate() == 0 ? true : dayPicker.getWrapSelectorWheel());
+                }
+
+            } else {
+                monthPicker.setMinValue(1);
+                monthPicker.setMaxValue(monthPicker.getMaxValue());
+                monthPicker.setWrapSelectorWheel(getMaxDate() == 0 ? true : monthPicker.getWrapSelectorWheel());
+
+                dayPicker.setMinValue(1);
+                dayPicker.setMaxValue(dayPicker.getMaxValue());
+                dayPicker.setWrapSelectorWheel(getMaxDate() == 0 ? true : dayPicker.getWrapSelectorWheel());
+
+                yearPicker.setMaxValue(yearPicker.getMaxValue());
+            }
+        }
+    }
+
+    private void processResetPickersMaxDate() {
+        if (getMaxDate() != 0) {
+
+            //cache min values
+            int cacheMinDay = dayPicker.getMinValue();
+            int cacheMinMonth = monthPicker.getMinValue();
+            int cacheMinYear = yearPicker.getMinValue();
+
+            yearPicker.setDisplayedValues(null);
+            monthPicker.setDisplayedValues(null);
+            dayPicker.setDisplayedValues(null);
+
+
+            yearPicker.setMaxValue(maxYear);
+            yearPicker.setWrapSelectorWheel(false);
+
+            //reinstate minValues
+            dayPicker.setMinValue(cacheMinDay);
+            monthPicker.setMinValue(cacheMinMonth);
+            yearPicker.setMinValue(cacheMinYear);
+
+
+            if (maxYear == getYear() && maxMonth == getMonth()) {
+                monthPicker.setMaxValue(maxMonth + 1);
+                monthPicker.setValue(maxMonth + 1);
+                monthPicker.setWrapSelectorWheel(false);
+
+                if (getDayOfMonth() >= maxDay) {
+                    dayPicker.setMaxValue(maxDay);
+                    dayPicker.setValue(maxDay);
+                    dayPicker.setWrapSelectorWheel(false);
+                } else {
+                    dayPicker.setMaxValue(NumericDatePickerHelper.getDaysInMonth(getMonth(), NumericDatePickerHelper.isLeapYear(getYear())));
+                    dayPicker.setWrapSelectorWheel(true);
+
+                }
+
+            } else {
+                monthPicker.setMaxValue(12);
+                monthPicker.setWrapSelectorWheel(true);
+                dayPicker.setMaxValue(NumericDatePickerHelper.getDaysInMonth(getMonth(), NumericDatePickerHelper.isLeapYear(getYear())));
+                dayPicker.setWrapSelectorWheel(true);
+            }
+
+
+        }
     }
 
     /**
