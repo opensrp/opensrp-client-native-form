@@ -47,8 +47,7 @@ script:
   - ls -la
 
   #Run All tests Unit and Instrumentation
-  - travis_wait ./gradlew :android-json-form-wizard:jacocoTestReport --stacktrace
-  - travis_wait ./gradlew :android-json-form-wizard:coveralls --stacktrace
+  - travis_wait ./gradlew :android-json-form-wizard:jacocoTestReport coveralls --stacktrace
 
   # Generate javadoc
   - travis_wait ./gradlew javadoc
