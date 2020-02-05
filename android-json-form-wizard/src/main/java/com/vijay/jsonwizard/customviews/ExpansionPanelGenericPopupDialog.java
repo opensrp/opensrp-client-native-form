@@ -39,10 +39,15 @@ import timber.log.Timber;
 
 import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 
+/**
+ * Performs the expansion panel's {@link com.vijay.jsonwizard.widgets.ExpansionPanelFactory} functionality, which includes
+ * Reading and assigning values on load
+ * Creation of the sub forms widgets
+ * Saving the new selected values to the expansion panel's widget `value` attribute
+ */
 public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
     protected Toolbar mToolbar;
     protected String container;
-    protected ExpansionPanelGenericPopupDialog expansionPanelGenericPopupDialog;
     private Map<String, ExpansionPanelValuesModel> secondaryValuesMap = new HashMap<>();
     private FormUtils formUtils = new FormUtils();
     private Activity activity;
@@ -86,6 +91,11 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
         Utils.hideProgressDialog();
     }
 
+    /**
+     * Loads the values from the expansion panel
+     *
+     * @throws JSONException
+     */
     @Override
     public void loadPartialSecondaryValues() throws JSONException {
         if (!TextUtils.isEmpty(getWidgetType()) && getWidgetType().equals(JsonFormConstants.EXPANSION_PANEL)) {
@@ -95,6 +105,9 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
         }
     }
 
+    /**
+     * Using the secondary values extracted from {@link ExpansionPanelGenericPopupDialog#loadPartialSecondaryValues()} it creates a map of the expansion panels values
+     */
     @Override
     public void createSecondaryValuesMap() {
         if (!TextUtils.isEmpty(getWidgetType()) && getWidgetType().equals(JsonFormConstants.EXPANSION_PANEL)) {
@@ -107,6 +120,9 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
 
     }
 
+    /**
+     * Loads the sub from the sub form name declared on the expansion panel widget
+     */
     @Override
     public void loadSubForms() {
         if (!TextUtils.isEmpty(getFormIdentity())) {
@@ -129,6 +145,12 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
         }
     }
 
+    /**
+     * Adds the values from the map created by {@link ExpansionPanelGenericPopupDialog#createSecondaryValuesMap()} to the fields extracted from the sub form by {@link ExpansionPanelGenericPopupDialog#loadSubForms()}
+     *
+     * @param formValues {@link JSONArray} Form fields extracted by {@link ExpansionPanelGenericPopupDialog#loadSubForms()}
+     * @return formFields {@link JSONArray} Form fields with values added.
+     */
     @Override
     protected JSONArray addFormValues(JSONArray formValues) {
         if (!TextUtils.isEmpty(getWidgetType()) && getWidgetType().equals(JsonFormConstants.EXPANSION_PANEL)) {
@@ -147,11 +169,7 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
             ViewGroup dialogView = (ViewGroup) inflater.inflate(R.layout.fragment_generic_dialog, container, false);
             attachToolBar(dialogView);
             attachDialogShowListener();
-            LinearLayout genericDialogContent = dialogView.findViewById(R.id.generic_dialog_content);
-            for (View view : getViewList()) {
-                genericDialogContent.addView(view);
-            }
-
+            addWidgetViews(dialogView);
             attachCancelDialogButton(dialogView);
             attachOkDialogButton(dialogView);
 
@@ -161,6 +179,13 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
             return dialogView;
         } else {
             return super.onCreateView(inflater, container, savedInstanceState);
+        }
+    }
+
+    private void addWidgetViews(ViewGroup dialogView) {
+        LinearLayout genericDialogContent = dialogView.findViewById(R.id.generic_dialog_content);
+        for (View view : getViewList()) {
+            genericDialogContent.addView(view);
         }
     }
 
@@ -233,6 +258,11 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
         }
     }
 
+    /**
+     * In the ANC case this is used to get the container the Expansion panel of loading to set its toolbar color.
+     *
+     * @return containerName - either C&T or Tests
+     */
     public String getContainer() {
         return container;
     }
@@ -240,8 +270,8 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
     /**
      * Receives the generic popup data from Generic Dialog fragment
      *
-     * @param parentKey
-     * @param childKey
+     * @param parentKey {@link String}
+     * @param childKey  {@link String}
      */
     public void onDataPass(String parentKey, String childKey) {
         JSONObject mJSONObject = getJsonApi().getmJSONObject();
@@ -262,6 +292,11 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
         }
     }
 
+    /**
+     * Appends the expansion panel values formatted by {@link ExpansionPanelGenericPopupDialog#createValues()} to the widget in this case the {@link com.vijay.jsonwizard.widgets.ExpansionPanelFactory} Expansion panel
+     *
+     * @param item {@link JSONObject} the widget to update.
+     */
     protected void addValues(JSONObject item) {
         JSONArray secondaryValuesArray = createValues();
         try {
@@ -299,7 +334,7 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
     }
 
     /**
-     * This methods adds a new attribute field called required_fields to the accordion object that it
+     * Adds a new attribute field called required_fields to the accordion object that it
      * has been passed. It does so by getting only visible that are required;
      *
      * @param theAccordion accordion/Expansion panel that is to be updated with the new attribute
@@ -386,6 +421,11 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
         return item;
     }
 
+    /**
+     * Formats the expansion panels popup values to a {@link JSONArray} to be attached to the main widget.
+     *
+     * @return selectedValues {@link JSONArray}
+     */
     @Override
     protected JSONArray createValues() {
         JSONArray selectedValues = new JSONArray();

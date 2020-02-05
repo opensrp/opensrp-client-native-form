@@ -10,19 +10,20 @@ import android.widget.RelativeLayout;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.task.ExpansionPanelGenericPopupDialogTask;
 import com.vijay.jsonwizard.utils.FormUtils;
-import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.views.CustomTextView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+/**
+ * Performs the click actions required by the {@link com.vijay.jsonwizard.widgets.ExpansionPanelFactory} widget record button.
+ */
 public class ExpansionPanelRecordButtonClickListener implements View.OnClickListener {
     private FormUtils formUtils = new FormUtils();
 
     @Override
     public void onClick(View view) {
         Context context = (Context) view.getTag(R.id.specify_context);
-        Utils.showProgressDialog(R.string.loading, R.string.loading_form_message,context);
 
         LinearLayout linearLayout = getLinearLayout(view);
         disableExpansionPanelViews(linearLayout);
@@ -60,7 +61,7 @@ public class ExpansionPanelRecordButtonClickListener implements View.OnClickList
     }
 
     /**
-     * Disable the expansion panel views after they are clicked
+     * Disable the expansion panel views in the main view from {@link ExpansionPanelRecordButtonClickListener#getLinearLayout(View)} after they are clicked
      *
      * @param linearLayout {@link LinearLayout}
      */

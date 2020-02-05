@@ -21,18 +21,22 @@ import org.json.JSONArray;
 
 import timber.log.Timber;
 
+/**
+ * The {@link AsyncTask} to start and set the required variables on the {@link ExpansionPanelGenericPopupDialog}
+ */
 public class ExpansionPanelGenericPopupDialogTask extends AsyncTask<Void, Void, Void> {
     private FormUtils formUtils = new FormUtils();
     private Utils utils = new Utils();
     private View view;
+    private Context context;
 
 
     public ExpansionPanelGenericPopupDialogTask(View view) {
         this.view = view;
     }
+
     @Override
     protected Void doInBackground(Void... voids) {
-        Context context = (Context) view.getTag(R.id.specify_context);
         String specifyContent = (String) view.getTag(R.id.specify_content);
         String specifyContentForm = (String) view.getTag(R.id.specify_content_form);
         String stepName = (String) view.getTag(R.id.specify_step_name);
@@ -68,7 +72,6 @@ public class ExpansionPanelGenericPopupDialogTask extends AsyncTask<Void, Void, 
                 genericPopupDialog.setCustomTextView(customTextView);
                 genericPopupDialog.setPopupReasonsTextView(reasonsTextView);
             }
-
             utils.setChildKey(view, type, genericPopupDialog);
 
             FragmentTransaction fragmentTransaction = utils.getFragmentTransaction((Activity) context);
@@ -79,5 +82,13 @@ public class ExpansionPanelGenericPopupDialogTask extends AsyncTask<Void, Void, 
             Timber.e("No sub form specified. Please specify one in order to use the expansion panel.");
         }
         return null;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        context = (Context) view.getTag(R.id.specify_context);
+        Utils.showProgressDialog(R.string.loading, R.string.loading_form_message, context);
+
     }
 }
