@@ -22,6 +22,7 @@ import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
+import com.vijay.jsonwizard.utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -173,7 +174,7 @@ public class CountDownTimerFactory implements FormWidgetFactory {
         String openMrsEntity = (String) rootLayout.getTag(R.id.openmrs_entity);
         String openMrsEntityId = (String) rootLayout.getTag(R.id.openmrs_entity_id);
         boolean extraPopup = widgetArgs.isPopup();
-        String timeStampString = String.valueOf(System.currentTimeMillis());
+        String timeStampString = Utils.stringValueOf(System.currentTimeMillis());
         try {
             jsonApi.writeValue(stepName, key, timeStampString, openMrsEntityParent, openMrsEntity, openMrsEntityId, extraPopup);
         } catch (JSONException je) {

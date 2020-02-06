@@ -16,6 +16,7 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.utils.FormUtils;
+import com.vijay.jsonwizard.utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -72,7 +73,7 @@ public class ImageViewFactory implements FormWidgetFactory {
             descriptionTextView.setText(descriptionText);
             String textColor = jsonObject.optString(JsonFormConstants.TEXT_COLOR, "#000000");
             descriptionTextView.setTextColor(Color.parseColor(textColor));
-            String textSize = jsonObject.optString(JsonFormConstants.TEXT_SIZE, String.valueOf(context.getResources().getDimension(R.dimen.label_text_size)));
+            String textSize = jsonObject.optString(JsonFormConstants.TEXT_SIZE, Utils.stringValueOf(context.getResources().getDimension(R.dimen.label_text_size)));
             descriptionTextView.setTextSize(FormUtils.getValueFromSpOrDpOrPx(textSize, context));
         }
 

@@ -296,7 +296,7 @@ public class FormUtils {
             String asterisks = "";
             int labelTextSize = FormUtils
                     .getValueFromSpOrDpOrPx(
-                            jsonObject.optString(JsonFormConstants.LABEL_TEXT_SIZE, String.valueOf(context
+                            jsonObject.optString(JsonFormConstants.LABEL_TEXT_SIZE, Utils.stringValueOf(context
                                     .getResources().getDimension(R.dimen.default_label_text_size))), context);
             String labelTextColor = jsonObject
                     .optString(JsonFormConstants.LABEL_TEXT_COLOR, JsonFormConstants.DEFAULT_TEXT_COLOR);
@@ -1246,10 +1246,10 @@ public class FormUtils {
             for (int j = 0; j < jsonArray.length(); j++) {
                 if (object.has(JsonFormConstants.VALUE)) {
                     if (object.getString(JsonFormConstants.VALUE).equals(jsonArray.getJSONObject(j).getString(JsonFormConstants.KEY))) {
-                        result.put(jsonArray.getJSONObject(j).getString(JsonFormConstants.KEY), String.valueOf(true));
+                        result.put(jsonArray.getJSONObject(j).getString(JsonFormConstants.KEY), Utils.stringValueOf(true));
                     } else {
                         if (!object.has(RuleConstant.IS_RULE_CHECK) || !object.getBoolean(RuleConstant.IS_RULE_CHECK)) {
-                            result.put(jsonArray.getJSONObject(j).getString(JsonFormConstants.KEY), String.valueOf(false));
+                            result.put(jsonArray.getJSONObject(j).getString(JsonFormConstants.KEY), Utils.stringValueOf(false));
                         }
                     }
                 } else {
@@ -1287,7 +1287,7 @@ public class FormUtils {
             formData.put(JsonFormConstants.Properties.APP_FORM_VERSION, formVersion);
             jsonForm.put(JsonFormConstants.Properties.DETAILS, formData);
 
-            form = String.valueOf(jsonForm);
+            form = Utils.stringValueOf(jsonForm);
         } catch (JSONException e) {
             Timber.e(e, "%s --> addFormDetails", this.getClass().getCanonicalName());
         }
@@ -1673,7 +1673,7 @@ public class FormUtils {
                 try {
                     formValue = fields.getJSONObject(i);
                     String key = formValue.getString(JsonFormConstants.KEY);
-                    formValue.put(JsonFormConstants.INDEX, String.valueOf(i));
+                    formValue.put(JsonFormConstants.INDEX, Utils.stringValueOf(i));
                     if (expansionPanelValuesModelMap.containsKey(key)) {
                         SecondaryValueModel secondaryValueModel = expansionPanelValuesModelMap.get(key);
                         String type = secondaryValueModel.getType();

@@ -18,6 +18,7 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
+import com.vijay.jsonwizard.utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -111,7 +112,7 @@ public class ExtendedRadioButtonWidgetFactory extends NativeRadioButtonFactory {
             throws JSONException {
         JSONArray jsonArray = jsonObject.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
         String optionTextSize =
-                String.valueOf(context.getResources().getDimension(com.vijay.jsonwizard.R.dimen.options_default_text_size));
+                Utils.stringValueOf(context.getResources().getDimension(com.vijay.jsonwizard.R.dimen.options_default_text_size));
         String optionTextColor = JsonFormConstants.DEFAULT_TEXT_COLOR;
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
         String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);

@@ -18,6 +18,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.rey.material.widget.TextView;
 import com.vijay.jsonwizard.R;
+import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.widgets.GpsFactory;
 
 /**
@@ -118,10 +119,10 @@ public class GpsDialog extends Dialog implements LocationListener, GoogleApiClie
         if (location != null) {
             location.getProvider();
 
-            latitudeTV.setText(String.format(context.getString(R.string.latitude), String.valueOf(location.getLatitude())));
-            longitudeTV.setText(String.format(context.getString(R.string.longitude), String.valueOf(location.getLongitude())));
-            altitudeTV.setText(String.format(context.getString(R.string.altitude), String.valueOf(location.getAltitude()) + " m"));
-            accuracyTV.setText(String.format(context.getString(R.string.accuracy), String.valueOf(location.getAccuracy()) + " m"));
+            latitudeTV.setText(String.format(context.getString(R.string.latitude), Utils.stringValueOf(location.getLatitude())));
+            longitudeTV.setText(String.format(context.getString(R.string.longitude), Utils.stringValueOf(location.getLongitude())));
+            altitudeTV.setText(String.format(context.getString(R.string.altitude), Utils.stringValueOf(location.getAltitude()) + " m"));
+            accuracyTV.setText(String.format(context.getString(R.string.accuracy), Utils.stringValueOf(location.getAccuracy()) + " m"));
             dataView.setTag(R.id.raw_value, GpsFactory.constructString(location));
         }
     }
@@ -140,7 +141,7 @@ public class GpsDialog extends Dialog implements LocationListener, GoogleApiClie
     @Override
     public void onLocationChanged(Location location) {
         if (location != null) {
-            dialogAccuracyTV.setText(String.format(context.getString(R.string.accuracy), String.valueOf(location.getAccuracy()) + " m"));
+            dialogAccuracyTV.setText(String.format(context.getString(R.string.accuracy), Utils.stringValueOf(location.getAccuracy()) + " m"));
         }
 
         lastLocation = location;

@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.vijay.jsonwizard.R;
+import com.vijay.jsonwizard.utils.Utils;
 
 import java.util.List;
 
@@ -52,7 +53,7 @@ public class NumberSelectorAdapter extends BaseAdapter {
             holder = (ViewHolder) view.getTag();
         }
 
-        holder.selectedNumber.setText(String.valueOf(getItem(position)));
+        holder.selectedNumber.setText(Utils.stringValueOf(getItem(position)));
 
         return view;
     }

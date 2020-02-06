@@ -357,7 +357,7 @@ public class Utils {
         Object jsonObject = object;
         try {
             if (jsonObject.toString().contains(".")) {
-                jsonObject = String.valueOf((float) Math.round(Float.valueOf(jsonObject.toString()) * 100) / 100);
+                jsonObject = Utils.stringValueOf((float) Math.round(Float.valueOf(jsonObject.toString()) * 100) / 100);
             } else {
                 jsonObject = Integer.valueOf(jsonObject.toString());
             }
@@ -519,11 +519,11 @@ public class Utils {
                     for (String conditionKey : conditionKeys) {
                         strCondition = strCondition.replace(conditionKey, conditionKey + "_" + uniqueId);
                     }
-                    jsonRulesDynamicObject.put(RuleConstant.NAME, String.valueOf(map.get(RuleConstant.NAME)).concat("_").concat(uniqueId));
-                    jsonRulesDynamicObject.put(RuleConstant.DESCRIPTION, String.valueOf(map.get(RuleConstant.DESCRIPTION)).concat("_").concat(uniqueId));
+                    jsonRulesDynamicObject.put(RuleConstant.NAME, Utils.stringValueOf(map.get(RuleConstant.NAME)).concat("_").concat(uniqueId));
+                    jsonRulesDynamicObject.put(RuleConstant.DESCRIPTION, Utils.stringValueOf(map.get(RuleConstant.DESCRIPTION)).concat("_").concat(uniqueId));
                     jsonRulesDynamicObject.put(RuleConstant.PRIORITY, map.get(RuleConstant.PRIORITY));
                     jsonRulesDynamicObject.put(RuleConstant.ACTIONS, ((ArrayList<String>) map.get(RuleConstant.ACTIONS)).get(0));
-                    jsonRulesDynamicObject.put(RuleConstant.CONDITION, String.valueOf(strCondition));
+                    jsonRulesDynamicObject.put(RuleConstant.CONDITION, Utils.stringValueOf(strCondition));
                     jsonArrayRules.put(jsonRulesDynamicObject);
                 }
 
@@ -552,6 +552,20 @@ public class Utils {
         }
 
         return properties;
+    }
+
+    /**
+     * This is to fix the Java 8 breakage caused by {@link String#valueOf(int)} if given a string parameter
+     *
+     * @param value {@link Object} any widget value
+     * @return newValue {@link String} the string value of the passed parameter
+     */
+    public static String stringValueOf(Object value) {
+        String newValue = "";
+        if (value != null) {
+            newValue = value instanceof String ? (String) value : String.valueOf(value);
+        }
+        return newValue;
     }
 }
 

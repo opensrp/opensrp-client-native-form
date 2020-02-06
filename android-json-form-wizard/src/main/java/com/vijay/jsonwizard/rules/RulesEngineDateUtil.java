@@ -95,7 +95,7 @@ public class RulesEngineDateUtil {
             }
         }
 
-        return "wd".equals(cleanDuration) ? getDuration(dateString).replace("w", " weeks").replace("d", " days") : String.valueOf(Math.abs(result));
+        return "wd".equals(cleanDuration) ? getDuration(dateString).replace("w", " weeks").replace("d", " days") : Utils.stringValueOf(Math.abs(result));
     }
 
     /**
