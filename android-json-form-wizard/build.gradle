@@ -25,11 +25,6 @@ android {
 
     defaultPublishConfig !isReleaseBuild() ? "debug" : "release"
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
     defaultConfig {
         minSdkVersion androidMinSdkVersion
         targetSdkVersion androidTargetSdkVersion

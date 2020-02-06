@@ -53,7 +53,7 @@ public class NumberSelectorAdapter extends BaseAdapter {
             holder = (ViewHolder) view.getTag();
         }
 
-        holder.selectedNumber.setText(Utils.stringValueOf(getItem(position)));
+        holder.selectedNumber.setText(String.valueOf(getItem(position)));
 
         return view;
     }

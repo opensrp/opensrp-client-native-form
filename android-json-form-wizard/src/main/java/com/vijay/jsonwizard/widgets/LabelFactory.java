@@ -139,7 +139,7 @@ public class LabelFactory implements FormWidgetFactory {
             );
         }
         int labelTextSize = FormUtils.getValueFromSpOrDpOrPx(
-                jsonObject.optString(JsonFormConstants.TEXT_SIZE, Utils.stringValueOf(context.getResources().getDimension(R
+                jsonObject.optString(JsonFormConstants.TEXT_SIZE, String.valueOf(context.getResources().getDimension(R
                         .dimen.default_label_text_size))), context);
         String textStyle = jsonObject.optString(JsonFormConstants.TEXT_STYLE, JsonFormConstants.NORMAL);
         FormUtils.setTextStyle(textStyle, labelText);

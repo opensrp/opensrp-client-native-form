@@ -62,7 +62,7 @@ public class GpsFactory implements FormWidgetFactory {
 
     public static String constructString(Location location) {
         if (location != null) {
-            return constructString(Utils.stringValueOf(location.getLatitude()), Utils.stringValueOf(location.getLongitude()));
+            return constructString(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()));
         }
 
         return null;

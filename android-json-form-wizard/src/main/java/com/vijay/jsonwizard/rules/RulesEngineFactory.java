@@ -204,14 +204,14 @@ public class RulesEngineFactory implements RuleListener {
     }
 
     private String formatCalculationReturnValue(Object rawValue) {
-        String value = Utils.stringValueOf(rawValue).trim();
+        String value = String.valueOf(rawValue).trim();
         if (value.isEmpty()) {
             return "";
         } else if (rawValue instanceof Map) {
             return new JSONObject((Map<String, String>) rawValue).toString();
         } else if (value.contains(".")) {
             try {
-                value = Utils.stringValueOf((float) Math.round(Float.valueOf(value) * 100) / 100);
+                value = String.valueOf((float) Math.round(Float.valueOf(value) * 100) / 100);
             } catch (NumberFormatException e) {
                 Timber.e(e, "%s formatCalculationReturnValue", this.getClass().getCanonicalName());
             }

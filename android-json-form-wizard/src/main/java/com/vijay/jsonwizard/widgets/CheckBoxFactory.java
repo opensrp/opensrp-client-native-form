@@ -276,7 +276,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
     private void createCheckBoxText(CheckBox checkBox, JSONObject item, Context context, Boolean readOnly)
             throws JSONException {
         String optionTextColor = JsonFormConstants.DEFAULT_TEXT_COLOR;
-        String optionTextSize = Utils.stringValueOf(context.getResources().getDimension(R.dimen.options_default_text_size));
+        String optionTextSize = String.valueOf(context.getResources().getDimension(R.dimen.options_default_text_size));
         if (item.has(JsonFormConstants.TEXT_COLOR)) {
             optionTextColor = item.getString(JsonFormConstants.TEXT_COLOR);
         }

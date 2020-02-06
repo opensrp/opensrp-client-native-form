@@ -141,7 +141,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
 
         List<String> numbers = new ArrayList<>();
         for (int i = startNumber; i <= maxValue; i++) {
-            numbers.add(Utils.stringValueOf(i));
+            numbers.add(String.valueOf(i));
         }
         return numbers;
     }
@@ -307,8 +307,8 @@ public class NumberSelectorFactory implements FormWidgetFactory {
     }
 
     public String getText(int item, int startSelectionNumber, int numberOfSelectors, int maxValue) {
-        String text = startSelectionNumber == 0 ? Utils.stringValueOf(item) : startSelectionNumber == 1 ? String
-                .valueOf(item + 1) : Utils.stringValueOf(startSelectionNumber + item);
+        String text = startSelectionNumber == 0 ? String.valueOf(item) : startSelectionNumber == 1 ? String
+                .valueOf(item + 1) : String.valueOf(startSelectionNumber + item);
         if ((item == (numberOfSelectors - 1)) && (maxValue - 1) > Integer.parseInt(text)) {
             text = text + "+";
         }

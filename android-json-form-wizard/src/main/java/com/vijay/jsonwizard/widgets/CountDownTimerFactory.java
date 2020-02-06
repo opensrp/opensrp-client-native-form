@@ -174,7 +174,7 @@ public class CountDownTimerFactory implements FormWidgetFactory {
         String openMrsEntity = (String) rootLayout.getTag(R.id.openmrs_entity);
         String openMrsEntityId = (String) rootLayout.getTag(R.id.openmrs_entity_id);
         boolean extraPopup = widgetArgs.isPopup();
-        String timeStampString = Utils.stringValueOf(System.currentTimeMillis());
+        String timeStampString = String.valueOf(System.currentTimeMillis());
         try {
             jsonApi.writeValue(stepName, key, timeStampString, openMrsEntityParent, openMrsEntity, openMrsEntityId, extraPopup);
         } catch (JSONException je) {

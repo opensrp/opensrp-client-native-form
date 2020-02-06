@@ -348,7 +348,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     @Override
     public void addFormDataView(View view) {
-        String address = Utils.stringValueOf(view.getTag(R.id.address));
+        String address = String.valueOf(view.getTag(R.id.address));
         formDataViews.put(address, view);
     }
 
@@ -712,7 +712,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     if (fieldObject.has(JsonFormConstants.VALUES)) {
                         String value;
                         if (JsonFormConstants.CHECK_BOX.equals(fieldObject.getString(JsonFormConstants.TYPE))) {
-                            value = Utils.stringValueOf(fieldObject.getJSONArray(JsonFormConstants.VALUES));
+                            value = String.valueOf(fieldObject.getJSONArray(JsonFormConstants.VALUES));
                             fieldObject.put(JsonFormConstants.VALUE, value);
                         } else {
                             value = fieldObject.getJSONArray(JsonFormConstants.VALUES).getString(0);
@@ -1034,7 +1034,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     for (int i = 0; i < constraint.length(); i++) {
                         JSONObject curConstraint = constraint.getJSONObject(i);
                         if (address.length == 2) {
-                            String value = Utils.stringValueOf(getValueFromAddress(address, popup).get(JsonFormConstants.VALUE));
+                            String value = String.valueOf(getValueFromAddress(address, popup).get(JsonFormConstants.VALUE));
                             errorMessage = enforceConstraint(value, curView, curConstraint);
                             if (errorMessage != null) break;
                         }
@@ -1248,7 +1248,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         args[i] = valueMatcher.group(1);
                     } else {
                         try {
-                            args[i] = Utils.stringValueOf(
+                            args[i] = String.valueOf(
                                     getValueFromAddress(curArg.split(":"), false).get(JsonFormConstants.VALUE));
                         } catch (Exception e) {
                             Timber.e(e, "JsonFormActivity --> getFunctionArgs");
@@ -1557,7 +1557,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 }
                 return false;
             } else {
-                String curValue = Utils.stringValueOf(curValueMap.get(JsonFormConstants.VALUE));
+                String curValue = String.valueOf(curValueMap.get(JsonFormConstants.VALUE));
                 return doComparison(curValue != null ? curValue : "", curRelevance);
             }
         }
@@ -1841,7 +1841,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         Object jsonObject = object;
         try {
             if (jsonObject.toString().contains(".")) {
-                jsonObject = Utils.stringValueOf((float) Math.round(Float.valueOf(jsonObject.toString()) * 100) / 100);
+                jsonObject = String.valueOf((float) Math.round(Float.valueOf(jsonObject.toString()) * 100) / 100);
             } else {
                 jsonObject = Integer.valueOf(jsonObject.toString());
             }

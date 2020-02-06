@@ -232,7 +232,7 @@ public class JsonFormFragmentPresenter extends
                 String parentKey = (String) childAt.getTag(R.id.key);
                 String childKey = (String) childAt.getTag(R.id.childKey);
                 getView().writeValue(mStepName, parentKey, JsonFormConstants.OPTIONS_FIELD_NAME, childKey,
-                        Utils.stringValueOf(((CheckBox) childAt).isChecked()), openMrsEntityParent, openMrsEntity,
+                        String.valueOf(((CheckBox) childAt).isChecked()), openMrsEntityParent, openMrsEntity,
                         openMrsEntityId, popup);
             } else if (childAt instanceof RadioButton) {
                 String parentKey = (String) childAt.getTag(R.id.key);
@@ -830,7 +830,7 @@ public class JsonFormFragmentPresenter extends
             }
 
             getView().writeValue(mStepName, parentKey, JsonFormConstants.OPTIONS_FIELD_NAME, childKey,
-                    Utils.stringValueOf(compoundButton.isChecked()), openMrsEntityParent, openMrsEntity,
+                    String.valueOf(compoundButton.isChecked()), openMrsEntityParent, openMrsEntity,
                     openMrsEntityId, popup);
         } else if (
                 (compoundButton instanceof AppCompatRadioButton || compoundButton instanceof RadioButton)
@@ -916,7 +916,7 @@ public class JsonFormFragmentPresenter extends
         if (popup == null) {
             popup = false;
         }
-        String value = Utils.stringValueOf(customTextView.getText());
+        String value = String.valueOf(customTextView.getText());
         getView().writeValue(mStepName, parentKey, value, openMrsEntityParent, openMrsEntity,
                 openMrsEntityId, popup);
     }
