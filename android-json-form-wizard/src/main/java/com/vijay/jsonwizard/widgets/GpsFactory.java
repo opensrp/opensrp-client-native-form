@@ -26,7 +26,6 @@ import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.interfaces.OnActivityRequestPermissionResultListener;
 import com.vijay.jsonwizard.utils.PermissionUtils;
-import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 

@@ -553,20 +553,6 @@ public class Utils {
 
         return properties;
     }
-
-    /**
-     * This is to fix the Java 8 breakage caused by {@link String#valueOf(int)} if given a string parameter
-     *
-     * @param value {@link Object} any widget value
-     * @return newValue {@link String} the string value of the passed parameter
-     */
-    public static String stringValueOf(Object value) {
-        String newValue = "";
-        if (value != null) {
-            newValue = value instanceof String ? (String) value : String.valueOf(value);
-        }
-        return newValue;
-    }
 }
 
 

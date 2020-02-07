@@ -47,7 +47,6 @@ import com.vijay.jsonwizard.task.ExpansionPanelGenericPopupDialogTask;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ImageUtils;
 import com.vijay.jsonwizard.utils.PermissionUtils;
-import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.CustomTextView;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;

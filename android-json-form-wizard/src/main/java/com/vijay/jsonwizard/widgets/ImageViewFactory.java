@@ -16,7 +16,6 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.utils.FormUtils;
-import com.vijay.jsonwizard.utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

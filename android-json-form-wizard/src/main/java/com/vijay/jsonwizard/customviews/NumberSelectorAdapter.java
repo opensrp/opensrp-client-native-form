@@ -8,7 +8,6 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.vijay.jsonwizard.R;
-import com.vijay.jsonwizard.utils.Utils;
 
 import java.util.List;
 

@@ -18,7 +18,6 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.rey.material.widget.TextView;
 import com.vijay.jsonwizard.R;
-import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.widgets.GpsFactory;
 
 /**
