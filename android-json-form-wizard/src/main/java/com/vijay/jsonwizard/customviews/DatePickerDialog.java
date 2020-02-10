@@ -106,7 +106,7 @@ public class DatePickerDialog extends DialogFragment {
 
             }
 
-            if (datePicker.getMaxDate() == 0 && datePicker.getMaxDate() == 0) {
+            if (datePicker.getMinDate() == 0 && datePicker.getMaxDate() == 0) {
 
                 calendar.setTime(date);
             }

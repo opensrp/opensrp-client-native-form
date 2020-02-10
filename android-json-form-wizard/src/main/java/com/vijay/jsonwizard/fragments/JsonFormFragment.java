@@ -74,18 +74,11 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     private static NativeFormsProperties nativeFormProperties;
 
     public static JsonFormFragment getFormFragment(String stepName) {
-        return getFormFragment(stepName, null);
-    }
-
-    public static JsonFormFragment getFormFragment(String stepName, Context context) {
         JsonFormFragment jsonFormFragment = new JsonFormFragment();
         Bundle bundle = new Bundle();
         bundle.putString(JsonFormConstants.JSON_FORM_KEY.STEPNAME, stepName);
         jsonFormFragment.setArguments(bundle);
 
-        if (context != null) {
-            nativeFormProperties = Utils.getProperties(context);
-        }
         return jsonFormFragment;
     }
 
@@ -93,6 +86,8 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     public void onCreate(Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
+
+        nativeFormProperties = Utils.getProperties(getContext());
     }
 
     @Override

@@ -309,11 +309,11 @@ public class NumericDatePicker extends DatePicker {
     @Override
     public void updateDate(int year, int month, int dayOfMonth) {
 
-        if (isMaxConstraintViolated(year, month, dayOfMonth)) {
+        if (isMaxConstraintViolated(year, month + 1, dayOfMonth)) {
             throw new IllegalStateException("You have set a date later than the Maximum allowed date settings");
         }
 
-        if (isMinConstraintViolated(year, month, dayOfMonth)) {
+        if (isMinConstraintViolated(year, month + 1, dayOfMonth)) {
             throw new IllegalStateException("You have set a date later than the Minimum allowed date settings");
         }
 
