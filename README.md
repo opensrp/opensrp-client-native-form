@@ -2058,7 +2058,7 @@ Create a class implementing [MultiSelectListRepository]([https://github.com/Open
 > `"repositoryClass": "<fqn of sorting repository class>"`
 
 
- ![Sample Form Screenshot] (https://user-images.githubusercontent.com/2793306/68639670-7c959100-052f-11ea-8cc9-e5ddf2c288ff.png)
+ [Sample Form Screenshot](https://user-images.githubusercontent.com/2793306/68639670-7c959100-052f-11ea-8cc9-e5ddf2c288ff.png)
 
 ## Configurability
 
@@ -2066,6 +2066,6 @@ By placing a file named `app.properties` in your implementation assets folder (S
 
 ### Configurable Settings
 
-| Configuration                         | Type    | Default | Description                                             |
-| --------------------------------------| ------- | ------- | --------------------------------------------------------|          |
-| `widget.datepicker.is.numeric`        | Boolean | false    | Use numeric date picker instead of Android default     |
+| Configuration                             | Type  | Default  | Description                                       		 	      |
+| --------------------------------------| ------- | --------- | ---------------------------------------------------------------|
+| `widget.datepicker.is.numeric`  | Boolean | false   | Use numeric date picker instead of Android default |

@@ -114,7 +114,7 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
     public synchronized void initializeFormFragment() {
         isFormFragmentInitialized = true;
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.container, JsonFormFragment.getFormFragment(JsonFormConstants.FIRST_STEP_NAME, this)).commitAllowingStateLoss();
+                .add(R.id.container, JsonFormFragment.getFormFragment(JsonFormConstants.FIRST_STEP_NAME)).commitAllowingStateLoss();
     }
 
     public void onFormStart() {
