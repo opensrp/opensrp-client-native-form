@@ -1,13 +1,13 @@
 package com.vijay.jsonwizard.widgets;
 
-import com.vijay.jsonwizard.BaseTest;
-import com.vijay.jsonwizard.repository.TestMultiSelectListRepository;
 import com.rey.material.util.ViewUtil;
+import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.adapter.MultiSelectListAdapter;
 import com.vijay.jsonwizard.adapter.MultiSelectListSelectedAdapter;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.MultiSelectItem;
 import com.vijay.jsonwizard.domain.MultiSelectListAccessory;
+import com.vijay.jsonwizard.repository.TestMultiSelectListRepository;
 
 import org.json.JSONArray;
 import org.json.JSONException;

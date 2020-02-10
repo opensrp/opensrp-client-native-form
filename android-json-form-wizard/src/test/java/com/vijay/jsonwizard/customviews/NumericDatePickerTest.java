@@ -1,11 +1,10 @@
-package com.jsonwizard.customviews;
+package com.vijay.jsonwizard.customviews;
 
 import android.util.AttributeSet;
 import android.widget.DatePicker;
 
-import com.jsonwizard.BaseTest;
+import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.R;
-import com.vijay.jsonwizard.customviews.NumericDatePicker;
 
 import org.joda.time.LocalDate;
 import org.junit.Assert;

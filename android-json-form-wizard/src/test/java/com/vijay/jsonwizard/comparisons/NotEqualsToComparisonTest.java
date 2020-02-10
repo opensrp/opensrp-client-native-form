@@ -4,7 +4,6 @@ import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.TestConstants;
 
 import org.junit.Assert;
-
 import org.junit.Test;
 
 public class NotEqualsToComparisonTest extends BaseTest {

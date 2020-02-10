@@ -1,10 +1,8 @@
 package com.vijay.jsonwizard.validators.edittext;
 
 import com.vijay.jsonwizard.BaseTest;
-import com.vijay.jsonwizard.validators.edittext.MinLengthValidator;
 
 import org.junit.Assert;
-
 import org.junit.Test;
 
 public class MinLengthValidatorTest extends BaseTest {

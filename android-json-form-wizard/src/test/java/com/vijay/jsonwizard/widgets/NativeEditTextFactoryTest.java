@@ -1,7 +1,7 @@
 package com.vijay.jsonwizard.widgets;
 
-import com.vijay.jsonwizard.BaseTest;
 import com.rengwuxian.materialedittext.validation.METValidator;
+import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.customviews.NativeEditText;
 
 import org.junit.Assert;

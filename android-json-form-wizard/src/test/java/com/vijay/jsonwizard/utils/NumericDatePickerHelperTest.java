@@ -1,6 +1,4 @@
-package com.jsonwizard.utils;
-
-import com.vijay.jsonwizard.utils.NumericDatePickerHelper;
+package com.vijay.jsonwizard.utils;
 
 import org.junit.Assert;
 import org.junit.Test;

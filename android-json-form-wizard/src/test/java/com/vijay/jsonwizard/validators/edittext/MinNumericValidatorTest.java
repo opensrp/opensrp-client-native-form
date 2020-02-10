@@ -1,11 +1,8 @@
 package com.vijay.jsonwizard.validators.edittext;
 
 import com.vijay.jsonwizard.BaseTest;
-import com.vijay.jsonwizard.validators.edittext.MaxNumericValidator;
-import com.vijay.jsonwizard.validators.edittext.MinNumericValidator;
 
 import org.junit.Assert;
-
 import org.junit.Test;
 
 public class MinNumericValidatorTest extends BaseTest {

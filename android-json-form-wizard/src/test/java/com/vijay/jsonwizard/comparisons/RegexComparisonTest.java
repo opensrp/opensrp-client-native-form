@@ -3,7 +3,6 @@ package com.vijay.jsonwizard.comparisons;
 import com.vijay.jsonwizard.BaseTest;
 
 import org.junit.Assert;
-
 import org.junit.Test;
 import org.mockito.Mockito;
 
