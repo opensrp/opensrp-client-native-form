@@ -15,6 +15,9 @@ import com.vijay.jsonwizard.views.CustomTextView;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+/**
+ * Performs the click actions required by the {@link com.vijay.jsonwizard.widgets.ExpansionPanelFactory} widget record button.
+ */
 public class ExpansionPanelRecordButtonClickListener implements View.OnClickListener {
     private FormUtils formUtils = new FormUtils();
 
@@ -58,7 +61,7 @@ public class ExpansionPanelRecordButtonClickListener implements View.OnClickList
     }
 
     /**
-     * Disable the expansion panel views after they are clicked
+     * Disable the expansion panel views in the main view from {@link ExpansionPanelRecordButtonClickListener#getLinearLayout(View)} after they are clicked
      *
      * @param linearLayout {@link LinearLayout}
      */

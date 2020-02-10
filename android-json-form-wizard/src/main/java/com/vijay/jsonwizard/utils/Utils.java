@@ -387,17 +387,23 @@ public class Utils {
         }
     }
 
+    /**
+     * Gets the {@link android.support.v4.app.FragmentTransaction} from the {@link Context} and removes any {@link android.support.v4.app.Fragment} with the tag `GenericPopup` from the transaction.
+     * Then nullifies the stack by calling {@link android.support.v4.app.FragmentTransaction#addToBackStack(String)} with a null value.
+     *
+     * @param context {@link Activity} The activity context where this transaction called from
+     * @return fragmentTransaction {@link android.support.v4.app.FragmentTransaction}
+     */
     @NotNull
     public FragmentTransaction getFragmentTransaction(Activity context) {
-        Activity activity = context;
-        FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
-        Fragment prev = activity.getFragmentManager().findFragmentByTag("GenericPopup");
-        if (prev != null) {
-            ft.remove(prev);
+        FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
+        Fragment fragment = context.getFragmentManager().findFragmentByTag("GenericPopup");
+        if (fragment != null) {
+            fragmentTransaction.remove(fragment);
         }
 
-        ft.addToBackStack(null);
-        return ft;
+        fragmentTransaction.addToBackStack(null);
+        return fragmentTransaction;
     }
 
     /**
