@@ -88,7 +88,6 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
             Timber.e(e, "ExpansionPanelGenericPopupDialogTask --> doInBackground");
         }
         setStyle(DialogFragment.STYLE_NORMAL, R.style.FullScreenDialogStyle);
-        Utils.hideProgressDialog();
     }
 
     /**
@@ -176,6 +175,8 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
             if (getDialog().getWindow() != null) {
                 getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
             }
+
+            Utils.hideProgressDialog();
             return dialogView;
         } else {
             return super.onCreateView(inflater, container, savedInstanceState);

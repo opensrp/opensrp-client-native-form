@@ -28,7 +28,6 @@ public class ExpansionPanelGenericPopupDialogTask extends AsyncTask<Void, Void, 
     private FormUtils formUtils = new FormUtils();
     private Utils utils = new Utils();
     private View view;
-    private Context context;
 
 
     public ExpansionPanelGenericPopupDialogTask(View view) {
@@ -36,7 +35,15 @@ public class ExpansionPanelGenericPopupDialogTask extends AsyncTask<Void, Void, 
     }
 
     @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        Context context = (Context) view.getTag(R.id.specify_context);
+        Utils.showProgressDialog(R.string.loading, R.string.loading_form_message, context);
+    }
+
+    @Override
     protected Void doInBackground(Void... voids) {
+        Context context = (Context) view.getTag(R.id.specify_context);
         String specifyContent = (String) view.getTag(R.id.specify_content);
         String specifyContentForm = (String) view.getTag(R.id.specify_content_form);
         String stepName = (String) view.getTag(R.id.specify_step_name);
@@ -82,13 +89,5 @@ public class ExpansionPanelGenericPopupDialogTask extends AsyncTask<Void, Void, 
             Timber.e("No sub form specified. Please specify one in order to use the expansion panel.");
         }
         return null;
-    }
-
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        context = (Context) view.getTag(R.id.specify_context);
-        Utils.showProgressDialog(R.string.loading, R.string.loading_form_message, context);
-
     }
 }
