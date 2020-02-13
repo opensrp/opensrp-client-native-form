@@ -109,6 +109,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'appcompat-v7'
         exclude group: 'com.android.support.test', module: 'runner'
         exclude group: 'com.android.support.test.espresso', module: 'espresso-core'
+        exclude group: 'com.google.android.gms', module: 'play-services-vision'
     }
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
 
