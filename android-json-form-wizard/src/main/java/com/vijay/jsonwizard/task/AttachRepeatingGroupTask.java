@@ -103,7 +103,6 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
                     String repeatingGroupKey = (String) rootLayout.getChildAt(i).getTag(R.id.repeating_group_key);
                     keysToRemove.add(repeatingGroupKey);
                     rootLayout.removeViewAt(i);
-
                 }
 //                remove deleted fields from form json
                 ArrayList<String> removeThisFields = new ArrayList<>();
