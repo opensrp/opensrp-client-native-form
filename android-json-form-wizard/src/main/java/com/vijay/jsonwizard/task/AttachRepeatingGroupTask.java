@@ -25,8 +25,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -72,6 +75,7 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
     @Override
     protected void onPreExecute() {
         showProgressDialog(R.string.please_wait_title, R.string.creating_repeating_group_message, widgetArgs.getFormFragment().getContext());
+        repeatingGroups = new ArrayList<>();
     }
 
     @Override
@@ -91,6 +95,7 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
     protected void onPostExecute(List<View> result) {
         if (diff < 0) {
             try {
+
                 JSONObject step = ((JsonApi) widgetArgs.getContext()).getmJSONObject().getJSONObject(widgetArgs.getStepName());
                 JSONArray fields = step.getJSONArray(FIELDS);
                 int currNumRepeatingGroups = rootLayout.getChildCount() - 1;
@@ -99,15 +104,29 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
                     String repeatingGroupKey = (String) rootLayout.getChildAt(i).getTag(R.id.repeating_group_key);
                     keysToRemove.add(repeatingGroupKey);
                     rootLayout.removeViewAt(i);
+
                 }
-                // remove deleted fields from form json
+//                remove deleted fields from form json
+                ArrayList<String> removeThisFields = new ArrayList<>();
                 int len = fields.length();
                 for (int i = len - 1; i >= 0; i--) {
                     String[] key = ((String) fields.getJSONObject(i).get(KEY)).split("_");
                     if (keysToRemove.contains(key[key.length - 1])) {
+                        removeThisFields.add((String) fields.getJSONObject(i).get(KEY));
                         fields.remove(i);
                     }
                 }
+//                remove deleted views from form json
+                Collection<View> viewCollection =  widgetArgs.getFormFragment().getJsonApi().getFormDataViews();
+                Iterator<View> viewIterator = viewCollection.iterator();
+                while (viewIterator.hasNext()){
+                    View view = viewIterator.next();
+                    String key = (String) view.getTag(R.id.key);
+                    if(removeThisFields.contains(key)){
+                        viewIterator.remove();
+                    }
+                }
+
                 LinearLayout referenceLayout = (LinearLayout) ((LinearLayout) parent).getChildAt(0);
                 referenceLayout.getChildAt(0).setTag(R.id.repeating_group_item_count, rootLayout.getChildCount());
             } catch (JSONException e) {
@@ -120,7 +139,7 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         }
 
         try {
-            ((JsonApi) widgetArgs.getContext()).invokeRefreshLogic(null, false, null, null);
+            ((JsonApi) widgetArgs.getContext()).invokeRefreshLogic(null, true, null, null);
         } catch (Exception e){
             e.printStackTrace();
         }
