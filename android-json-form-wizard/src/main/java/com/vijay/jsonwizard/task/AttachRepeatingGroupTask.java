@@ -25,6 +25,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -91,6 +92,7 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
     protected void onPostExecute(List<View> result) {
         if (diff < 0) {
             try {
+
                 JSONObject step = ((JsonApi) widgetArgs.getContext()).getmJSONObject().getJSONObject(widgetArgs.getStepName());
                 JSONArray fields = step.getJSONArray(FIELDS);
                 int currNumRepeatingGroups = rootLayout.getChildCount() - 1;
@@ -100,14 +102,22 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
                     keysToRemove.add(repeatingGroupKey);
                     rootLayout.removeViewAt(i);
                 }
-                // remove deleted fields from form json
+//                remove deleted fields from form json
+                ArrayList<String> removeThisFields = new ArrayList<>();
                 int len = fields.length();
                 for (int i = len - 1; i >= 0; i--) {
                     String[] key = ((String) fields.getJSONObject(i).get(KEY)).split("_");
                     if (keysToRemove.contains(key[key.length - 1])) {
+                        removeThisFields.add((String) fields.getJSONObject(i).get(KEY));
                         fields.remove(i);
                     }
                 }
+//                remove deleted views to avoid validation errors while saving the form
+                Collection<View> viewCollection = widgetArgs.getFormFragment().getJsonApi().getFormDataViews();
+                if (viewCollection != null) {
+                    Utils.removeDeletedViewsFromJsonForm(viewCollection, removeThisFields);
+                }
+
                 LinearLayout referenceLayout = (LinearLayout) ((LinearLayout) parent).getChildAt(0);
                 referenceLayout.getChildAt(0).setTag(R.id.repeating_group_item_count, rootLayout.getChildCount());
             } catch (JSONException e) {
