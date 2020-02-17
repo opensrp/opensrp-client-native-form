@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -74,7 +73,6 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
     @Override
     protected void onPreExecute() {
         showProgressDialog(R.string.please_wait_title, R.string.creating_repeating_group_message, widgetArgs.getFormFragment().getContext());
-        repeatingGroups = new ArrayList<>();
     }
 
     @Override
@@ -114,15 +112,10 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
                         fields.remove(i);
                     }
                 }
-//                remove deleted views from form json
-                Collection<View> viewCollection =  widgetArgs.getFormFragment().getJsonApi().getFormDataViews();
-                Iterator<View> viewIterator = viewCollection.iterator();
-                while (viewIterator.hasNext()){
-                    View view = viewIterator.next();
-                    String key = (String) view.getTag(R.id.key);
-                    if(removeThisFields.contains(key)){
-                        viewIterator.remove();
-                    }
+//                remove deleted views to avoid validation errors while saving the form
+                Collection<View> viewCollection = widgetArgs.getFormFragment().getJsonApi().getFormDataViews();
+                if (viewCollection != null) {
+                    Utils.removeDeletedViewsFromJsonForm(viewCollection, removeThisFields);
                 }
 
                 LinearLayout referenceLayout = (LinearLayout) ((LinearLayout) parent).getChildAt(0);
