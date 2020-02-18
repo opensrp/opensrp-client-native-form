@@ -294,12 +294,9 @@ public class FormUtils {
         String label = jsonObject.optString(JsonFormConstants.LABEL, "");
         if (!TextUtils.isEmpty(label)) {
             String asterisks = "";
-            int labelTextSize = FormUtils
-                    .getValueFromSpOrDpOrPx(
-                            jsonObject.optString(JsonFormConstants.LABEL_TEXT_SIZE, String.valueOf(context
-                                    .getResources().getDimension(R.dimen.default_label_text_size))), context);
-            String labelTextColor = jsonObject
-                    .optString(JsonFormConstants.LABEL_TEXT_COLOR, JsonFormConstants.DEFAULT_TEXT_COLOR);
+            int labelTextSize = FormUtils.getValueFromSpOrDpOrPx(jsonObject.optString(JsonFormConstants.LABEL_TEXT_SIZE, String.valueOf(context
+                    .getResources().getDimension(R.dimen.default_label_text_size))), context);
+            String labelTextColor = jsonObject.optString(JsonFormConstants.LABEL_TEXT_COLOR, JsonFormConstants.DEFAULT_TEXT_COLOR);
             JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
             ConstraintLayout labelConstraintLayout = createLabelLinearLayout(stepName, canvasIds, jsonObject, context, listener);
             labelConstraintLayout.setTag(R.id.extraPopup, popup);
@@ -365,8 +362,7 @@ public class FormUtils {
         String calculation = jsonObject.optString(JsonFormConstants.CALCULATION);
         String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
 
-        ConstraintLayout constraintLayout = (ConstraintLayout) LayoutInflater.from(context)
-                .inflate(R.layout.native_form_labels, null);
+        ConstraintLayout constraintLayout = getRootConstraintLayout(context);
         constraintLayout.setId(ViewUtil.generateViewId());
         canvasIds.put(constraintLayout.getId());
         constraintLayout.setTag(R.id.canvas_ids, canvasIds.toString());
@@ -399,6 +395,10 @@ public class FormUtils {
                 canvasIds);
 
         return constraintLayout;
+    }
+
+    public static ConstraintLayout getRootConstraintLayout(Context context) {
+        return (ConstraintLayout) LayoutInflater.from(context).inflate(R.layout.native_form_labels, null);
     }
 
     /**

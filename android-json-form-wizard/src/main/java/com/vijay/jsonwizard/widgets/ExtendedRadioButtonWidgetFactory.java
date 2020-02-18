@@ -40,7 +40,7 @@ public class ExtendedRadioButtonWidgetFactory extends NativeRadioButtonFactory {
             if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
                 readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
             }
-            LinearLayout rootLayout = (LinearLayout) LayoutInflater.from(context).inflate(getLayout(), null);
+            LinearLayout rootLayout = getLinearRootLayout(context);
             Map<String, View> labelViews = FormUtils
                     .createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly,
                             commonListener, popup);

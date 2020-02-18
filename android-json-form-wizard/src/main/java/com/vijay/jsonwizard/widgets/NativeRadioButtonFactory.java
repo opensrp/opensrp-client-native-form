@@ -335,7 +335,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         List<View> views = new ArrayList<>(1);
         ImageView editButton;
 
-        LinearLayout rootLayout = (LinearLayout) LayoutInflater.from(context).inflate(getLayout(), null);
+        LinearLayout rootLayout = getLinearRootLayout(context);
 
         Map<String, View> labelViews = new HashMap<>();
         String label = jsonObject.optString(JsonFormConstants.LABEL, "");
@@ -343,10 +343,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             labelViews = FormUtils.createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly, listener, popup);
         }
 
-        View radioGroup =
-                addRadioButtonOptionsElements(jsonObject, context, stepName, rootLayout, listener,
-                        popup);
-
+        View radioGroup = addRadioButtonOptionsElements(jsonObject, context, stepName, rootLayout, listener, popup);
         radioGroup.setTag(R.id.json_object, jsonObject);
 
         if (labelViews != null && labelViews.size() > 0) {
@@ -363,8 +360,8 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         return views;
     }
 
-    protected int getLayout() {
-        return R.layout.native_form_compound_button_parent;
+    public LinearLayout getLinearRootLayout(Context context) {
+        return (LinearLayout) LayoutInflater.from(context).inflate(R.layout.native_form_compound_button_parent, null);
     }
 
     /**
@@ -395,17 +392,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             extraRelArray = jsonObject.optString(JsonFormConstants.HAS_EXTRA_REL, null);
         }
 
-        RadioGroup radioGroup = new RadioGroup(context);
-        radioGroup.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
-        radioGroup.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
-        radioGroup.setTag(R.id.openmrs_entity, openMrsEntity);
-        radioGroup.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-        radioGroup.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
-        radioGroup.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
-        radioGroup.setTag(R.id.extraRelCheck, extraRelCheck);
-        radioGroup.setTag(R.id.extraRelArray, extraRelArray);
-        radioGroup.setTag(R.id.extraPopup, popup);
-        radioGroup.setId(ViewUtil.generateViewId());
+        RadioGroup radioGroup = getRadioGroup(jsonObject, context, stepName, popup, openMrsEntityParent, openMrsEntity, openMrsEntityId, extraRelCheck, extraRelArray);
         canvasIds.put(radioGroup.getId());
         addRequiredValidator(radioGroup, jsonObject);
         for (int i = 0; i < options.length(); i++) {
@@ -435,9 +422,24 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
     }
 
     @NotNull
+    public RadioGroup getRadioGroup(JSONObject jsonObject, Context context, String stepName, boolean popup, String openMrsEntityParent, String openMrsEntity, String openMrsEntityId, Boolean extraRelCheck, String extraRelArray) throws JSONException {
+        RadioGroup radioGroup = new RadioGroup(context);
+        radioGroup.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+        radioGroup.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
+        radioGroup.setTag(R.id.openmrs_entity, openMrsEntity);
+        radioGroup.setTag(R.id.openmrs_entity_id, openMrsEntityId);
+        radioGroup.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
+        radioGroup.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+        radioGroup.setTag(R.id.extraRelCheck, extraRelCheck);
+        radioGroup.setTag(R.id.extraRelArray, extraRelArray);
+        radioGroup.setTag(R.id.extraPopup, popup);
+        radioGroup.setId(ViewUtil.generateViewId());
+        return radioGroup;
+    }
+
+    @NotNull
     private RelativeLayout getRadioGroupLayout(JSONObject jsonObject, Context context, String stepName, boolean popup, String openMrsEntityParent, String openMrsEntity, String openMrsEntityId, JSONObject item) throws JSONException {
-        RelativeLayout radioGroupLayout =
-                (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.native_item_radio_button, null);
+        RelativeLayout radioGroupLayout = getRadioGroupLayout(context);
         radioGroupLayout.setId(ViewUtil.generateViewId());
         radioGroupLayout.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
         radioGroupLayout.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
@@ -451,6 +453,10 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         radioGroupLayout.setTag(R.id.native_radio_button_layout_view_id, radioGroupLayout.getId());
         radioGroupLayout.setTag(R.id.canvas_ids, canvasIds.toString());
         return radioGroupLayout;
+    }
+
+    private RelativeLayout getRadioGroupLayout(Context context) {
+        return (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.native_item_radio_button, null);
     }
 
     private void attachRelevance(Context context, String relevance, String constraints, String calculation, RadioGroup radioGroup) {
