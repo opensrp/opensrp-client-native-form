@@ -340,7 +340,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         Map<String, View> labelViews = new HashMap<>();
         String label = jsonObject.optString(JsonFormConstants.LABEL, "");
         if (StringUtils.isNotBlank(label)) {
-            labelViews = FormUtils.createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly, listener, popup);
+            labelViews = formUtils.createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly, listener, popup);
         }
 
         View radioGroup = addRadioButtonOptionsElements(jsonObject, context, stepName, rootLayout, listener, popup);
@@ -438,7 +438,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
     }
 
     @NotNull
-    private RelativeLayout getRadioGroupLayout(JSONObject jsonObject, Context context, String stepName, boolean popup, String openMrsEntityParent, String openMrsEntity, String openMrsEntityId, JSONObject item) throws JSONException {
+    public RelativeLayout getRadioGroupLayout(JSONObject jsonObject, Context context, String stepName, boolean popup, String openMrsEntityParent, String openMrsEntity, String openMrsEntityId, JSONObject item) throws JSONException {
         RelativeLayout radioGroupLayout = getRadioGroupLayout(context);
         radioGroupLayout.setId(ViewUtil.generateViewId());
         radioGroupLayout.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
@@ -455,7 +455,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         return radioGroupLayout;
     }
 
-    private RelativeLayout getRadioGroupLayout(Context context) {
+    public RelativeLayout getRadioGroupLayout(Context context) {
         return (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.native_item_radio_button, null);
     }
 

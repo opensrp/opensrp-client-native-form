@@ -45,6 +45,7 @@ import com.vijay.jsonwizard.views.CustomTextView;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jeasy.rules.api.Facts;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -286,7 +287,7 @@ public class FormUtils {
         }
     }
 
-    public static Map<String, View> createRadioButtonAndCheckBoxLabel(String stepName, LinearLayout linearLayout,
+    public Map<String, View> createRadioButtonAndCheckBoxLabel(String stepName, LinearLayout linearLayout,
                                                                       JSONObject jsonObject, Context context,
                                                                       JSONArray canvasIds, Boolean readOnly,
                                                                       CommonListener listener, boolean popup) throws JSONException {
@@ -350,7 +351,7 @@ public class FormUtils {
         return px;
     }
 
-    public static ConstraintLayout createLabelLinearLayout(String stepName, JSONArray canvasIds,
+    public ConstraintLayout createLabelLinearLayout(String stepName, JSONArray canvasIds,
                                                            JSONObject jsonObject,
                                                            Context context,
                                                            CommonListener listener) throws JSONException {
@@ -362,18 +363,16 @@ public class FormUtils {
         String calculation = jsonObject.optString(JsonFormConstants.CALCULATION);
         String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
 
-        ConstraintLayout constraintLayout = getRootConstraintLayout(context);
-        constraintLayout.setId(ViewUtil.generateViewId());
-        canvasIds.put(constraintLayout.getId());
-        constraintLayout.setTag(R.id.canvas_ids, canvasIds.toString());
-        constraintLayout.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
-        constraintLayout.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
-        constraintLayout.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
-        constraintLayout.setTag(R.id.openmrs_entity, openMrsEntity);
-        constraintLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-        constraintLayout
-                .setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
-        constraintLayout.setId(ViewUtil.generateViewId());
+        ConstraintLayout constraintLayout = getConstraintLayout(stepName, canvasIds, jsonObject, context, openMrsEntityParent, openMrsEntity, openMrsEntityId);
+        attachRefreshLogic(context, relevance, calculation, constraints, constraintLayout);
+
+        ImageView imageView = constraintLayout.findViewById(R.id.label_info);
+        showInfoIcon(stepName, jsonObject, listener, FormUtils.getInfoDialogAttributes(jsonObject), imageView, canvasIds);
+
+        return constraintLayout;
+    }
+
+    private void attachRefreshLogic(Context context, String relevance, String calculation, String constraints, ConstraintLayout constraintLayout) {
         if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             constraintLayout.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(constraintLayout);
@@ -388,16 +387,26 @@ public class FormUtils {
             constraintLayout.setTag(R.id.constraints, constraints);
             ((JsonApi) context).addCalculationLogicView(constraintLayout);
         }
+    }
 
-        ImageView imageView = constraintLayout.findViewById(R.id.label_info);
-        showInfoIcon(stepName, jsonObject, listener, FormUtils.getInfoDialogAttributes(jsonObject),
-                imageView,
-                canvasIds);
-
+    @NotNull
+    private ConstraintLayout getConstraintLayout(String stepName, JSONArray canvasIds, JSONObject jsonObject, Context context, String openMrsEntityParent, String openMrsEntity, String openMrsEntityId) throws JSONException {
+        ConstraintLayout constraintLayout = getRootConstraintLayout(context);
+        constraintLayout.setId(ViewUtil.generateViewId());
+        canvasIds.put(constraintLayout.getId());
+        constraintLayout.setTag(R.id.canvas_ids, canvasIds.toString());
+        constraintLayout.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+        constraintLayout.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
+        constraintLayout.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
+        constraintLayout.setTag(R.id.openmrs_entity, openMrsEntity);
+        constraintLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
+        constraintLayout
+                .setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+        constraintLayout.setId(ViewUtil.generateViewId());
         return constraintLayout;
     }
 
-    public static ConstraintLayout getRootConstraintLayout(Context context) {
+    public ConstraintLayout getRootConstraintLayout(Context context) {
         return (ConstraintLayout) LayoutInflater.from(context).inflate(R.layout.native_form_labels, null);
     }
 

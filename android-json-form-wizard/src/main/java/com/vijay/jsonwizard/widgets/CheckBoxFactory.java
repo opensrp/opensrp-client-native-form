@@ -31,7 +31,6 @@ import java.util.Map;
 
 import static com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT;
 import static com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT;
-import static com.vijay.jsonwizard.utils.FormUtils.createRadioButtonAndCheckBoxLabel;
 import static com.vijay.jsonwizard.utils.FormUtils.getCurrentCheckboxValues;
 import static com.vijay.jsonwizard.utils.FormUtils.getLinearLayoutParams;
 import static com.vijay.jsonwizard.utils.FormUtils.getValueFromSpOrDpOrPx;
@@ -119,7 +118,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
         canvasIds.put(rootLayout.getId());
         addRequiredValidator(rootLayout, jsonObject);
 
-        Map<String, View> labelViews = createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly, listener, popup);
+        Map<String, View> labelViews = formUtils.createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly, listener, popup);
 
 
         ArrayList<View> editableCheckBoxes = addCheckBoxOptionsElements(jsonObject, context, readOnly, canvasIds, stepName,
