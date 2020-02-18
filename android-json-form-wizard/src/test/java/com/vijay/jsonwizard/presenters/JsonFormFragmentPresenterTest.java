@@ -4,7 +4,9 @@ import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
+import com.vijay.jsonwizard.widgets.CountDownTimerFactory;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -24,6 +26,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
@@ -31,7 +34,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
  */
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({JsonFormFragment.class})
+@PrepareForTest({JsonFormFragment.class, CountDownTimerFactory.class})
 public class JsonFormFragmentPresenterTest {
 
     private JsonFormFragmentPresenter jsonFormFragmentPresenter;
@@ -71,6 +74,15 @@ public class JsonFormFragmentPresenterTest {
         assertFalse(movedToNext);
     }
 
+    @Test
+    public void testCheckAndStopCountdownAlarmShouldStopAlarm() throws JSONException {
+        bootStrapCurrentJsonState();
+        mockStatic(CountDownTimerFactory.class);
+        jsonFormFragmentPresenter.checkAndStopCountdownAlarm();
+        verifyStatic(CountDownTimerFactory.class);
+        CountDownTimerFactory.stopAlarm();
+    }
+
     private void mockStaticClasses() {
         mockStatic(JsonFormFragment.class);
         when(JsonFormFragment.getFormFragment(anyString())).thenReturn(jsonFormFragment);
@@ -83,10 +95,28 @@ public class JsonFormFragmentPresenterTest {
     }
 
     private void setUpJsonFormFragment(boolean validationStatus) throws JSONException {
+        // bootstrap jsonApi
         JsonApi jsonApi = mock(JsonApi.class);
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put(JsonFormConstants.VALIDATE_ON_SUBMIT, validationStatus);
+        JSONObject mJsonObject = new JSONObject();
+        mJsonObject.put(JsonFormConstants.VALIDATE_ON_SUBMIT, validationStatus);
         doReturn(jsonApi).when(jsonFormFragment).getJsonApi();
-        doReturn(jsonObject).when(jsonApi).getmJSONObject();
+        doReturn(mJsonObject).when(jsonApi).getmJSONObject();
+    }
+
+    private void bootStrapCurrentJsonState() throws JSONException {
+        // bootstrap currentJsonState
+        JSONObject currentJsonState = new JSONObject();
+        JSONArray fields = new JSONArray();
+        JSONObject step1 = new JSONObject();
+        step1.put("fields", fields);
+        currentJsonState.put("step1", step1);
+        Whitebox.setInternalState(jsonFormFragmentPresenter, "mStepName", "step1");
+
+        // add timer object
+        JSONObject timerObj = new JSONObject();
+        timerObj.put(JsonFormConstants.COUNTDOWN_TIME_VALUE, 12);
+        fields.put(timerObj);
+
+        doReturn(currentJsonState.toString()).when(jsonFormFragment).getCurrentJsonState();
     }
 }
