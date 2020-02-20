@@ -7,6 +7,9 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.util.Locale;
+import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class NativeFormLangUtils {
 
@@ -30,5 +33,17 @@ public class NativeFormLangUtils {
         }
 
         return context;
+    }
+
+    public static String getTranslatedJSONForm(String jsonForm) {
+        StringBuffer stringBuffer = new StringBuffer();
+        Pattern placeholderPattern = Pattern.compile("\\{\\{([a-zA-Z_0-9]+)\\}\\}");
+        Matcher matcher = placeholderPattern.matcher(jsonForm);
+        while (matcher.find()) {
+            matcher.appendReplacement(stringBuffer, "$1");
+        }
+        matcher.appendTail(stringBuffer);
+
+        return stringBuffer.toString();
     }
 }
