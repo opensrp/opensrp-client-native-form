@@ -59,6 +59,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
     private final String REFERENCE_EDIT_TEXT_HINT = "reference_edit_text_hint";
     private final String REPEATING_GROUP_LABEL = "repeating_group_label";
     private final String REFERENCE_EDIT_TEXT = "reference_edit_text";
+    private final String REPEATING_GROUP_MAX = "repeating_group_max";
     private static Map<Integer, String> repeatingGroupLayouts = new HashMap<>();
 
     private ImageButton doneButton;
@@ -92,6 +93,14 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         final String referenceEditTextHint = jsonObject.optString(REFERENCE_EDIT_TEXT_HINT, context.getString(R.string.enter_number_of_repeating_group_items));
         final String repeatingGroupLabel = jsonObject.optString(REPEATING_GROUP_LABEL, context.getString(R.string.repeating_group_item));
         String remoteReferenceEditText = jsonObject.optString(REFERENCE_EDIT_TEXT);
+        String repeating_group_max = jsonObject.optString(REPEATING_GROUP_MAX);
+        if (StringUtils.isNotBlank(repeating_group_max) && StringUtils.isNumeric(repeating_group_max)) {
+            try {
+                MAX_NUM_REPEATING_GROUPS = Integer.parseInt(repeating_group_max);
+            } catch (NumberFormatException e) {
+                Timber.e(e, " --> repeating_group_max");
+            }
+        }
 
         // Enables us to fetch this value from a previous edit_text & disable this one
         retrieveRepeatingGroupCountFromRemoteReferenceEditText(rootLayout, (JsonApi) context, referenceEditText, remoteReferenceEditText);
@@ -234,7 +243,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
             referenceEditText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
             referenceEditText.addValidator(new RegexpValidator(context.getString(R.string.repeating_group_number_format_err_msg), "\\d*"));
             referenceEditText.addValidator(new MaxNumericValidator(context.getString(R.string.repeating_group_max_value_err_msg, MAX_NUM_REPEATING_GROUPS), MAX_NUM_REPEATING_GROUPS));
-            referenceEditText.addValidator(new MinNumericValidator(context.getString(R.string.repeating_group_min_value_err_msg), 0));
+            referenceEditText.addValidator(new MinNumericValidator(context.getString(R.string.repeating_group_min_value_err_msg), 1));
 
             addRequiredValidator(widgetArgs.getJsonObject(), referenceEditText);
         }
