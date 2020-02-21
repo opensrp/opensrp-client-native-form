@@ -93,8 +93,8 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         final String referenceEditTextHint = jsonObject.optString(REFERENCE_EDIT_TEXT_HINT, context.getString(R.string.enter_number_of_repeating_group_items));
         final String repeatingGroupLabel = jsonObject.optString(REPEATING_GROUP_LABEL, context.getString(R.string.repeating_group_item));
         String remoteReferenceEditText = jsonObject.optString(REFERENCE_EDIT_TEXT);
-        String repeating_group_max = jsonObject.optString(REPEATING_GROUP_MAX);
 
+        String repeating_group_max = jsonObject.optString(REPEATING_GROUP_MAX);
         setMaxNumberOfRepeatingGroups(repeating_group_max);
 
         // Enables us to fetch this value from a previous edit_text & disable this one
