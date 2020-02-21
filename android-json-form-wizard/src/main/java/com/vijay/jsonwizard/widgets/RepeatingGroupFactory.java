@@ -94,13 +94,8 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         final String repeatingGroupLabel = jsonObject.optString(REPEATING_GROUP_LABEL, context.getString(R.string.repeating_group_item));
         String remoteReferenceEditText = jsonObject.optString(REFERENCE_EDIT_TEXT);
         String repeating_group_max = jsonObject.optString(REPEATING_GROUP_MAX);
-        if (StringUtils.isNotBlank(repeating_group_max) && StringUtils.isNumeric(repeating_group_max)) {
-            try {
-                MAX_NUM_REPEATING_GROUPS = Integer.parseInt(repeating_group_max);
-            } catch (NumberFormatException e) {
-                Timber.e(e, " --> repeating_group_max");
-            }
-        }
+
+        setMaxNumberOfRepeatingGroups(repeating_group_max);
 
         // Enables us to fetch this value from a previous edit_text & disable this one
         retrieveRepeatingGroupCountFromRemoteReferenceEditText(rootLayout, (JsonApi) context, referenceEditText, remoteReferenceEditText);
@@ -123,6 +118,17 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         prepareViewChecks(rootLayout, context);
 
         return views;
+    }
+
+//    check if a max number of repeating groups is set on the form if not use the default
+    private void setMaxNumberOfRepeatingGroups(String repeating_group_max) {
+        if (StringUtils.isNotBlank(repeating_group_max) && StringUtils.isNumeric(repeating_group_max)) {
+            try {
+                MAX_NUM_REPEATING_GROUPS = Integer.parseInt(repeating_group_max);
+            } catch (NumberFormatException e) {
+                Timber.e(e, " --> repeating_group_max");
+            }
+        }
     }
 
     private void setViewTags(@NonNull LinearLayout rootLayout) {
