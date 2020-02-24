@@ -149,20 +149,6 @@
         }
       },
       {
-        "key": "skip_diagnostic_questions",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "check_box",
-        "options": [
-          {
-            "key": "skip_questions",
-            "text": "Skip diagnostic questions",
-            "value": "true"
-          }
-        ]
-      },
-      {
         "key": "been_treated",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -179,20 +165,13 @@
             "text": "No"
           },
           {
-            "key": "not_answered",
+            "key": "Not Answered",
             "text": "Not Answered"
           }
         ],
-        "value": "not_answered",
         "v_required": {
           "value": "true",
           "err": "Has the patient been treated for malaria in the past 3 months?"
-        },
-        "relevance": {
-          "step1:skip_diagnostic_questions": {
-            "type": "string",
-            "ex": "equalTo(., \"false\")"
-          }
         }
       }
     ]
