@@ -47,9 +47,8 @@ script:
   - ls -la
 
   #Run All tests Unit and Instrumentation
-  - travis_wait ./gradlew :android-json-form-wizard:jacocoTestReport coveralls --stacktrace
-  - ls -lt /home/travis/build/OpenSRP/opensrp-client-native-form/android-json-form-wizard/build/reports/jacoco/jacocoRootReport
-  - travis_wait ./gradlew :android-json-form-wizard:jacocoTestReport coveralls --info
+  - travis_wait ./gradlew :android-json-form-wizard:jacocoTestReport --stacktrace
+  - travis_wait ./gradlew  coveralls --info
 
   # Generate javadoc
   - travis_wait ./gradlew javadoc
