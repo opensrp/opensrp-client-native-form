@@ -35,12 +35,12 @@ public class NativeFormLangUtils {
         return context;
     }
 
-    public static String getTranslatedJSONForm(String jsonForm, String filePath) {
-        ResourceBundle mlsResourceBundle = ResourceBundle.getBundle(filePath);
+    public static String getTranslatedJSONForm(String jsonForm, String fileName) {
+        ResourceBundle mlsResourceBundle = ResourceBundle.getBundle(fileName);
 
         StringBuffer stringBuffer = new StringBuffer();
-        Pattern placeholderPattern = Pattern.compile("\"\\{\\{([a-zA-Z_0-9\\.]+)\\}\\}\"");
-        Matcher matcher = placeholderPattern.matcher(jsonForm);
+        Pattern interpolatedStringPattern = Pattern.compile("\"\\{\\{([a-zA-Z_0-9\\.]+)\\}\\}\"");
+        Matcher matcher = interpolatedStringPattern.matcher(jsonForm);
         while (matcher.find()) {
             matcher.appendReplacement(stringBuffer, mlsResourceBundle.getString(matcher.group(1)));
         }
