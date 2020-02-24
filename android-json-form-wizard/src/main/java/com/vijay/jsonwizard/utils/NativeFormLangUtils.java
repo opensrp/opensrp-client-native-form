@@ -36,11 +36,10 @@ public class NativeFormLangUtils {
     }
 
     public static String getTranslatedJSONForm(String jsonForm, String filePath) {
-        Locale.setDefault(new Locale("id"));
         ResourceBundle mlsResourceBundle = ResourceBundle.getBundle(filePath);
 
         StringBuffer stringBuffer = new StringBuffer();
-        Pattern placeholderPattern = Pattern.compile("\\{\\{([a-zA-Z_0-9]+)\\}\\}");
+        Pattern placeholderPattern = Pattern.compile("\"\\{\\{([a-zA-Z_0-9\\.]+)\\}\\}\"");
         Matcher matcher = placeholderPattern.matcher(jsonForm);
         while (matcher.find()) {
             matcher.appendReplacement(stringBuffer, mlsResourceBundle.getString(matcher.group(1)));

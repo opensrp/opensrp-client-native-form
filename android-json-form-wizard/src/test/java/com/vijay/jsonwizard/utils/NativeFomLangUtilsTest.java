@@ -2,8 +2,8 @@ package com.vijay.jsonwizard.utils;
 
 import org.junit.Test;
 
-import java.io.IOException;
 import java.io.InputStream;
+import java.util.Locale;
 
 import static org.junit.Assert.assertEquals;
 
@@ -13,9 +13,15 @@ import static org.junit.Assert.assertEquals;
 public class NativeFomLangUtilsTest {
 
     @Test
-    public void testStringInterpolation() throws IOException {
-        String interpolatedJsonForm = convertStreamToString(getClass().getClassLoader().getResourceAsStream("test_translation_interpolated"));
-        assertEquals("hello_world_str, another_string,yet_another_string", NativeFormLangUtils.getTranslatedJSONForm(interpolatedJsonForm, "strings"));
+    public void testStringInterpolation() {
+        Locale.setDefault(new Locale("id"));
+        String indonesiaJsonForm = getFileContentsAsString("test_translation_in");
+        String interpolatedJsonForm = getFileContentsAsString("test_translation_interpolated");
+        assertEquals(indonesiaJsonForm, NativeFormLangUtils.getTranslatedJSONForm(interpolatedJsonForm, "strings"));
+    }
+
+    private String getFileContentsAsString(String filePath) {
+        return convertStreamToString(getClass().getClassLoader().getResourceAsStream(filePath));
     }
 
     private String convertStreamToString(InputStream is) {

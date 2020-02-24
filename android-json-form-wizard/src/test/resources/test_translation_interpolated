@@ -165,20 +165,13 @@
             "text": "{{step1.been_treated.options.No.text}}"
           },
           {
-            "key": "not_answered",
+            "key": "Not Answered",
             "text": "{{step1.been_treated.options.not_answered.text}}"
           }
         ],
-        "value": "not_answered",
         "v_required": {
           "value": "true",
           "err": "{{step1.been_treated.v_required.err}}"
-        },
-        "relevance": {
-          "step1:skip_diagnostic_questions": {
-            "type": "string",
-            "ex": "equalTo(., \"false\")"
-          }
         }
       }
     ]
