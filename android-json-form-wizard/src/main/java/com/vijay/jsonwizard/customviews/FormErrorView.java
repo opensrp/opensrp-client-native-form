@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Set;
 
 public class FormErrorView extends LinearLayoutCompat {
-    private Context context;
     private Map<String, ValidationStatus> invalidFields;
     private HashMap<String, ArrayList<ValidationStatus>> errorsPerStep;
 
@@ -25,7 +24,6 @@ public class FormErrorView extends LinearLayoutCompat {
         super(context);
         invalidFields = new HashMap<>();
         errorsPerStep = new HashMap<>();
-        this.context = context;
         this.setOrientation(VERTICAL);
     }
 
@@ -65,13 +63,13 @@ public class FormErrorView extends LinearLayoutCompat {
             View view = LayoutInflater.from(this.getContext()).inflate(R.layout.native_form_error_item, null, false);
             FormErrorViewHolder formErrorViewHolder = new FormErrorViewHolder(view);
             String errors;
-            StringBuilder sb = new StringBuilder();
+            StringBuilder stringBuilder = new StringBuilder();
             String spacing = values.size() > 1 ? "\n\n" : "";
             for (int i = 0; i < values.size(); i++) {
                 ValidationStatus validationStatus = values.get(i);
-                sb.append(i + 1).append(". ").append(validationStatus.getErrorMessage()).append(spacing);
+                stringBuilder.append(i + 1).append(". ").append(validationStatus.getErrorMessage()).append(spacing);
             }
-            errors = sb.toString();
+            errors = stringBuilder.toString();
             String stepName = key.toUpperCase();
             formErrorViewHolder.bindViews(stepName, errors);
             this.addView(formErrorViewHolder.getItemView());

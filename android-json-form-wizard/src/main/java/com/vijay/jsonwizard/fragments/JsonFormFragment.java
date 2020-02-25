@@ -523,16 +523,23 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     @Override
     public void scrollToView(final View view) {
-        view.requestFocus();
-        if (!(view instanceof MaterialEditText)) {
-            mScrollView.post(new Runnable() {
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    int y = view.getBottom() - view.getHeight();
-                    if (y < 0) {
-                        y = 0;
+                    view.requestFocus();
+                    if (!(view instanceof MaterialEditText)) {
+                        mScrollView.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                int y = view.getBottom() - view.getHeight();
+                                if (y < 0) {
+                                    y = 0;
+                                }
+                                mScrollView.scrollTo(0, y);
+                            }
+                        });
                     }
-                    mScrollView.scrollTo(0, y);
                 }
             });
         }

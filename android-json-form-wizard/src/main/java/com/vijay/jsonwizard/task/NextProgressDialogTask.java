@@ -4,52 +4,65 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.vijay.jsonwizard.R;
-import com.vijay.jsonwizard.activities.JsonWizardFormActivity;
-import com.vijay.jsonwizard.fragments.JsonFormFragment;
+import com.vijay.jsonwizard.fragments.JsonWizardFormFragment;
 
 public class NextProgressDialogTask extends AsyncTask<Void, Void, Void> {
+    private JsonWizardFormFragment formFragment;
     private Context context;
     private ProgressDialog progressDialog;
-    private JsonFormFragment formFragment;
 
-    public NextProgressDialogTask(Context context, JsonFormFragment jsonFormFragment) {
-        this.context = context;
-        this.formFragment = jsonFormFragment;
-        progressDialog = new ProgressDialog(context);
+    private void showDialog() {
+        setProgressDialog(new ProgressDialog(getContext()));
+        getProgressDialog().setCancelable(false);
+        getProgressDialog().setTitle(getContext().getString(com.vijay.jsonwizard.R.string.loading));
+        getProgressDialog().setMessage(getContext().getString(com.vijay.jsonwizard.R.string.loading_form_message));
+        getProgressDialog().show();
+    }
+
+    private void hideDialog() {
+        if (getProgressDialog() != null && getProgressDialog().isShowing()) {
+            getProgressDialog().dismiss();
+        }
+    }
+
+    public NextProgressDialogTask(JsonWizardFormFragment jsonFormFragment) {
+        if (jsonFormFragment != null) {
+            this.formFragment = jsonFormFragment;
+            this.context = jsonFormFragment.getContext();
+        }
     }
 
     @Override
     protected Void doInBackground(Void... voids) {
-        ((JsonWizardFormActivity) getContext()).getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left,
-                        R.anim.exit_to_right).replace(R.id.container, getFormFragment()).addToBackStack(getFormFragment().getClass().getSimpleName())
-                .commitAllowingStateLoss(); // use https://stackoverflow.com/a/10261449/9782187
+        getFormFragment().next();
         return null;
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        progressDialog.setCancelable(false);
-        progressDialog.setTitle(context.getString(R.string.loading));
-        progressDialog.setMessage(context.getString(R.string.loading_form_message));
-        progressDialog.show();
+        showDialog();
     }
 
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
+        hideDialog();
+    }
+
+    public JsonWizardFormFragment getFormFragment() {
+        return formFragment;
     }
 
     public Context getContext() {
         return context;
     }
 
-    public JsonFormFragment getFormFragment() {
-        return formFragment;
+    public ProgressDialog getProgressDialog() {
+        return progressDialog;
+    }
+
+    public void setProgressDialog(ProgressDialog progressDialog) {
+        this.progressDialog = progressDialog;
     }
 }

@@ -1,10 +1,8 @@
 package com.vijay.jsonwizard.fragments;
 
-import android.app.ProgressDialog;
 import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -21,12 +19,12 @@ import android.widget.Toast;
 
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
-import com.vijay.jsonwizard.activities.JsonWizardFormActivity;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 import com.vijay.jsonwizard.presenters.JsonFormFragmentPresenter;
 import com.vijay.jsonwizard.presenters.JsonWizardFormFragmentPresenter;
+import com.vijay.jsonwizard.task.NextProgressDialogTask;
 import com.vijay.jsonwizard.viewstates.JsonFormFragmentViewState;
 
 import org.apache.commons.lang3.StringUtils;
@@ -50,6 +48,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
     private TextView stepName;
     private Toolbar navigationToolbar;
     private View bottomNavLayout;
+    private JsonWizardFormFragment jsonFormFragment;
 
     public static JsonWizardFormFragment getFormFragment(String stepName) {
         JsonWizardFormFragment jsonFormFragment = new JsonWizardFormFragment();
@@ -150,13 +149,11 @@ public class JsonWizardFormFragment extends JsonFormFragment {
     @Override
     public void onResume() {
         super.onResume();
+        setJsonFormFragment(this);
         if (!getJsonApi().isPreviousPressed()) {
             skipStepsOnNextPressed();
         } else {
             skipStepOnPreviousPressed();
-        }
-        if (((JsonWizardFormActivity) getActivity()).getProgressDialog() != null && ((JsonWizardFormActivity) getActivity()).getProgressDialog().isShowing()) {
-            ((JsonWizardFormActivity) getActivity()).getProgressDialog().dismiss();
         }
     }
 
@@ -365,17 +362,18 @@ public class JsonWizardFormFragment extends JsonFormFragment {
         return stepName;
     }
 
+    public JsonWizardFormFragment getJsonFormFragment() {
+        return jsonFormFragment;
+    }
+
+    public void setJsonFormFragment(JsonWizardFormFragment jsonFormFragment) {
+        this.jsonFormFragment = jsonFormFragment;
+    }
+
+
     ////////////////////////////////////////////////////////////////
     // Inner classes
     ////////////////////////////////////////////////////////////////
-
-    public void showDialog() {
-        ((JsonWizardFormActivity) getActivity()).setProgressDialog(new ProgressDialog(getContext()));
-        ((JsonWizardFormActivity) getActivity()).getProgressDialog().setCancelable(false);
-        ((JsonWizardFormActivity) getActivity()).getProgressDialog().setTitle(getContext().getString(com.vijay.jsonwizard.R.string.loading));
-        ((JsonWizardFormActivity) getActivity()).getProgressDialog().setMessage(getContext().getString(com.vijay.jsonwizard.R.string.loading_form_message));
-        ((JsonWizardFormActivity) getActivity()).getProgressDialog().show();
-    }
 
     protected class BottomNavigationListener implements View.OnClickListener {
         @Override
@@ -385,23 +383,11 @@ public class JsonWizardFormFragment extends JsonFormFragment {
                     getJsonApi().setPreviousPressed(false);
                     Object tag = view.getTag(R.id.NEXT_STATE);
                     if (tag == null) {
-                        new Handler().post(new Runnable() {
-                            @Override
-                            public void run() {
-                                showDialog();
-                                next();
-                            }
-                        });
+                        new NextProgressDialogTask(getJsonFormFragment()).execute();
                     } else {
                         boolean next = (boolean) tag;
                         if (next) {
-                            new Handler().post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    showDialog();
-                                    next();
-                                }
-                            });
+                            new NextProgressDialogTask(getJsonFormFragment()).execute();
                         } else {
                             save();
                         }
