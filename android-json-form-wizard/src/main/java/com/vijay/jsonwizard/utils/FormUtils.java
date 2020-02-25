@@ -288,9 +288,9 @@ public class FormUtils {
     }
 
     public Map<String, View> createRadioButtonAndCheckBoxLabel(String stepName, LinearLayout linearLayout,
-                                                                      JSONObject jsonObject, Context context,
-                                                                      JSONArray canvasIds, Boolean readOnly,
-                                                                      CommonListener listener, boolean popup) throws JSONException {
+                                                               JSONObject jsonObject, Context context,
+                                                               JSONArray canvasIds, Boolean readOnly,
+                                                               CommonListener listener, boolean popup) throws JSONException {
         Map<String, View> createdViewsMap = new HashMap<>();
         String label = jsonObject.optString(JsonFormConstants.LABEL, "");
         if (!TextUtils.isEmpty(label)) {
@@ -302,32 +302,30 @@ public class FormUtils {
             ConstraintLayout labelConstraintLayout = createLabelLinearLayout(stepName, canvasIds, jsonObject, context, listener);
             labelConstraintLayout.setTag(R.id.extraPopup, popup);
             CustomTextView labelText = labelConstraintLayout.findViewById(R.id.label_text);
-            labelText.setTag(R.id.extraPopup, popup);
             ImageView editButton = labelConstraintLayout.findViewById(R.id.label_edit_button);
             if (requiredObject != null) {
                 String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
-                if (!TextUtils.isEmpty(requiredValue) && (
-                        Boolean.TRUE.toString().equalsIgnoreCase(requiredValue) || Boolean
-                                .valueOf(requiredValue))) {
+                if (!TextUtils.isEmpty(requiredValue) && (Boolean.TRUE.toString().equalsIgnoreCase(requiredValue) || Boolean.valueOf(requiredValue))) {
                     asterisks = "<font color=#CF0800> *</font>";
                 }
             }
 
-            String combinedLabelText =
-                    "<font color=" + labelTextColor + ">" + label + "</font>" + asterisks;
+            String combinedLabelText = "<font color=" + labelTextColor + ">" + label + "</font>" + asterisks;
 
             //Applying textStyle to the text;
-            String textStyle = jsonObject
-                    .optString(JsonFormConstants.TEXT_STYLE, JsonFormConstants.NORMAL);
-            setTextStyle(textStyle, labelText);
-            labelText.setText(Html.fromHtml(combinedLabelText));
-            labelText.setTag(R.id.original_text, Html.fromHtml(combinedLabelText));
-            labelText.setTextSize(labelTextSize);
-            canvasIds.put(labelConstraintLayout.getId());
-            labelConstraintLayout.setEnabled(!readOnly);
-            linearLayout.addView(labelConstraintLayout);
-            createdViewsMap.put(JsonFormConstants.EDIT_BUTTON, editButton);
-            createdViewsMap.put(JsonFormConstants.CUSTOM_TEXT, labelText);
+            String textStyle = jsonObject.optString(JsonFormConstants.TEXT_STYLE, JsonFormConstants.NORMAL);
+            if (labelText != null && editButton != null) {
+                setTextStyle(textStyle, labelText);
+                labelText.setText(Html.fromHtml(combinedLabelText));
+                labelText.setTag(R.id.extraPopup, popup);
+                labelText.setTag(R.id.original_text, Html.fromHtml(combinedLabelText));
+                labelText.setTextSize(labelTextSize);
+                canvasIds.put(labelConstraintLayout.getId());
+                labelConstraintLayout.setEnabled(!readOnly);
+                linearLayout.addView(labelConstraintLayout);
+                createdViewsMap.put(JsonFormConstants.EDIT_BUTTON, editButton);
+                createdViewsMap.put(JsonFormConstants.CUSTOM_TEXT, labelText);
+            }
         }
         return createdViewsMap;
     }
@@ -352,9 +350,9 @@ public class FormUtils {
     }
 
     public ConstraintLayout createLabelLinearLayout(String stepName, JSONArray canvasIds,
-                                                           JSONObject jsonObject,
-                                                           Context context,
-                                                           CommonListener listener) throws JSONException {
+                                                    JSONObject jsonObject,
+                                                    Context context,
+                                                    CommonListener listener) throws JSONException {
         String openMrsEntityParent = jsonObject
                 .optString(JsonFormConstants.OPENMRS_ENTITY_PARENT, null);
         String openMrsEntity = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY, null);
@@ -390,7 +388,7 @@ public class FormUtils {
     }
 
     @NotNull
-    private ConstraintLayout getConstraintLayout(String stepName, JSONArray canvasIds, JSONObject jsonObject, Context context, String openMrsEntityParent, String openMrsEntity, String openMrsEntityId) throws JSONException {
+    public ConstraintLayout getConstraintLayout(String stepName, JSONArray canvasIds, JSONObject jsonObject, Context context, String openMrsEntityParent, String openMrsEntity, String openMrsEntityId) throws JSONException {
         ConstraintLayout constraintLayout = getRootConstraintLayout(context);
         constraintLayout.setId(ViewUtil.generateViewId());
         canvasIds.put(constraintLayout.getId());
@@ -414,20 +412,22 @@ public class FormUtils {
      *
      */
     public static void setTextStyle(String textStyle, AppCompatTextView view) {
-        switch (textStyle) {
-            case JsonFormConstants.BOLD:
-                view.setTypeface(null, Typeface.BOLD);
-                break;
-            case JsonFormConstants.ITALIC:
-                view.setTypeface(null, Typeface.ITALIC);
-                break;
-            case JsonFormConstants.BOLD_ITALIC:
-                view.setTypeface(null, Typeface.BOLD_ITALIC);
-                break;
-            case JsonFormConstants.NORMAL:
-            default:
-                view.setTypeface(null, Typeface.NORMAL);
-                break;
+        if (view != null && StringUtils.isNotBlank(textStyle)) {
+            switch (textStyle) {
+                case JsonFormConstants.BOLD:
+                    view.setTypeface(null, Typeface.BOLD);
+                    break;
+                case JsonFormConstants.ITALIC:
+                    view.setTypeface(null, Typeface.ITALIC);
+                    break;
+                case JsonFormConstants.BOLD_ITALIC:
+                    view.setTypeface(null, Typeface.BOLD_ITALIC);
+                    break;
+                case JsonFormConstants.NORMAL:
+                default:
+                    view.setTypeface(null, Typeface.NORMAL);
+                    break;
+            }
         }
     }
 
@@ -441,35 +441,36 @@ public class FormUtils {
         return (int) (dps * scale + 0.5f);
     }
 
-    public static void showInfoIcon(String stepName, JSONObject jsonObject, CommonListener listener,
-                                    @NonNull HashMap<String, String> imageAttributes, ImageView imageView, JSONArray canvasIds)
+    public void showInfoIcon(String stepName, JSONObject jsonObject, CommonListener listener,
+                             @NonNull HashMap<String, String> imageAttributes, ImageView imageView, JSONArray canvasIds)
             throws JSONException {
+        if (imageView != null) {
+            //Display custom dialog if has image is true otherwise normal alert dialog is enough
+            if (imageAttributes.get(JsonFormConstants.LABEL_INFO_HAS_IMAGE) != null &&
+                    Boolean.parseBoolean(imageAttributes.get(JsonFormConstants.LABEL_INFO_HAS_IMAGE))) {
 
-        //Display custom dialog if has image is true otherwise normal alert dialog is enough
-        if (imageAttributes.get(JsonFormConstants.LABEL_INFO_HAS_IMAGE) != null &&
-                Boolean.parseBoolean(imageAttributes.get(JsonFormConstants.LABEL_INFO_HAS_IMAGE))) {
+                imageView.setTag(R.id.label_dialog_image_src,
+                        imageAttributes.get(JsonFormConstants.LABEL_INFO_IMAGE_SRC));
+                imageView.setVisibility(View.VISIBLE);
 
-            imageView.setTag(R.id.label_dialog_image_src,
-                    imageAttributes.get(JsonFormConstants.LABEL_INFO_IMAGE_SRC));
-            imageView.setVisibility(View.VISIBLE);
+            }
 
+            if (imageAttributes.get(JsonFormConstants.LABEL_INFO_TEXT) != null) {
+
+                imageView
+                        .setTag(R.id.label_dialog_info, imageAttributes.get(JsonFormConstants.LABEL_INFO_TEXT));
+                imageView
+                        .setTag(R.id.label_dialog_title, imageAttributes.get(JsonFormConstants.LABEL_INFO_TITLE));
+                imageView.setVisibility(View.VISIBLE);
+
+            }
+
+            imageView.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+            imageView.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
+            imageView.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+            imageView.setTag(R.id.canvas_ids, canvasIds.toString());
+            imageView.setOnClickListener(listener);
         }
-
-        if (imageAttributes.get(JsonFormConstants.LABEL_INFO_TEXT) != null) {
-
-            imageView
-                    .setTag(R.id.label_dialog_info, imageAttributes.get(JsonFormConstants.LABEL_INFO_TEXT));
-            imageView
-                    .setTag(R.id.label_dialog_title, imageAttributes.get(JsonFormConstants.LABEL_INFO_TITLE));
-            imageView.setVisibility(View.VISIBLE);
-
-        }
-
-        imageView.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
-        imageView.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
-        imageView.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
-        imageView.setTag(R.id.canvas_ids, canvasIds.toString());
-        imageView.setOnClickListener(listener);
     }
 
     public static HashMap<String, String> getInfoDialogAttributes(JSONObject jsonObject) {

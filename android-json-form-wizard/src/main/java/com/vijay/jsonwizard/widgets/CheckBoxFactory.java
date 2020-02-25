@@ -34,7 +34,6 @@ import static com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT;
 import static com.vijay.jsonwizard.utils.FormUtils.getCurrentCheckboxValues;
 import static com.vijay.jsonwizard.utils.FormUtils.getLinearLayoutParams;
 import static com.vijay.jsonwizard.utils.FormUtils.getValueFromSpOrDpOrPx;
-import static com.vijay.jsonwizard.utils.FormUtils.showInfoIcon;
 
 /**
  * Created by vijay on 24-05-2015.
@@ -221,8 +220,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
             }
             //Displaying optional info alert dialog
             ImageView imageView = checkboxLayout.findViewById(R.id.checkbox_info_icon);
-
-            showInfoIcon(stepName, jsonObject, listener, FormUtils.getInfoDialogAttributes(item), imageView, canvasIds);
+            formUtils.showInfoIcon(stepName, jsonObject, listener, FormUtils.getInfoDialogAttributes(item), imageView, canvasIds);
 
             checkboxLayout.setTag(R.id.canvas_ids, canvasIds.toString());
             checkboxLayouts.add(checkboxLayout);

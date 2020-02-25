@@ -57,7 +57,7 @@ import static com.vijay.jsonwizard.widgets.DatePickerFactory.DATE_FORMAT;
 public class NativeRadioButtonFactory implements FormWidgetFactory {
 
     private static final String TAG = NativeRadioButtonFactory.class.getCanonicalName();
-    private static FormUtils formUtils = new FormUtils();
+    private FormUtils formUtils = new FormUtils();
     private RadioButton radioButton;
     private CustomTextView extraInfoTextView;
     private CustomTextView specifyTextView;
@@ -145,7 +145,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
                     String stepName = (String) customTextView.getTag(R.id.specify_step_name);
                     Context context = (Context) customTextView.getTag(R.id.specify_context);
 
-                    JSONArray fields = formUtils.getFormFields(stepName, context);
+                    JSONArray fields = new FormUtils().getFormFields(stepName, context);
                     if (fields.length() > 0) {
                         for (int i = 0; i < fields.length(); i++) {
                             try {
@@ -402,7 +402,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
             //Showing optional info alert dialog on individual radio buttons
             ImageView imageView = radioGroupLayout.findViewById(R.id.info_icon);
-            FormUtils.showInfoIcon(stepName, jsonObject, listener, FormUtils.getInfoDialogAttributes(item), imageView, canvasIds);
+            formUtils.showInfoIcon(stepName, jsonObject, listener, FormUtils.getInfoDialogAttributes(item), imageView, canvasIds);
 
             createRadioButton(radioGroupLayout, jsonObject, item, listener, popup);
 
@@ -503,43 +503,45 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
 
         final RadioButton radioButton = rootLayout.findViewById(R.id.mainRadioButton);
-        setRadioButtonTags(rootLayout, jsonObject, item, extraInfo, radioButton);
+        if (radioButton != null) {
+            setRadioButtonTags(rootLayout, jsonObject, item, extraInfo, radioButton);
 
-        if (!TextUtils.isEmpty(jsonObject.optString(JsonFormConstants.VALUE)) &&
-                jsonObject.optString(JsonFormConstants.VALUE).equals(item.getString(JsonFormConstants.KEY))) {
-            radioButton.setChecked(true);
-        }
-        String optionTextColor = JsonFormConstants.DEFAULT_TEXT_COLOR;
-        if (item.has(JsonFormConstants.TEXT_COLOR)) {
-            optionTextColor = item.getString(JsonFormConstants.TEXT_COLOR);
-        }
-        String optionTextSize = String.valueOf(this.context.getResources().getDimension(R.dimen.options_default_text_size));
-        if (item.has(JsonFormConstants.TEXT_SIZE)) {
-            optionTextSize = item.getString(JsonFormConstants.TEXT_SIZE);
-        }
+            if (!TextUtils.isEmpty(jsonObject.optString(JsonFormConstants.VALUE)) &&
+                    jsonObject.optString(JsonFormConstants.VALUE).equals(item.getString(JsonFormConstants.KEY))) {
+                radioButton.setChecked(true);
+            }
+            String optionTextColor = JsonFormConstants.DEFAULT_TEXT_COLOR;
+            if (item.has(JsonFormConstants.TEXT_COLOR)) {
+                optionTextColor = item.getString(JsonFormConstants.TEXT_COLOR);
+            }
+            String optionTextSize = String.valueOf(this.context.getResources().getDimension(R.dimen.options_default_text_size));
+            if (item.has(JsonFormConstants.TEXT_SIZE)) {
+                optionTextSize = item.getString(JsonFormConstants.TEXT_SIZE);
+            }
 
-        String optionText = item.getString(JsonFormConstants.TEXT);
+            String optionText = item.getString(JsonFormConstants.TEXT);
 
-        if (item.has(JsonFormConstants.SECONDARY_VALUE)) {
-            optionText = getOptionTextWithSecondaryValue(item, jsonObject);
+            if (item.has(JsonFormConstants.SECONDARY_VALUE)) {
+                optionText = getOptionTextWithSecondaryValue(item, jsonObject);
+            }
+
+            setRadioButton(radioButton);
+            if (specifyInfo != null) {
+                createSpecifyReasonsDisplayTextView(rootLayout, jsonObject, item, this.stepName, text_color);
+                createSpecifyTextView(rootLayout, listener, jsonObject, this.context, readOnly, item, popup, this.formFragment,
+                        this.stepName
+                );
+            }
+
+            addPopupRelevantTags(radioButton, jsonObject, popup, item, this.context, this.formFragment, this.stepName, listener);
+            radioButton.setTextColor(Color.parseColor(optionTextColor));
+            radioButton.setTextSize(FormUtils.getValueFromSpOrDpOrPx(optionTextSize, this.context));
+            radioButton.setText(optionText);
+            radioButton.setEnabled(!readOnly);
+            this.canvasIds.put(radioButton.getId());
+            radioButton.setOnCheckedChangeListener(listener);
+            radioButton.setTag(R.id.canvas_ids, canvasIds.toString());
         }
-
-        setRadioButton(radioButton);
-        if (specifyInfo != null) {
-            createSpecifyReasonsDisplayTextView(rootLayout, jsonObject, item, this.stepName, text_color);
-            createSpecifyTextView(rootLayout, listener, jsonObject, this.context, readOnly, item, popup, this.formFragment,
-                    this.stepName
-            );
-        }
-
-        addPopupRelevantTags(radioButton, jsonObject, popup, item, this.context, this.formFragment, this.stepName, listener);
-        radioButton.setTextColor(Color.parseColor(optionTextColor));
-        radioButton.setTextSize(FormUtils.getValueFromSpOrDpOrPx(optionTextSize, this.context));
-        radioButton.setText(optionText);
-        radioButton.setEnabled(!readOnly);
-        this.canvasIds.put(radioButton.getId());
-        radioButton.setOnCheckedChangeListener(listener);
-        radioButton.setTag(R.id.canvas_ids, canvasIds.toString());
     }
 
     private void setRadioButtonTags(RelativeLayout rootLayout, JSONObject jsonObject, JSONObject item, String extraInfo,
@@ -550,23 +552,25 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
 
         int generatedViewId = ViewUtil.generateViewId();
-        radioButton.setId(generatedViewId);
-        radioButton.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
-        radioButton.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
-        radioButton.setTag(R.id.openmrs_entity, openMrsEntity);
-        radioButton.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-        radioButton.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
-        radioButton.setTag(R.id.childKey, item.getString(JsonFormConstants.KEY));
-        radioButton.setTag(R.id.address, this.stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
-        radioButton.setTag(R.id.relevance, relevance);
-        rootLayout.setTag(R.id.native_radio_button_view_id, generatedViewId);
-        if (extraInfo != null) {
-            radioButton.setTag(R.id.native_radio_button_extra_info, true);
-        } else {
-            radioButton.setTag(R.id.native_radio_button_extra_info, false);
+        if (radioButton != null) {
+            radioButton.setId(generatedViewId);
+            radioButton.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+            radioButton.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
+            radioButton.setTag(R.id.openmrs_entity, openMrsEntity);
+            radioButton.setTag(R.id.openmrs_entity_id, openMrsEntityId);
+            radioButton.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
+            radioButton.setTag(R.id.childKey, item.getString(JsonFormConstants.KEY));
+            radioButton.setTag(R.id.address, this.stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+            radioButton.setTag(R.id.relevance, relevance);
+            rootLayout.setTag(R.id.native_radio_button_view_id, generatedViewId);
+            if (extraInfo != null) {
+                radioButton.setTag(R.id.native_radio_button_extra_info, true);
+            } else {
+                radioButton.setTag(R.id.native_radio_button_extra_info, false);
 
+            }
+            radioButton.setTag(jsonObject.getString(JsonFormConstants.TYPE));
         }
-        radioButton.setTag(jsonObject.getString(JsonFormConstants.TYPE));
     }
 
     /**
@@ -623,7 +627,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         String optionKey = item.getString(JsonFormConstants.KEY);
         String widgetValue = jsonObject.optString(JsonFormConstants.VALUE, "");
 
-        if (optionKey.equals(widgetValue)) {
+        if (optionKey.equals(widgetValue) && item.has(JsonFormConstants.SECONDARY_VALUE)) {
             JSONArray secondaryValueArray = item.getJSONArray(JsonFormConstants.SECONDARY_VALUE);
             if (secondaryValueArray != null && secondaryValueArray.length() > 0) {
                 JSONObject secondaryValue = secondaryValueArray.getJSONObject(0);
@@ -647,22 +651,24 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         String specifyContent = item.optString(JsonFormConstants.CONTENT_FORM, null);
         String specifyContentForm = item.optString(JsonFormConstants.CONTENT_FORM_LOCATION, null);
 
-        view.setTag(R.id.extraPopup, popup);
-        view.setTag(R.id.json_object, jsonObject);
-        view.setTag(R.id.option_json_object, item);
-        view.setTag(R.id.specify_textview, getSpecifyTextView());
-        view.setTag(R.id.native_radio_button, getRadioButton());
-        view.setTag(R.id.specify_reasons_textview, getReasonsTextView());
-        view.setTag(R.id.specify_extra_info_textview, getExtraInfoTextView());
-        view.setTag(R.id.specify_type, JsonFormConstants.CONTENT_INFO);
-        view.setTag(R.id.specify_context, context);
-        view.setTag(R.id.specify_widget, specifyWidget);
-        view.setTag(R.id.specify_content, specifyContent);
-        view.setTag(R.id.specify_content_form, specifyContentForm);
-        view.setTag(R.id.specify_listener, listener);
-        view.setTag(R.id.specify_step_name, stepName);
-        view.setTag(R.id.specify_fragment, formFragment);
-        view.setTag(R.id.secondaryValues, formUtils.getSecondaryValues(item, jsonObject.getString(JsonFormConstants.TYPE)));
+        if (view != null) {
+            view.setTag(R.id.extraPopup, popup);
+            view.setTag(R.id.json_object, jsonObject);
+            view.setTag(R.id.option_json_object, item);
+            view.setTag(R.id.specify_textview, getSpecifyTextView());
+            view.setTag(R.id.native_radio_button, getRadioButton());
+            view.setTag(R.id.specify_reasons_textview, getReasonsTextView());
+            view.setTag(R.id.specify_extra_info_textview, getExtraInfoTextView());
+            view.setTag(R.id.specify_type, JsonFormConstants.CONTENT_INFO);
+            view.setTag(R.id.specify_context, context);
+            view.setTag(R.id.specify_widget, specifyWidget);
+            view.setTag(R.id.specify_content, specifyContent);
+            view.setTag(R.id.specify_content_form, specifyContentForm);
+            view.setTag(R.id.specify_listener, listener);
+            view.setTag(R.id.specify_step_name, stepName);
+            view.setTag(R.id.specify_fragment, formFragment);
+            view.setTag(R.id.secondaryValues, formUtils.getSecondaryValues(item, jsonObject.getString(JsonFormConstants.TYPE)));
+        }
     }
 
     private void createExtraInfoDisplayTextView(RelativeLayout rootLayout, JSONObject jsonObject, Boolean readOnly,
