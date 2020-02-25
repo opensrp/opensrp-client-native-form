@@ -7,6 +7,7 @@ buildscript {
         classpath 'com.android.tools.build:gradle:3.5.3'
         classpath 'org.apache.commons:commons-lang3:3.7'
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.3'
+        classpath 'org.apache.httpcomponents:httpmime:4.5.6'
     }
 }
 
@@ -32,6 +33,12 @@ android {
         versionName project.VERSION_NAME
         multiDexEnabled true
         testInstrumentationRunner "com.android.test.runner.MultiDexTestRunner"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                includeCompileClasspath = true
+            }
+        }
     }
 
     buildTypes {
@@ -126,7 +133,6 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:4.7.1'
     implementation 'org.greenrobot:eventbus:3.1.1'
     implementation 'com.android.support:multidex:1.0.3'
-    implementation "org.apache.httpcomponents:httpmime:4.5.6"
 
     // PowerMock
     def powerMockVersion = '2.0.4'
