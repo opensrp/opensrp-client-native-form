@@ -27,9 +27,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
-import org.robolectric.RuntimeEnvironment;
 
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
