@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class FormErrorView extends LinearLayoutCompat {
-
+    private Context context;
     private Map<String, ValidationStatus> invalidFields;
     private HashMap<String, ArrayList<ValidationStatus>> errorsPerStep;
 
@@ -25,6 +25,7 @@ public class FormErrorView extends LinearLayoutCompat {
         super(context);
         invalidFields = new HashMap<>();
         errorsPerStep = new HashMap<>();
+        this.context = context;
         this.setOrientation(VERTICAL);
     }
 

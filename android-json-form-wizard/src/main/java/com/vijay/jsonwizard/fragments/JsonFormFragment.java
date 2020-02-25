@@ -619,16 +619,18 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     protected class BottomNavigationListener implements View.OnClickListener {
         @Override
-        public void onClick(View v) {
-            if (v.getId() == R.id.next_button) {
-                Object isSubmit = v.getTag(R.id.submit);
-                if (isSubmit != null && Boolean.valueOf(isSubmit.toString())) {
-                    save(false);
-                } else {
-                    next();
+        public void onClick(View view) {
+            if (view != null) {
+                if (view.getId() == R.id.next_button) {
+                    Object isSubmit = view.getTag(R.id.submit);
+                    if (isSubmit != null && Boolean.valueOf(isSubmit.toString())) {
+                        save(false);
+                    } else {
+                        next();
+                    }
+                } else if (view.getId() == R.id.previous_button) {
+                    getFragmentManager().popBackStack();
                 }
-            } else if (v.getId() == R.id.previous_button) {
-                getFragmentManager().popBackStack();
             }
         }
     }

@@ -1,8 +1,10 @@
 package com.vijay.jsonwizard.fragments;
 
+import android.app.ProgressDialog;
 import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -19,6 +21,7 @@ import android.widget.Toast;
 
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
+import com.vijay.jsonwizard.activities.JsonWizardFormActivity;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
@@ -37,7 +40,6 @@ import timber.log.Timber;
  * Created by keyman on 04/12/2018.
  */
 public class JsonWizardFormFragment extends JsonFormFragment {
-
     public static final String TAG = JsonWizardFormFragment.class.getName();
     private static final int MENU_NAVIGATION = 100001;
     private BottomNavigationListener navigationListener = new BottomNavigationListener();
@@ -153,6 +155,9 @@ public class JsonWizardFormFragment extends JsonFormFragment {
         } else {
             skipStepOnPreviousPressed();
         }
+        if (((JsonWizardFormActivity) getActivity()).getProgressDialog() != null && ((JsonWizardFormActivity) getActivity()).getProgressDialog().isShowing()) {
+            ((JsonWizardFormActivity) getActivity()).getProgressDialog().dismiss();
+        }
     }
 
     @Override
@@ -264,7 +269,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
     /**
      * Skips blank by relevance steps when next is clicked on the json wizard forms.
      */
-    private void skipStepsOnNextPressed() {
+    public void skipStepsOnNextPressed() {
         if (skipBlankSteps()) {
             JSONObject formStep = getStep(getArguments().getString(JsonFormConstants.STEPNAME));
             String next = formStep.optString(JsonFormConstants.NEXT, "");
@@ -280,7 +285,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
     /**
      * Skips blank by relevance steps when previous is clicked on the json wizard forms.
      */
-    private void skipStepOnPreviousPressed() {
+    public void skipStepOnPreviousPressed() {
         if (skipBlankSteps()) {
             JSONObject currentFormStep = getStep(getArguments().getString(JsonFormConstants.STEPNAME));
             String next = currentFormStep.optString(JsonFormConstants.NEXT, "");
@@ -364,28 +369,50 @@ public class JsonWizardFormFragment extends JsonFormFragment {
     // Inner classes
     ////////////////////////////////////////////////////////////////
 
+    public void showDialog() {
+        ((JsonWizardFormActivity) getActivity()).setProgressDialog(new ProgressDialog(getContext()));
+        ((JsonWizardFormActivity) getActivity()).getProgressDialog().setCancelable(false);
+        ((JsonWizardFormActivity) getActivity()).getProgressDialog().setTitle(getContext().getString(com.vijay.jsonwizard.R.string.loading));
+        ((JsonWizardFormActivity) getActivity()).getProgressDialog().setMessage(getContext().getString(com.vijay.jsonwizard.R.string.loading_form_message));
+        ((JsonWizardFormActivity) getActivity()).getProgressDialog().show();
+    }
+
     protected class BottomNavigationListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            if (view.getId() == R.id.next || view.getId() == R.id.next_icon) {
-                getJsonApi().setPreviousPressed(false);
-                Object tag = view.getTag(R.id.NEXT_STATE);
-                if (tag == null) {
-                    next();
-                } else {
-                    boolean next = (boolean) tag;
-                    if (next) {
-                        next();
+            if (view != null) {
+                if (view.getId() == R.id.next || view.getId() == R.id.next_icon) {
+                    getJsonApi().setPreviousPressed(false);
+                    Object tag = view.getTag(R.id.NEXT_STATE);
+                    if (tag == null) {
+                        new Handler().post(new Runnable() {
+                            @Override
+                            public void run() {
+                                showDialog();
+                                next();
+                            }
+                        });
                     } else {
-                        save();
+                        boolean next = (boolean) tag;
+                        if (next) {
+                            new Handler().post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    showDialog();
+                                    next();
+                                }
+                            });
+                        } else {
+                            save();
+                        }
                     }
-                }
 
-            } else if (view.getId() == R.id.previous || view.getId() == R.id.previous_icon) {
-                assert getFragmentManager() != null;
-                presenter.checkAndStopCountdownAlarm();
-                getJsonApi().setPreviousPressed(true);
-                getFragmentManager().popBackStack();
+                } else if (view.getId() == R.id.previous || view.getId() == R.id.previous_icon) {
+                    assert getFragmentManager() != null;
+                    presenter.checkAndStopCountdownAlarm();
+                    getJsonApi().setPreviousPressed(true);
+                    getFragmentManager().popBackStack();
+                }
             }
         }
     }
