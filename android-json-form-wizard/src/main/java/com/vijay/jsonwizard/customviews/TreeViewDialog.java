@@ -190,7 +190,6 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
 
     private void setValue(final ArrayList<String> value) {
         this.value = value;
-        extractName();
     }
 
     public ArrayList<String> getName() {
