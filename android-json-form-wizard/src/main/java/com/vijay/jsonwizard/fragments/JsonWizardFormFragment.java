@@ -254,6 +254,11 @@ public class JsonWizardFormFragment extends JsonFormFragment {
                 previousButton.setVisibility(View.GONE);
             }
         }
+
+        //hide wizard nav bar if stepcount is zero
+        if (Integer.valueOf(getCount()) < 2) {
+            navigationToolbar.setVisibility(View.GONE);
+        }
     }
 
     /**

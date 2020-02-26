@@ -64,6 +64,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
     private String suffix = "";
     private Activity activity;
     private JSONArray specifyContent;
+    private List<View> viewList;
 
     @Override
     public void onAttach(Context context) {
@@ -91,11 +92,20 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
             createSecondaryValuesMap();
             loadSubForms();
             getJsonApi().updateGenericPopupSecondaryValues(specifyContent);
+            setViewList(initiateViews());
         } catch (JSONException e) {
             Timber.e(e, " --> onCreate");
         }
 
         setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Light_Dialog);
+    }
+
+    public List<View> getViewList() {
+        return viewList;
+    }
+
+    public void setViewList(List<View> viewList) {
+        this.viewList = viewList;
     }
 
     public String getStepName() {
@@ -278,10 +288,8 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         ViewGroup dialogView = (ViewGroup) inflater.inflate(R.layout.native_form_generic_dialog, container, false);
 
         attachOnShowListener();
-
-        List<View> viewList = initiateViews();
         LinearLayout genericDialogContent = dialogView.findViewById(R.id.generic_dialog_content);
-        for (View view : viewList) {
+        for (View view : getViewList()) {
             genericDialogContent.addView(view);
         }
 

@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ExtendedRadioButtonWidgetFactory extends NativeRadioButtonFactory {
+    private FormUtils formUtils = new FormUtils();
     @Override
     protected List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject,
                                     CommonListener commonListener, boolean popup) throws JSONException {
@@ -40,9 +41,8 @@ public class ExtendedRadioButtonWidgetFactory extends NativeRadioButtonFactory {
             if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
                 readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
             }
-            LinearLayout rootLayout = (LinearLayout) LayoutInflater.from(context).inflate(getLayout(), null);
-            Map<String, View> labelViews = FormUtils
-                    .createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly,
+            LinearLayout rootLayout = getLinearRootLayout(context);
+            Map<String, View> labelViews = formUtils.createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly,
                             commonListener, popup);
             String openMrsEntityParent = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
             String openMrsEntity = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY);

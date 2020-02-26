@@ -227,7 +227,7 @@
         "openmrs_entity": "person",
         "openmrs_entity_id": "first_name",
         "type": "edit_text",
-        "hint": "Enter first name as Martin *"
+        "hint": "Enter first name as Martin"
       },
       {
         "key": "hepb_immun_status",

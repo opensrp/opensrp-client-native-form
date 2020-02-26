@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
@@ -38,14 +39,17 @@ import org.json.JSONObject;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -385,17 +389,23 @@ public class Utils {
         }
     }
 
+    /**
+     * Gets the {@link android.support.v4.app.FragmentTransaction} from the {@link Context} and removes any {@link android.support.v4.app.Fragment} with the tag `GenericPopup` from the transaction.
+     * Then nullifies the stack by calling {@link android.support.v4.app.FragmentTransaction#addToBackStack(String)} with a null value.
+     *
+     * @param context {@link Activity} The activity context where this transaction called from
+     * @return fragmentTransaction {@link android.support.v4.app.FragmentTransaction}
+     */
     @NotNull
     public FragmentTransaction getFragmentTransaction(Activity context) {
-        Activity activity = context;
-        FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
-        Fragment prev = activity.getFragmentManager().findFragmentByTag("GenericPopup");
-        if (prev != null) {
-            ft.remove(prev);
+        FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
+        Fragment fragment = context.getFragmentManager().findFragmentByTag("GenericPopup");
+        if (fragment != null) {
+            fragmentTransaction.remove(fragment);
         }
 
-        ft.addToBackStack(null);
-        return ft;
+        fragmentTransaction.addToBackStack(null);
+        return fragmentTransaction;
     }
 
     /**
@@ -536,6 +546,31 @@ public class Utils {
             }
         }
 
+    }
+
+    public static NativeFormsProperties getProperties(Context context) {
+        NativeFormsProperties properties = new NativeFormsProperties();
+
+        try {
+            AssetManager assetManager = context.getAssets();
+            InputStream inputStream = assetManager.open("app.properties");
+            properties.load(inputStream);
+        } catch (Exception var4) {
+            Timber.e(var4);
+        }
+
+        return properties;
+    }
+
+    public static void removeDeletedViewsFromJsonForm(Collection<View> viewCollection, ArrayList<String> removeThisFields){
+        Iterator<View> viewIterator = viewCollection.iterator();
+        while (viewIterator.hasNext()){
+            View view = viewIterator.next();
+            String key = (String) view.getTag(R.id.key);
+            if(removeThisFields.contains(key)){
+                viewIterator.remove();
+            }
+        }
     }
 }
 

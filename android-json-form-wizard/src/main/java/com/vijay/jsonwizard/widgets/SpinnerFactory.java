@@ -35,6 +35,7 @@ import java.util.List;
  * Created by nipun on 30/05/15.
  */
 public class SpinnerFactory implements FormWidgetFactory {
+    private FormUtils formUtils = new FormUtils();
 
     public static ValidationStatus validate(JsonFormFragmentView formFragmentView, MaterialSpinner spinner) {
         if (spinner.getTag(R.id.v_required) == null) {
@@ -161,7 +162,7 @@ public class SpinnerFactory implements FormWidgetFactory {
         }
         ((JsonApi) context).addFormDataView(spinner);
 
-        FormUtils.showInfoIcon(stepName, jsonObject, listener, FormUtils.getInfoDialogAttributes(jsonObject), spinnerInfoIconImageView,
+        formUtils.showInfoIcon(stepName, jsonObject, listener, FormUtils.getInfoDialogAttributes(jsonObject), spinnerInfoIconImageView,
                 canvasIds);
         spinner.setTag(R.id.canvas_ids, canvasIds.toString());
     }
