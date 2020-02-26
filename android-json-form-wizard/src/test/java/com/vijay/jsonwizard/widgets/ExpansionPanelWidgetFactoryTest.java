@@ -1,7 +1,6 @@
 package com.vijay.jsonwizard.widgets;
 
 import android.content.res.Resources;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -22,7 +21,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 
 import java.util.List;
 
@@ -80,7 +78,6 @@ public class ExpansionPanelWidgetFactoryTest extends BaseTest {
     }
 
     @Test
-    @PrepareForTest ({LayoutInflater.class})
     public void testExpansionPanelWidgetFactoryInstantiatesViewsCorrectly() throws Exception {
         Assert.assertNotNull(factory);
         ExpansionPanelFactory factorySpy = Mockito.spy(factory);

@@ -33,6 +33,7 @@ import java.util.List;
 public class LabelFactory implements FormWidgetFactory {
     private final String TAG = this.getClass().getSimpleName();
     private CustomTextView numberText;
+    private FormUtils formUtils = new FormUtils();
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
@@ -52,8 +53,7 @@ public class LabelFactory implements FormWidgetFactory {
         List<View> views = new ArrayList<>(1);
         if (jsonObject.has(JsonFormConstants.TEXT)) {
             JSONArray canvasIds = new JSONArray();
-            ConstraintLayout constraintLayout = FormUtils
-                    .createLabelLinearLayout(stepName, canvasIds, jsonObject, context, listener);
+            ConstraintLayout constraintLayout = formUtils.createLabelLinearLayout(stepName, canvasIds, jsonObject, context, listener);
 
             constraintLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
 
