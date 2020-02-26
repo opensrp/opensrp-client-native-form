@@ -35,6 +35,7 @@
     <string name="select_one">Choisir un numéro</string>
     <string name="done">Fait</string>
     <string name="please_wait_title">Veuillez patienter</string>
+    <string name="creating_repeating_group_title">Veuillez patienter</string>
     <string name="creating_repeating_group_message">Création du groupe répeté</string>
     <string name="launching_rdt_capture_message">Lancement du widget de capture RDT</string>
     <string name="repeating_group_max_value_err_msg">Le nombre de groupes répétés ne peut êtres supérieur à %1$d</string>

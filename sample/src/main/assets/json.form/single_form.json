@@ -207,10 +207,10 @@
           "value": "[A-Za-z\\s\\.\\-]*",
           "err": "Please enter a valid name"
         },
-        "v_max_length":{
-          "value":11,
-          "err":"length not more then 11",
-          "is_fixed_size":true
+        "v_max_length": {
+          "value": 11,
+          "err": "length not more then 11",
+          "is_fixed_size": true
         }
       },
       {
@@ -516,7 +516,7 @@
         "openmrs_entity_id": "163531AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
         "openmrs_data_type": "text",
         "type": "tree",
-        "hint": "Which health facility was the child born in? *",
+        "hint": "Which health facility was the child born in?",
         "tree": [
         ],
         "v_required": {
