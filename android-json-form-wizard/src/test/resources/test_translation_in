@@ -2,6 +2,7 @@
   "count": "1",
   "encounter_type": "patient_registration",
   "entity_id": "",
+  "properties_file_name": "strings",
   "metadata": {
     "start": {
       "openmrs_entity_parent": "",

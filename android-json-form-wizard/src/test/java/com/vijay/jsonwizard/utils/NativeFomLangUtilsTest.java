@@ -17,11 +17,11 @@ public class NativeFomLangUtilsTest {
         Locale.setDefault(new Locale("id"));
         String expectedJsonForm = getFileContentsAsString("test_translation_in");
         String interpolatedJsonForm = getFileContentsAsString("test_translation_interpolated");
-        assertEquals(expectedJsonForm, NativeFormLangUtils.getTranslatedJSONForm(interpolatedJsonForm, "strings"));
+        assertEquals(expectedJsonForm, NativeFormLangUtils.getTranslatedJSONForm(interpolatedJsonForm));
 
         Locale.setDefault(new Locale("en", "US"));
         expectedJsonForm = getFileContentsAsString("test_translation_en_US");
-        assertEquals(expectedJsonForm, NativeFormLangUtils.getTranslatedJSONForm(interpolatedJsonForm, "strings"));
+        assertEquals(expectedJsonForm, NativeFormLangUtils.getTranslatedJSONForm(interpolatedJsonForm));
     }
 
     private String getFileContentsAsString(String filePath) {
