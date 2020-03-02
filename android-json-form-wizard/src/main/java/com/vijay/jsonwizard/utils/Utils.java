@@ -38,9 +38,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.yaml.snakeyaml.Yaml;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,6 +60,7 @@ import java.util.concurrent.TimeUnit;
 import timber.log.Timber;
 
 import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
+import static com.vijay.jsonwizard.utils.NativeFormLangUtils.getTranslatedString;
 
 public class Utils {
     private static ProgressDialog progressDialog;
@@ -482,16 +485,29 @@ public class Utils {
 
     public static Iterable<Object> readYamlFile(String fileName, Context context) {
         Yaml yaml = new Yaml();
-        InputStreamReader inputStreamReader;
         Iterable<Object> objectIterable = null;
         try {
-            inputStreamReader = new InputStreamReader(context.getAssets().open(fileName));
-            objectIterable = yaml.loadAll(inputStreamReader);
+            String translatedYamlStr = getTranslatedString(getAssetFileAsString(fileName, context));
+            objectIterable = yaml.loadAll(translatedYamlStr);
         } catch (IOException e) {
             Timber.e(e);
         }
 
         return objectIterable;
+    }
+
+
+    public static String getAssetFileAsString(String fileName, Context context) throws IOException {
+        StringBuilder stringBuilder = new StringBuilder();
+        InputStream inputStream = context.getAssets().open(fileName);
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+        String str;
+        while ((str = bufferedReader.readLine()) != null) {
+            stringBuilder.append(str);
+        }
+        bufferedReader.close();
+
+        return stringBuilder.toString();
     }
 
     public static void buildRulesWithUniqueId(JSONObject element, String uniqueId, String ruleType, WidgetArgs widgetArgs, Map<String, List<Map<String, Object>>> rulesFileMap) throws JSONException {
