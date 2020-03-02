@@ -19,7 +19,7 @@ import static org.mockito.Mockito.mock;
 /**
  * Created by Vincent Karuri on 20/02/2020
  */
-public class NativeFomLangUtilsTest {
+public class NativeFormLangUtilsTest {
 
     @Test
     public void testJsonFormTranslationShouldTranslateForm() {
