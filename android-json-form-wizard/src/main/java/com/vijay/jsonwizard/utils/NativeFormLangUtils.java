@@ -40,7 +40,7 @@ public class NativeFormLangUtils {
     public static String getTranslatedString(String jsonForm) {
         String translationsFileName = getTranslationsFileName(jsonForm);
         if (translationsFileName.isEmpty()) {
-            Timber.e("Could not translate the string. Translation file name is not specified!");
+            Timber.e("Could not translate the String. Translation file name is not specified!");
             return jsonForm;
         }
 
