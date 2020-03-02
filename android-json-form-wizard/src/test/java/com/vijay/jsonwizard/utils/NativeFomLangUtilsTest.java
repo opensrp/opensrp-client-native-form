@@ -3,13 +3,12 @@ package com.vijay.jsonwizard.utils;
 import android.content.Context;
 import android.content.res.AssetManager;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Locale;
 
+import static com.vijay.jsonwizard.utils.Utils.convertStreamToString;
 import static com.vijay.jsonwizard.utils.Utils.getTranslatedYamlFile;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
@@ -49,10 +48,5 @@ public class NativeFomLangUtilsTest {
 
     private String getFileContentsAsString(String filePath) {
         return convertStreamToString(getClass().getClassLoader().getResourceAsStream(filePath));
-    }
-
-    private String convertStreamToString(InputStream is) {
-        java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
-        return s.hasNext() ? s.next() : "";
     }
 }

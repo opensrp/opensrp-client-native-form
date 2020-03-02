@@ -1,4 +1,5 @@
 ---
+properties_file_name: "yaml_strings",
 sub_group: ultrasound_tests_results
 fields:
   - template: "Ultrasound test: {ultrasound}"

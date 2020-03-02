@@ -38,11 +38,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,6 +51,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -501,16 +499,13 @@ public class Utils {
     }
 
     public static String getAssetFileAsString(String fileName, Context context) throws IOException {
-        StringBuilder stringBuilder = new StringBuilder();
         InputStream inputStream = context.getAssets().open(fileName);
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-        String str;
-        while ((str = bufferedReader.readLine()) != null) {
-            stringBuilder.append(str);
-        }
-        bufferedReader.close();
+        return convertStreamToString(inputStream);
+    }
 
-        return stringBuilder.toString();
+    public static String convertStreamToString(InputStream inputStream) {
+        Scanner s = new Scanner(inputStream).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
     }
 
     public static void buildRulesWithUniqueId(JSONObject element, String uniqueId, String ruleType, WidgetArgs widgetArgs, Map<String, List<Map<String, Object>>> rulesFileMap) throws JSONException {
