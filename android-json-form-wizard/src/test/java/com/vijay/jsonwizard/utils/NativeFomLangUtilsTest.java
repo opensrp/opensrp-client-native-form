@@ -6,6 +6,7 @@ import android.content.res.AssetManager;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Locale;
 
 import static com.vijay.jsonwizard.utils.Utils.convertStreamToString;
@@ -36,7 +37,7 @@ public class NativeFomLangUtilsTest {
     public void testYamlFileTranslation() throws IOException {
         Context context = mock(Context.class);
         AssetManager assetManager = mock(AssetManager.class);
-        doReturn(getClass().getClassLoader().getResourceAsStream("interpolated_yaml"))
+        doReturn(getTestResource("interpolated_yaml"))
                 .when(assetManager)
                 .open(eq("file_name"));
         doReturn(assetManager).when(context).getAssets();
@@ -46,7 +47,11 @@ public class NativeFomLangUtilsTest {
         assertEquals(getFileContentsAsString("test_yaml_translation_en_US"), translatedYamlStr);
     }
 
+    private InputStream getTestResource(String filePath) {
+        return getClass().getClassLoader().getResourceAsStream(filePath);
+    }
+
     private String getFileContentsAsString(String filePath) {
-        return convertStreamToString(getClass().getClassLoader().getResourceAsStream(filePath));
+        return convertStreamToString(getTestResource(filePath));
     }
 }
