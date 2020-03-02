@@ -487,7 +487,7 @@ public class Utils {
         Yaml yaml = new Yaml();
         Iterable<Object> objectIterable = null;
         try {
-            String translatedYamlStr = getTranslatedString(getAssetFileAsString(fileName, context));
+            String translatedYamlStr = getTranslatedYamlFile(fileName, context);
             objectIterable = yaml.loadAll(translatedYamlStr);
         } catch (IOException e) {
             Timber.e(e);
@@ -496,6 +496,9 @@ public class Utils {
         return objectIterable;
     }
 
+    public static String getTranslatedYamlFile(String fileName, Context context) throws IOException {
+        return getTranslatedString(getAssetFileAsString(fileName, context));
+    }
 
     public static String getAssetFileAsString(String fileName, Context context) throws IOException {
         StringBuilder stringBuilder = new StringBuilder();

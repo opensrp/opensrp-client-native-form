@@ -34,7 +34,6 @@ public class NativeFomLangUtilsTest {
     }
 
     @Test
-    @Ignore
     public void testYamlFileTranslation() throws IOException {
         Context context = mock(Context.class);
         AssetManager assetManager = mock(AssetManager.class);
