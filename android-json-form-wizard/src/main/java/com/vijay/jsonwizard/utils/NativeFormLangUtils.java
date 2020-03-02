@@ -11,6 +11,8 @@ import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import timber.log.Timber;
+
 public class NativeFormLangUtils {
 
     public static String getLanguage(Context ctx) {
@@ -36,7 +38,13 @@ public class NativeFormLangUtils {
     }
 
     public static String getTranslatedString(String jsonForm) {
-        ResourceBundle mlsResourceBundle = ResourceBundle.getBundle(getPropertiesFileName(jsonForm));
+        String translationsFileName = getTranslationsFileName(jsonForm);
+        if (translationsFileName.isEmpty()) {
+            Timber.e("Could not translate the string. Translation file name is not specified!");
+            return jsonForm;
+        }
+
+        ResourceBundle mlsResourceBundle = ResourceBundle.getBundle(getTranslationsFileName(jsonForm));
 
         StringBuffer stringBuffer = new StringBuffer();
         Pattern interpolatedStringPattern = Pattern.compile("\\{\\{([a-zA-Z_0-9\\.]+)\\}\\}");
@@ -49,11 +57,9 @@ public class NativeFormLangUtils {
         return stringBuffer.toString();
     }
 
-    public static String getPropertiesFileName(String jsonForm) {
+    public static String getTranslationsFileName(String jsonForm) {
         Pattern propertiesFileNamePattern = Pattern.compile("\"?properties_file_name\"?: \"([a-zA-Z_0-9\\.]+)\"");
         Matcher matcher = propertiesFileNamePattern.matcher(jsonForm);
-        matcher.find();
-        String propertiesFileName = matcher.group(1);
-        return propertiesFileName;
+        return matcher.find() ? matcher.group(1) : "";
     }
 }
