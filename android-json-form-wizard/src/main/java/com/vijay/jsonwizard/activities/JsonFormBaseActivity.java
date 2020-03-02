@@ -33,7 +33,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.vijay.jsonwizard.utils.NativeFormLangUtils.getTranslatedJSONForm;
+import static com.vijay.jsonwizard.utils.NativeFormLangUtils.getTranslatedString;
 
 abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnFieldsInvalid {
     protected static final String TAG = JsonFormActivity.class.getSimpleName();
@@ -89,7 +89,7 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
     private String getForm() {
         String jsonForm = getIntent().getStringExtra(JsonFormConstants.JSON_FORM_KEY.JSON);
         if (getIntent().getBooleanExtra(PERFORM_FORM_TRANSLATION, false)) {
-            jsonForm = getTranslatedJSONForm(jsonForm);
+            jsonForm = getTranslatedString(jsonForm);
         }
         return jsonForm;
     }

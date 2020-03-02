@@ -35,7 +35,7 @@ public class NativeFormLangUtils {
         return context;
     }
 
-    public static String getTranslatedJSONForm(String jsonForm) {
+    public static String getTranslatedString(String jsonForm) {
         ResourceBundle mlsResourceBundle = ResourceBundle.getBundle(getPropertiesFileName(jsonForm));
 
         StringBuffer stringBuffer = new StringBuffer();
