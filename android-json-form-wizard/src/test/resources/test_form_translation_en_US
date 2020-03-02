@@ -2,7 +2,7 @@
   "count": "1",
   "encounter_type": "patient_registration",
   "entity_id": "",
-  "properties_file_name": "strings",
+  "properties_file_name": "form_strings",
   "metadata": {
     "start": {
       "openmrs_entity_parent": "",
@@ -48,19 +48,19 @@
     "encounter_location": ""
   },
   "step1": {
-    "title": "{{step1.title}}",
+    "title": "New client record",
     "display_back_button": "true",
-    "previous_label": "{{step1.previous_label}}",
+    "previous_label": "SAVE AND EXIT",
     "bottom_navigation": "true",
     "bottom_navigation_orientation": "vertical",
     "next_type": "submit",
-    "submit_label": "{{step1.submit_label}}",
+    "submit_label": "SAVE",
     "next_form": "json.form/patient-registration-form.json",
     "fields": [
       {
         "key": "patient_name_label",
         "type": "label",
-        "text": "{{step1.patient_name_label.text}}",
+        "text": "Name",
         "text_color": "#000000"
       },
       {
@@ -94,20 +94,20 @@
         "openmrs_entity": "person",
         "openmrs_entity_id": "gender",
         "type": "native_radio",
-        "label": "{{step1.sex.label}}",
+        "label": "Gender",
         "options": [
           {
             "key": "Female",
-            "text": "{{step1.sex.options.Female.text}}"
+            "text": "Female"
           },
           {
             "key": "Male",
-            "text": "{{step1.sex.options.Male.text}}"
+            "text": "Male"
           }
         ],
         "v_required": {
           "value": "true",
-          "err": "{{step1.sex.v_required.err}}"
+          "err": "Please specify gender"
         }
       },
       {
@@ -116,10 +116,10 @@
         "openmrs_entity": "person_attribute",
         "openmrs_entity_id": "birthdate",
         "type": "date_picker",
-        "hint": "{{step1.patient_dob.hint}}",
+        "hint": "Patient's date of birth",
         "expanded": false,
         "duration": {
-          "label": "{{step1.patient_dob.duration.label}}"
+          "label": "Age"
         },
         "min_date": "today-100y",
         "max_date": "today"
@@ -135,7 +135,7 @@
       {
         "key": "patient_occupation_label",
         "type": "label",
-        "text": "{{step1.patient_occupation_label.text}}",
+        "text": "Occupation",
         "text_color": "#000000"
       },
       {
@@ -155,24 +155,24 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "{{step1.been_treated.label}}",
+        "label": "Has been treated for malaria in the past 3 months?",
         "options": [
           {
             "key": "Yes",
-            "text": "{{step1.been_treated.options.Yes.text}}"
+            "text": "Yes"
           },
           {
             "key": "No",
-            "text": "{{step1.been_treated.options.No.text}}"
+            "text": "No"
           },
           {
             "key": "Not Answered",
-            "text": "{{step1.been_treated.options.not_answered.text}}"
+            "text": "Not Answered"
           }
         ],
         "v_required": {
           "value": "true",
-          "err": "{{step1.been_treated.v_required.err}}"
+          "err": "Has the patient been treated for malaria in the past 3 months?"
         }
       }
     ]

@@ -39,7 +39,7 @@ public class NativeFormLangUtils {
         ResourceBundle mlsResourceBundle = ResourceBundle.getBundle(getPropertiesFileName(jsonForm));
 
         StringBuffer stringBuffer = new StringBuffer();
-        Pattern interpolatedStringPattern = Pattern.compile("\"\\{\\{([a-zA-Z_0-9\\.]+)\\}\\}\"");
+        Pattern interpolatedStringPattern = Pattern.compile("\\{\\{([a-zA-Z_0-9\\.]+)\\}\\}");
         Matcher matcher = interpolatedStringPattern.matcher(jsonForm);
         while (matcher.find()) {
             matcher.appendReplacement(stringBuffer, mlsResourceBundle.getString(matcher.group(1)));
@@ -50,7 +50,7 @@ public class NativeFormLangUtils {
     }
 
     public static String getPropertiesFileName(String jsonForm) {
-        Pattern propertiesFileNamePattern = Pattern.compile("\"properties_file_name\": \"(strings)\"");
+        Pattern propertiesFileNamePattern = Pattern.compile("\"?properties_file_name\"?: \"([a-zA-Z_0-9\\.]+)\"");
         Matcher matcher = propertiesFileNamePattern.matcher(jsonForm);
         matcher.find();
         String propertiesFileName = matcher.group(1);
