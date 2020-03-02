@@ -250,22 +250,21 @@ public class JsonFormFragmentPresenter extends
         formFragment.onFieldsInvalid.passInvalidFields(invalidFields);
     }
 
+    /**
+     * Check if alarm is ringing and stop it if so
+     */
     public void checkAndStopCountdownAlarm() {
-        // Check if alarm is ringing and stop
-        JSONObject formJSONObject = null;
-        JSONObject fieldObject = null;
         try {
-            formJSONObject = new JSONObject(formFragment.getCurrentJsonState());
+            JSONObject formJSONObject = new JSONObject(formFragment.getCurrentJsonState());
             JSONArray fields = FormUtils.fields(formJSONObject, mStepName);
             for (int i = 0; i < fields.length(); i++) {
-                fieldObject = (JSONObject) fields.get(i);
+                JSONObject fieldObject = (JSONObject) fields.get(i);
                 if (fieldObject.has(JsonFormConstants.COUNTDOWN_TIME_VALUE)) {
                     CountDownTimerFactory.stopAlarm();
                 }
             }
-        } catch (Exception ex) {
-            Log.w(TAG, "Countdown alarm not stopped");
-            ex.printStackTrace();
+        } catch (Exception e) {
+            Timber.e(e, "Countdown alarm could not be stopped!");
         }
     }
 
