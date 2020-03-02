@@ -37,18 +37,26 @@ public class NativeFormLangUtils {
         return context;
     }
 
-    public static String getTranslatedString(String jsonForm) {
-        String translationsFileName = getTranslationsFileName(jsonForm);
+    /**
+     * Performs translation on an interpolated {@param str}
+     * i.e. a String containing tokens in the format {{string_name}},
+     * replacing these tokens with their corresponding values for the current Locale
+     *
+     * @param str
+     * @return
+     */
+    public static String getTranslatedString(String str) {
+        String translationsFileName = getTranslationsFileName(str);
         if (translationsFileName.isEmpty()) {
             Timber.e("Could not translate the String. Translation file name is not specified!");
-            return jsonForm;
+            return str;
         }
 
-        ResourceBundle mlsResourceBundle = ResourceBundle.getBundle(getTranslationsFileName(jsonForm));
+        ResourceBundle mlsResourceBundle = ResourceBundle.getBundle(getTranslationsFileName(str));
 
         StringBuffer stringBuffer = new StringBuffer();
         Pattern interpolatedStringPattern = Pattern.compile("\\{\\{([a-zA-Z_0-9\\.]+)\\}\\}");
-        Matcher matcher = interpolatedStringPattern.matcher(jsonForm);
+        Matcher matcher = interpolatedStringPattern.matcher(str);
         while (matcher.find()) {
             matcher.appendReplacement(stringBuffer, mlsResourceBundle.getString(matcher.group(1)));
         }
@@ -57,9 +65,15 @@ public class NativeFormLangUtils {
         return stringBuffer.toString();
     }
 
-    public static String getTranslationsFileName(String jsonForm) {
+    /**
+     * Gets the name of the translation file to be applied to the {@param str}
+     *
+     * @param str
+     * @return
+     */
+    public static String getTranslationsFileName(String str) {
         Pattern propertiesFileNamePattern = Pattern.compile("\"?properties_file_name\"?: \"([a-zA-Z_0-9\\.]+)\"");
-        Matcher matcher = propertiesFileNamePattern.matcher(jsonForm);
+        Matcher matcher = propertiesFileNamePattern.matcher(str);
         return matcher.find() ? matcher.group(1) : "";
     }
 }

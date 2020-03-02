@@ -494,15 +494,43 @@ public class Utils {
         return objectIterable;
     }
 
+    /**
+     * Translates a yaml file specified by {@param fileName} and returns its String representation
+     *
+     * @param fileName
+     * @param context
+     *
+     * @return Translated Yaml file in its String representation
+     *
+     * @throws IOException
+     */
     public static String getTranslatedYamlFile(String fileName, Context context) throws IOException {
         return getTranslatedString(getAssetFileAsString(fileName, context));
     }
 
+    /**
+     *
+     * Gets a file specified by {@param fileName} from the assets folder as a String
+     *
+     * @param fileName
+     * @param context
+     *
+     * @return A file from the assets folder as a String
+     *
+     * @throws IOException
+     */
     public static String getAssetFileAsString(String fileName, Context context) throws IOException {
         InputStream inputStream = context.getAssets().open(fileName);
         return convertStreamToString(inputStream);
     }
 
+    /**
+     * Converts an {@link InputStream} into a String
+     *
+     * @param inputStream
+     *
+     * @return String representation of an {@link InputStream}
+     */
     public static String convertStreamToString(InputStream inputStream) {
         Scanner s = new Scanner(inputStream).useDelimiter("\\A");
         return s.hasNext() ? s.next() : "";
