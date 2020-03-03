@@ -550,27 +550,23 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             if (StringUtils.isNotBlank(strCount)) {
                 int count = Integer.parseInt(strCount);
                 for (int i = 1; i <= count; i++) {
-                    JSONObject ithStepObject = json.optJSONObject(JsonFormConstants.STEP + count);
+                    JSONObject ithStepObject = json.optJSONObject(JsonFormConstants.STEP + i);
                     JSONArray fieldsJsonObject = ithStepObject.optJSONArray(JsonFormConstants.FIELDS);
                     for (int k = 0; k < fieldsJsonObject.length(); k++) {
-                        handleFieldBehaviour(fieldsJsonObject.optJSONObject(k));
+                        Utils.handleFieldBehaviour(fieldsJsonObject.optJSONObject(k), getForm());
                     }
                 }
             }
         }
     }
 
-    private void handleFieldBehaviour(JSONObject fieldObject) {
-        String key = fieldObject.optString(JsonFormConstants.KEY);
+//
+//    private void handleSubFormFields(JSONObject subFormJson) {
+//        for (int i = 0; i < subFormJson.optJSONArray(JsonFormConstants.CONTENT_FORM).length(); i++) {
+//            handleFieldBehaviour(subFormJson.optJSONArray(JsonFormConstants.CONTENT_FORM).optJSONObject(i));
+//        }
+//    }
 
-        if (getForm() != null && getForm().getHiddenFields() != null && getForm().getHiddenFields().contains(key)) {
-            makeFieldHidden(fieldObject);
-        }
-
-        if (getForm() != null && getForm().getDisabledFields() != null && getForm().getDisabledFields().contains(key)) {
-            makeFieldDisabled(fieldObject);
-        }
-    }
 
     @Override
     public void updateGenericPopupSecondaryValues(JSONArray jsonArray) {
@@ -654,21 +650,17 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     @Override
     public void makeFieldHidden(JSONObject fieldObject) {
-        try {
-            fieldObject.put(JsonFormConstants.TYPE, JsonFormConstants.HIDDEN);
-        } catch (JSONException e) {
-            Timber.e(e);
-        }
+        Utils.makeFieldHidden(fieldObject);
     }
 
     @Override
     public void makeFieldDisabled(JSONObject fieldObject) {
-        try {
-            makeFieldHidden(fieldObject);
-            fieldObject.put(JsonFormConstants.DISABLED, true);
-        } catch (JSONException e) {
-            Timber.e(e);
-        }
+        Utils.makeFieldDisabled(fieldObject);
+    }
+
+    @Override
+    public Form form() {
+        return getForm();
     }
 
     private String getViewKey(View view) {

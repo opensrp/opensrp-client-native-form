@@ -47,4 +47,6 @@ public class JsonFormActivityTest extends BaseActivityTest {
         activity.setConfirmCloseMessage(DUMMY_TEST_STRING);
         Assert.assertEquals(DUMMY_TEST_STRING, activity.getConfirmCloseMessage());
     }
+
+
 }

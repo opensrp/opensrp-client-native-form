@@ -3,6 +3,7 @@ package com.vijay.jsonwizard.interfaces;
 import android.view.View;
 
 import com.vijay.jsonwizard.customviews.GenericPopupDialog;
+import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 
 import org.json.JSONArray;
@@ -123,4 +124,6 @@ public interface JsonApi {
     void makeFieldHidden(JSONObject fieldObject);
 
     void makeFieldDisabled(JSONObject fieldObject);
+
+    Form form();
 }

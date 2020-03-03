@@ -24,6 +24,7 @@ import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.CompoundButton;
 import com.vijay.jsonwizard.customviews.ExpansionPanelGenericPopupDialog;
+import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.domain.WidgetArgs;
 import com.vijay.jsonwizard.event.BaseEvent;
 import com.vijay.jsonwizard.rules.RuleConstant;
@@ -60,11 +61,11 @@ import timber.log.Timber;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
 
 public class Utils {
-    private static ProgressDialog progressDialog;
     public final static List<String> PREFICES_OF_INTEREST = Arrays.asList(RuleConstant.PREFIX.GLOBAL, RuleConstant.STEP);
     public final static Set<Character> JAVA_OPERATORS = new HashSet<>(
             Arrays.asList('(', '!', ',', '?', '+', '-', '*', '/', '%', '+', '-', '.', '^', ')', '<', '>', '=', '{', '}', ':',
                     ';', '[', ']'));
+    private static ProgressDialog progressDialog;
 
     public static void showToast(Context context, String message) {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show();
@@ -285,6 +286,179 @@ public class Utils {
 
     }
 
+    public static void updateSubFormFields(JSONObject subForm, Form form) {
+        for (int i = 0; i < subForm.optJSONArray(JsonFormConstants.CONTENT_FORM).length(); i++) {
+            handleFieldBehaviour(subForm.optJSONArray(JsonFormConstants.CONTENT_FORM).optJSONObject(i), form);
+        }
+    }
+
+    public static void handleFieldBehaviour(JSONObject fieldObject, Form form) {
+        String key = fieldObject.optString(JsonFormConstants.KEY);
+
+        if (form != null && form.getHiddenFields() != null && form.getHiddenFields().contains(key)) {
+            makeFieldHidden(fieldObject);
+        }
+
+        if (form != null && form.getDisabledFields() != null && form.getDisabledFields().contains(key)) {
+            makeFieldDisabled(fieldObject);
+        }
+
+    }
+
+    public static void makeFieldDisabled(JSONObject fieldObject) {
+        try {
+            makeFieldHidden(fieldObject);
+            fieldObject.put(JsonFormConstants.DISABLED, true);
+        } catch (JSONException e) {
+            Timber.e(e);
+        }
+    }
+
+    public static void makeFieldHidden(JSONObject fieldObject) {
+        try {
+            fieldObject.put(JsonFormConstants.TYPE, JsonFormConstants.HIDDEN);
+        } catch (JSONException e) {
+            Timber.e(e);
+        }
+    }
+
+    @NonNull
+    private static String cleanToken(String conditionTokenRaw) {
+        String conditionToken = conditionTokenRaw.trim();
+
+        for (int i = 0; i < conditionToken.length(); i++) {
+            if (JAVA_OPERATORS.contains(conditionToken.charAt(i))) {
+                if (i == 0) {
+                    conditionToken = cleanToken(conditionToken.substring(1));
+                } else {
+                    conditionToken = conditionToken.substring(0, conditionToken.indexOf(conditionToken.charAt(i)));
+                    break;
+                }
+            }
+        }
+
+        return conditionToken;
+    }
+
+    public static List<String> getConditionKeys(String condition) {
+        String cleanString = cleanConditionString(condition);
+        String[] conditionTokens = cleanString.split(" ");
+        Map<String, Boolean> conditionKeys = new HashMap<>();
+
+        for (String token : conditionTokens) {
+            if (token.contains(RuleConstant.STEP) || token.contains(RuleConstant.PREFIX.GLOBAL)) {
+                String conditionToken = cleanToken(token);
+                conditionKeys.put(conditionToken, true);
+            }
+        }
+
+        return new ArrayList<>(conditionKeys.keySet());
+    }
+
+    private static String cleanConditionString(String conditionStringRaw) {
+        String conditionString = conditionStringRaw;
+
+        for (String token : PREFICES_OF_INTEREST) {
+
+            conditionString = conditionString.replaceAll(token, " " + token);
+        }
+
+        return conditionString.replaceAll("  ", " ");
+    }
+
+    public static Iterable<Object> readYamlFile(String fileName, Context context) {
+        Yaml yaml = new Yaml();
+        InputStreamReader inputStreamReader;
+        Iterable<Object> objectIterable = null;
+        try {
+            inputStreamReader = new InputStreamReader(context.getAssets().open(fileName));
+            objectIterable = yaml.loadAll(inputStreamReader);
+        } catch (IOException e) {
+            Timber.e(e);
+        }
+
+        return objectIterable;
+    }
+
+    public static void buildRulesWithUniqueId(JSONObject element, String uniqueId, String ruleType, WidgetArgs widgetArgs, Map<String, List<Map<String, Object>>> rulesFileMap) throws JSONException {
+        JSONObject rules = element.optJSONObject(ruleType);
+        if (rules != null) {
+            if (rules.has(RuleConstant.RULES_ENGINE) && widgetArgs != null) {
+                JSONObject jsonRulesEngineObject = rules.optJSONObject(RuleConstant.RULES_ENGINE);
+                JSONObject jsonExRules = jsonRulesEngineObject.optJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES);
+                String fileName = JsonFormConstants.RULE + jsonExRules.optString(RuleConstant.RULES_DYNAMIC);
+
+                if (!rulesFileMap.containsKey(fileName)) {
+                    Iterable<Object> objectIterable = readYamlFile(fileName, widgetArgs.getContext());
+                    List<Map<String, Object>> arrayList = new ArrayList<>();
+                    while (objectIterable.iterator().hasNext()) {
+                        Map<String, Object> map = (Map<String, Object>) objectIterable.iterator().next();
+                        if (map != null) {
+                            arrayList.add(map);
+                        }
+                    }
+                    rulesFileMap.put(fileName, arrayList);
+                }
+
+                List<Map<String, Object>> mapArrayList = rulesFileMap.get(fileName);
+
+                JSONArray jsonArrayRules = new JSONArray();
+                JSONObject keyJsonObject = new JSONObject();
+                keyJsonObject.put(KEY, uniqueId);
+                jsonArrayRules.put(keyJsonObject);
+                for (Map<String, Object> map : mapArrayList) {
+                    JSONObject jsonRulesDynamicObject = new JSONObject();
+                    String strCondition = (String) map.get(RuleConstant.CONDITION);
+                    List<String> conditionKeys = getConditionKeys(strCondition);
+                    for (String conditionKey : conditionKeys) {
+                        strCondition = strCondition.replace(conditionKey, conditionKey + "_" + uniqueId);
+                    }
+                    jsonRulesDynamicObject.put(RuleConstant.NAME, String.valueOf(map.get(RuleConstant.NAME)).concat("_").concat(uniqueId));
+                    jsonRulesDynamicObject.put(RuleConstant.DESCRIPTION, String.valueOf(map.get(RuleConstant.DESCRIPTION)).concat("_").concat(uniqueId));
+                    jsonRulesDynamicObject.put(RuleConstant.PRIORITY, map.get(RuleConstant.PRIORITY));
+                    jsonRulesDynamicObject.put(RuleConstant.ACTIONS, ((ArrayList<String>) map.get(RuleConstant.ACTIONS)).get(0));
+                    jsonRulesDynamicObject.put(RuleConstant.CONDITION, String.valueOf(strCondition));
+                    jsonArrayRules.put(jsonRulesDynamicObject);
+                }
+
+                jsonExRules.put(RuleConstant.RULES_DYNAMIC, jsonArrayRules);
+
+            } else {
+                String currKey = rules.keys().next();
+                JSONObject rulesObj = rules.getJSONObject(currKey);
+                String newKey = currKey + "_" + uniqueId;
+                rules.remove(currKey);
+                rules.put(newKey, rulesObj);
+            }
+        }
+
+    }
+
+    public static NativeFormsProperties getProperties(Context context) {
+        NativeFormsProperties properties = new NativeFormsProperties();
+
+        try {
+            AssetManager assetManager = context.getAssets();
+            InputStream inputStream = assetManager.open("app.properties");
+            properties.load(inputStream);
+        } catch (Exception var4) {
+            Timber.e(var4);
+        }
+
+        return properties;
+    }
+
+    public static void removeDeletedViewsFromJsonForm(Collection<View> viewCollection, ArrayList<String> removeThisFields) {
+        Iterator<View> viewIterator = viewCollection.iterator();
+        while (viewIterator.hasNext()) {
+            View view = viewIterator.next();
+            String key = (String) view.getTag(R.id.key);
+            if (removeThisFields.contains(key)) {
+                viewIterator.remove();
+            }
+        }
+    }
+
     public List<String> createExpansionPanelChildren(JSONArray jsonArray) throws JSONException {
         List<String> stringList = new ArrayList<>();
         String label;
@@ -432,145 +606,6 @@ public class Utils {
         Button okButton = buttonLayout.findViewById(R.id.ok_button);
         okButton.setEnabled(true);
         okButton.setClickable(true);
-    }
-
-
-    @NonNull
-    private static String cleanToken(String conditionTokenRaw) {
-        String conditionToken = conditionTokenRaw.trim();
-
-        for (int i = 0; i < conditionToken.length(); i++) {
-            if (JAVA_OPERATORS.contains(conditionToken.charAt(i))) {
-                if (i == 0) {
-                    conditionToken = cleanToken(conditionToken.substring(1));
-                } else {
-                    conditionToken = conditionToken.substring(0, conditionToken.indexOf(conditionToken.charAt(i)));
-                    break;
-                }
-            }
-        }
-
-        return conditionToken;
-    }
-
-    public static List<String> getConditionKeys(String condition) {
-        String cleanString = cleanConditionString(condition);
-        String[] conditionTokens = cleanString.split(" ");
-        Map<String, Boolean> conditionKeys = new HashMap<>();
-
-        for (String token : conditionTokens) {
-            if (token.contains(RuleConstant.STEP) || token.contains(RuleConstant.PREFIX.GLOBAL)) {
-                String conditionToken = cleanToken(token);
-                conditionKeys.put(conditionToken, true);
-            }
-        }
-
-        return new ArrayList<>(conditionKeys.keySet());
-    }
-
-
-    private static String cleanConditionString(String conditionStringRaw) {
-        String conditionString = conditionStringRaw;
-
-        for (String token : PREFICES_OF_INTEREST) {
-
-            conditionString = conditionString.replaceAll(token, " " + token);
-        }
-
-        return conditionString.replaceAll("  ", " ");
-    }
-
-    public static Iterable<Object> readYamlFile(String fileName, Context context) {
-        Yaml yaml = new Yaml();
-        InputStreamReader inputStreamReader;
-        Iterable<Object> objectIterable = null;
-        try {
-            inputStreamReader = new InputStreamReader(context.getAssets().open(fileName));
-            objectIterable = yaml.loadAll(inputStreamReader);
-        } catch (IOException e) {
-            Timber.e(e);
-        }
-
-        return objectIterable;
-    }
-
-    public static void buildRulesWithUniqueId(JSONObject element, String uniqueId, String ruleType, WidgetArgs widgetArgs, Map<String, List<Map<String, Object>>> rulesFileMap) throws JSONException {
-        JSONObject rules = element.optJSONObject(ruleType);
-        if (rules != null) {
-            if (rules.has(RuleConstant.RULES_ENGINE) && widgetArgs != null) {
-                JSONObject jsonRulesEngineObject = rules.optJSONObject(RuleConstant.RULES_ENGINE);
-                JSONObject jsonExRules = jsonRulesEngineObject.optJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES);
-                String fileName = JsonFormConstants.RULE + jsonExRules.optString(RuleConstant.RULES_DYNAMIC);
-
-                if (!rulesFileMap.containsKey(fileName)) {
-                    Iterable<Object> objectIterable = readYamlFile(fileName, widgetArgs.getContext());
-                    List<Map<String, Object>> arrayList = new ArrayList<>();
-                    while (objectIterable.iterator().hasNext()) {
-                        Map<String, Object> map = (Map<String, Object>) objectIterable.iterator().next();
-                        if (map != null) {
-                            arrayList.add(map);
-                        }
-                    }
-                    rulesFileMap.put(fileName, arrayList);
-                }
-
-                List<Map<String, Object>> mapArrayList = rulesFileMap.get(fileName);
-
-                JSONArray jsonArrayRules = new JSONArray();
-                JSONObject keyJsonObject = new JSONObject();
-                keyJsonObject.put(KEY, uniqueId);
-                jsonArrayRules.put(keyJsonObject);
-                for (Map<String, Object> map : mapArrayList) {
-                    JSONObject jsonRulesDynamicObject = new JSONObject();
-                    String strCondition = (String) map.get(RuleConstant.CONDITION);
-                    List<String> conditionKeys = getConditionKeys(strCondition);
-                    for (String conditionKey : conditionKeys) {
-                        strCondition = strCondition.replace(conditionKey, conditionKey + "_" + uniqueId);
-                    }
-                    jsonRulesDynamicObject.put(RuleConstant.NAME, String.valueOf(map.get(RuleConstant.NAME)).concat("_").concat(uniqueId));
-                    jsonRulesDynamicObject.put(RuleConstant.DESCRIPTION, String.valueOf(map.get(RuleConstant.DESCRIPTION)).concat("_").concat(uniqueId));
-                    jsonRulesDynamicObject.put(RuleConstant.PRIORITY, map.get(RuleConstant.PRIORITY));
-                    jsonRulesDynamicObject.put(RuleConstant.ACTIONS, ((ArrayList<String>) map.get(RuleConstant.ACTIONS)).get(0));
-                    jsonRulesDynamicObject.put(RuleConstant.CONDITION, String.valueOf(strCondition));
-                    jsonArrayRules.put(jsonRulesDynamicObject);
-                }
-
-                jsonExRules.put(RuleConstant.RULES_DYNAMIC, jsonArrayRules);
-
-            } else {
-                String currKey = rules.keys().next();
-                JSONObject rulesObj = rules.getJSONObject(currKey);
-                String newKey = currKey + "_" + uniqueId;
-                rules.remove(currKey);
-                rules.put(newKey, rulesObj);
-            }
-        }
-
-    }
-
-    public static NativeFormsProperties getProperties(Context context) {
-        NativeFormsProperties properties = new NativeFormsProperties();
-
-        try {
-            AssetManager assetManager = context.getAssets();
-            InputStream inputStream = assetManager.open("app.properties");
-            properties.load(inputStream);
-        } catch (Exception var4) {
-            Timber.e(var4);
-        }
-
-        return properties;
-    }
-
-    public static void removeDeletedViewsFromJsonForm(Collection<View> viewCollection, ArrayList<String> removeThisFields){
-        Iterator<View> viewIterator = viewCollection.iterator();
-        while (viewIterator.hasNext()){
-            View view = viewIterator.next();
-            String key = (String) view.getTag(R.id.key);
-            if(removeThisFields.contains(key)){
-                viewIterator.remove();
-            }
-        }
     }
 }
 
