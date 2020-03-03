@@ -89,6 +89,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -544,6 +545,20 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     @Override
+    protected void initiateFormUpdate(JSONObject json) {
+        if (getForm() != null) {
+
+            if (getForm().getDisabledFields() != null && !getForm().getDisabledFields().isEmpty()) {
+                processDisabledFields(json, getForm().getDisabledFields());
+            }
+
+            if (getForm().getHiddenFields() != null && !getForm().getHiddenFields().isEmpty()) {
+                processHiddenFields(json, getForm().getHiddenFields());
+            }
+        }
+    }
+
+    @Override
     public void updateGenericPopupSecondaryValues(JSONArray jsonArray) {
         setExtraFieldsWithValues(jsonArray);
     }
@@ -620,6 +635,53 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     public boolean skipBlankSteps() {
         synchronized (getmJSONObject()) {
             return getmJSONObject().optBoolean(JsonFormConstants.SKIP_BLANK_STEPS, false);
+        }
+    }
+
+    @Override
+    public void processHiddenFields(JSONObject json, Set<String> keysToBeHidden) {
+        String strCount = json.optString("count");
+        if (StringUtils.isNotBlank(strCount)) {
+            int count = Integer.parseInt(strCount);
+            for (int i = 1; i <= count; i++) {
+                JSONObject ithStepObject = json.optJSONObject("step" + count);
+                JSONArray fieldsJsonObject = ithStepObject.optJSONArray("fields");
+                for (int k = 0; k < fieldsJsonObject.length(); k++) {
+                    JSONObject field = fieldsJsonObject.optJSONObject(k);
+                    String key = field.optString("key");
+                    if (keysToBeHidden.contains(key)) {
+                        try {
+                            fieldsJsonObject.optJSONObject(k).put("type", "hidden");
+                        } catch (JSONException e) {
+                            Timber.e(e);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void processDisabledFields(JSONObject json, Set<String> keysToBeDisabled) {
+        String strCount = json.optString("count");
+        if (StringUtils.isNotBlank(strCount)) {
+            int count = Integer.parseInt(strCount);
+            for (int i = 1; i <= count; i++) {
+                JSONObject ithStepObject = json.optJSONObject("step" + count);
+                JSONArray fieldsJsonObject = ithStepObject.optJSONArray("fields");
+                for (int k = 0; k < fieldsJsonObject.length(); k++) {
+                    JSONObject field = fieldsJsonObject.optJSONObject(k);
+                    String key = field.optString("key");
+                    if (keysToBeDisabled.contains(key)) {
+                        try {
+                            fieldsJsonObject.optJSONObject(k).put("type", "hidden");
+                            fieldsJsonObject.optJSONObject(k).put("disabled", true);
+                        } catch (JSONException e) {
+                            Timber.e(e);
+                        }
+                    }
+                }
+            }
         }
     }
 

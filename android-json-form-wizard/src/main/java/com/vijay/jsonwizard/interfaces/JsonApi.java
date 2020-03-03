@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by vijay on 5/16/15.
@@ -119,4 +120,8 @@ public interface JsonApi {
     boolean isPreviousPressed();
 
     void setPreviousPressed(boolean previousPressed);
+
+    void processHiddenFields(JSONObject formObject, Set<String> keysToBeHidden);
+
+    void processDisabledFields(JSONObject formObject, Set<String> keysToBeDisabled);
 }
