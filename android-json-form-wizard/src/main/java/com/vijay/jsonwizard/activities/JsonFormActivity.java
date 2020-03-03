@@ -89,7 +89,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -547,14 +546,29 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     @Override
     protected void initiateFormUpdate(JSONObject json) {
         if (getForm() != null) {
-
-            if (getForm().getDisabledFields() != null && !getForm().getDisabledFields().isEmpty()) {
-                processDisabledFields(json, getForm().getDisabledFields());
+            String strCount = json.optString(JsonFormConstants.COUNT);
+            if (StringUtils.isNotBlank(strCount)) {
+                int count = Integer.parseInt(strCount);
+                for (int i = 1; i <= count; i++) {
+                    JSONObject ithStepObject = json.optJSONObject(JsonFormConstants.STEP + count);
+                    JSONArray fieldsJsonObject = ithStepObject.optJSONArray(JsonFormConstants.FIELDS);
+                    for (int k = 0; k < fieldsJsonObject.length(); k++) {
+                        handleFieldBehaviour(fieldsJsonObject.optJSONObject(k));
+                    }
+                }
             }
+        }
+    }
 
-            if (getForm().getHiddenFields() != null && !getForm().getHiddenFields().isEmpty()) {
-                processHiddenFields(json, getForm().getHiddenFields());
-            }
+    private void handleFieldBehaviour(JSONObject fieldObject) {
+        String key = fieldObject.optString(JsonFormConstants.KEY);
+
+        if (getForm() != null && getForm().getHiddenFields() != null && getForm().getHiddenFields().contains(key)) {
+            makeFieldHidden(fieldObject);
+        }
+
+        if (getForm() != null && getForm().getDisabledFields() != null && getForm().getDisabledFields().contains(key)) {
+            makeFieldDisabled(fieldObject);
         }
     }
 
@@ -639,49 +653,21 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     @Override
-    public void processHiddenFields(JSONObject json, Set<String> keysToBeHidden) {
-        String strCount = json.optString("count");
-        if (StringUtils.isNotBlank(strCount)) {
-            int count = Integer.parseInt(strCount);
-            for (int i = 1; i <= count; i++) {
-                JSONObject ithStepObject = json.optJSONObject("step" + count);
-                JSONArray fieldsJsonObject = ithStepObject.optJSONArray("fields");
-                for (int k = 0; k < fieldsJsonObject.length(); k++) {
-                    JSONObject field = fieldsJsonObject.optJSONObject(k);
-                    String key = field.optString("key");
-                    if (keysToBeHidden.contains(key)) {
-                        try {
-                            fieldsJsonObject.optJSONObject(k).put("type", "hidden");
-                        } catch (JSONException e) {
-                            Timber.e(e);
-                        }
-                    }
-                }
-            }
+    public void makeFieldHidden(JSONObject fieldObject) {
+        try {
+            fieldObject.put(JsonFormConstants.TYPE, JsonFormConstants.HIDDEN);
+        } catch (JSONException e) {
+            Timber.e(e);
         }
     }
 
     @Override
-    public void processDisabledFields(JSONObject json, Set<String> keysToBeDisabled) {
-        String strCount = json.optString("count");
-        if (StringUtils.isNotBlank(strCount)) {
-            int count = Integer.parseInt(strCount);
-            for (int i = 1; i <= count; i++) {
-                JSONObject ithStepObject = json.optJSONObject("step" + count);
-                JSONArray fieldsJsonObject = ithStepObject.optJSONArray("fields");
-                for (int k = 0; k < fieldsJsonObject.length(); k++) {
-                    JSONObject field = fieldsJsonObject.optJSONObject(k);
-                    String key = field.optString("key");
-                    if (keysToBeDisabled.contains(key)) {
-                        try {
-                            fieldsJsonObject.optJSONObject(k).put("type", "hidden");
-                            fieldsJsonObject.optJSONObject(k).put("disabled", true);
-                        } catch (JSONException e) {
-                            Timber.e(e);
-                        }
-                    }
-                }
-            }
+    public void makeFieldDisabled(JSONObject fieldObject) {
+        try {
+            makeFieldHidden(fieldObject);
+            fieldObject.put(JsonFormConstants.DISABLED, true);
+        } catch (JSONException e) {
+            Timber.e(e);
         }
     }
 
