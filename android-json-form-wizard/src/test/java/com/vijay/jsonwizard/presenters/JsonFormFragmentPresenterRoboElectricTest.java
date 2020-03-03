@@ -9,6 +9,7 @@ import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.TestConstants;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.fragments.JsonFormErrorFragment;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 import com.vijay.jsonwizard.interfaces.CommonListener;
@@ -27,8 +28,10 @@ import org.powermock.reflect.Whitebox;
 import org.robolectric.RuntimeEnvironment;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Stack;
 
 import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP1;
 import static org.junit.Assert.assertEquals;
@@ -53,16 +56,16 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
 
     @Mock
     private JsonFormInteractor jsonFormInteractor;
-
-    private JsonFormFragmentPresenter presenter;
-
     @Mock
     private JsonFormActivity jsonFormActivity;
 
     @Captor
     private ArgumentCaptor<JSONObject> jsonArgumentCaptor;
 
-    private JSONObject jsonForm;
+    @Mock
+    private JsonFormErrorFragment errorFragment;
+
+    private JsonFormFragmentPresenter presenter;
 
     private JSONObject mStepDetails;
 
@@ -77,7 +80,7 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         presenter = new JsonFormFragmentPresenter(formFragment, jsonFormInteractor);
         Whitebox.setInternalState(presenter, "viewRef", new WeakReference<>(formFragment));
         textView = new TextView(context);
-        jsonForm = new JSONObject(TestConstants.PAOT_TEST_FORM);
+        JSONObject jsonForm = new JSONObject(TestConstants.PAOT_TEST_FORM);
         mStepDetails = jsonForm.getJSONObject(STEP1);
     }
 
@@ -140,6 +143,22 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         verify(formFragment).hideKeyBoard();
         verify(formFragment).backClick();
 
+    }
+
+    @Test
+    public void testGetIncorrectlyFormattedFields() {
+        assertEquals(new ArrayList<>(), presenter.getIncorrectlyFormattedFields());
+        Stack<String> stack = new Stack<>();
+        stack.push("field1");
+        Whitebox.setInternalState(presenter, "incorrectlyFormattedFields", stack);
+        assertEquals(stack, presenter.getIncorrectlyFormattedFields());
+    }
+
+
+    @Test
+    public void testSetErrorFragment() {
+        presenter.setErrorFragment(errorFragment);
+        assertEquals(errorFragment, presenter.getErrorFragment());
     }
 
 }
