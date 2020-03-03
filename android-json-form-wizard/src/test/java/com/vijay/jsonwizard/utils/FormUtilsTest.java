@@ -1,6 +1,5 @@
 package com.vijay.jsonwizard.utils;
 
-import com.google.android.apps.common.testing.accessibility.framework.proto.FrameworkProtos;
 import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 
@@ -11,13 +10,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RuntimeEnvironment;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.fail;
 
 public class FormUtilsTest extends BaseTest {
     private FormUtils formUtils;
