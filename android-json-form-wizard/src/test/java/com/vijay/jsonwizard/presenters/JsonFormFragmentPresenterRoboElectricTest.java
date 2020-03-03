@@ -105,14 +105,13 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
     }
 
     @Test
-    public void testSetUpToolBarForStep2AndMore(){
+    public void testSetUpToolBarForStep2AndMore() {
         Whitebox.setInternalState(presenter, "mStepDetails", mStepDetails);
         Whitebox.setInternalState(presenter, "mStepName", "step2");
         presenter.setUpToolBar();
         verify(formFragment).setUpBackButton();
 
     }
-
 
 
     @Test
@@ -132,6 +131,14 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         Whitebox.setInternalState(presenter, "mStepName", "step2");
         presenter.setUpToolBar();
         verify(formFragment).updateVisibilityOfNextAndSave(false, true);
+
+    }
+
+    @Test
+    public void testOnBackClick() {
+        presenter.onBackClick();
+        verify(formFragment).hideKeyBoard();
+        verify(formFragment).backClick();
 
     }
 
