@@ -104,4 +104,35 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
 
     }
 
+    @Test
+    public void testSetUpToolBarForStep2AndMore(){
+        Whitebox.setInternalState(presenter, "mStepDetails", mStepDetails);
+        Whitebox.setInternalState(presenter, "mStepName", "step2");
+        presenter.setUpToolBar();
+        verify(formFragment).setUpBackButton();
+
+    }
+
+
+
+    @Test
+    public void testSetUpToolBarIfStepHasNext() throws JSONException {
+        Whitebox.setInternalState(presenter, "mStepDetails", mStepDetails);
+        Whitebox.setInternalState(presenter, "mStepName", "step2");
+        mStepDetails.put("next", true);
+        presenter.setUpToolBar();
+        verify(formFragment).updateVisibilityOfNextAndSave(true, false);
+
+    }
+
+
+    @Test
+    public void testSetUpToolBarForLastLastStep() {
+        Whitebox.setInternalState(presenter, "mStepDetails", mStepDetails);
+        Whitebox.setInternalState(presenter, "mStepName", "step2");
+        presenter.setUpToolBar();
+        verify(formFragment).updateVisibilityOfNextAndSave(false, true);
+
+    }
+
 }
