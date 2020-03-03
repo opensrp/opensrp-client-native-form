@@ -16,7 +16,6 @@ import com.vijay.jsonwizard.interfaces.CommonListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -63,36 +62,46 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
     @Captor
     private ArgumentCaptor<JSONObject> jsonArgumentCaptor;
 
-    private static JSONObject jsonForm;
+    private JSONObject jsonForm;
+
+    private JSONObject mStepDetails;
 
     private View textView;
 
     private Context context = RuntimeEnvironment.application;
 
-    @BeforeClass
-    public static void initForm() throws JSONException {
-        jsonForm = new JSONObject(TestConstants.PAOT_TEST_FORM);
-    }
 
     @Before
-    public void setUp() {
+    public void setUp() throws JSONException {
         when(formFragment.getJsonApi()).thenReturn(jsonFormActivity);
         presenter = new JsonFormFragmentPresenter(formFragment, jsonFormInteractor);
         Whitebox.setInternalState(presenter, "viewRef", new WeakReference<>(formFragment));
         textView = new TextView(context);
+        jsonForm = new JSONObject(TestConstants.PAOT_TEST_FORM);
+        mStepDetails = jsonForm.getJSONObject(STEP1);
     }
 
     @Test
-    public void testAddFormElements() throws JSONException {
+    public void testAddFormElements() {
         Bundle bundle = new Bundle();
         bundle.putString(JsonFormConstants.JSON_FORM_KEY.STEPNAME, STEP1);
         when(formFragment.getArguments()).thenReturn(bundle);
-        when(formFragment.getStep(STEP1)).thenReturn(jsonForm.getJSONObject(STEP1));
+        when(formFragment.getStep(STEP1)).thenReturn(mStepDetails);
         List<View> views = Collections.singletonList(textView);
         when(jsonFormInteractor.fetchFormElements(anyString(), any(JsonFormFragment.class), any(JSONObject.class), isNull(CommonListener.class), anyBoolean())).thenReturn(views);
         presenter.addFormElements();
         verify(jsonFormInteractor).fetchFormElements(eq(STEP1), eq(formFragment), jsonArgumentCaptor.capture(), isNull(CommonListener.class), eq(false));
-        assertEquals(jsonForm.getJSONObject(STEP1).toString(), jsonArgumentCaptor.getValue().toString());
+        assertEquals(mStepDetails.toString(), jsonArgumentCaptor.getValue().toString());
         verify(formFragment).addFormElements(views);
     }
+
+    @Test
+    public void testSetUpToolBarForBottomNavigation() throws JSONException {
+        Whitebox.setInternalState(presenter, "mStepDetails", mStepDetails);
+        mStepDetails.put("bottom_navigation", true);
+        presenter.setUpToolBar();
+        verify(formFragment).updateVisibilityOfNextAndSave(false, false);
+
+    }
+
 }
