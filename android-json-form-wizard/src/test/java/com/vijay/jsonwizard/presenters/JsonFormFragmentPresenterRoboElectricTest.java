@@ -13,6 +13,7 @@ import com.vijay.jsonwizard.fragments.JsonFormErrorFragment;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 import com.vijay.jsonwizard.interfaces.CommonListener;
+import com.vijay.jsonwizard.interfaces.OnFieldsInvalid;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,6 +36,7 @@ import java.util.Stack;
 
 import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP1;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -65,6 +67,9 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
     @Mock
     private JsonFormErrorFragment errorFragment;
 
+    @Mock
+    private OnFieldsInvalid onFieldsInvalid;
+
     private JsonFormFragmentPresenter presenter;
 
     private JSONObject mStepDetails;
@@ -77,11 +82,13 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
     @Before
     public void setUp() throws JSONException {
         when(formFragment.getJsonApi()).thenReturn(jsonFormActivity);
+        formFragment.onFieldsInvalid = onFieldsInvalid;
         presenter = new JsonFormFragmentPresenter(formFragment, jsonFormInteractor);
         Whitebox.setInternalState(presenter, "viewRef", new WeakReference<>(formFragment));
         textView = new TextView(context);
         JSONObject jsonForm = new JSONObject(TestConstants.PAOT_TEST_FORM);
         mStepDetails = jsonForm.getJSONObject(STEP1);
+        when(jsonFormActivity.getmJSONObject()).thenReturn(jsonForm);
     }
 
     @Test
@@ -159,6 +166,12 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
     public void testSetErrorFragment() {
         presenter.setErrorFragment(errorFragment);
         assertEquals(errorFragment, presenter.getErrorFragment());
+    }
+
+    @Test
+    public void testOnNextClickReturnsFalseIfFormIsInvalid() {
+        Whitebox.setInternalState(presenter, "mStepDetails", mStepDetails);
+        assertFalse(presenter.onNextClick(null));
     }
 
 }
