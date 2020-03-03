@@ -560,14 +560,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         }
     }
 
-//
-//    private void handleSubFormFields(JSONObject subFormJson) {
-//        for (int i = 0; i < subFormJson.optJSONArray(JsonFormConstants.CONTENT_FORM).length(); i++) {
-//            handleFieldBehaviour(subFormJson.optJSONArray(JsonFormConstants.CONTENT_FORM).optJSONObject(i));
-//        }
-//    }
-
-
     @Override
     public void updateGenericPopupSecondaryValues(JSONArray jsonArray) {
         setExtraFieldsWithValues(jsonArray);
