@@ -58,8 +58,6 @@ import java.util.concurrent.TimeUnit;
 
 import timber.log.Timber;
 
-import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
-
 public class Utils {
     public final static List<String> PREFICES_OF_INTEREST = Arrays.asList(RuleConstant.PREFIX.GLOBAL, RuleConstant.STEP);
     public final static Set<Character> JAVA_OPERATORS = new HashSet<>(
@@ -404,7 +402,7 @@ public class Utils {
 
                 JSONArray jsonArrayRules = new JSONArray();
                 JSONObject keyJsonObject = new JSONObject();
-                keyJsonObject.put(KEY, uniqueId);
+                keyJsonObject.put(JsonFormConstants.KEY, uniqueId);
                 jsonArrayRules.put(keyJsonObject);
                 for (Map<String, Object> map : mapArrayList) {
                     JSONObject jsonRulesDynamicObject = new JSONObject();
