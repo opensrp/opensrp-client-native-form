@@ -540,12 +540,12 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     @Override
     public void setmJSONObject(JSONObject mJSONObject) {
-        this.mJSONObject = mJSONObject;
+        super.setmJSONObject(mJSONObject);
     }
 
     @Override
     protected void initiateFormUpdate(JSONObject json) {
-        if (getForm() != null) {
+        if (getForm() != null && (!getForm().getHiddenFields().isEmpty() || !getForm().getDisabledFields().isEmpty())) {
             String strCount = json.optString(JsonFormConstants.COUNT);
             if (StringUtils.isNotBlank(strCount)) {
                 int count = Integer.parseInt(strCount);

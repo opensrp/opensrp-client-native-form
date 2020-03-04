@@ -85,7 +85,6 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
     public void init(String json) {
         try {
             JSONObject formObject = new JSONObject(json);
-            initiateFormUpdate(formObject);
             setmJSONObject(formObject);
             if (!mJSONObject.has("encounter_type")) {
                 mJSONObject = new JSONObject();
@@ -141,6 +140,7 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
     }
 
     public void setmJSONObject(JSONObject mJSONObject) {
+        initiateFormUpdate(mJSONObject);
         this.mJSONObject = mJSONObject;
     }
 
