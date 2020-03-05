@@ -58,8 +58,6 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
     private Map<String, ValidationStatus> invalidFields = new HashMap<>();
     private boolean isPreviousPressed = false;
 
-    public static final String PERFORM_FORM_TRANSLATION = "perform_form_translation";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,7 +86,7 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
 
     private String getForm() {
         String jsonForm = getIntent().getStringExtra(JsonFormConstants.JSON_FORM_KEY.JSON);
-        if (getIntent().getBooleanExtra(PERFORM_FORM_TRANSLATION, false)) {
+        if (getIntent().getBooleanExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, false)) {
             jsonForm = getTranslatedString(jsonForm);
         }
         return jsonForm;
