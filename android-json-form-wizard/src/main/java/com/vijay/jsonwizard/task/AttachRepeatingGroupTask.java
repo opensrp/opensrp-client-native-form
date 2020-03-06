@@ -47,15 +47,15 @@ import static com.vijay.jsonwizard.utils.Utils.showProgressDialog;
 
 public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> {
 
-    private LinearLayout rootLayout;
+    protected final int REPEATING_GROUP_LABEL_TEXT_COLOR = R.color.black;
     private final ViewParent parent;
+    private final ViewGroup.LayoutParams WIDTH_MATCH_PARENT_HEIGHT_WRAP_CONTENT = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+    private LinearLayout rootLayout;
     private List<View> repeatingGroups = new ArrayList<>();
     private int diff = 0;
     private ImageButton doneButton;
     private WidgetArgs widgetArgs;
     private int numRepeatingGroups;
-    private final ViewGroup.LayoutParams WIDTH_MATCH_PARENT_HEIGHT_WRAP_CONTENT = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-    protected final int REPEATING_GROUP_LABEL_TEXT_COLOR = R.color.black;
     private Map<String, List<Map<String, Object>>> rulesFileMap = new HashMap<>();
     private Map<Integer, String> repeatingGroupLayouts;
     private int currNumRepeatingGroups;
@@ -131,7 +131,7 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
 
         try {
             ((JsonApi) widgetArgs.getContext()).invokeRefreshLogic(null, false, null, null);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         hideProgressDialog();
@@ -195,8 +195,10 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         currKey += ("_" + uniqueId);
         element.put(KEY, currKey);
         // modify relevance to reflect changes in unique key name
-        Utils.buildRulesWithUniqueId(element, uniqueId, RELEVANCE, widgetArgs, rulesFileMap);
-        Utils.buildRulesWithUniqueId(element, uniqueId, CALCULATION, widgetArgs, rulesFileMap);
+        if (widgetArgs != null) {
+            Utils.buildRulesWithUniqueId(element, uniqueId, RELEVANCE, widgetArgs.getContext(), rulesFileMap);
+            Utils.buildRulesWithUniqueId(element, uniqueId, CALCULATION, widgetArgs.getContext(), rulesFileMap);
+        }
         // modify relative max validator to reflect changes in unique key name
         JSONObject relativeMaxValidator = element.optJSONObject(V_RELATIVE_MAX);
         if (relativeMaxValidator != null) {
