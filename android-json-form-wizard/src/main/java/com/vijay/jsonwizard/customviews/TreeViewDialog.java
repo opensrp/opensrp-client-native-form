@@ -23,8 +23,8 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
     private static final String KEY_LEVEL = "level";
     private static final String KEY_NAME = "name";
     private static final String KEY_KEY = "key";
-    private static boolean shouldExpandAllNodes = false;
     private final Context context;
+    private boolean shouldExpandAllNodes = false;
     private ArrayList<String> value;
     private ArrayList<String> name;
     private HashMap<TreeNode, String> treeNodeHashMap;
@@ -68,12 +68,12 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
         return null;
     }
 
-    public static boolean shouldExpandAllNodes() {
+    public boolean shouldExpandAllNodes() {
         return shouldExpandAllNodes;
     }
 
-    public static void setShouldExpandAllNodes(boolean shouldExpandAllNodes) {
-        TreeViewDialog.shouldExpandAllNodes = shouldExpandAllNodes;
+    public void setShouldExpandAllNodes(boolean shouldExpandAllNodes) {
+        this.shouldExpandAllNodes = shouldExpandAllNodes;
     }
 
     private void setSelectedValue(TreeNode treeNode, int level, ArrayList<String> defaultValue,
