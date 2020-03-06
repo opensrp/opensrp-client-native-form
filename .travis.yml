@@ -17,7 +17,7 @@ cache:
 env:
   global:
     # wait up to 10 minutes for adb to connect to emulator
-    - ADB_INSTALL_TIMEOUT=10
+    - ADB_INSTALL_TIMEOUT=20
     - MALLOC_ARENA_MAX=2
     # git hub token
     - secure: cTVpPLOE3v3nncmqLcG72N6rlnxA6VcDFjDRiV98ZBjLiw2WVuIB68DKqfLYo/3ew4vF5ROvEP+8WY84ZwFZndysny/ikdOZ9oaog00kw5ZivQGC0nxp2oDZFeTDlQ9QN6ewe0y2WGA1NFUu2Xq8r3hEewORQ88vRgS+4kVwf9kNJSe4u1kDR9LoKOZTu4FSlsSCW2VarGRw2pYS1lRfHzoYv2n/OUa9prDAyZQbPvu2bekTbyj3z0RDs8s0NLEl7JfMkDEvjolGZlmaWMS6im5IMPIjnSipr/JtMubvssb8jcU2jK8O2cepZ3xFVUlIzfXUfUa9iz3tEKWWL0OT5sS5Lhtisv+NSuwAOEGhDl0UDMh8C3tyjsXlBUvgTt9QYmNI+oyhY49Di62dWOPF+dRqkSJjx8qqClft+DmgqGPdK49aGBKuwdfO4pXKvNw2jpS6B4OksRewZlr1CkSPlDpd1+Itt0gJMuk+71x7ZKAusDOQpxhDUxsYC0jIDXFcTb3uPYFVIU27lsfex/x/c3LCpdBRjlkjP6+D0W0c3DXfYDInLdr6Xa6WqiWXbuGvQR2lOpBoVshq0n/hDV4X3J32DASDwCd3Nr030+zQuT5+ibKc76KeciwqFzh0oZgpPjKLQDoqVy6FSgC4yW+n8ui/Z4wSEUprv8xWocvV3IQ=

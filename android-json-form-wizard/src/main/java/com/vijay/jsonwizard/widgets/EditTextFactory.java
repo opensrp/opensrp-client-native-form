@@ -55,6 +55,7 @@ import static com.vijay.jsonwizard.utils.FormUtils.getFieldJSONObject;
 public class EditTextFactory implements FormWidgetFactory {
     public static final int MIN_LENGTH = 0;
     public static final int MAX_LENGTH = 100;
+    private FormUtils formUtils = new FormUtils();
 
     public static ValidationStatus validate(JsonFormFragmentView formFragmentView,
                                             MaterialEditText editText) {
@@ -164,7 +165,7 @@ public class EditTextFactory implements FormWidgetFactory {
                                 CommonListener listener) throws JSONException {
         if (jsonObject.has(JsonFormConstants.LABEL_INFO_TEXT) || jsonObject.has(JsonFormConstants.LABEL_INFO_HAS_IMAGE)) {
             ImageView infoIcon = rootLayout.findViewById(R.id.info_icon);
-            FormUtils.showInfoIcon(stepName, jsonObject, listener, FormUtils.getInfoDialogAttributes(jsonObject), infoIcon, canvasIds);
+            formUtils.showInfoIcon(stepName, jsonObject, listener, FormUtils.getInfoDialogAttributes(jsonObject), infoIcon, canvasIds);
         }
 
     }

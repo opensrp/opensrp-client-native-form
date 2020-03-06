@@ -45,9 +45,11 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -558,6 +560,17 @@ public class Utils {
         }
 
         return properties;
+    }
+
+    public static void removeDeletedViewsFromJsonForm(Collection<View> viewCollection, ArrayList<String> removeThisFields){
+        Iterator<View> viewIterator = viewCollection.iterator();
+        while (viewIterator.hasNext()){
+            View view = viewIterator.next();
+            String key = (String) view.getTag(R.id.key);
+            if(removeThisFields.contains(key)){
+                viewIterator.remove();
+            }
+        }
     }
 }
 
