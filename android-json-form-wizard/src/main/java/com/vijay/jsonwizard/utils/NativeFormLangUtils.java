@@ -72,7 +72,7 @@ public class NativeFormLangUtils {
      * @return
      */
     public static String getTranslationsFileName(String str) {
-        Pattern propertiesFileNamePattern = Pattern.compile("\"?properties_file_name\"?:\"([a-zA-Z_0-9\\.]+)\"");
+        Pattern propertiesFileNamePattern = Pattern.compile("\"?properties_file_name\"?: ?\"([a-zA-Z_0-9\\.]+)\"");
         Matcher matcher = propertiesFileNamePattern.matcher(str);
         return matcher.find() ? matcher.group(1) : "";
     }
