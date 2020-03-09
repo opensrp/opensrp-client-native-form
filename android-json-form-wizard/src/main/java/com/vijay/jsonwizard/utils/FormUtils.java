@@ -1008,7 +1008,6 @@ public class FormUtils {
     }
 
     public String getSpecifyText(JSONArray jsonArray) {
-        FormUtils formUtils = new FormUtils();
         StringBuilder specifyText = new StringBuilder();
         for (int i = 0; i < jsonArray.length(); i++) {
             try {
@@ -1017,7 +1016,7 @@ public class FormUtils {
                     String type = jsonObject.optString(JsonFormConstants.TYPE, null);
                     JSONArray itemArray = jsonObject.getJSONArray(JsonFormConstants.VALUES);
                     for (int j = 0; j < itemArray.length(); j++) {
-                        String s = formUtils.getValueFromSecondaryValues(type, itemArray.getString(j));
+                        String s = getValueFromSecondaryValues(type, itemArray.getString(j));
                         if (!TextUtils.isEmpty(s)) {
                             specifyText.append(s).append(",").append(" ");
                         }
