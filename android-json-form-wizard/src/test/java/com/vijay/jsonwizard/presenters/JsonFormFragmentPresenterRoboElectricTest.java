@@ -105,8 +105,8 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         intent.putExtra("json", TestConstants.BASIC_FORM);
         jsonFormActivity = spy(Robolectric.buildActivity(JsonFormActivity.class, intent).create().resume().get());
         formFragment = spy(JsonFormFragment.getFormFragment("step1"));
-        formFragment.onFieldsInvalid = this.onFieldsInvalid;
         jsonFormActivity.getSupportFragmentManager().beginTransaction().add(formFragment, null).commit();
+        formFragment.onFieldsInvalid = this.onFieldsInvalid;
         presenter = formFragment.getPresenter();
     }
 
@@ -224,7 +224,7 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         assertEquals(0, presenter.getInvalidFields().size());
         verify(formFragment, times(13)).writeValue(anyString(), anyString(), anyString(), anyString(), anyString(),
                 anyString(), anyBoolean());
-        verify(onFieldsInvalid).passInvalidFields(presenter.getInvalidFields());
+        verify(onFieldsInvalid,times(2)).passInvalidFields(presenter.getInvalidFields());
     }
 
     private void setTextValue(String address, String value) {
