@@ -3,10 +3,12 @@ package com.vijay.jsonwizard.presenters;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.AppCompatSpinner;
 import android.view.View;
 import android.widget.TextView;
 
 import com.vijay.jsonwizard.BaseTest;
+import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.TestConstants;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
@@ -44,6 +46,7 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -201,6 +204,33 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         verify(formFragment, times(6)).writeValue(anyString(), anyString(), anyString(), anyString(), anyString(),
                 anyString(), anyBoolean());
         verify(onFieldsInvalid).passInvalidFields(presenter.getInvalidFields());
+    }
+
+
+    @Test
+    public void testValidateAndWriteValues() {
+        initWithActualForm();
+        presenter.validateAndWriteValues();
+        assertEquals(4, presenter.getInvalidFields().size());
+
+
+        setTextValue("step1:user_last_name", "Doe");
+        setTextValue("step1:user_first_name", "John");
+        setTextValue("step1:user_age", "21");
+        ((AppCompatSpinner) formFragment.getJsonApi().getFormDataView("step1:user_spinner")).setSelection(1);
+        formFragment.onFieldsInvalid = this.onFieldsInvalid;
+        presenter.validateAndWriteValues();
+        assertEquals(0, presenter.getInvalidFields().size());
+        verify(formFragment, times(13)).writeValue(anyString(), anyString(), anyString(), anyString(), anyString(),
+                anyString(), anyBoolean());
+        verify(onFieldsInvalid).passInvalidFields(presenter.getInvalidFields());
+    }
+
+    private void setTextValue(String address, String value) {
+        TextView view= (TextView) formFragment.getJsonApi().getFormDataView(address);
+        view.setTag(R.id.raw_value, value);
+        view.setText(value);
+
     }
 
 }
