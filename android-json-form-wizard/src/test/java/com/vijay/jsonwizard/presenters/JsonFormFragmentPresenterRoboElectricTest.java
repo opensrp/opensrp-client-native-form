@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.widget.AppCompatSpinner;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.R;
@@ -31,6 +32,7 @@ import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.shadows.ShadowToast;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -41,6 +43,7 @@ import java.util.Stack;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP1;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -103,6 +106,7 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         intent.putExtra("json", TestConstants.BASIC_FORM);
         jsonFormActivity = spy(Robolectric.buildActivity(JsonFormActivity.class, intent).create().resume().get());
         formFragment = spy(JsonFormFragment.getFormFragment("step1"));
+        formFragment.onFieldsInvalid = this.onFieldsInvalid;
         jsonFormActivity.getSupportFragmentManager().beginTransaction().add(formFragment, null).commit();
         presenter = formFragment.getPresenter();
     }
@@ -194,7 +198,6 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
     @Test
     public void testValidateAndWriteValuesWithInvalidFields() {
         initWithActualForm();
-        formFragment.onFieldsInvalid = this.onFieldsInvalid;
         presenter.validateAndWriteValues();
         assertEquals(4, presenter.getInvalidFields().size());
         assertEquals("Please enter the last name", presenter.getInvalidFields().get("step1#Basic Form One:user_last_name").getErrorMessage());
@@ -218,7 +221,6 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         setTextValue("step1:user_first_name", "John");
         setTextValue("step1:user_age", "21");
         ((AppCompatSpinner) formFragment.getJsonApi().getFormDataView("step1:user_spinner")).setSelection(1);
-        formFragment.onFieldsInvalid = this.onFieldsInvalid;
         presenter.validateAndWriteValues();
         assertEquals(0, presenter.getInvalidFields().size());
         verify(formFragment, times(13)).writeValue(anyString(), anyString(), anyString(), anyString(), anyString(),
@@ -227,10 +229,30 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
     }
 
     private void setTextValue(String address, String value) {
-        TextView view= (TextView) formFragment.getJsonApi().getFormDataView(address);
+        TextView view = (TextView) formFragment.getJsonApi().getFormDataView(address);
         view.setTag(R.id.raw_value, value);
         view.setText(value);
 
     }
+
+
+    @Test
+    public void testOnSaveClickDisplaysErrorFragmentAndDisplaysToast() {
+        initWithActualForm();
+        formFragment.getMainView().setTag(R.id.skip_validation, false);
+        presenter.onSaveClick(formFragment.getMainView());
+        assertEquals(4, presenter.getInvalidFields().size());
+        assertEquals("Please enter the last name", presenter.getInvalidFields().get("step1#Basic Form One:user_last_name").getErrorMessage());
+        assertEquals("Please enter user age", presenter.getInvalidFields().get("step1#Basic Form One:user_age").getErrorMessage());
+        assertEquals("Please enter the first name", presenter.getInvalidFields().get("step1#Basic Form One:user_first_name").getErrorMessage());
+        assertEquals("Please enter the sex", presenter.getInvalidFields().get("step1#Basic Form One:user_spinner").getErrorMessage());
+        verify(formFragment, times(6)).writeValue(anyString(), anyString(), anyString(), anyString(), anyString(),
+                anyString(), anyBoolean());
+        assertTrue(presenter.getErrorFragment().isVisible());
+        Toast toast = ShadowToast.getLatestToast();
+        assertEquals(Toast.LENGTH_SHORT, toast.getDuration());
+        assertEquals(context.getString(R.string.json_form_error_msg, 4), ShadowToast.getTextOfLatestToast());
+    }
+
 
 }
