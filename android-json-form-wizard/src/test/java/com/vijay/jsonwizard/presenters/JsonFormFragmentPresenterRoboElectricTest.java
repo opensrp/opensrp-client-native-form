@@ -1,6 +1,7 @@
 package com.vijay.jsonwizard.presenters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -26,6 +27,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
+import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 
 import java.lang.ref.WeakReference;
@@ -42,6 +44,8 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -89,6 +93,15 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         JSONObject jsonForm = new JSONObject(TestConstants.PAOT_TEST_FORM);
         mStepDetails = jsonForm.getJSONObject(STEP1);
         when(jsonFormActivity.getmJSONObject()).thenReturn(jsonForm);
+    }
+
+    private void initWithActualForm() {
+        Intent intent = new Intent();
+        intent.putExtra("json", TestConstants.BASIC_FORM);
+        jsonFormActivity = spy(Robolectric.buildActivity(JsonFormActivity.class, intent).create().resume().get());
+        formFragment = spy(JsonFormFragment.getFormFragment("step1"));
+        jsonFormActivity.getSupportFragmentManager().beginTransaction().add(formFragment, null).commit();
+        presenter = formFragment.getPresenter();
     }
 
     @Test
@@ -172,6 +185,22 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
     public void testOnNextClickReturnsFalseIfFormIsInvalid() {
         Whitebox.setInternalState(presenter, "mStepDetails", mStepDetails);
         assertFalse(presenter.onNextClick(null));
+    }
+
+
+    @Test
+    public void testValidateAndWriteValuesWithInvalidFields() {
+        initWithActualForm();
+        formFragment.onFieldsInvalid = this.onFieldsInvalid;
+        presenter.validateAndWriteValues();
+        assertEquals(4, presenter.getInvalidFields().size());
+        assertEquals("Please enter the last name", presenter.getInvalidFields().get("step1#Basic Form One:user_last_name").getErrorMessage());
+        assertEquals("Please enter user age", presenter.getInvalidFields().get("step1#Basic Form One:user_age").getErrorMessage());
+        assertEquals("Please enter the first name", presenter.getInvalidFields().get("step1#Basic Form One:user_first_name").getErrorMessage());
+        assertEquals("Please enter the sex", presenter.getInvalidFields().get("step1#Basic Form One:user_spinner").getErrorMessage());
+        verify(formFragment, times(6)).writeValue(anyString(), anyString(), anyString(), anyString(), anyString(),
+                anyString(), anyBoolean());
+        verify(onFieldsInvalid).passInvalidFields(presenter.getInvalidFields());
     }
 
 }
