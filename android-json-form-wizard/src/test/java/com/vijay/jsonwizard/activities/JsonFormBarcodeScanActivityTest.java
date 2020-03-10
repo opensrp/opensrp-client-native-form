@@ -9,6 +9,7 @@ import com.google.android.gms.vision.barcode.Barcode;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -17,7 +18,7 @@ import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
 import org.robolectric.android.controller.ActivityController;
 
-
+@Ignore
 public class JsonFormBarcodeScanActivityTest extends BaseActivityTest {
 
     private JsonFormBarcodeScanActivity barcodeScanActivity;
