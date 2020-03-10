@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import timber.log.Timber;
+
 @RunWith(MockitoJUnitRunner.class)
 public class RulesEngineFactoryTest {
 
@@ -51,7 +53,7 @@ public class RulesEngineFactoryTest {
             Assert.assertEquals("diagnostic_test_result_spinner_c29afdf9843e4c909a793dafd70e045b", ruleObject.getDescription());
             Assert.assertEquals(1, ruleObject.getPriority());
         } catch (JSONException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
     }
 
@@ -74,7 +76,7 @@ public class RulesEngineFactoryTest {
             Rules result = WhiteboxImpl.invokeMethod(rulesEngineFactory, "getDynamicRulesFromJsonArray", jsonArray);
             Assert.assertNull(result);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
     }
 
