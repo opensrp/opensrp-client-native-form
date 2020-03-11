@@ -1289,14 +1289,16 @@ public class FormUtils {
     public String addFormDetails(String formString) {
         String form = "";
         try {
-            JSONObject jsonForm = new JSONObject(formString);
-            String formVersion = jsonForm.optString(JsonFormConstants.FORM_VERSION, "");
-            JSONObject formData = new JSONObject();
-            formData.put(JsonFormConstants.Properties.APP_VERSION_NAME, BuildConfig.VERSION_NAME);
-            formData.put(JsonFormConstants.Properties.APP_FORM_VERSION, formVersion);
-            jsonForm.put(JsonFormConstants.Properties.DETAILS, formData);
+            if (StringUtils.isNoneBlank(formString)) {
+                JSONObject jsonForm = new JSONObject(formString);
+                String formVersion = jsonForm.optString(JsonFormConstants.FORM_VERSION, "");
+                JSONObject formData = new JSONObject();
+                formData.put(JsonFormConstants.Properties.APP_VERSION_NAME, BuildConfig.VERSION_NAME);
+                formData.put(JsonFormConstants.Properties.APP_FORM_VERSION, formVersion);
+                jsonForm.put(JsonFormConstants.Properties.DETAILS, formData);
 
-            form = String.valueOf(jsonForm);
+                form = String.valueOf(jsonForm);
+            }
         } catch (JSONException e) {
             Timber.e(e, "%s --> addFormDetails", this.getClass().getCanonicalName());
         }

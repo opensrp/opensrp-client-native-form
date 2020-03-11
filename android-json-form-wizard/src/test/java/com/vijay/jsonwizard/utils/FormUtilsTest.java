@@ -2,7 +2,9 @@ package com.vijay.jsonwizard.utils;
 
 import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.domain.ExpansionPanelValuesModel;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,6 +15,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Map;
 
 import static junit.framework.TestCase.assertEquals;
 
@@ -55,9 +58,85 @@ public class FormUtilsTest extends BaseTest {
 
     @Test
     public void testCreateExpansionPanelValues() throws JSONException {
-        String selectedValues = "[{\"key\":\"respiratory_exam_abnormal\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"type\":\"check_box\",\"label\":\"Abnormal\",\"label_text_style\":\"bold\",\"text_color\":\"#000000\",\"options\":[{\"key\":\"rapid_breathing\",\"text\":\"Rapid breathing\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"TACHYPNEA\",\"openmrs_entity_id\":\"125061\",\"value\":true},{\"key\":\"slow_breathing\",\"text\":\"Slow breathing\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"value\":false},{\"key\":\"other\",\"text\":\"Other (specify)\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"value\":false}]},{\"key\":\"Place_Birth\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"1572AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_data_type\":\"select one\",\"type\":\"spinner\",\"hint\":\"Place of birth *\",\"label_info_title\":\"Place of birth spinner\",\"label_info_text\":\"here is some text on this dialog\",\"values\":[\"Health facility\",\"Home\"],\"openmrs_choice_ids\":{\"Health facility\":\"1588AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"Home\":\"1536AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value\":\"Home\"},{\"key\":\"respiratory_exam_abnormal_other\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"type\":\"edit_text\",\"hint\":\"Specify\",\"relevance\":{\"step1:respiratory_exam_abnormal\":{\"ex-checkbox\":[{\"or\":[\"other\"]}]}},\"value\":\"Reasons\"},{\"key\":\"respiratory_exam_radio_button\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165300AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"type\":\"native_radio\",\"label\":\"Respiratory exam\",\"label_text_style\":\"bold\",\"text_color\":\"#000000\",\"extra_rel\":true,\"has_extra_rel\":\"3\",\"options\":[{\"key\":\"1\",\"text\":\"Not done\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165269AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"value\":true},{\"key\":\"2\",\"text\":\"Normal\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165230AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},{\"key\":\"3\",\"text\":\"Abnormal\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165231AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]}]";
+        String selectedValues = "[{\"key\":\"blood_type_test_status\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"label\":\"Blood type test\",\"label_text_style\":\"bold\",\"text_color\":\"#000000\",\"type\":\"extended_radio_button\",\"options\":[{\"key\":\"done_today\",\"text\":\"Done today\",\"type\":\"done_today\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},{\"key\":\"done_earlier\",\"text\":\"Done earlier\",\"type\":\"done_earlier\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165385AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},{\"key\":\"ordered\",\"text\":\"Ordered\",\"type\":\"ordered\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165384AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},{\"key\":\"not_done\",\"text\":\"Not done\",\"type\":\"not_done\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"1118AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}],\"v_required\":{\"value\":true,\"err\":\"Blood type status is required\"},\"index\":\"0\",\"value\":\"done_today\",\"step\":\"step1\",\"is-rule-check\":true},{\"key\":\"spacer\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"spacer\",\"type\":\"spacer\",\"spacer_height\":\"10dp\",\"index\":\"1\"},{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"key\":\"blood_type_test_date_today_hidden\",\"type\":\"hidden\",\"label_text_style\":\"bold\",\"text_color\":\"#000000\",\"calculation\":{\"rules-engine\":{\"ex-rules\":{\"rules-file\":\"expansion_panel_calculation_rules.yml\"}}},\"index\":\"2\",\"value\":\"10-03-2020\"},{\"key\":\"blood_type_test_date\",\"openmrs_entity_parent\":\"300AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163724AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"type\":\"date_picker\",\"hint\":\"Blood type test date\",\"expanded\":\"false\",\"max_date\":\"today\",\"relevance\":{\"rules-engine\":{\"ex-rules\":{\"rules-file\":\"expansion_panel_relevance_rules.yml\"}}},\"calculation\":{\"rules-engine\":{\"ex-rules\":{\"rules-file\":\"expansion_panel_calculation_rules.yml\"}}},\"v_required\":{\"value\":true,\"err\":\"Date that the blood test was done.\"},\"index\":\"3\",\"is_visible\":false},{\"key\":\"blood_type\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163126AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"type\":\"native_radio\",\"label\":\"Blood type\",\"label_text_style\":\"bold\",\"options\":[{\"key\":\"a\",\"text\":\"A\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163115AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},{\"key\":\"b\",\"text\":\"B\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163116AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},{\"key\":\"ab\",\"text\":\"AB\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163117AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},{\"key\":\"o\",\"text\":\"O\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163118AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}],\"v_required\":{\"value\":true,\"err\":\"Please specify blood type\"},\"relevance\":{\"rules-engine\":{\"ex-rules\":{\"rules-file\":\"expansion_panel_relevance_rules.yml\"}}},\"index\":\"4\",\"is_visible\":true,\"value\":\"ab\"},{\"key\":\"rh_factor\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"160232AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"type\":\"native_radio\",\"label\":\"Rh factor\",\"label_text_style\":\"bold\",\"options\":[{\"key\":\"positive\",\"text\":\"Positive\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"703AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},{\"key\":\"negative\",\"text\":\"Negative\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"664AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}],\"v_required\":{\"value\":true,\"err\":\"Rh factor is required\"},\"relevance\":{\"rules-engine\":{\"ex-rules\":{\"rules-file\":\"expansion_panel_relevance_rules.yml\"}}},\"index\":\"5\",\"is_visible\":true,\"step\":\"step1\",\"is-rule-check\":true,\"value\":\"negative\"},{\"key\":\"rh_factor_toaster\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"type\":\"toaster_notes\",\"text\":\"Rh factor negative counseling\",\"toaster_info_text\":\"- Woman is at risk of alloimmunisation if the baby's father is Rh positive or unknown.\\n\\n- Proceed with local protocol to investigate sensitization and the need for referral.\\n\\n- If Rh negative and non-sensitized, woman should receive anti- D prophylaxis postnatally if the baby is Rh positive.\",\"toaster_info_title\":\"Rh factor negative counseling\",\"toaster_type\":\"warning\",\"relevance\":{\"rules-engine\":{\"ex-rules\":{\"rules-file\":\"expansion_panel_relevance_rules.yml\"}}},\"index\":\"6\",\"is_visible\":true}]";
         JSONArray fields = formUtils.createExpansionPanelValues(new JSONArray(selectedValues));
         Assert.assertNotNull(fields);
-        Assert.assertEquals(3, fields.length());
+        Assert.assertEquals(5, fields.length());
+    }
+
+    @Test
+    public void testCheckValuesContent() throws JSONException {
+        JSONArray value = new JSONArray("[\n" +
+                "  {\n" +
+                "    \"key\": \"blood_type_test_status\",\n" +
+                "    \"type\": \"extended_radio_button\",\n" +
+                "    \"label\": \"Blood type test\",\n" +
+                "    \"index\": 0,\n" +
+                "    \"values\": [\n" +
+                "      \"done_today:Done today\"\n" +
+                "    ],\n" +
+                "    \"openmrs_attributes\": {\n" +
+                "      \"openmrs_entity_parent\": \"\",\n" +
+                "      \"openmrs_entity\": \"concept\",\n" +
+                "      \"openmrs_entity_id\": \"165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+                "    },\n" +
+                "    \"value_openmrs_attributes\": [\n" +
+                "      {\n" +
+                "        \"key\": \"blood_type_test_status\",\n" +
+                "        \"openmrs_entity_parent\": \"\",\n" +
+                "        \"openmrs_entity\": \"concept\",\n" +
+                "        \"openmrs_entity_id\": \"165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+                "      }\n" +
+                "    ]\n" +
+                "  }\n" +
+                "]");
+        boolean showHidden = formUtils.checkValuesContent(value);
+        Assert.assertFalse(showHidden);
+    }
+
+    @Test
+    public void testCheckValuesContentWithMultipleValues() throws JSONException {
+        JSONArray value = new JSONArray("[{\"key\":\"blood_type_test_status\",\"type\":\"extended_radio_button\",\"label\":\"Blood type test\",\"index\":0,\"values\":[\"done_today:Done today\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"blood_type_test_status\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]},{\"key\":\"blood_type_test_date_today_hidden\",\"type\":\"hidden\",\"label\":\"\",\"index\":2,\"values\":[\"10-03-2020\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\"}},{\"key\":\"blood_type_test_date\",\"type\":\"date_picker\",\"label\":\"Blood type test date\",\"index\":3,\"values\":[\"10-03-2020\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"300AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163724AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}}]");
+        boolean showHidden = formUtils.checkValuesContent(value);
+        Assert.assertTrue(showHidden);
+    }
+
+    @Test
+    public void testAddFormDetails() {
+        String form = "{\"count\":\"1\",\"encounter_type\":\"Test\",\"entity_id\":\"\",\"relational_id\":\"\",\"validate_on_submit\":true,\"show_errors_on_submit\":true,\"form_version\":\"0.0.1\",\"step1\":{\"title\":\"Basic Form One\",\"next\":\"step2\",\"fields\":[{\"key\":\"user_image\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"type\":\"choose_image\",\"uploadButtonText\":\"Take a photo of the child\"}]}}";
+        String updatedForm = formUtils.addFormDetails(form);
+        Assert.assertNotNull(updatedForm);
+        Assert.assertTrue(updatedForm.contains("appVersionName"));
+    }
+
+    @Test
+    public void testAddFormDetailsWithNull() {
+        String updatedForm = formUtils.addFormDetails(null);
+        Assert.assertNotNull(updatedForm);
+        Assert.assertTrue(StringUtils.isAllBlank(updatedForm));
+        Assert.assertFalse(updatedForm.contains("appVersionName"));
+    }
+
+    @Test
+    public void testLoadExpansionPanelValues() throws JSONException {
+        JSONArray jsonArray = new JSONArray("[{\"key\":\"accordion_panel_demo\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"text\":\"Expansion Panel Demo\",\"type\":\"expansion_panel\",\"content_form\":\"expansion_panel_sub_form\",\"container\":\"anc_test\",\"value\":[{\"key\":\"blood_type_test_status\",\"type\":\"extended_radio_button\",\"label\":\"Blood type test\",\"index\":0,\"values\":[\"done_today:Done today\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"blood_type_test_status\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]},{\"key\":\"blood_type_test_date_today_hidden\",\"type\":\"hidden\",\"label\":\"\",\"index\":2,\"values\":[\"10-03-2020\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\"}},{\"key\":\"blood_type_test_date\",\"type\":\"date_picker\",\"label\":\"Blood type test date\",\"index\":3,\"values\":[\"10-03-2020\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"300AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163724AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}},{\"key\":\"blood_type\",\"type\":\"native_radio\",\"label\":\"Blood type\",\"index\":4,\"values\":[\"ab:AB\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163126AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"blood_type\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163117AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]},{\"key\":\"rh_factor\",\"type\":\"native_radio\",\"label\":\"Rh factor\",\"index\":5,\"values\":[\"positive:Positive\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"160232AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"rh_factor\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"703AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]}],\"required_fields\":[\"blood_type_test_status\",\"blood_type\",\"rh_factor\"]}]");
+        JSONArray values = formUtils.loadExpansionPanelValues(jsonArray,"accordion_panel_demo");
+        Assert.assertNotNull(values);
+        Assert.assertEquals(5, values.length());
+    }
+
+    @Test
+    public void testCreateSecondaryValuesMap() throws JSONException {
+        JSONArray jsonArray = new JSONArray("[{\"key\":\"accordion_panel_demo\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"text\":\"Expansion Panel Demo\",\"type\":\"expansion_panel\",\"content_form\":\"expansion_panel_sub_form\",\"container\":\"anc_test\",\"value\":[{\"key\":\"blood_type_test_status\",\"type\":\"extended_radio_button\",\"label\":\"Blood type test\",\"index\":0,\"values\":[\"done_today:Done today\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"blood_type_test_status\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]},{\"key\":\"blood_type_test_date_today_hidden\",\"type\":\"hidden\",\"label\":\"\",\"index\":2,\"values\":[\"10-03-2020\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\"}},{\"key\":\"blood_type_test_date\",\"type\":\"date_picker\",\"label\":\"Blood type test date\",\"index\":3,\"values\":[\"10-03-2020\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"300AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163724AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}},{\"key\":\"blood_type\",\"type\":\"native_radio\",\"label\":\"Blood type\",\"index\":4,\"values\":[\"ab:AB\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163126AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"blood_type\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163117AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]},{\"key\":\"rh_factor\",\"type\":\"native_radio\",\"label\":\"Rh factor\",\"index\":5,\"values\":[\"positive:Positive\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"160232AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"rh_factor\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"703AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]}],\"required_fields\":[\"blood_type_test_status\",\"blood_type\",\"rh_factor\"]}]");
+        JSONArray values = formUtils.loadExpansionPanelValues(jsonArray,"accordion_panel_demo");
+        Assert.assertNotNull(values);
+
+        Map<String, ExpansionPanelValuesModel> valuesModelMap = formUtils.createSecondaryValuesMap(values);
+        Assert.assertNotNull(valuesModelMap);
+        Assert.assertTrue(valuesModelMap.containsKey("blood_type_test_status"));
+
+        ExpansionPanelValuesModel valuesModel = valuesModelMap.get("blood_type_test_status");
+        Assert.assertNotNull(valuesModel);
+        Assert.assertEquals("Blood type test", valuesModel.getLabel());
     }
 }
