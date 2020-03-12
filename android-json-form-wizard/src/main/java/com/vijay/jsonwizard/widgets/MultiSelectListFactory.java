@@ -47,7 +47,7 @@ import java.util.List;
 import timber.log.Timber;
 
 public class MultiSelectListFactory implements FormWidgetFactory {
-    public JSONObject jsonObject = new JSONObject();
+    public JSONObject jsonObject;
     public String currentAdapterKey;
     public Context context;
     private JsonFormFragment jsonFormFragment;

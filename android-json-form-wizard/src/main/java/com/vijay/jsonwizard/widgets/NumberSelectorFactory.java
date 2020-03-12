@@ -44,9 +44,6 @@ public class NumberSelectorFactory implements FormWidgetFactory {
     private Map<String, JSONObject> jsonObjectMap = new HashMap<>();
     private Map<String, LinearLayout> rootLayoutMap = new HashMap<>();
 
-    public NumberSelectorFactory() {
-        NumberSelectorFactory.receiver = new NumberSelectorFactoryReceiver();
-    }
 
     @SuppressLint("NewApi")
     private static void setSelectedColor(Context context, CustomTextView customTextView, int item, int numberOfSelectors,
@@ -161,7 +158,10 @@ public class NumberSelectorFactory implements FormWidgetFactory {
 
     }
 
-    public static NumberSelectorFactoryReceiver getNumberSelectorsReceiver() {
+    public NumberSelectorFactoryReceiver getNumberSelectorsReceiver() {
+        if (receiver == null) {
+            receiver = new NumberSelectorFactoryReceiver();
+        }
         return receiver;
     }
 
