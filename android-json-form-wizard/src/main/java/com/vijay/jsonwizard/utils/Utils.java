@@ -401,10 +401,10 @@ public class Utils {
 
         try {
             AssetManager assetManager = context.getAssets();
-            InputStream inputStream = assetManager.open("app.properties");
+            InputStream inputStream = assetManager.open(JsonFormConstants.APP_PROPERTIES_FILE);
             properties.load(inputStream);
-        } catch (Exception var4) {
-            Timber.e(var4);
+        } catch (Exception exception) {
+            Timber.e(exception);
         }
 
         return properties;

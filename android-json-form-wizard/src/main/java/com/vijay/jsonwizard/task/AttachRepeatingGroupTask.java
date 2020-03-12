@@ -47,7 +47,6 @@ import static com.vijay.jsonwizard.utils.Utils.showProgressDialog;
 
 public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> {
 
-    protected final int REPEATING_GROUP_LABEL_TEXT_COLOR = R.color.black;
     private final ViewParent parent;
     private final ViewGroup.LayoutParams WIDTH_MATCH_PARENT_HEIGHT_WRAP_CONTENT = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     private LinearLayout rootLayout;
@@ -132,7 +131,7 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         try {
             ((JsonApi) widgetArgs.getContext()).invokeRefreshLogic(null, false, null, null);
         } catch (Exception e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
         hideProgressDialog();
         doneButton.setImageResource(R.drawable.ic_done_green);
@@ -185,7 +184,7 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         formattedLabel.setSpan(new StyleSpan(Typeface.ITALIC), 0, formattedLabel.length(), 0);
         repeatingGroupLabel.setText(formattedLabel);
         repeatingGroupLabel.setTextSize(context.getResources().getInteger(R.integer.repeating_group_label_text_size));
-        repeatingGroupLabel.setTextColor(context.getResources().getColor(REPEATING_GROUP_LABEL_TEXT_COLOR));
+        repeatingGroupLabel.setTextColor(context.getResources().getColor(R.color.black));
         referenceEditText.setTag(R.id.repeating_group_item_count, repeatingGroupItemCount + 1);
     }
 
