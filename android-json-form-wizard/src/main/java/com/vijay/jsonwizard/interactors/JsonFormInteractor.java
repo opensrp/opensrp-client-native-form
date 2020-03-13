@@ -43,8 +43,10 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by vijay on 5/19/15.
@@ -54,13 +56,16 @@ public class JsonFormInteractor {
     private static final String TAG = "JsonFormInteractor";
     protected static JsonFormInteractor INSTANCE;
     public Map<String, FormWidgetFactory> map;
+    private final Set<String> defaultTranslatableWidgetFields;
 
     public JsonFormInteractor() {
         this(null);
     }
 
     public JsonFormInteractor(@Nullable Map<String, FormWidgetFactory> additionalWidgetsMap) {
+        defaultTranslatableWidgetFields = new HashSet<>();
         registerWidgets();
+        registerDefaultTranslatableFields();
         if (additionalWidgetsMap != null) {
             for (Map.Entry<String, FormWidgetFactory> widgetFactoryEntry : additionalWidgetsMap.entrySet()) {
                 map.put(widgetFactoryEntry.getKey(), widgetFactoryEntry.getValue());
@@ -79,6 +84,15 @@ public class JsonFormInteractor {
 
     public static JsonFormInteractor getInstance() {
         return getInstance(null);
+    }
+
+    private void registerDefaultTranslatableFields() {
+        defaultTranslatableWidgetFields.add("label");
+        defaultTranslatableWidgetFields.add("text");
+        defaultTranslatableWidgetFields.add("title");
+        defaultTranslatableWidgetFields.add("hint");
+        defaultTranslatableWidgetFields.add("v_required.err");
+        defaultTranslatableWidgetFields.add("v_regex.err");
     }
 
     protected void registerWidgets() {
@@ -197,6 +211,9 @@ public class JsonFormInteractor {
                             + e.getMessage());
             e.printStackTrace();
         }
+    }
 
+    public Set<String> getDefaultTranslatableWidgetFields() {
+        return defaultTranslatableWidgetFields;
     }
 }
