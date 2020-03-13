@@ -207,13 +207,14 @@ public class JsonFormConstants {
     public static final String FALSE = "false";
     public static final String DISPLAY_SCROLL_BARS = "display_scroll_bars";
     public static final String SKIP_BLANK_STEPS = "skip_blank_steps";
-    public static final String MULTI_SELECT_LIST ="multi_select_list" ;
+    public static final String MULTI_SELECT_LIST = "multi_select_list";
     public static final String FORM_VERSION = "form_version";
     public static final String LABEL_CONSTRAINT_LAYOUT = "label_constraint_layout";
     public static final String STEP = "step";
     public static final String RULE = "rule/";
     public static final String REFERENCE_EDIT_TEXT = "reference_edit_text";
     public static final String DISPLAY_LABEL = "display_label";
+    public static final String PERFORM_FORM_TRANSLATION = "perform_form_translation";
 
     public interface MultiSelectUtils {
         String IS_HEADER = "isHeader";
