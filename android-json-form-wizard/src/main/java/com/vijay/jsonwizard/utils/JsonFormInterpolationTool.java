@@ -1,15 +1,16 @@
 package com.vijay.jsonwizard.utils;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 
 import java.io.FileNotFoundException;
-import java.util.Map;
 
 import timber.log.Timber;
 
+import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP;
 import static com.vijay.jsonwizard.utils.Utils.getFileContentsAsString;
 
 /**
@@ -42,8 +43,11 @@ public class JsonFormInterpolationTool {
         for (String str : JsonFormInteractor.getInstance().getDefaultTranslatableWidgetFields()) {
             printToSystemOut(str);
         }
-        for (Map.Entry<String, JsonElement> entry : jsonForm.entrySet()) {
-            printToSystemOut("The key is: " + entry.getKey() + " and the value is: " + entry.getValue());
+
+        int numOfSteps = getNumOfSteps(jsonForm);
+        for (int i = 1; i <= numOfSteps; i++) {
+            String stepName = STEP + i;
+            printToSystemOut("The key is: " + stepName + " and the value is: " + getWidgets(jsonForm, stepName));
         }
     }
 
@@ -53,5 +57,19 @@ public class JsonFormInterpolationTool {
 
     public static void main(String[] args) {
         processForm();
+    }
+
+    private static JsonArray getWidgets(JsonObject jsonForm, String step) {
+        JsonObject stepJsonObject = jsonForm.has(step) ? jsonForm.getAsJsonObject(step) : null;
+        if (stepJsonObject == null) {
+            return null;
+        }
+
+        return stepJsonObject.has(JsonFormConstants.FIELDS) ? stepJsonObject
+                .getAsJsonArray(JsonFormConstants.FIELDS) : null;
+    }
+
+    private static int getNumOfSteps(JsonObject jsonForm) {
+        return jsonForm.has(JsonFormConstants.COUNT) ? jsonForm.get(JsonFormConstants.COUNT).getAsInt() : -1;
     }
 }
