@@ -6,8 +6,8 @@ import com.google.gson.JsonObject;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 
+import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Iterator;
 import java.util.Set;
 
 import timber.log.Timber;
@@ -31,7 +31,9 @@ public class JsonFormInterpolationTool {
             printToSystemOut("\nForm before interpolation:\n");
             printToSystemOut(form);
 
-            performInterpolation(stringToJson(form));
+            String[] formPath = formToTranslate.split(File.separator);
+            String formName = formPath[formPath.length - 1].split("\\.")[0];
+            performInterpolation(stringToJson(form), formName);
         } catch (FileNotFoundException e) {
             Timber.e(e);
         }
@@ -41,7 +43,7 @@ public class JsonFormInterpolationTool {
         return new Gson().fromJson(json, JsonObject.class);
     }
 
-    private static void performInterpolation(JsonObject jsonForm) {
+    private static void performInterpolation(JsonObject jsonForm, String formName) {
         printToSystemOut("List of translatable widget fields:\n");
         for (String str : JsonFormInteractor.getInstance().getDefaultTranslatableWidgetFields()) {
             printToSystemOut(str);
@@ -52,13 +54,13 @@ public class JsonFormInterpolationTool {
             String stepName = STEP + i;
             JsonArray stepWidgets = getWidgets(jsonForm, stepName);
             printToSystemOut("The key is: " + stepName + " and the value is: " + stepWidgets);
-            replaceStringLiterals(stepName, stepWidgets, JsonFormInteractor.getInstance().getDefaultTranslatableWidgetFields());
+            replaceStringLiterals(formName + "." + stepName, stepWidgets, JsonFormInteractor.getInstance().getDefaultTranslatableWidgetFields());
         }
 
         printToSystemOut("Interpolated string: " + jsonForm);
     }
 
-    private static void replaceStringLiterals(String stepName, JsonArray stepWidgets, Set<String> fieldsToTranslate) {
+    private static void replaceStringLiterals(String interpolationStrPrefix, JsonArray stepWidgets, Set<String> fieldsToTranslate) {
         for (int i = 0; i < stepWidgets.size(); i++) {
             JsonObject widget = stepWidgets.get(i).getAsJsonObject();
             String widgetKey = widget.get(KEY).getAsString();
@@ -72,7 +74,7 @@ public class JsonFormInterpolationTool {
                     }
                 }
 
-                String interpolationStr = "{{" + stepName + "." + widgetKey + "." + fieldName + "}}";
+                String interpolationStr = "{{" + interpolationStrPrefix + "." + widgetKey + "." + fieldName + "}}";
                 if (fieldToInterpolate != null) {
                     fieldToInterpolate.addProperty(fieldHierarchy[fieldHierarchy.length - 1], interpolationStr);
                 }
@@ -80,14 +82,6 @@ public class JsonFormInterpolationTool {
                 printToSystemOut("Interpolation String for widget " + widgetKey +  " is: " + interpolationStr);
             }
         }
-    }
-
-    private static void printToSystemOut(String str) {
-        System.out.println(str);
-    }
-
-    public static void main(String[] args) {
-        processForm();
     }
 
     private static JsonArray getWidgets(JsonObject jsonForm, String step) {
@@ -102,5 +96,13 @@ public class JsonFormInterpolationTool {
 
     private static int getNumOfSteps(JsonObject jsonForm) {
         return jsonForm.has(JsonFormConstants.COUNT) ? jsonForm.get(JsonFormConstants.COUNT).getAsInt() : -1;
+    }
+
+    private static void printToSystemOut(String str) {
+        System.out.println(str);
+    }
+
+    public static void main(String[] args) {
+        processForm();
     }
 }
