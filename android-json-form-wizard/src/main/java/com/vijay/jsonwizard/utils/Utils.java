@@ -40,7 +40,6 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,12 +51,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import timber.log.Timber;
 
 import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
+import static com.vijay.jsonwizard.utils.NativeFormLangUtils.getTranslatedString;
 
 public class Utils {
     private static ProgressDialog progressDialog;
@@ -482,16 +483,57 @@ public class Utils {
 
     public static Iterable<Object> readYamlFile(String fileName, Context context) {
         Yaml yaml = new Yaml();
-        InputStreamReader inputStreamReader;
         Iterable<Object> objectIterable = null;
         try {
-            inputStreamReader = new InputStreamReader(context.getAssets().open(fileName));
-            objectIterable = yaml.loadAll(inputStreamReader);
+            String translatedYamlStr = getTranslatedYamlFile(fileName, context);
+            objectIterable = yaml.loadAll(translatedYamlStr);
         } catch (IOException e) {
             Timber.e(e);
         }
 
         return objectIterable;
+    }
+
+    /**
+     * Translates a yaml file specified by {@param fileName} and returns its String representation
+     *
+     * @param fileName
+     * @param context
+     *
+     * @return Translated Yaml file in its String representation
+     *
+     * @throws IOException
+     */
+    public static String getTranslatedYamlFile(String fileName, Context context) throws IOException {
+        return getTranslatedString(getAssetFileAsString(fileName, context));
+    }
+
+    /**
+     *
+     * Gets a file specified by {@param fileName} from the assets folder as a String
+     *
+     * @param fileName
+     * @param context
+     *
+     * @return A file from the assets folder as a String
+     *
+     * @throws IOException
+     */
+    public static String getAssetFileAsString(String fileName, Context context) throws IOException {
+        InputStream inputStream = context.getAssets().open(fileName);
+        return convertStreamToString(inputStream);
+    }
+
+    /**
+     * Converts an {@link InputStream} into a String
+     *
+     * @param inputStream
+     *
+     * @return String representation of an {@link InputStream}
+     */
+    public static String convertStreamToString(InputStream inputStream) {
+        Scanner s = new Scanner(inputStream).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
     }
 
     public static void buildRulesWithUniqueId(JSONObject element, String uniqueId, String ruleType, WidgetArgs widgetArgs, Map<String, List<Map<String, Object>>> rulesFileMap) throws JSONException {

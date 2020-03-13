@@ -33,6 +33,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.vijay.jsonwizard.utils.NativeFormLangUtils.getTranslatedString;
+
 abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnFieldsInvalid {
     protected static final String TAG = JsonFormActivity.class.getSimpleName();
     protected static final String JSON_STATE = "jsonState";
@@ -69,7 +71,7 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
         lifeCycleListeners = new ArrayList<>();
         isFormFragmentInitialized = false;
         if (savedInstanceState == null) {
-            init(getIntent().getStringExtra(JsonFormConstants.JSON_FORM_KEY.JSON));
+            init(getForm());
             initializeFormFragment();
             onFormStart();
             this.form = extractForm(getIntent().getSerializableExtra(JsonFormConstants.JSON_FORM_KEY.FORM));
@@ -80,6 +82,14 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
         for (LifeCycleListener lifeCycleListener : lifeCycleListeners) {
             lifeCycleListener.onCreate(savedInstanceState);
         }
+    }
+
+    private String getForm() {
+        String jsonForm = getIntent().getStringExtra(JsonFormConstants.JSON_FORM_KEY.JSON);
+        if (getIntent().getBooleanExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, false)) {
+            jsonForm = getTranslatedString(jsonForm);
+        }
+        return jsonForm;
     }
 
     public void init(String json) {
