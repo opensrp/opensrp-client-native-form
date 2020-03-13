@@ -7,6 +7,8 @@ import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 
 import java.io.FileNotFoundException;
+import java.util.Iterator;
+import java.util.Set;
 
 import timber.log.Timber;
 
@@ -47,7 +49,15 @@ public class JsonFormInterpolationTool {
         int numOfSteps = getNumOfSteps(jsonForm);
         for (int i = 1; i <= numOfSteps; i++) {
             String stepName = STEP + i;
-            printToSystemOut("The key is: " + stepName + " and the value is: " + getWidgets(jsonForm, stepName));
+            JsonArray stepWidgets = getWidgets(jsonForm, stepName);
+            printToSystemOut("The key is: " + stepName + " and the value is: " + stepWidgets);
+            replaceStringLiterals(stepWidgets, JsonFormInteractor.getInstance().getDefaultTranslatableWidgetFields());
+        }
+    }
+
+    private static void replaceStringLiterals(JsonArray stepWidgets, Set<String> fieldsToTranslate) {
+        for (int i = 0; i < stepWidgets.size(); i++) {
+            printToSystemOut(stepWidgets.get(i).getAsJsonObject().toString());
         }
     }
 
