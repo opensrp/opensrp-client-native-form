@@ -38,6 +38,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.yaml.snakeyaml.Yaml;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
@@ -521,7 +523,21 @@ public class Utils {
      */
     public static String getAssetFileAsString(String fileName, Context context) throws IOException {
         InputStream inputStream = context.getAssets().open(fileName);
-        return convertStreamToString(inputStream);
+        String fileContents = convertStreamToString(inputStream);
+        if (inputStream != null) {
+            inputStream.close();
+        }
+        return fileContents;
+    }
+
+
+    public static String getFileContentsAsString(String filePath) throws FileNotFoundException {
+        Scanner scanner = new Scanner( new File(filePath) );
+        String fileContents = scanner.useDelimiter("\\A").next();
+        if (scanner != null) {
+            scanner.close();
+        }
+        return fileContents;
     }
 
     /**
