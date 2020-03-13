@@ -214,10 +214,10 @@ public class JsonFormConstants {
     public static final String RULE = "rule/";
     public static final String REFERENCE_EDIT_TEXT = "reference_edit_text";
     public static final String DISPLAY_LABEL = "display_label";
+    public static final String PERFORM_FORM_TRANSLATION = "perform_form_translation";
     public static final String APP_PROPERTIES_FILE = "app.properties";
     public static final String DISABLED = "disabled";
     public static final String ENCOUNTER_TYPE = "encounter_type";
-
     public interface MultiSelectUtils {
         String IS_HEADER = "isHeader";
         String TEXT = "text";

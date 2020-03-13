@@ -52,10 +52,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import timber.log.Timber;
+
+import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
+import static com.vijay.jsonwizard.utils.NativeFormLangUtils.getTranslatedString;
 
 public class Utils {
     public final static List<String> PREFICES_OF_INTEREST = Arrays.asList(RuleConstant.PREFIX.GLOBAL, RuleConstant.STEP);
@@ -613,6 +617,136 @@ public class Utils {
         Button okButton = buttonLayout.findViewById(R.id.ok_button);
         okButton.setEnabled(true);
         okButton.setClickable(true);
+    }
+
+
+    @NonNull
+    private static String cleanToken(String conditionTokenRaw) {
+        String conditionToken = conditionTokenRaw.trim();
+
+        for (int i = 0; i < conditionToken.length(); i++) {
+            if (JAVA_OPERATORS.contains(conditionToken.charAt(i))) {
+                if (i == 0) {
+                    conditionToken = cleanToken(conditionToken.substring(1));
+                } else {
+                    conditionToken = conditionToken.substring(0, conditionToken.indexOf(conditionToken.charAt(i)));
+                    break;
+                }
+            }
+        }
+
+        return conditionToken;
+    }
+
+    public static List<String> getConditionKeys(String condition) {
+        String cleanString = cleanConditionString(condition);
+        String[] conditionTokens = cleanString.split(" ");
+        Map<String, Boolean> conditionKeys = new HashMap<>();
+
+        for (String token : conditionTokens) {
+            if (token.contains(RuleConstant.STEP) || token.contains(RuleConstant.PREFIX.GLOBAL)) {
+                String conditionToken = cleanToken(token);
+                conditionKeys.put(conditionToken, true);
+            }
+        }
+
+        return new ArrayList<>(conditionKeys.keySet());
+    }
+
+    /**
+     * Translates a yaml file specified by {@param fileName} and returns its String representation
+     *
+     * @param fileName
+     * @param context
+     *
+     * @return Translated Yaml file in its String representation
+     *
+     * @throws IOException
+     */
+    public static String getTranslatedYamlFile(String fileName, Context context) throws IOException {
+        return getTranslatedString(getAssetFileAsString(fileName, context));
+    }
+
+    /**
+     *
+     * Gets a file specified by {@param fileName} from the assets folder as a String
+     *
+     * @param fileName
+     * @param context
+     *
+     * @return A file from the assets folder as a String
+     *
+     * @throws IOException
+     */
+    public static String getAssetFileAsString(String fileName, Context context) throws IOException {
+        InputStream inputStream = context.getAssets().open(fileName);
+        return convertStreamToString(inputStream);
+    }
+
+    /**
+     * Converts an {@link InputStream} into a String
+     *
+     * @param inputStream
+     *
+     * @return String representation of an {@link InputStream}
+     */
+    public static String convertStreamToString(InputStream inputStream) {
+        Scanner s = new Scanner(inputStream).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
+    }
+
+    public static void buildRulesWithUniqueId(JSONObject element, String uniqueId, String ruleType, Context context, Map<String, List<Map<String, Object>>> rulesFileMap) throws JSONException {
+        JSONObject rules = element.optJSONObject(ruleType);
+        if (rules != null) {
+            if (rules.has(RuleConstant.RULES_ENGINE) && context != null) {
+                JSONObject jsonRulesEngineObject = rules.optJSONObject(RuleConstant.RULES_ENGINE);
+                JSONObject jsonExRules = jsonRulesEngineObject.optJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES);
+                String fileName = JsonFormConstants.RULE + jsonExRules.optString(RuleConstant.RULES_DYNAMIC);
+
+                if (!rulesFileMap.containsKey(fileName)) {
+                    Iterable<Object> objectIterable = readYamlFile(fileName, context);
+                    List<Map<String, Object>> arrayList = new ArrayList<>();
+                    while (objectIterable.iterator().hasNext()) {
+                        Map<String, Object> map = (Map<String, Object>) objectIterable.iterator().next();
+                        if (map != null) {
+                            arrayList.add(map);
+                        }
+                    }
+                    rulesFileMap.put(fileName, arrayList);
+                }
+
+                List<Map<String, Object>> mapArrayList = rulesFileMap.get(fileName);
+
+                JSONArray jsonArrayRules = new JSONArray();
+                JSONObject keyJsonObject = new JSONObject();
+                keyJsonObject.put(JsonFormConstants.KEY, uniqueId);
+                jsonArrayRules.put(keyJsonObject);
+                for (Map<String, Object> map : mapArrayList) {
+                    JSONObject jsonRulesDynamicObject = new JSONObject();
+                    String strCondition = (String) map.get(RuleConstant.CONDITION);
+                    List<String> conditionKeys = getConditionKeys(strCondition);
+                    for (String conditionKey : conditionKeys) {
+                        strCondition = strCondition.replace(conditionKey, conditionKey + "_" + uniqueId);
+                    }
+                    jsonRulesDynamicObject.put(RuleConstant.NAME, String.valueOf(map.get(RuleConstant.NAME)).concat("_").concat(uniqueId));
+                    jsonRulesDynamicObject.put(RuleConstant.DESCRIPTION, String.valueOf(map.get(RuleConstant.DESCRIPTION)).concat("_").concat(uniqueId));
+                    jsonRulesDynamicObject.put(RuleConstant.PRIORITY, map.get(RuleConstant.PRIORITY));
+                    jsonRulesDynamicObject.put(RuleConstant.ACTIONS, ((ArrayList<String>) map.get(RuleConstant.ACTIONS)).get(0));
+                    jsonRulesDynamicObject.put(RuleConstant.CONDITION, String.valueOf(strCondition));
+                    jsonArrayRules.put(jsonRulesDynamicObject);
+                }
+
+                jsonExRules.put(RuleConstant.RULES_DYNAMIC, jsonArrayRules);
+
+            } else {
+                String currKey = rules.keys().next();
+                JSONObject rulesObj = rules.getJSONObject(currKey);
+                String newKey = currKey + "_" + uniqueId;
+                rules.remove(currKey);
+                rules.put(newKey, rulesObj);
+            }
+        }
+
     }
 }
 
