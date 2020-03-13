@@ -54,6 +54,8 @@ public class JsonFormInterpolationTool {
             printToSystemOut("The key is: " + stepName + " and the value is: " + stepWidgets);
             replaceStringLiterals(stepName, stepWidgets, JsonFormInteractor.getInstance().getDefaultTranslatableWidgetFields());
         }
+
+        printToSystemOut("Interpolated string: " + jsonForm);
     }
 
     private static void replaceStringLiterals(String stepName, JsonArray stepWidgets, Set<String> fieldsToTranslate) {
@@ -62,7 +64,19 @@ public class JsonFormInterpolationTool {
             String widgetKey = widget.get(KEY).getAsString();
             printToSystemOut(widget.toString());
             for (String fieldName : fieldsToTranslate) {
-                String interpolationStr = stepName + "." + widgetKey + "." + fieldName;
+                String[] fieldHierarchy = fieldName.split("\\.");
+                JsonObject fieldToInterpolate = widget;
+                for (int j = 0; j < fieldHierarchy.length - 1; j++) {
+                    if (fieldToInterpolate != null) {
+                        fieldToInterpolate = fieldToInterpolate.getAsJsonObject(fieldHierarchy[j]);
+                    }
+                }
+
+                String interpolationStr = "{{" + stepName + "." + widgetKey + "." + fieldName + "}}";
+                if (fieldToInterpolate != null) {
+                    fieldToInterpolate.addProperty(fieldHierarchy[fieldHierarchy.length - 1], interpolationStr);
+                }
+
                 printToSystemOut("Interpolation String for widget " + widgetKey +  " is: " + interpolationStr);
             }
         }
