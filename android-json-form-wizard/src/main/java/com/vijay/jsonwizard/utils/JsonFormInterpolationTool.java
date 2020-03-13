@@ -12,6 +12,7 @@ import java.util.Set;
 
 import timber.log.Timber;
 
+import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP;
 import static com.vijay.jsonwizard.utils.Utils.getFileContentsAsString;
 
@@ -22,10 +23,10 @@ public class JsonFormInterpolationTool {
 
     private static void processForm() {
         try {
-            String fileToTranslate = System.getenv("FILE_TO_TRANSLATE");
-            printToSystemOut("Interpolating form at path: " + fileToTranslate + " ...\n");
+            String formToTranslate = System.getenv("FORM_TO_TRANSLATE");
+            printToSystemOut("Interpolating form at path: " + formToTranslate + " ...\n");
 
-            String form = getFileContentsAsString(fileToTranslate);
+            String form = getFileContentsAsString(formToTranslate);
 
             printToSystemOut("\nForm before interpolation:\n");
             printToSystemOut(form);
@@ -51,13 +52,19 @@ public class JsonFormInterpolationTool {
             String stepName = STEP + i;
             JsonArray stepWidgets = getWidgets(jsonForm, stepName);
             printToSystemOut("The key is: " + stepName + " and the value is: " + stepWidgets);
-            replaceStringLiterals(stepWidgets, JsonFormInteractor.getInstance().getDefaultTranslatableWidgetFields());
+            replaceStringLiterals(stepName, stepWidgets, JsonFormInteractor.getInstance().getDefaultTranslatableWidgetFields());
         }
     }
 
-    private static void replaceStringLiterals(JsonArray stepWidgets, Set<String> fieldsToTranslate) {
+    private static void replaceStringLiterals(String stepName, JsonArray stepWidgets, Set<String> fieldsToTranslate) {
         for (int i = 0; i < stepWidgets.size(); i++) {
-            printToSystemOut(stepWidgets.get(i).getAsJsonObject().toString());
+            JsonObject widget = stepWidgets.get(i).getAsJsonObject();
+            String widgetKey = widget.get(KEY).getAsString();
+            printToSystemOut(widget.toString());
+            for (String fieldName : fieldsToTranslate) {
+                String interpolationStr = stepName + "." + widgetKey + "." + fieldName;
+                printToSystemOut("Interpolation String for widget " + widgetKey +  " is: " + interpolationStr);
+            }
         }
     }
 
