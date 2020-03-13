@@ -546,19 +546,13 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     @Override
     protected void initiateFormUpdate(JSONObject json) {
         if (getForm() != null && ((getForm().getHiddenFields() != null && !getForm().getHiddenFields().isEmpty()) || (getForm().getDisabledFields() != null && !getForm().getDisabledFields().isEmpty()))) {
-            String strCount = json.optString(JsonFormConstants.COUNT);
-            if (StringUtils.isNotBlank(strCount)) {
-                int count = Integer.parseInt(strCount);
-                for (int i = 1; i <= count; i++) {
-                    JSONObject ithStepObject = json.optJSONObject(JsonFormConstants.STEP + i);
-                    JSONArray fieldsJsonObject = ithStepObject.optJSONArray(JsonFormConstants.FIELDS);
-                    for (int k = 0; k < fieldsJsonObject.length(); k++) {
-                        Utils.handleFieldBehaviour(fieldsJsonObject.optJSONObject(k), getForm());
-                    }
-                }
+            JSONArray fieldsJsonObject = FormUtils.getMultiStepFormFields(json);
+            for (int k = 0; k < fieldsJsonObject.length(); k++) {
+                Utils.handleFieldBehaviour(fieldsJsonObject.optJSONObject(k), getForm());
             }
         }
     }
+
 
     @Override
     public void updateGenericPopupSecondaryValues(JSONArray jsonArray) {
@@ -638,16 +632,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         synchronized (getmJSONObject()) {
             return getmJSONObject().optBoolean(JsonFormConstants.SKIP_BLANK_STEPS, false);
         }
-    }
-
-    @Override
-    public void makeFieldHidden(JSONObject fieldObject) {
-        Utils.makeFieldHidden(fieldObject);
-    }
-
-    @Override
-    public void makeFieldDisabled(JSONObject fieldObject) {
-        Utils.makeFieldDisabled(fieldObject);
     }
 
     @Override

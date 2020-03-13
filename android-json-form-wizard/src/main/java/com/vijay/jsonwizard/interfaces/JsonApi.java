@@ -121,9 +121,5 @@ public interface JsonApi {
 
     void setPreviousPressed(boolean previousPressed);
 
-    void makeFieldHidden(JSONObject fieldObject);
-
-    void makeFieldDisabled(JSONObject fieldObject);
-
     Form form();
 }

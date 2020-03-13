@@ -84,9 +84,8 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
 
     public void init(String json) {
         try {
-            JSONObject formObject = new JSONObject(json);
-            setmJSONObject(formObject);
-            if (!mJSONObject.has("encounter_type")) {
+            setmJSONObject(new JSONObject(json));
+            if (!mJSONObject.has(JsonFormConstants.ENCOUNTER_TYPE)) {
                 mJSONObject = new JSONObject();
                 throw new JSONException("Form encounter_type not set");
             }

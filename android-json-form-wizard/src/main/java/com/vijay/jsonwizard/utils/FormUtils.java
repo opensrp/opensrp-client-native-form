@@ -659,7 +659,7 @@ public class FormUtils {
             if (jsonForm.has(JsonFormConstants.COUNT)) {
                 int stepCount = Integer.parseInt(jsonForm.getString(JsonFormConstants.COUNT));
                 for (int i = 0; i < stepCount; i++) {
-                    String stepName = "step" + (i + 1);
+                    String stepName = JsonFormConstants.STEP + (i + 1);
                     JSONObject step = jsonForm.has(stepName) ? jsonForm.getJSONObject(stepName) : null;
                     if (step != null && step.has(JsonFormConstants.FIELDS)) {
                         JSONArray stepFields = step.getJSONArray(JsonFormConstants.FIELDS);

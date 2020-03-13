@@ -25,7 +25,6 @@ import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.CompoundButton;
 import com.vijay.jsonwizard.customviews.ExpansionPanelGenericPopupDialog;
 import com.vijay.jsonwizard.domain.Form;
-import com.vijay.jsonwizard.domain.WidgetArgs;
 import com.vijay.jsonwizard.event.BaseEvent;
 import com.vijay.jsonwizard.rules.RuleConstant;
 import com.vijay.jsonwizard.views.CustomTextView;
@@ -284,42 +283,6 @@ public class Utils {
 
     }
 
-    public static void updateSubFormFields(JSONObject subForm, Form form) {
-        for (int i = 0; i < subForm.optJSONArray(JsonFormConstants.CONTENT_FORM).length(); i++) {
-            handleFieldBehaviour(subForm.optJSONArray(JsonFormConstants.CONTENT_FORM).optJSONObject(i), form);
-        }
-    }
-
-    public static void handleFieldBehaviour(JSONObject fieldObject, Form form) {
-        String key = fieldObject.optString(JsonFormConstants.KEY);
-
-        if (form != null && form.getHiddenFields() != null && form.getHiddenFields().contains(key)) {
-            makeFieldHidden(fieldObject);
-        }
-
-        if (form != null && form.getDisabledFields() != null && form.getDisabledFields().contains(key)) {
-            makeFieldDisabled(fieldObject);
-        }
-
-    }
-
-    public static void makeFieldDisabled(JSONObject fieldObject) {
-        try {
-            makeFieldHidden(fieldObject);
-            fieldObject.put(JsonFormConstants.DISABLED, true);
-        } catch (JSONException e) {
-            Timber.e(e);
-        }
-    }
-
-    public static void makeFieldHidden(JSONObject fieldObject) {
-        try {
-            fieldObject.put(JsonFormConstants.TYPE, JsonFormConstants.HIDDEN);
-        } catch (JSONException e) {
-            Timber.e(e);
-        }
-    }
-
     @NonNull
     private static String cleanToken(String conditionTokenRaw) {
         String conditionToken = conditionTokenRaw.trim();
@@ -378,16 +341,16 @@ public class Utils {
         return objectIterable;
     }
 
-    public static void buildRulesWithUniqueId(JSONObject element, String uniqueId, String ruleType, WidgetArgs widgetArgs, Map<String, List<Map<String, Object>>> rulesFileMap) throws JSONException {
+    public static void buildRulesWithUniqueId(JSONObject element, String uniqueId, String ruleType, Context context, Map<String, List<Map<String, Object>>> rulesFileMap) throws JSONException {
         JSONObject rules = element.optJSONObject(ruleType);
         if (rules != null) {
-            if (rules.has(RuleConstant.RULES_ENGINE) && widgetArgs != null) {
+            if (rules.has(RuleConstant.RULES_ENGINE) && context != null) {
                 JSONObject jsonRulesEngineObject = rules.optJSONObject(RuleConstant.RULES_ENGINE);
                 JSONObject jsonExRules = jsonRulesEngineObject.optJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES);
                 String fileName = JsonFormConstants.RULE + jsonExRules.optString(RuleConstant.RULES_DYNAMIC);
 
                 if (!rulesFileMap.containsKey(fileName)) {
-                    Iterable<Object> objectIterable = readYamlFile(fileName, widgetArgs.getContext());
+                    Iterable<Object> objectIterable = readYamlFile(fileName, context);
                     List<Map<String, Object>> arrayList = new ArrayList<>();
                     while (objectIterable.iterator().hasNext()) {
                         Map<String, Object> map = (Map<String, Object>) objectIterable.iterator().next();
@@ -437,10 +400,10 @@ public class Utils {
 
         try {
             AssetManager assetManager = context.getAssets();
-            InputStream inputStream = assetManager.open("app.properties");
+            InputStream inputStream = assetManager.open(JsonFormConstants.APP_PROPERTIES_FILE);
             properties.load(inputStream);
-        } catch (Exception var4) {
-            Timber.e(var4);
+        } catch (Exception exception) {
+            Timber.e(exception);
         }
 
         return properties;
@@ -454,6 +417,52 @@ public class Utils {
             if (removeThisFields.contains(key)) {
                 viewIterator.remove();
             }
+        }
+    }
+
+    public static void updateSubFormFields(JSONObject subForm, Form form) {
+        for (int i = 0; i < subForm.optJSONArray(JsonFormConstants.CONTENT_FORM).length(); i++) {
+            handleFieldBehaviour(subForm.optJSONArray(JsonFormConstants.CONTENT_FORM).optJSONObject(i), form);
+        }
+    }
+
+    public static void handleFieldBehaviour(JSONObject fieldObject, Form form) {
+        String key = fieldObject.optString(JsonFormConstants.KEY);
+
+        if (form != null && form.getHiddenFields() != null && form.getHiddenFields().contains(key)) {
+            makeFieldHidden(fieldObject);
+        }
+
+        if (form != null && form.getDisabledFields() != null && form.getDisabledFields().contains(key)) {
+            makeFieldDisabled(fieldObject);
+        }
+
+    }
+
+    /**
+     * Used to change type of field to hidden and put attribute disabled as true
+     *
+     * @param fieldObject
+     */
+    public static void makeFieldDisabled(JSONObject fieldObject) {
+        try {
+            makeFieldHidden(fieldObject);
+            fieldObject.put(JsonFormConstants.DISABLED, true);
+        } catch (JSONException e) {
+            Timber.e(e);
+        }
+    }
+
+    /**
+     * Used to change type of field to hidden
+     *
+     * @param fieldObject
+     */
+    public static void makeFieldHidden(JSONObject fieldObject) {
+        try {
+            fieldObject.put(JsonFormConstants.TYPE, JsonFormConstants.HIDDEN);
+        } catch (JSONException e) {
+            Timber.e(e);
         }
     }
 
