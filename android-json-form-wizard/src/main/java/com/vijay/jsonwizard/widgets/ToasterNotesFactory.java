@@ -24,7 +24,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ToasterNotesFactory implements FormWidgetFactory {
     @Override
@@ -139,5 +141,10 @@ public class ToasterNotesFactory implements FormWidgetFactory {
         toasterNoteInfo.setTag(R.id.label_dialog_title, infoTitle);
         toasterNoteInfo.setOnClickListener(listener);
         views.add(linearLayout);
+    }
+
+    @Override
+    public Set<String> getCustomTranslatableWidgetFields() {
+        return new HashSet<>();
     }
 }

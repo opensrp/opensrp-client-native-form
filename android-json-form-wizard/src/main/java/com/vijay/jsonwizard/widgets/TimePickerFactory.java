@@ -32,8 +32,10 @@ import org.json.JSONObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 public class TimePickerFactory implements FormWidgetFactory {
     public static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm");
@@ -256,5 +258,10 @@ public class TimePickerFactory implements FormWidgetFactory {
         public static final String VALUE = (JsonFormConstants.VALUE);
 
         public static final String DEFAULT = "default";
+    }
+
+    @Override
+    public Set<String> getCustomTranslatableWidgetFields() {
+        return new HashSet<>();
     }
 }

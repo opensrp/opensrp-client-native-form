@@ -20,7 +20,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class HiddenTextFactory implements FormWidgetFactory {
 
@@ -95,4 +97,8 @@ public class HiddenTextFactory implements FormWidgetFactory {
         return R.layout.native_form_item_edit_text;
     }
 
+    @Override
+    public Set<String> getCustomTranslatableWidgetFields() {
+        return new HashSet<>();
+    }
 }

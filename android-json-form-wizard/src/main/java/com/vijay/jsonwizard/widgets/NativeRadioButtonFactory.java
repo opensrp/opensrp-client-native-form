@@ -45,8 +45,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static com.vijay.jsonwizard.widgets.DatePickerFactory.DATE_FORMAT;
 
@@ -801,5 +803,10 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             radioButton.setChecked(false);
             radioButton.performClick();
         }
+    }
+
+    @Override
+    public Set<String> getCustomTranslatableWidgetFields() {
+        return new HashSet<>();
     }
 }

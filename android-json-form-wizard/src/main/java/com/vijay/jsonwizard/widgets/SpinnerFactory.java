@@ -29,7 +29,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by nipun on 30/05/15.
@@ -196,5 +198,10 @@ public class SpinnerFactory implements FormWidgetFactory {
             spinner.setTag(R.id.calculation, calculations);
             ((JsonApi) context).addCalculationLogicView(spinner);
         }
+    }
+
+    @Override
+    public Set<String> getCustomTranslatableWidgetFields() {
+        return new HashSet<>();
     }
 }

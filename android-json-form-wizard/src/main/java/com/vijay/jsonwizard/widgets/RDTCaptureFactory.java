@@ -24,7 +24,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import edu.washington.cs.ubicomplab.rdt_reader.activity.RDTCaptureActivity;
 
@@ -146,5 +148,10 @@ public class RDTCaptureFactory implements FormWidgetFactory {
 
     protected int getLayout() {
         return R.layout.native_form_rdt_capture;
+    }
+
+    @Override
+    public Set<String> getCustomTranslatableWidgetFields() {
+        return new HashSet<>();
     }
 }

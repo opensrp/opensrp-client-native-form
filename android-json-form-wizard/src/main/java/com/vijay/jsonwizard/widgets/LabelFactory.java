@@ -25,7 +25,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by vijay on 24-05-2015.
@@ -227,4 +229,8 @@ public class LabelFactory implements FormWidgetFactory {
                 asterisks;
     }
 
+    @Override
+    public Set<String> getCustomTranslatableWidgetFields() {
+        return new HashSet<>();
+    }
 }

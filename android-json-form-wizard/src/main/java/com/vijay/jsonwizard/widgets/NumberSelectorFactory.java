@@ -32,8 +32,10 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class NumberSelectorFactory implements FormWidgetFactory {
     public static final String TAG = NumberSelectorFactory.class.getCanonicalName();
@@ -209,6 +211,11 @@ public class NumberSelectorFactory implements FormWidgetFactory {
                                        JSONObject jsonObject,
                                        CommonListener listener) throws Exception {
         return attachJson(stepName, context, jsonObject, listener, false);
+    }
+
+    @Override
+    public Set<String> getCustomTranslatableWidgetFields() {
+        return new HashSet<>();
     }
 
     private List<View> attachJson(String stepName, Context context, JSONObject jsonObject, CommonListener listener,

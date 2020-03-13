@@ -26,8 +26,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT;
 import static com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT;
@@ -284,5 +286,10 @@ public class CheckBoxFactory implements FormWidgetFactory {
         checkBox.setTextColor(Color.parseColor(optionTextColor));
         checkBox.setTextSize(getValueFromSpOrDpOrPx(optionTextSize, context));
         checkBox.setEnabled(!readOnly);
+    }
+
+    @Override
+    public Set<String> getCustomTranslatableWidgetFields() {
+        return new HashSet<>();
     }
 }

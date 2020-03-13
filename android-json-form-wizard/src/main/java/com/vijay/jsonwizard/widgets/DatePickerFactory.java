@@ -37,8 +37,10 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * @author Jason Rogena - jrogena@ona.io
@@ -327,6 +329,11 @@ public class DatePickerFactory implements FormWidgetFactory {
         }
 
         return datePickerDialog;
+    }
+
+    @Override
+    public Set<String> getCustomTranslatableWidgetFields() {
+        return new HashSet<>();
     }
 
     protected int getLayout() {

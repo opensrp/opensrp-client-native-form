@@ -26,7 +26,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.vijay.jsonwizard.constants.JsonFormConstants.BTN_BG_COLOR;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.BTN_TEXT_COLOR;
@@ -174,5 +176,10 @@ public class ButtonFactory implements FormWidgetFactory {
         button.setBackgroundResource(R.drawable.btn_bg);
 
         return button;
+    }
+
+    @Override
+    public Set<String> getCustomTranslatableWidgetFields() {
+        return new HashSet<>();
     }
 }
