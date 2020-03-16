@@ -33,6 +33,7 @@ import com.vijay.jsonwizard.widgets.DatePickerFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -655,6 +656,47 @@ public class Utils {
         return s.hasNext() ? s.next() : "";
     }
 
+
+    /**
+     * Gets form config entries as specified in json.form.config.json
+     *
+     * @param formName
+     * @param configLocation
+     * @param context
+     * @return
+     * @throws JSONException
+     * @throws IOException
+     */
+    public static JSONObject getFormConfig(@NonNull String formName, @NonNull String configLocation, @NonNull Context context) throws JSONException, IOException {
+        String fileContent = getAssetFileAsString(configLocation, context);
+        if (StringUtils.isNotBlank(fileContent)) {
+            JSONArray jsonArray = new JSONArray(fileContent);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.optJSONObject(i);
+                if (formName.equals(jsonObject.optString(JsonFormConstants.FORM_NAME))) {
+                    return jsonObject;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Converts string jsonArray to set
+     *
+     * @param jsonArray
+     * @return
+     */
+    public static Set<String> convertStringJsonArrayToSet(@Nullable JSONArray jsonArray) {
+        if (jsonArray != null) {
+            Set<String> strings = new HashSet<>();
+            for (int i = 0; i < jsonArray.length(); i++) {
+                strings.add(jsonArray.optString(i));
+            }
+            return strings;
+        }
+        return null;
+    }
 }
 
 
