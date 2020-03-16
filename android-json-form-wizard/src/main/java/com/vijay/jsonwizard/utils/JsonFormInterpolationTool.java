@@ -2,17 +2,23 @@ package com.vijay.jsonwizard.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import timber.log.Timber;
 
 import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.MLS.PROPERTIES_FILE_NAME;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP;
 import static com.vijay.jsonwizard.utils.Utils.getFileContentsAsString;
 
@@ -21,7 +27,11 @@ import static com.vijay.jsonwizard.utils.Utils.getFileContentsAsString;
  */
 public class JsonFormInterpolationTool {
 
-    private static void processForm() {
+    private static Map<String, String> interpolationToTranslationMap = new HashMap<>();
+    private static String formName;
+
+    private static String processForm() {
+        String interpolatedFormStr = "";
         try {
             String formToTranslate = System.getenv("FORM_TO_TRANSLATE");
             printToSystemOut("Interpolating form at path: " + formToTranslate + " ...\n");
@@ -32,18 +42,21 @@ public class JsonFormInterpolationTool {
             printToSystemOut(form);
 
             String[] formPath = formToTranslate.split(File.separator);
-            String formName = formPath[formPath.length - 1].split("\\.")[0];
-            performInterpolation(stringToJson(form), formName);
+            formName = formPath[formPath.length - 1].split("\\.")[0];
+            JsonObject interpolatedForm = performInterpolation(stringToJson(form), formName);
+            interpolatedForm.addProperty(PROPERTIES_FILE_NAME, formName);
+            interpolatedFormStr = interpolatedForm.toString();
         } catch (FileNotFoundException e) {
             Timber.e(e);
         }
+        return interpolatedFormStr;
     }
 
     private static JsonObject stringToJson(String json) {
         return new Gson().fromJson(json, JsonObject.class);
     }
 
-    private static void performInterpolation(JsonObject jsonForm, String formName) {
+    private static JsonObject performInterpolation(JsonObject jsonForm, String formName) {
         printToSystemOut("List of translatable widget fields:\n");
         for (String str : JsonFormInteractor.getInstance().getDefaultTranslatableWidgetFields()) {
             printToSystemOut(str);
@@ -58,6 +71,8 @@ public class JsonFormInterpolationTool {
         }
 
         printToSystemOut("Interpolated string: " + jsonForm);
+
+        return jsonForm;
     }
 
     private static void replaceStringLiterals(String interpolationStrPrefix, JsonArray stepWidgets, Set<String> fieldsToTranslate) {
@@ -74,9 +89,14 @@ public class JsonFormInterpolationTool {
                     }
                 }
 
-                String interpolationStr = "{{" + interpolationStrPrefix + "." + widgetKey + "." + fieldName + "}}";
+                String propertyName = interpolationStrPrefix + "." + widgetKey + "." + fieldName;
+                String interpolationStr = "{{" + propertyName + "}}";
                 if (fieldToInterpolate != null) {
-                    fieldToInterpolate.addProperty(fieldHierarchy[fieldHierarchy.length - 1], interpolationStr);
+                    JsonElement strLiteralElement = fieldToInterpolate.get(fieldHierarchy[fieldHierarchy.length - 1]);
+                    if (strLiteralElement != null) {
+                        interpolationToTranslationMap.put(propertyName, strLiteralElement.getAsString());
+                        fieldToInterpolate.addProperty(fieldHierarchy[fieldHierarchy.length - 1], interpolationStr);
+                    }
                 }
 
                 printToSystemOut("Interpolation String for widget " + widgetKey +  " is: " + interpolationStr);
@@ -102,7 +122,40 @@ public class JsonFormInterpolationTool {
         System.out.println(str);
     }
 
+    private static void createTranslationsPropertyFile() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Map.Entry<String, String> entry : interpolationToTranslationMap.entrySet()) {
+            stringBuilder.append(entry.getKey() + " = " + entry.getValue() + "\n");
+        }
+        writeToFile(stringBuilder.toString(), File.separator + "tmp" + File.separator + formName + ".properties");
+    }
+
+    private static void writeToFile(String data, String path) {
+        FileWriter fileWriter = null;
+        try {
+            File file = new File(path);
+            fileWriter = new FileWriter(file);
+            fileWriter.write(data);
+            if (fileWriter != null) {
+                fileWriter.close();
+            }
+        } catch (IOException e) {
+            Timber.e(e);
+        } finally {
+            if (fileWriter != null) {
+                try {
+                    fileWriter.close();
+                } catch (IOException e) {
+                    Timber.e(e);
+                }
+            }
+        }
+    }
+
+
     public static void main(String[] args) {
-        processForm();
+        String interpolatedForm = processForm();
+        writeToFile(interpolatedForm, File.separator + "tmp" + File.separator + formName + ".json");
+        createTranslationsPropertyFile();
     }
 }
