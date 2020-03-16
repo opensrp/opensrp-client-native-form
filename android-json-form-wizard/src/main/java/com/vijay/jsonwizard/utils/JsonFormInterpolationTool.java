@@ -1,6 +1,7 @@
 package com.vijay.jsonwizard.utils;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -30,26 +31,25 @@ public class JsonFormInterpolationTool {
     private static Map<String, String> interpolationToTranslationMap = new HashMap<>();
     private static String formName;
 
-    private static String processForm() {
-        String interpolatedFormStr = "";
+    public static void processForm(String formToTranslate) {
         try {
-            String formToTranslate = System.getenv("FORM_TO_TRANSLATE");
-            printToSystemOut("Interpolating form at path: " + formToTranslate + " ...\n");
-
             String form = getFileContentsAsString(formToTranslate);
 
             printToSystemOut("\nForm before interpolation:\n");
             printToSystemOut(form);
 
             String[] formPath = formToTranslate.split(File.separator);
-            formName = formPath[formPath.length - 1].split("\\.")[0];
+            formName = formPath[formPath.length - 1].split("\\.")[0] + "_interpolated";
             JsonObject interpolatedForm = performInterpolation(stringToJson(form), formName);
             interpolatedForm.addProperty(PROPERTIES_FILE_NAME, formName);
-            interpolatedFormStr = interpolatedForm.toString();
+
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            writeToFile(gson.toJson(interpolatedForm, JsonObject.class), File.separator + "tmp" + File.separator + formName + ".json");
+
+            createTranslationsPropertyFile();
         } catch (FileNotFoundException e) {
             Timber.e(e);
         }
-        return interpolatedFormStr;
     }
 
     private static JsonObject stringToJson(String json) {
@@ -152,10 +152,9 @@ public class JsonFormInterpolationTool {
         }
     }
 
-
     public static void main(String[] args) {
-        String interpolatedForm = processForm();
-        writeToFile(interpolatedForm, File.separator + "tmp" + File.separator + formName + ".json");
-        createTranslationsPropertyFile();
+        String formToTranslate = System.getenv("FORM_TO_TRANSLATE");
+        printToSystemOut("Interpolating form at path: " + formToTranslate + " ...\n");
+        processForm(formToTranslate);
     }
 }

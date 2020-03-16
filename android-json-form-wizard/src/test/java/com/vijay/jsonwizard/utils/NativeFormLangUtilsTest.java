@@ -3,6 +3,8 @@ package com.vijay.jsonwizard.utils;
 import android.content.Context;
 import android.content.res.AssetManager;
 
+import com.vijay.jsonwizard.TestUtils;
+
 import org.junit.Test;
 
 import java.io.IOException;
@@ -21,15 +23,17 @@ import static org.mockito.Mockito.mock;
  */
 public class NativeFormLangUtilsTest {
 
+    private final TestUtils testUtils = new TestUtils();
+
     @Test
     public void testJsonFormTranslationShouldTranslateForm() {
         Locale.setDefault(new Locale("id"));
-        String expectedJsonForm = getFileContentsAsString("test_form_translation_in");
-        String interpolatedJsonForm = getFileContentsAsString("test_form_translation_interpolated");
+        String expectedJsonForm = testUtils.getResourceFileContentsAsString("test_form_translation_in");
+        String interpolatedJsonForm = testUtils.getResourceFileContentsAsString("test_form_translation_interpolated");
         assertEquals(expectedJsonForm, NativeFormLangUtils.getTranslatedString(interpolatedJsonForm));
 
         Locale.setDefault(new Locale("en", "US"));
-        expectedJsonForm = getFileContentsAsString("test_form_translation_en_US");
+        expectedJsonForm = testUtils.getResourceFileContentsAsString("test_form_translation_en_US");
         assertEquals(expectedJsonForm, NativeFormLangUtils.getTranslatedString(interpolatedJsonForm));
     }
 
@@ -38,13 +42,13 @@ public class NativeFormLangUtilsTest {
         Context context = mockAssetManager("test_yaml_translation_interpolated");
         Locale.setDefault(new Locale("en", "US"));
         String translatedYamlStr = getTranslatedYamlFile("file_name", context);
-        assertEquals(getFileContentsAsString("test_yaml_translation_en_US"), translatedYamlStr);
+        assertEquals(testUtils.getResourceFileContentsAsString("test_yaml_translation_en_US"), translatedYamlStr);
     }
 
     @Test
     public void testJsonFormTranslationShouldReturnUntranslatedForm() {
         Locale.setDefault(new Locale("id"));
-        String interpolatedJsonForm = getFileContentsAsString("test_form_translation_interpolated_missing_translations");
+        String interpolatedJsonForm = testUtils.getResourceFileContentsAsString("test_form_translation_interpolated_missing_translations");
         assertEquals(interpolatedJsonForm, NativeFormLangUtils.getTranslatedString(interpolatedJsonForm));
     }
 
@@ -53,24 +57,16 @@ public class NativeFormLangUtilsTest {
         Context context = mockAssetManager("test_yaml_translation_interpolated_missing_translations");
         Locale.setDefault(new Locale("en", "US"));
         String translatedYamlStr = getTranslatedYamlFile("file_name", context);
-        assertEquals(getFileContentsAsString("test_yaml_translation_interpolated_missing_translations"), translatedYamlStr);
+        assertEquals(testUtils.getResourceFileContentsAsString("test_yaml_translation_interpolated_missing_translations"), translatedYamlStr);
     }
 
     private Context mockAssetManager(String yamlFilePath) throws IOException {
         Context context = mock(Context.class);
         AssetManager assetManager = mock(AssetManager.class);
-        doReturn(getTestResource(yamlFilePath))
+        doReturn(testUtils.getTestResource(yamlFilePath))
                 .when(assetManager)
                 .open(eq("file_name"));
         doReturn(assetManager).when(context).getAssets();
         return context;
-    }
-
-    private InputStream getTestResource(String filePath) {
-        return getClass().getClassLoader().getResourceAsStream(filePath);
-    }
-
-    private String getFileContentsAsString(String filePath) {
-        return convertStreamToString(getTestResource(filePath));
     }
 }
