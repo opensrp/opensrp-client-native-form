@@ -687,7 +687,7 @@ public class Utils {
      * @param jsonArray
      * @return
      */
-    public static Set<String> convertStringJsonArrayToSet(@Nullable JSONArray jsonArray) {
+    public static Set<String> convertJsonArrayToSet(@Nullable JSONArray jsonArray) {
         if (jsonArray != null) {
             Set<String> strings = new HashSet<>();
             for (int i = 0; i < jsonArray.length(); i++) {
