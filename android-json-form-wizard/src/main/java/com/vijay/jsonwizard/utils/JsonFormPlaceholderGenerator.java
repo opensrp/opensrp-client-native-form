@@ -26,11 +26,18 @@ import static com.vijay.jsonwizard.utils.Utils.getFileContentsAsString;
 /**
  * Created by Vincent Karuri on 12/03/2020
  */
-public class JsonFormInterpolationTool {
+public class JsonFormPlaceholderGenerator {
 
     private static Map<String, String> interpolationToTranslationMap = new HashMap<>();
     private static String formName;
 
+    /**
+     *
+     * Processes the {@param formToTranslate} outputting a placeholder-injected form
+     * and its corresponding property file
+     *
+     * @param formToTranslate
+     */
     public static void processForm(String formToTranslate) {
         try {
             String form = getFileContentsAsString(formToTranslate);
@@ -52,10 +59,29 @@ public class JsonFormInterpolationTool {
         }
     }
 
+    /**
+     *
+     * Converts a {@link String} representation of JSON into a {@link JsonObject}
+     *
+     * @param json
+     * @return
+     */
     private static JsonObject stringToJson(String json) {
         return new Gson().fromJson(json, JsonObject.class);
     }
 
+    /**
+     *
+     * Replaces {@link String} literals in the {@param jsonForm} with placeholders.
+     *
+     * The {@link String} literals (fields) to be replaced have to be defined either globally or as part of a widget's definition.
+     *
+     * The placeholders follow the scheme : {{form_name.step_name.widget_key.field_identifier}}
+     *
+     * @param jsonForm
+     * @param formName
+     * @return
+     */
     private static JsonObject performInterpolation(JsonObject jsonForm, String formName) {
         printToSystemOut("List of translatable widget fields:\n");
         for (String str : JsonFormInteractor.getInstance().getDefaultTranslatableWidgetFields()) {
@@ -75,6 +101,14 @@ public class JsonFormInterpolationTool {
         return jsonForm;
     }
 
+    /**
+     *
+     * Replaces {@link String} literals with the appropriate placeholders
+     *
+     * @param interpolationStrPrefix
+     * @param stepWidgets
+     * @param fieldsToTranslate
+     */
     private static void replaceStringLiterals(String interpolationStrPrefix, JsonArray stepWidgets, Set<String> fieldsToTranslate) {
         for (int i = 0; i < stepWidgets.size(); i++) {
             JsonObject widget = stepWidgets.get(i).getAsJsonObject();
@@ -104,6 +138,14 @@ public class JsonFormInterpolationTool {
         }
     }
 
+    /**
+     *
+     * Gets all the widget definitions for a particular {@param step} in the {@param jsonForm}
+     *
+     * @param jsonForm
+     * @param step
+     * @return
+     */
     private static JsonArray getWidgets(JsonObject jsonForm, String step) {
         JsonObject stepJsonObject = jsonForm.has(step) ? jsonForm.getAsJsonObject(step) : null;
         if (stepJsonObject == null) {
@@ -114,14 +156,32 @@ public class JsonFormInterpolationTool {
                 .getAsJsonArray(JsonFormConstants.FIELDS) : null;
     }
 
+    /**
+     *
+     * Extracts the number of steps in a form
+     *
+     * @param jsonForm
+     * @return
+     */
     private static int getNumOfSteps(JsonObject jsonForm) {
         return jsonForm.has(JsonFormConstants.COUNT) ? jsonForm.get(JsonFormConstants.COUNT).getAsInt() : -1;
     }
 
+    /**
+     *
+     * Utility that prints to system out for debugging
+     *
+     * @param str
+     */
     private static void printToSystemOut(String str) {
         System.out.println(str);
     }
 
+    /**
+     *
+     * Creates a property file and writes it to disk
+     *
+     */
     private static void createTranslationsPropertyFile() {
         StringBuilder stringBuilder = new StringBuilder();
         for (Map.Entry<String, String> entry : interpolationToTranslationMap.entrySet()) {
@@ -130,15 +190,19 @@ public class JsonFormInterpolationTool {
         writeToFile(stringBuilder.toString(), File.separator + "tmp" + File.separator + formName + ".properties");
     }
 
+    /**
+     *
+     * Writes {@param data} to disk at the specified {@param path}
+     *
+     * @param data
+     * @param path
+     */
     private static void writeToFile(String data, String path) {
         FileWriter fileWriter = null;
         try {
             File file = new File(path);
             fileWriter = new FileWriter(file);
             fileWriter.write(data);
-            if (fileWriter != null) {
-                fileWriter.close();
-            }
         } catch (IOException e) {
             Timber.e(e);
         } finally {

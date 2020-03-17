@@ -13,15 +13,15 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by Vincent Karuri on 16/03/2020
  */
-public class JsonFormInterpolationToolTest {
+public class JsonFormPlaceholderGeneratorTest {
 
     private final TestUtils testUtils = new TestUtils();
-    private JsonFormInterpolationTool jsonFormInterpolationTool;
+    private JsonFormPlaceholderGenerator jsonFormPlaceholderGenerator;
     private final String formName = "basic_form";
 
     @Before
     public void setUp() {
-        jsonFormInterpolationTool = new JsonFormInterpolationTool();
+        jsonFormPlaceholderGenerator = new JsonFormPlaceholderGenerator();
     }
 
     @Test
@@ -29,7 +29,7 @@ public class JsonFormInterpolationToolTest {
         String interpolatedFormPath = File.separator + "tmp" + File.separator + formName + "_interpolated" + ".json";
         String propertiesFilePath = File.separator + "tmp" + File.separator + formName + "_interpolated" + ".properties";
 
-        jsonFormInterpolationTool.processForm(testUtils.getResourcesFilePath() + File.separator + formName + ".json");
+        jsonFormPlaceholderGenerator.processForm(testUtils.getResourcesFilePath() + File.separator + formName + ".json");
         testUtils.copyFilesIntoResourcesFolder(interpolatedFormPath);
         testUtils.copyFilesIntoResourcesFolder(propertiesFilePath);
 

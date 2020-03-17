@@ -92,6 +92,7 @@ public class JsonFormInteractor {
         defaultTranslatableWidgetFields.add("hint");
         defaultTranslatableWidgetFields.add("v_required.err");
         defaultTranslatableWidgetFields.add("v_regex.err");
+        defaultTranslatableWidgetFields.add("v_numeric.err");
     }
 
     protected void registerWidgets() {
