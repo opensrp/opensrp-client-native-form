@@ -52,6 +52,8 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -230,7 +232,7 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         assertEquals(0, presenter.getInvalidFields().size());
         verify(formFragment, times(13)).writeValue(anyString(), anyString(), anyString(), anyString(), anyString(),
                 anyString(), anyBoolean());
-        verify(onFieldsInvalid,times(2)).passInvalidFields(presenter.getInvalidFields());
+        verify(onFieldsInvalid, times(2)).passInvalidFields(presenter.getInvalidFields());
     }
 
     private void setTextValue(String address, String value) {
@@ -260,7 +262,6 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
     }
 
 
-
     @Test
     public void testOnSaveClickFinishesForm() throws JSONException {
         initWithActualForm();
@@ -274,16 +275,39 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         verify(formFragment, times(7)).writeValue(anyString(), anyString(), anyString(), anyString(), anyString(),
                 anyString(), anyBoolean());
         assertNull(presenter.getErrorFragment());
-        assertNull( ShadowToast.getLatestToast());
+        assertNull(ShadowToast.getLatestToast());
         verify(formFragment).onFormFinish();
         verify(formFragment).finishWithResult(intentArgumentCaptor.capture());
-        assertFalse(intentArgumentCaptor.getValue().getBooleanExtra(JsonFormConstants.SKIP_VALIDATION,true));
-        JSONObject json= new JSONObject(intentArgumentCaptor.getValue().getStringExtra("json"));
+        assertFalse(intentArgumentCaptor.getValue().getBooleanExtra(JsonFormConstants.SKIP_VALIDATION, true));
+        JSONObject json = new JSONObject(intentArgumentCaptor.getValue().getStringExtra("json"));
         assertNotNull(json);
-        assertEquals("Doe",FormUtils.getFieldFromForm(json,"user_last_name").getString(JsonFormConstants.VALUE));
-        assertEquals("John",FormUtils.getFieldFromForm(json,"user_first_name").getString(JsonFormConstants.VALUE));
-        assertEquals("21",FormUtils.getFieldFromForm(json,"user_age").getString(JsonFormConstants.VALUE));
+        assertEquals("Doe", FormUtils.getFieldFromForm(json, "user_last_name").getString(JsonFormConstants.VALUE));
+        assertEquals("John", FormUtils.getFieldFromForm(json, "user_first_name").getString(JsonFormConstants.VALUE));
+        assertEquals("21", FormUtils.getFieldFromForm(json, "user_age").getString(JsonFormConstants.VALUE));
 
+    }
+
+
+    @Test
+    public void testOnSaveClickErrorFragmentDisabledAndDisplaysSnackbar() throws JSONException {
+        initWithActualForm();
+        formFragment.getMainView().setTag(R.id.skip_validation, false);
+        formFragment.getJsonApi().getmJSONObject().put(JsonFormConstants.SHOW_ERRORS_ON_SUBMIT,false);
+        formFragment=spy(formFragment);
+        doNothing().when(formFragment).showSnackBar(anyString());
+        Whitebox.setInternalState(presenter, "viewRef", new WeakReference<>(formFragment));
+        presenter.onSaveClick(formFragment.getMainView());
+        assertEquals(4, presenter.getInvalidFields().size());
+        assertEquals("Please enter the last name", presenter.getInvalidFields().get("step1#Basic Form One:user_last_name").getErrorMessage());
+        assertEquals("Please enter user age", presenter.getInvalidFields().get("step1#Basic Form One:user_age").getErrorMessage());
+        assertEquals("Please enter the first name", presenter.getInvalidFields().get("step1#Basic Form One:user_first_name").getErrorMessage());
+        assertEquals("Please enter the sex", presenter.getInvalidFields().get("step1#Basic Form One:user_spinner").getErrorMessage());
+        verify(formFragment, times(6)).writeValue(anyString(), anyString(), anyString(), anyString(), anyString(),
+                anyString(), anyBoolean());
+        assertNull(presenter.getErrorFragment());
+        assertNull(ShadowToast.getLatestToast());
+        verify(formFragment, never()).onFormFinish();
+        verify(formFragment).showSnackBar(context.getString(R.string.json_form_error_msg, 4));
     }
 
 
