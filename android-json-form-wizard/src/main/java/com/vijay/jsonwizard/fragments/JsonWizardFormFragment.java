@@ -381,11 +381,11 @@ public class JsonWizardFormFragment extends JsonFormFragment {
             if (view != null) {
                 if (view.getId() == R.id.next || view.getId() == R.id.next_icon) {
                     getJsonApi().setPreviousPressed(false);
-                    Object tag = view.getTag(R.id.NEXT_STATE);
-                    if (tag == null) {
+                    Object nextStateTag = view.getTag(R.id.NEXT_STATE);
+                    if (nextStateTag == null) {
                         new NextProgressDialogTask(getJsonFormFragment()).execute();
                     } else {
-                        boolean next = (boolean) tag;
+                        boolean next = (boolean) nextStateTag;
                         if (next) {
                             new NextProgressDialogTask(getJsonFormFragment()).execute();
                         } else {

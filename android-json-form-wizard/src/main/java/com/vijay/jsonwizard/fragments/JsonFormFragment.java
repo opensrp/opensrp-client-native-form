@@ -532,11 +532,11 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
                         mScrollView.post(new Runnable() {
                             @Override
                             public void run() {
-                                int y = view.getBottom() - view.getHeight();
-                                if (y < 0) {
-                                    y = 0;
+                                int viewLength = view.getBottom() - view.getHeight();
+                                if (viewLength < 0) {
+                                    viewLength = 0;
                                 }
-                                mScrollView.scrollTo(0, y);
+                                mScrollView.scrollTo(0, viewLength);
                             }
                         });
                     }

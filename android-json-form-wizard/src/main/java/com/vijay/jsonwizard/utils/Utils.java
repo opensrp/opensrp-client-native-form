@@ -325,9 +325,9 @@ public class Utils {
                     List<Map<String, Object>> arrayList = new ArrayList<>();
                     if (objectIterable != null) {
                         while (objectIterable.iterator().hasNext()) {
-                            Map<String, Object> map = (Map<String, Object>) objectIterable.iterator().next();
-                            if (map != null) {
-                                arrayList.add(map);
+                            Map<String, Object> yamlRulesMap = (Map<String, Object>) objectIterable.iterator().next();
+                            if (yamlRulesMap != null) {
+                                arrayList.add(yamlRulesMap);
                             }
                         }
                     }

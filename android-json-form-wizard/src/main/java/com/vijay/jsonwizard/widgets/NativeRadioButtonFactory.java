@@ -252,30 +252,30 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         if (radioGroup.isEnabled() && error != null) {
             final LinearLayout linearLayout = (LinearLayout) radioGroup.getParent();
             boolean isValid = performValidation(radioGroup);
-            final TextView[] errorTv = {linearLayout.findViewById(R.id.error_textView)};
+            final TextView[] errorTextView = {linearLayout.findViewById(R.id.error_textView)};
             if (!isValid) {
                 ((JsonFormActivity) formFragmentView.getContext()).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         ConstraintLayout constraintLayout = (ConstraintLayout) linearLayout.getChildAt(0);
-                        if (errorTv[0] == null) {
-                            errorTv[0] = new TextView(formFragmentView.getContext());
-                            errorTv[0].setId(R.id.error_textView);
-                            errorTv[0].setTextColor(formFragmentView.getContext().getResources().getColor(R.color.toaster_note_red_icon));
-                            errorTv[0].setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                        if (errorTextView[0] == null) {
+                            errorTextView[0] = new TextView(formFragmentView.getContext());
+                            errorTextView[0].setId(R.id.error_textView);
+                            errorTextView[0].setTextColor(formFragmentView.getContext().getResources().getColor(R.color.toaster_note_red_icon));
+                            errorTextView[0].setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
                             ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(constraintLayout.getLayoutParams());
                             layoutParams.topToBottom = R.id.label_text;
                             layoutParams.leftMargin = FormUtils.dpToPixels(formFragmentView.getContext(), 8);
-                            constraintLayout.addView(errorTv[0], new ConstraintLayout.LayoutParams(layoutParams));
+                            constraintLayout.addView(errorTextView[0], new ConstraintLayout.LayoutParams(layoutParams));
                         }
-                        errorTv[0].setVisibility(View.VISIBLE);
-                        errorTv[0].setText(error);
+                        errorTextView[0].setVisibility(View.VISIBLE);
+                        errorTextView[0].setText(error);
                     }
                 });
 
                 return new ValidationStatus(false, error, formFragmentView, radioGroup);
-            } else if (errorTv[0] != null) {
-                errorTv[0].setVisibility(View.GONE);
+            } else if (errorTextView[0] != null) {
+                errorTextView[0].setVisibility(View.GONE);
             }
         }
         return new ValidationStatus(true, null, formFragmentView, radioGroup);
