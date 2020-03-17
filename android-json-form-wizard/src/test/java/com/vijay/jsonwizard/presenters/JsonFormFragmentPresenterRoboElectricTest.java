@@ -18,6 +18,7 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.OnFieldsInvalid;
+import com.vijay.jsonwizard.utils.FormUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,6 +44,8 @@ import java.util.Stack;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP1;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -72,6 +75,9 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
 
     @Captor
     private ArgumentCaptor<JSONObject> jsonArgumentCaptor;
+
+    @Captor
+    private ArgumentCaptor<Intent> intentArgumentCaptor;
 
     @Mock
     private JsonFormErrorFragment errorFragment;
@@ -251,6 +257,33 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         Toast toast = ShadowToast.getLatestToast();
         assertEquals(Toast.LENGTH_SHORT, toast.getDuration());
         assertEquals(context.getString(R.string.json_form_error_msg, 4), ShadowToast.getTextOfLatestToast());
+    }
+
+
+
+    @Test
+    public void testOnSaveClickFinishesForm() throws JSONException {
+        initWithActualForm();
+        formFragment.getMainView().setTag(R.id.skip_validation, false);
+        setTextValue("step1:user_last_name", "Doe");
+        setTextValue("step1:user_first_name", "John");
+        setTextValue("step1:user_age", "21");
+        ((AppCompatSpinner) formFragment.getJsonApi().getFormDataView("step1:user_spinner")).setSelection(1);
+        presenter.onSaveClick(formFragment.getMainView());
+        assertEquals(0, presenter.getInvalidFields().size());
+        verify(formFragment, times(7)).writeValue(anyString(), anyString(), anyString(), anyString(), anyString(),
+                anyString(), anyBoolean());
+        assertNull(presenter.getErrorFragment());
+        assertNull( ShadowToast.getLatestToast());
+        verify(formFragment).onFormFinish();
+        verify(formFragment).finishWithResult(intentArgumentCaptor.capture());
+        assertFalse(intentArgumentCaptor.getValue().getBooleanExtra(JsonFormConstants.SKIP_VALIDATION,true));
+        JSONObject json= new JSONObject(intentArgumentCaptor.getValue().getStringExtra("json"));
+        assertNotNull(json);
+        assertEquals("Doe",FormUtils.getFieldFromForm(json,"user_last_name").getString(JsonFormConstants.VALUE));
+        assertEquals("John",FormUtils.getFieldFromForm(json,"user_first_name").getString(JsonFormConstants.VALUE));
+        assertEquals("21",FormUtils.getFieldFromForm(json,"user_age").getString(JsonFormConstants.VALUE));
+
     }
 
 
