@@ -2,6 +2,7 @@ package com.vijay.jsonwizard.presenters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatSpinner;
 import android.view.View;
@@ -41,7 +42,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP1;
+import static com.vijay.jsonwizard.presenters.JsonFormFragmentPresenter.RESULT_LOAD_IMG;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -57,6 +61,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 /**
@@ -308,6 +313,16 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         assertNull(ShadowToast.getLatestToast());
         verify(formFragment, never()).onFormFinish();
         verify(formFragment).showSnackBar(context.getString(R.string.json_form_error_msg, 4));
+    }
+
+    @Test
+    public void testOnActivityResult(){
+        when(formFragment.getContext()).thenReturn(context);
+        presenter.onActivityResult(RESULT_LOAD_IMG,RESULT_CANCELED,null);
+        verify(formFragment).getJsonApi();
+        verifyNoMoreInteractions(formFragment);
+        presenter.onActivityResult(RESULT_LOAD_IMG,RESULT_OK,null);
+        verify(formFragment).updateRelevantImageView(null,null,null);
     }
 
 
