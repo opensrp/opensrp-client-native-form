@@ -323,10 +323,12 @@ public class Utils {
                 if (!rulesFileMap.containsKey(fileName)) {
                     Iterable<Object> objectIterable = readYamlFile(fileName, context);
                     List<Map<String, Object>> arrayList = new ArrayList<>();
-                    while (objectIterable.iterator().hasNext()) {
-                        Map<String, Object> map = (Map<String, Object>) objectIterable.iterator().next();
-                        if (map != null) {
-                            arrayList.add(map);
+                    if (objectIterable != null) {
+                        while (objectIterable.iterator().hasNext()) {
+                            Map<String, Object> map = (Map<String, Object>) objectIterable.iterator().next();
+                            if (map != null) {
+                                arrayList.add(map);
+                            }
                         }
                     }
                     rulesFileMap.put(fileName, arrayList);
