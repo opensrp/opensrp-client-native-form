@@ -540,8 +540,19 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     @Override
     public void setmJSONObject(JSONObject mJSONObject) {
-        this.mJSONObject = mJSONObject;
+        super.setmJSONObject(mJSONObject);
     }
+
+    @Override
+    protected void initiateFormUpdate(JSONObject json) {
+        if (getForm() != null && ((getForm().getHiddenFields() != null && !getForm().getHiddenFields().isEmpty()) || (getForm().getDisabledFields() != null && !getForm().getDisabledFields().isEmpty()))) {
+            JSONArray fieldsJsonObject = FormUtils.getMultiStepFormFields(json);
+            for (int k = 0; k < fieldsJsonObject.length(); k++) {
+                Utils.handleFieldBehaviour(fieldsJsonObject.optJSONObject(k), getForm());
+            }
+        }
+    }
+
 
     @Override
     public void updateGenericPopupSecondaryValues(JSONArray jsonArray) {
@@ -621,6 +632,11 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         synchronized (getmJSONObject()) {
             return getmJSONObject().optBoolean(JsonFormConstants.SKIP_BLANK_STEPS, false);
         }
+    }
+
+    @Override
+    public Form form() {
+        return getForm();
     }
 
     private String getViewKey(View view) {

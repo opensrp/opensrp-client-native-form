@@ -1,0 +1,14 @@
+---
+sub_group: ultrasound_tests_results
+fields:
+  - template: "{{profile_contact_tab_tests.ultrasound_test}}: {ultrasound}"
+    relevance: "ultrasound != ''"
+
+  - template: "{{profile_contact_tab_tests.ultrasound_test_not_done_reason}}: {ultrasound_notdone}"
+    relevance: "ultrasound_notdone != ''"
+
+  - template: "{{profile_contact_tab_tests.ultrasound_test_not_done_other_reason}}: {ultrasound_notdone_other}"
+    relevance: "ultrasound_notdone_other != ''"
+
+  - template: "{{profile_contact_tab_tests.ultrasound_test_done_date}}: {ultrasound_date}"
+    relevance: "ultrasound_date != ''"

@@ -131,7 +131,7 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
 
         try {
             ((JsonApi) widgetArgs.getContext()).invokeRefreshLogic(null, false, null, null);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         hideProgressDialog();
@@ -195,8 +195,10 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         currKey += ("_" + uniqueId);
         element.put(KEY, currKey);
         // modify relevance to reflect changes in unique key name
-        Utils.buildRulesWithUniqueId(element, uniqueId, RELEVANCE, widgetArgs, rulesFileMap);
-        Utils.buildRulesWithUniqueId(element, uniqueId, CALCULATION, widgetArgs, rulesFileMap);
+        if (widgetArgs != null && widgetArgs.getContext() != null) {
+            Utils.buildRulesWithUniqueId(element, uniqueId, RELEVANCE, widgetArgs.getContext(), rulesFileMap);
+            Utils.buildRulesWithUniqueId(element, uniqueId, CALCULATION, widgetArgs.getContext(), rulesFileMap);
+        }
         // modify relative max validator to reflect changes in unique key name
         JSONObject relativeMaxValidator = element.optJSONObject(V_RELATIVE_MAX);
         if (relativeMaxValidator != null) {

@@ -1,0 +1,15 @@
+---
+properties_file_name: "yaml_strings",
+sub_group: ultrasound_tests_results
+fields:
+  - template: "Ultrasound test: {ultrasound}"
+    relevance: "ultrasound != ''"
+
+  - template: "Ultrasound not done reason: {ultrasound_notdone}"
+    relevance: "ultrasound_notdone != ''"
+
+  - template: "Ultrasound not done other reason: {ultrasound_notdone_other}"
+    relevance: "ultrasound_notdone_other != ''"
+
+  - template: "Ultrasound done date: {ultrasound_date}"
+    relevance: "ultrasound_date != ''"

@@ -659,7 +659,7 @@ public class FormUtils {
             if (jsonForm.has(JsonFormConstants.COUNT)) {
                 int stepCount = Integer.parseInt(jsonForm.getString(JsonFormConstants.COUNT));
                 for (int i = 0; i < stepCount; i++) {
-                    String stepName = "step" + (i + 1);
+                    String stepName = JsonFormConstants.STEP + (i + 1);
                     JSONObject step = jsonForm.has(stepName) ? jsonForm.getJSONObject(stepName) : null;
                     if (step != null && step.has(JsonFormConstants.FIELDS)) {
                         JSONArray stepFields = step.getJSONArray(JsonFormConstants.FIELDS);
@@ -1008,7 +1008,6 @@ public class FormUtils {
     }
 
     public String getSpecifyText(JSONArray jsonArray) {
-        FormUtils formUtils = new FormUtils();
         StringBuilder specifyText = new StringBuilder();
         for (int i = 0; i < jsonArray.length(); i++) {
             try {
@@ -1017,7 +1016,7 @@ public class FormUtils {
                     String type = jsonObject.optString(JsonFormConstants.TYPE, null);
                     JSONArray itemArray = jsonObject.getJSONArray(JsonFormConstants.VALUES);
                     for (int j = 0; j < itemArray.length(); j++) {
-                        String s = formUtils.getValueFromSecondaryValues(type, itemArray.getString(j));
+                        String s = getValueFromSecondaryValues(type, itemArray.getString(j));
                         if (!TextUtils.isEmpty(s)) {
                             specifyText.append(s).append(",").append(" ");
                         }
@@ -1290,14 +1289,16 @@ public class FormUtils {
     public String addFormDetails(String formString) {
         String form = "";
         try {
-            JSONObject jsonForm = new JSONObject(formString);
-            String formVersion = jsonForm.optString(JsonFormConstants.FORM_VERSION, "");
-            JSONObject formData = new JSONObject();
-            formData.put(JsonFormConstants.Properties.APP_VERSION_NAME, BuildConfig.VERSION_NAME);
-            formData.put(JsonFormConstants.Properties.APP_FORM_VERSION, formVersion);
-            jsonForm.put(JsonFormConstants.Properties.DETAILS, formData);
+            if (StringUtils.isNoneBlank(formString)) {
+                JSONObject jsonForm = new JSONObject(formString);
+                String formVersion = jsonForm.optString(JsonFormConstants.FORM_VERSION, "");
+                JSONObject formData = new JSONObject();
+                formData.put(JsonFormConstants.Properties.APP_VERSION_NAME, BuildConfig.VERSION_NAME);
+                formData.put(JsonFormConstants.Properties.APP_FORM_VERSION, formVersion);
+                jsonForm.put(JsonFormConstants.Properties.DETAILS, formData);
 
-            form = String.valueOf(jsonForm);
+                form = String.valueOf(jsonForm);
+            }
         } catch (JSONException e) {
             Timber.e(e, "%s --> addFormDetails", this.getClass().getCanonicalName());
         }
