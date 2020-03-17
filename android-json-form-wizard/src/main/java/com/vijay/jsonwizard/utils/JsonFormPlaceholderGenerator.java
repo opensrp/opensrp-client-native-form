@@ -28,7 +28,7 @@ import static com.vijay.jsonwizard.utils.Utils.getFileContentsAsString;
  */
 public class JsonFormPlaceholderGenerator {
 
-    private static Map<String, String> interpolationToTranslationMap = new HashMap<>();
+    private static Map<String, String> placeholdersToTranslationsMap = new HashMap<>();
     private static String formName;
 
     /**
@@ -42,16 +42,16 @@ public class JsonFormPlaceholderGenerator {
         try {
             String form = getFileContentsAsString(formToTranslate);
 
-            printToSystemOut("\nForm before interpolation:\n");
+            printToSystemOut("\nForm before placeholder injection:\n");
             printToSystemOut(form);
 
             String[] formPath = formToTranslate.split(File.separator);
-            formName = formPath[formPath.length - 1].split("\\.")[0] + "_interpolated";
-            JsonObject interpolatedForm = performInterpolation(stringToJson(form), formName);
-            interpolatedForm.addProperty(PROPERTIES_FILE_NAME, formName);
+            formName = "placeholder_injected_" + formPath[formPath.length - 1].split("\\.")[0];
+            JsonObject placeholderInjectedForm = injectPlaceholders(stringToJson(form), formName);
+            placeholderInjectedForm.addProperty(PROPERTIES_FILE_NAME, formName);
 
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            writeToFile(gson.toJson(interpolatedForm, JsonObject.class), File.separator + "tmp" + File.separator + formName + ".json");
+            writeToFile(gson.toJson(placeholderInjectedForm, JsonObject.class), File.separator + "tmp" + File.separator + formName + ".json");
 
             createTranslationsPropertyFile();
         } catch (FileNotFoundException e) {
@@ -82,7 +82,7 @@ public class JsonFormPlaceholderGenerator {
      * @param formName
      * @return
      */
-    private static JsonObject performInterpolation(JsonObject jsonForm, String formName) {
+    private static JsonObject injectPlaceholders(JsonObject jsonForm, String formName) {
         printToSystemOut("List of translatable widget fields:\n");
         for (String str : JsonFormInteractor.getInstance().getDefaultTranslatableWidgetFields()) {
             printToSystemOut(str);
@@ -91,49 +91,66 @@ public class JsonFormPlaceholderGenerator {
         int numOfSteps = getNumOfSteps(jsonForm);
         for (int i = 1; i <= numOfSteps; i++) {
             String stepName = STEP + i;
+            String placeholderStringPrefix = formName + "." + stepName;
+            
+            replaceStepStringLiterals(getStepJsonObject(jsonForm, stepName), placeholderStringPrefix);
+            
             JsonArray stepWidgets = getWidgets(jsonForm, stepName);
             printToSystemOut("The key is: " + stepName + " and the value is: " + stepWidgets);
-            replaceStringLiterals(formName + "." + stepName, stepWidgets, JsonFormInteractor.getInstance().getDefaultTranslatableWidgetFields());
+            replaceWidgetStringLiterals(placeholderStringPrefix, stepWidgets, JsonFormInteractor.getInstance().getDefaultTranslatableWidgetFields());
         }
 
-        printToSystemOut("Interpolated string: " + jsonForm);
+        printToSystemOut("Placeholder-injected form: " + jsonForm);
 
         return jsonForm;
+    }
+    
+    private static void replaceStepStringLiterals(JsonObject stepJsonObject, String placeholderStrPrefix) {
+        for (String stepField : JsonFormInteractor.getInstance().getDefaultTranslatableStepFields()) {
+            String propertyName = placeholderStrPrefix + "." + stepField;
+            String placeholderStr = "{{" + propertyName + "}}";
+            
+            JsonElement strLiteralElement = stepJsonObject.get(stepField);
+            if (strLiteralElement != null) {
+                placeholdersToTranslationsMap.put(propertyName, strLiteralElement.getAsString());
+                stepJsonObject.addProperty(stepField, placeholderStr);
+            }
+        }
     }
 
     /**
      *
-     * Replaces {@link String} literals with the appropriate placeholders
+     * Replaces {@link String} literals in widgets with the appropriate placeholders
      *
-     * @param interpolationStrPrefix
+     * @param placeholderStrPrefix
      * @param stepWidgets
      * @param fieldsToTranslate
      */
-    private static void replaceStringLiterals(String interpolationStrPrefix, JsonArray stepWidgets, Set<String> fieldsToTranslate) {
+    private static void replaceWidgetStringLiterals(String placeholderStrPrefix, JsonArray stepWidgets, Set<String> fieldsToTranslate) {
         for (int i = 0; i < stepWidgets.size(); i++) {
             JsonObject widget = stepWidgets.get(i).getAsJsonObject();
             String widgetKey = widget.get(KEY).getAsString();
             printToSystemOut(widget.toString());
             for (String fieldName : fieldsToTranslate) {
                 String[] fieldHierarchy = fieldName.split("\\.");
-                JsonObject fieldToInterpolate = widget;
+                JsonObject fieldToAddPlaceholderTo = widget;
                 for (int j = 0; j < fieldHierarchy.length - 1; j++) {
-                    if (fieldToInterpolate != null) {
-                        fieldToInterpolate = fieldToInterpolate.getAsJsonObject(fieldHierarchy[j]);
+                    if (fieldToAddPlaceholderTo != null) {
+                        fieldToAddPlaceholderTo = fieldToAddPlaceholderTo.getAsJsonObject(fieldHierarchy[j]);
                     }
                 }
 
-                String propertyName = interpolationStrPrefix + "." + widgetKey + "." + fieldName;
-                String interpolationStr = "{{" + propertyName + "}}";
-                if (fieldToInterpolate != null) {
-                    JsonElement strLiteralElement = fieldToInterpolate.get(fieldHierarchy[fieldHierarchy.length - 1]);
+                String propertyName = placeholderStrPrefix + "." + widgetKey + "." + fieldName;
+                String placeholderStr = "{{" + propertyName + "}}";
+                if (fieldToAddPlaceholderTo != null) {
+                    JsonElement strLiteralElement = fieldToAddPlaceholderTo.get(fieldHierarchy[fieldHierarchy.length - 1]);
                     if (strLiteralElement != null) {
-                        interpolationToTranslationMap.put(propertyName, strLiteralElement.getAsString());
-                        fieldToInterpolate.addProperty(fieldHierarchy[fieldHierarchy.length - 1], interpolationStr);
+                        placeholdersToTranslationsMap.put(propertyName, strLiteralElement.getAsString());
+                        fieldToAddPlaceholderTo.addProperty(fieldHierarchy[fieldHierarchy.length - 1], placeholderStr);
                     }
                 }
 
-                printToSystemOut("Interpolation String for widget " + widgetKey +  " is: " + interpolationStr);
+                printToSystemOut("Placeholder String for widget " + widgetKey +  " is: " + placeholderStr);
             }
         }
     }
@@ -147,13 +164,17 @@ public class JsonFormPlaceholderGenerator {
      * @return
      */
     private static JsonArray getWidgets(JsonObject jsonForm, String step) {
-        JsonObject stepJsonObject = jsonForm.has(step) ? jsonForm.getAsJsonObject(step) : null;
+        JsonObject stepJsonObject = getStepJsonObject(jsonForm, step);
         if (stepJsonObject == null) {
             return null;
         }
 
         return stepJsonObject.has(JsonFormConstants.FIELDS) ? stepJsonObject
                 .getAsJsonArray(JsonFormConstants.FIELDS) : null;
+    }
+    
+    private static JsonObject getStepJsonObject(JsonObject jsonForm, String step) {
+        return jsonForm.has(step) ? jsonForm.getAsJsonObject(step) : null;
     }
 
     /**
@@ -184,7 +205,7 @@ public class JsonFormPlaceholderGenerator {
      */
     private static void createTranslationsPropertyFile() {
         StringBuilder stringBuilder = new StringBuilder();
-        for (Map.Entry<String, String> entry : interpolationToTranslationMap.entrySet()) {
+        for (Map.Entry<String, String> entry : placeholdersToTranslationsMap.entrySet()) {
             stringBuilder.append(entry.getKey() + " = " + entry.getValue() + "\n");
         }
         writeToFile(stringBuilder.toString(), File.separator + "tmp" + File.separator + formName + ".properties");
@@ -218,7 +239,7 @@ public class JsonFormPlaceholderGenerator {
 
     public static void main(String[] args) {
         String formToTranslate = System.getenv("FORM_TO_TRANSLATE");
-        printToSystemOut("Interpolating form at path: " + formToTranslate + " ...\n");
+        printToSystemOut("Injecting placeholders in form at path: " + formToTranslate + " ...\n");
         processForm(formToTranslate);
     }
 }

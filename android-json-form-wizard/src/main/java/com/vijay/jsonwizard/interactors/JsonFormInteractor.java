@@ -57,6 +57,7 @@ public class JsonFormInteractor {
     protected static JsonFormInteractor INSTANCE;
     public Map<String, FormWidgetFactory> map;
     private final Set<String> defaultTranslatableWidgetFields;
+    private final Set<String> defaultTranslatableStepFields;
 
     public JsonFormInteractor() {
         this(null);
@@ -64,6 +65,7 @@ public class JsonFormInteractor {
 
     public JsonFormInteractor(@Nullable Map<String, FormWidgetFactory> additionalWidgetsMap) {
         defaultTranslatableWidgetFields = new HashSet<>();
+        defaultTranslatableStepFields = new HashSet<>();
         registerWidgets();
         registerDefaultTranslatableFields();
         if (additionalWidgetsMap != null) {
@@ -86,13 +88,20 @@ public class JsonFormInteractor {
     }
 
     private void registerDefaultTranslatableFields() {
+        // step fields
+        defaultTranslatableStepFields.add("previous_label");
+        defaultTranslatableStepFields.add("next_label");
+        defaultTranslatableStepFields.add("submit_label");
+        defaultTranslatableStepFields.add("title");
+
+        // widget fields
         defaultTranslatableWidgetFields.add("label");
         defaultTranslatableWidgetFields.add("text");
-        defaultTranslatableWidgetFields.add("title");
         defaultTranslatableWidgetFields.add("hint");
         defaultTranslatableWidgetFields.add("v_required.err");
         defaultTranslatableWidgetFields.add("v_regex.err");
         defaultTranslatableWidgetFields.add("v_numeric.err");
+        defaultTranslatableWidgetFields.add("text");
     }
 
     protected void registerWidgets() {
@@ -213,7 +222,11 @@ public class JsonFormInteractor {
         }
     }
 
-    public Set<String> getDefaultTranslatableWidgetFields() {
+    public final Set<String> getDefaultTranslatableWidgetFields() {
         return defaultTranslatableWidgetFields;
+    }
+
+    public final Set<String> getDefaultTranslatableStepFields() {
+        return defaultTranslatableStepFields;
     }
 }
