@@ -466,5 +466,5 @@
       }
     ]
   },
-  "properties_file_name": "basic_form_interpolated"
+  "properties_file_name": "placeholder_injected_basic_form"
 }

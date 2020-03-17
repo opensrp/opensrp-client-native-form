@@ -26,19 +26,19 @@ public class JsonFormPlaceholderGeneratorTest {
 
     @Test
     public void testFormInterpolationShouldPerformCorrectTransformation() throws IOException {
-        String interpolatedFormPath = File.separator + "tmp" + File.separator + formName + "_interpolated" + ".json";
-        String propertiesFilePath = File.separator + "tmp" + File.separator + formName + "_interpolated" + ".properties";
+        String placeholderInjectedFormPath = File.separator + "tmp" + File.separator + "placeholder_injected_" +  formName  + ".json";
+        String propertiesFilePath = File.separator + "tmp" + File.separator + "placeholder_injected_" + formName  + ".properties";
 
         jsonFormPlaceholderGenerator.processForm(testUtils.getResourcesFilePath() + File.separator + formName + ".json");
-        testUtils.copyFilesIntoResourcesFolder(interpolatedFormPath);
+        testUtils.copyFilesIntoResourcesFolder(placeholderInjectedFormPath);
         testUtils.copyFilesIntoResourcesFolder(propertiesFilePath);
 
         String expectedJsonForm = testUtils.getResourceFileContentsAsString(formName + ".json");
-        String interpolatedJsonForm = testUtils.getResourceFileContentsAsString(formName + "_interpolated" + ".json");
+        String placeholderInjectedJsonForm = testUtils.getResourceFileContentsAsString("placeholder_injected_" + formName  + ".json");
 
-        assertEquals(expectedJsonForm, NativeFormLangUtils.getTranslatedString(interpolatedJsonForm));
+        assertEquals(expectedJsonForm, NativeFormLangUtils.getTranslatedString(placeholderInjectedJsonForm));
 
-        testUtils.deleteFile(testUtils.getResourcesFilePath() + File.separator + formName + "_interpolated" + ".json");
-        testUtils.deleteFile(testUtils.getResourcesFilePath() + File.separator + formName +  "_interpolated" + ".properties");
+        testUtils.deleteFile(testUtils.getResourcesFilePath() + File.separator + "placeholder_injected_" + formName  + ".json");
+        testUtils.deleteFile(testUtils.getResourcesFilePath() + File.separator + "placeholder_injected_" + formName + ".properties");
     }
 }
