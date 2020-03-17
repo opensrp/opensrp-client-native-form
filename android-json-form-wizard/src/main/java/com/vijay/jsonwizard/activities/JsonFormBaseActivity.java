@@ -33,6 +33,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.vijay.jsonwizard.utils.NativeFormLangUtils.getTranslatedString;
+
 abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnFieldsInvalid {
     protected static final String TAG = JsonFormActivity.class.getSimpleName();
     protected static final String JSON_STATE = "jsonState";
@@ -70,7 +72,7 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
         isFormFragmentInitialized = false;
         if (savedInstanceState == null) {
             this.form = extractForm(getIntent().getSerializableExtra(JsonFormConstants.JSON_FORM_KEY.FORM));
-            init(getIntent().getStringExtra(JsonFormConstants.JSON_FORM_KEY.JSON));
+            init(getForm());
             initializeFormFragment();
             onFormStart();
         } else {
@@ -82,12 +84,18 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
         }
     }
 
+    private String getForm() {
+        String jsonForm = getIntent().getStringExtra(JsonFormConstants.JSON_FORM_KEY.JSON);
+        if (getIntent().getBooleanExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, false)) {
+            jsonForm = getTranslatedString(jsonForm);
+        }
+        return jsonForm;
+    }
+
     public void init(String json) {
         try {
-            JSONObject formObject = new JSONObject(json);
-            initiateFormUpdate(formObject);
-            setmJSONObject(formObject);
-            if (!mJSONObject.has("encounter_type")) {
+            setmJSONObject(new JSONObject(json));
+            if (!mJSONObject.has(JsonFormConstants.ENCOUNTER_TYPE)) {
                 mJSONObject = new JSONObject();
                 throw new JSONException("Form encounter_type not set");
             }
@@ -141,6 +149,7 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
     }
 
     public void setmJSONObject(JSONObject mJSONObject) {
+        initiateFormUpdate(mJSONObject);
         this.mJSONObject = mJSONObject;
     }
 
