@@ -1,6 +1,7 @@
 package com.vijay.jsonwizard.utils;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -70,9 +71,7 @@ public class ImageUtils {
     }
 
     public static int getDeviceWidth(Context context) {
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        return display.getWidth();
+       return  Resources.getSystem().getDisplayMetrics().widthPixels;
     }
 
     /**

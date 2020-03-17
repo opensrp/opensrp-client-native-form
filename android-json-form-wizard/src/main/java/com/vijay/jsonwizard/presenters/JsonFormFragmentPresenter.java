@@ -88,7 +88,7 @@ public class JsonFormFragmentPresenter extends
         MvpBasePresenter<JsonFormFragmentView<JsonFormFragmentViewState>> {
 
     private static final String TAG = "FormFragmentPresenter";
-    private static final int RESULT_LOAD_IMG = 1;
+    protected static final int RESULT_LOAD_IMG = 1;
     private final JsonFormFragment formFragment;
     protected JSONObject mStepDetails;
     protected String key;

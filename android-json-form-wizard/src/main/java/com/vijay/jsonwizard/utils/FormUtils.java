@@ -437,8 +437,7 @@ public class FormUtils {
     }
 
     public static int dpToPixels(Context context, float dps) {
-        float scale = context.getResources().getDisplayMetrics().density;
-        return (int) (dps * scale + 0.5f);
+        return  (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dps, context.getResources().getDisplayMetrics());
     }
 
     public void showInfoIcon(String stepName, JSONObject jsonObject, CommonListener listener,
