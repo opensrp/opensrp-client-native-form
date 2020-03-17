@@ -1,8 +1,8 @@
 package com.vijay.jsonwizard.presenters;
 
+import android.Manifest.permission;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatSpinner;
 import android.view.View;
@@ -19,7 +19,10 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.OnFieldsInvalid;
+import com.vijay.jsonwizard.shadow.ShadowContextCompat;
+import com.vijay.jsonwizard.shadow.ShadowPermissionUtils;
 import com.vijay.jsonwizard.utils.FormUtils;
+import com.vijay.jsonwizard.utils.PermissionUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,6 +37,7 @@ import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowToast;
 
 import java.lang.ref.WeakReference;
@@ -46,6 +50,7 @@ import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP1;
 import static com.vijay.jsonwizard.presenters.JsonFormFragmentPresenter.RESULT_LOAD_IMG;
+import static com.vijay.jsonwizard.utils.PermissionUtils.CAMERA_PERMISSION_REQUEST_CODE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -53,6 +58,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
@@ -297,8 +303,8 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
     public void testOnSaveClickErrorFragmentDisabledAndDisplaysSnackbar() throws JSONException {
         initWithActualForm();
         formFragment.getMainView().setTag(R.id.skip_validation, false);
-        formFragment.getJsonApi().getmJSONObject().put(JsonFormConstants.SHOW_ERRORS_ON_SUBMIT,false);
-        formFragment=spy(formFragment);
+        formFragment.getJsonApi().getmJSONObject().put(JsonFormConstants.SHOW_ERRORS_ON_SUBMIT, false);
+        formFragment = spy(formFragment);
         doNothing().when(formFragment).showSnackBar(anyString());
         Whitebox.setInternalState(presenter, "viewRef", new WeakReference<>(formFragment));
         presenter.onSaveClick(formFragment.getMainView());
@@ -316,13 +322,24 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
     }
 
     @Test
-    public void testOnActivityResult(){
+    public void testOnActivityResult() {
         when(formFragment.getContext()).thenReturn(context);
-        presenter.onActivityResult(RESULT_LOAD_IMG,RESULT_CANCELED,null);
+        presenter.onActivityResult(RESULT_LOAD_IMG, RESULT_CANCELED, null);
         verify(formFragment).getJsonApi();
         verifyNoMoreInteractions(formFragment);
-        presenter.onActivityResult(RESULT_LOAD_IMG,RESULT_OK,null);
-        verify(formFragment).updateRelevantImageView(null,null,null);
+        presenter.onActivityResult(RESULT_LOAD_IMG, RESULT_OK, null);
+        verify(formFragment).updateRelevantImageView(null, null, null);
+    }
+
+    @Test
+    @Config(shadows = {ShadowContextCompat.class, ShadowPermissionUtils.class})
+    public void testOnRequestPermissionsResultDisplaysCameraIntent() {
+        Whitebox.setInternalState(presenter, "key", "user_image");
+        Whitebox.setInternalState(presenter, "type", "choose_image");
+        when(formFragment.getContext()).thenReturn(context);
+        presenter.onRequestPermissionsResult(CAMERA_PERMISSION_REQUEST_CODE, new String[]{permission.CAMERA, permission.READ_EXTERNAL_STORAGE, permission.WRITE_EXTERNAL_STORAGE}, new int[5]);
+        verify(formFragment).hideKeyBoard();
+       assertEquals("user_image",Whitebox.getInternalState(presenter,"mCurrentKey"));
     }
 
 
