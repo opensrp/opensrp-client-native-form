@@ -16,6 +16,7 @@ import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -78,6 +79,11 @@ public class HiddenTextFactory implements FormWidgetFactory {
 
         hiddenText.setVisibility(View.GONE);
 
+        // Set value (if exists) before attaching listener so that changes can be effected by the listener after
+        String value = jsonObject.optString(JsonFormConstants.VALUE);
+        if (StringUtils.isNotBlank(value)) {
+            hiddenText.setTag(R.id.raw_value, value);
+        }
         hiddenText.addTextChangedListener(new GenericTextWatcher(stepName, formFragment, hiddenText));
         if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             hiddenText.setTag(R.id.relevance, relevance);
