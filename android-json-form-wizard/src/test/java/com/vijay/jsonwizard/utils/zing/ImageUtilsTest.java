@@ -2,6 +2,7 @@ package com.vijay.jsonwizard.utils.zing;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.view.Display;
 import android.view.WindowManager;
@@ -37,16 +38,8 @@ public class ImageUtilsTest extends BaseTest {
 
     @Test
     public void testGetDeviceWidth() {
-        Application application = Mockito.spy(Application.class);
-        Mockito.doReturn(context).when(application).getApplicationContext();
-        Mockito.doReturn(windowManager).when(context).getSystemService(Context.WINDOW_SERVICE);
-        Assert.assertNotNull(windowManager);
-        Mockito.doReturn(display).when(windowManager).getDefaultDisplay();
-        Assert.assertNotNull(display);
-
         int width = ImageUtils.getDeviceWidth(context);
-        Assert.assertEquals(0, width);
-        Mockito.verify(display).getWidth();
+        Assert.assertEquals(Resources.getSystem().getDisplayMetrics().widthPixels, width);
     }
 
     @Test

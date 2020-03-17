@@ -1,5 +1,6 @@
 package com.vijay.jsonwizard.presenters;
 
+import android.Manifest.permission;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,6 +19,9 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.OnFieldsInvalid;
+import com.vijay.jsonwizard.shadow.ShadowContextCompat;
+import com.vijay.jsonwizard.shadow.ShadowPermissionUtils;
+import com.vijay.jsonwizard.utils.FormUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,6 +36,7 @@ import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowToast;
 
 import java.lang.ref.WeakReference;
@@ -40,18 +45,27 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP1;
+import static com.vijay.jsonwizard.presenters.JsonFormFragmentPresenter.RESULT_LOAD_IMG;
+import static com.vijay.jsonwizard.utils.PermissionUtils.CAMERA_PERMISSION_REQUEST_CODE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 /**
@@ -72,6 +86,9 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
 
     @Captor
     private ArgumentCaptor<JSONObject> jsonArgumentCaptor;
+
+    @Captor
+    private ArgumentCaptor<Intent> intentArgumentCaptor;
 
     @Mock
     private JsonFormErrorFragment errorFragment;
@@ -224,7 +241,7 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         assertEquals(0, presenter.getInvalidFields().size());
         verify(formFragment, times(13)).writeValue(anyString(), anyString(), anyString(), anyString(), anyString(),
                 anyString(), anyBoolean());
-        verify(onFieldsInvalid,times(2)).passInvalidFields(presenter.getInvalidFields());
+        verify(onFieldsInvalid, times(2)).passInvalidFields(presenter.getInvalidFields());
     }
 
     private void setTextValue(String address, String value) {
@@ -251,6 +268,76 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         Toast toast = ShadowToast.getLatestToast();
         assertEquals(Toast.LENGTH_SHORT, toast.getDuration());
         assertEquals(context.getString(R.string.json_form_error_msg, 4), ShadowToast.getTextOfLatestToast());
+    }
+
+
+    @Test
+    public void testOnSaveClickFinishesForm() throws JSONException {
+        initWithActualForm();
+        formFragment.getMainView().setTag(R.id.skip_validation, false);
+        setTextValue("step1:user_last_name", "Doe");
+        setTextValue("step1:user_first_name", "John");
+        setTextValue("step1:user_age", "21");
+        ((AppCompatSpinner) formFragment.getJsonApi().getFormDataView("step1:user_spinner")).setSelection(1);
+        presenter.onSaveClick(formFragment.getMainView());
+        assertEquals(0, presenter.getInvalidFields().size());
+        verify(formFragment, times(7)).writeValue(anyString(), anyString(), anyString(), anyString(), anyString(),
+                anyString(), anyBoolean());
+        assertNull(presenter.getErrorFragment());
+        assertNull(ShadowToast.getLatestToast());
+        verify(formFragment).onFormFinish();
+        verify(formFragment).finishWithResult(intentArgumentCaptor.capture());
+        assertFalse(intentArgumentCaptor.getValue().getBooleanExtra(JsonFormConstants.SKIP_VALIDATION, true));
+        JSONObject json = new JSONObject(intentArgumentCaptor.getValue().getStringExtra("json"));
+        assertNotNull(json);
+        assertEquals("Doe", FormUtils.getFieldFromForm(json, "user_last_name").getString(JsonFormConstants.VALUE));
+        assertEquals("John", FormUtils.getFieldFromForm(json, "user_first_name").getString(JsonFormConstants.VALUE));
+        assertEquals("21", FormUtils.getFieldFromForm(json, "user_age").getString(JsonFormConstants.VALUE));
+
+    }
+
+
+    @Test
+    public void testOnSaveClickErrorFragmentDisabledAndDisplaysSnackbar() throws JSONException {
+        initWithActualForm();
+        formFragment.getMainView().setTag(R.id.skip_validation, false);
+        formFragment.getJsonApi().getmJSONObject().put(JsonFormConstants.SHOW_ERRORS_ON_SUBMIT, false);
+        formFragment = spy(formFragment);
+        doNothing().when(formFragment).showSnackBar(anyString());
+        Whitebox.setInternalState(presenter, "viewRef", new WeakReference<>(formFragment));
+        presenter.onSaveClick(formFragment.getMainView());
+        assertEquals(4, presenter.getInvalidFields().size());
+        assertEquals("Please enter the last name", presenter.getInvalidFields().get("step1#Basic Form One:user_last_name").getErrorMessage());
+        assertEquals("Please enter user age", presenter.getInvalidFields().get("step1#Basic Form One:user_age").getErrorMessage());
+        assertEquals("Please enter the first name", presenter.getInvalidFields().get("step1#Basic Form One:user_first_name").getErrorMessage());
+        assertEquals("Please enter the sex", presenter.getInvalidFields().get("step1#Basic Form One:user_spinner").getErrorMessage());
+        verify(formFragment, times(6)).writeValue(anyString(), anyString(), anyString(), anyString(), anyString(),
+                anyString(), anyBoolean());
+        assertNull(presenter.getErrorFragment());
+        assertNull(ShadowToast.getLatestToast());
+        verify(formFragment, never()).onFormFinish();
+        verify(formFragment).showSnackBar(context.getString(R.string.json_form_error_msg, 4));
+    }
+
+    @Test
+    public void testOnActivityResult() {
+        when(formFragment.getContext()).thenReturn(context);
+        presenter.onActivityResult(RESULT_LOAD_IMG, RESULT_CANCELED, null);
+        verify(formFragment).getJsonApi();
+        verifyNoMoreInteractions(formFragment);
+        presenter.onActivityResult(RESULT_LOAD_IMG, RESULT_OK, null);
+        verify(formFragment).updateRelevantImageView(null, null, null);
+    }
+
+    @Test
+    @Config(shadows = {ShadowContextCompat.class, ShadowPermissionUtils.class})
+    public void testOnRequestPermissionsResultDisplaysCameraIntent() {
+        Whitebox.setInternalState(presenter, "key", "user_image");
+        Whitebox.setInternalState(presenter, "type", "choose_image");
+        when(formFragment.getContext()).thenReturn(context);
+        presenter.onRequestPermissionsResult(CAMERA_PERMISSION_REQUEST_CODE, new String[]{permission.CAMERA, permission.READ_EXTERNAL_STORAGE, permission.WRITE_EXTERNAL_STORAGE}, new int[5]);
+        verify(formFragment).hideKeyBoard();
+       assertEquals("user_image",Whitebox.getInternalState(presenter,"mCurrentKey"));
     }
 
 
