@@ -13,6 +13,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
+import org.robolectric.RuntimeEnvironment;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -176,5 +177,13 @@ public class FormUtilsTest extends BaseTest {
         Assert.assertNotNull(jsonArray);
         Assert.assertEquals("blood_type_test_status", jsonArray.getJSONObject(0).getString(JsonFormConstants.KEY));
         Assert.assertEquals("done_today", jsonArray.getJSONObject(0).getString(JsonFormConstants.VALUE));
+    }
+
+    @Test
+    public void testGetSubFormJson() throws Exception {
+        JSONObject form = FormUtils.getSubFormJson("expansion_panel_sub_form", null, RuntimeEnvironment.application);
+        Assert.assertNotNull(form);
+        Assert.assertTrue(form.has(JsonFormConstants.CONTENT_FORM));
+        Assert.assertEquals(7, form.getJSONArray(JsonFormConstants.CONTENT_FORM).length());
     }
 }
