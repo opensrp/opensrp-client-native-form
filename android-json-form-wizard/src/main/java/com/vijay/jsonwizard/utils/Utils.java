@@ -682,7 +682,7 @@ public class Utils {
     }
 
     /**
-     * Converts string jsonArray to set
+     * Converts jsonArray to set
      *
      * @param jsonArray
      * @return
