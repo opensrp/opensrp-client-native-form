@@ -71,13 +71,13 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
         lifeCycleListeners = new ArrayList<>();
         isFormFragmentInitialized = false;
         if (savedInstanceState == null) {
+            this.form = extractForm(getIntent().getSerializableExtra(JsonFormConstants.JSON_FORM_KEY.FORM));
             init(getForm());
             initializeFormFragment();
             onFormStart();
-            this.form = extractForm(getIntent().getSerializableExtra(JsonFormConstants.JSON_FORM_KEY.FORM));
         } else {
-            init(savedInstanceState.getString(JSON_STATE));
             this.form = extractForm(savedInstanceState.getSerializable(FORM_STATE));
+            init(savedInstanceState.getString(JSON_STATE));
         }
         for (LifeCycleListener lifeCycleListener : lifeCycleListeners) {
             lifeCycleListener.onCreate(savedInstanceState);
@@ -95,7 +95,7 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
     public void init(String json) {
         try {
             setmJSONObject(new JSONObject(json));
-            if (!mJSONObject.has("encounter_type")) {
+            if (!mJSONObject.has(JsonFormConstants.ENCOUNTER_TYPE)) {
                 mJSONObject = new JSONObject();
                 throw new JSONException("Form encounter_type not set");
             }
@@ -120,6 +120,8 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
             Log.e(TAG, "Initialization error. Json passed is invalid : " + e.getMessage(), e);
         }
     }
+
+    protected abstract void initiateFormUpdate(JSONObject json);
 
     public synchronized void initializeFormFragment() {
         isFormFragmentInitialized = true;
@@ -147,6 +149,7 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
     }
 
     public void setmJSONObject(JSONObject mJSONObject) {
+        initiateFormUpdate(mJSONObject);
         this.mJSONObject = mJSONObject;
     }
 
