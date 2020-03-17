@@ -78,10 +78,11 @@ public class FormUtilsTest extends BaseTest {
         Mockito.doReturn(resources).when(context).getResources();
         Mockito.doReturn(displayMetrics).when(resources).getDisplayMetrics();
 
-        Whitebox.setInternalState(displayMetrics, "density", 5);
-
-        float dpString = 30.0f;
         int expected = 150;
+        float dpString = 30.0f;
+        PowerMockito.mockStatic(TypedValue.class);
+        PowerMockito.when(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpString, displayMetrics)).thenReturn(Float
+                .valueOf(expected));
 
         int px = FormUtils.dpToPixels(context, dpString);
         Assert.assertEquals(expected, px);
@@ -114,13 +115,16 @@ public class FormUtilsTest extends BaseTest {
         Mockito.doReturn(context).when(application).getApplicationContext();
         Mockito.doReturn(resources).when(context).getResources();
         Mockito.doReturn(displayMetrics).when(resources).getDisplayMetrics();
-
         String dpString = "30dp";
-        int expected = 150;
         PowerMockito.mockStatic(TextUtils.class);
-        PowerMockito.mockStatic(TypedValue.class);
         PowerMockito.when(!TextUtils.isEmpty(dpString)).thenReturn(false);
-        Whitebox.setInternalState(displayMetrics, "density", 5);
+
+        Float dp = 30f;
+        int expected = 150;
+        PowerMockito.mockStatic(TypedValue.class);
+        PowerMockito.when(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, displayMetrics)).thenReturn(Float
+                .valueOf(expected));
+
 
         int px = FormUtils.getValueFromSpOrDpOrPx(dpString, context);
         Assert.assertEquals(expected, px);
