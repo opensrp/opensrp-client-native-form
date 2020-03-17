@@ -14,7 +14,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import timber.log.Timber;
 
@@ -26,7 +25,7 @@ import static com.vijay.jsonwizard.utils.Utils.getFileContentsAsString;
 /**
  * Created by Vincent Karuri on 12/03/2020
  */
-public class JsonFormPlaceholderGenerator {
+public class JsonFormMLSAssetGenerator {
 
     private static Map<String, String> placeholdersToTranslationsMap = new HashMap<>();
     private static String formName;
@@ -42,11 +41,11 @@ public class JsonFormPlaceholderGenerator {
         try {
             String form = getFileContentsAsString(formToTranslate);
 
-            printToSystemOut("\nForm before placeholder injection:\n");
-            printToSystemOut(form);
+            printToSystemOut("\nForm before placeholder injection:\n" + form);
 
             String[] formPath = formToTranslate.split(File.separator);
             formName = "placeholder_injected_" + formPath[formPath.length - 1].split("\\.")[0];
+
             JsonObject placeholderInjectedForm = injectPlaceholders(stringToJson(form), formName);
             placeholderInjectedForm.addProperty(PROPERTIES_FILE_NAME, formName);
 
@@ -76,42 +75,38 @@ public class JsonFormPlaceholderGenerator {
      *
      * The {@link String} literals (fields) to be replaced have to be defined either globally or as part of a widget's definition.
      *
-     * The placeholders follow the scheme : {{form_name.step_name.widget_key.field_identifier}}
+     * The placeholders follow the scheme : {{form_name.step_name.widget_key.field_identifier}} for widget fields
+     *
+     * And {{form_name.step_name.field_identifier}} for step-level fields
      *
      * @param jsonForm
      * @param formName
      * @return
      */
     private static JsonObject injectPlaceholders(JsonObject jsonForm, String formName) {
-        printToSystemOut("List of translatable widget fields:\n");
-        for (String str : JsonFormInteractor.getInstance().getDefaultTranslatableWidgetFields()) {
-            printToSystemOut(str);
-        }
-
-        int numOfSteps = getNumOfSteps(jsonForm);
-        for (int i = 1; i <= numOfSteps; i++) {
+        for (int i = 1; i <= getNumOfSteps(jsonForm); i++) {
             String stepName = STEP + i;
             String placeholderStringPrefix = formName + "." + stepName;
-            
-            replaceStepStringLiterals(getStepJsonObject(jsonForm, stepName), placeholderStringPrefix);
-            
-            JsonArray stepWidgets = getWidgets(jsonForm, stepName);
-            printToSystemOut("The key is: " + stepName + " and the value is: " + stepWidgets);
-            replaceWidgetStringLiterals(placeholderStringPrefix, stepWidgets, JsonFormInteractor.getInstance().getDefaultTranslatableWidgetFields());
+            replaceStepStringLiterals(placeholderStringPrefix, getStepJsonObject(jsonForm, stepName));
+            replaceWidgetStringLiterals(placeholderStringPrefix, getWidgets(jsonForm, stepName));
         }
-
         printToSystemOut("Placeholder-injected form: " + jsonForm);
-
         return jsonForm;
     }
-    
-    private static void replaceStepStringLiterals(JsonObject stepJsonObject, String placeholderStrPrefix) {
+
+    /**
+     *
+     * Replaces {@link String} literals at step level with the appropriate placeholders
+     *
+     * @param stepJsonObject
+     * @param placeholderStrPrefix
+     */
+    private static void replaceStepStringLiterals(String placeholderStrPrefix, JsonObject stepJsonObject) {
         for (String stepField : JsonFormInteractor.getInstance().getDefaultTranslatableStepFields()) {
-            String propertyName = placeholderStrPrefix + "." + stepField;
-            String placeholderStr = "{{" + propertyName + "}}";
-            
             JsonElement strLiteralElement = stepJsonObject.get(stepField);
             if (strLiteralElement != null) {
+                String propertyName = placeholderStrPrefix + "." + stepField;
+                String placeholderStr = "{{" + propertyName + "}}";
                 placeholdersToTranslationsMap.put(propertyName, strLiteralElement.getAsString());
                 stepJsonObject.addProperty(stepField, placeholderStr);
             }
@@ -124,33 +119,33 @@ public class JsonFormPlaceholderGenerator {
      *
      * @param placeholderStrPrefix
      * @param stepWidgets
-     * @param fieldsToTranslate
      */
-    private static void replaceWidgetStringLiterals(String placeholderStrPrefix, JsonArray stepWidgets, Set<String> fieldsToTranslate) {
+    private static void replaceWidgetStringLiterals(String placeholderStrPrefix, JsonArray stepWidgets) {
         for (int i = 0; i < stepWidgets.size(); i++) {
             JsonObject widget = stepWidgets.get(i).getAsJsonObject();
             String widgetKey = widget.get(KEY).getAsString();
-            printToSystemOut(widget.toString());
-            for (String fieldName : fieldsToTranslate) {
-                String[] fieldHierarchy = fieldName.split("\\.");
+            for (String fieldIdentifier : JsonFormInteractor.getInstance().getDefaultTranslatableWidgetFields()) {
+                // Split the widget field identifier into it's constituent keys
+                // and traverse the widget JsonObject to get to the child element
+                String[] fieldIdentifierKeys = fieldIdentifier.split("\\.");
                 JsonObject fieldToAddPlaceholderTo = widget;
-                for (int j = 0; j < fieldHierarchy.length - 1; j++) {
+                for (int j = 0; j < fieldIdentifierKeys.length - 1; j++) {
                     if (fieldToAddPlaceholderTo != null) {
-                        fieldToAddPlaceholderTo = fieldToAddPlaceholderTo.getAsJsonObject(fieldHierarchy[j]);
+                        fieldToAddPlaceholderTo = fieldToAddPlaceholderTo.getAsJsonObject(fieldIdentifierKeys[j]);
                     }
                 }
-
-                String propertyName = placeholderStrPrefix + "." + widgetKey + "." + fieldName;
+                // At the child element, use the last portion of the field identifier as a key
+                // and replace the string literal with a placeholder
+                String propertyName = placeholderStrPrefix + "." + widgetKey + "." + fieldIdentifier;
                 String placeholderStr = "{{" + propertyName + "}}";
                 if (fieldToAddPlaceholderTo != null) {
-                    JsonElement strLiteralElement = fieldToAddPlaceholderTo.get(fieldHierarchy[fieldHierarchy.length - 1]);
+                    String childElementKey = fieldIdentifierKeys[fieldIdentifierKeys.length - 1];
+                    JsonElement strLiteralElement = fieldToAddPlaceholderTo.get(childElementKey);
                     if (strLiteralElement != null) {
                         placeholdersToTranslationsMap.put(propertyName, strLiteralElement.getAsString());
-                        fieldToAddPlaceholderTo.addProperty(fieldHierarchy[fieldHierarchy.length - 1], placeholderStr);
+                        fieldToAddPlaceholderTo.addProperty(childElementKey, placeholderStr);
                     }
                 }
-
-                printToSystemOut("Placeholder String for widget " + widgetKey +  " is: " + placeholderStr);
             }
         }
     }
@@ -164,17 +159,19 @@ public class JsonFormPlaceholderGenerator {
      * @return
      */
     private static JsonArray getWidgets(JsonObject jsonForm, String step) {
-        JsonObject stepJsonObject = getStepJsonObject(jsonForm, step);
-        if (stepJsonObject == null) {
-            return null;
-        }
-
-        return stepJsonObject.has(JsonFormConstants.FIELDS) ? stepJsonObject
-                .getAsJsonArray(JsonFormConstants.FIELDS) : null;
+        return getStepJsonObject(jsonForm, step).getAsJsonArray(JsonFormConstants.FIELDS);
     }
-    
+
+    /**
+     *
+     * Get the {@link JsonObject} representation of a {@param jsonForm} {@param step}
+     *
+     * @param jsonForm
+     * @param step
+     * @return
+     */
     private static JsonObject getStepJsonObject(JsonObject jsonForm, String step) {
-        return jsonForm.has(step) ? jsonForm.getAsJsonObject(step) : null;
+        return jsonForm.getAsJsonObject(step);
     }
 
     /**

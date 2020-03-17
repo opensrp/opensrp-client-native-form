@@ -13,15 +13,15 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by Vincent Karuri on 16/03/2020
  */
-public class JsonFormPlaceholderGeneratorTest {
+public class JsonFormMLSAssetGeneratorTest {
 
     private final TestUtils testUtils = new TestUtils();
-    private JsonFormPlaceholderGenerator jsonFormPlaceholderGenerator;
+    private JsonFormMLSAssetGenerator jsonFormMLSAssetGenerator;
     private final String formName = "basic_form";
 
     @Before
     public void setUp() {
-        jsonFormPlaceholderGenerator = new JsonFormPlaceholderGenerator();
+        jsonFormMLSAssetGenerator = new JsonFormMLSAssetGenerator();
     }
 
     @Test
@@ -29,7 +29,7 @@ public class JsonFormPlaceholderGeneratorTest {
         String placeholderInjectedFormPath = File.separator + "tmp" + File.separator + "placeholder_injected_" +  formName  + ".json";
         String propertiesFilePath = File.separator + "tmp" + File.separator + "placeholder_injected_" + formName  + ".properties";
 
-        jsonFormPlaceholderGenerator.processForm(testUtils.getResourcesFilePath() + File.separator + formName + ".json");
+        jsonFormMLSAssetGenerator.processForm(testUtils.getResourcesFilePath() + File.separator + formName + ".json");
         testUtils.copyFilesIntoResourcesFolder(placeholderInjectedFormPath);
         testUtils.copyFilesIntoResourcesFolder(propertiesFilePath);
 
