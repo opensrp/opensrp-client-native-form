@@ -24,6 +24,7 @@ import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.CompoundButton;
 import com.vijay.jsonwizard.customviews.ExpansionPanelGenericPopupDialog;
+import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.event.BaseEvent;
 import com.vijay.jsonwizard.rules.RuleConstant;
 import com.vijay.jsonwizard.views.CustomTextView;
@@ -32,6 +33,7 @@ import com.vijay.jsonwizard.widgets.DatePickerFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,12 +53,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import timber.log.Timber;
 
-import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
+import static com.vijay.jsonwizard.utils.NativeFormLangUtils.getTranslatedString;
 
 public class Utils {
     public final static List<String> PREFICES_OF_INTEREST = Arrays.asList(RuleConstant.PREFIX.GLOBAL, RuleConstant.STEP);
@@ -284,39 +287,6 @@ public class Utils {
 
     }
 
-    @NonNull
-    private static String cleanToken(String conditionTokenRaw) {
-        String conditionToken = conditionTokenRaw.trim();
-
-        for (int i = 0; i < conditionToken.length(); i++) {
-            if (JAVA_OPERATORS.contains(conditionToken.charAt(i))) {
-                if (i == 0) {
-                    conditionToken = cleanToken(conditionToken.substring(1));
-                } else {
-                    conditionToken = conditionToken.substring(0, conditionToken.indexOf(conditionToken.charAt(i)));
-                    break;
-                }
-            }
-        }
-
-        return conditionToken;
-    }
-
-    public static List<String> getConditionKeys(String condition) {
-        String cleanString = cleanConditionString(condition);
-        String[] conditionTokens = cleanString.split(" ");
-        Map<String, Boolean> conditionKeys = new HashMap<>();
-
-        for (String token : conditionTokens) {
-            if (token.contains(RuleConstant.STEP) || token.contains(RuleConstant.PREFIX.GLOBAL)) {
-                String conditionToken = cleanToken(token);
-                conditionKeys.put(conditionToken, true);
-            }
-        }
-
-        return new ArrayList<>(conditionKeys.keySet());
-    }
-
     private static String cleanConditionString(String conditionStringRaw) {
         String conditionString = conditionStringRaw;
 
@@ -366,7 +336,7 @@ public class Utils {
 
                 JSONArray jsonArrayRules = new JSONArray();
                 JSONObject keyJsonObject = new JSONObject();
-                keyJsonObject.put(KEY, uniqueId);
+                keyJsonObject.put(JsonFormConstants.KEY, uniqueId);
                 jsonArrayRules.put(keyJsonObject);
                 for (Map<String, Object> map : mapArrayList) {
                     JSONObject jsonRulesDynamicObject = new JSONObject();
@@ -418,6 +388,52 @@ public class Utils {
             if (removeThisFields.contains(key)) {
                 viewIterator.remove();
             }
+        }
+    }
+
+    public static void updateSubFormFields(JSONObject subForm, Form form) {
+        for (int i = 0; i < subForm.optJSONArray(JsonFormConstants.CONTENT_FORM).length(); i++) {
+            handleFieldBehaviour(subForm.optJSONArray(JsonFormConstants.CONTENT_FORM).optJSONObject(i), form);
+        }
+    }
+
+    public static void handleFieldBehaviour(JSONObject fieldObject, Form form) {
+        String key = fieldObject.optString(JsonFormConstants.KEY);
+
+        if (form != null && form.getHiddenFields() != null && form.getHiddenFields().contains(key)) {
+            makeFieldHidden(fieldObject);
+        }
+
+        if (form != null && form.getDisabledFields() != null && form.getDisabledFields().contains(key)) {
+            makeFieldDisabled(fieldObject);
+        }
+
+    }
+
+    /**
+     * Used to change type of field to hidden and put attribute disabled as true
+     *
+     * @param fieldObject
+     */
+    public static void makeFieldDisabled(JSONObject fieldObject) {
+        try {
+            makeFieldHidden(fieldObject);
+            fieldObject.put(JsonFormConstants.DISABLED, true);
+        } catch (JSONException e) {
+            Timber.e(e);
+        }
+    }
+
+    /**
+     * Used to change type of field to hidden
+     *
+     * @param fieldObject
+     */
+    public static void makeFieldHidden(JSONObject fieldObject) {
+        try {
+            fieldObject.put(JsonFormConstants.TYPE, JsonFormConstants.HIDDEN);
+        } catch (JSONException e) {
+            Timber.e(e);
         }
     }
 
@@ -568,6 +584,118 @@ public class Utils {
         Button okButton = buttonLayout.findViewById(R.id.ok_button);
         okButton.setEnabled(true);
         okButton.setClickable(true);
+    }
+
+
+    @NonNull
+    private static String cleanToken(String conditionTokenRaw) {
+        String conditionToken = conditionTokenRaw.trim();
+
+        for (int i = 0; i < conditionToken.length(); i++) {
+            if (JAVA_OPERATORS.contains(conditionToken.charAt(i))) {
+                if (i == 0) {
+                    conditionToken = cleanToken(conditionToken.substring(1));
+                } else {
+                    conditionToken = conditionToken.substring(0, conditionToken.indexOf(conditionToken.charAt(i)));
+                    break;
+                }
+            }
+        }
+
+        return conditionToken;
+    }
+
+    public static List<String> getConditionKeys(String condition) {
+        String cleanString = cleanConditionString(condition);
+        String[] conditionTokens = cleanString.split(" ");
+        Map<String, Boolean> conditionKeys = new HashMap<>();
+
+        for (String token : conditionTokens) {
+            if (token.contains(RuleConstant.STEP) || token.contains(RuleConstant.PREFIX.GLOBAL)) {
+                String conditionToken = cleanToken(token);
+                conditionKeys.put(conditionToken, true);
+            }
+        }
+
+        return new ArrayList<>(conditionKeys.keySet());
+    }
+
+    /**
+     * Translates a yaml file specified by {@param fileName} and returns its String representation
+     *
+     * @param fileName
+     * @param context
+     * @return Translated Yaml file in its String representation
+     * @throws IOException
+     */
+    public static String getTranslatedYamlFile(String fileName, Context context) throws IOException {
+        return getTranslatedString(getAssetFileAsString(fileName, context));
+    }
+
+    /**
+     * Gets a file specified by {@param fileName} from the assets folder as a String
+     *
+     * @param fileName
+     * @param context
+     * @return A file from the assets folder as a String
+     * @throws IOException
+     */
+    public static String getAssetFileAsString(String fileName, Context context) throws IOException {
+        InputStream inputStream = context.getAssets().open(fileName);
+        return convertStreamToString(inputStream);
+    }
+
+    /**
+     * Converts an {@link InputStream} into a String
+     *
+     * @param inputStream
+     * @return String representation of an {@link InputStream}
+     */
+    public static String convertStreamToString(InputStream inputStream) {
+        Scanner s = new Scanner(inputStream).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
+    }
+
+
+    /**
+     * Gets form config entries as specified in json.form.config.json
+     *
+     * @param formName
+     * @param configLocation
+     * @param context
+     * @return
+     * @throws JSONException
+     * @throws IOException
+     */
+    public static JSONObject getFormConfig(@NonNull String formName, @NonNull String configLocation, @NonNull Context context) throws JSONException, IOException {
+        String fileContent = getAssetFileAsString(configLocation, context);
+        if (StringUtils.isNotBlank(fileContent)) {
+            JSONArray jsonArray = new JSONArray(fileContent);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.optJSONObject(i);
+                if (formName.equals(jsonObject.optString(JsonFormConstants.FORM_NAME))) {
+                    return jsonObject;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Converts jsonArray to set
+     *
+     * @param jsonArray
+     * @return
+     */
+    public static Set<String> convertJsonArrayToSet(@Nullable JSONArray jsonArray) {
+        if (jsonArray != null) {
+            Set<String> strings = new HashSet<>();
+            for (int i = 0; i < jsonArray.length(); i++) {
+                strings.add(jsonArray.optString(i));
+            }
+            return strings;
+        }
+        return null;
     }
 }
 

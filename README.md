@@ -1,3 +1,4 @@
+
 [![Build Status](https://travis-ci.org/OpenSRP/opensrp-client-native-form.svg?branch=master)](https://travis-ci.org/OpenSRP/opensrp-client-native-form) [![Coverage Status](https://coveralls.io/repos/github/OpenSRP/opensrp-client-native-form/badge.svg?branch=master)](https://coveralls.io/github/OpenSRP/opensrp-client-native-form?branch=master) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/bf52b1d28f8e4cd39243cff5f13ec395)](https://www.codacy.com/manual/OpenSRP/opensrp-client-native-form?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=OpenSRP/opensrp-client-native-form&amp;utm_campaign=Badge_Grade)
 
 [![Dristhi](https://raw.githubusercontent.com/OpenSRP/opensrp-client/master/opensrp-app/res/drawable-mdpi/login_logo.png)](https://smartregister.atlassian.net/wiki/dashboard.action)
@@ -20,7 +21,7 @@
 
 # Introduction
 
-OpenSRP Client Native Form Module/app provides the ability to easily create Android forms using JSON forms. 
+OpenSRP Client Native Form Module/app provides the ability to easily create Android forms using JSON forms.
 
 Thanks to this [Android Native JSON Form Library](https://github.com/vijayrawatsan/android-json-form-wizard) from which OpenSRP Client Native Form has been customised to fit OpenSRP Requirements
 
@@ -791,31 +792,31 @@ Here are a few instructions on how to write the JSON Form:
 
 ```
 //Start of your JSON FORM
-{  
+{
     "count":1,
     "encounter_type":"Birth Registration",
-    "mother":{  
+    "mother":{
 
     },
     "entity_id":"",
     "relational_id":"",
-    "metadata":{  
+    "metadata":{
 
     },
-    "step1":{  
+    "step1":{
         "title":"Birth Registration",
-        "fields":[  
-            {  
+        "fields":[
+            {
                 "type":"edit_text",
                 "openmrs_entity_id":"",
                 "hint":"First name",
                 "key":"First_Name",
-                "v_regex":{  
+                "v_regex":{
                     "value":"[A-Za-z]*",
                     "err":"Please enter a valid name"
                 }
             },
-            {  
+            {
 
             }
         ]
@@ -888,7 +889,7 @@ This section will provide a brief description how to build and install the appli
     * Install VirtualBox
     * Download Genymotion & Install it
     * Sign in to the genymotion app
-    * Create a new Genymotion Virtual Device 
+    * Create a new Genymotion Virtual Device
         * **Preferrable & Stable Choice** - API 22(Android 5.1.0), Screen size of around 800 X 1280, 1024 MB Memory --> eg. Google Nexus 7, Google Nexus 5
 
 ## How to install
@@ -973,12 +974,12 @@ Some customisations were done on the parent library to fit OpenSRP requirements.
          * `value` - The unique entity identifier eg. `9898-sd23D-f523a`
 
 > ### OpenMRS Keys
-> 
+>
 > Each metadata field objects above have the following properties:
->    * `key` 
+>    * `key`
 >    * `openmrs_entity_parent`
 >    * `openmrs_entity`
->    * `openmrs_data_type` 
+>    * `openmrs_data_type`
 >    * `openmrs_entity_id`
 
 3. Mandatory fields for each JSON Form i.e.
@@ -999,12 +1000,12 @@ Death | A deceased child/patient is reported
 
 
 4. Validations & Constraints for input fields i.e.
-   * `v_regex` - This is used for validating input using [Regular Expression](https://en.wikipedia.org/wiki/Regular_expression) 
+   * `v_regex` - This is used for validating input using [Regular Expression](https://en.wikipedia.org/wiki/Regular_expression)
    * `v_min` - This validation ensures input entered is not below minimum value stated
    * `v_max` - Ensure that the input entered is not above the maximum value stated
    * `v_min_length` - Ensure that the number of characters entered is above the minimum value stated
    * `v_max_length` - Ensure that the number of characters entered is not above the maximum value stated
-   
+
 The Number Selector widget has constraints which can be defined in either of two ways
    * Using the Rules engine as shown below
 ```
@@ -1018,8 +1019,8 @@ The Number Selector widget has constraints which can be defined in either of two
 }
 
 ```
-   
-``` 
+
+```
 name: step1_numbers_selector_three
 description: Number Selectors
 priority: 1
@@ -1027,7 +1028,7 @@ condition: "true"
 actions:
   - "constraint = (step1_numbers_selector - step1_numbers_selector_two)"
 
-``` 
+```
  * Using the legacy approach
  ```
      "constraints": [
@@ -1124,13 +1125,13 @@ the CHW Phone Number Widget will only show based on these various conditions:
 2. Both Perineal Tear and Placenta Previa are checked
 3. Both Cord Prolapse and Abnormal Presentation checked or just Prolonged Obstructed Labour is checked
 
-The implementation introduces a new field `ex-checkbox` which contains the complex checkbox expression, the example for the above 3 conditions is as below. 
-The relevant keys of the multi-select checkbox are specified as arrays wrapped with an object key of either `and` or `or` or `both` to be used for simple boolean logic processing. 
+The implementation introduces a new field `ex-checkbox` which contains the complex checkbox expression, the example for the above 3 conditions is as below.
+The relevant keys of the multi-select checkbox are specified as arrays wrapped with an object key of either `and` or `or` or `both` to be used for simple boolean logic processing.
 
-``` 
+```
 ,
         "relevance": {
-          "step1:delivery_complications": { 
+          "step1:delivery_complications": {
             "ex-checkbox": [
               {
                 "or": ["severe_bleeding"]
@@ -1223,19 +1224,19 @@ The relevant keys of the multi-select checkbox are specified as arrays wrapped w
           "value": "false"
         }
       }
-``` 
-The above relevance example shows a multiple select checkbox example and its used in the sample demo app for the CHW_Phone_Number widget. 
+```
+The above relevance example shows a multiple select checkbox example and its used in the sample demo app for the CHW_Phone_Number widget.
 
 If you want to specify relevance on the basis of whether a particular value HAS NOT been checked/selected use the `not` key field as shown below. Here, the widget will not show if the `severe bleeding` option has been selected
 
 ```
   "relevance": {
-          "step1:delivery_complications": { 
+          "step1:delivery_complications": {
             "ex-checkbox": [
               {
                 "not": ["severe_bleeding"]
               }]
-           } 
+           }
 ```
 
  ### Checkbox Exclusive Select field
@@ -1247,19 +1248,19 @@ If you want to specify relevance on the basis of whether a particular value HAS 
 
  OpenSRP Client Native Forms is now integrated with a rules engine for skip logic and also complex fields calculations. We use the J-Easy Library which can be found [Here](https://github.com/j-easy/easy-rules).
  Rules are defined in yaml configuration files that are stored in the `assets/rule` folder. You can define multiple rules in multiple configs to be used by one json form
- 
+
  When defining the skip logic and calculations for your forms keep Calculations and Relevance in separate files. e.g if i am doing a form called `physical_exam` , under `assets/rules` i should have two files namely
  `physical-exam-relevance-rules.yml`
  `physical-exam-calculations-rules.yml`
- 
+
  You can name the files any thing you want so long as you don't mix calculations and relevance definitions.
- 
+
  Separating and naming the files this way per form is however the recommended approach
- 
+
  The j-easy library uses MVEL expression language which is java like to define its rules. There are a few subtle differences but those can be found in the MVEL Documentation [Here](http://mvel.documentnode.com/)
- 
+
  Once you have the rules defined, you need to reference them like this in the form's json
- 
+
 ```
 {
         "key": "happiness_level",
@@ -1281,7 +1282,7 @@ If you want to specify relevance on the basis of whether a particular value HAS 
              }
            }
          }
-      } 
+      }
 ```
 In the example above, the relevance and the calculations for the edit text with key `happiness_level` are defined in the `assets/rule/sample-relevance-rules.yml` and `assets/rule/sample-calculation-rules.yml` files respectively.
 The calculation setting here means that the value for this field is calculated rather than entered, its calculation rules being defined in the `sample-calculation-rules.yml` file.
@@ -1289,16 +1290,16 @@ The calculation setting here means that the value for this field is calculated r
 The Sample App now has the various sections separated for easier reference. Once you run the app , clicking on the RULES ENGINE LOGIC button guides you through various configurations for relevance and calculations.
 You can check out the corresponding rules files under `assets/rule` to see how they are configured.
 
-NB: 
-    - When defining rules, always prefix with the step name they reference e.g. if its a key `age` in `step 1` then the field reference in the condition should be as `step1_age` 
+NB:
+    - When defining rules, always prefix with the step name they reference e.g. if its a key `age` in `step 1` then the field reference in the condition should be as `step1_age`
       e.g. `condition: "step1_hepb_immun_status < 60 || step1_hepb_immun_status > 100"` or if field contains a value which is a list like the checkbox widget `step2_super_heroes.contains('batman')`
     - The name of the rule should be the key of the field it configures also be prefixed with its step  e.g. `name: step1_happiness_level`
-    - The action of a calculation should always be an assignment to the key calculation e.g. 
+    - The action of a calculation should always be an assignment to the key calculation e.g.
      ```
     actions:
       - "calculation = calculation + 1"
      ```
-    - The action of a relevance should always be an assignment to the key is relevant e.g. 
+    - The action of a relevance should always be an assignment to the key is relevant e.g.
      ```
     actions:
       - "isRelevant = true"
@@ -1327,10 +1328,10 @@ actions:
  ```condition: 'helper.formatDate(step1_Date_Birth,"y") <= 2'``` checks whether the date of birth is less than or equal to 2 years
  ```- 'calculation = helper.formatDate("19-12-2020","y")'```  gets number of weeks from passed date. you can also use `d` for days `m` for months `w` for weeks
  ```- 'calculation = helper.formatDate("19-12-2020","wd")'``` outputs special format `28 weeks 5 days`
- 
- 
+
+
 6. More input field types:
- 
+
  ### Extra input field types
 
  Field Type | Name | Description
@@ -1338,7 +1339,7 @@ actions:
  TreeView | `tree` | A stepped Selection View/Widget for nested selections eg. `Happy Kids Clinic` can be found in **Zambia Ministry of Health > Northern Highlands > Fort Jameson**. They all have to be expanded to get to it
  Barcode | `barcode` | A text input field with a **SCAN QR CODE** button. It enables one to scan QR code and prints the scan result in the text input field
  Date Picker | `date_picker` | This is a date picker view
- GPS Location Picker | `gps` | This retrieves the current user location from the GPS. The value is retrievable as a `latitude longitude`(LatLng Combination separated by a space) 
+ GPS Location Picker | `gps` | This retrieves the current user location from the GPS. The value is retrievable as a `latitude longitude`(LatLng Combination separated by a space)
 
 7. Media, Image or Note display:
 
@@ -1361,9 +1362,9 @@ actions:
             "media_text": ""
           }
         ],
-        
+
 ```
-The field above would only be required in questions where there is a need to show any note,image or video based on answer to the question. 
+The field above would only be required in questions where there is a need to show any note,image or video based on answer to the question.
 In that case "has_media_content" needs to be set to true.
 The entire question field in that case would look like
  ```
@@ -1415,10 +1416,10 @@ The repeating group widget allows for replication of a single form definition wh
 a form layout once, using the normal Json Forms syntax, and the layout can be replicated a number of
 times as specified by the user.
 
-The repeating group comprises of an edit text field (henceforth referred to as the `reference edit text`) 
-that is used to specify the number of repeating group elements the user would like to generate and the 
-repeating group layout definition defined in Json. In cases where you want to use a value from another edit_text, 
-specify the address of edit text on the optional property `reference_edit_text` eg. 
+The repeating group comprises of an edit text field (henceforth referred to as the `reference edit text`)
+that is used to specify the number of repeating group elements the user would like to generate and the
+repeating group layout definition defined in Json. In cases where you want to use a value from another edit_text,
+specify the address of edit text on the optional property `reference_edit_text` eg.
 
 ```json
 
@@ -1440,7 +1441,7 @@ edit_text referenced in the property does not have a valid value.
 
 To specify the repeating group layout, add its Json definition to the value field in the repeating group widget.
 
-The repeating group form layout definition follows the same format as the regular Json form. 
+The repeating group form layout definition follows the same format as the regular Json form.
 
 An example can be seen below:
 
@@ -1853,14 +1854,14 @@ To use the widget, simply enter the number of repeating group elements to be gen
 After the elements are generated, the tick will turn green. At the moment, specifying a value in the reference edit text that is less than the current number of repeating group elements deletes the extra elements.
 
 ![image](https://user-images.githubusercontent.com/33488286/56918119-de2b6c00-6ac5-11e9-99a0-fe2606630bca.png)
- 
+
 **NOTE**: At the moment the repeating group widget has not been tested with the rules engine
 
 
 
 ### RDT Capture widget
 
-This widget uses the phone camera to take raw images of an RDT (Rapid Diagnostic Test) cassette. 
+This widget uses the phone camera to take raw images of an RDT (Rapid Diagnostic Test) cassette.
 
 The example below shows how to include the widget in a json form:
 
@@ -2007,7 +2008,7 @@ and a your customjsonform fragment class initialize this interactor from createP
         .....
      }
  ````
- 
+
  ### MultiSelectList Widget
 
 Getting started
@@ -2028,34 +2029,36 @@ Add the following field in you form
 >       }
 
     sort - default false, if true keys of the jsonObject will be sorted alphabetically
-    
+
     source - if specified repository class will be used to fetch data otherwise options data will be used
-     
+
     sortClass - provide a class implementing Comparator<MultiSelectItem> then in it specify your sorting preference
 
 ## Ways of loading data to the widget
 
  1. Using options attribute
 Must not specify the `source` feld
->      "options": [
->     				{
->     					"key": "key1",
->     					"text": "text1",
->                         "openmrsentityparent":  "",
->                         "openmrsentityid":  "",
->                         "openmrsentity":  "",
->     					"property": {
->     						"property1": "er",
->     						"property2":"er"
->     					}
->     				} 
->     			]
+```json
+      "options": [
+               {
+                  "key": "key1",
+                  "text": "text1",
+                  "openmrsentityparent":  "",
+                  "openmrsentityid":  "",
+                  "openmrsentity":  "",
+                  "property": {
+                     "property1": "er",
+                     "property2":"er"
+                  }
+               }
+            ]
+```
 
  2. Using repository class
  Must specify `source` field
-Create a class implementing [MultiSelectListRepository]([https://github.com/OpenSRP/opensrp-client-native-form/blob/add-repository-class/android-json-form-wizard/src/main/java/com/vijay/jsonwizard/interfaces/MultiSelectListRepository.java](https://github.com/OpenSRP/opensrp-client-native-form/blob/add-repository-class/android-json-form-wizard/src/main/java/com/vijay/jsonwizard/interfaces/MultiSelectListRepository.java))  then add it the field json object in place of  `fqn of sorting repository class`
+Create a class implementing [MultiSelectListRepository]([https://github.com/OpenSRP/opensrp-client-native-form/blob/add-repository-class/android-json-form-wizard/src/main/java/com/vijay/jsonwizard/interfaces/MultiSelectListRepository.java](https://github.com/OpenSRP/opensrp-client-native-form/blob/add-repository-class/android-json-form-wizard/src/main/java/com/vijay/jsonwizard/interfaces/MultiSelectListRepository.java))  then add it the field json object in place of  `fqn of class implementing MultiSelectRepository class`
 
-> `"repositoryClass": "<fqn of sorting repository class>"`
+> `"repositoryClass": "<fqn of class implementing MultiSelectRepository class>"`
 
 
  [Sample Form Screenshot](https://user-images.githubusercontent.com/2793306/68639670-7c959100-052f-11ea-8cc9-e5ddf2c288ff.png)
@@ -2066,6 +2069,65 @@ By placing a file named `app.properties` in your implementation assets folder (S
 
 ### Configurable Settings
 
-| Configuration                             | Type  | Default  | Description                                       		 	      |
+| Configuration                             | Type  | Default  | Description                                                       |
 | --------------------------------------| ------- | --------- | ---------------------------------------------------------------|
 | `widget.datepicker.is.numeric`  | Boolean | false   | Use numeric date picker instead of Android default |
+
+
+## Hidden & Disabled Fields
+Definition:
+`Hidden` Fields: Changes the type of field to hidden.
+`Disabled` Field: Changed the type of field to hidden then puts a disabled attribute as true.
+
+To achieve this one has to add a form config file called `json.form.config.json`. With the following structure.
+```json
+[
+  {
+    "form_name": "anc_quick_check",
+    "hidden_fields": [],
+    "disabled_fields": [
+      "leg_cramps"
+    ]
+  },
+  {
+    "form_name": "anc_test",
+    "hidden_fields": [],
+    "disabled_fields": [
+      "hepatitis_b_info_toaster",
+      "accordion_hepatitis_c",
+      "syphilis_greater_5_toaster",
+      "syphilis_below_5_toaster",
+      "lab_syphilis_test",
+      "rpr_syphilis_test",
+      "glucose_test_type",
+      "fasting_plasma_gluc",
+      "random_plasma"
+    ]
+  },
+  {
+    "form_name": "anc_profile",
+    "disabled_fields": [
+      "flu_immun_status",
+      "hepb_immun_status",
+      "hep_b_testing_recommended_toaster",
+      "fully_hep_b_immunised_toaster",
+      "flu_immunisation_toaster",
+      "immunised_against_flu_toaster"
+    ],
+    "hidden_fields": []
+  },
+  {
+    "form_name": "anc_symptoms_follow_up",
+    "hidden_fields": [],
+    "disabled_fields": [
+      "aspirin_comply",
+      "vita_comply",
+      "leg_cramps",
+      "pencillin_comply",
+      "toaster7",
+      "toaster16"
+    ]
+  }
+]
+```
+These values will be parsed and processed by passing it through `Form` pojo class in their setters.

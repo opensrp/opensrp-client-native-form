@@ -68,7 +68,6 @@ public class JsonFormInteractor {
         }
     }
 
-
     public static JsonFormInteractor getInstance(@Nullable Map<String, FormWidgetFactory> additionalWidgetsMap) {
         if (INSTANCE == null) {
             INSTANCE = new JsonFormInteractor(additionalWidgetsMap);

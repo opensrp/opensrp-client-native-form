@@ -47,14 +47,15 @@ import static com.vijay.jsonwizard.utils.Utils.showProgressDialog;
 
 public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> {
 
-    private final ViewParent parent;
-    private final ViewGroup.LayoutParams WIDTH_MATCH_PARENT_HEIGHT_WRAP_CONTENT = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     private LinearLayout rootLayout;
+    private final ViewParent parent;
     private List<View> repeatingGroups = new ArrayList<>();
     private int diff = 0;
     private ImageButton doneButton;
     private WidgetArgs widgetArgs;
     private int numRepeatingGroups;
+    private final ViewGroup.LayoutParams WIDTH_MATCH_PARENT_HEIGHT_WRAP_CONTENT = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+    protected final int REPEATING_GROUP_LABEL_TEXT_COLOR = R.color.black;
     private Map<String, List<Map<String, Object>>> rulesFileMap = new HashMap<>();
     private Map<Integer, String> repeatingGroupLayouts;
     private int currNumRepeatingGroups;
@@ -131,7 +132,7 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         try {
             ((JsonApi) widgetArgs.getContext()).invokeRefreshLogic(null, false, null, null);
         } catch (Exception e) {
-            Timber.e(e);
+            e.printStackTrace();
         }
         hideProgressDialog();
         doneButton.setImageResource(R.drawable.ic_done_green);
@@ -184,7 +185,7 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         formattedLabel.setSpan(new StyleSpan(Typeface.ITALIC), 0, formattedLabel.length(), 0);
         repeatingGroupLabel.setText(formattedLabel);
         repeatingGroupLabel.setTextSize(context.getResources().getInteger(R.integer.repeating_group_label_text_size));
-        repeatingGroupLabel.setTextColor(context.getResources().getColor(R.color.black));
+        repeatingGroupLabel.setTextColor(context.getResources().getColor(REPEATING_GROUP_LABEL_TEXT_COLOR));
         referenceEditText.setTag(R.id.repeating_group_item_count, repeatingGroupItemCount + 1);
     }
 
@@ -194,7 +195,7 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         currKey += ("_" + uniqueId);
         element.put(KEY, currKey);
         // modify relevance to reflect changes in unique key name
-        if (widgetArgs != null) {
+        if (widgetArgs != null && widgetArgs.getContext() != null) {
             Utils.buildRulesWithUniqueId(element, uniqueId, RELEVANCE, widgetArgs.getContext(), rulesFileMap);
             Utils.buildRulesWithUniqueId(element, uniqueId, CALCULATION, widgetArgs.getContext(), rulesFileMap);
         }

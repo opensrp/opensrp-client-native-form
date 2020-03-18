@@ -437,8 +437,7 @@ public class FormUtils {
     }
 
     public static int dpToPixels(Context context, float dps) {
-        float scale = context.getResources().getDisplayMetrics().density;
-        return (int) (dps * scale + 0.5f);
+        return  (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dps, context.getResources().getDisplayMetrics());
     }
 
     public void showInfoIcon(String stepName, JSONObject jsonObject, CommonListener listener,
@@ -659,7 +658,7 @@ public class FormUtils {
             if (jsonForm.has(JsonFormConstants.COUNT)) {
                 int stepCount = Integer.parseInt(jsonForm.getString(JsonFormConstants.COUNT));
                 for (int i = 0; i < stepCount; i++) {
-                    String stepName = "step" + (i + 1);
+                    String stepName = JsonFormConstants.STEP + (i + 1);
                     JSONObject step = jsonForm.has(stepName) ? jsonForm.getJSONObject(stepName) : null;
                     if (step != null && step.has(JsonFormConstants.FIELDS)) {
                         JSONArray stepFields = step.getJSONArray(JsonFormConstants.FIELDS);

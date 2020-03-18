@@ -1,0 +1,179 @@
+{
+  "count": "1",
+  "encounter_type": "patient_registration",
+  "entity_id": "",
+  "metadata": {
+    "start": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "start",
+      "openmrs_entity_id": "163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "end": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "end",
+      "openmrs_entity_id": "163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "today": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "encounter",
+      "openmrs_entity_id": "encounter_date"
+    },
+    "deviceid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "deviceid",
+      "openmrs_entity_id": "163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "subscriberid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "subscriberid",
+      "openmrs_entity_id": "163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "simserial": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "simserial",
+      "openmrs_entity_id": "163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "phonenumber": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "phonenumber",
+      "openmrs_entity_id": "163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "encounter_location": ""
+  },
+  "step1": {
+    "title": "{{step1.title}}",
+    "display_back_button": "true",
+    "previous_label": "{{step1.previous_label}}",
+    "bottom_navigation": "true",
+    "bottom_navigation_orientation": "vertical",
+    "next_type": "submit",
+    "submit_label": "{{step1.submit_label}}",
+    "next_form": "json.form/patient-registration-form.json",
+    "fields": [
+      {
+        "key": "patient_name_label",
+        "type": "label",
+        "text": "{{step1.patient_name_label.text}}",
+        "text_color": "#000000"
+      },
+      {
+        "key": "patient_name",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person",
+        "openmrs_entity_id": "first_name",
+        "type": "edit_text",
+        "edit_type": "name"
+      },
+      {
+        "key": "patient_id_label",
+        "type": "label",
+        "text": "Patient ID",
+        "text_color": "#000000"
+      },
+      {
+        "key": "patient_id",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "v_required": {
+          "value": "true",
+          "err": "Please enter patient ID"
+        }
+      },
+      {
+        "key": "sex",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person",
+        "openmrs_entity_id": "gender",
+        "type": "native_radio",
+        "label": "{{step1.sex.label}}",
+        "options": [
+          {
+            "key": "Female",
+            "text": "{{step1.sex.options.Female.text}}"
+          },
+          {
+            "key": "Male",
+            "text": "{{step1.sex.options.Male.text}}"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "{{step1.sex.v_required.err}}"
+        }
+      },
+      {
+        "key": "patient_dob",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person_attribute",
+        "openmrs_entity_id": "birthdate",
+        "type": "date_picker",
+        "hint": "{{step1.patient_dob.hint}}",
+        "expanded": false,
+        "duration": {
+          "label": "{{step1.patient_dob.duration.label}}"
+        },
+        "min_date": "today-100y",
+        "max_date": "today"
+      },
+      {
+        "key": "age",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "value": ""
+      },
+      {
+        "key": "patient_occupation_label",
+        "type": "label",
+        "text": "{{step1.patient_occupation_label.text}}",
+        "text_color": "#000000"
+      },
+      {
+        "key": "patient_occupation",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "v_required": {
+          "value": "false",
+          "err": ""
+        }
+      },
+      {
+        "key": "been_treated",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "{{step1.been_treated.label}}",
+        "options": [
+          {
+            "key": "Yes",
+            "text": "{{step1.been_treated.options.Yes.text}}"
+          },
+          {
+            "key": "No",
+            "text": "{{step1.been_treated.options.No.text}}"
+          },
+          {
+            "key": "Not Answered",
+            "text": "{{step1.been_treated.options.not_answered.text}}"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "{{step1.been_treated.v_required.err}}"
+        }
+      }
+    ]
+  }
+}

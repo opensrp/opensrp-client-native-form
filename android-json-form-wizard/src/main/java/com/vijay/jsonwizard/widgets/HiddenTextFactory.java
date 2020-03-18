@@ -28,6 +28,10 @@ public class HiddenTextFactory implements FormWidgetFactory {
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
                                        JSONObject jsonObject, CommonListener
                                                listener, boolean popup) throws Exception {
+        boolean isDisabled = jsonObject.optBoolean(JsonFormConstants.DISABLED);
+        if (isDisabled) {
+            return new ArrayList<>();
+        }
         List<View> views = new ArrayList<>(1);
 
         RelativeLayout rootLayout = (RelativeLayout) LayoutInflater.from(context).inflate(
