@@ -112,6 +112,10 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         return stepName;
     }
 
+    public void setStepName(String stepName) {
+        this.stepName = stepName;
+    }
+
     protected void loadPartialSecondaryValues() throws JSONException {
         if (getMainFormFields() != null && getMainFormFields().length() > 0) {
             for (int i = 0; i < getMainFormFields().length(); i++) {
@@ -186,12 +190,24 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         return mainFormFields;
     }
 
+    public void setMainFormFields(JSONArray mainFormFields) {
+        this.mainFormFields = mainFormFields;
+    }
+
     public JSONArray getSecondaryValues() {
         return secondaryValues;
     }
 
+    public void setSecondaryValues(JSONArray secondaryValues) {
+        this.secondaryValues = secondaryValues;
+    }
+
     public Map<String, SecondaryValueModel> getSecondaryValuesMap() {
         return secondaryValuesMap;
+    }
+
+    public void setSecondaryValuesMap(Map<String, SecondaryValueModel> secondaryValuesMap) {
+        this.secondaryValuesMap = secondaryValuesMap;
     }
 
     @Nullable
@@ -199,6 +215,8 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         JSONObject subForm = new JSONObject();
         try {
             subForm = FormUtils.getSubFormJson(getFormIdentity(), getFormLocation(), context);
+            Utils.updateSubFormFields(subForm, getJsonApi().form());
+
         } catch (Exception e) {
             Timber.e(e, "GenericPopupDialog --> getSubForm");
         }
@@ -244,6 +262,10 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         return specifyContent;
     }
 
+    public void setSpecifyContent(JSONArray specifyContent) {
+        this.specifyContent = specifyContent;
+    }
+
     public String getFormLocation() {
         return formLocation;
     }
@@ -260,26 +282,6 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
 
     public void setWidgetType(String widgetType) {
         this.widgetType = widgetType;
-    }
-
-    public void setSpecifyContent(JSONArray specifyContent) {
-        this.specifyContent = specifyContent;
-    }
-
-    public void setSecondaryValuesMap(Map<String, SecondaryValueModel> secondaryValuesMap) {
-        this.secondaryValuesMap = secondaryValuesMap;
-    }
-
-    public void setSecondaryValues(JSONArray secondaryValues) {
-        this.secondaryValues = secondaryValues;
-    }
-
-    public void setMainFormFields(JSONArray mainFormFields) {
-        this.mainFormFields = mainFormFields;
-    }
-
-    public void setStepName(String stepName) {
-        this.stepName = stepName;
     }
 
     @Nullable
@@ -364,6 +366,10 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         return commonListener;
     }
 
+    public void setCommonListener(CommonListener commonListener) {
+        this.commonListener = commonListener;
+    }
+
     public void setContext(Context context) throws IllegalStateException {
         this.context = context;
     }
@@ -409,6 +415,10 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
 
     public String getChildKey() {
         return childKey;
+    }
+
+    public void setChildKey(String childKey) {
+        this.childKey = childKey;
     }
 
     /**
@@ -471,6 +481,10 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         return newSelectedValues;
     }
 
+    public void setNewSelectedValues(JSONArray newSelectedValues) {
+        this.newSelectedValues = newSelectedValues;
+    }
+
     protected JSONArray createValues() throws JSONException {
         JSONArray selectedValues = new JSONArray();
         JSONArray formFields = getSubFormsFields();
@@ -520,18 +534,6 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
 
     public void setSubFormsFields(JSONArray subFormsFields) {
         this.subFormsFields = subFormsFields;
-    }
-
-    public void setNewSelectedValues(JSONArray newSelectedValues) {
-        this.newSelectedValues = newSelectedValues;
-    }
-
-    public void setChildKey(String childKey) {
-        this.childKey = childKey;
-    }
-
-    public void setCommonListener(CommonListener commonListener) {
-        this.commonListener = commonListener;
     }
 
     @Override
