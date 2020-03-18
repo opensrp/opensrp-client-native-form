@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import timber.log.Timber;
+
 import static com.vijay.jsonwizard.utils.Utils.convertStreamToString;
 
 /**
@@ -29,13 +31,16 @@ public class TestUtils {
         return convertStreamToString(getTestResource(filePath));
     }
 
-    public void copyFile(String sourcePath, String destPath) throws IOException {
-        if (!new File(destPath).exists()) {
-            Files.move(Paths.get(sourcePath), Paths.get(destPath));
+    public void copyFile(String sourcePath, String destPath) {
+        try {
+            deleteFile(destPath);
+            Files.copy(Paths.get(sourcePath), Paths.get(destPath));
+        } catch (IOException e) {
+            Timber.e(e);
         }
     }
 
-    public void copyFilesIntoResourcesFolder(String sourcePath) throws IOException {
+    public void copyFilesIntoResourcesFolder(String sourcePath) {
         String[] filePath = sourcePath.split(File.separator);
         String fileName = filePath[filePath.length - 1];
         copyFile(sourcePath, getResourcesFilePath() + File.separator + fileName);

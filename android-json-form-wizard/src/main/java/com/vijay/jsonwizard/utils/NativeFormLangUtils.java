@@ -6,6 +6,10 @@ import android.content.res.Resources;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
@@ -53,9 +57,21 @@ public class NativeFormLangUtils {
             Timber.e("Could not translate the String. Translation file name is not specified!");
             return str;
         }
+        return translateString(str, ResourceBundle.getBundle(getTranslationsFileName(str)));
+    }
 
-        ResourceBundle mlsResourceBundle = ResourceBundle.getBundle(getTranslationsFileName(str));
+    public static String getTranslatedString(String str, String propertyFilesFolderPath) {
+        String translatedString = str;
+        try {
+            ResourceBundle mlsResourceBundle = ResourceBundle.getBundle(getTranslationsFileName(str), Locale.getDefault(), getPathURL(propertyFilesFolderPath));
+            translatedString = translateString(str, mlsResourceBundle);
+        } catch (MalformedURLException e) {
+            Timber.e(e);
+        }
+        return translatedString;
+    }
 
+    private static String translateString(String str, ResourceBundle mlsResourceBundle) {
         StringBuffer stringBuffer = new StringBuffer();
         Pattern interpolatedStringPattern = Pattern.compile("\\{\\{([a-zA-Z_0-9\\.]+)\\}\\}");
         Matcher matcher = interpolatedStringPattern.matcher(str);
@@ -65,6 +81,12 @@ public class NativeFormLangUtils {
         matcher.appendTail(stringBuffer);
 
         return stringBuffer.toString();
+    }
+
+    private static URLClassLoader getPathURL(String path) throws MalformedURLException {
+        File file = new File(path);
+        URL[] urls = {file.toURI().toURL()};
+        return new URLClassLoader(urls);
     }
 
     /**

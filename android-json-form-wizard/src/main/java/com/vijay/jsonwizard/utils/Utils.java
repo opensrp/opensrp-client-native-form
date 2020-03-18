@@ -39,6 +39,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.yaml.snakeyaml.Yaml;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -641,15 +642,15 @@ public class Utils {
         }  catch (IOException e) {
             Timber.e(e);
         } finally {
-            closeInputStream(inputStream);
+            closeCloseable(inputStream);
         }
         return fileContents;
     }
 
-    private static void closeInputStream(InputStream inputStream) {
+    public static void closeCloseable(Closeable closeable) {
         try {
-            if (inputStream != null) {
-                inputStream.close();
+            if (closeable != null) {
+                closeable.close();
             }
         } catch (IOException e) {
             Timber.e(e);

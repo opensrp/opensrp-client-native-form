@@ -6,7 +6,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -25,20 +24,12 @@ public class JsonFormMLSAssetGeneratorTest {
     }
 
     @Test
-    public void testFormInterpolationShouldPerformCorrectTransformation() throws IOException {
-        String placeholderInjectedFormPath = File.separator + "tmp" + File.separator + "placeholder_injected_" +  formName  + ".json";
-        String propertiesFilePath = File.separator + "tmp" + File.separator + "placeholder_injected_" + formName  + ".properties";
-
+    public void testFormInterpolationShouldPerformCorrectTransformation() {
         jsonFormMLSAssetGenerator.processForm(testUtils.getResourcesFilePath() + File.separator + formName + ".json");
-        testUtils.copyFilesIntoResourcesFolder(placeholderInjectedFormPath);
-        testUtils.copyFilesIntoResourcesFolder(propertiesFilePath);
 
         String expectedJsonForm = testUtils.getResourceFileContentsAsString(formName + ".json");
-        String placeholderInjectedJsonForm = testUtils.getResourceFileContentsAsString("placeholder_injected_" + formName  + ".json");
+        String placeholderInjectedJsonForm = Utils.getFileContentsAsString(File.separator + "tmp" + File.separator + "placeholder_injected_" +  formName  + ".json");
 
-        assertEquals(expectedJsonForm, NativeFormLangUtils.getTranslatedString(placeholderInjectedJsonForm));
-
-        testUtils.deleteFile(testUtils.getResourcesFilePath() + File.separator + "placeholder_injected_" + formName  + ".json");
-        testUtils.deleteFile(testUtils.getResourcesFilePath() + File.separator + "placeholder_injected_" + formName + ".properties");
+        assertEquals(expectedJsonForm, NativeFormLangUtils.getTranslatedString(placeholderInjectedJsonForm, File.separator + "tmp" + File.separator));
     }
 }
