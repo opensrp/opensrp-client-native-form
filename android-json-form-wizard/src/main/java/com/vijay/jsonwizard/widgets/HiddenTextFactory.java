@@ -79,12 +79,8 @@ public class HiddenTextFactory implements FormWidgetFactory {
 
         hiddenText.setVisibility(View.GONE);
 
-        // Set value (if exists) before attaching listener so that changes can be effected by the listener after
-        String value = jsonObject.optString(JsonFormConstants.VALUE);
-        if (StringUtils.isNotBlank(value)) {
-            hiddenText.setTag(R.id.raw_value, value);
-        }
         hiddenText.addTextChangedListener(new GenericTextWatcher(stepName, formFragment, hiddenText));
+
         if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             hiddenText.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(hiddenText);
@@ -98,6 +94,13 @@ public class HiddenTextFactory implements FormWidgetFactory {
         if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
             hiddenText.setTag(R.id.calculation, calculation);
             ((JsonApi) context).addCalculationLogicView(hiddenText);
+        }
+
+        // Handle setting injected value (if exists) after attaching listener so that changes can be
+        // effected by the listener and calculations applied
+        String value = jsonObject.optString(JsonFormConstants.VALUE);
+        if (StringUtils.isNotBlank(value)) {
+            hiddenText.setText(value);
         }
     }
 
