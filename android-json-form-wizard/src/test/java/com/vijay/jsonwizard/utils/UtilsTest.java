@@ -3,6 +3,7 @@ package com.vijay.jsonwizard.utils;
 import android.content.Context;
 import android.content.res.AssetManager;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
@@ -20,6 +21,11 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UtilsTest {
@@ -88,5 +94,37 @@ public class UtilsTest {
         Utils.buildRulesWithUniqueId(element, unique_id, ruleType, context, rulesFileMap);
         String expected = "{\"relevance\":{\"step1:dob_unknown_c29afdf9-843e-4c90-9a79-3dafd70e045b\":{\"ex\":\"equalTo(., \\\"false\\\")\",\"type\":\"string\"}}}";
         Assert.assertEquals(expected, element.toString());
+    }
+
+    @Test
+    public void testGetFormConfigShouldReturnFormConfig() throws IOException, JSONException {
+        Context context = Mockito.mock(Context.class);
+        AssetManager assetManager = Mockito.mock(AssetManager.class);
+        String configFileContent = "[{\"form_name\":\"anc_quick_check\",\"hidden_fields\":[],\"disabled_fields\":[\"leg_cramps\"]}]";
+        Mockito.when(assetManager.open("json.form.config.json")).thenReturn(new ByteArrayInputStream(configFileContent.getBytes()));
+        Mockito.when(context.getAssets()).thenReturn(assetManager);
+        JSONObject jsonResult = Utils.getFormConfig("anc_quick_check", "json.form.config.json", context);
+        assertEquals(3, jsonResult.length());
+        assertTrue(jsonResult.has("form_name"));
+        assertTrue(jsonResult.has("hidden_fields"));
+        assertTrue(jsonResult.has("disabled_fields"));
+
+    }
+
+    @Test
+    public void testConvertJsonArrayToSetShouldReturnASet() {
+        JSONArray jsonArray = new JSONArray();
+        jsonArray.put("test");
+        jsonArray.put("tester");
+        jsonArray.put("tested");
+        jsonArray.put("testing");
+        jsonArray.put("test");
+        Set<String> strings = Utils.convertJsonArrayToSet(jsonArray);
+        assertEquals(4, strings.size());
+    }
+
+    @Test
+    public void testConvertJsonArrayToSetShouldReturnNull() {
+        assertNull(Utils.convertJsonArrayToSet(null));
     }
 }
