@@ -484,16 +484,7 @@ public class Utils {
     }
 
     public static Iterable<Object> readYamlFile(String fileName, Context context) {
-        Yaml yaml = new Yaml();
-        Iterable<Object> objectIterable = null;
-        try {
-            String translatedYamlStr = getTranslatedYamlFile(fileName, context);
-            objectIterable = yaml.loadAll(translatedYamlStr);
-        } catch (IOException e) {
-            Timber.e(e);
-        }
-
-        return objectIterable;
+        return new Yaml().loadAll(getTranslatedYamlFile(fileName, context));
     }
 
     /**
@@ -504,52 +495,86 @@ public class Utils {
      *
      * @return Translated Yaml file in its String representation
      *
-     * @throws IOException
      */
-    public static String getTranslatedYamlFile(String fileName, Context context) throws IOException {
+    public static String getTranslatedYamlFile(String fileName, Context context) {
         return getTranslatedString(getAssetFileAsString(fileName, context));
     }
 
     /**
      *
-     * Gets a file specified by {@param fileName} from the assets folder as a String
+     * Gets the contents of a file specified by {@param fileName} from the assets folder as a {@link String}
      *
      * @param fileName
      * @param context
      *
      * @return A file from the assets folder as a String
      *
-     * @throws IOException
      */
-    public static String getAssetFileAsString(String fileName, Context context) throws IOException {
-        InputStream inputStream = context.getAssets().open(fileName);
-        String fileContents = convertStreamToString(inputStream);
-        if (inputStream != null) {
-            inputStream.close();
+    public static String getAssetFileAsString(String fileName, Context context) {
+        InputStream inputStream = null;
+        String fileContents = "";
+        try {
+            inputStream = context.getAssets().open(fileName);
+            fileContents = convertStreamToString(inputStream);
+        }  catch (IOException e) {
+            Timber.e(e);
+        } finally {
+            closeInputStream(inputStream);
         }
         return fileContents;
     }
 
+    private static void closeInputStream(InputStream inputStream) {
+        try {
+            if (inputStream != null) {
+                inputStream.close();
+            }
+        } catch (IOException e) {
+            Timber.e(e);
+        }
+    }
 
-    public static String getFileContentsAsString(String filePath) throws FileNotFoundException {
-        Scanner scanner = new Scanner( new File(filePath) );
-        String fileContents = scanner.useDelimiter("\\A").next();
+    private static void closeScanner(Scanner scanner) {
         if (scanner != null) {
             scanner.close();
+        }
+    }
+
+    /**
+     *
+     * Returns file contents for the file at {@param filePath} as a String
+     *
+     * Defaults to an empty {@link String} if the file does not exist or is empty
+     *
+     * @param filePath
+     * @return
+     */
+    public static String getFileContentsAsString(String filePath) {
+        Scanner scanner = null;
+        String fileContents = "";
+        try {
+            scanner = new Scanner(new File(filePath));
+            fileContents = scanner.useDelimiter("\\A").next();
+        } catch (IOException e) {
+            Timber.e(e);
+        } finally {
+            closeScanner(scanner);
         }
         return fileContents;
     }
 
     /**
-     * Converts an {@link InputStream} into a String
+     * Converts an {@link InputStream} into a {@link String}
      *
      * @param inputStream
      *
      * @return String representation of an {@link InputStream}
      */
     public static String convertStreamToString(InputStream inputStream) {
-        Scanner s = new Scanner(inputStream).useDelimiter("\\A");
-        return s.hasNext() ? s.next() : "";
+        Scanner scanner = new Scanner(inputStream).useDelimiter("\\A");
+        String data = scanner.hasNext() ? scanner.next() : "";
+        closeScanner(scanner);
+        return data;
     }
 
     public static void buildRulesWithUniqueId(JSONObject element, String uniqueId, String ruleType, WidgetArgs widgetArgs, Map<String, List<Map<String, Object>>> rulesFileMap) throws JSONException {
@@ -613,8 +638,8 @@ public class Utils {
             AssetManager assetManager = context.getAssets();
             InputStream inputStream = assetManager.open("app.properties");
             properties.load(inputStream);
-        } catch (Exception var4) {
-            Timber.e(var4);
+        } catch (Exception e) {
+            Timber.e(e);
         }
 
         return properties;

@@ -41,7 +41,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -56,16 +58,14 @@ public class JsonFormInteractor {
     private static final String TAG = "JsonFormInteractor";
     protected static JsonFormInteractor INSTANCE;
     public Map<String, FormWidgetFactory> map;
-    private final Set<String> defaultTranslatableWidgetFields;
-    private final Set<String> defaultTranslatableStepFields;
+    private Set<String> defaultTranslatableWidgetFields;
+    private Set<String> defaultTranslatableStepFields;
 
     public JsonFormInteractor() {
         this(null);
     }
 
     public JsonFormInteractor(@Nullable Map<String, FormWidgetFactory> additionalWidgetsMap) {
-        defaultTranslatableWidgetFields = new HashSet<>();
-        defaultTranslatableStepFields = new HashSet<>();
         registerWidgets();
         registerDefaultTranslatableFields();
         if (additionalWidgetsMap != null) {
@@ -89,12 +89,15 @@ public class JsonFormInteractor {
 
     private void registerDefaultTranslatableFields() {
         // step fields
+        defaultTranslatableStepFields = new HashSet<>();
         defaultTranslatableStepFields.add("previous_label");
         defaultTranslatableStepFields.add("next_label");
         defaultTranslatableStepFields.add("submit_label");
         defaultTranslatableStepFields.add("title");
+        defaultTranslatableStepFields = Collections.unmodifiableSet(defaultTranslatableStepFields);
 
         // widget fields
+        defaultTranslatableWidgetFields = new HashSet<>();
         defaultTranslatableWidgetFields.add("label");
         defaultTranslatableWidgetFields.add("text");
         defaultTranslatableWidgetFields.add("hint");
@@ -102,6 +105,7 @@ public class JsonFormInteractor {
         defaultTranslatableWidgetFields.add("v_regex.err");
         defaultTranslatableWidgetFields.add("v_numeric.err");
         defaultTranslatableWidgetFields.add("text");
+        defaultTranslatableWidgetFields = Collections.unmodifiableSet(defaultTranslatableWidgetFields);
     }
 
     protected void registerWidgets() {

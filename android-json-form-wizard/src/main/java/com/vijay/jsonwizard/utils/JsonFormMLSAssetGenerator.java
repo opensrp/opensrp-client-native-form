@@ -9,9 +9,9 @@ import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,24 +38,20 @@ public class JsonFormMLSAssetGenerator {
      * @param formToTranslate
      */
     public static void processForm(String formToTranslate) {
-        try {
-            String form = getFileContentsAsString(formToTranslate);
+        String form = getFileContentsAsString(formToTranslate);
 
-            printToSystemOut("\nForm before placeholder injection:\n" + form);
+        printToSystemOut("\nForm before placeholder injection:\n" + form);
 
-            String[] formPath = formToTranslate.split(File.separator);
-            formName = "placeholder_injected_" + formPath[formPath.length - 1].split("\\.")[0];
+        String[] formPath = formToTranslate.split(File.separator);
+        formName = "placeholder_injected_" + formPath[formPath.length - 1].split("\\.")[0];
 
-            JsonObject placeholderInjectedForm = injectPlaceholders(stringToJson(form), formName);
-            placeholderInjectedForm.addProperty(PROPERTIES_FILE_NAME, formName);
+        JsonObject placeholderInjectedForm = injectPlaceholders(stringToJson(form), formName);
+        placeholderInjectedForm.addProperty(PROPERTIES_FILE_NAME, formName);
 
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            writeToFile(gson.toJson(placeholderInjectedForm, JsonObject.class), File.separator + "tmp" + File.separator + formName + ".json");
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        writeToFile(gson.toJson(placeholderInjectedForm, JsonObject.class), File.separator + "tmp" + File.separator + formName + ".json");
 
-            createTranslationsPropertyFile();
-        } catch (FileNotFoundException e) {
-            Timber.e(e);
-        }
+        createTranslationsPropertyFile();
     }
 
     /**
@@ -216,21 +212,10 @@ public class JsonFormMLSAssetGenerator {
      * @param path
      */
     private static void writeToFile(String data, String path) {
-        FileWriter fileWriter = null;
         try {
-            File file = new File(path);
-            fileWriter = new FileWriter(file);
-            fileWriter.write(data);
+            Files.write(Paths.get(path), data.getBytes());
         } catch (IOException e) {
             Timber.e(e);
-        } finally {
-            if (fileWriter != null) {
-                try {
-                    fileWriter.close();
-                } catch (IOException e) {
-                    Timber.e(e);
-                }
-            }
         }
     }
 
