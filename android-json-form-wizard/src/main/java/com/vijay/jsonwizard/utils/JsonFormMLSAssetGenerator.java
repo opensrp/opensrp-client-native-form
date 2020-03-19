@@ -14,12 +14,14 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import timber.log.Timber;
 
 import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.MLS.PROPERTIES_FILE_NAME;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.TYPE;
 import static com.vijay.jsonwizard.utils.Utils.getFileContentsAsString;
 
 /**
@@ -29,6 +31,8 @@ public class JsonFormMLSAssetGenerator {
 
     private static Map<String, String> placeholdersToTranslationsMap = new HashMap<>();
     private static String formName;
+
+    private static final JsonFormInteractor jsonFormInteractor = JsonFormInteractor.getInstance();
 
     /**
      *
@@ -40,7 +44,7 @@ public class JsonFormMLSAssetGenerator {
     public static void processForm(String formToTranslate) {
         String form = getFileContentsAsString(formToTranslate);
 
-        printToSystemOut("\nForm before placeholder injection:\n" + form);
+        printToSystemOut("\nForm before placeholder injection:\n\n" + form);
 
         String[] formPath = formToTranslate.split(File.separator);
         formName = "placeholder_injected_" + formPath[formPath.length - 1].split("\\.")[0];
@@ -49,7 +53,10 @@ public class JsonFormMLSAssetGenerator {
         placeholderInjectedForm.addProperty(PROPERTIES_FILE_NAME, formName);
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        writeToFile(gson.toJson(placeholderInjectedForm, JsonObject.class), File.separator + "tmp" + File.separator + formName + ".json");
+        String placeholderInjectedFormStr = gson.toJson(placeholderInjectedForm, JsonObject.class);
+        writeToFile(placeholderInjectedFormStr, File.separator + "tmp" + File.separator + formName + ".json");
+
+        printToSystemOut("\n\nPlaceholder-injected form: \n\n " + placeholderInjectedFormStr);
 
         createTranslationsPropertyFile();
     }
@@ -86,7 +93,6 @@ public class JsonFormMLSAssetGenerator {
             replaceStepStringLiterals(placeholderStringPrefix, getStepJsonObject(jsonForm, stepName));
             replaceWidgetStringLiterals(placeholderStringPrefix, getWidgets(jsonForm, stepName));
         }
-        printToSystemOut("Placeholder-injected form: " + jsonForm);
         return jsonForm;
     }
 
@@ -98,7 +104,7 @@ public class JsonFormMLSAssetGenerator {
      * @param placeholderStrPrefix
      */
     private static void replaceStepStringLiterals(String placeholderStrPrefix, JsonObject stepJsonObject) {
-        for (String stepField : JsonFormInteractor.getInstance().getDefaultTranslatableStepFields()) {
+        for (String stepField : jsonFormInteractor.getDefaultTranslatableStepFields()) {
             JsonElement strLiteralElement = stepJsonObject.get(stepField);
             if (strLiteralElement != null) {
                 String propertyName = placeholderStrPrefix + "." + stepField;
@@ -120,7 +126,15 @@ public class JsonFormMLSAssetGenerator {
         for (int i = 0; i < stepWidgets.size(); i++) {
             JsonObject widget = stepWidgets.get(i).getAsJsonObject();
             String widgetKey = widget.get(KEY).getAsString();
-            for (String fieldIdentifier : JsonFormInteractor.getInstance().getDefaultTranslatableWidgetFields()) {
+
+            Set<String> translatableWidgetFields = jsonFormInteractor
+                    .map
+                    .get(widget.get(TYPE).getAsString())
+                    .getCustomTranslatableWidgetFields();
+
+            translatableWidgetFields.addAll(jsonFormInteractor.getDefaultTranslatableWidgetFields());
+
+            for (String fieldIdentifier : translatableWidgetFields) {
                 // Split the widget field identifier into it's constituent keys
                 // and traverse the widget JsonObject to get to the child element
                 String[] fieldIdentifierKeys = fieldIdentifier.split("\\.");
