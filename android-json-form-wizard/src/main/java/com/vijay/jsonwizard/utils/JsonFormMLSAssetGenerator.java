@@ -119,10 +119,10 @@ public class JsonFormMLSAssetGenerator {
      *
      * Replaces {@link String} literals in widgets with the appropriate placeholders
      *
-     * @param placeholderStrPrefix
+     * @param rootPlaceholderPrefix
      * @param stepWidgets
      */
-    private static void replaceWidgetStringLiterals(String placeholderStrPrefix, JsonArray stepWidgets) {
+    private static void replaceWidgetStringLiterals(String rootPlaceholderPrefix, JsonArray stepWidgets) {
         for (int i = 0; i < stepWidgets.size(); i++) {
             JsonObject widget = stepWidgets.get(i).getAsJsonObject();
             String widgetKey = widget.get(KEY).getAsString();
@@ -138,24 +138,61 @@ public class JsonFormMLSAssetGenerator {
                 // Split the widget field identifier into it's constituent keys
                 // and traverse the widget JsonObject to get to the child element
                 String[] fieldIdentifierKeys = fieldIdentifier.split("\\.");
-                JsonObject fieldToAddPlaceholderTo = widget;
+                JsonObject parentJsonObj = widget;
+                JsonElement parentElement = widget;
+                StringBuilder fieldIdentifierPrefix = new StringBuilder();
                 for (int j = 0; j < fieldIdentifierKeys.length - 1; j++) {
-                    if (fieldToAddPlaceholderTo != null) {
-                        fieldToAddPlaceholderTo = fieldToAddPlaceholderTo.getAsJsonObject(fieldIdentifierKeys[j]);
+                    String constituentFieldIdentifierKey = fieldIdentifierKeys[j];
+                    parentElement = parentJsonObj.get(constituentFieldIdentifierKey);
+                    if (parentElement != null) {
+                        if (parentElement instanceof JsonArray) {
+                            break; // support only one level of nesting
+                        } else {
+                            parentJsonObj = parentElement.getAsJsonObject();
+                        }
+                        fieldIdentifierPrefix.append(constituentFieldIdentifierKey);
                     }
                 }
-                // At the child element, use the last portion of the field identifier as a key
-                // and replace the string literal with a placeholder
-                String propertyName = placeholderStrPrefix + "." + widgetKey + "." + fieldIdentifier;
-                String placeholderStr = "{{" + propertyName + "}}";
-                if (fieldToAddPlaceholderTo != null) {
-                    String childElementKey = fieldIdentifierKeys[fieldIdentifierKeys.length - 1];
-                    JsonElement strLiteralElement = fieldToAddPlaceholderTo.get(childElementKey);
-                    if (strLiteralElement != null) {
-                        placeholdersToTranslationsMap.put(propertyName, strLiteralElement.getAsString());
-                        fieldToAddPlaceholderTo.addProperty(childElementKey, placeholderStr);
+
+                if (parentElement != null) {
+                    JsonArray parentElementsArr = new JsonArray();
+                    parentElementsArr.add(parentElement);
+                    parentElementsArr = parentElement instanceof JsonArray ? parentElement.getAsJsonArray() : parentElementsArr;
+                    String widgetPlaceholderPrefix;
+                    if (fieldIdentifierPrefix.toString().isEmpty()) {
+                        widgetPlaceholderPrefix = rootPlaceholderPrefix;
+                    } else {
+                        widgetPlaceholderPrefix = rootPlaceholderPrefix + "." + widgetKey + "." + fieldIdentifierPrefix;
                     }
+                    performReplacements(parentElementsArr, widgetPlaceholderPrefix, fieldIdentifierKeys[fieldIdentifierKeys.length - 1]);
                 }
+            }
+        }
+    }
+
+
+    private static void performReplacements(JsonArray parentElements, String placeholderStrPrefix, String childElementFieldName){
+        // At the child element, use the last portion of the field identifier as a key
+        // and replace the string literal with a placeholder
+        if (parentElements == null) {
+            return;
+        }
+
+        for (int i = 0; i < parentElements.size(); i++) {
+            String propertyName = placeholderStrPrefix;
+            JsonObject childElement = parentElements.get(i).getAsJsonObject();
+            JsonElement childElementKey = childElement.get(KEY);
+            if (childElementKey != null) {
+                propertyName += "." + childElementKey.getAsString();
+            }
+            propertyName += "." + childElementFieldName;
+
+            String placeholderStr = "{{" + propertyName + "}}";
+
+            JsonElement strLiteralElement = childElement.get(childElementFieldName);
+            if (strLiteralElement != null) {
+                placeholdersToTranslationsMap.put(propertyName, strLiteralElement.getAsString());
+                childElement.addProperty(childElementFieldName, placeholderStr);
             }
         }
     }
