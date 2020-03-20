@@ -46,7 +46,6 @@ script:
   - chmod 755 gradlew
   - ls -la
   - travis_wait ./gradlew clean --stacktrace
-  - travis_wait ./gradlew build --stacktrace
   #Run All tests Unit and Instrumentation
   - travis_wait ./gradlew :android-json-form-wizard:jacocoTestReport --stacktrace
   - travis_wait ./gradlew :android-json-form-wizard:coveralls
