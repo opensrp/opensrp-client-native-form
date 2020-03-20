@@ -76,7 +76,9 @@ public class NativeFormLangUtils {
         Pattern interpolatedStringPattern = Pattern.compile("\\{\\{([a-zA-Z_0-9\\.]+)\\}\\}");
         Matcher matcher = interpolatedStringPattern.matcher(str);
         while (matcher.find()) {
-            matcher.appendReplacement(stringBuffer, mlsResourceBundle.getString(matcher.group(1)));
+            String replacement = Matcher.quoteReplacement(mlsResourceBundle.getString(matcher.group(1))
+                            .replace("\n", "\\n")); // ensures \n is preserved in a String
+            matcher.appendReplacement(stringBuffer, replacement);
         }
         matcher.appendTail(stringBuffer);
 

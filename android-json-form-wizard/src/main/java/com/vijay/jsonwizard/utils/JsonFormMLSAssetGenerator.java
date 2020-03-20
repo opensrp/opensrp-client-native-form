@@ -8,6 +8,8 @@ import com.google.gson.JsonObject;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -264,7 +266,7 @@ public class JsonFormMLSAssetGenerator {
     private static void createTranslationsPropertyFile() {
         StringBuilder stringBuilder = new StringBuilder();
         for (Map.Entry<String, String> entry : placeholdersToTranslationsMap.entrySet()) {
-            stringBuilder.append(entry.getKey() + " = " + entry.getValue() + "\n");
+            stringBuilder.append(entry.getKey() + " = " + entry.getValue().replace("\n", "\\n") + "\n"); // ensures \n is preserved in a String
         }
         writeToFile(stringBuilder.toString(), File.separator + "tmp" + File.separator + formName + ".properties");
     }
