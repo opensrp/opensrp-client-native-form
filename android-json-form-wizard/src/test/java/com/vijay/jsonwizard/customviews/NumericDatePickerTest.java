@@ -111,8 +111,7 @@ public class NumericDatePickerTest extends BaseTest {
         Assert.assertEquals(maxTimeStamp, datePicker.getMaxDate());
 
         //Try set a date outside max
-
-        Date dateTwoYearsFromToday = localDate.plusDays(10).toDate();
+        Date dateTwoYearsFromToday = localDate.plusYears(2).toDate();
         datePicker.setDate(dateTwoYearsFromToday);
     }
 
