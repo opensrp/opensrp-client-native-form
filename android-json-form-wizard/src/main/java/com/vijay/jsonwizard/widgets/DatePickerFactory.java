@@ -42,6 +42,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import static com.vijay.jsonwizard.widgets.TimePickerFactory.KEY.DURATION;
+
 /**
  * @author Jason Rogena - jrogena@ona.io
  * @since 25/01/2017
@@ -332,8 +334,11 @@ public class DatePickerFactory implements FormWidgetFactory {
     }
 
     @Override
+    @NonNull
     public Set<String> getCustomTranslatableWidgetFields() {
-        return new HashSet<>();
+        Set<String> customTranslatableWidgetFields = new HashSet<>();
+        customTranslatableWidgetFields.add(DURATION + "." + JsonFormConstants.LABEL);
+        return customTranslatableWidgetFields;
     }
 
     protected int getLayout() {
@@ -351,5 +356,4 @@ public class DatePickerFactory implements FormWidgetFactory {
 
         public static final String DEFAULT = "default";
     }
-
 }

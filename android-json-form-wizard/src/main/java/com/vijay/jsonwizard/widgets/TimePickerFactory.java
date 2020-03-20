@@ -37,6 +37,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import static com.vijay.jsonwizard.widgets.TimePickerFactory.KEY.DURATION;
+
 public class TimePickerFactory implements FormWidgetFactory {
     public static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm");
     private static final String TIME_FORMAT_REGEX = "^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$";
@@ -97,8 +99,8 @@ public class TimePickerFactory implements FormWidgetFactory {
             duration.setTag(R.id.openmrs_entity, openMrsEntity);
             duration.setTag(R.id.openmrs_entity_id, openMrsEntityId);
             editText.setTag(com.vijay.jsonwizard.R.id.locale_independent_value,jsonObject.optString(TimePickerFactory.KEY.VALUE));
-            if (jsonObject.has(TimePickerFactory.KEY.DURATION)) {
-                duration.setTag(R.id.label, jsonObject.getJSONObject(TimePickerFactory.KEY.DURATION).getString(JsonFormConstants.LABEL));
+            if (jsonObject.has(DURATION)) {
+                duration.setTag(R.id.label, jsonObject.getJSONObject(DURATION).getString(JsonFormConstants.LABEL));
             }
 
             updateEditText(editText, jsonObject, stepName, context);
@@ -261,7 +263,10 @@ public class TimePickerFactory implements FormWidgetFactory {
     }
 
     @Override
+    @NonNull
     public Set<String> getCustomTranslatableWidgetFields() {
-        return new HashSet<>();
+        Set<String> customTranslatableWidgetFields = new HashSet<>();
+        customTranslatableWidgetFields.add(DURATION + "." + JsonFormConstants.LABEL);
+        return customTranslatableWidgetFields;
     }
 }

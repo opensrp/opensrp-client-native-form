@@ -810,7 +810,9 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
     @NonNull
     public Set<String> getCustomTranslatableWidgetFields() {
         Set<String> customTranslatableWidgetFields = new HashSet<>();
-        customTranslatableWidgetFields.add("options.text");
+        customTranslatableWidgetFields.add(JsonFormConstants.OPTIONS_FIELD_NAME + "." + JsonFormConstants.TEXT);
+        customTranslatableWidgetFields.add(JsonFormConstants.LABEL_INFO_TEXT);
+        customTranslatableWidgetFields.add(JsonFormConstants.LABEL_INFO_TITLE);
         return customTranslatableWidgetFields;
     }
 }
