@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Build;
 import android.support.annotation.VisibleForTesting;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -310,11 +311,11 @@ public class NumericDatePicker extends DatePicker {
     public void updateDate(int year, int month, int dayOfMonth) {
 
         if (isMaxConstraintViolated(year, month, dayOfMonth)) {
-            throw new IllegalStateException("You have set a date later than the Maximum allowed date settings");
+            Log.d(NumericDatePicker.class.getCanonicalName(), "You have set a date later than the Maximum allowed date settings");
         }
 
         if (isMinConstraintViolated(year, month, dayOfMonth)) {
-            throw new IllegalStateException("You have set a date later than the Minimum allowed date settings");
+            Log.d(NumericDatePicker.class.getCanonicalName(), "You have set a date later than the Minimum allowed date settings");
         }
 
         dayPicker.setValue(dayOfMonth);

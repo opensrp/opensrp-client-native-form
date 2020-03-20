@@ -96,8 +96,7 @@ public class NumericDatePickerTest extends BaseTest {
 
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void testNumericDatePickerSetMaxValueThrowsExceptionDateMoreThanMax() {
+    public void testNumericDatePickerSetMaxValueDoesNotThrowExceptionDateMoreThanMax() {
 
         //First constructor
         NumericDatePicker datePicker = new NumericDatePicker(RuntimeEnvironment.application);
@@ -140,8 +139,7 @@ public class NumericDatePickerTest extends BaseTest {
 
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void testNumericDatePickerSetMinValueThrowsExceptionDateMoreThanMin() {
+    public void testNumericDatePickerSetMinValueDoesNotThrowsExceptionDateMoreThanMin() {
 
         //First constructor
         NumericDatePicker datePicker = new NumericDatePicker(RuntimeEnvironment.application);
