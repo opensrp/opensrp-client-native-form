@@ -136,7 +136,8 @@ public class JsonFormMLSAssetGenerator {
 
             for (String fieldIdentifier : translatableWidgetFields) {
                 // Split the widget field identifier into it's constituent keys
-                // and traverse the widget JsonObject to get to the child element
+                // and traverse the widget json object to get to the
+                // base parent element(s) (the element(s) with a field to be replaced)
                 String[] fieldIdentifierKeys = fieldIdentifier.split("\\.");
                 JsonObject parentJsonObj = widget;
                 JsonElement parentElement = widget;
@@ -145,25 +146,29 @@ public class JsonFormMLSAssetGenerator {
                     String constituentFieldIdentifierKey = fieldIdentifierKeys[j];
                     parentElement = parentJsonObj.get(constituentFieldIdentifierKey);
                     if (parentElement != null) {
+                        fieldIdentifierPrefix.append(constituentFieldIdentifierKey);
                         if (parentElement instanceof JsonArray) {
-                            break; // support only one level of nesting
+                            break; // support only one level of json array placeholder injection
                         } else {
                             parentJsonObj = parentElement.getAsJsonObject();
                         }
-                        fieldIdentifierPrefix.append(constituentFieldIdentifierKey);
                     }
                 }
 
+                // package parent element(s) into json array
                 if (parentElement != null) {
                     JsonArray parentElementsArr = new JsonArray();
                     parentElementsArr.add(parentElement);
                     parentElementsArr = parentElement instanceof JsonArray ? parentElement.getAsJsonArray() : parentElementsArr;
+
+                    // if parent element is the widget itself, don't modify placeholder prefix
                     String widgetPlaceholderPrefix;
                     if (fieldIdentifierPrefix.toString().isEmpty()) {
                         widgetPlaceholderPrefix = rootPlaceholderPrefix;
                     } else {
                         widgetPlaceholderPrefix = rootPlaceholderPrefix + "." + widgetKey + "." + fieldIdentifierPrefix;
                     }
+
                     performReplacements(parentElementsArr, widgetPlaceholderPrefix, fieldIdentifierKeys[fieldIdentifierKeys.length - 1]);
                 }
             }
@@ -171,28 +176,37 @@ public class JsonFormMLSAssetGenerator {
     }
 
 
-    private static void performReplacements(JsonArray parentElements, String placeholderStrPrefix, String childElementFieldName){
-        // At the child element, use the last portion of the field identifier as a key
-        // and replace the string literal with a placeholder
+    /**
+     *
+     * For each parent element in {@param parentElements}, replaces the {@param fieldToReplace}
+     * with the appropriate placeholder derived from {@param placeholderPrefix}
+     *
+     * @param parentElements
+     * @param placeholderPrefix
+     * @param fieldToReplace
+     */
+    private static void performReplacements(JsonArray parentElements, String placeholderPrefix, String fieldToReplace){
         if (parentElements == null) {
             return;
         }
 
         for (int i = 0; i < parentElements.size(); i++) {
-            String propertyName = placeholderStrPrefix;
-            JsonObject childElement = parentElements.get(i).getAsJsonObject();
-            JsonElement childElementKey = childElement.get(KEY);
-            if (childElementKey != null) {
-                propertyName += "." + childElementKey.getAsString();
+            String propertyName = placeholderPrefix;
+            JsonObject parentElement = parentElements.get(i).getAsJsonObject();
+            JsonElement parentElementKey = parentElement.get(KEY);
+
+            // add unique key identifier if it exists
+            if (parentElementKey != null) {
+                propertyName += "." + parentElementKey.getAsString();
             }
-            propertyName += "." + childElementFieldName;
+            propertyName += "." + fieldToReplace;
 
             String placeholderStr = "{{" + propertyName + "}}";
 
-            JsonElement strLiteralElement = childElement.get(childElementFieldName);
-            if (strLiteralElement != null) {
-                placeholdersToTranslationsMap.put(propertyName, strLiteralElement.getAsString());
-                childElement.addProperty(childElementFieldName, placeholderStr);
+            JsonElement fieldValueToReplace = parentElement.get(fieldToReplace);
+            if (fieldValueToReplace != null) {
+                placeholdersToTranslationsMap.put(propertyName, fieldValueToReplace.getAsString());
+                parentElement.addProperty(fieldToReplace, placeholderStr);
             }
         }
     }
@@ -223,7 +237,7 @@ public class JsonFormMLSAssetGenerator {
 
     /**
      *
-     * Extracts the number of steps in a form
+     * Extracts the number of steps in a {@param jsonForm}
      *
      * @param jsonForm
      * @return
