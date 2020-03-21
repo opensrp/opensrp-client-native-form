@@ -389,12 +389,12 @@ public class NumericDatePicker extends DatePicker {
 
         boolean constraintValidationError = false;
 
-        if (isMaxConstraintViolated(year, month, dayOfMonth)) {
+        if (isMaxConstraintViolated(year, month + 1, dayOfMonth)) {
             constraintValidationError = true;
             Log.i(NumericDatePicker.class.getCanonicalName(), "You have set a date later than the Maximum allowed date settings");
         }
 
-        if (isMinConstraintViolated(year, month, dayOfMonth)) {
+        if (isMinConstraintViolated(year, month + 1, dayOfMonth)) {
             constraintValidationError = true;
             Log.i(NumericDatePicker.class.getCanonicalName(), "You have set a date later than the Minimum allowed date settings");
         }
@@ -411,7 +411,7 @@ public class NumericDatePicker extends DatePicker {
      * Checks to see if there is a minimum value set and whether its value is greater than the parameter provided
      *
      * @param year       year of date
-     * @param month      month of date
+     * @param month      month of date starts with 1 for January
      * @param dayOfMonth day of month of date
      * @return boolean value indicating whether the constraint was violated
      */
@@ -423,7 +423,7 @@ public class NumericDatePicker extends DatePicker {
      * Checks to see if there is a maximum value set and whether its value is less than the parameter provided
      *
      * @param year       year of date
-     * @param month      month of date
+     * @param month      month of date start from 1 for January
      * @param dayOfMonth day of month of date
      */
     private boolean isMaxConstraintViolated(int year, int month, int dayOfMonth) {

@@ -70,23 +70,25 @@ public class DatePickerFactory implements FormWidgetFactory {
                                              MaterialEditText editText) {
         FragmentTransaction ft = context.getFragmentManager().beginTransaction();
         Fragment prev = context.getFragmentManager().findFragmentByTag(TAG);
-        if (prev != null) {
-            ft.remove(prev);
-        }
 
-        ft.addToBackStack(null);
+        if (!(prev != null && prev.isAdded())) {
 
-        datePickerDialog.show(ft, TAG);
-        String text = editText.getText().toString();
-        Calendar date = FormUtils.getDate(text);
-        if (text.isEmpty()) {
-            Object defaultValue = datePickerDialog.getArguments().get(JsonFormConstants.DEFAULT);
-            if (defaultValue != null)
-                datePickerDialog.setDate(FormUtils.getDate(defaultValue.toString()).getTime());
-            else
+            datePickerDialog.show(ft, TAG);
+
+            //Fragments are committed asynchronously, force commit
+            context.getFragmentManager().executePendingTransactions();
+
+            String text = editText.getText().toString();
+            Calendar date = FormUtils.getDate(text);
+            if (text.isEmpty()) {
+                Object defaultValue = datePickerDialog.getArguments().get(JsonFormConstants.DEFAULT);
+                if (defaultValue != null)
+                    datePickerDialog.setDate(FormUtils.getDate(defaultValue.toString()).getTime());
+                else
+                    datePickerDialog.setDate(date.getTime());
+            } else {
                 datePickerDialog.setDate(date.getTime());
-        } else {
-            datePickerDialog.setDate(date.getTime());
+            }
         }
     }
 
@@ -158,8 +160,10 @@ public class DatePickerFactory implements FormWidgetFactory {
             editText.setTag(R.id.json_object, jsonObject);
 
             final DatePickerDialog datePickerDialog = createDateDialog(context, duration, editText, jsonObject);
-            if (formFragment !=null) {
-                NativeFormsProperties nativeFormsProperties = formFragment.getNativeFormProperties();https://docs.google.com/document/d/1qGuQ-yw2epegvKZjPd5OE3lTjWrNTxzKk79hTPKi054/edit?pli=1
+            if (formFragment != null) {
+                NativeFormsProperties nativeFormsProperties = formFragment.getNativeFormProperties();
+                https:
+//docs.google.com/document/d/1qGuQ-yw2epegvKZjPd5OE3lTjWrNTxzKk79hTPKi054/edit?pli=1
                 if (nativeFormsProperties != null) {
                     datePickerDialog.setNumericDatePicker(nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_DATEPICKER_IS_NUMERIC));
                 }
