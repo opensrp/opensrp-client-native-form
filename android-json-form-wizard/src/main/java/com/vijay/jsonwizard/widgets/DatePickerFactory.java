@@ -25,9 +25,10 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.utils.DateUtil;
 import com.vijay.jsonwizard.utils.FormUtils;
+import com.vijay.jsonwizard.utils.NativeFormLangUtils;
 import com.vijay.jsonwizard.utils.NativeFormsProperties;
-import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
 
 import org.json.JSONArray;
@@ -51,13 +52,14 @@ public class DatePickerFactory implements FormWidgetFactory {
     private static final String TAG = "DatePickerFactory";
     private FormUtils formUtils = new FormUtils();
 
-    private static void updateDateText(MaterialEditText editText, TextView duration, String date) {
+    private static void updateDateText(Context context, MaterialEditText editText, TextView duration, String date) {
         editText.setText(date);
         String durationLabel = (String) duration.getTag(R.id.label);
         if (!TextUtils.isEmpty(durationLabel)) {
-            String durationText = Utils.getDuration(date);
+            Locale locale = new Locale(NativeFormLangUtils.getLanguage(context));
+            String durationText = DateUtil.getDuration(DateUtil.getDurationTimeDifference(date, null), locale, context);
             if (!TextUtils.isEmpty(durationText)) {
-                durationText = String.format("(%s: %s)", durationLabel, durationText);
+                durationText = locale.getLanguage().equals("ar") ? String.format("(%s :%s)", durationText, durationLabel) : String.format("(%s: %s)", durationLabel, durationText);
             }
             duration.setText(durationText);
         }
@@ -193,7 +195,7 @@ public class DatePickerFactory implements FormWidgetFactory {
             editText.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    updateDateText(editText, duration, "");
+                    updateDateText(context, editText, duration, "");
                     return true;
                 }
             });
@@ -276,7 +278,7 @@ public class DatePickerFactory implements FormWidgetFactory {
         }
 
         if (!TextUtils.isEmpty(jsonObject.optString(KEY.VALUE))) {
-            updateDateText(editText, duration, DATE_FORMAT_LOCALE.format(FormUtils.getDate(jsonObject.optString(KEY.VALUE)).getTime()));
+            updateDateText(context, editText, duration, DATE_FORMAT_LOCALE.format(FormUtils.getDate(jsonObject.optString(KEY.VALUE)).getTime()));
         }
 
         if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
@@ -286,7 +288,7 @@ public class DatePickerFactory implements FormWidgetFactory {
         }
     }
 
-    protected DatePickerDialog createDateDialog(Context context, final TextView duration, final MaterialEditText editText,
+    protected DatePickerDialog createDateDialog(final Context context, final TextView duration, final MaterialEditText editText,
                                                 JSONObject jsonObject) throws JSONException {
         final DatePickerDialog datePickerDialog = new DatePickerDialog();
         datePickerDialog.setContext(context);
@@ -304,10 +306,10 @@ public class DatePickerFactory implements FormWidgetFactory {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB
                         && calendarDate.getTimeInMillis() >= view.getMinDate()
                         && calendarDate.getTimeInMillis() <= view.getMaxDate()) {
-                    updateDateText(editText, duration,
+                    updateDateText(context, editText, duration,
                             DATE_FORMAT.format(calendarDate.getTime()));
                 } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                    updateDateText(editText, duration, "");
+                    updateDateText(context, editText, duration, "");
                 }
             }
         });
