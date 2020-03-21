@@ -57,9 +57,9 @@ public class DatePickerFactory implements FormWidgetFactory {
         String durationLabel = (String) duration.getTag(R.id.label);
         if (!TextUtils.isEmpty(durationLabel)) {
             Locale locale = new Locale(NativeFormLangUtils.getLanguage(context));
-            String durationText = DateUtil.getDuration(DateUtil.getDurationTimeDifference(date, null), locale, context);
+            String durationText = DateUtil.getDuration(DateUtil.getDurationTimeDifference(date, null), locale.getLanguage().equals("ar") ? Locale.ENGLISH : locale, context);
             if (!TextUtils.isEmpty(durationText)) {
-                durationText = locale.getLanguage().equals("ar") ? String.format("(%s :%s)", durationText, durationLabel) : String.format("(%s: %s)", durationLabel, durationText);
+                durationText =  String.format("(%s: %s)", durationLabel, durationText);
             }
             duration.setText(durationText);
         }
@@ -67,9 +67,8 @@ public class DatePickerFactory implements FormWidgetFactory {
     }
 
 
-    private static void showDatePickerDialog(Activity context,
-                                             DatePickerDialog datePickerDialog,
-                                             MaterialEditText editText) {
+    private static void showDatePickerDialog(Activity context, DatePickerDialog datePickerDialog, MaterialEditText editText) {
+
         FragmentTransaction ft = context.getFragmentManager().beginTransaction();
         Fragment prev = context.getFragmentManager().findFragmentByTag(TAG);
 
@@ -250,9 +249,10 @@ public class DatePickerFactory implements FormWidgetFactory {
         }
     }
 
-    private void updateEditText(MaterialEditText editText, JSONObject jsonObject, String stepName, Context context,
-                                TextView duration) throws JSONException {
-        SimpleDateFormat DATE_FORMAT_LOCALE = new SimpleDateFormat("dd-MM-yyyy", context.getResources().getConfiguration().locale);
+    private void updateEditText(MaterialEditText editText, JSONObject jsonObject, String stepName, Context context, TextView duration) throws JSONException {
+
+        Locale locale = context.getResources().getConfiguration().locale.getLanguage().equals("ar") ? Locale.ENGLISH : context.getResources().getConfiguration().locale;//Arabic should render normal numbers/numeric digits
+        SimpleDateFormat DATE_FORMAT_LOCALE = new SimpleDateFormat("dd-MM-yyyy", locale);
 
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
@@ -292,6 +292,9 @@ public class DatePickerFactory implements FormWidgetFactory {
                                                 JSONObject jsonObject) throws JSONException {
         final DatePickerDialog datePickerDialog = new DatePickerDialog();
         datePickerDialog.setContext(context);
+
+        Locale locale = context.getResources().getConfiguration().locale.getLanguage().equals("ar") ? Locale.ENGLISH : context.getResources().getConfiguration().locale;//Arabic should render normal numbers/numeric digits
+        final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy", locale);
 
         datePickerDialog.setOnDateSetListener(new android.app.DatePickerDialog.OnDateSetListener() {
             @Override
