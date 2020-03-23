@@ -47,7 +47,7 @@ public class JsonFormMLSAssetGenerator {
         printToSystemOut("\nForm before placeholder injection:\n\n" + form);
 
         String[] formPath = formToTranslate.split(File.separator);
-        formName = "placeholder_injected_" + formPath[formPath.length - 1].split("\\.")[0];
+        formName = formPath[formPath.length - 1].split("\\.")[0];
 
         JsonObject placeholderInjectedForm = injectPlaceholders(stringToJson(form), formName);
         placeholderInjectedForm.addProperty(PROPERTIES_FILE_NAME, formName);
