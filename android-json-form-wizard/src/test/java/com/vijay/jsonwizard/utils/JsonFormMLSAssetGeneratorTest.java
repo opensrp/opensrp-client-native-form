@@ -28,8 +28,11 @@ public class JsonFormMLSAssetGeneratorTest {
         jsonFormMLSAssetGenerator.processForm(testUtils.getResourcesFilePath() + File.separator + formName + ".json");
 
         String expectedJsonForm = testUtils.getResourceFileContentsAsString(formName + ".json");
-        String placeholderInjectedJsonForm = Utils.getFileContentsAsString(File.separator + "tmp" + File.separator + "placeholder_injected_" +  formName  + ".json");
+        String placeholderInjectedJsonForm = Utils.getFileContentsAsString(File.separator + "tmp" + File.separator + formName  + ".json");
 
         assertEquals(expectedJsonForm, NativeFormLangUtils.getTranslatedString(placeholderInjectedJsonForm, File.separator + "tmp" + File.separator));
+
+        testUtils.deleteFile(File.separator + "tmp" + File.separator + formName  + ".json");
+        testUtils.deleteFile(File.separator + "tmp" + File.separator + formName  + ".properties");
     }
 }
