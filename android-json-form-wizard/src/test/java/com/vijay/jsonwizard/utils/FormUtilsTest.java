@@ -15,6 +15,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Map;
 
 import static junit.framework.TestCase.assertEquals;
@@ -120,7 +121,7 @@ public class FormUtilsTest extends BaseTest {
     @Test
     public void testLoadExpansionPanelValues() throws JSONException {
         JSONArray jsonArray = new JSONArray("[{\"key\":\"accordion_panel_demo\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"text\":\"Expansion Panel Demo\",\"type\":\"expansion_panel\",\"content_form\":\"expansion_panel_sub_form\",\"container\":\"anc_test\",\"value\":[{\"key\":\"blood_type_test_status\",\"type\":\"extended_radio_button\",\"label\":\"Blood type test\",\"index\":0,\"values\":[\"done_today:Done today\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"blood_type_test_status\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]},{\"key\":\"blood_type_test_date_today_hidden\",\"type\":\"hidden\",\"label\":\"\",\"index\":2,\"values\":[\"10-03-2020\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\"}},{\"key\":\"blood_type_test_date\",\"type\":\"date_picker\",\"label\":\"Blood type test date\",\"index\":3,\"values\":[\"10-03-2020\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"300AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163724AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}},{\"key\":\"blood_type\",\"type\":\"native_radio\",\"label\":\"Blood type\",\"index\":4,\"values\":[\"ab:AB\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163126AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"blood_type\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163117AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]},{\"key\":\"rh_factor\",\"type\":\"native_radio\",\"label\":\"Rh factor\",\"index\":5,\"values\":[\"positive:Positive\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"160232AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"rh_factor\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"703AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]}],\"required_fields\":[\"blood_type_test_status\",\"blood_type\",\"rh_factor\"]}]");
-        JSONArray values = formUtils.loadExpansionPanelValues(jsonArray,"accordion_panel_demo");
+        JSONArray values = formUtils.loadExpansionPanelValues(jsonArray, "accordion_panel_demo");
         Assert.assertNotNull(values);
         Assert.assertEquals(5, values.length());
     }
@@ -128,7 +129,7 @@ public class FormUtilsTest extends BaseTest {
     @Test
     public void testCreateSecondaryValuesMap() throws JSONException {
         JSONArray jsonArray = new JSONArray("[{\"key\":\"accordion_panel_demo\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"text\":\"Expansion Panel Demo\",\"type\":\"expansion_panel\",\"content_form\":\"expansion_panel_sub_form\",\"container\":\"anc_test\",\"value\":[{\"key\":\"blood_type_test_status\",\"type\":\"extended_radio_button\",\"label\":\"Blood type test\",\"index\":0,\"values\":[\"done_today:Done today\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"blood_type_test_status\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]},{\"key\":\"blood_type_test_date_today_hidden\",\"type\":\"hidden\",\"label\":\"\",\"index\":2,\"values\":[\"10-03-2020\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\"}},{\"key\":\"blood_type_test_date\",\"type\":\"date_picker\",\"label\":\"Blood type test date\",\"index\":3,\"values\":[\"10-03-2020\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"300AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163724AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}},{\"key\":\"blood_type\",\"type\":\"native_radio\",\"label\":\"Blood type\",\"index\":4,\"values\":[\"ab:AB\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163126AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"blood_type\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163117AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]},{\"key\":\"rh_factor\",\"type\":\"native_radio\",\"label\":\"Rh factor\",\"index\":5,\"values\":[\"positive:Positive\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"160232AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"rh_factor\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"703AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]}],\"required_fields\":[\"blood_type_test_status\",\"blood_type\",\"rh_factor\"]}]");
-        JSONArray values = formUtils.loadExpansionPanelValues(jsonArray,"accordion_panel_demo");
+        JSONArray values = formUtils.loadExpansionPanelValues(jsonArray, "accordion_panel_demo");
         Assert.assertNotNull(values);
 
         Map<String, ExpansionPanelValuesModel> valuesModelMap = formUtils.createSecondaryValuesMap(values);
@@ -138,5 +139,54 @@ public class FormUtilsTest extends BaseTest {
         ExpansionPanelValuesModel valuesModel = valuesModelMap.get("blood_type_test_status");
         Assert.assertNotNull(valuesModel);
         Assert.assertEquals("Blood type test", valuesModel.getLabel());
+    }
+
+    @Test
+    public void testAddExpansionPanelFormValuesShouldPopulateValueAttributeOfJsonObj() throws JSONException {
+        JSONArray jsonArray = new JSONArray();
+        String widgetRadioExpansionPanelValue = "{\"key\":\"ultrasound\",\"type\":\"extended_radio_button\",\"label\":\"Ultrasound test\",\"index\":0,\"values\":[\"done_today:Done today\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"ultrasound\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]}";
+        String widgetCheckBoxExpansionPanelValue = "{\"key\":\"ultrasound_notdone\",\"type\":\"check_box\",\"label\":\"Reason\",\"index\":4,\"values\":[\"expired_stock:Expired stock:true\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"161476AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165182AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"ultrasound_notdone\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165299AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]}";
+
+        String widgetRadio = "{\"key\":\"ultrasound\",\"openmrs_entity_parent\":\"159617AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163725AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"label\":\"Ultrasound test\",\"label_text_style\":\"bold\",\"text_color\":\"#000000\",\"type\":\"extended_radio_button\",\"options\":[{\"key\":\"done_today\",\"text\":\"Done today\",\"type\":\"done_today\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},{\"key\":\"done_earlier\",\"text\":\"Done earlier\",\"type\":\"done_earlier\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165385AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},{\"key\":\"ordered\",\"text\":\"Ordered\",\"type\":\"ordered\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165384AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},{\"key\":\"not_done\",\"text\":\"Not done\",\"type\":\"not_done\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"1118AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}],\"v_required\":{\"value\":true}}";
+        String widgetCheckbox = "{\"key\":\"ultrasound_notdone\",\"openmrs_entity_parent\":\"161476AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165182AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"type\":\"check_box\",\"label\":\"Reason\",\"label_text_style\":\"bold\",\"options\":[{\"key\":\"stock_out\",\"text\":\"Stock out\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165183AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},{\"key\":\"expired_stock\",\"text\":\"Expired stock\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165299AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},{\"key\":\"other\",\"text\":\"Other (specify)\",\"openmrs_entity_parent\":\"161476AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}],\"relevance\":{\"rules-engine\":{\"ex-rules\":{\"rules-file\":\"tests_relevance_rules.yml\"}}},\"v_required\":{\"value\":true}}";
+        JSONObject jsonObjectRadio = new JSONObject(widgetRadioExpansionPanelValue);
+        JSONObject jsonObjectCheckBox = new JSONObject(widgetCheckBoxExpansionPanelValue);
+
+        jsonArray.put(new JSONObject(widgetRadio)).put(new JSONObject(widgetCheckbox));
+        Map<String, ExpansionPanelValuesModel> expansionPanelValuesModelMap = new HashMap<>();
+        ExpansionPanelValuesModel expansionPanelValuesModel = new ExpansionPanelValuesModel(
+                jsonObjectRadio.optString(JsonFormConstants.KEY),
+                jsonObjectRadio.optString(JsonFormConstants.TYPE),
+                jsonObjectRadio.optString(JsonFormConstants.LABEL),
+                jsonObjectRadio.optInt(JsonFormConstants.INDEX),
+                jsonObjectRadio.optJSONArray(JsonFormConstants.VALUES),
+                jsonObjectRadio.optJSONObject(JsonFormConstants.OPENMRS_ATTRIBUTES),
+                jsonObjectRadio.optJSONArray(JsonFormConstants.VALUE_OPENMRS_ATTRIBUTES));
+        expansionPanelValuesModelMap.put("ultrasound", expansionPanelValuesModel);
+
+        ExpansionPanelValuesModel expansionPanelValuesModelNotDone = new ExpansionPanelValuesModel(
+                jsonObjectCheckBox.optString(JsonFormConstants.KEY),
+                jsonObjectCheckBox.optString(JsonFormConstants.TYPE),
+                jsonObjectCheckBox.optString(JsonFormConstants.LABEL),
+                jsonObjectCheckBox.optInt(JsonFormConstants.INDEX),
+                jsonObjectCheckBox.optJSONArray(JsonFormConstants.VALUES),
+                jsonObjectCheckBox.optJSONObject(JsonFormConstants.OPENMRS_ATTRIBUTES),
+                jsonObjectCheckBox.optJSONArray(JsonFormConstants.VALUE_OPENMRS_ATTRIBUTES));
+        expansionPanelValuesModelMap.put("ultrasound_notdone", expansionPanelValuesModelNotDone);
+        FormUtils formUtils = new FormUtils();
+        JSONArray result = formUtils.addExpansionPanelFormValues(jsonArray, expansionPanelValuesModelMap);
+        JSONObject objectRadio = result.optJSONObject(0);//expired_stock
+        JSONObject objectCheckbox = result.optJSONObject(1);
+        Assert.assertEquals("done_today", objectRadio.optString(JsonFormConstants.VALUE));
+        JSONArray jsonArrayOptions = objectCheckbox.optJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
+        JSONObject expectedOption = null;
+        for (int i = 0; i < jsonArrayOptions.length(); i++) {
+            JSONObject option = jsonArrayOptions.optJSONObject(i);
+            if (option.has(JsonFormConstants.VALUE) && option.optBoolean(JsonFormConstants.VALUE)) {
+                expectedOption = option;
+            }
+        }
+        Assert.assertNotNull(expectedOption);
+        Assert.assertEquals("expired_stock", expectedOption.optString(JsonFormConstants.KEY));
     }
 }
