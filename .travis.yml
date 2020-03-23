@@ -3,7 +3,7 @@ language: android
 # Setting sudo to required prevents Travis from testing the project in a Docker container.
 sudo: required
 jdk: oraclejdk8
-dist: precise
+dist: trusty
 
 before_cache:
   -rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
@@ -36,19 +36,19 @@ android:
     - android-28
 
 licenses:
-    - 'android-sdk-preview-license-.+'
-    - 'android-sdk-license-.+'
-    - 'google-gdk-license-.+'
+  - 'android-sdk-preview-license-.+'
+  - 'android-sdk-license-.+'
+  - 'google-gdk-license-.+'
 
 script:
   - echo "Travis branch is $TRAVIS_BRANCH"
   - echo "Travis branch is in pull request $TRAVIS_PULL+REQUEST"
   - chmod 755 gradlew
   - ls -la
-
+  - travis_wait ./gradlew clean --stacktrace
   #Run All tests Unit and Instrumentation
-  - travis_wait ./gradlew :android-json-form-wizard:jacocoTestReport coveralls --stacktrace
-
+  - travis_wait ./gradlew :android-json-form-wizard:jacocoTestReport --stacktrace
+  - travis_wait ./gradlew :android-json-form-wizard:coveralls
   # Generate javadoc
   - travis_wait ./gradlew javadoc
 

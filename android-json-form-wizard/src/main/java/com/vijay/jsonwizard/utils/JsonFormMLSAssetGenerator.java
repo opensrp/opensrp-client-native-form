@@ -136,7 +136,8 @@ public class JsonFormMLSAssetGenerator {
 
             for (String fieldIdentifier : translatableWidgetFields) {
                 // Split the widget field identifier into it's constituent keys
-                // and traverse the JsonObject widget to get to the base parent element
+                // and traverse the widget json object to get to the
+                // base parent element(s) (the element(s) with a field to be replaced)
                 String[] fieldIdentifierKeys = fieldIdentifier.split("\\.");
                 JsonObject parentJsonObj = widget;
                 JsonElement parentElement = widget;
@@ -154,16 +155,20 @@ public class JsonFormMLSAssetGenerator {
                     }
                 }
 
+                // package parent element(s) into json array
                 if (parentElement != null) {
                     JsonArray parentElementsArr = new JsonArray();
                     parentElementsArr.add(parentElement);
                     parentElementsArr = parentElement instanceof JsonArray ? parentElement.getAsJsonArray() : parentElementsArr;
+
+                    // if parent element is the widget itself, don't modify placeholder prefix
                     String widgetPlaceholderPrefix;
                     if (fieldIdentifierPrefix.toString().isEmpty()) {
                         widgetPlaceholderPrefix = rootPlaceholderPrefix;
                     } else {
                         widgetPlaceholderPrefix = rootPlaceholderPrefix + "." + widgetKey + "." + fieldIdentifierPrefix;
                     }
+
                     performReplacements(parentElementsArr, widgetPlaceholderPrefix, fieldIdentifierKeys[fieldIdentifierKeys.length - 1]);
                 }
             }
@@ -171,17 +176,26 @@ public class JsonFormMLSAssetGenerator {
     }
 
 
-    private static void performReplacements(JsonArray parentElements, String placeholderStrPrefix, String fieldToReplace){
-        // At the child element, use the last portion of the field identifier as a key
-        // and replace the string literal with a placeholder
+    /**
+     *
+     * For each parent element in {@param parentElements}, replaces the {@param fieldToReplace}
+     * with the appropriate placeholder derived from {@param placeholderPrefix}
+     *
+     * @param parentElements
+     * @param placeholderPrefix
+     * @param fieldToReplace
+     */
+    private static void performReplacements(JsonArray parentElements, String placeholderPrefix, String fieldToReplace){
         if (parentElements == null) {
             return;
         }
 
         for (int i = 0; i < parentElements.size(); i++) {
-            String propertyName = placeholderStrPrefix;
+            String propertyName = placeholderPrefix;
             JsonObject parentElement = parentElements.get(i).getAsJsonObject();
             JsonElement parentElementKey = parentElement.get(KEY);
+
+            // add unique key identifier if it exists
             if (parentElementKey != null) {
                 propertyName += "." + parentElementKey.getAsString();
             }
@@ -189,9 +203,9 @@ public class JsonFormMLSAssetGenerator {
 
             String placeholderStr = "{{" + propertyName + "}}";
 
-            JsonElement childElementToReplace = parentElement.get(fieldToReplace);
-            if (childElementToReplace != null) {
-                placeholdersToTranslationsMap.put(propertyName, childElementToReplace.getAsString());
+            JsonElement fieldValueToReplace = parentElement.get(fieldToReplace);
+            if (fieldValueToReplace != null) {
+                placeholdersToTranslationsMap.put(propertyName, fieldValueToReplace.getAsString());
                 parentElement.addProperty(fieldToReplace, placeholderStr);
             }
         }
@@ -250,7 +264,7 @@ public class JsonFormMLSAssetGenerator {
     private static void createTranslationsPropertyFile() {
         StringBuilder stringBuilder = new StringBuilder();
         for (Map.Entry<String, String> entry : placeholdersToTranslationsMap.entrySet()) {
-            stringBuilder.append(entry.getKey() + " = " + entry.getValue() + "\n");
+            stringBuilder.append(entry.getKey() + " = " + entry.getValue().replace("\n", "\\n") + "\n"); // ensures \n is preserved in a String
         }
         writeToFile(stringBuilder.toString(), File.separator + "tmp" + File.separator + formName + ".properties");
     }

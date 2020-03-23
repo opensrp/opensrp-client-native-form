@@ -41,7 +41,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -90,21 +89,20 @@ public class JsonFormInteractor {
     private void registerDefaultTranslatableFields() {
         // step fields
         defaultTranslatableStepFields = new HashSet<>();
-        defaultTranslatableStepFields.add("previous_label");
-        defaultTranslatableStepFields.add("next_label");
-        defaultTranslatableStepFields.add("submit_label");
-        defaultTranslatableStepFields.add("title");
+        defaultTranslatableStepFields.add(JsonFormConstants.PREVIOUS_LABEL);
+        defaultTranslatableStepFields.add(JsonFormConstants.NEXT_LABEL);
+        defaultTranslatableStepFields.add(JsonFormConstants.SUBMIT_LABEL);
+        defaultTranslatableStepFields.add(JsonFormConstants.STEP_TITLE);
         defaultTranslatableStepFields = Collections.unmodifiableSet(defaultTranslatableStepFields);
 
         // widget fields
         defaultTranslatableWidgetFields = new HashSet<>();
-        defaultTranslatableWidgetFields.add("label");
-        defaultTranslatableWidgetFields.add("text");
-        defaultTranslatableWidgetFields.add("hint");
-        defaultTranslatableWidgetFields.add("v_required.err");
-        defaultTranslatableWidgetFields.add("v_regex.err");
-        defaultTranslatableWidgetFields.add("v_numeric.err");
-        defaultTranslatableWidgetFields.add("text");
+        defaultTranslatableWidgetFields.add(JsonFormConstants.LABEL);
+        defaultTranslatableWidgetFields.add(JsonFormConstants.TEXT);
+        defaultTranslatableWidgetFields.add(JsonFormConstants.HINT);
+        defaultTranslatableWidgetFields.add(JsonFormConstants.V_REQUIRED + "." + JsonFormConstants.ERR);
+        defaultTranslatableWidgetFields.add(JsonFormConstants.V_REGEX + "." + JsonFormConstants.ERR);
+        defaultTranslatableWidgetFields.add(JsonFormConstants.V_NUMERIC + "." + JsonFormConstants.ERR);
         defaultTranslatableWidgetFields = Collections.unmodifiableSet(defaultTranslatableWidgetFields);
     }
 

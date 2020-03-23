@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.text.TextUtils;
 import android.util.Log;
@@ -806,7 +807,12 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
     }
 
     @Override
+    @NonNull
     public Set<String> getCustomTranslatableWidgetFields() {
-        return new HashSet<>();
+        Set<String> customTranslatableWidgetFields = new HashSet<>();
+        customTranslatableWidgetFields.add(JsonFormConstants.OPTIONS_FIELD_NAME + "." + JsonFormConstants.TEXT);
+        customTranslatableWidgetFields.add(JsonFormConstants.LABEL_INFO_TEXT);
+        customTranslatableWidgetFields.add(JsonFormConstants.LABEL_INFO_TITLE);
+        return customTranslatableWidgetFields;
     }
 }

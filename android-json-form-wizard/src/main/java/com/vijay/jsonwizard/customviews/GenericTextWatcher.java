@@ -74,9 +74,10 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
         String openMrsEntity = (String) mView.getTag(R.id.openmrs_entity);
         String openMrsEntityId = (String) mView.getTag(R.id.openmrs_entity_id);
         Boolean popup = (Boolean) mView.getTag(R.id.extraPopup);
+        popup = popup == null ? false : popup; // Handle nulls as a result of injected values
         ValidationStatus validationStatus = JsonFormFragmentPresenter.validate(formFragment, mView,
                 false);
-        if(validationStatus.isValid()) {
+        if (validationStatus.isValid()) {
             try {
                 api.writeValue(mStepName, key, text, openMrsEntityParent, openMrsEntity,
                         openMrsEntityId, popup);
