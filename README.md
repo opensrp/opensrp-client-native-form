@@ -2131,3 +2131,36 @@ To achieve this one has to add a form config file called `json.form.config.json`
 ]
 ```
 These values will be parsed and processed by passing it through `Form` pojo class in their setters.
+
+# JsonForm MLS Asset Generator (JMAG)
+
+This section describes how to configure JMAG for use with Android Studio.
+
+JMAG is a pure Java class, meaning it DOES NOT and SHOULD NOT contain Android dependencies. Additionally, the elements it interacts with should not have Android dependencies as part of their instantiation process, otherwise the tool won't run.
+
+JMAG is run through Android Studio as part of an Android Studio configuration. Here is some [background](https://developer.android.com/studio/run/rundebugconfig#opening) on adding an Android Studio configuration.
+
+As part of the JMAG configuration, the following steps will need to be taken:
+
+1. On the Android Studio menu click `Run -> Edit configuration`.
+2. On the `Run/Debug Configurations` dialog, click `plus icon -> Application`.
+3. Add the following configurations:
+   - Name: `JsonForm MLS Asset Generator`
+   - Main class: `com.vijay.jsonwizard.utils.JsonFormMLSAssetGenerator`
+   - Use classpath of module: `android-json-form-wizard`
+   - JRE: `Android API 21 Platform` (you can use a different API level)
+4. Within the same `Run/Debug Configurations` dialog, specify the JsonForm against which assets are to be generated: 
+   - Create an environment variable named `FORM_TO_TRANSLATE` and set its value to the absolute path of the JsonForm to translate.
+   - This environment variable will need to be reset any time a different form needs to be translated.
+5. Press `Apply` and `OK`
+6. To run JMAG: switch to your newly created configuration and click the `Run` button.
+
+The final configuration should look something like:
+
+![image](https://user-images.githubusercontent.com/33488286/77306006-0fc5ab00-6d08-11ea-8b35-559a6ef4308c.png)
+
+Two asset files will be created under the `/tmp` folder : a translations property file and a placeholder-injected JsonForm. 
+
+For a form named `example_form` the generated assets will follow the following naming covention : `example_form.json` and `example_form.properties`. 
+
+The properties file can then be copied over to the `resources` folder of your Android project. The placeholder-injected JsonForm will typically be copied over to the `assets` folder of your Android project (although not mandatory).
