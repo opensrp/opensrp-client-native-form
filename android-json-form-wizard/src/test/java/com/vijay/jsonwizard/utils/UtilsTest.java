@@ -174,11 +174,4 @@ public class UtilsTest {
         String expected = "yes, no, don't know";
         Assert.assertEquals(expected, WhiteboxImpl.invokeMethod(utils, "getStringValue", jsonObject));
     }
-
-    @Test
-    public void testGetDuration() {
-        Assert.assertNotNull(Utils.getDuration("12-11-1997", "13-11-1997"));
-        Assert.assertNotNull(Utils.getDuration("12-11-1997", null));
-    }
-
 }
