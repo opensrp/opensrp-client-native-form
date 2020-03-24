@@ -161,13 +161,13 @@ public class UtilsTest {
     }
 
     @Test
-    public void testReverseDateString() {
+    public void testReverseDateStringShouldReturnReverseDateString() {
         String date = "20-12-1997";
         Assert.assertEquals("1997-12-20", Utils.reverseDateString(date, "-"));
     }
 
     @Test
-    public void testGetStringValue() throws Exception {
+    public void testGetStringValueShouldReturnStringValue() throws Exception {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put(JsonFormConstants.VALUES, new JSONArray().put("yes").put("no").put("don't know"));
         Utils utils = new Utils();
