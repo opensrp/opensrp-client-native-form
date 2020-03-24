@@ -1,19 +1,30 @@
 package com.vijay.jsonwizard.utils;
 
+import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
+import com.vijay.jsonwizard.BaseTest;
+import com.vijay.jsonwizard.R;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.views.CustomTextView;
+
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.robolectric.RuntimeEnvironment;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -23,12 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-@RunWith(MockitoJUnitRunner.class)
-public class UtilsTest {
+public class UtilsTest extends BaseTest {
 
     @Mock
     private Context context;
@@ -46,10 +52,10 @@ public class UtilsTest {
         Mockito.when(assetManager.open("json.form.config.json")).thenReturn(new ByteArrayInputStream(configFileContent.getBytes()));
         Mockito.when(context.getAssets()).thenReturn(assetManager);
         JSONObject jsonResult = Utils.getFormConfig("anc_quick_check", "json.form.config.json", context);
-        assertEquals(3, jsonResult.length());
-        assertTrue(jsonResult.has("form_name"));
-        assertTrue(jsonResult.has("hidden_fields"));
-        assertTrue(jsonResult.has("disabled_fields"));
+        Assert.assertEquals(3, jsonResult.length());
+        Assert.assertTrue(jsonResult.has("form_name"));
+        Assert.assertTrue(jsonResult.has("hidden_fields"));
+        Assert.assertTrue(jsonResult.has("disabled_fields"));
 
     }
 
@@ -62,12 +68,12 @@ public class UtilsTest {
         jsonArray.put("testing");
         jsonArray.put("test");
         Set<String> strings = Utils.convertJsonArrayToSet(jsonArray);
-        assertEquals(4, strings.size());
+        Assert.assertEquals(4, strings.size());
     }
 
     @Test
     public void testConvertJsonArrayToSetShouldReturnNull() {
-        assertNull(Utils.convertJsonArrayToSet(null));
+        Assert.assertNull(Utils.convertJsonArrayToSet(null));
     }
 
     @Test
@@ -113,7 +119,7 @@ public class UtilsTest {
         Mockito.when(assetManager.open("rule/diagnose_and_treat_relevance.yml")).thenReturn(inputStream);
         Map<String, List<Map<String, Object>>> rulesFileMap = new HashMap<>();
         Utils.buildRulesWithUniqueId(element, unique_id, ruleType, context, rulesFileMap);
-        String expected = "{\"relevance\":{\"rules-engine\":{\"ex-rules\":{\"rules-dynamic\":[{\"key\":\"c29afdf9-843e-4c90-9a79-3dafd70e045b\"},{\"condition\":\"step1_diagnostic_test_c29afdf9-843e-4c90-9a79-3dafd70e045b == 'Pregnancy Test' || step1_diagnostic_test_c29afdf9-843e-4c90-9a79-3dafd70e045b == 'Malaria test' || step1_diagnostic_test_c29afdf9-843e-4c90-9a79-3dafd70e045b == 'HIV test' || step1_diagnostic_test_c29afdf9-843e-4c90-9a79-3dafd70e045b == 'Syphilis test' || step1_diagnostic_test_c29afdf9-843e-4c90-9a79-3dafd70e045b == 'Hep B test' || step1_diagnostic_test_c29afdf9-843e-4c90-9a79-3dafd70e045b == 'Hep C test' || step1_diagnostic_test_c29afdf9-843e-4c90-9a79-3dafd70e045b == 'TB Screening' || step1_diagnostic_test_c29afdf9-843e-4c90-9a79-3dafd70e045b == 'Midstream urine Gram-staining'\",\"name\":\"step1_diagnostic_test_result_spinner_c29afdf9-843e-4c90-9a79-3dafd70e045b\",\"description\":\"diagnostic_test_result_spinner_c29afdf9-843e-4c90-9a79-3dafd70e045b\",\"priority\":1,\"actions\":\"isRelevant = true\"},{\"condition\":\"step1_diagnostic_test_c29afdf9-843e-4c90-9a79-3dafd70e045b == 'Ultra sound'\",\"name\":\"step1_diagnostic_test_result_specify_c29afdf9-843e-4c90-9a79-3dafd70e045b\",\"description\":\"diagnostic_test_result_specify_c29afdf9-843e-4c90-9a79-3dafd70e045b\",\"priority\":1,\"actions\":\"isRelevant = true\"},{\"condition\":\"step1_diagnostic_test_c29afdf9-843e-4c90-9a79-3dafd70e045b.startsWith('Blood Glucose test')\",\"name\":\"step1_diagnostic_test_result_glucose_c29afdf9-843e-4c90-9a79-3dafd70e045b\",\"description\":\"diagnostic_test_result_glucose_c29afdf9-843e-4c90-9a79-3dafd70e045b\",\"priority\":1,\"actions\":\"isRelevant = true\"},{\"condition\":\"step1_diagnostic_test_c29afdf9-843e-4c90-9a79-3dafd70e045b == 'Blood Type test'\",\"name\":\"step1_diagnostic_test_result_spinner_blood_type_c29afdf9-843e-4c90-9a79-3dafd70e045b\",\"description\":\"diagnostic_test_result_spinner_blood_type_c29afdf9-843e-4c90-9a79-3dafd70e045b\",\"priority\":1,\"actions\":\"isRelevant = true\"}]}}}}";
+        String expected = "{\"relevance\":{\"rules-engine\":{\"ex-rules\":{\"rules-dynamic\":[{\"key\":\"c29afdf9-843e-4c90-9a79-3dafd70e045b\"},{\"name\":\"step1_diagnostic_test_result_spinner_c29afdf9-843e-4c90-9a79-3dafd70e045b\",\"description\":\"diagnostic_test_result_spinner_c29afdf9-843e-4c90-9a79-3dafd70e045b\",\"priority\":1,\"actions\":\"isRelevant = true\",\"condition\":\"step1_diagnostic_test_c29afdf9-843e-4c90-9a79-3dafd70e045b == 'Pregnancy Test' || step1_diagnostic_test_c29afdf9-843e-4c90-9a79-3dafd70e045b == 'Malaria test' || step1_diagnostic_test_c29afdf9-843e-4c90-9a79-3dafd70e045b == 'HIV test' || step1_diagnostic_test_c29afdf9-843e-4c90-9a79-3dafd70e045b == 'Syphilis test' || step1_diagnostic_test_c29afdf9-843e-4c90-9a79-3dafd70e045b == 'Hep B test' || step1_diagnostic_test_c29afdf9-843e-4c90-9a79-3dafd70e045b == 'Hep C test' || step1_diagnostic_test_c29afdf9-843e-4c90-9a79-3dafd70e045b == 'TB Screening' || step1_diagnostic_test_c29afdf9-843e-4c90-9a79-3dafd70e045b == 'Midstream urine Gram-staining'\"},{\"name\":\"step1_diagnostic_test_result_specify_c29afdf9-843e-4c90-9a79-3dafd70e045b\",\"description\":\"diagnostic_test_result_specify_c29afdf9-843e-4c90-9a79-3dafd70e045b\",\"priority\":1,\"actions\":\"isRelevant = true\",\"condition\":\"step1_diagnostic_test_c29afdf9-843e-4c90-9a79-3dafd70e045b == 'Ultra sound'\"},{\"name\":\"step1_diagnostic_test_result_glucose_c29afdf9-843e-4c90-9a79-3dafd70e045b\",\"description\":\"diagnostic_test_result_glucose_c29afdf9-843e-4c90-9a79-3dafd70e045b\",\"priority\":1,\"actions\":\"isRelevant = true\",\"condition\":\"step1_diagnostic_test_c29afdf9-843e-4c90-9a79-3dafd70e045b.startsWith('Blood Glucose test')\"},{\"name\":\"step1_diagnostic_test_result_spinner_blood_type_c29afdf9-843e-4c90-9a79-3dafd70e045b\",\"description\":\"diagnostic_test_result_spinner_blood_type_c29afdf9-843e-4c90-9a79-3dafd70e045b\",\"priority\":1,\"actions\":\"isRelevant = true\",\"condition\":\"step1_diagnostic_test_c29afdf9-843e-4c90-9a79-3dafd70e045b == 'Blood Type test'\"}]}}}}";
         Assert.assertEquals(expected, element.toString());
     }
 
@@ -125,7 +131,79 @@ public class UtilsTest {
         String unique_id = "c29afdf9-843e-4c90-9a79-3dafd70e045b";
         Map<String, List<Map<String, Object>>> rulesFileMap = new HashMap<>();
         Utils.buildRulesWithUniqueId(element, unique_id, ruleType, context, rulesFileMap);
-        String expected = "{\"relevance\":{\"step1:dob_unknown_c29afdf9-843e-4c90-9a79-3dafd70e045b\":{\"ex\":\"equalTo(., \\\"false\\\")\",\"type\":\"string\"}}}";
+        String expected = "{\"relevance\":{\"step1:dob_unknown_c29afdf9-843e-4c90-9a79-3dafd70e045b\":{\"type\":\"string\",\"ex\":\"equalTo(., \\\"false\\\")\"}}}";
         Assert.assertEquals(expected, element.toString());
+    }
+
+    @Test
+    public void testResetRadioButtonsSpecifyText() throws JSONException {
+        JSONObject jsonObject = new JSONObject("{\"key\":\"resOne3\",\"text\":\"Abnormal\",\"specify_info\":\"Specify\",\"specify_info_color\":\"#b5b5b5\",\"specify_widget\":\"check_box\",\"content_form\":\"child_enrollment_sub_form\",\"content_form_location\":\"\",\"secondary_suffix\":\"test\",\"secondary_value\":[{\"key\":\"respiratory_exam_abnormal\",\"type\":\"check_box\",\"values\":[\"rapid_breathing:Rapid breathing:true\"]},{\"key\":\"respiratory_exam_radio_button\",\"type\":\"native_radio\",\"values\":[\"1:Not done\"]},{\"key\":\"respiratory_exam_abnormal_other\",\"type\":\"edit_text\",\"values\":[\"other:Respiratory exam answer\"]}]}");
+        Assert.assertNotNull(jsonObject);
+
+        LinearLayout linearLayout = new LinearLayout(RuntimeEnvironment.application);
+        Assert.assertNotNull(linearLayout);
+
+        CustomTextView specifyText = new CustomTextView(RuntimeEnvironment.application);
+        Assert.assertNotNull(specifyText);
+
+        CustomTextView extraInfoTextView = new CustomTextView(RuntimeEnvironment.application);
+        extraInfoTextView.setVisibility(View.GONE);
+        Assert.assertNotNull(extraInfoTextView);
+
+        CustomTextView reasonsText = new CustomTextView(RuntimeEnvironment.application);
+        linearLayout.addView(reasonsText);
+        Assert.assertNotNull(reasonsText);
+
+        RadioGroup radioGroup = new RadioGroup(RuntimeEnvironment.application);
+        linearLayout.addView(radioGroup);
+        Assert.assertNotNull(radioGroup);
+
+        RadioButton radioButton = new RadioButton(RuntimeEnvironment.application);
+        radioGroup.addView(radioButton);
+        radioButton.setTag(R.id.specify_textview, specifyText);
+        radioButton.setTag(R.id.option_json_object, jsonObject);
+        radioButton.setTag(R.id.specify_extra_info_textview, extraInfoTextView);
+        radioButton.setTag(R.id.specify_reasons_textview, reasonsText);
+        Assert.assertNotNull(radioButton);
+
+        Utils.resetRadioButtonsSpecifyText(radioButton);
+        Assert.assertEquals("(Specify)", specifyText.getText().toString());
+        Assert.assertTrue(jsonObject.has(JsonFormConstants.SECONDARY_VALUE));
+        Assert.assertEquals("", jsonObject.get(JsonFormConstants.SECONDARY_VALUE));
+        Assert.assertEquals(View.VISIBLE, extraInfoTextView.getVisibility());
+        Assert.assertEquals(View.GONE, reasonsText.getVisibility());
+    }
+
+    @Test
+    public void testCreateExpansionPanelChildren() throws JSONException {
+        JSONArray values = new JSONArray("[{\"key\":\"blood_type_test_status\",\"type\":\"extended_radio_button\",\"label\":\"Blood type test\",\"index\":0,\"values\":[\"done_today:Done today\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"blood_type_test_status\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]},{\"key\":\"blood_type_test_date_today_hidden\",\"type\":\"hidden\",\"label\":\"\",\"index\":2,\"values\":[\"10-03-2020\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\"}},{\"key\":\"blood_type_test_date\",\"type\":\"date_picker\",\"label\":\"Blood type test date\",\"index\":3,\"values\":[\"10-03-2020\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"300AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163724AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}}]");
+        Assert.assertNotNull(values);
+
+        List<String> stringList = new Utils().createExpansionPanelChildren(values);
+        Assert.assertNotNull(stringList);
+        Assert.assertEquals(2, stringList.size());
+        Assert.assertEquals("Blood type test date:10-03-2020", stringList.get(1));
+    }
+
+    @Test
+    public void testShowProgressDialog() {
+        Utils.showProgressDialog(R.string.please_wait_title, R.string.please_wait, RuntimeEnvironment.application);
+        Assert.assertTrue(Utils.getProgressDialog().isShowing());
+
+        Utils.hideProgressDialog();
+        Assert.assertFalse(Utils.getProgressDialog().isShowing());
+    }
+
+    @Test
+    public void testPixelToDp() {
+        int layoutMargin = Utils.pixelToDp((int) RuntimeEnvironment.application.getResources().getDimension(R.dimen.bottom_navigation_margin), RuntimeEnvironment.application);
+        Assert.assertEquals(4, layoutMargin);
+    }
+
+    @Test
+    public void testGetFragmentTransaction() {
+        Activity activity = new Activity();
+       @NotNull FragmentTransaction fragmentTransaction = new Utils().getFragmentTransaction(activity);
+       Assert.assertNotNull(fragmentTransaction);
     }
 }
