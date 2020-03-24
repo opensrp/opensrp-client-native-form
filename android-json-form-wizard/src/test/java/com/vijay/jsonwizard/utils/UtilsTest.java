@@ -3,6 +3,9 @@ package com.vijay.jsonwizard.utils;
 import android.content.Context;
 import android.content.res.AssetManager;
 
+import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.widgets.DatePickerFactory;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,10 +17,13 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.powermock.reflect.internal.WhiteboxImpl;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -128,4 +134,51 @@ public class UtilsTest {
         String expected = "{\"relevance\":{\"step1:dob_unknown_c29afdf9-843e-4c90-9a79-3dafd70e045b\":{\"ex\":\"equalTo(., \\\"false\\\")\",\"type\":\"string\"}}}";
         Assert.assertEquals(expected, element.toString());
     }
+
+    @Test
+    public void testProcessNumberValuesShouldReturnCorrectValues() {
+        Utils utils = new Utils();
+        Assert.assertEquals(String.valueOf(4.7), utils.processNumberValues("4.7"));//test float
+        Assert.assertEquals(String.valueOf(0.05), utils.processNumberValues("0.047"));//test rounding off
+        Assert.assertEquals(47, utils.processNumberValues("47"));//test integer
+        Assert.assertEquals(String.valueOf(Long.MAX_VALUE), utils.processNumberValues(String.valueOf(Long.MAX_VALUE)));//test when exception
+    }
+
+    @Test
+    public void testGetDateFromStringShouldReturnCorrectDate() throws ParseException {
+        String date = "20-12-1997";
+        Assert.assertEquals(DatePickerFactory.DATE_FORMAT.parse(date), Utils.getDateFromString("20-12-1997"));
+        Assert.assertNull(Utils.getDateFromString("20/12/1997"));
+        Assert.assertNull(Utils.getDateFromString(""));
+    }
+
+    @Test
+    public void testGetStringFromDateShouldReturnCorrectString() throws ParseException {
+        String strDate = "20-12-1997";
+        Date date = DatePickerFactory.DATE_FORMAT.parse(strDate);
+        Assert.assertEquals(strDate, Utils.getStringFromDate(date));
+        Assert.assertNull(Utils.getStringFromDate(null));
+    }
+
+    @Test
+    public void testReverseDateString() {
+        String date = "20-12-1997";
+        Assert.assertEquals("1997-12-20", Utils.reverseDateString(date, "-"));
+    }
+
+    @Test
+    public void testGetStringValue() throws Exception {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(JsonFormConstants.VALUES, new JSONArray().put("yes").put("no").put("don't know"));
+        Utils utils = new Utils();
+        String expected = "yes, no, don't know";
+        Assert.assertEquals(expected, WhiteboxImpl.invokeMethod(utils, "getStringValue", jsonObject));
+    }
+
+    @Test
+    public void testGetDuration() {
+        Assert.assertNotNull(Utils.getDuration("12-11-1997", "13-11-1997"));
+        Assert.assertNotNull(Utils.getDuration("12-11-1997", null));
+    }
+
 }
