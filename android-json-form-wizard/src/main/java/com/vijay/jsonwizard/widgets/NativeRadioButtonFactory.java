@@ -48,6 +48,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import timber.log.Timber;
+
 import static com.vijay.jsonwizard.widgets.DatePickerFactory.DATE_FORMAT;
 
 
@@ -243,7 +245,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         try {
             item.put(JsonFormConstants.SECONDARY_VALUE, new JSONArray().put(valueObject));
         } catch (Exception e) {
-            Log.i(TAG, Log.getStackTraceString(e));
+            Timber.e(e, "--> addSecondaryValue");
         }
     }
 
@@ -257,19 +259,21 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
                 ((JsonFormActivity) formFragmentView.getContext()).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        ConstraintLayout constraintLayout = (ConstraintLayout) linearLayout.getChildAt(0);
-                        if (errorTextView[0] == null) {
-                            errorTextView[0] = new TextView(formFragmentView.getContext());
-                            errorTextView[0].setId(R.id.error_textView);
-                            errorTextView[0].setTextColor(formFragmentView.getContext().getResources().getColor(R.color.toaster_note_red_icon));
-                            errorTextView[0].setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-                            ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(constraintLayout.getLayoutParams());
-                            layoutParams.topToBottom = R.id.label_text;
-                            layoutParams.leftMargin = FormUtils.dpToPixels(formFragmentView.getContext(), 8);
-                            constraintLayout.addView(errorTextView[0], new ConstraintLayout.LayoutParams(layoutParams));
+                        if (linearLayout.getChildAt(0) instanceof ConstraintLayout) {
+                            ConstraintLayout constraintLayout = (ConstraintLayout) linearLayout.getChildAt(0);
+                            if (errorTextView[0] == null) {
+                                errorTextView[0] = new TextView(formFragmentView.getContext());
+                                errorTextView[0].setId(R.id.error_textView);
+                                errorTextView[0].setTextColor(formFragmentView.getContext().getResources().getColor(R.color.toaster_note_red_icon));
+                                errorTextView[0].setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                                ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(constraintLayout.getLayoutParams());
+                                layoutParams.topToBottom = R.id.label_text;
+                                layoutParams.leftMargin = FormUtils.dpToPixels(formFragmentView.getContext(), 8);
+                                constraintLayout.addView(errorTextView[0], new ConstraintLayout.LayoutParams(layoutParams));
+                            }
+                            errorTextView[0].setVisibility(View.VISIBLE);
+                            errorTextView[0].setText(error);
                         }
-                        errorTextView[0].setVisibility(View.VISIBLE);
-                        errorTextView[0].setText(error);
                     }
                 });
 
