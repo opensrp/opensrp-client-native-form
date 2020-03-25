@@ -2177,6 +2177,8 @@ The final configuration should look something like:
 
 Two asset files will be created under the `/tmp` folder : a translations property file and a placeholder-injected JsonForm. 
 
+Alternatively, a different folder can be specified by setting the `MLS_ASSETS_FOLDER` environment variable, just ensure the folder exists and has the correct write permissions.
+
 For a form named `example_form` the generated assets will follow the following naming covention : `example_form.json` and `example_form.properties`. 
 
 The properties file can then be copied over to the `resources` folder of your Android project. The placeholder-injected JsonForm will typically be copied over to the `assets` folder of your Android project (although not mandatory).
