@@ -1,5 +1,6 @@
 package com.vijay.jsonwizard.activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
@@ -57,6 +58,7 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
     private Toolbar mToolbar;
     private Map<String, ValidationStatus> invalidFields = new HashMap<>();
     private boolean isPreviousPressed = false;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -203,5 +205,13 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
 
     public void setRulesEngineFactory(RulesEngineFactory rulesEngineFactory) {
         this.rulesEngineFactory = rulesEngineFactory;
+    }
+
+    public ProgressDialog getProgressDialog() {
+        return progressDialog;
+    }
+
+    public void setProgressDialog(ProgressDialog progressDialog) {
+        this.progressDialog = progressDialog;
     }
 }
