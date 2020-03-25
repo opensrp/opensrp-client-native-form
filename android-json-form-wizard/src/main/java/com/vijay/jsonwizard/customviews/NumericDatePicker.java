@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Build;
 import android.support.annotation.VisibleForTesting;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -138,8 +137,8 @@ public class NumericDatePicker extends DatePicker {
 
         //Year max and min never change
 
-        yearPicker.setMaxValue(maxYear);
         yearPicker.setMinValue(minYear);
+        yearPicker.setMaxValue(maxYear);
 
         dayPicker.setWrapSelectorWheel(resetWrapSelector(dayPicker));
         monthPicker.setWrapSelectorWheel(resetWrapSelector(monthPicker));
@@ -385,26 +384,32 @@ public class NumericDatePicker extends DatePicker {
 
     //The month starts from zero
     @Override
-    public void updateDate(int year, int month, int dayOfMonth) {
+    public void updateDate(int year_, int month_, int dayOfMonth_) {
 
-        boolean constraintValidationError = false;
+        int year = year_;
+        int month = month_;
+        int dayOfMonth = dayOfMonth_;
 
         if (isMaxConstraintViolated(year, month + 1, dayOfMonth)) {
-            constraintValidationError = true;
-            Log.i(NumericDatePicker.class.getCanonicalName(), "You have set a date later than the Maximum allowed date settings");
+
+            dayOfMonth = maxDay;
+            month = maxMonth;
+            year = maxYear;
+
         }
 
         if (isMinConstraintViolated(year, month + 1, dayOfMonth)) {
-            constraintValidationError = true;
-            Log.i(NumericDatePicker.class.getCanonicalName(), "You have set a date later than the Minimum allowed date settings");
+
+            dayOfMonth = minDay;
+            month = minMonth;
+            year = minYear;
         }
 
-        if (!constraintValidationError) {
-            dayPicker.setValue(dayOfMonth);
-            monthPicker.setValue(month + 1);
-            yearPicker.setValue(year);
-            resetPickers();
-        }
+        dayPicker.setValue(dayOfMonth);
+        monthPicker.setValue(month + 1);
+        yearPicker.setValue(year);
+        resetPickers();
+
     }
 
     /**
