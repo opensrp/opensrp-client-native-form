@@ -54,11 +54,22 @@ public class JsonFormMLSAssetGenerator {
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String placeholderInjectedFormStr = gson.toJson(placeholderInjectedForm, JsonObject.class);
-        writeToFile(placeholderInjectedFormStr, File.separator + "tmp" + File.separator + formName + ".json");
+        writeToFile(placeholderInjectedFormStr, File.separator + getMLSAssetsFolder() + File.separator + formName + ".json");
 
         printToSystemOut("\n\nPlaceholder-injected form: \n\n " + placeholderInjectedFormStr);
 
         createTranslationsPropertyFile();
+    }
+
+    /**
+     *
+     * Returns the path to which generated assets should be stored
+     *
+     * @return
+     */
+    public static String getMLSAssetsFolder() {
+        String mlsAssetsFolder = System.getenv("MLS_ASSETS_FOLDER");
+        return mlsAssetsFolder == null ? "tmp" : mlsAssetsFolder;
     }
 
     /**
@@ -266,7 +277,7 @@ public class JsonFormMLSAssetGenerator {
         for (Map.Entry<String, String> entry : placeholdersToTranslationsMap.entrySet()) {
             stringBuilder.append(entry.getKey() + " = " + entry.getValue().replace("\n", "\\n") + "\n"); // ensures \n is preserved in a String
         }
-        writeToFile(stringBuilder.toString(), File.separator + "tmp" + File.separator + formName + ".properties");
+        writeToFile(stringBuilder.toString(), File.separator + getMLSAssetsFolder() + File.separator + formName + ".properties");
     }
 
     /**
