@@ -1,7 +1,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/native_form_activity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="@color/white"
     android:theme="@style/NativeFormsAppTheme">
 
@@ -15,7 +16,7 @@
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         android:paddingEnd="20dp"
-        app:theme="@style/AppTheme.DarkToolbar"/>
+        app:theme="@style/AppTheme.DarkToolbar" />
 
     <EditText
         android:id="@+id/default_focus_view"
@@ -25,8 +26,8 @@
         android:layout_alignParentTop="true" />
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                 android:id="@+id/container"
-                 android:layout_width="match_parent"
-                 android:layout_height="match_parent"
-                 android:layout_below="@+id/tb_top" />
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tb_top" />
 </RelativeLayout>

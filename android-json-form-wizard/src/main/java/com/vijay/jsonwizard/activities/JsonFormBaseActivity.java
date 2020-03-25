@@ -64,6 +64,7 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.native_form_activity_json_form);
+        findViewById(R.id.native_form_activity).setFilterTouchesWhenObscured(true);
         mToolbar = findViewById(R.id.tb_top);
         setSupportActionBar(mToolbar);
         skipLogicViews = new LinkedHashMap<>();
