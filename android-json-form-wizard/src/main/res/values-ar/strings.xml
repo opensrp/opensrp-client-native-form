@@ -75,10 +75,27 @@
     <string name="edit_button_label">زر التحرير</string>
     <string name="info_icon">أيقونة المعلومات</string>
     <string name="attention">انتباه</string>
-    <string name="json_form_error_msg" >تم العثور على %d خطأ (أخطاء) في الاستمارة. يرجى تصحيحها يرجى تصحيحها لتقديم</string>
-    <string name="json_form_on_next_error_msg" >يرجى تصحيح الخطأ (الأخطاء) في الاستمارة للتقدم</string>
+    <string name="json_form_error_msg">تم العثور على %d خطأ (أخطاء) في الاستمارة. يرجى تصحيحها يرجى تصحيحها لتقديم</string>
+    <string name="json_form_on_next_error_msg">يرجى تصحيح الخطأ (الأخطاء) في الاستمارة للتقدم</string>
     <string name="go_to_step">اذهب إلى الخطوة</string>
-  <string name="shows_image_on_dialog">shows Image on dialog</string>
+    <string name="shows_image_on_dialog">shows Image on dialog</string>
     <string name="simprints_guid">GUID not found</string>
     <string name="simprints_init_fail">Project Id or user id or module id not found. can be use SimprintsLibrary.init</string>
+
+    <!-- Duration -->
+    <string name="x_seconds">%1$dث</string>
+    <string name="x_minutes">%1$dد</string>
+    <string name="x_hours">%1$dس</string>
+    <string name="x_days">%1$dيـ</string>
+    <string name="x_weeks">%1$dأ</string>
+    <string name="x_weeks_days">%1$dأ
+        %2$dيـ
+        </string>
+    <string name="x_months">%1$dش</string>
+    <string name="x_months_weeks">%1$dش
+        %2$dأ
+    </string>
+    <string name="x_years">%1$dس</string>
+    <string name="x_years_months">%1$dس
+        %2$dش</string>
 </resources>

@@ -25,9 +25,10 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.utils.DateUtil;
 import com.vijay.jsonwizard.utils.FormUtils;
+import com.vijay.jsonwizard.utils.NativeFormLangUtils;
 import com.vijay.jsonwizard.utils.NativeFormsProperties;
-import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
 
 import org.json.JSONArray;
@@ -51,13 +52,14 @@ public class DatePickerFactory implements FormWidgetFactory {
     private static final String TAG = "DatePickerFactory";
     private FormUtils formUtils = new FormUtils();
 
-    private static void updateDateText(MaterialEditText editText, TextView duration, String date) {
+    private static void updateDateText(Context context, MaterialEditText editText, TextView duration, String date) {
         editText.setText(date);
         String durationLabel = (String) duration.getTag(R.id.label);
         if (!TextUtils.isEmpty(durationLabel)) {
-            String durationText = Utils.getDuration(date);
+            Locale locale = new Locale(NativeFormLangUtils.getLanguage(context));
+            String durationText = DateUtil.getDuration(DateUtil.getDurationTimeDifference(date, null), locale.getLanguage().equals("ar") ? Locale.ENGLISH : locale, context);
             if (!TextUtils.isEmpty(durationText)) {
-                durationText = String.format("(%s: %s)", durationLabel, durationText);
+                durationText =  String.format("(%s: %s)", durationLabel, durationText);
             }
             duration.setText(durationText);
         }
@@ -65,28 +67,29 @@ public class DatePickerFactory implements FormWidgetFactory {
     }
 
 
-    private static void showDatePickerDialog(Activity context,
-                                             DatePickerDialog datePickerDialog,
-                                             MaterialEditText editText) {
+    private static void showDatePickerDialog(Activity context, DatePickerDialog datePickerDialog, MaterialEditText editText) {
+
         FragmentTransaction ft = context.getFragmentManager().beginTransaction();
         Fragment prev = context.getFragmentManager().findFragmentByTag(TAG);
-        if (prev != null) {
-            ft.remove(prev);
-        }
 
-        ft.addToBackStack(null);
+        if (!(prev != null && prev.isAdded())) {
 
-        datePickerDialog.show(ft, TAG);
-        String text = editText.getText().toString();
-        Calendar date = FormUtils.getDate(text);
-        if (text.isEmpty()) {
-            Object defaultValue = datePickerDialog.getArguments().get(JsonFormConstants.DEFAULT);
-            if (defaultValue != null)
-                datePickerDialog.setDate(FormUtils.getDate(defaultValue.toString()).getTime());
-            else
+            datePickerDialog.show(ft, TAG);
+
+            //Fragments are committed asynchronously, force commit
+            context.getFragmentManager().executePendingTransactions();
+
+            String text = editText.getText().toString();
+            Calendar date = FormUtils.getDate(text);
+            if (text.isEmpty()) {
+                Object defaultValue = datePickerDialog.getArguments().get(JsonFormConstants.DEFAULT);
+                if (defaultValue != null)
+                    datePickerDialog.setDate(FormUtils.getDate(defaultValue.toString()).getTime());
+                else
+                    datePickerDialog.setDate(date.getTime());
+            } else {
                 datePickerDialog.setDate(date.getTime());
-        } else {
-            datePickerDialog.setDate(date.getTime());
+            }
         }
     }
 
@@ -158,8 +161,10 @@ public class DatePickerFactory implements FormWidgetFactory {
             editText.setTag(R.id.json_object, jsonObject);
 
             final DatePickerDialog datePickerDialog = createDateDialog(context, duration, editText, jsonObject);
-            if (formFragment !=null) {
-                NativeFormsProperties nativeFormsProperties = formFragment.getNativeFormProperties();https://docs.google.com/document/d/1qGuQ-yw2epegvKZjPd5OE3lTjWrNTxzKk79hTPKi054/edit?pli=1
+            if (formFragment != null) {
+                NativeFormsProperties nativeFormsProperties = formFragment.getNativeFormProperties();
+                https:
+//docs.google.com/document/d/1qGuQ-yw2epegvKZjPd5OE3lTjWrNTxzKk79hTPKi054/edit?pli=1
                 if (nativeFormsProperties != null) {
                     datePickerDialog.setNumericDatePicker(nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_DATEPICKER_IS_NUMERIC));
                 }
@@ -189,7 +194,7 @@ public class DatePickerFactory implements FormWidgetFactory {
             editText.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    updateDateText(editText, duration, "");
+                    updateDateText(context, editText, duration, "");
                     return true;
                 }
             });
@@ -244,9 +249,10 @@ public class DatePickerFactory implements FormWidgetFactory {
         }
     }
 
-    private void updateEditText(MaterialEditText editText, JSONObject jsonObject, String stepName, Context context,
-                                TextView duration) throws JSONException {
-        SimpleDateFormat DATE_FORMAT_LOCALE = new SimpleDateFormat("dd-MM-yyyy", context.getResources().getConfiguration().locale);
+    private void updateEditText(MaterialEditText editText, JSONObject jsonObject, String stepName, Context context, TextView duration) throws JSONException {
+
+        Locale locale = context.getResources().getConfiguration().locale.getLanguage().equals("ar") ? Locale.ENGLISH : context.getResources().getConfiguration().locale;//Arabic should render normal numbers/numeric digits
+        SimpleDateFormat DATE_FORMAT_LOCALE = new SimpleDateFormat("dd-MM-yyyy", locale);
 
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
@@ -272,7 +278,7 @@ public class DatePickerFactory implements FormWidgetFactory {
         }
 
         if (!TextUtils.isEmpty(jsonObject.optString(KEY.VALUE))) {
-            updateDateText(editText, duration, DATE_FORMAT_LOCALE.format(FormUtils.getDate(jsonObject.optString(KEY.VALUE)).getTime()));
+            updateDateText(context, editText, duration, DATE_FORMAT_LOCALE.format(FormUtils.getDate(jsonObject.optString(KEY.VALUE)).getTime()));
         }
 
         if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
@@ -282,10 +288,13 @@ public class DatePickerFactory implements FormWidgetFactory {
         }
     }
 
-    protected DatePickerDialog createDateDialog(Context context, final TextView duration, final MaterialEditText editText,
+    protected DatePickerDialog createDateDialog(final Context context, final TextView duration, final MaterialEditText editText,
                                                 JSONObject jsonObject) throws JSONException {
         final DatePickerDialog datePickerDialog = new DatePickerDialog();
         datePickerDialog.setContext(context);
+
+        Locale locale = context.getResources().getConfiguration().locale.getLanguage().equals("ar") ? Locale.ENGLISH : context.getResources().getConfiguration().locale;//Arabic should render normal numbers/numeric digits
+        final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy", locale);
 
         datePickerDialog.setOnDateSetListener(new android.app.DatePickerDialog.OnDateSetListener() {
             @Override
@@ -300,10 +309,10 @@ public class DatePickerFactory implements FormWidgetFactory {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB
                         && calendarDate.getTimeInMillis() >= view.getMinDate()
                         && calendarDate.getTimeInMillis() <= view.getMaxDate()) {
-                    updateDateText(editText, duration,
+                    updateDateText(context, editText, duration,
                             DATE_FORMAT.format(calendarDate.getTime()));
                 } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                    updateDateText(editText, duration, "");
+                    updateDateText(context, editText, duration, "");
                 }
             }
         });
