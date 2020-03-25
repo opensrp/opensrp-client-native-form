@@ -14,6 +14,7 @@
     <item name="raw_value" type="id" />
     <item name="canvas_ids" type="id" />
     <item name="relevance_decided" type="id"/>
+    <item name="repeating_group_remote_reference_value" type="id"/>
     <item name="after_look_up" type="id" />
     <item name="editable_view" type="id" />
     <item name="repeating_group_item_count" type="id" />
