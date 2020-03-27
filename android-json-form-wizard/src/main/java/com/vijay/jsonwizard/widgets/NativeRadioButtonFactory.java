@@ -51,6 +51,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import timber.log.Timber;
+
 import static com.vijay.jsonwizard.widgets.DatePickerFactory.DATE_FORMAT;
 
 
@@ -246,33 +248,41 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         try {
             item.put(JsonFormConstants.SECONDARY_VALUE, new JSONArray().put(valueObject));
         } catch (Exception e) {
-            Log.i(TAG, Log.getStackTraceString(e));
+            Timber.e(e, "--> addSecondaryValue");
         }
     }
 
-    public static ValidationStatus validate(JsonFormFragmentView formFragmentView, RadioGroup radioGroup) {
-        String error = (String) radioGroup.getTag(R.id.error);
+    public static ValidationStatus validate(final JsonFormFragmentView formFragmentView, RadioGroup radioGroup) {
+        final String error = (String) radioGroup.getTag(R.id.error);
         if (radioGroup.isEnabled() && error != null) {
-            LinearLayout linearLayout = (LinearLayout) radioGroup.getParent();
+            final LinearLayout linearLayout = (LinearLayout) radioGroup.getParent();
             boolean isValid = performValidation(radioGroup);
-            TextView errorTv = linearLayout.findViewById(R.id.error_textView);
+            final TextView[] errorTextView = {linearLayout.findViewById(R.id.error_textView)};
             if (!isValid) {
-                ConstraintLayout constraintLayout = (ConstraintLayout) linearLayout.getChildAt(0);
-                if (errorTv == null) {
-                    errorTv = new TextView(formFragmentView.getContext());
-                    errorTv.setId(R.id.error_textView);
-                    errorTv.setTextColor(formFragmentView.getContext().getResources().getColor(R.color.toaster_note_red_icon));
-                    errorTv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-                    ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(constraintLayout.getLayoutParams());
-                    layoutParams.topToBottom = R.id.label_text;
-                    layoutParams.leftMargin = FormUtils.dpToPixels(formFragmentView.getContext(), 8);
-                    constraintLayout.addView(errorTv, new ConstraintLayout.LayoutParams(layoutParams));
-                }
-                errorTv.setVisibility(View.VISIBLE);
-                errorTv.setText(error);
+                ((JsonFormActivity) formFragmentView.getContext()).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (linearLayout.getChildAt(0) instanceof ConstraintLayout) {
+                            ConstraintLayout constraintLayout = (ConstraintLayout) linearLayout.getChildAt(0);
+                            if (errorTextView[0] == null) {
+                                errorTextView[0] = new TextView(formFragmentView.getContext());
+                                errorTextView[0].setId(R.id.error_textView);
+                                errorTextView[0].setTextColor(formFragmentView.getContext().getResources().getColor(R.color.toaster_note_red_icon));
+                                errorTextView[0].setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                                ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(constraintLayout.getLayoutParams());
+                                layoutParams.topToBottom = R.id.label_text;
+                                layoutParams.leftMargin = FormUtils.dpToPixels(formFragmentView.getContext(), 8);
+                                constraintLayout.addView(errorTextView[0], new ConstraintLayout.LayoutParams(layoutParams));
+                            }
+                            errorTextView[0].setVisibility(View.VISIBLE);
+                            errorTextView[0].setText(error);
+                        }
+                    }
+                });
+
                 return new ValidationStatus(false, error, formFragmentView, radioGroup);
-            } else if (errorTv != null) {
-                errorTv.setVisibility(View.GONE);
+            } else if (errorTextView[0] != null) {
+                errorTextView[0].setVisibility(View.GONE);
             }
         }
         return new ValidationStatus(true, null, formFragmentView, radioGroup);

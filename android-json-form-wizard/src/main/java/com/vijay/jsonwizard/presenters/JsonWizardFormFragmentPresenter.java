@@ -12,9 +12,6 @@ import com.vijay.jsonwizard.interactors.JsonFormInteractor;
  * Created by keyman on 04/12/18.
  */
 public class JsonWizardFormFragmentPresenter extends JsonFormFragmentPresenter {
-
-    public static final String TAG = JsonWizardFormFragmentPresenter.class.getName();
-
     public JsonWizardFormFragmentPresenter(JsonFormFragment formFragment, JsonFormInteractor jsonFormInteractor) {
         super(formFragment, jsonFormInteractor);
     }

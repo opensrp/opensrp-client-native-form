@@ -353,8 +353,7 @@ public class FormUtils {
                                                     JSONObject jsonObject,
                                                     Context context,
                                                     CommonListener listener) throws JSONException {
-        String openMrsEntityParent = jsonObject
-                .optString(JsonFormConstants.OPENMRS_ENTITY_PARENT, null);
+        String openMrsEntityParent = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT, null);
         String openMrsEntity = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY, null);
         String openMrsEntityId = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_ID, null);
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
@@ -398,8 +397,7 @@ public class FormUtils {
         constraintLayout.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
         constraintLayout.setTag(R.id.openmrs_entity, openMrsEntity);
         constraintLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-        constraintLayout
-                .setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+        constraintLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
         constraintLayout.setId(ViewUtil.generateViewId());
         return constraintLayout;
     }
