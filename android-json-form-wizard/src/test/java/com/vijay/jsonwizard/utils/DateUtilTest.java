@@ -20,7 +20,7 @@ public class DateUtilTest extends BaseTest {
 
     @Test
     public void assertDateUtilNotNull() {
-        org.junit.Assert.assertNotNull(new DateUtil());
+        Assert.assertNotNull(new DateUtil());
     }
 
     @Test
