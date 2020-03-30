@@ -163,8 +163,6 @@ public class DatePickerFactory implements FormWidgetFactory {
             final DatePickerDialog datePickerDialog = createDateDialog(context, duration, editText, jsonObject);
             if (formFragment != null) {
                 NativeFormsProperties nativeFormsProperties = formFragment.getNativeFormProperties();
-                https:
-//docs.google.com/document/d/1qGuQ-yw2epegvKZjPd5OE3lTjWrNTxzKk79hTPKi054/edit?pli=1
                 if (nativeFormsProperties != null) {
                     datePickerDialog.setNumericDatePicker(nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_DATEPICKER_IS_NUMERIC));
                 }
