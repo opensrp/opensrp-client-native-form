@@ -252,7 +252,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         try {
             switch (id) {
                 case R.id.child_enrollment:
-                    startForm(REQUEST_CODE_GET_JSON, "anc_register", null, true);
+                    startForm(REQUEST_CODE_GET_JSON, "single_form", null, true);
                     break;
                 case R.id.wizard_form:
                     startForm(REQUEST_CODE_GET_JSON, "wizard_form", null, false);
