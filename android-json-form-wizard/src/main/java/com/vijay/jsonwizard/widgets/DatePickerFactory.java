@@ -45,6 +45,8 @@ import java.util.Set;
 
 import static com.vijay.jsonwizard.widgets.TimePickerFactory.KEY.DURATION;
 
+import timber.log.Timber;
+
 /**
  * @author Jason Rogena - jrogena@ona.io
  * @since 25/01/2017
@@ -63,7 +65,7 @@ public class DatePickerFactory implements FormWidgetFactory {
             Locale locale = new Locale(NativeFormLangUtils.getLanguage(context));
             String durationText = DateUtil.getDuration(DateUtil.getDurationTimeDifference(date, null), locale.getLanguage().equals("ar") ? Locale.ENGLISH : locale, context);
             if (!TextUtils.isEmpty(durationText)) {
-                durationText =  String.format("(%s: %s)", durationLabel, durationText);
+                durationText = String.format("(%s: %s)", durationLabel, durationText);
             }
             duration.setText(durationText);
         }
@@ -167,8 +169,6 @@ public class DatePickerFactory implements FormWidgetFactory {
             final DatePickerDialog datePickerDialog = createDateDialog(context, duration, editText, jsonObject);
             if (formFragment != null) {
                 NativeFormsProperties nativeFormsProperties = formFragment.getNativeFormProperties();
-                https:
-//docs.google.com/document/d/1qGuQ-yw2epegvKZjPd5OE3lTjWrNTxzKk79hTPKi054/edit?pli=1
                 if (nativeFormsProperties != null) {
                     datePickerDialog.setNumericDatePicker(nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_DATEPICKER_IS_NUMERIC));
                 }
@@ -204,7 +204,8 @@ public class DatePickerFactory implements FormWidgetFactory {
             });
             editText.setFocusable(false);
         } catch (Exception e) {
-            e.printStackTrace();
+
+            Timber.e(e.getMessage(), TAG);
         }
 
     }
