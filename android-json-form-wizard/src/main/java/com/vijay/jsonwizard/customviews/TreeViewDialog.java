@@ -2,6 +2,7 @@ package com.vijay.jsonwizard.customviews;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.support.annotation.VisibleForTesting;
 import android.view.Window;
 import android.widget.LinearLayout;
 
@@ -175,7 +176,8 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
         }
     }
 
-    private void executeOnClick(TreeNode node) {
+    @VisibleForTesting
+    void executeOnClick(TreeNode node) {
         ArrayList<String> reversedValue = new ArrayList<>();
         retrieveValue(treeNodeHashMap, node, reversedValue);
         Collections.reverse(reversedValue);
