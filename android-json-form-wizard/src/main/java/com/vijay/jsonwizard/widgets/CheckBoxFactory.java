@@ -284,5 +284,6 @@ public class CheckBoxFactory implements FormWidgetFactory {
         checkBox.setTextColor(Color.parseColor(optionTextColor));
         checkBox.setTextSize(getValueFromSpOrDpOrPx(optionTextSize, context));
         checkBox.setEnabled(!readOnly);
+        checkBox.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
     }
 }

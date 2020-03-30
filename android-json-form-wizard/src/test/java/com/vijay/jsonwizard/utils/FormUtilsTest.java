@@ -2,6 +2,7 @@ package com.vijay.jsonwizard.utils;
 
 import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.domain.ExpansionPanelItemModel;
 import com.vijay.jsonwizard.domain.ExpansionPanelValuesModel;
 
 import org.apache.commons.lang3.StringUtils;
@@ -12,9 +13,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
+import org.robolectric.RuntimeEnvironment;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Map;
 
 import static junit.framework.TestCase.assertEquals;
@@ -120,7 +123,7 @@ public class FormUtilsTest extends BaseTest {
     @Test
     public void testLoadExpansionPanelValues() throws JSONException {
         JSONArray jsonArray = new JSONArray("[{\"key\":\"accordion_panel_demo\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"text\":\"Expansion Panel Demo\",\"type\":\"expansion_panel\",\"content_form\":\"expansion_panel_sub_form\",\"container\":\"anc_test\",\"value\":[{\"key\":\"blood_type_test_status\",\"type\":\"extended_radio_button\",\"label\":\"Blood type test\",\"index\":0,\"values\":[\"done_today:Done today\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"blood_type_test_status\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]},{\"key\":\"blood_type_test_date_today_hidden\",\"type\":\"hidden\",\"label\":\"\",\"index\":2,\"values\":[\"10-03-2020\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\"}},{\"key\":\"blood_type_test_date\",\"type\":\"date_picker\",\"label\":\"Blood type test date\",\"index\":3,\"values\":[\"10-03-2020\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"300AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163724AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}},{\"key\":\"blood_type\",\"type\":\"native_radio\",\"label\":\"Blood type\",\"index\":4,\"values\":[\"ab:AB\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163126AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"blood_type\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163117AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]},{\"key\":\"rh_factor\",\"type\":\"native_radio\",\"label\":\"Rh factor\",\"index\":5,\"values\":[\"positive:Positive\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"160232AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"rh_factor\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"703AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]}],\"required_fields\":[\"blood_type_test_status\",\"blood_type\",\"rh_factor\"]}]");
-        JSONArray values = formUtils.loadExpansionPanelValues(jsonArray,"accordion_panel_demo");
+        JSONArray values = formUtils.loadExpansionPanelValues(jsonArray, "accordion_panel_demo");
         Assert.assertNotNull(values);
         Assert.assertEquals(5, values.length());
     }
@@ -128,7 +131,7 @@ public class FormUtilsTest extends BaseTest {
     @Test
     public void testCreateSecondaryValuesMap() throws JSONException {
         JSONArray jsonArray = new JSONArray("[{\"key\":\"accordion_panel_demo\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"text\":\"Expansion Panel Demo\",\"type\":\"expansion_panel\",\"content_form\":\"expansion_panel_sub_form\",\"container\":\"anc_test\",\"value\":[{\"key\":\"blood_type_test_status\",\"type\":\"extended_radio_button\",\"label\":\"Blood type test\",\"index\":0,\"values\":[\"done_today:Done today\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"blood_type_test_status\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]},{\"key\":\"blood_type_test_date_today_hidden\",\"type\":\"hidden\",\"label\":\"\",\"index\":2,\"values\":[\"10-03-2020\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\"}},{\"key\":\"blood_type_test_date\",\"type\":\"date_picker\",\"label\":\"Blood type test date\",\"index\":3,\"values\":[\"10-03-2020\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"300AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163724AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}},{\"key\":\"blood_type\",\"type\":\"native_radio\",\"label\":\"Blood type\",\"index\":4,\"values\":[\"ab:AB\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163126AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"blood_type\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163117AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]},{\"key\":\"rh_factor\",\"type\":\"native_radio\",\"label\":\"Rh factor\",\"index\":5,\"values\":[\"positive:Positive\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"160232AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"rh_factor\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"703AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]}],\"required_fields\":[\"blood_type_test_status\",\"blood_type\",\"rh_factor\"]}]");
-        JSONArray values = formUtils.loadExpansionPanelValues(jsonArray,"accordion_panel_demo");
+        JSONArray values = formUtils.loadExpansionPanelValues(jsonArray, "accordion_panel_demo");
         Assert.assertNotNull(values);
 
         Map<String, ExpansionPanelValuesModel> valuesModelMap = formUtils.createSecondaryValuesMap(values);
@@ -138,5 +141,98 @@ public class FormUtilsTest extends BaseTest {
         ExpansionPanelValuesModel valuesModel = valuesModelMap.get("blood_type_test_status");
         Assert.assertNotNull(valuesModel);
         Assert.assertEquals("Blood type test", valuesModel.getLabel());
+    }
+
+    @Test
+    public void testGetExpansionPanelItem() throws JSONException {
+        JSONArray values = new JSONArray("[{\"key\":\"blood_type_test_status\",\"type\":\"extended_radio_button\",\"label\":\"Blood type test\",\"index\":0,\"values\":[\"done_today:Done today\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"blood_type_test_status\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]},{\"key\":\"blood_type_test_date_today_hidden\",\"type\":\"hidden\",\"label\":\"\",\"index\":2,\"values\":[\"10-03-2020\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\"}},{\"key\":\"blood_type_test_date\",\"type\":\"date_picker\",\"label\":\"Blood type test date\",\"index\":3,\"values\":[\"10-03-2020\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"300AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163724AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}},{\"key\":\"blood_type\",\"type\":\"native_radio\",\"label\":\"Blood type\",\"index\":4,\"values\":[\"ab:AB\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163126AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"blood_type\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163117AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]},{\"key\":\"rh_factor\",\"type\":\"native_radio\",\"label\":\"Rh factor\",\"index\":5,\"values\":[\"positive:Positive\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"160232AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"rh_factor\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"703AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]},{\"key\":\"rh_factor_two\",\"type\":\"check_box\",\"label\":\"Rh factor\",\"index\":5,\"values\":[\"positive:Positive\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"160232AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"rh_factor\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"703AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]}]");
+        Assert.assertNotNull(values);
+
+        ExpansionPanelItemModel expansionPanelItemModel = FormUtils.getExpansionPanelItem("blood_type_test_status", values);
+        Assert.assertNotNull(expansionPanelItemModel);
+        Assert.assertEquals("Done today", expansionPanelItemModel.getSelectedValues());
+
+        ExpansionPanelItemModel expansionPanelItemModelDatePicker = FormUtils.getExpansionPanelItem("blood_type_test_date", values);
+        Assert.assertNotNull(expansionPanelItemModelDatePicker);
+        Assert.assertEquals("10-03-2020", expansionPanelItemModelDatePicker.getSelectedValues());
+
+
+        ExpansionPanelItemModel expansionPanelItemModelCheckBox = FormUtils.getExpansionPanelItem("rh_factor_two", values);
+        Assert.assertNotNull(expansionPanelItemModelCheckBox);
+        Assert.assertEquals("Positive", expansionPanelItemModelCheckBox.getSelectedValues());
+    }
+
+    @Test
+    public void testAddExpansionPanelFormValues() throws JSONException {
+        JSONArray values = new JSONArray("[{\"key\":\"blood_type_test_status\",\"type\":\"extended_radio_button\",\"label\":\"Blood type test\",\"index\":0,\"values\":[\"done_today:Done today\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"blood_type_test_status\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]},{\"key\":\"blood_type_test_date_today_hidden\",\"type\":\"hidden\",\"label\":\"\",\"index\":2,\"values\":[\"10-03-2020\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\"}},{\"key\":\"blood_type_test_date\",\"type\":\"date_picker\",\"label\":\"Blood type test date\",\"index\":3,\"values\":[\"10-03-2020\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"300AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163724AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}},{\"key\":\"blood_type\",\"type\":\"native_radio\",\"label\":\"Blood type\",\"index\":4,\"values\":[\"ab:AB\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163126AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"blood_type\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163117AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]},{\"key\":\"rh_factor\",\"type\":\"native_radio\",\"label\":\"Rh factor\",\"index\":5,\"values\":[\"positive:Positive\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"160232AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"rh_factor\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"703AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]},{\"key\":\"rh_factor_two\",\"type\":\"check_box\",\"label\":\"Rh factor\",\"index\":5,\"values\":[\"positive:Positive\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"160232AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"rh_factor\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"703AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]}]");
+        Assert.assertNotNull(values);
+
+        Map<String, ExpansionPanelValuesModel> secondaryValuesMap = formUtils.createSecondaryValuesMap(values);
+        Assert.assertNotNull(secondaryValuesMap);
+        Assert.assertEquals(6, secondaryValuesMap.size());
+
+        JSONArray fields = new JSONArray("[{\"key\":\"blood_type_test_status\",\"openmrs_entity_parent\":\"300AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163725AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"label\":\"Blood type test\",\"label_text_style\":\"bold\",\"text_color\":\"#000000\",\"type\":\"extended_radio_button\",\"options\":[{\"key\":\"done_today\",\"text\":\"Done today\",\"type\":\"done_today\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},{\"key\":\"done_earlier\",\"text\":\"Done earlier\",\"type\":\"done_earlier\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165385AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},{\"key\":\"ordered\",\"text\":\"Ordered\",\"type\":\"ordered\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165384AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},{\"key\":\"not_done\",\"text\":\"Not done\",\"type\":\"not_done\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"1118AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}],\"v_required\":{\"value\":true,\"err\":\"Blood type status is required\"}},{\"key\":\"spacer\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"spacer\",\"type\":\"spacer\",\"spacer_height\":\"10dp\"},{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"key\":\"blood_type_test_date_today_hidden\",\"type\":\"hidden\",\"label_text_style\":\"bold\",\"text_color\":\"#000000\",\"calculation\":{\"rules-engine\":{\"ex-rules\":{\"rules-file\":\"expansion_panel_calculation_rules.yml\"}}}},{\"key\":\"blood_type_test_date\",\"openmrs_entity_parent\":\"300AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163724AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"type\":\"date_picker\",\"hint\":\"Blood type test date\",\"expanded\":\"false\",\"max_date\":\"today\",\"relevance\":{\"rules-engine\":{\"ex-rules\":{\"rules-file\":\"expansion_panel_relevance_rules.yml\"}}},\"calculation\":{\"rules-engine\":{\"ex-rules\":{\"rules-file\":\"expansion_panel_calculation_rules.yml\"}}},\"v_required\":{\"value\":true,\"err\":\"Date that the blood test was done.\"}},{\"key\":\"blood_type\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163126AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"type\":\"native_radio\",\"label\":\"Blood type\",\"label_text_style\":\"bold\",\"options\":[{\"key\":\"a\",\"text\":\"A\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163115AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},{\"key\":\"b\",\"text\":\"B\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163116AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},{\"key\":\"ab\",\"text\":\"AB\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163117AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},{\"key\":\"o\",\"text\":\"O\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163118AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}],\"v_required\":{\"value\":true,\"err\":\"Please specify blood type\"},\"relevance\":{\"rules-engine\":{\"ex-rules\":{\"rules-file\":\"expansion_panel_relevance_rules.yml\"}}}},{\"key\":\"rh_factor\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"160232AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"type\":\"native_radio\",\"label\":\"Rh factor\",\"label_text_style\":\"bold\",\"options\":[{\"key\":\"positive\",\"text\":\"Positive\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"703AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},{\"key\":\"negative\",\"text\":\"Negative\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"664AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}],\"v_required\":{\"value\":true,\"err\":\"Rh factor is required\"},\"relevance\":{\"rules-engine\":{\"ex-rules\":{\"rules-file\":\"expansion_panel_relevance_rules.yml\"}}}},{\"key\":\"rh_factor_two\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"160232AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"type\":\"check_box\",\"label\":\"Rh factor\",\"label_text_style\":\"bold\",\"options\":[{\"key\":\"positive\",\"text\":\"Positive\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"703AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},{\"key\":\"negative\",\"text\":\"Negative\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"664AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}],\"v_required\":{\"value\":true,\"err\":\"Rh factor is required\"},\"relevance\":{\"rules-engine\":{\"ex-rules\":{\"rules-file\":\"expansion_panel_relevance_rules.yml\"}}}},{\"key\":\"rh_factor_toaster\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"type\":\"toaster_notes\",\"text\":\"Rh factor negative counseling\",\"toaster_info_text\":\"- Woman is at risk of alloimmunisation if the baby's father is Rh positive or unknown.\\n\\n- Proceed with local protocol to investigate sensitization and the need for referral.\\n\\n- If Rh negative and non-sensitized, woman should receive anti- D prophylaxis postnatally if the baby is Rh positive.\",\"toaster_info_title\":\"Rh factor negative counseling\",\"toaster_type\":\"warning\",\"relevance\":{\"rules-engine\":{\"ex-rules\":{\"rules-file\":\"expansion_panel_relevance_rules.yml\"}}}}]");
+        Assert.assertNotNull(fields);
+
+        JSONArray jsonArray = formUtils.addExpansionPanelFormValues(fields, secondaryValuesMap);
+        Assert.assertNotNull(jsonArray);
+        Assert.assertEquals("blood_type_test_status", jsonArray.getJSONObject(0).getString(JsonFormConstants.KEY));
+        Assert.assertEquals("done_today", jsonArray.getJSONObject(0).getString(JsonFormConstants.VALUE));
+    }
+
+    @Test
+    public void testGetSubFormJson() throws Exception {
+        JSONObject form = FormUtils.getSubFormJson("expansion_panel_sub_form", null, RuntimeEnvironment.application);
+        Assert.assertNotNull(form);
+        Assert.assertTrue(form.has(JsonFormConstants.CONTENT_FORM));
+        Assert.assertEquals(7, form.getJSONArray(JsonFormConstants.CONTENT_FORM).length());
+    }
+
+    public void testAddExpansionPanelFormValuesShouldPopulateValueAttributeOfJsonObj() throws JSONException {
+        JSONArray jsonArray = new JSONArray();
+        String widgetRadioExpansionPanelValue = "{\"key\":\"ultrasound\",\"type\":\"extended_radio_button\",\"label\":\"Ultrasound test\",\"index\":0,\"values\":[\"done_today:Done today\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"ultrasound\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]}";
+        String widgetCheckBoxExpansionPanelValue = "{\"key\":\"ultrasound_notdone\",\"type\":\"check_box\",\"label\":\"Reason\",\"index\":4,\"values\":[\"expired_stock:Expired stock:true\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"161476AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165182AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"ultrasound_notdone\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165299AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]}";
+
+        String widgetRadio = "{\"key\":\"ultrasound\",\"openmrs_entity_parent\":\"159617AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163725AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"label\":\"Ultrasound test\",\"label_text_style\":\"bold\",\"text_color\":\"#000000\",\"type\":\"extended_radio_button\",\"options\":[{\"key\":\"done_today\",\"text\":\"Done today\",\"type\":\"done_today\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},{\"key\":\"done_earlier\",\"text\":\"Done earlier\",\"type\":\"done_earlier\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165385AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},{\"key\":\"ordered\",\"text\":\"Ordered\",\"type\":\"ordered\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165384AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},{\"key\":\"not_done\",\"text\":\"Not done\",\"type\":\"not_done\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"1118AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}],\"v_required\":{\"value\":true}}";
+        String widgetCheckbox = "{\"key\":\"ultrasound_notdone\",\"openmrs_entity_parent\":\"161476AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165182AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"type\":\"check_box\",\"label\":\"Reason\",\"label_text_style\":\"bold\",\"options\":[{\"key\":\"stock_out\",\"text\":\"Stock out\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165183AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},{\"key\":\"expired_stock\",\"text\":\"Expired stock\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165299AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},{\"key\":\"other\",\"text\":\"Other (specify)\",\"openmrs_entity_parent\":\"161476AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}],\"relevance\":{\"rules-engine\":{\"ex-rules\":{\"rules-file\":\"tests_relevance_rules.yml\"}}},\"v_required\":{\"value\":true}}";
+        JSONObject jsonObjectRadio = new JSONObject(widgetRadioExpansionPanelValue);
+        JSONObject jsonObjectCheckBox = new JSONObject(widgetCheckBoxExpansionPanelValue);
+
+        jsonArray.put(new JSONObject(widgetRadio)).put(new JSONObject(widgetCheckbox));
+        Map<String, ExpansionPanelValuesModel> expansionPanelValuesModelMap = new HashMap<>();
+        ExpansionPanelValuesModel expansionPanelValuesModel = new ExpansionPanelValuesModel(
+                jsonObjectRadio.optString(JsonFormConstants.KEY),
+                jsonObjectRadio.optString(JsonFormConstants.TYPE),
+                jsonObjectRadio.optString(JsonFormConstants.LABEL),
+                jsonObjectRadio.optInt(JsonFormConstants.INDEX),
+                jsonObjectRadio.optJSONArray(JsonFormConstants.VALUES),
+                jsonObjectRadio.optJSONObject(JsonFormConstants.OPENMRS_ATTRIBUTES),
+                jsonObjectRadio.optJSONArray(JsonFormConstants.VALUE_OPENMRS_ATTRIBUTES));
+        expansionPanelValuesModelMap.put("ultrasound", expansionPanelValuesModel);
+
+        ExpansionPanelValuesModel expansionPanelValuesModelNotDone = new ExpansionPanelValuesModel(
+                jsonObjectCheckBox.optString(JsonFormConstants.KEY),
+                jsonObjectCheckBox.optString(JsonFormConstants.TYPE),
+                jsonObjectCheckBox.optString(JsonFormConstants.LABEL),
+                jsonObjectCheckBox.optInt(JsonFormConstants.INDEX),
+                jsonObjectCheckBox.optJSONArray(JsonFormConstants.VALUES),
+                jsonObjectCheckBox.optJSONObject(JsonFormConstants.OPENMRS_ATTRIBUTES),
+                jsonObjectCheckBox.optJSONArray(JsonFormConstants.VALUE_OPENMRS_ATTRIBUTES));
+        expansionPanelValuesModelMap.put("ultrasound_notdone", expansionPanelValuesModelNotDone);
+        FormUtils formUtils = new FormUtils();
+        JSONArray result = formUtils.addExpansionPanelFormValues(jsonArray, expansionPanelValuesModelMap);
+        JSONObject objectRadio = result.optJSONObject(0);//expired_stock
+        JSONObject objectCheckbox = result.optJSONObject(1);
+        Assert.assertEquals("done_today", objectRadio.optString(JsonFormConstants.VALUE));
+        JSONArray jsonArrayOptions = objectCheckbox.optJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
+        JSONObject expectedOption = null;
+        for (int i = 0; i < jsonArrayOptions.length(); i++) {
+            JSONObject option = jsonArrayOptions.optJSONObject(i);
+            if (option.has(JsonFormConstants.VALUE) && option.optBoolean(JsonFormConstants.VALUE)) {
+                expectedOption = option;
+            }
+        }
+        Assert.assertNotNull(expectedOption);
+        Assert.assertEquals("expired_stock", expectedOption.optString(JsonFormConstants.KEY));
     }
 }
