@@ -41,6 +41,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import timber.log.Timber;
+
 /**
  * @author Jason Rogena - jrogena@ona.io
  * @since 25/01/2017
@@ -59,7 +61,7 @@ public class DatePickerFactory implements FormWidgetFactory {
             Locale locale = new Locale(NativeFormLangUtils.getLanguage(context));
             String durationText = DateUtil.getDuration(DateUtil.getDurationTimeDifference(date, null), locale.getLanguage().equals("ar") ? Locale.ENGLISH : locale, context);
             if (!TextUtils.isEmpty(durationText)) {
-                durationText =  String.format("(%s: %s)", durationLabel, durationText);
+                durationText = String.format("(%s: %s)", durationLabel, durationText);
             }
             duration.setText(durationText);
         }
@@ -198,7 +200,8 @@ public class DatePickerFactory implements FormWidgetFactory {
             });
             editText.setFocusable(false);
         } catch (Exception e) {
-            e.printStackTrace();
+
+            Timber.e(e.getMessage(), TAG);
         }
 
     }
