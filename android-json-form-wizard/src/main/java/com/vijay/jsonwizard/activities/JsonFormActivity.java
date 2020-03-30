@@ -281,7 +281,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     @Override
     public void refreshSkipLogic(String parentKey, String childKey, boolean popup) {
         initComparisons();
-        for (View curView : skipLogicViews.values()) {
+        View[] views = skipLogicViews.values().toArray(new View[0]);
+        for (View curView : views) {
             addRelevance(curView, popup);
         }
     }
