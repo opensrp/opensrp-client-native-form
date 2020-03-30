@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 
 import com.google.gson.Gson;
@@ -32,6 +31,8 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import timber.log.Timber;
 
 import static com.vijay.jsonwizard.utils.NativeFormLangUtils.getTranslatedString;
 
@@ -117,7 +118,7 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
             localBroadcastManager = LocalBroadcastManager.getInstance(this);
 
         } catch (JSONException e) {
-            Log.e(TAG, "Initialization error. Json passed is invalid : " + e.getMessage(), e);
+            Timber.e(e, "Initialization error. Json passed is invalid");
         }
     }
 
@@ -136,7 +137,7 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
             }
             FormUtils.updateStartProperties(propertyManager, mJSONObject);
         } catch (Exception e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
     }
 
