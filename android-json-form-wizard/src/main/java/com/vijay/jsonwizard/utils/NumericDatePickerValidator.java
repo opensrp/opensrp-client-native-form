@@ -9,6 +9,10 @@ import org.joda.time.LocalDate;
  */
 public class NumericDatePickerValidator {
 
+    private boolean isValid;
+    private LocalDate selectedDate;
+    private Violation violation;
+
     public enum Violation {
         MALFORMED_DATE,
         MAX_DATE,
@@ -21,13 +25,10 @@ public class NumericDatePickerValidator {
         this.violation = violation;
     }
 
-    private boolean isValid;
-    private LocalDate selectedDate;
-    private Violation violation;
-
     public boolean isValid() {
         return isValid;
     }
+
     public LocalDate getSelectedDate() {
         return selectedDate;
     }
