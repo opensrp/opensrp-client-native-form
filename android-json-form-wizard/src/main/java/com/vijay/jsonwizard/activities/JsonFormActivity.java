@@ -1735,37 +1735,47 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     }
 
-    private void setRadioButtonCalculation(RadioGroup view, String calculation) {
+    private void setRadioButtonCalculation(final RadioGroup view, final String calculation) {
         int count = view.getChildCount();
         for (int i = 0; i < count; i++) {
-            if (!TextUtils.isEmpty(calculation)) {
-                RelativeLayout radioButtonLayout = (RelativeLayout) view.getChildAt(i);
-                int radioButtonViewId = (int) radioButtonLayout.getTag(R.id.native_radio_button_view_id);
-                RadioButton radioButton = radioButtonLayout.findViewById(radioButtonViewId);
-                boolean showExtraInfo = (boolean) radioButton.getTag(R.id.native_radio_button_extra_info);
-                String radioButtonKey = (String) radioButton.getTag(R.id.childKey);
-
-                if (!TextUtils.isEmpty(radioButtonKey) && calculation.equals(radioButtonKey)) {
-                    radioButton.setChecked(true);
-                    radioButton.performClick();
+            final int childPosition = i;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    addRadioButtonCalculation(calculation, view, childPosition);
                 }
+            });
+        }
+    }
 
-                if (showExtraInfo) {
-                    CustomTextView renderView = view.getChildAt(i).findViewById(R.id.extraInfoTextView);
+    private void addRadioButtonCalculation(String calculation, RadioGroup view, int childPosition) {
+        if (!TextUtils.isEmpty(calculation)) {
+            RelativeLayout radioButtonLayout = (RelativeLayout) view.getChildAt(childPosition);
+            int radioButtonViewId = (int) radioButtonLayout.getTag(R.id.native_radio_button_view_id);
+            RadioButton radioButton = radioButtonLayout.findViewById(radioButtonViewId);
+            boolean showExtraInfo = (boolean) radioButton.getTag(R.id.native_radio_button_extra_info);
+            String radioButtonKey = (String) radioButton.getTag(R.id.childKey);
 
-                    if (renderView.getTag(R.id.original_text) == null) {
-                        renderView.setTag(R.id.original_text, renderView.getText());
-                    }
-                    if (!TextUtils.isEmpty(calculation)) {
-                        renderView.setText(calculation.charAt(0) == '{' ? getRenderText(calculation, renderView.getTag(R.id.original_text).toString(), false) : calculation);
-                    }
-
-                    renderView.setVisibility(renderView.getText().toString().contains("{") ||
-                            renderView.getText().toString().equals("0") ? View.GONE : View.VISIBLE);
-                }
+            if (!TextUtils.isEmpty(radioButtonKey) && calculation.equals(radioButtonKey)) {
+                radioButton.setChecked(true);
+                radioButton.performClick();
             }
 
+            if (showExtraInfo) {
+                CustomTextView renderView = view.getChildAt(childPosition).findViewById(R.id.extraInfoTextView);
 
+                if (renderView.getTag(R.id.original_text) == null) {
+                    renderView.setTag(R.id.original_text, renderView.getText());
+                }
+
+
+                if (!TextUtils.isEmpty(calculation)) {
+                    renderView.setText(calculation.charAt(0) == '{' ? getRenderText(calculation, renderView.getTag(R.id.original_text).toString(), false) : calculation);
+                }
+
+                renderView.setVisibility(renderView.getText().toString().contains("{") ||
+                        renderView.getText().toString().equals("0") ? View.GONE : View.VISIBLE);
+            }
         }
     }
 

@@ -163,7 +163,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "hint": "User age",
-        "edit_type": "number",
+        "edit_type": "name",
         "v_required": {
           "value": "true",
           "err": "Please enter the last name"
@@ -229,7 +229,11 @@
         "openmrs_entity_id": "",
         "type": "normal_edit_text",
         "hint": "User Text ",
-        "edit_text_style": "bordered"
+        "edit_text_style": "bordered",
+        "v_required": {
+          "value": true,
+          "err": "Please enter the user ID"
+        }
       },
       {
         "key": "user_normal_edit_number",
@@ -239,7 +243,11 @@
         "type": "normal_edit_text",
         "hint": "User number",
         "edit_text_style": "bordered",
-        "edit_type": "number"
+        "edit_type": "number",
+        "v_required": {
+          "value": true,
+          "err": "Please enter the user ID"
+        }
       },
       {
         "key": "user_toaster_problem",

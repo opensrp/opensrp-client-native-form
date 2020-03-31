@@ -71,18 +71,17 @@ public class CheckBoxFactory implements FormWidgetFactory {
     }
 
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
-                                       JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
-        return attachJson(stepName, context, jsonObject, listener, popup);
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
+        return attachJson(stepName, context, jsonObject, listener, formFragment, popup);
     }
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
                                        JSONObject jsonObject, CommonListener listener) throws Exception {
-        return attachJson(stepName, context, jsonObject, listener, false);
+        return attachJson(stepName, context, jsonObject, listener, formFragment, false);
     }
 
-    private List<View> attachJson(String stepName, Context context, JSONObject jsonObject, CommonListener listener,
+    private List<View> attachJson(String stepName, Context context, JSONObject jsonObject, CommonListener listener, JsonFormFragment formFragment,
                                   boolean popup) throws JSONException {
 
 
@@ -137,8 +136,20 @@ public class CheckBoxFactory implements FormWidgetFactory {
         formUtils.updateValueToJSONArray(jsonObject, jsonObject.optString(JsonFormConstants.VALUE, ""));
         attachRefreshLogic(jsonObject, context, rootLayout);
         rootLayout.setTag(R.id.canvas_ids, canvasIds.toString());
+
+        genericWidgetLayoutHookback(rootLayout, jsonObject, formFragment);
+
         views.add(rootLayout);
         return views;
+    }
+
+    /**
+     * Generic method incase you want to alter or reference the widgets properties
+     *
+     * @param view the root layout
+     */
+    public void genericWidgetLayoutHookback(View view, JSONObject jsonObject, JsonFormFragment formFragment) {
+        // Override this in views if you require a reference to the widget's properties
     }
 
     protected int getLayout() {
@@ -284,5 +295,6 @@ public class CheckBoxFactory implements FormWidgetFactory {
         checkBox.setTextColor(Color.parseColor(optionTextColor));
         checkBox.setTextSize(getValueFromSpOrDpOrPx(optionTextSize, context));
         checkBox.setEnabled(!readOnly);
+        checkBox.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
     }
 }
