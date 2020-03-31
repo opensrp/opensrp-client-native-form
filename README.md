@@ -17,6 +17,8 @@
    * [Installation Devices](#installation-devices)
    * [How to install](#how-to-install)
    * [Customisations From Android Native JSON Form](#customisations-from-android-native-json-form)
+* [Multi Language Support (MLS)](#multi-language-support-mls)
+* [JsonForm MLS Asset Generator](#jsonform-mls-asset-generator-jmag)
 
 
 # Introduction
