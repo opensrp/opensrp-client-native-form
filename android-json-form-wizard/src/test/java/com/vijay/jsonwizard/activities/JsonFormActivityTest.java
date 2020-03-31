@@ -1,6 +1,8 @@
 package com.vijay.jsonwizard.activities;
 
 import android.content.Intent;
+import android.text.Html;
+import android.text.Spanned;
 
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
@@ -8,6 +10,7 @@ import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.utils.FormUtils;
 
 import org.jeasy.rules.api.Facts;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
@@ -19,7 +22,11 @@ import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.android.controller.ActivityController;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class JsonFormActivityTest extends BaseActivityTest {
@@ -107,5 +114,30 @@ public class JsonFormActivityTest extends BaseActivityTest {
         Assert.assertEquals("false", facts.asMap().get("slow_breathing"));
         Assert.assertTrue(facts.asMap().containsKey("rapid_breathing"));
         Assert.assertEquals("true", facts.asMap().get("rapid_breathing"));
+    }
+
+
+    @Test
+    public void testStringFormatShouldFormatStringTemplateCorrectly() {
+        String str = "{bmi} translates {bmi_meaning}";
+        Map<String, Object> valueMap = new HashMap<>();
+        valueMap.put("bmi", "24.1");
+        List<String> strings = new ArrayList<>();
+        strings.add("Overweight 25-29.0");
+        strings.add("Underweight < 18.5");
+        strings.add("Normal 18.5 - 24.9");
+        valueMap.put("bmi_meaning", strings);
+        Spanned result = activity.stringFormat(str, valueMap, true);
+        Spanned expectedResult = Html.fromHtml("<b>24.1</b> translates <b>Overweight 25-29.0, Underweight < 18.5, Normal 18.5 - 24.9</b>");
+        Assert.assertEquals(expectedResult.toString(), result.toString());
+    }
+
+    @Test
+    public void testGetSubFormFields() {
+        String subFormName = "expansion_panel_sub_form";
+        String subFormLocation = "form.sub_form";
+        JSONArray fields = new JSONArray();
+        JSONArray result = activity.getSubFormFields(subFormName, subFormLocation, fields);
+        Assert.assertEquals(7, result.length());
     }
 }
