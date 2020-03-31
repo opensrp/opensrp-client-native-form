@@ -133,7 +133,7 @@ public class JsonFormActivityTest extends BaseActivityTest {
     }
 
     @Test
-    public void testGetSubFormFields() {
+    public void testGetSubFormFieldsShouldReturnFieldsFromSubForm() {
         String subFormName = "expansion_panel_sub_form";
         String subFormLocation = "form.sub_form";
         JSONArray fields = new JSONArray();
