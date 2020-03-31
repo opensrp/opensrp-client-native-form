@@ -1,9 +1,11 @@
 package com.vijay.jsonwizard.utils;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.AssetManager;
 
 import com.vijay.jsonwizard.BaseTest;
+import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 
 import org.json.JSONArray;
@@ -16,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.util.ReflectionHelpers;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -183,5 +186,24 @@ public class UtilsTest extends BaseTest {
         Utils.buildRulesWithUniqueId(element, unique_id, ruleType, context, rulesFileMap);
         String expected = "{\"relevance\":{\"step1:dob_unknown_c29afdf9-843e-4c90-9a79-3dafd70e045b\":{\"type\":\"string\",\"ex\":\"equalTo(., \\\"false\\\")\"}}}";
         Assert.assertEquals(expected, element.toString());
+    }
+
+    @Test
+    public void testShowProgressDialogShouldReturnIfCurrentProgressDialogIsShowingOrNull() {
+        ProgressDialog progressDialog = Mockito.mock(ProgressDialog.class);
+        Mockito.doReturn(true).when(progressDialog).isShowing();
+
+        ReflectionHelpers.setStaticField(Utils.class, "progressDialog", progressDialog);
+        Utils.showProgressDialog(R.string.please_wait_title, R.string.please_wait, null);
+        Assert.assertEquals(progressDialog, ReflectionHelpers.getStaticField(Utils.class, "progressDialog"));
+    }
+
+    @Test
+    public void testShowProgressDialogShouldCreateProgressDialog() {
+        Assert.assertNull(ReflectionHelpers.getStaticField(Utils.class, "progressDialog"));
+
+        Utils.showProgressDialog(R.string.hello_world, R.string.hello_world, RuntimeEnvironment.application);
+        ProgressDialog progressDialog = ReflectionHelpers.getStaticField(Utils.class, "progressDialog");
+        Assert.assertTrue(progressDialog.isShowing());
     }
 }

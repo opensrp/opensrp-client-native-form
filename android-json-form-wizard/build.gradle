@@ -27,7 +27,7 @@ android {
     compileSdkVersion androidCompileSdkVersion
     buildToolsVersion androidBuildToolsVersion
 
-    //defaultPublishConfig !isReleaseBuild() ? "debug" : "release"
+    defaultPublishConfig !isReleaseBuild() ? "debug" : "release"
 
     defaultConfig {
         minSdkVersion androidMinSdkVersion
