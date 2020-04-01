@@ -210,7 +210,7 @@ public class JsonFormMLSAssetGenerator {
             if (parentElementKey != null) {
                 propertyName += "." + parentElementKey.getAsString();
             }
-            propertyName += "." + fieldToReplace;
+            propertyName = propertyName.replaceAll("\\s", "_") + "." + fieldToReplace;
 
             String placeholderStr = "{{" + propertyName + "}}";
 

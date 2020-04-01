@@ -425,7 +425,7 @@
         }
       },
       {
-        "key": "user_check_box",
+        "key": "user check box",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
@@ -441,7 +441,7 @@
             "openmrs_choice_id": ""
           },
           {
-            "key": "yes",
+            "key": "yes choice",
             "text": "Yes",
             "value": false,
             "openmrs_choice_id": ""
