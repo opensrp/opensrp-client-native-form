@@ -609,11 +609,25 @@ public class FormUtils {
 
     public static JSONObject getSubFormJson(String formIdentity, String subFormsLocation,
                                             Context context) throws Exception {
-        String defaultSubFormLocation = JsonFormConstants.DEFAULT_SUB_FORM_LOCATION;
-        if (!TextUtils.isEmpty(subFormsLocation)) {
-            defaultSubFormLocation = subFormsLocation;
-        }
-        return new JSONObject(loadSubForm(formIdentity, defaultSubFormLocation, context));
+
+        return new JSONObject(loadSubForm(formIdentity, getSubFormLocation(subFormsLocation), context));
+    }
+
+    public static JSONObject getSubFormJson(String formIdentity, String subFormsLocation,
+                                            Context context, boolean translateSubForm) throws Exception {
+
+        return new JSONObject(loadSubForm(formIdentity, getSubFormLocation(subFormsLocation), context, translateSubForm));
+    }
+
+    private static String getSubFormLocation(String subFormsLocation) {
+        return TextUtils.isEmpty(subFormsLocation) ? JsonFormConstants.DEFAULT_SUB_FORM_LOCATION : subFormsLocation;
+    }
+
+    public static String loadSubForm(String formIdentity, String defaultSubFormLocation,
+                                     Context context, boolean translateSubForm) throws IOException {
+
+        String subForm = loadSubForm(formIdentity, defaultSubFormLocation, context);
+        return translateSubForm ? NativeFormLangUtils.getTranslatedString(subForm) : subForm;
     }
 
     public static String loadSubForm(String formIdentity, String defaultSubFormLocation,
