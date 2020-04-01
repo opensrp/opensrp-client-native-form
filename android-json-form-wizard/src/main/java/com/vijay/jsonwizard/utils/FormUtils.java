@@ -69,6 +69,8 @@ import java.util.regex.Pattern;
 
 import timber.log.Timber;
 
+import static com.vijay.jsonwizard.utils.Utils.convertStreamToString;
+
 /**
  * Created by vijay on 24-05-2015.
  */
@@ -631,20 +633,9 @@ public class FormUtils {
     }
 
     public static String loadSubForm(String formIdentity, String defaultSubFormLocation,
-                                     Context context)
-            throws IOException {
-        StringBuilder stringBuilder = new StringBuilder();
-        InputStream inputStream = context.getAssets()
-                .open(defaultSubFormLocation + "/" + formIdentity + ".json");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+                                     Context context) throws IOException {
 
-        String jsonString;
-        while ((jsonString = reader.readLine()) != null) {
-            stringBuilder.append(jsonString);
-        }
-        inputStream.close();
-
-        return stringBuilder.toString();
+        return convertStreamToString(context.getAssets().open(defaultSubFormLocation + "/" + formIdentity + ".json"));
     }
 
     public static JSONObject getFieldFromForm(JSONObject jsonForm, String key) throws JSONException {

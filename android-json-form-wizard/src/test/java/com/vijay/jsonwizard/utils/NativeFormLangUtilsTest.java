@@ -3,9 +3,13 @@ package com.vijay.jsonwizard.utils;
 import android.content.Context;
 import android.content.res.AssetManager;
 
+import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.TestUtils;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
 
+import org.json.JSONObject;
 import org.junit.Test;
+import org.robolectric.RuntimeEnvironment;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,7 +25,7 @@ import static org.mockito.Mockito.mock;
 /**
  * Created by Vincent Karuri on 20/02/2020
  */
-public class NativeFormLangUtilsTest {
+public class NativeFormLangUtilsTest extends BaseTest {
 
     private final TestUtils testUtils = new TestUtils();
 
@@ -35,6 +39,19 @@ public class NativeFormLangUtilsTest {
         Locale.setDefault(new Locale("en", "US"));
         expectedJsonForm = testUtils.getResourceFileContentsAsString("test_form_translation_en_US");
         assertEquals(expectedJsonForm, NativeFormLangUtils.getTranslatedString(interpolatedJsonForm));
+    }
+
+    @Test
+    public void testJsonSubFormTranslationShouldTranslateForm() throws Exception {
+        Locale.setDefault(new Locale("id"));
+        String expectedSubFormJson = testUtils.getResourceFileContentsAsString("test_form_translation_in");
+        String interpolatedSubFormJson = FormUtils.loadSubForm("test_form_translation_interpolated", JsonFormConstants.DEFAULT_SUB_FORM_LOCATION , RuntimeEnvironment.application, true);
+        assertEquals(expectedSubFormJson, interpolatedSubFormJson);
+
+        Locale.setDefault(new Locale("en", "US"));
+        interpolatedSubFormJson = FormUtils.loadSubForm("test_form_translation_interpolated", JsonFormConstants.DEFAULT_SUB_FORM_LOCATION , RuntimeEnvironment.application, true);
+        expectedSubFormJson = testUtils.getResourceFileContentsAsString("test_form_translation_en_US");
+        assertEquals(expectedSubFormJson, interpolatedSubFormJson);
     }
 
     @Test
