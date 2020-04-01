@@ -1,6 +1,7 @@
 package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -283,7 +284,11 @@ public class ExpansionPanelFactory implements FormWidgetFactory {
     }
 
     @Override
+    @NonNull
     public Set<String> getCustomTranslatableWidgetFields() {
-        return new HashSet<>();
+        Set<String> customTranslatableWidgetFields = new HashSet<>();
+        customTranslatableWidgetFields.add(JsonFormConstants.ACCORDION_INFO_TEXT);
+        customTranslatableWidgetFields.add(JsonFormConstants.ACCORDION_INFO_TITLE);
+        return customTranslatableWidgetFields;
     }
 }
