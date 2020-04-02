@@ -65,7 +65,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
     private Activity activity;
     private JSONArray specifyContent;
     private List<View> viewList;
-    private boolean translateSubforms = false;
+    private boolean translateSubForms = false;
 
     @Override
     public void onAttach(Context context) {
@@ -86,7 +86,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
 
         activity = (Activity) context;
         setJsonApi((JsonApi) activity);
-        translateSubforms = getArguments().getBoolean(JsonFormConstants.PERFORM_FORM_TRANSLATION);
+        translateSubForms = getArguments().getBoolean(JsonFormConstants.PERFORM_FORM_TRANSLATION, false);
 
         try {
             setMainFormFields(formUtils.getFormFields(getStepName(), context));
@@ -216,7 +216,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
     protected JSONObject getSubForm() {
         JSONObject subForm = new JSONObject();
         try {
-            subForm = FormUtils.getSubFormJson(getFormIdentity(), getFormLocation(), context, translateSubforms);
+            subForm = FormUtils.getSubFormJson(getFormIdentity(), getFormLocation(), context, translateSubForms);
             Utils.updateSubFormFields(subForm, getJsonApi().form());
 
         } catch (Exception e) {

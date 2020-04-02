@@ -7,15 +7,12 @@ import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.TestUtils;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 
-import org.json.JSONObject;
 import org.junit.Test;
 import org.robolectric.RuntimeEnvironment;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Locale;
 
-import static com.vijay.jsonwizard.utils.Utils.convertStreamToString;
 import static com.vijay.jsonwizard.utils.Utils.getTranslatedYamlFile;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
@@ -42,7 +39,7 @@ public class NativeFormLangUtilsTest extends BaseTest {
     }
 
     @Test
-    public void testJsonSubFormTranslationShouldTranslateForm() throws Exception {
+    public void testJsonSubFormTranslationShouldTranslateJsonSubForm() throws Exception {
         Locale.setDefault(new Locale("id"));
         String expectedSubFormJson = testUtils.getResourceFileContentsAsString("test_form_translation_in");
         String interpolatedSubFormJson = FormUtils.loadSubForm("test_form_translation_interpolated", JsonFormConstants.DEFAULT_SUB_FORM_LOCATION , RuntimeEnvironment.application, true);
