@@ -354,6 +354,45 @@
         }
       },
       {
+        "key": "response_spinner_with_options",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "Response Spinners",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "no",
+            "text": "No",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "maybe",
+            "text": "Maybe",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Please enter response"
+        },
+        "openmrs_choice_ids": {
+          "user_one": "1107AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+          "user_two": "1713AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        }
+      },
+      {
         "key": "spacer",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
