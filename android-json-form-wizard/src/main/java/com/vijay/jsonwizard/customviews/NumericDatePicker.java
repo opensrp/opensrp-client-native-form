@@ -12,6 +12,7 @@ import android.widget.NumberPicker;
 
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.utils.NumericDatePickerHelper;
+import com.vijay.jsonwizard.utils.NumericDatePickerValidator;
 
 import org.joda.time.LocalDate;
 
@@ -42,18 +43,200 @@ public class NumericDatePicker extends DatePicker {
     private int maxMonth;
     private int maxYear;
 
+    private int changedPickerId = 0;
+
+    private int previousDay;
+
     private final NumberPicker.OnValueChangeListener onValueChangeListener =
             new NumberPicker.OnValueChangeListener() {
                 @Override
                 public void onValueChange(NumberPicker numberPicker, int oldValue, int newValue) {
 
+                    numberPicker.setTag(R.id.previous, oldValue);
+
+                    changedPickerId = numberPicker.getId();
+
                     resetPickers();
+
+                    changedPickerId = 0;
 
                     if (onDateChangedListener != null) {
                         onDateChangedListener.onDateChanged(NumericDatePicker.this, getYear(), getMonth(), getDayOfMonth());
                     }
                 }
             };
+
+    /**
+     * This Reset the number picker value to a correct state with respect to min and max constraints as well as gregorian calendar month differences
+     */
+    @VisibleForTesting
+    protected void resetDatePicker() {
+
+        processDependencySpin(); //Before validation, we can do dependency spin
+
+        NumericDatePickerValidator validator = validateCurrentSelectedDate();
+
+        while (!(validator.isValid()) && changedPickerId > 0) {
+
+            NumericDatePickerValidator.Violation violation = validator.getViolation();
+
+            switch (violation) {
+                case MALFORMED_DATE:
+                    // Only Day can malform since different months have different days in the Gregorian calendar
+                    resetPicker(dayPicker, previousDay > 0 ? previousDay : minDay);
+
+                    break;
+
+                case MAX_DATE:
+
+                    if (changedPickerId == R.id.year) {
+
+                        resetPicker(yearPicker, maxYear);
+
+                    } else if (changedPickerId == R.id.month) {
+
+                        monthPicker.setMaxValue(maxMonth + 1);
+                        resetPicker(monthPicker, maxMonth + 1);
+
+                    } else if (changedPickerId == R.id.day) {
+
+                        dayPicker.setMaxValue(maxDay);
+                        resetPicker(dayPicker, maxDay);
+
+                    }
+
+                    break;
+
+                case MIN_DATE:
+
+                    if (changedPickerId == R.id.year) {
+
+                        resetPicker(yearPicker, minYear);
+
+                    } else if (changedPickerId == R.id.month) {
+
+                        monthPicker.setMinValue(minMonth + 1);
+                        resetPicker(monthPicker, minMonth + 1);
+
+                    } else if (changedPickerId == R.id.day) {
+
+                        dayPicker.setMinValue(minDay);
+                        resetPicker(dayPicker, minDay);
+
+                    }
+                    break;
+
+                default:
+                    break;
+
+            }
+
+            validator = validateCurrentSelectedDate();
+
+        }
+
+        //Year max and min never change
+
+        yearPicker.setMinValue(minYear);
+        yearPicker.setMaxValue(maxYear);
+
+        dayPicker.setWrapSelectorWheel(resetWrapSelector(dayPicker));
+        monthPicker.setWrapSelectorWheel(resetWrapSelector(monthPicker));
+        yearPicker.setWrapSelectorWheel(resetWrapSelector(yearPicker));
+
+        setMinMaxValues();
+
+        previousDay = getDayOfMonth();
+
+    }
+
+    /**
+     * Trigger dependent spinners if within max and min constraint bounds
+     * The Year has no dependents
+     */
+    private void processDependencySpin() {
+
+        //We only care about day and month, Year has none
+
+        if (changedPickerId > 0) {
+
+            if (changedPickerId == R.id.month) {
+
+                if (Integer.valueOf(monthPicker.getTag(R.id.previous).toString()).equals(1) && getMonth() == 11 && (getYear() - 1) <= maxYear) {
+
+                    yearPicker.setValue(getYear() - 1);
+                    changedPickerId = R.id.year;
+
+                } else if (Integer.valueOf(monthPicker.getTag(R.id.previous).toString()).equals(12) && getMonth() == 0 && (getYear() + 1) >= minYear) {
+
+                    yearPicker.setValue(getYear() + 1);
+                    changedPickerId = R.id.year;
+                }
+
+
+            } else if (changedPickerId == R.id.day) {
+                if (Integer.valueOf(dayPicker.getTag(R.id.previous).toString()).equals(1) && getDayOfMonth() == getMaxDayForSelectedDate()) {
+
+                    if ((monthPicker.getValue() - 1) <= maxMonth) {
+
+                        monthPicker.setValue(monthPicker.getValue() - 1);
+
+                    } else {
+
+                        monthPicker.setValue(maxMonth + 1);
+                    }
+
+                    changedPickerId = R.id.month;
+
+                } else if (Integer.valueOf(dayPicker.getTag(R.id.previous).toString()).equals(getMaxDayForSelectedDate()) && getDayOfMonth() == 1 && (monthPicker.getValue() + 1) >= minMonth) {
+
+                    if ((monthPicker.getValue() - 1) <= maxMonth) {
+
+                        monthPicker.setValue(monthPicker.getValue() + 1);
+
+                    } else {
+
+                        monthPicker.setValue(minMonth + 1);
+                    }
+
+
+                    changedPickerId = R.id.month;
+                }
+
+            }
+
+        }
+
+    }
+
+    private void setMinMaxValues() {
+
+        if (isMinMonthEdge()) {
+            monthPicker.setMinValue(minMonth + 1);
+        } else {
+            monthPicker.setMinValue(1);
+        }
+
+        if (isMaxMonthEdge()) {
+            monthPicker.setMaxValue(maxMonth + 1);
+        } else {
+            monthPicker.setMaxValue(12);
+        }
+
+        if (isMinDayEdge()) {
+            dayPicker.setMinValue(minDay);
+
+        } else {
+            dayPicker.setMinValue(1);
+        }
+
+        if (isMaxDayEdge()) {
+            dayPicker.setMaxValue(maxDay);
+
+        } else {
+            dayPicker.setMaxValue(getMaxDayForSelectedDate());
+        }
+    }
 
     private final NumberPicker.Formatter pickerDigitFormatter = new NumberPicker.Formatter() {
         final StringBuilder stringBuilder = new StringBuilder();
@@ -168,116 +351,9 @@ public class NumericDatePicker extends DatePicker {
 
         checkConstraintsConstraint();
 
-        if (getMinDate() != 0 || getMaxDate() != 0) {
+        resetDatePicker();
 
 
-            processResetPickersMaxDate();
-
-            processResetPickersMinDate();
-        }
-
-        fixWeirdNumberPickerBug(dayPicker);
-    }
-
-    private void processResetPickersMinDate() {
-        if (getMinDate() != 0) {
-
-            //Cache max values
-            int cacheMaxDay = dayPicker.getMaxValue();
-            int cacheMaxMonth = monthPicker.getMaxValue();
-            int cacheMaxYear = yearPicker.getMaxValue();
-
-
-            yearPicker.setDisplayedValues(null);
-            monthPicker.setDisplayedValues(null);
-            dayPicker.setDisplayedValues(null);
-
-            yearPicker.setMinValue(minYear);
-            yearPicker.setWrapSelectorWheel(false);
-
-
-            //reinstate minValues
-            dayPicker.setMaxValue(cacheMaxDay);
-            monthPicker.setMaxValue(cacheMaxMonth);
-            yearPicker.setMaxValue(cacheMaxYear);
-
-
-            if (minYear == getYear() && minMonth == getMonth()) {
-                monthPicker.setMinValue(minMonth + 1);
-                monthPicker.setValue(minMonth + 1);
-                monthPicker.setWrapSelectorWheel(false);
-
-                if (getDayOfMonth() <= minDay) {
-                    dayPicker.setMinValue(minDay);
-                    dayPicker.setValue(minDay);
-                    dayPicker.setMaxValue(dayPicker.getMaxValue() > minDay ? minDay : dayPicker.getMaxValue());
-                    dayPicker.setWrapSelectorWheel(false);
-                } else {
-                    dayPicker.setMinValue(1);
-                    dayPicker.setMaxValue(dayPicker.getMaxValue());
-                    dayPicker.setWrapSelectorWheel(getMaxDate() == 0 ? true : dayPicker.getWrapSelectorWheel());
-                }
-
-            } else {
-                monthPicker.setMinValue(1);
-                monthPicker.setMaxValue(monthPicker.getMaxValue());
-                monthPicker.setWrapSelectorWheel(getMaxDate() == 0 ? true : monthPicker.getWrapSelectorWheel());
-
-                dayPicker.setMinValue(1);
-                dayPicker.setMaxValue(dayPicker.getMaxValue());
-                dayPicker.setWrapSelectorWheel(getMaxDate() == 0 ? true : dayPicker.getWrapSelectorWheel());
-
-                yearPicker.setMaxValue(yearPicker.getMaxValue());
-            }
-        }
-    }
-
-    private void processResetPickersMaxDate() {
-        if (getMaxDate() != 0) {
-
-            //cache min values
-            int cacheMinDay = dayPicker.getMinValue();
-            int cacheMinMonth = monthPicker.getMinValue();
-            int cacheMinYear = yearPicker.getMinValue();
-
-            yearPicker.setDisplayedValues(null);
-            monthPicker.setDisplayedValues(null);
-            dayPicker.setDisplayedValues(null);
-
-
-            yearPicker.setMaxValue(maxYear);
-            yearPicker.setWrapSelectorWheel(false);
-
-            //reinstate minValues
-            dayPicker.setMinValue(cacheMinDay);
-            monthPicker.setMinValue(cacheMinMonth);
-            yearPicker.setMinValue(cacheMinYear);
-
-
-            if (maxYear == getYear() && maxMonth == getMonth()) {
-                monthPicker.setMaxValue(maxMonth + 1);
-                monthPicker.setValue(maxMonth + 1);
-                monthPicker.setWrapSelectorWheel(false);
-
-                if (getDayOfMonth() >= maxDay) {
-                    dayPicker.setMaxValue(maxDay);
-                    dayPicker.setValue(maxDay);
-                    dayPicker.setWrapSelectorWheel(false);
-                } else {
-                    dayPicker.setMaxValue(NumericDatePickerHelper.getDaysInMonth(getMonth(), NumericDatePickerHelper.isLeapYear(getYear())));
-                    dayPicker.setWrapSelectorWheel(true);
-
-                }
-
-            } else {
-                monthPicker.setMaxValue(12);
-                monthPicker.setWrapSelectorWheel(true);
-                dayPicker.setMaxValue(NumericDatePickerHelper.getDaysInMonth(getMonth(), NumericDatePickerHelper.isLeapYear(getYear())));
-                dayPicker.setWrapSelectorWheel(true);
-            }
-
-
-        }
     }
 
     /**
@@ -306,44 +382,57 @@ public class NumericDatePicker extends DatePicker {
         this.onDateChangedListener = onDateChangedListener;
     }
 
+    //The month starts from zero
     @Override
-    public void updateDate(int year, int month, int dayOfMonth) {
+    public void updateDate(int year_, int month_, int dayOfMonth_) {
 
-        if (isMaxConstraintViolated(year, month, dayOfMonth)) {
-            throw new IllegalStateException("You have set a date later than the Maximum allowed date settings");
+        int year = year_;
+        int month = month_;
+        int dayOfMonth = dayOfMonth_;
+
+        if (isMaxConstraintViolated(year, month + 1, dayOfMonth)) {
+
+            dayOfMonth = maxDay;
+            month = maxMonth;
+            year = maxYear;
+
         }
 
-        if (isMinConstraintViolated(year, month, dayOfMonth)) {
-            throw new IllegalStateException("You have set a date later than the Minimum allowed date settings");
+        if (isMinConstraintViolated(year, month + 1, dayOfMonth)) {
+
+            dayOfMonth = minDay;
+            month = minMonth;
+            year = minYear;
         }
 
         dayPicker.setValue(dayOfMonth);
         monthPicker.setValue(month + 1);
         yearPicker.setValue(year);
         resetPickers();
+
     }
 
     /**
      * Checks to see if there is a minimum value set and whether its value is greater than the parameter provided
      *
      * @param year       year of date
-     * @param month      month of date
+     * @param month      month of date starts with 1 for January
      * @param dayOfMonth day of month of date
      * @return boolean value indicating whether the constraint was violated
      */
     private boolean isMinConstraintViolated(int year, int month, int dayOfMonth) {
-        return minDate > 0 && (new LocalDate(year, month, dayOfMonth).isBefore(new LocalDate(minYear, minMonth, minDay)));
+        return minDate > 0 && (new LocalDate(year, month, dayOfMonth).isBefore(new LocalDate(minYear, minMonth + 1, minDay)));
     }
 
     /**
      * Checks to see if there is a maximum value set and whether its value is less than the parameter provided
      *
      * @param year       year of date
-     * @param month      month of date
+     * @param month      month of date start from 1 for January
      * @param dayOfMonth day of month of date
      */
     private boolean isMaxConstraintViolated(int year, int month, int dayOfMonth) {
-        return maxDate > 0 && (new LocalDate(year, month, dayOfMonth).isAfter(new LocalDate(maxYear, maxMonth, maxDay)));
+        return maxDate > 0 && (new LocalDate(year, month, dayOfMonth).isAfter(new LocalDate(maxYear, maxMonth + 1, maxDay)));
     }
 
     @Override
@@ -419,5 +508,131 @@ public class NumericDatePicker extends DatePicker {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+    }
+
+    /**
+     * @return current MAX date of the spinner selected and null if invalid date
+     */
+    private LocalDate getCurrentSelectedDate() {
+        try {
+            return new LocalDate(getYear(), getMonth() + 1, getDayOfMonth());
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+
+    }
+
+
+    /**
+     * Checks if the selected date is valid
+     */
+
+    private NumericDatePickerValidator validateCurrentSelectedDate() {
+
+        LocalDate selectedDate = getCurrentSelectedDate();
+
+        NumericDatePickerValidator validator;
+
+        if (selectedDate == null) {
+
+            validator = new NumericDatePickerValidator(false, selectedDate, NumericDatePickerValidator.Violation.MALFORMED_DATE);
+
+        } else if (isMaxConstraintViolated(selectedDate.getYear(), selectedDate.getMonthOfYear(), selectedDate.getDayOfMonth())) {
+
+
+            validator = new NumericDatePickerValidator(false, selectedDate, NumericDatePickerValidator.Violation.MAX_DATE);
+
+
+        } else if (isMinConstraintViolated(selectedDate.getYear(), selectedDate.getMonthOfYear(), selectedDate.getDayOfMonth())) {
+
+
+            validator = new NumericDatePickerValidator(false, selectedDate, NumericDatePickerValidator.Violation.MIN_DATE);
+
+
+        } else {
+
+            validator = new NumericDatePickerValidator(true, selectedDate, null);
+        }
+
+        return validator;
+    }
+
+    private void resetPicker(NumberPicker numberPicker, int value) {
+
+        //Cache original values
+        int cacheMax = numberPicker.getMaxValue();
+        int cacheMin = numberPicker.getMinValue();
+
+        //reset picker
+        numberPicker.setDisplayedValues(null);
+
+        //set new value
+
+        if (value != 0)
+            numberPicker.setValue(value);
+
+        //reinstate values
+        if (cacheMin != 0)
+            numberPicker.setMinValue(cacheMin);
+
+        if (cacheMax != 0) {
+            numberPicker.setMaxValue(cacheMax);
+        }
+
+
+        if (numberPicker.getId() == R.id.year) {
+
+            changedPickerId = R.id.month;  //Who to process if we still have a violation
+
+        } else if (numberPicker.getId() == R.id.month) {
+
+            changedPickerId = R.id.day; //Who to process if we still have a violation
+            dayPicker.setMaxValue(getMaxDayForSelectedDate());//Max day changes with change in month
+        }
+
+        fixWeirdNumberPickerBug(numberPicker);
+    }
+
+    /**
+     * Reset Wrap selector if constraints reached
+     */
+    private boolean resetWrapSelector(NumberPicker numberPicker) {
+
+        boolean isScroll = true;
+
+        if (numberPicker.getId() == R.id.year) {
+
+            isScroll = !(numberPicker.getValue() == maxYear || numberPicker.getValue() == minYear);
+
+        } else if (numberPicker.getId() == R.id.month) {
+            isScroll = !(isMinMonthEdge() || isMaxMonthEdge());
+
+        } else if (numberPicker.getId() == R.id.day) {
+
+            isScroll = !(isMinDayEdge() || isMaxDayEdge());
+
+        }
+
+        return isScroll;
+    }
+
+    private boolean isMinMonthEdge() {
+        return getYear() <= minYear && monthPicker.getValue() == (minMonth + 1);
+    }
+
+    private boolean isMaxMonthEdge() {
+        return getYear() >= maxYear && monthPicker.getValue() == (maxMonth + 1);
+    }
+
+    private boolean isMinDayEdge() {
+        return getYear() <= minYear && getMonth() <= minMonth && dayPicker.getValue() == minDay;
+    }
+
+    private boolean isMaxDayEdge() {
+        return getYear() >= maxYear && getMonth() >= maxMonth && dayPicker.getValue() == maxDay;
+    }
+
+    private int getMaxDayForSelectedDate() {
+        return NumericDatePickerHelper.getDaysInMonth(getMonth(), NumericDatePickerHelper.isLeapYear(getYear()));
     }
 }
