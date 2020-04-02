@@ -2,6 +2,7 @@ package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -184,7 +185,7 @@ public class SpinnerFactory implements FormWidgetFactory {
         JSONArray optionValues = new JSONArray();
         for (int i = 0; i < options.length(); i++) {
             optionKeys.put(options.getJSONObject(i).optString(JsonFormConstants.KEY));
-            optionValues.put(options.getJSONObject(i).optString(JsonFormConstants.VALUE));
+            optionValues.put(options.getJSONObject(i).optString(JsonFormConstants.TEXT));
         }
         return new Pair<>(optionKeys, optionValues);
     }
@@ -221,7 +222,10 @@ public class SpinnerFactory implements FormWidgetFactory {
     }
 
     @Override
+    @NonNull
     public Set<String> getCustomTranslatableWidgetFields() {
-        return new HashSet<>();
+        Set<String> customTranslatableWidgetFields = new HashSet<>();
+        customTranslatableWidgetFields.add(JsonFormConstants.OPTIONS_FIELD_NAME + "." + JsonFormConstants.TEXT);
+        return customTranslatableWidgetFields;
     }
 }
