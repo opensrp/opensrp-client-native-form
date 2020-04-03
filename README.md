@@ -635,6 +635,45 @@ This form has been generated from the `JSON Form` below: [Click here to Skip](#u
         }
       },
       {
+        "key": "response_spinner_with_options",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "Response Spinners",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "no",
+            "text": "No",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "maybe",
+            "text": "Maybe",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Please enter response"
+        },
+        "openmrs_choice_ids": {
+          "user_one": "1107AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+          "user_two": "1713AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        }
+      },
+      {
         "key": "native_radio",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -2146,7 +2185,7 @@ An Android client application wishing to use MLS needs to take the following ste
 4. Step 2. will be repeated for each language that the Android client wishes to support. 
    - The `string_identifier`s would remain the same but the String literals would change - taking on their translated versions for each locale. 
    - To distinguish between the different property files for each locale, the following [convention](https://developer.android.com/reference/java/util/ResourceBundle.html#getBundle(java.lang.String,%20java.util.Locale,%20java.lang.ClassLoader)) should be used e.g. `basic_form_en_US.properties` for US English and `basic_form_fr.properties` for French.
-5. Set the `JsonFormConstants.PERFORM_FORM_TRANSLATION` intent extra to true when launching each JsonForm to activate MLS for that form.
+5. Set the `JsonFormConstants.PERFORM_FORM_TRANSLATION` intent extra to true when launching each JsonForm to activate MLS for that form (for sub-forms, `setArguments` can be used).
 
 The process of generating the assets in steps 1-3 may be a bit tedious and error prone. To this end, a utility is provided to ease the process. The tool (`JsonForm MLS Asset Generator`) is described below. 
    
@@ -2183,4 +2222,4 @@ Alternatively, a different folder can be specified by setting the `MLS_ASSETS_FO
 
 For a form named `example_form` the generated assets will follow the following naming covention : `example_form.json` and `example_form.properties`. 
 
-The properties file can then be copied over to the `resources` folder of your Android project. The placeholder-injected JsonForm will typically be copied over to the `assets` folder of your Android project (although not mandatory).
+The properties file can then be copied over to the `resources` folder of your Android project under `src/main`. The placeholder-injected JsonForm will typically be copied over to the `assets` folder of your Android project (although not mandatory).
