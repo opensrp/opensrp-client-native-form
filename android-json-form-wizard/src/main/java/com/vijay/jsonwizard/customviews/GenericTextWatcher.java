@@ -17,6 +17,8 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 
+import timber.log.Timber;
+
 public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListener {
 
     private static String TAG = GenericTextWatcher.class.getCanonicalName();
@@ -82,7 +84,7 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
                 api.writeValue(mStepName, key, text, openMrsEntityParent, openMrsEntity,
                         openMrsEntityId, popup);
             } catch (JSONException e) {
-                Log.e(TAG, e.getMessage(), e);
+                Timber.e(e);
             }
         }
 
