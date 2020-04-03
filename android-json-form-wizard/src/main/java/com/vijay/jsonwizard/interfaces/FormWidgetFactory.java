@@ -6,7 +6,6 @@ import android.view.View;
 
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.util.List;
