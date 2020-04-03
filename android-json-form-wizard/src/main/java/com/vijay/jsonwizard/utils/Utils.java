@@ -60,8 +60,6 @@ import java.util.concurrent.TimeUnit;
 
 import timber.log.Timber;
 
-import static com.vijay.jsonwizard.utils.NativeFormLangUtils.getTranslatedString;
-
 public class Utils {
     public final static List<String> PREFICES_OF_INTEREST = Arrays.asList(RuleConstant.PREFIX.GLOBAL, RuleConstant.STEP);
     public final static Set<Character> JAVA_OPERATORS = new HashSet<>(
@@ -623,7 +621,7 @@ public class Utils {
      *
      */
     public static String getTranslatedYamlFile(String fileName, Context context) {
-        return getTranslatedString(getAssetFileAsString(fileName, context));
+        return NativeFormLangUtils.getTranslatedString(getAssetFileAsString(fileName, context));
     }
 
     /**

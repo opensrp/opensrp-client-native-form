@@ -20,6 +20,27 @@ import timber.log.Timber;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.MLS.PROPERTIES_FILE_NAME;
 
 public class NativeFormLangUtils {
+    private static Locale locale;
+    private static String translatedFileName;
+
+    public static Locale getLocale() {
+        if (locale == null) {
+            locale = Locale.getDefault();
+        }
+        return locale;
+    }
+
+    public static void setLocale(Locale locale) {
+        NativeFormLangUtils.locale = locale;
+    }
+
+    public static String getTranslatedFileName() {
+        return translatedFileName;
+    }
+
+    public static void setTranslatedFileName(String translatedFileName) {
+        NativeFormLangUtils.translatedFileName = translatedFileName;
+    }
 
     public static String getLanguage(Context ctx) {
         AllSharedPreferences allSharedPreferences = new AllSharedPreferences(PreferenceManager.getDefaultSharedPreferences(ctx));
@@ -44,27 +65,28 @@ public class NativeFormLangUtils {
     }
 
     /**
-     * Performs translation on an interpolated {@param str}
+     * Performs translation on an interpolated {@param jsonFormString}
      * i.e. a String containing tokens in the format {{string_name}},
      * replacing these tokens with their corresponding values for the current Locale
      *
-     * @param str
+     * @param jsonFormString
      * @return
      */
-    public static String getTranslatedString(String str) {
-        String translationsFileName = getTranslationsFileName(str);
-        if (translationsFileName.isEmpty()) {
+    public static String getTranslatedString(String jsonFormString) {
+        getTranslationsFileName(jsonFormString);
+        if (getTranslatedFileName().isEmpty()) {
             Timber.e("Could not translate the String. Translation file name is not specified!");
-            return str;
+            return jsonFormString;
         }
-        return translateString(str, ResourceBundle.getBundle(getTranslationsFileName(str)));
+        return translateString(jsonFormString, ResourceBundle.getBundle(getTranslatedFileName(), getLocale()));
     }
 
-    public static String getTranslatedString(String str, String propertyFilesFolderPath) {
-        String translatedString = str;
+    public static String getTranslatedString(String jsonFormString, String propertyFilesFolderPath) {
+        getTranslationsFileName(jsonFormString);
+        String translatedString = jsonFormString;
         try {
-            ResourceBundle mlsResourceBundle = ResourceBundle.getBundle(getTranslationsFileName(str), Locale.getDefault(), getPathURL(propertyFilesFolderPath));
-            translatedString = translateString(str, mlsResourceBundle);
+            ResourceBundle mlsResourceBundle = ResourceBundle.getBundle(getTranslatedFileName(), getLocale(), getPathURL(propertyFilesFolderPath));
+            translatedString = translateString(jsonFormString, mlsResourceBundle);
         } catch (MalformedURLException e) {
             Timber.e(e);
         }
@@ -77,7 +99,7 @@ public class NativeFormLangUtils {
         Matcher matcher = interpolatedStringPattern.matcher(str);
         while (matcher.find()) {
             String replacement = Matcher.quoteReplacement(mlsResourceBundle.getString(matcher.group(1))
-                            .replace("\n", "\\n")); // ensures \n is preserved in a String
+                    .replace("\n", "\\n")); // ensures \n is preserved in a String
             matcher.appendReplacement(stringBuffer, replacement);
         }
         matcher.appendTail(stringBuffer);
@@ -92,14 +114,14 @@ public class NativeFormLangUtils {
     }
 
     /**
-     * Gets the name of the translation file to be applied to the {@param str}
+     * Gets the name of the translation file to be applied to the {@param jsonFormString}
      *
-     * @param str
+     * @param jsonFormString
      * @return
      */
-    public static String getTranslationsFileName(String str) {
+    public static void getTranslationsFileName(String jsonFormString) {
         Pattern propertiesFileNamePattern = Pattern.compile("\"?" + PROPERTIES_FILE_NAME + "\"?: ?\"([a-zA-Z_0-9\\.]+)\"");
-        Matcher matcher = propertiesFileNamePattern.matcher(str);
-        return matcher.find() ? matcher.group(1) : "";
+        Matcher matcher = propertiesFileNamePattern.matcher(jsonFormString);
+        setTranslatedFileName(matcher.find() ? matcher.group(1) : "");
     }
 }

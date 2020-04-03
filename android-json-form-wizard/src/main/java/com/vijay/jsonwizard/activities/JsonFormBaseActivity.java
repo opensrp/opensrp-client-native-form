@@ -20,6 +20,7 @@ import com.vijay.jsonwizard.interfaces.OnActivityResultListener;
 import com.vijay.jsonwizard.interfaces.OnFieldsInvalid;
 import com.vijay.jsonwizard.rules.RulesEngineFactory;
 import com.vijay.jsonwizard.utils.FormUtils;
+import com.vijay.jsonwizard.utils.NativeFormLangUtils;
 import com.vijay.jsonwizard.utils.PropertyManager;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 
@@ -33,8 +34,6 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.vijay.jsonwizard.utils.NativeFormLangUtils.getTranslatedString;
 
 abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnFieldsInvalid {
     protected static final String TAG = JsonFormActivity.class.getSimpleName();
@@ -75,7 +74,7 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
         isFormFragmentInitialized = false;
         if (savedInstanceState == null) {
             this.form = extractForm(getIntent().getSerializableExtra(JsonFormConstants.JSON_FORM_KEY.FORM));
-            init(getForm());
+            init(getTranslatedForm());
             initializeFormFragment();
             onFormStart();
         } else {
@@ -87,10 +86,10 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
         }
     }
 
-    private String getForm() {
+    public String getTranslatedForm() {
         String jsonForm = getIntent().getStringExtra(JsonFormConstants.JSON_FORM_KEY.JSON);
         if (getIntent().getBooleanExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, false)) {
-            jsonForm = getTranslatedString(jsonForm);
+            jsonForm = NativeFormLangUtils.getTranslatedString(jsonForm);
         }
         return jsonForm;
     }
