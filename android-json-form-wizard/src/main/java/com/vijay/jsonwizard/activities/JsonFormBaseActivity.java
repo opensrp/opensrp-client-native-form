@@ -76,7 +76,7 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
         isFormFragmentInitialized = false;
         if (savedInstanceState == null) {
             this.form = extractForm(getIntent().getSerializableExtra(JsonFormConstants.JSON_FORM_KEY.FORM));
-            init(getForm());
+            init(getTranslatedForm());
             initializeFormFragment();
             onFormStart();
         } else {
@@ -88,7 +88,12 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
         }
     }
 
-    private String getForm() {
+    /**
+     * Returns a json file file with all the translation keys replaced with literal strings.
+     *
+     * @return jsonForm {@link java.lang.String} -- The translated json form string with literal strings replaced.
+     */
+    public String getTranslatedForm() {
         String jsonForm = getIntent().getStringExtra(JsonFormConstants.JSON_FORM_KEY.JSON);
         if (getIntent().getBooleanExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, false)) {
             jsonForm = getTranslatedString(jsonForm);

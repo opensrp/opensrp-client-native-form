@@ -14,6 +14,27 @@ import java.util.regex.Pattern;
 import timber.log.Timber;
 
 public class NativeFormLangUtils {
+    private static Locale locale;
+    private static String fileName;
+
+    public static Locale getLocale() {
+        if (locale == null) {
+            locale = Locale.getDefault();
+        }
+        return locale;
+    }
+
+    public static void setLocale(Locale locale) {
+        NativeFormLangUtils.locale = locale;
+    }
+
+    public static String getFileName() {
+        return fileName;
+    }
+
+    public static void setFileName(String fileName) {
+        NativeFormLangUtils.fileName = fileName;
+    }
 
     public static String getLanguage(Context ctx) {
         AllSharedPreferences allSharedPreferences = new AllSharedPreferences(PreferenceManager.getDefaultSharedPreferences(ctx));
@@ -38,25 +59,25 @@ public class NativeFormLangUtils {
     }
 
     /**
-     * Performs translation on an interpolated {@param str}
+     * Performs translation on an interpolated {@param jsonFormString}
      * i.e. a String containing tokens in the format {{string_name}},
      * replacing these tokens with their corresponding values for the current Locale
      *
-     * @param str
+     * @param jsonFormString
      * @return
      */
-    public static String getTranslatedString(String str) {
-        String translationsFileName = getTranslationsFileName(str);
-        if (translationsFileName.isEmpty()) {
+    public static String getTranslatedString(String jsonFormString) {
+        getTranslationsFileName(jsonFormString);
+        if (getFileName().isEmpty()) {
             Timber.e("Could not translate the String. Translation file name is not specified!");
-            return str;
+            return jsonFormString;
         }
 
-        ResourceBundle mlsResourceBundle = ResourceBundle.getBundle(getTranslationsFileName(str));
+        ResourceBundle mlsResourceBundle = ResourceBundle.getBundle(getFileName());
 
         StringBuffer stringBuffer = new StringBuffer();
         Pattern interpolatedStringPattern = Pattern.compile("\\{\\{([a-zA-Z_0-9\\.]+)\\}\\}");
-        Matcher matcher = interpolatedStringPattern.matcher(str);
+        Matcher matcher = interpolatedStringPattern.matcher(jsonFormString);
         while (matcher.find()) {
             matcher.appendReplacement(stringBuffer, mlsResourceBundle.getString(matcher.group(1)));
         }
@@ -71,9 +92,9 @@ public class NativeFormLangUtils {
      * @param str
      * @return
      */
-    public static String getTranslationsFileName(String str) {
+    public static void getTranslationsFileName(String str) {
         Pattern propertiesFileNamePattern = Pattern.compile("\"?properties_file_name\"?: ?\"([a-zA-Z_0-9\\.]+)\"");
         Matcher matcher = propertiesFileNamePattern.matcher(str);
-        return matcher.find() ? matcher.group(1) : "";
+        setFileName(matcher.find() ? matcher.group(1) : "");
     }
 }
