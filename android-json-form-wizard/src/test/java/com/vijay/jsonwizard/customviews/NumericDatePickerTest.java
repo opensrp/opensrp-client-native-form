@@ -258,9 +258,6 @@ public class NumericDatePickerTest extends BaseTest {
 
         Assert.assertEquals(Calendar.NOVEMBER, datePicker.getMonth());
 
-        NumberPicker dayPicker = ReflectionHelpers.getField(datePicker, "dayPicker");
-        dayPicker.setValue(21);
-
         ReflectionHelpers.setField(datePicker, "changedPickerId", R.id.year);
         datePicker.resetDatePicker();
 
@@ -301,10 +298,6 @@ public class NumericDatePickerTest extends BaseTest {
         Assert.assertEquals(Calendar.SEPTEMBER, datePicker.getMonth());
 
         ReflectionHelpers.setField(datePicker, "changedPickerId", R.id.month);
-
-        NumberPicker dayPicker = ReflectionHelpers.getField(datePicker, "dayPicker");
-        dayPicker.setValue(20);
-
         datePicker.resetDatePicker();
 
         int dayOfMonthToday = new LocalDate().getDayOfMonth();
