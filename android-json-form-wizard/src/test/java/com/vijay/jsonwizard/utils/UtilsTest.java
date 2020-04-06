@@ -14,8 +14,8 @@ import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.rules.RuleConstant;
-import com.vijay.jsonwizard.widgets.DatePickerFactory;
 import com.vijay.jsonwizard.views.CustomTextView;
+import com.vijay.jsonwizard.widgets.DatePickerFactory;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
