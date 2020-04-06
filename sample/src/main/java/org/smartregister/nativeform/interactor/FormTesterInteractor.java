@@ -24,12 +24,8 @@ public class FormTesterInteractor implements FormTesterContract.Interactor {
         AssetManager assetManager = context.getAssets();
         try {
             String root = verifyOrCreateDiskDirectory();
-            String[] file_source = {"json.form"};
-            for (String sourceDir : file_source) {
-                exportDirectory(assetManager, sourceDir, context, root, false);
-            }
 
-            String[] image_source = {"img", "image", "rule"};
+            String[] image_source = {"json.form", "img", "image", "rule"};
             for (String sourceDir : image_source) {
                 exportDirectory(assetManager, sourceDir, context, root, true);
             }
@@ -114,14 +110,14 @@ public class FormTesterInteractor implements FormTesterContract.Interactor {
     @Override
     public boolean verifyFormsDirectoryExists() {
         String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString();
-        File myDir = new File(root + "/" + JsonFormConstants.DEFAULT_FORMS_DIRECTORY);
+        File myDir = new File(root + "/" + JsonFormConstants.DEFAULT_FORMS_DIRECTORY + "/json.form/");
         return myDir.exists();
     }
 
     @Override
     public List<File> readForms(Context context, FormTesterContract.Presenter presenter) {
         String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString();
-        File myDir = new File(root + "/" + JsonFormConstants.DEFAULT_FORMS_DIRECTORY);
+        File myDir = new File(root + "/" + JsonFormConstants.DEFAULT_FORMS_DIRECTORY + "/json.form/");
 
         List<File> files = new ArrayList<>();
         if (myDir.exists()) {
