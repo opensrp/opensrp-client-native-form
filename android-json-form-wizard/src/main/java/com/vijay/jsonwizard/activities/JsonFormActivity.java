@@ -16,6 +16,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.util.Pair;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -90,6 +91,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -113,6 +115,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private TextView selectedTextView = null;
     private Utils utils = new Utils();
     private HashMap<String, String[]> addressMap = new HashMap<>();
+
+    private Map<String, Set<String>> calculationTree = new HashMap<>();
 
     TimingLogger timingLogger = new TimingLogger("TimingLogger", "JsonFormActivity");
 
@@ -292,71 +296,87 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         }
     }
 
+
+    public Pair<String[], JSONObject> getAddressAndValue(View curView) throws JSONException {
+        String calculationTag = (String) curView.getTag(R.id.calculation);
+        String widgetKey = (String) curView.getTag(R.id.key);
+        String stepName = ((String) curView.getTag(R.id.address)).split(":")[0];
+        if (calculationTag != null && calculationTag.length() > 0) {
+            JSONObject calculation = new JSONObject(calculationTag);
+            Iterator<String> keys = calculation.keys();
+
+            while (keys.hasNext()) {
+                String curKey = keys.next();
+
+                JSONObject curCalculation = calculation.getJSONObject(curKey);
+                JSONObject valueSource = new JSONObject();
+                if (calculation.has(JsonFormConstants.SRC)) {
+                    valueSource = calculation.getJSONObject(JsonFormConstants.SRC);
+                }
+                String[] address = getAddressFromMap(widgetKey, stepName, JsonFormConstants.CALCULATION);
+                if (address == null && curCalculation.has(JsonFormConstants.JSON_FORM_KEY.EX_RULES)) {
+                    JSONObject exRulesObject = curCalculation.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES);
+                    if (exRulesObject.has(RuleConstant.RULES_DYNAMIC)) {
+                        address = getDynamicRulesEngineAddress(curKey, curCalculation, curView, JsonFormConstants.CALCULATION);
+                    } else {
+                        address = getRulesEngineAddress(curKey, curCalculation, curView, JsonFormConstants.CALCULATION);
+                    }
+                }
+                return new Pair<>(address, valueSource);
+            }
+        }
+        return null;
+    }
+
     @Override
     public void refreshCalculationLogic(String parentKey, String childKey, boolean popup) {
 
         Collection<View> views = calculationLogicViews.values();
         for (View curView : views) {
-            String calculationTag = (String) curView.getTag(R.id.calculation);
-            String widgetKey = (String) curView.getTag(R.id.key);
-            String stepName = ((String) curView.getTag(R.id.address)).split(":")[0];
-            if (calculationTag != null && calculationTag.length() > 0) {
-                try {
-                    JSONObject calculation = new JSONObject(calculationTag);
-                    Iterator<String> keys = calculation.keys();
-
-                    while (keys.hasNext()) {
-                        String curKey = keys.next();
-
-                        JSONObject curCalculation = calculation.getJSONObject(curKey);
-                        JSONObject valueSource = new JSONObject();
-                        if (calculation.has(JsonFormConstants.SRC)) {
-                            valueSource = calculation.getJSONObject(JsonFormConstants.SRC);
-                        }
-
-                        String[] address = getAddressFromMap(widgetKey, stepName, JsonFormConstants.CALCULATION);
-                        if (address == null && curCalculation.has(JsonFormConstants.JSON_FORM_KEY.EX_RULES)) {
-                            JSONObject exRulesObject = curCalculation.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES);
-                            if (exRulesObject.has(RuleConstant.RULES_DYNAMIC)) {
-                                address = getDynamicRulesEngineAddress(curKey, curCalculation, curView, JsonFormConstants.CALCULATION);
-                            } else {
-                                address = getRulesEngineAddress(curKey, curCalculation, curView, JsonFormConstants.CALCULATION);
-                            }
-                        }
-
-                        if (address != null) {
-                            Facts curValueMap;
-                            if (valueSource.length() > 0) {
-                                curValueMap = getValueFromAddress(address, popup, valueSource);
-                            } else {
-                                curValueMap = getValueFromAddress(address, popup);
-                            }
-                            timingLogger.addSplit("refreshCalculationLogic "+childKey);
-                            updateCalculation(curValueMap, curView, address);
-
-
-                        }
+            try {
+                Pair<String[], JSONObject> addressAndValue = getAddressAndValue(curView);
+                if (addressAndValue != null && addressAndValue.first != null) {
+                    String[] address = addressAndValue.first;
+                    JSONObject valueSource = addressAndValue.second;
+                    Facts curValueMap;
+                    if (valueSource.length() > 0) {
+                        curValueMap = getValueFromAddress(address, popup, valueSource);
+                    } else {
+                        curValueMap = getValueFromAddress(address, popup);
                     }
+                    timingLogger.addSplit("refreshCalculationLogic " + childKey);
+                    updateCalculation(curValueMap, curView, address);
 
-                } catch (Exception e) {
-                    Timber.e(e, "%s refreshCalculationLogic()", this.getClass().getCanonicalName());
 
                 }
+
+            } catch (Exception e) {
+                Timber.e(e, "%s refreshCalculationLogic()", this.getClass().getCanonicalName());
+
             }
         }
     }
 
     @Override
     public void invokeRefreshLogic(String value, boolean popup, String parentKey, String childKey) {
-        timingLogger.addSplit("invokeRefreshLogic "+childKey);
+        populateCalculationTree();
+        timingLogger.addSplit("invokeRefreshLogic " + childKey);
         refreshCalculationLogic(parentKey, childKey, popup);
-        timingLogger.addSplit("refreshCalculationLogic "+childKey);
+        timingLogger.addSplit("refreshCalculationLogic " + childKey);
         refreshSkipLogic(parentKey, childKey, popup);
-        timingLogger.addSplit("refreshSkipLogic "+childKey);
+        timingLogger.addSplit("refreshSkipLogic " + childKey);
         refreshConstraints(parentKey, childKey, popup);
-        timingLogger.addSplit("refreshConstraints "+childKey);
+        timingLogger.addSplit("refreshConstraints " + childKey);
         refreshMediaLogic(parentKey, value);
-        timingLogger.addSplit("refreshMediaLogic "+childKey);
+        timingLogger.addSplit("refreshMediaLogic " + childKey);
+    }
+
+    private void populateCalculationTree() {
+
+        for (View view : calculationLogicViews.values()) {
+
+        }
+
     }
 
     @Override
@@ -759,7 +779,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     protected void widgetsWriteValue(String stepName, String key, String value, String openMrsEntityParent,
                                      String openMrsEntity, String openMrsEntityId, boolean popup) throws JSONException {
-        timingLogger.addSplit("widgetsWriteValue "+key);
+        timingLogger.addSplit("widgetsWriteValue " + key);
         synchronized (getmJSONObject()) {
             JSONObject jsonObject = getmJSONObject().getJSONObject(stepName);
             JSONArray fields = fetchFields(jsonObject, popup);
@@ -777,7 +797,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         widgetWriteItemValue(value, item, itemType);
                     }
                     addOpenMrsAttributes(openMrsEntityParent, openMrsEntity, openMrsEntityId, item);
-                    timingLogger.addSplit("widgetsWriteValue "+keyAtIndex);
+                    timingLogger.addSplit("widgetsWriteValue " + keyAtIndex);
                     invokeRefreshLogic(value, popup, cleanKey, null);
                     return;
                 }
@@ -992,7 +1012,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         } catch (Exception e) {
             Timber.e(e, "%s --> Main function", this.getClass().getCanonicalName());
         }
-        timingLogger.addSplit("addRelevance"+ view.getTag(R.id.key));
+        timingLogger.addSplit("addRelevance" + view.getTag(R.id.key));
     }
 
     protected void toggleViewVisibility(View view, boolean visible, boolean popup) {
@@ -1706,7 +1726,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             } else {
                 calculation = getRulesEngineFactory().getCalculation(valueMap, address[1]);
             }
-            timingLogger.addSplit("updateCalculation.getCalculation "+address[2]);
+            timingLogger.addSplit("updateCalculation.getCalculation " + address[2]);
 
             if (calculation != null) {
                 if (view instanceof CheckBox) {
@@ -1749,7 +1769,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         } catch (Exception e) {
             Timber.e(e, "calling updateCalculation on Non TextView or Text View decendant");
         }
-        timingLogger.addSplit("updateCalculation "+address[2]);
+        timingLogger.addSplit("updateCalculation " + address[2]);
 
     }
 
