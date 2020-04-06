@@ -132,7 +132,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             try {
                 return getmJSONObject().getJSONObject(name);
             } catch (JSONException e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
         }
         return null;
@@ -220,7 +220,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             }
             FormUtils.updateEndProperties(propertyManager, mJSONObject);
         } catch (Exception e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
     }
 
@@ -273,7 +273,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     toggleViewVisibility(curView, false, popup);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
         }
     }
@@ -281,7 +281,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     @Override
     public void refreshSkipLogic(String parentKey, String childKey, boolean popup) {
         initComparisons();
-        for (View curView : skipLogicViews.values()) {
+        View[] views = skipLogicViews.values().toArray(new View[0]);
+        for (View curView : views) {
             addRelevance(curView, popup);
         }
     }
@@ -1948,7 +1949,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         getmJSONObject().put(JsonFormConstants.INVISIBLE_REQUIRED_FIELDS, invisibleRequiredFields);
                     }
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    Timber.e(e);
                 }
                 return null;
             }
