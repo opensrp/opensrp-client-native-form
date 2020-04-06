@@ -132,8 +132,9 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         try {
             ((JsonApi) widgetArgs.getContext()).invokeRefreshLogic(null, false, null, null);
         } catch (Exception e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
+
         hideProgressDialog();
         doneButton.setImageResource(R.drawable.ic_done_green);
     }
@@ -172,8 +173,8 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
                 step.getJSONArray(FIELDS).put(element);
             }
         }
-        repeatingGroup.setTag(R.id.repeating_group_key, groupUniqueId);
 
+        repeatingGroup.setTag(R.id.repeating_group_key, groupUniqueId);
         return repeatingGroup;
     }
 
@@ -208,4 +209,8 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         }
     }
 
+    @Override
+    protected void onCancelled() {
+        hideProgressDialog();
+    }
 }

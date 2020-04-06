@@ -196,8 +196,12 @@ public class Utils {
     }
 
     public static void showProgressDialog(@StringRes int title, @StringRes int message, Context context) {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            return;
+        }
+
         progressDialog = new ProgressDialog(context);
-        progressDialog.setCancelable(false);
+        progressDialog.setCancelable(true);
         progressDialog.setTitle(context.getString(title));
         progressDialog.setMessage(context.getString(message));
         progressDialog.show();
