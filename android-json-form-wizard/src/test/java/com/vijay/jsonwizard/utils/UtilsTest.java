@@ -1,15 +1,23 @@
 package com.vijay.jsonwizard.utils;
 
+import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.rules.RuleConstant;
 import com.vijay.jsonwizard.widgets.DatePickerFactory;
+import com.vijay.jsonwizard.views.CustomTextView;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -104,17 +112,6 @@ public class UtilsTest extends BaseTest {
     }
 
     @Test
-    public void testCreateExpansionPanelChildren() throws JSONException {
-        JSONArray fields = new JSONArray("[{\"key\":\"blood_type_test_status\",\"type\":\"extended_radio_button\",\"label\":\"Blood type test\",\"index\":0,\"values\":[\"done_today:Done today\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"blood_type_test_status\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]},{\"key\":\"blood_type_test_date_today_hidden\",\"type\":\"hidden\",\"label\":\"\",\"index\":2,\"values\":[\"10-03-2020\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\"}},{\"key\":\"blood_type_test_date\",\"type\":\"date_picker\",\"label\":\"Blood type test date\",\"index\":3,\"values\":[\"10-03-2020\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"300AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163724AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}},{\"key\":\"blood_type\",\"type\":\"native_radio\",\"label\":\"Blood type\",\"index\":4,\"values\":[\"ab:AB\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163126AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"blood_type\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163117AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]},{\"key\":\"rh_factor\",\"type\":\"native_radio\",\"label\":\"Rh factor\",\"index\":5,\"values\":[\"positive:Positive\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"160232AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"rh_factor\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"703AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]}]");
-        Assert.assertNotNull(fields);
-
-        List<String> strings = new Utils().createExpansionPanelChildren(fields);
-        Assert.assertNotNull(strings);
-        Assert.assertEquals(4, strings.size());
-        Assert.assertEquals("Blood type test date:10-03-2020", strings.get(1));
-    }
-
-    @Test
     public void testGetDurationWithYears() {
         String duration = Utils.getDuration("10-03-2012", "30-05-2020");
         Assert.assertNotNull(duration);
@@ -205,6 +202,77 @@ public class UtilsTest extends BaseTest {
     }
 
     @Test
+    public void testResetRadioButtonsSpecifyText() throws JSONException {
+        JSONObject jsonObject = new JSONObject("{\"key\":\"resOne3\",\"text\":\"Abnormal\",\"specify_info\":\"Specify\",\"specify_info_color\":\"#b5b5b5\",\"specify_widget\":\"check_box\",\"content_form\":\"child_enrollment_sub_form\",\"content_form_location\":\"\",\"secondary_suffix\":\"test\",\"secondary_value\":[{\"key\":\"respiratory_exam_abnormal\",\"type\":\"check_box\",\"values\":[\"rapid_breathing:Rapid breathing:true\"]},{\"key\":\"respiratory_exam_radio_button\",\"type\":\"native_radio\",\"values\":[\"1:Not done\"]},{\"key\":\"respiratory_exam_abnormal_other\",\"type\":\"edit_text\",\"values\":[\"other:Respiratory exam answer\"]}]}");
+        Assert.assertNotNull(jsonObject);
+
+        LinearLayout linearLayout = new LinearLayout(RuntimeEnvironment.application);
+        Assert.assertNotNull(linearLayout);
+
+        CustomTextView specifyText = new CustomTextView(RuntimeEnvironment.application);
+        Assert.assertNotNull(specifyText);
+
+        CustomTextView extraInfoTextView = new CustomTextView(RuntimeEnvironment.application);
+        extraInfoTextView.setVisibility(View.GONE);
+        Assert.assertNotNull(extraInfoTextView);
+
+        CustomTextView reasonsText = new CustomTextView(RuntimeEnvironment.application);
+        linearLayout.addView(reasonsText);
+        Assert.assertNotNull(reasonsText);
+
+        RadioGroup radioGroup = new RadioGroup(RuntimeEnvironment.application);
+        linearLayout.addView(radioGroup);
+        Assert.assertNotNull(radioGroup);
+
+        RadioButton radioButton = new RadioButton(RuntimeEnvironment.application);
+        radioGroup.addView(radioButton);
+        radioButton.setTag(R.id.specify_textview, specifyText);
+        radioButton.setTag(R.id.option_json_object, jsonObject);
+        radioButton.setTag(R.id.specify_extra_info_textview, extraInfoTextView);
+        radioButton.setTag(R.id.specify_reasons_textview, reasonsText);
+        Assert.assertNotNull(radioButton);
+
+        Utils.resetRadioButtonsSpecifyText(radioButton);
+        Assert.assertEquals("(Specify)", specifyText.getText().toString());
+        Assert.assertTrue(jsonObject.has(JsonFormConstants.SECONDARY_VALUE));
+        Assert.assertEquals("", jsonObject.get(JsonFormConstants.SECONDARY_VALUE));
+        Assert.assertEquals(View.VISIBLE, extraInfoTextView.getVisibility());
+        Assert.assertEquals(View.GONE, reasonsText.getVisibility());
+    }
+
+    @Test
+    public void testCreateExpansionPanelChildren() throws JSONException {
+        JSONArray values = new JSONArray("[{\"key\":\"blood_type_test_status\",\"type\":\"extended_radio_button\",\"label\":\"Blood type test\",\"index\":0,\"values\":[\"done_today:Done today\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"value_openmrs_attributes\":[{\"key\":\"blood_type_test_status\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165383AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}]},{\"key\":\"blood_type_test_date_today_hidden\",\"type\":\"hidden\",\"label\":\"\",\"index\":2,\"values\":[\"10-03-2020\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\"}},{\"key\":\"blood_type_test_date\",\"type\":\"date_picker\",\"label\":\"Blood type test date\",\"index\":3,\"values\":[\"10-03-2020\"],\"openmrs_attributes\":{\"openmrs_entity_parent\":\"300AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163724AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}}]");
+        Assert.assertNotNull(values);
+
+        List<String> stringList = new Utils().createExpansionPanelChildren(values);
+        Assert.assertNotNull(stringList);
+        Assert.assertEquals(2, stringList.size());
+        Assert.assertEquals("Blood type test date:10-03-2020", stringList.get(1));
+    }
+
+    @Test
+    public void testShowProgressDialog() {
+        Utils.showProgressDialog(R.string.please_wait_title, R.string.please_wait, RuntimeEnvironment.application);
+        Assert.assertTrue(Utils.getProgressDialog().isShowing());
+
+        Utils.hideProgressDialog();
+        Assert.assertFalse(Utils.getProgressDialog().isShowing());
+    }
+
+    @Test
+    public void testPixelToDp() {
+        int layoutMargin = Utils.pixelToDp((int) RuntimeEnvironment.application.getResources().getDimension(R.dimen.bottom_navigation_margin), RuntimeEnvironment.application);
+        Assert.assertEquals(4, layoutMargin);
+    }
+
+    @Test
+    public void testGetFragmentTransaction() {
+        Activity activity = new Activity();
+        @NotNull FragmentTransaction fragmentTransaction = new Utils().getFragmentTransaction(activity);
+        Assert.assertNotNull(fragmentTransaction);
+    }
+
     public void testShowProgressDialogShouldReturnIfCurrentProgressDialogIsShowingOrNull() {
         ProgressDialog progressDialog = Mockito.mock(ProgressDialog.class);
         Mockito.doReturn(true).when(progressDialog).isShowing();
