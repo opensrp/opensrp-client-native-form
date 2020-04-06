@@ -16,7 +16,6 @@ public class JsonFormMLSAssetGeneratorTest {
 
     private final TestUtils testUtils = new TestUtils();
     private JsonFormMLSAssetGenerator jsonFormMLSAssetGenerator;
-    private final String formName = "basic_form";
 
     @Before
     public void setUp() {
@@ -24,7 +23,22 @@ public class JsonFormMLSAssetGeneratorTest {
     }
 
     @Test
-    public void testFormInterpolationShouldPerformCorrectTransformation() {
+    public void testFormInterpolationShouldPerformCorrectTransformationForJsonForm() {
+        String formName = "basic_form";
+        jsonFormMLSAssetGenerator.processForm(testUtils.getResourcesFilePath() + File.separator + formName + ".json");
+
+        String expectedJsonForm = testUtils.getResourceFileContentsAsString(formName + ".json");
+        String placeholderInjectedJsonForm = Utils.getFileContentsAsString(File.separator + jsonFormMLSAssetGenerator.getMLSAssetsFolder() + File.separator + formName  + ".json");
+
+        assertEquals(expectedJsonForm, NativeFormLangUtils.getTranslatedString(placeholderInjectedJsonForm, File.separator + jsonFormMLSAssetGenerator.getMLSAssetsFolder() + File.separator));
+
+        testUtils.deleteFile(File.separator + jsonFormMLSAssetGenerator.getMLSAssetsFolder() + File.separator + formName  + ".json");
+        testUtils.deleteFile(File.separator + jsonFormMLSAssetGenerator.getMLSAssetsFolder() + File.separator + formName  + ".properties");
+    }
+
+    @Test
+    public void testFormInterpolationShouldPerformCorrectTransformationForJsonSubForm() {
+        String formName = "expansion_panel_sub_form";
         jsonFormMLSAssetGenerator.processForm(testUtils.getResourcesFilePath() + File.separator + formName + ".json");
 
         String expectedJsonForm = testUtils.getResourceFileContentsAsString(formName + ".json");
