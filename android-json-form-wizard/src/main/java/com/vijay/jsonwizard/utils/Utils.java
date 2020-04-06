@@ -196,8 +196,12 @@ public class Utils {
     }
 
     public static void showProgressDialog(@StringRes int title, @StringRes int message, Context context) {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            return;
+        }
+
         progressDialog = new ProgressDialog(context);
-        progressDialog.setCancelable(false);
+        progressDialog.setCancelable(true);
         progressDialog.setTitle(context.getString(title));
         progressDialog.setMessage(context.getString(message));
         progressDialog.show();
@@ -326,10 +330,12 @@ public class Utils {
                 if (!rulesFileMap.containsKey(fileName)) {
                     Iterable<Object> objectIterable = readYamlFile(fileName, context);
                     List<Map<String, Object>> arrayList = new ArrayList<>();
-                    while (objectIterable.iterator().hasNext()) {
-                        Map<String, Object> map = (Map<String, Object>) objectIterable.iterator().next();
-                        if (map != null) {
-                            arrayList.add(map);
+                    if (objectIterable != null) {
+                        while (objectIterable.iterator().hasNext()) {
+                            Map<String, Object> yamlRulesMap = (Map<String, Object>) objectIterable.iterator().next();
+                            if (yamlRulesMap != null) {
+                                arrayList.add(yamlRulesMap);
+                            }
                         }
                     }
                     rulesFileMap.put(fileName, arrayList);

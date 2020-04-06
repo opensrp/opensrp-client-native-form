@@ -1,10 +1,10 @@
 package com.vijay.jsonwizard.activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 
 import com.google.gson.Gson;
@@ -33,6 +33,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import timber.log.Timber;
+
 import static com.vijay.jsonwizard.utils.NativeFormLangUtils.getTranslatedString;
 
 abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnFieldsInvalid {
@@ -57,11 +59,13 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
     private Toolbar mToolbar;
     private Map<String, ValidationStatus> invalidFields = new HashMap<>();
     private boolean isPreviousPressed = false;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.native_form_activity_json_form);
+        findViewById(R.id.native_form_activity).setFilterTouchesWhenObscured(true);
         mToolbar = findViewById(R.id.tb_top);
         setSupportActionBar(mToolbar);
         skipLogicViews = new LinkedHashMap<>();
@@ -117,7 +121,7 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
             localBroadcastManager = LocalBroadcastManager.getInstance(this);
 
         } catch (JSONException e) {
-            Log.e(TAG, "Initialization error. Json passed is invalid : " + e.getMessage(), e);
+            Timber.e(e, "Initialization error. Json passed is invalid");
         }
     }
 
@@ -136,7 +140,7 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
             }
             FormUtils.updateStartProperties(propertyManager, mJSONObject);
         } catch (Exception e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
     }
 
@@ -203,5 +207,13 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
 
     public void setRulesEngineFactory(RulesEngineFactory rulesEngineFactory) {
         this.rulesEngineFactory = rulesEngineFactory;
+    }
+
+    public ProgressDialog getProgressDialog() {
+        return progressDialog;
+    }
+
+    public void setProgressDialog(ProgressDialog progressDialog) {
+        this.progressDialog = progressDialog;
     }
 }
