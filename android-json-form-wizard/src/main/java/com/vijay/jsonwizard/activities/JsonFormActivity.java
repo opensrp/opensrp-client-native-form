@@ -85,6 +85,7 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -263,7 +264,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     @Override
     public void addCalculationLogicView(View view) {
-        calculationLogicViews.put(getViewKey(view), view);
+        calculationLogicViews.put((String) view.getTag(R.id.address), view);
     }
 
     @Override
@@ -297,10 +298,10 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
 
-    public Pair<String[], JSONObject> getAddressAndValue(View curView) throws JSONException {
-        String calculationTag = (String) curView.getTag(R.id.calculation);
-        String widgetKey = (String) curView.getTag(R.id.key);
-        String stepName = ((String) curView.getTag(R.id.address)).split(":")[0];
+    public Pair<String[], JSONObject> getAddressAndValue(View view) throws JSONException {
+        String calculationTag = (String) view.getTag(R.id.calculation);
+        String widgetKey = (String) view.getTag(R.id.key);
+        String stepName = ((String) view.getTag(R.id.address)).split(":")[0];
         if (calculationTag != null && calculationTag.length() > 0) {
             JSONObject calculation = new JSONObject(calculationTag);
             Iterator<String> keys = calculation.keys();
@@ -317,9 +318,9 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 if (address == null && curCalculation.has(JsonFormConstants.JSON_FORM_KEY.EX_RULES)) {
                     JSONObject exRulesObject = curCalculation.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES);
                     if (exRulesObject.has(RuleConstant.RULES_DYNAMIC)) {
-                        address = getDynamicRulesEngineAddress(curKey, curCalculation, curView, JsonFormConstants.CALCULATION);
+                        address = getDynamicRulesEngineAddress(curKey, curCalculation, view, JsonFormConstants.CALCULATION);
                     } else {
-                        address = getRulesEngineAddress(curKey, curCalculation, curView, JsonFormConstants.CALCULATION);
+                        address = getRulesEngineAddress(curKey, curCalculation, view, JsonFormConstants.CALCULATION);
                     }
                 }
                 return new Pair<>(address, valueSource);
@@ -330,10 +331,12 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     @Override
     public void refreshCalculationLogic(String parentKey, String childKey, boolean popup) {
-
-        Collection<View> views = calculationLogicViews.values();
-        for (View curView : views) {
+        Set<String> viewsIds=calculationTree.get("step1_"+parentKey);
+        if(parentKey==null || viewsIds==null)
+            viewsIds=calculationLogicViews.keySet();
+        for (String viewId : viewsIds) {
             try {
+                View curView=calculationLogicViews.get(viewId);
                 Pair<String[], JSONObject> addressAndValue = getAddressAndValue(curView);
                 if (addressAndValue != null && addressAndValue.first != null) {
                     String[] address = addressAndValue.first;
@@ -346,8 +349,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     }
                     timingLogger.addSplit("refreshCalculationLogic " + childKey);
                     updateCalculation(curValueMap, curView, address);
-
-
                 }
 
             } catch (Exception e) {
@@ -372,9 +373,29 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     private void populateCalculationTree() {
-
         for (View view : calculationLogicViews.values()) {
-
+            try {
+                Pair<String[], JSONObject> addressAndValue = getAddressAndValue(view);
+                if (addressAndValue != null) {
+                    String[] address = addressAndValue.first;
+                    List<String> widgets = getRules(address[1], address[2]);
+                    for (String widget : widgets) {
+                        if(!widget.startsWith(RuleConstant.STEP)){
+                          continue;
+                        }
+                        String key = (String) view.getTag(R.id.address);
+                        if (!calculationTree.containsKey(widget)) {
+                            Set<String> views = new HashSet<>();
+                            views.add(key);
+                            calculationTree.put(widget, views);
+                        } else {
+                            calculationTree.get(widget).add(key);
+                        }
+                    }
+                }
+            } catch (JSONException e) {
+                Timber.e(e);
+            }
         }
 
     }
