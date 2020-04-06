@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -29,12 +28,10 @@ public class ExpansionPanelGenericPopupDialogTask extends AsyncTask<Void, Void, 
     private FormUtils formUtils = new FormUtils();
     private Utils utils = new Utils();
     private View view;
-    private boolean translateSubForm;
+
 
     public ExpansionPanelGenericPopupDialogTask(View view) {
         this.view = view;
-        Object translateSubFormTag = view.getTag(R.id.translate_forms);
-        translateSubForm = translateSubFormTag == null ? false : Boolean.valueOf(translateSubFormTag.toString());
     }
 
     @Override
@@ -76,12 +73,6 @@ public class ExpansionPanelGenericPopupDialogTask extends AsyncTask<Void, Void, 
             genericPopupDialog.setParentKey(parentKey);
             genericPopupDialog.setLinearLayout(rootLayout);
             genericPopupDialog.setContext(context);
-
-            // specify if sub-form should be translated
-            Bundle bundle = new Bundle();
-            bundle.putBoolean(JsonFormConstants.PERFORM_FORM_TRANSLATION, translateSubForm);
-            genericPopupDialog.setArguments(bundle);
-
             utils.setExpansionPanelDetails(type, toolbarHeader, container, genericPopupDialog);
             genericPopupDialog.setWidgetType(type);
             if (customTextView != null && reasonsTextView != null) {

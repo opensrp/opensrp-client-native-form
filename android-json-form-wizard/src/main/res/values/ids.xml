@@ -84,5 +84,5 @@
     <item name="maxSelectable" type="id"/>
 
     <item name="simprints_guid" type="id" />
-    <item name="translate_forms" type="id" />
+
 </resources>

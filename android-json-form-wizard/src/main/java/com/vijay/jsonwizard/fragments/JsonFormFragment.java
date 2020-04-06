@@ -72,7 +72,6 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     private BottomNavigationListener navigationListener;
     private boolean shouldSkipStep = true;
     private static NativeFormsProperties nativeFormProperties;
-    private boolean translateForms = false;
 
     public static JsonFormFragment getFormFragment(String stepName) {
         JsonFormFragment jsonFormFragment = new JsonFormFragment();
@@ -89,10 +88,6 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         super.onCreate(savedInstanceState);
 
         nativeFormProperties = Utils.getProperties(getContext());
-
-        Intent activityIntent = getActivity().getIntent();
-        translateForms =  activityIntent == null ? translateForms
-                : activityIntent.getBooleanExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, false);
     }
 
     @Override
@@ -594,7 +589,6 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     @Override
     public void onClick(View v) {
-        v.setTag(R.id.translate_forms, translateForms);
         presenter.onClick(v);
     }
 
@@ -604,7 +598,6 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        buttonView.setTag(R.id.translate_forms, translateForms);
         presenter.onCheckedChanged(buttonView, isChecked);
     }
 
