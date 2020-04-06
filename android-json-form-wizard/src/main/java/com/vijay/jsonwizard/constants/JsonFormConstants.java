@@ -220,6 +220,8 @@ public class JsonFormConstants {
     public static final String ENCOUNTER_TYPE = "encounter_type";
     public static final String FORM_NAME = "form_name";
     public static final String FORM_CONFIG_LOCATION = "json.form/json.form.config.json";
+    public static final String FROM_DATA_SOURCE = "form_data_source";
+    public static final String DEFAULT_FORMS_DIRECTORY = "opensrpNativeFormTester";
 
     public interface MultiSelectUtils {
         String IS_HEADER = "isHeader";
@@ -324,5 +326,10 @@ public class JsonFormConstants {
 
     public interface RepeatingGroupFactory {
         String SHOW_GROUP_LABEL = "showGroupLabel";
+    }
+
+    public interface FileSource {
+        String DISK = "DISK";
+        String ASSETS = "ASSETS";
     }
 }
