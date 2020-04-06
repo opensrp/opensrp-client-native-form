@@ -214,6 +214,10 @@ public class Utils {
         }
     }
 
+    public static ProgressDialog getProgressDialog() {
+        return progressDialog;
+    }
+
     public static int pixelToDp(int dpValue, Context context) {
         float dpRatio = context.getResources().getDisplayMetrics().density;
         float pixelForDp = dpValue * dpRatio;
@@ -266,8 +270,7 @@ public class Utils {
     public static void resetRadioButtonsSpecifyText(RadioButton button) throws JSONException {
         CustomTextView specifyText = (CustomTextView) button.getTag(R.id.specify_textview);
         CustomTextView reasonsText = (CustomTextView) button.getTag(R.id.specify_reasons_textview);
-        CustomTextView extraInfoTextView = (CustomTextView) button
-                .getTag(R.id.specify_extra_info_textview);
+        CustomTextView extraInfoTextView = (CustomTextView) button.getTag(R.id.specify_extra_info_textview);
         JSONObject optionsJson = (JSONObject) button.getTag(R.id.option_json_object);
         String radioButtonText = optionsJson.optString(JsonFormConstants.TEXT);
         button.setText(radioButtonText);
