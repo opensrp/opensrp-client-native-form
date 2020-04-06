@@ -237,42 +237,78 @@ public class NumericDatePickerTest extends BaseTest {
 
     @Test
     public void testResetDatePickerCreatesValidDateWhenMaxConstraintsViolatedAfterUpdatingYear() {
+
         NumericDatePicker datePicker = new NumericDatePicker(RuntimeEnvironment.application);
+
         //Set malformed date
+
         ReflectionHelpers.setField(datePicker, "maxDate", 1405890000000l);
+
         ReflectionHelpers.setField(datePicker, "maxYear", 2014);
+
         ReflectionHelpers.setField(datePicker, "maxMonth", Calendar.JULY);
+
         ReflectionHelpers.setField(datePicker, "maxDay", 21);
+
         NumberPicker yearPicker = ReflectionHelpers.getField(datePicker, "yearPicker");
         yearPicker.setValue(2020);
+
         NumberPicker monthPicker = ReflectionHelpers.getField(datePicker, "monthPicker");
         monthPicker.setValue(Calendar.NOVEMBER + 1);
+
         Assert.assertEquals(Calendar.NOVEMBER, datePicker.getMonth());
+
         ReflectionHelpers.setField(datePicker, "changedPickerId", R.id.year);
         datePicker.resetDatePicker();
+
+        int dayOfMonthToday = new LocalDate().getDayOfMonth();
+        int expectedDayOfMonth = dayOfMonthToday;
+        if (dayOfMonthToday > 21) {
+            expectedDayOfMonth = 21;
+        }
+
         Assert.assertEquals(2014, datePicker.getYear());
-        Assert.assertEquals(new LocalDate().getDayOfMonth(), datePicker.getDayOfMonth());
+        Assert.assertEquals(expectedDayOfMonth, datePicker.getDayOfMonth());
         Assert.assertEquals(Calendar.JULY, datePicker.getMonth());
+
     }
 
     @Test
     public void testResetDatePickerCreatesValidDateWhenMaxConstraintsViolatedAfterUpdatingMonth() {
+
         NumericDatePicker datePicker = new NumericDatePicker(RuntimeEnvironment.application);
+
         //Set malformed date
+
         ReflectionHelpers.setField(datePicker, "maxDate", 1595192400000l);
+
         ReflectionHelpers.setField(datePicker, "maxYear", 2020);
+
         ReflectionHelpers.setField(datePicker, "maxMonth", Calendar.AUGUST);
+
         ReflectionHelpers.setField(datePicker, "maxDay", 20);
+
         NumberPicker yearPicker = ReflectionHelpers.getField(datePicker, "yearPicker");
         yearPicker.setValue(2020);
+
         NumberPicker monthPicker = ReflectionHelpers.getField(datePicker, "monthPicker");
         monthPicker.setValue(Calendar.SEPTEMBER + 1);
         monthPicker.setTag(R.id.previous, Calendar.AUGUST + 1);
+
         Assert.assertEquals(Calendar.SEPTEMBER, datePicker.getMonth());
+
         ReflectionHelpers.setField(datePicker, "changedPickerId", R.id.month);
         datePicker.resetDatePicker();
-        Assert.assertEquals(new LocalDate().getDayOfMonth(), datePicker.getDayOfMonth());
+
+        int dayOfMonthToday = new LocalDate().getDayOfMonth();
+        int expectedDayOfMonth = dayOfMonthToday;
+        if (dayOfMonthToday > 21) {
+            expectedDayOfMonth = 21;
+        }
+
+        Assert.assertEquals(expectedDayOfMonth, datePicker.getDayOfMonth());
         Assert.assertEquals(Calendar.AUGUST, datePicker.getMonth());
+
     }
 
     @Test
