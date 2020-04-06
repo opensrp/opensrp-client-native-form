@@ -49,7 +49,8 @@ public class JsonFormMLSAssetGenerator {
         String[] formPath = formToTranslate.split(File.separator);
         formName = formPath[formPath.length - 1].split("\\.")[0];
 
-        JsonObject placeholderInjectedForm = injectPlaceholders(stringToJson(form), formName);
+        JsonObject formJson = stringToJson(form);
+        JsonObject placeholderInjectedForm = injectPlaceholders(formJson, formName, formJson.has(JsonFormConstants.CONTENT_FORM));
         placeholderInjectedForm.addProperty(PROPERTIES_FILE_NAME, formName);
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -97,7 +98,8 @@ public class JsonFormMLSAssetGenerator {
      * @param formName
      * @return
      */
-    private static JsonObject injectPlaceholders(JsonObject jsonForm, String formName) {
+    private static JsonObject injectPlaceholders(JsonObject jsonForm, String formName, boolean isSubForm) {
+        if (isSubForm) { jsonForm.addProperty(JsonFormConstants.COUNT, 1); }
         for (int i = 1; i <= getNumOfSteps(jsonForm); i++) {
             String stepName = STEP + i;
             String placeholderStringPrefix = formName + "." + stepName;
@@ -115,6 +117,7 @@ public class JsonFormMLSAssetGenerator {
      * @param placeholderStrPrefix
      */
     private static void replaceStepStringLiterals(String placeholderStrPrefix, JsonObject stepJsonObject) {
+        if (stepJsonObject == null) { return; }
         for (String stepField : jsonFormInteractor.getDefaultTranslatableStepFields()) {
             JsonElement strLiteralElement = stepJsonObject.get(stepField);
             if (strLiteralElement != null) {
@@ -224,14 +227,16 @@ public class JsonFormMLSAssetGenerator {
 
     /**
      *
-     * Gets all the widget definitions for a particular {@param step} in the {@param jsonForm}
+     * Gets all the widget definitions in a particular {@param step} of the {@param jsonForm}
+     * or in the {@code JsonFormConstants.CONTENT_FORM} portion of a sub-form
      *
      * @param jsonForm
      * @param step
      * @return
      */
     private static JsonArray getWidgets(JsonObject jsonForm, String step) {
-        return getStepJsonObject(jsonForm, step).getAsJsonArray(JsonFormConstants.FIELDS);
+        JsonArray formFields = jsonForm.has(JsonFormConstants.CONTENT_FORM) ? jsonForm.get(JsonFormConstants.CONTENT_FORM).getAsJsonArray() : null;
+        return formFields == null ? getStepJsonObject(jsonForm, step).getAsJsonArray(JsonFormConstants.FIELDS) : formFields;
     }
 
     /**
