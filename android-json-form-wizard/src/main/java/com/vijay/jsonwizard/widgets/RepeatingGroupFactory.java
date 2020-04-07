@@ -64,8 +64,6 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
 
     private ImageButton doneButton;
     private WidgetArgs widgetArgs;
-    private boolean isRemoteReferenceValueUsed;
-    private int remoteReferenceValue;
 
     @Override
     public List<View> getViewsFromJson(final String stepName, final Context context, final JsonFormFragment formFragment, final JSONObject jsonObject, final CommonListener listener, final boolean popup) throws Exception {
@@ -102,7 +100,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         setUpReferenceEditText(referenceEditText, referenceEditTextHint, repeatingGroupLabel);
 
         // Disable the done button if the reference edit text being used is remote & has a valid value
-        if (isRemoteReferenceValueUsed) {
+        if (isRemoteReferenceValueUsed(referenceEditText)) {
             doneButton.setVisibility(View.GONE);
         } else {
             doneButton.setOnClickListener(new View.OnClickListener() {
@@ -163,8 +161,6 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
     }
 
     private void retrieveRepeatingGroupCountFromRemoteReferenceEditText(final @NonNull View rootLayout, @NonNull JsonApi context, @NonNull final MaterialEditText referenceEditText, @Nullable String remoteReferenceEditTextAddress) throws JSONException {
-        isRemoteReferenceValueUsed = false;
-        remoteReferenceValue = 0;
         if (!TextUtils.isEmpty(remoteReferenceEditTextAddress) && remoteReferenceEditTextAddress.contains(":")) {
             String finalRemoteReferenceEditTextAddress = remoteReferenceEditTextAddress.trim();
             String[] addressSections = finalRemoteReferenceEditTextAddress.split(":");
@@ -184,8 +180,8 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
 
                             if (!StringUtils.isEmpty(fieldValue)) {
                                 try {
-                                    remoteReferenceValue = Integer.parseInt(fieldValue);
-                                    isRemoteReferenceValueUsed = true;
+                                    final int remoteReferenceValue = Integer.parseInt(fieldValue);
+                                    referenceEditText.setTag(R.id.repeating_group_remote_reference_value, remoteReferenceValue);
 
                                     // Start the repeating groups
                                     Object visibilityTag = rootLayout.getTag(R.id.relevance_decided);
@@ -219,7 +215,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
     private void setUpReferenceEditText(final MaterialEditText referenceEditText, String referenceEditTextHint, String repeatingGroupLabel) throws JSONException {
         // We should disable this edit_text if another referenced edit text is being used
         Context context = widgetArgs.getContext();
-        if (isRemoteReferenceValueUsed) {
+        if (isRemoteReferenceValueUsed(referenceEditText)) {
             referenceEditText.setVisibility(View.GONE);
         } else {
             referenceEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -245,7 +241,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         referenceEditText.setTag(R.id.openmrs_entity, "");
         referenceEditText.setTag(R.id.openmrs_entity_id, "");
 
-        if (!isRemoteReferenceValueUsed) {
+        if (!isRemoteReferenceValueUsed(referenceEditText)) {
             referenceEditText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
             referenceEditText.addValidator(new RegexpValidator(context.getString(R.string.repeating_group_number_format_err_msg), "\\d*"));
             referenceEditText.addValidator(new MaxNumericValidator(context.getString(R.string.repeating_group_max_value_err_msg, MAX_NUM_REPEATING_GROUPS), MAX_NUM_REPEATING_GROUPS));
@@ -312,5 +308,15 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
 
     protected int getLayout() {
         return R.layout.native_form_repeating_group;
+    }
+
+    private boolean isRemoteReferenceValueUsed(@NonNull View referenceEditText) {
+        Object tagValue = referenceEditText.getTag(R.id.repeating_group_remote_reference_value);
+        return tagValue instanceof Integer && (int) tagValue > -1;
+    }
+
+    public int remoteReferenceValue(@NonNull View referenceEditText) {
+        Object tagValue = referenceEditText.getTag(R.id.repeating_group_remote_reference_value);
+        return tagValue instanceof Integer ? (int) tagValue : 0;
     }
 }
