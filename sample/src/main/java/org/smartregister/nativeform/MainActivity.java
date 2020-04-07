@@ -14,7 +14,7 @@ import com.vijay.jsonwizard.activities.JsonFormBaseActivity;
 import com.vijay.jsonwizard.activities.JsonWizardFormActivity;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.Form;
-import com.vijay.jsonwizard.factory.FileSourceFactory;
+import com.vijay.jsonwizard.factory.FileSourceFactoryHelper;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public JSONObject getFormJson(String formIdentity) {
         try {
-            return FileSourceFactory.getFileSource(JsonFormBaseActivity.DATA_SOURCE)
+            return FileSourceFactoryHelper.getFileSource(JsonFormBaseActivity.DATA_SOURCE)
                     .getFormFromFile(getApplicationContext(), formIdentity);
         } catch (Exception e) {
             e.printStackTrace();

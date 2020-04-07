@@ -26,11 +26,11 @@ import timber.log.Timber;
  */
 public class DiskFileSource implements FormFileSource {
 
+    public static DiskFileSource INSTANCE = new DiskFileSource();
+
     private DiskFileSource() {
 
     }
-
-    public static DiskFileSource INSTANCE = new DiskFileSource();
 
     @Override
     public Rules getRulesFromFile(Context context, String fileName) throws Exception {

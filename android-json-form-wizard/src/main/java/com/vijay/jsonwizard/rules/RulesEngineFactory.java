@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 import com.google.gson.Gson;
 import com.vijay.jsonwizard.activities.JsonFormBaseActivity;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
-import com.vijay.jsonwizard.factory.FileSourceFactory;
+import com.vijay.jsonwizard.factory.FileSourceFactoryHelper;
 import com.vijay.jsonwizard.utils.Utils;
 
 import org.jeasy.rules.api.Facts;
@@ -140,7 +140,7 @@ public class RulesEngineFactory implements RuleListener {
         try {
             if (!ruleMap.containsKey(fileName)) {
                 ruleMap.put(fileName,
-                        FileSourceFactory.getFileSource(JsonFormBaseActivity.DATA_SOURCE).getRulesFromFile(context, fileName)
+                        FileSourceFactoryHelper.getFileSource(JsonFormBaseActivity.DATA_SOURCE).getRulesFromFile(context, fileName)
                 );
             }
             return ruleMap.get(fileName);

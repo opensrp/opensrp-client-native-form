@@ -22,10 +22,10 @@ import timber.log.Timber;
  */
 public class AssetsFileSource implements FormFileSource {
 
+    public static AssetsFileSource INSTANCE = new AssetsFileSource();
+
     private AssetsFileSource() {
     }
-
-    public static AssetsFileSource INSTANCE = new AssetsFileSource();
 
     @Override
     public Rules getRulesFromFile(Context context, String fileName) throws Exception {
