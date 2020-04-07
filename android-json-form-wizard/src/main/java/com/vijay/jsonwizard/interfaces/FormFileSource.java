@@ -1,23 +1,35 @@
 package com.vijay.jsonwizard.interfaces;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 
 import org.jeasy.rules.api.Rules;
 import org.json.JSONObject;
 
-import java.io.IOException;
+import java.io.InputStream;
 
 public interface FormFileSource {
 
     Rules getRulesFromFile(Context context, String fileName) throws Exception;
 
-    JSONObject getFormFromFile(Context context, String fileName);
-
-    /***
+    /**
+     * Reads a file source and returns the JSON object of the content.
+     * Any exception apart from IOException & JSONException are propagated
      *
      * @param context
      * @param fileName
      * @return
      */
-    byte[] getFileContent(Context context, String fileName);
+    @Nullable
+    JSONObject getFormFromFile(Context context, String fileName) throws Exception;
+
+    /**
+     * gets context aware file InputStream
+     * @param context
+     * @param fileName
+     * @return
+     * @throws Exception
+     */
+    InputStream getFileInputStream(Context context, String fileName) throws Exception;
+
 }
