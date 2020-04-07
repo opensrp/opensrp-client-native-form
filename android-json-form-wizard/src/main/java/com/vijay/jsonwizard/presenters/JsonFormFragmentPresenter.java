@@ -135,6 +135,7 @@ public class JsonFormFragmentPresenter extends
                 final List<View> views = mJsonFormInteractor
                         .fetchFormElements(mStepName, formFragment, mStepDetails, getView().getCommonListener(),
                                 false);
+                formFragment.getJsonApi().initializeDependencyMaps();
 
                 formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
                     @Override

@@ -376,9 +376,13 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     @Override
-    public void invokeRefreshLogic(String value, boolean popup, String parentKey, String childKey, String stepName) {
+    public void initializeDependencyMaps(){
         populateDependencyMap(calculationLogicViews, calculationDependencyMap, true);
         populateDependencyMap(skipLogicViews, skipLogicDependencyMap, false);
+    }
+
+    @Override
+    public void invokeRefreshLogic(String value, boolean popup, String parentKey, String childKey, String stepName) {
         timingLogger.addSplit("invokeRefreshLogic " + childKey);
         refreshCalculationLogic(parentKey, childKey, popup, stepName);
         timingLogger.addSplit("refreshCalculationLogic " + childKey);
