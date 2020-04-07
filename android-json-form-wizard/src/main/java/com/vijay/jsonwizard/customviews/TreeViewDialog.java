@@ -2,6 +2,7 @@ package com.vijay.jsonwizard.customviews;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.support.annotation.VisibleForTesting;
 import android.view.Window;
 import android.widget.LinearLayout;
 
@@ -23,11 +24,12 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
     private static final String KEY_LEVEL = "level";
     private static final String KEY_NAME = "name";
     private static final String KEY_KEY = "key";
-
     private final Context context;
+    private boolean shouldExpandAllNodes = false;
     private ArrayList<String> value;
     private ArrayList<String> name;
     private HashMap<TreeNode, String> treeNodeHashMap;
+    private ArrayList<String> defaultValue;
 
     public TreeViewDialog(Context context, JSONArray structure, ArrayList<String> defaultValue, ArrayList<String> value)
             throws
@@ -67,8 +69,16 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
         return null;
     }
 
-    private static void setSelectedValue(TreeNode treeNode, int level, ArrayList<String> defaultValue,
-                                         HashMap<TreeNode, String> treeNodeHashMap) {
+    public boolean shouldExpandAllNodes() {
+        return shouldExpandAllNodes;
+    }
+
+    public void setShouldExpandAllNodes(boolean shouldExpandAllNodes) {
+        this.shouldExpandAllNodes = shouldExpandAllNodes;
+    }
+
+    private void setSelectedValue(TreeNode treeNode, int level, ArrayList<String> defaultValue,
+                                  HashMap<TreeNode, String> treeNodeHashMap) {
         if (treeNode != null) {
             if (defaultValue != null && level >= 0 && level < defaultValue.size()) {
                 String levelValue = defaultValue.get(level);
@@ -83,12 +93,13 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
                 }
             }
 
-            treeNode.setExpanded(false);
+            treeNode.setExpanded(shouldExpandAllNodes());
         }
     }
 
-    private void init(JSONArray nodes, ArrayList<String> defaultValue,
-                      final ArrayList<String> value) throws JSONException {
+    public void init(JSONArray nodes, ArrayList<String> defaultValue,
+                     final ArrayList<String> value) throws JSONException {
+        this.defaultValue = defaultValue;
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.setContentView(R.layout.native_form_dialog_tree_view);
         LinearLayout canvas = this.findViewById(R.id.canvas);
@@ -158,16 +169,21 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
     public void onClick(TreeNode node, Object value) {
         this.value = new ArrayList<>();
         this.name = new ArrayList<>();
-        if (node.getChildren().size() == 0) {
-            ArrayList<String> reversedValue = new ArrayList<>();
-            retrieveValue(treeNodeHashMap, node, reversedValue);
-
-            Collections.reverse(reversedValue);
-            this.value = reversedValue;
-            extractName();
-
-            dismiss();
+        if (shouldExpandAllNodes() && !getDefaultValue().contains(String.valueOf(value))) {
+            executeOnClick(node);
+        } else if (!shouldExpandAllNodes() && (node.getChildren().size() == 0)) {
+            executeOnClick(node);
         }
+    }
+
+    @VisibleForTesting
+    void executeOnClick(TreeNode node) {
+        ArrayList<String> reversedValue = new ArrayList<>();
+        retrieveValue(treeNodeHashMap, node, reversedValue);
+        Collections.reverse(reversedValue);
+        this.value = reversedValue;
+        extractName();
+        dismiss();
     }
 
     public ArrayList<String> getValue() {
@@ -182,4 +198,17 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
     public ArrayList<String> getName() {
         return this.name;
     }
+
+    public ArrayList<String> getDefaultValue() {
+        return defaultValue;
+    }
+
+    public HashMap<TreeNode, String> getTreeNodeHashMap() {
+        return treeNodeHashMap;
+    }
+
+    public void setTreeNodeHashMap(HashMap<TreeNode, String> treeNodeHashMap) {
+        this.treeNodeHashMap = treeNodeHashMap;
+    }
+
 }
