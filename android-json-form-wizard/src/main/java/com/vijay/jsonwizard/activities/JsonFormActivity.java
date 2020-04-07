@@ -85,7 +85,6 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -117,7 +116,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private Utils utils = new Utils();
     private HashMap<String, String[]> addressMap = new HashMap<>();
 
-    private Map<String, Set<String>> calculationTree = new HashMap<>();
+    private Map<String, Set<String>> calculationDependencyMap = new HashMap<>();
 
     TimingLogger timingLogger = new TimingLogger("TimingLogger", "JsonFormActivity");
 
@@ -292,7 +291,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     public void refreshSkipLogic(String parentKey, String childKey, boolean popup) {
         initComparisons();
         View[] views = skipLogicViews.values().toArray(new View[0]);
-        for (View curView : views) {
+        for (View curView :views) {
             addRelevance(curView, popup);
         }
     }
@@ -331,7 +330,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     @Override
     public void refreshCalculationLogic(String parentKey, String childKey, boolean popup) {
-        Set<String> viewsIds=calculationTree.get("step1_"+parentKey);
+        Set<String> viewsIds= calculationDependencyMap.get("step1_"+parentKey);
         if(parentKey==null || viewsIds==null)
             viewsIds=calculationLogicViews.keySet();
         for (String viewId : viewsIds) {
@@ -360,7 +359,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     @Override
     public void invokeRefreshLogic(String value, boolean popup, String parentKey, String childKey) {
-        populateCalculationTree();
+        populateCalculationDependencyMap();
         timingLogger.addSplit("invokeRefreshLogic " + childKey);
         refreshCalculationLogic(parentKey, childKey, popup);
         timingLogger.addSplit("refreshCalculationLogic " + childKey);
@@ -372,24 +371,24 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         timingLogger.addSplit("refreshMediaLogic " + childKey);
     }
 
-    private void populateCalculationTree() {
+    private void populateCalculationDependencyMap() {
         for (View view : calculationLogicViews.values()) {
             try {
                 Pair<String[], JSONObject> addressAndValue = getAddressAndValue(view);
                 if (addressAndValue != null) {
                     String[] address = addressAndValue.first;
-                    List<String> widgets = getRules(address[1], address[2]);
+                    List<String> widgets = getRules(address[1], address[2],true);
                     for (String widget : widgets) {
                         if(!widget.startsWith(RuleConstant.STEP)){
                           continue;
                         }
                         String key = (String) view.getTag(R.id.address);
-                        if (!calculationTree.containsKey(widget)) {
+                        if (!calculationDependencyMap.containsKey(widget)) {
                             Set<String> views = new HashSet<>();
                             views.add(key);
-                            calculationTree.put(widget, views);
+                            calculationDependencyMap.put(widget, views);
                         } else {
-                            calculationTree.get(widget).add(key);
+                            calculationDependencyMap.get(widget).add(key);
                         }
                     }
                 }
@@ -435,7 +434,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 return fillFieldsWithValues(keysList, popup);
             } else if (RuleConstant.RULES_ENGINE.equals(address[0])) {
                 String fieldKey = address[2];
-                List<String> rulesList = getRules(address[1], fieldKey);
+                List<String> rulesList = getRules(address[1], fieldKey,false);
                 if (rulesList != null) {
                     return fillFieldsWithValues(rulesList, popup);
                 }
@@ -481,7 +480,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     if (RuleConstant.RULES_ENGINE.equals(address[0])) {
                         String fieldKey = address[2];
 
-                        List<String> rulesList = getRules(address[1], fieldKey);
+                        List<String> rulesList = getRules(address[1], fieldKey,false);
                         if (rulesList != null) {
                             JSONObject result = new JSONObject();
                             JSONArray rulesArray = new JSONArray();
@@ -1681,7 +1680,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         return new ExObjectResult(false, false);
     }
 
-    private List<String> getRules(String filename, String fieldKey) {
+    private List<String> getRules(String filename, String fieldKey, boolean readAllRules) {
         List<String> rules = ruleKeys.get(filename + ":" + fieldKey);
 
         if (rules == null) {
@@ -1719,10 +1718,9 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     actions.addAll(getConditionKeys(conditionString.toString()));
                     ruleKeys.put(filename + ":" + name, actions);
 
-                    if (name.equals(fieldKey)) {
+                    if (!readAllRules && name.equals(fieldKey)) {
                         break;
                     }
-
                 }
 
             } catch (Exception e) {
