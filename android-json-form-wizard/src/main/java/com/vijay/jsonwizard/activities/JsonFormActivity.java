@@ -63,6 +63,7 @@ import com.vijay.jsonwizard.interfaces.LifeCycleListener;
 import com.vijay.jsonwizard.interfaces.OnActivityRequestPermissionResultListener;
 import com.vijay.jsonwizard.interfaces.OnActivityResultListener;
 import com.vijay.jsonwizard.rules.RuleConstant;
+import com.vijay.jsonwizard.utils.AppExecutors;
 import com.vijay.jsonwizard.utils.ExObjectResult;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.PermissionUtils;
@@ -120,6 +121,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private Map<String, Set<String>> skipLogicDependencyMap = new HashMap<>();
 
     TimingLogger timingLogger = new TimingLogger("TimingLogger", "JsonFormActivity");
+
+    private  AppExecutors appExecutors= new AppExecutors();
 
     private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
         @Override
@@ -2238,5 +2241,10 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             values = new ArrayList<>();
         }
         return values;
+    }
+
+    @Override
+    public AppExecutors getAppExecutors() {
+        return appExecutors;
     }
 }

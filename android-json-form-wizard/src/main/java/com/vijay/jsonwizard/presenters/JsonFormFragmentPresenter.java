@@ -116,18 +116,29 @@ public class JsonFormFragmentPresenter extends
     }
 
     public void addFormElements() {
-        mStepName = getView().getArguments().getString("stepName");
-        JSONObject step = getView().getStep(mStepName);
-        try {
-            mStepDetails = new JSONObject(step.toString());
-        } catch (JSONException e) {
-            Log.e(TAG, e.getMessage(), e);
-        }
-        List<View> views = mJsonFormInteractor
-                .fetchFormElements(mStepName, formFragment, mStepDetails, getView().getCommonListener(),
-                        false);
-        getView().addFormElements(views);
+        formFragment.getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                mStepName = getView().getArguments().getString("stepName");
+                JSONObject step = getView().getStep(mStepName);
+                try {
+                    mStepDetails = new JSONObject(step.toString());
+                } catch (JSONException e) {
+                    Log.e(TAG, e.getMessage(), e);
+                }
+                final List<View> views = mJsonFormInteractor
+                        .fetchFormElements(mStepName, formFragment, mStepDetails, getView().getCommonListener(),
+                                false);
 
+                formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        getView().addFormElements(views);
+                        formFragment.getJsonApi().invokeRefreshLogic(null, false, null, null,mStepName);
+                    }
+                });
+            }
+        });
     }
 
     @SuppressLint("ResourceAsColor")

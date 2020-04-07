@@ -4,6 +4,7 @@ import android.view.View;
 
 import com.vijay.jsonwizard.customviews.GenericPopupDialog;
 import com.vijay.jsonwizard.domain.Form;
+import com.vijay.jsonwizard.utils.AppExecutors;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 
 import org.json.JSONArray;
@@ -122,4 +123,6 @@ public interface JsonApi {
     void setPreviousPressed(boolean previousPressed);
 
     Form form();
+
+    AppExecutors getAppExecutors();
 }
