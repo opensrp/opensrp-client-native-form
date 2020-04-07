@@ -13,7 +13,9 @@ import android.widget.RadioGroup;
 import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.rules.RuleConstant;
 import com.vijay.jsonwizard.views.CustomTextView;
+import com.vijay.jsonwizard.widgets.DatePickerFactory;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -25,12 +27,15 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.powermock.reflect.internal.WhiteboxImpl;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.util.ReflectionHelpers;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -127,6 +132,7 @@ public class UtilsTest extends BaseTest {
         Assert.assertEquals("0d", duration);
     }
 
+    @Test
     public void testBuildRulesWithUniqueIdShouldUpdateRelevanceRulesEngineObjectAccordingly() throws JSONException, IOException {
         String ruleType = "relevance";
         JSONObject element = new JSONObject();
@@ -169,8 +175,18 @@ public class UtilsTest extends BaseTest {
         Mockito.when(assetManager.open("rule/diagnose_and_treat_relevance.yml")).thenReturn(inputStream);
         Map<String, List<Map<String, Object>>> rulesFileMap = new HashMap<>();
         Utils.buildRulesWithUniqueId(element, unique_id, ruleType, context, rulesFileMap);
-        String expected = "{\"relevance\":{\"rules-engine\":{\"ex-rules\":{\"rules-dynamic\":[{\"key\":\"c29afdf9-843e-4c90-9a79-3dafd70e045b\"},{\"name\":\"step1_diagnostic_test_result_spinner_c29afdf9-843e-4c90-9a79-3dafd70e045b\",\"description\":\"diagnostic_test_result_spinner_c29afdf9-843e-4c90-9a79-3dafd70e045b\",\"priority\":1,\"actions\":\"isRelevant = true\",\"condition\":\"step1_diagnostic_test_c29afdf9-843e-4c90-9a79-3dafd70e045b == 'Pregnancy Test' || step1_diagnostic_test_c29afdf9-843e-4c90-9a79-3dafd70e045b == 'Malaria test' || step1_diagnostic_test_c29afdf9-843e-4c90-9a79-3dafd70e045b == 'HIV test' || step1_diagnostic_test_c29afdf9-843e-4c90-9a79-3dafd70e045b == 'Syphilis test' || step1_diagnostic_test_c29afdf9-843e-4c90-9a79-3dafd70e045b == 'Hep B test' || step1_diagnostic_test_c29afdf9-843e-4c90-9a79-3dafd70e045b == 'Hep C test' || step1_diagnostic_test_c29afdf9-843e-4c90-9a79-3dafd70e045b == 'TB Screening' || step1_diagnostic_test_c29afdf9-843e-4c90-9a79-3dafd70e045b == 'Midstream urine Gram-staining'\"},{\"name\":\"step1_diagnostic_test_result_specify_c29afdf9-843e-4c90-9a79-3dafd70e045b\",\"description\":\"diagnostic_test_result_specify_c29afdf9-843e-4c90-9a79-3dafd70e045b\",\"priority\":1,\"actions\":\"isRelevant = true\",\"condition\":\"step1_diagnostic_test_c29afdf9-843e-4c90-9a79-3dafd70e045b == 'Ultra sound'\"},{\"name\":\"step1_diagnostic_test_result_glucose_c29afdf9-843e-4c90-9a79-3dafd70e045b\",\"description\":\"diagnostic_test_result_glucose_c29afdf9-843e-4c90-9a79-3dafd70e045b\",\"priority\":1,\"actions\":\"isRelevant = true\",\"condition\":\"step1_diagnostic_test_c29afdf9-843e-4c90-9a79-3dafd70e045b.startsWith('Blood Glucose test')\"},{\"name\":\"step1_diagnostic_test_result_spinner_blood_type_c29afdf9-843e-4c90-9a79-3dafd70e045b\",\"description\":\"diagnostic_test_result_spinner_blood_type_c29afdf9-843e-4c90-9a79-3dafd70e045b\",\"priority\":1,\"actions\":\"isRelevant = true\",\"condition\":\"step1_diagnostic_test_c29afdf9-843e-4c90-9a79-3dafd70e045b == 'Blood Type test'\"}]}}}}";
-        Assert.assertEquals(expected, element.toString());
+        JSONObject jsonExpectedObject = element.getJSONObject(ruleType);//new JSONObject(element);
+        JSONArray jsonArray = jsonExpectedObject.optJSONObject(RuleConstant.RULES_ENGINE)
+                .optJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES)
+                .optJSONArray(RuleConstant.RULES_DYNAMIC);
+        String resultKeyValue = "";
+        for (int i = 0; i < jsonArray.length(); i++) {
+            if (jsonArray.optJSONObject(i).has(JsonFormConstants.KEY)) {
+                resultKeyValue = jsonArray.optJSONObject(i).optString(JsonFormConstants.KEY);
+                break;
+            }
+        }
+        Assert.assertEquals(unique_id, resultKeyValue);
     }
 
     @Test
@@ -273,5 +289,45 @@ public class UtilsTest extends BaseTest {
         Utils.showProgressDialog(R.string.hello_world, R.string.hello_world, RuntimeEnvironment.application);
         ProgressDialog progressDialog = ReflectionHelpers.getStaticField(Utils.class, "progressDialog");
         Assert.assertTrue(progressDialog.isShowing());
+    }
+
+    @Test
+    public void testProcessNumberValuesShouldReturnCorrectValues() {
+        Utils utils = new Utils();
+        Assert.assertEquals(String.valueOf(4.7), utils.processNumberValues("4.7"));//test float
+        Assert.assertEquals(String.valueOf(0.05), utils.processNumberValues("0.047"));//test rounding off
+        Assert.assertEquals(47, utils.processNumberValues("47"));//test integer
+        Assert.assertEquals(String.valueOf(Long.MAX_VALUE), utils.processNumberValues(String.valueOf(Long.MAX_VALUE)));//test when exception
+    }
+
+    @Test
+    public void testGetDateFromStringShouldReturnCorrectDate() throws ParseException {
+        String date = "20-12-1997";
+        Assert.assertEquals(DatePickerFactory.DATE_FORMAT.parse(date), Utils.getDateFromString("20-12-1997"));
+        Assert.assertNull(Utils.getDateFromString("20/12/1997"));
+        Assert.assertNull(Utils.getDateFromString(""));
+    }
+
+    @Test
+    public void testGetStringFromDateShouldReturnCorrectString() throws ParseException {
+        String strDate = "20-12-1997";
+        Date date = DatePickerFactory.DATE_FORMAT.parse(strDate);
+        Assert.assertEquals(strDate, Utils.getStringFromDate(date));
+        Assert.assertNull(Utils.getStringFromDate(null));
+    }
+
+    @Test
+    public void testReverseDateStringShouldReturnReverseDateString() {
+        String date = "20-12-1997";
+        Assert.assertEquals("1997-12-20", Utils.reverseDateString(date, "-"));
+    }
+
+    @Test
+    public void testGetStringValueShouldReturnStringValue() throws Exception {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(JsonFormConstants.VALUES, new JSONArray().put("yes").put("no").put("don't know"));
+        Utils utils = new Utils();
+        String expected = "yes, no, don't know";
+        Assert.assertEquals(expected, WhiteboxImpl.invokeMethod(utils, "getStringValue", jsonObject));
     }
 }

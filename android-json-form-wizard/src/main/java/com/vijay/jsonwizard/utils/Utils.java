@@ -517,17 +517,17 @@ public class Utils {
     }
 
     protected Object processNumberValues(Object object) {
-        Object jsonObject = object;
+        Object value = object;
         try {
-            if (jsonObject.toString().contains(".")) {
-                jsonObject = String.valueOf((float) Math.round(Float.valueOf(jsonObject.toString()) * 100) / 100);
+            if (value.toString().contains(".")) {
+                value = String.valueOf((float) Math.round(Float.valueOf(value.toString()) * 100) / 100);
             } else {
-                jsonObject = Integer.valueOf(jsonObject.toString());
+                value = Integer.valueOf(value.toString());
             }
         } catch (NumberFormatException e) {
-            //Log.e(TAG, "Error trying to convert " + object + " to a number ", e);
+            Timber.e(e);
         }
-        return jsonObject;
+        return value;
     }
 
     protected boolean canHaveNumber(JSONObject object) throws JSONException {
