@@ -62,11 +62,11 @@ public interface JsonApi {
 
     void refreshHiddenViews(boolean popup);
 
-    void refreshSkipLogic(String parentKey, String childKey, boolean popup);
+    void refreshSkipLogic(String parentKey, String childKey, boolean popup, String stepName);
 
-    void refreshCalculationLogic(String parentKey, String childKey, boolean popup, String step);
+    void refreshCalculationLogic(String parentKey, String childKey, boolean popup, String stepName);
 
-    void invokeRefreshLogic(String value, boolean popup, String parentKey, String childKey,String step);
+    void invokeRefreshLogic(String value, boolean popup, String parentKey, String childKey,String stepName);
 
     void addFormDataView(View view);
 

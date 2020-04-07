@@ -117,7 +117,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private HashMap<String, String[]> addressMap = new HashMap<>();
 
     private Map<String, Set<String>> calculationDependencyMap = new HashMap<>();
-    private Map<String, Set<String>> relevanceDependencyMap = new HashMap<>();
+    private Map<String, Set<String>> skipLogicDependencyMap = new HashMap<>();
 
     TimingLogger timingLogger = new TimingLogger("TimingLogger", "JsonFormActivity");
 
@@ -259,7 +259,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     @Override
     public void addSkipLogicView(View view) {
-        skipLogicViews.put(getViewKey(view), view);
+        skipLogicViews.put((String) view.getTag(R.id.address), view);
     }
 
     @Override
@@ -289,15 +289,30 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     @Override
-    public void refreshSkipLogic(String parentKey, String childKey, boolean popup) {
+    public void refreshSkipLogic(String parentKey, String childKey, boolean popup, String stepName) {
         initComparisons();
-        for (View curView : skipLogicViews.values()) {
-            addRelevance(curView, popup);
+        Set<String> viewsIds = skipLogicDependencyMap.get(stepName + "_" + parentKey);
+        if (parentKey == null || childKey == null) {
+            for (View curView : skipLogicViews.values()) {
+                addRelevance(curView, popup);
+            }
+        } else if (viewsIds == null) {
+            for (View curView : skipLogicViews.values()) {
+                //skip any relevance by rules engine since the these components are not affected either way.
+                // Run relevance for native relevance functions as these are first and not optimized currently
+                if (!skipLogicDependencyMap.containsKey(curView.getTag(R.id.address))) {
+                    addRelevance(curView, popup);
+                }
+            }
+        } else {
+            for (String viewId : viewsIds) {
+                addRelevance(skipLogicViews.get(viewId), popup);
+            }
         }
     }
 
 
-    public Pair<String[], JSONObject> getCaclulcationAddressAndValue(View view) throws JSONException {
+    public Pair<String[], JSONObject> getCalculationAddressAndValue(View view) throws JSONException {
         String calculationTag = (String) view.getTag(R.id.calculation);
         String widgetKey = (String) view.getTag(R.id.key);
         String stepName = ((String) view.getTag(R.id.address)).split(":")[0];
@@ -336,7 +351,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         for (String viewId : viewsIds) {
             try {
                 View curView = calculationLogicViews.get(viewId);
-                Pair<String[], JSONObject> addressAndValue = getCaclulcationAddressAndValue(curView);
+                Pair<String[], JSONObject> addressAndValue = getCalculationAddressAndValue(curView);
                 if (addressAndValue != null && addressAndValue.first != null) {
                     String[] address = addressAndValue.first;
                     JSONObject valueSource = addressAndValue.second;
@@ -358,13 +373,13 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     @Override
-    public void invokeRefreshLogic(String value, boolean popup, String parentKey, String childKey, String step) {
+    public void invokeRefreshLogic(String value, boolean popup, String parentKey, String childKey, String stepName) {
         populateDependencyMap(calculationLogicViews, calculationDependencyMap, true);
-        populateDependencyMap(skipLogicViews, relevanceDependencyMap, false);
+        populateDependencyMap(skipLogicViews, skipLogicDependencyMap, false);
         timingLogger.addSplit("invokeRefreshLogic " + childKey);
-        refreshCalculationLogic(parentKey, childKey, popup, step);
+        refreshCalculationLogic(parentKey, childKey, popup, stepName);
         timingLogger.addSplit("refreshCalculationLogic " + childKey);
-        refreshSkipLogic(parentKey, childKey, popup);
+        refreshSkipLogic(parentKey, childKey, popup, stepName);
         timingLogger.addSplit("refreshSkipLogic " + childKey);
         refreshConstraints(parentKey, childKey, popup);
         timingLogger.addSplit("refreshConstraints " + childKey);
@@ -375,11 +390,11 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private void populateDependencyMap(Map<String, View> formViews, Map<String, Set<String>> dependencyMap, boolean calculation) {
         for (View view : formViews.values()) {
             try {
-                Pair<String[], JSONObject> addressAndValue = calculation ? getCaclulcationAddressAndValue(view) :
+                Pair<String[], JSONObject> addressAndValue = calculation ? getCalculationAddressAndValue(view) :
                         getRelevanceAddress(view, (boolean) view.getTag(R.id.extraPopup));
                 if (addressAndValue != null) {
                     String[] address = addressAndValue.first;
-                    if(address.length<=2)
+                    if (address.length <= 2)
                         continue;
                     List<String> widgets = getRules(address[1], address[2], true);
                     for (String widget : widgets) {
