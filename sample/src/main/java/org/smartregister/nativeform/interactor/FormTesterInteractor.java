@@ -3,21 +3,30 @@ package org.smartregister.nativeform.interactor;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.os.Environment;
+import android.support.annotation.Nullable;
 
+import com.google.gson.Gson;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.domain.Form;
 
 import org.smartregister.nativeform.contract.FormTesterContract;
+import org.smartregister.nativeform.domain.ConfigForm;
 import org.smartregister.nativeform.domain.JsonForm;
+import org.smartregister.nativeform.util.FileReaderUtil;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class FormTesterInteractor implements FormTesterContract.Interactor {
+    private Gson gson = null;
 
     @Override
     public void exportDefaultForms(Context context, FormTesterContract.Presenter presenter) {
@@ -25,7 +34,7 @@ public class FormTesterInteractor implements FormTesterContract.Interactor {
         try {
             String root = verifyOrCreateDiskDirectory();
 
-            String[] image_source = {"json.form", "img", "image", "rule"};
+            String[] image_source = {"json.form", "json.form.config", "img", "image", "rule"};
             for (String sourceDir : image_source) {
                 exportDirectory(assetManager, sourceDir, context, root, true);
             }
@@ -125,7 +134,7 @@ public class FormTesterInteractor implements FormTesterContract.Interactor {
             for (File file : myDir.listFiles()) {
                 String type = getFileExtension(file.getName());
                 if (type.equalsIgnoreCase("json"))
-                    nativeForms.add(new JsonForm(file));
+                    nativeForms.add(new JsonForm(file, readFileForm(context, file.getName())));
             }
 
             Collections.sort(nativeForms, (o1, o2) -> o1.getFileName().compareTo(o2.getFileName()));
@@ -135,10 +144,50 @@ public class FormTesterInteractor implements FormTesterContract.Interactor {
         return files;
     }
 
+    @Nullable
+    private Form readFileForm(Context context, String formName) {
+        String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString();
+        File formFile = new File(root + "/" + JsonFormConstants.DEFAULT_FORMS_DIRECTORY + "/json.form.config/" + formName);
+        if (formFile.exists()) {
+            // parse and create a form object
+            if (gson == null)
+                gson = new Gson();
+
+            try {
+                String content = FileReaderUtil.getStringFromFile(formFile);
+                ConfigForm configForm = gson.fromJson(content, ConfigForm.class);
+                return configForm.toForm(context);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return null;
+    }
+
     private String getFileExtension(String fullName) {
         String fileName = new File(fullName).getName();
         int dotIndex = fileName.lastIndexOf('.');
         return (dotIndex == -1) ? "" : fileName.substring(dotIndex + 1);
     }
 
+
+    private String getStringFromFile(File sourceFile) throws Exception {
+        FileInputStream fin = new FileInputStream(sourceFile);
+        String ret = convertStreamToString(fin);
+        //Make sure you close all streams.
+        fin.close();
+        return ret;
+    }
+
+    private String convertStreamToString(InputStream is) throws Exception {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            sb.append(line).append("\n");
+        }
+        reader.close();
+        return sb.toString();
+    }
 }

@@ -6,6 +6,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 
+import com.vijay.jsonwizard.domain.Form;
+
 import org.json.JSONObject;
 
 import java.io.File;
@@ -31,7 +33,7 @@ public interface FormTesterContract {
          *
          * @param jsonObject
          */
-        void startForm(JSONObject jsonObject);
+        void startForm(@NonNull JSONObject jsonObject, @Nullable Form form);
 
         void displayForms(List<NativeForm> nativeForms);
 
@@ -120,5 +122,11 @@ public interface FormTesterContract {
          */
         @Nullable
         JSONObject getJsonForm();
+
+        @Nullable
+        /***
+         * Returns a customizable form object if present
+         */
+        Form getFormDetails();
     }
 }

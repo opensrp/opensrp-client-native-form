@@ -5,15 +5,13 @@ import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 
 import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.domain.Form;
 
 import org.json.JSONObject;
 import org.smartregister.nativeform.contract.FormTesterContract;
+import org.smartregister.nativeform.util.FileReaderUtil;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 import timber.log.Timber;
 
@@ -28,12 +26,14 @@ public class JsonForm implements FormTesterContract.NativeForm {
     private String fileName;
     private boolean isValid = false;
     private JSONObject jsonObject;
+    private Form form = null;
 
     @WorkerThread
-    public JsonForm(@NonNull File sourceFile) {
+    public JsonForm(@NonNull File sourceFile, Form form) {
         fileName = sourceFile.getName();
+        this.form = form;
         try {
-            jsonObject = new JSONObject(getStringFromFile(sourceFile));
+            jsonObject = new JSONObject(FileReaderUtil.getStringFromFile(sourceFile));
             if (jsonObject.has(JsonFormConstants.ENCOUNTER_TYPE)) {
                 formName = jsonObject.getString(JsonFormConstants.ENCOUNTER_TYPE);
                 isValid = true;
@@ -41,25 +41,6 @@ public class JsonForm implements FormTesterContract.NativeForm {
         } catch (Exception e) {
             Timber.e(e);
         }
-    }
-
-    private String getStringFromFile(File sourceFile) throws Exception {
-        FileInputStream fin = new FileInputStream(sourceFile);
-        String ret = convertStreamToString(fin);
-        //Make sure you close all streams.
-        fin.close();
-        return ret;
-    }
-
-    private String convertStreamToString(InputStream is) throws Exception {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        StringBuilder sb = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            sb.append(line).append("\n");
-        }
-        reader.close();
-        return sb.toString();
     }
 
     @Nullable
@@ -82,5 +63,11 @@ public class JsonForm implements FormTesterContract.NativeForm {
     @Override
     public JSONObject getJsonForm() {
         return jsonObject;
+    }
+
+    @Nullable
+    @Override
+    public Form getFormDetails() {
+        return form;
     }
 }

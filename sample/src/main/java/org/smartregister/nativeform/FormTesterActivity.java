@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
@@ -21,6 +23,7 @@ import android.widget.Toast;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
 import com.vijay.jsonwizard.activities.JsonWizardFormActivity;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.domain.Form;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
@@ -87,13 +90,16 @@ public class FormTesterActivity extends AppCompatActivity implements FormTesterC
     }
 
     @Override
-    public void startForm(JSONObject jsonObject) {
+    public void startForm(@NonNull JSONObject jsonObject, @Nullable Form form) {
 
         Class<?> cls = (jsonObject.has("step2")) ? JsonWizardFormActivity.class : JsonFormActivity.class;
         Intent intent = new Intent(this, cls);
         intent.putExtra("json", jsonObject.toString());
         intent.putExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, false);
         intent.putExtra(JsonFormConstants.FROM_DATA_SOURCE, JsonFormConstants.FileSource.DISK);
+        if (form != null)
+            intent.putExtra(JsonFormConstants.JSON_FORM_KEY.FORM, form);
+
         Timber.d("form is " + jsonObject.toString());
         startActivityForResult(intent, REQUEST_CODE_GET_JSON);
     }
@@ -118,7 +124,7 @@ public class FormTesterActivity extends AppCompatActivity implements FormTesterC
     @Override
     public void onFormViewClicked(FormTesterContract.NativeForm selectedObject, View hostView, int viewID) {
         if (selectedObject.isValid() && selectedObject.getJsonForm() != null) {
-            startForm(selectedObject.getJsonForm());
+            startForm(selectedObject.getJsonForm(), selectedObject.getFormDetails());
         }
     }
 
