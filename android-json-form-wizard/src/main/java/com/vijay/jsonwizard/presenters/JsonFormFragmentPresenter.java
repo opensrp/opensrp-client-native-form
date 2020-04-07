@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -116,6 +117,11 @@ public class JsonFormFragmentPresenter extends
     }
 
     public void addFormElements() {
+        final ProgressDialog dialog = new ProgressDialog(formFragment.getContext());
+        dialog.setCancelable(false);
+        dialog.setTitle(formFragment.getContext().getString(com.vijay.jsonwizard.R.string.loading));
+        dialog.setMessage(formFragment.getContext().getString(com.vijay.jsonwizard.R.string.loading_form_message));
+        dialog.show();
         formFragment.getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -133,8 +139,9 @@ public class JsonFormFragmentPresenter extends
                 formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
                     @Override
                     public void run() {
+                        dialog.dismiss();
                         getView().addFormElements(views);
-                        formFragment.getJsonApi().invokeRefreshLogic(null, false, null, null,mStepName);
+                        formFragment.getJsonApi().invokeRefreshLogic(null, false, null, null, mStepName);
                     }
                 });
             }

@@ -122,7 +122,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     TimingLogger timingLogger = new TimingLogger("TimingLogger", "JsonFormActivity");
 
-    private  AppExecutors appExecutors= new AppExecutors();
+    private AppExecutors appExecutors = new AppExecutors();
 
     private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
         @Override
