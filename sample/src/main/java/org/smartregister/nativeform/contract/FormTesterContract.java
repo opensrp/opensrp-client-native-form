@@ -1,7 +1,6 @@
 package org.smartregister.nativeform.contract;
 
 import android.content.Context;
-import android.support.annotation.IntegerRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -10,7 +9,6 @@ import com.vijay.jsonwizard.domain.Form;
 
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.List;
 
 public interface FormTesterContract {
@@ -104,7 +102,9 @@ public interface FormTesterContract {
          * @param presenter
          * @return
          */
-        List<File> readForms(Context context, Presenter presenter);
+        void readForms(@NonNull Context context, Presenter presenter);
+
+        void executeOnMainThread(@NonNull Runnable runnable);
 
     }
 
@@ -118,6 +118,7 @@ public interface FormTesterContract {
 
         /**
          * Check for nullability and is the file is valid
+         *
          * @return
          */
         @Nullable

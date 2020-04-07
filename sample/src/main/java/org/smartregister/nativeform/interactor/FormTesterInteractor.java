@@ -3,12 +3,15 @@ package org.smartregister.nativeform.interactor;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.Form;
 
+import org.jetbrains.annotations.NotNull;
 import org.smartregister.nativeform.contract.FormTesterContract;
 import org.smartregister.nativeform.domain.ConfigForm;
 import org.smartregister.nativeform.domain.JsonForm;
@@ -21,25 +24,30 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class FormTesterInteractor implements FormTesterContract.Interactor {
     private Gson gson = null;
+    private ExecutorService executorService = Executors.newFixedThreadPool(1);
 
     @Override
     public void exportDefaultForms(Context context, FormTesterContract.Presenter presenter) {
-        AssetManager assetManager = context.getAssets();
-        try {
-            String root = verifyOrCreateDiskDirectory();
+        executorService.execute(() -> {
+            AssetManager assetManager = context.getAssets();
+            try {
+                String root = verifyOrCreateDiskDirectory();
 
-            String[] image_source = {"json.form", "json.form.config", "img", "image", "rule"};
-            for (String sourceDir : image_source) {
-                exportDirectory(assetManager, sourceDir, context, root, true);
+                String[] image_source = {"json.form", "json.form.config", "img", "image", "rule"};
+                for (String sourceDir : image_source) {
+                    exportDirectory(assetManager, sourceDir, context, root, true);
+                }
+
+                readForms(context, presenter);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-
-            readForms(context, presenter);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        });
     }
 
     private void exportDirectory(AssetManager assetManager, String sourceDir, Context context, String root, boolean createRoot) throws IOException {
@@ -100,7 +108,7 @@ public class FormTesterInteractor implements FormTesterContract.Interactor {
 
     @Override
     public void validateForm(Context context, String formName) {
-
+        // TODO
     }
 
     @Override
@@ -121,24 +129,30 @@ public class FormTesterInteractor implements FormTesterContract.Interactor {
     }
 
     @Override
-    public List<File> readForms(Context context, FormTesterContract.Presenter presenter) {
-        String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString();
-        File myDir = new File(root + "/" + JsonFormConstants.DEFAULT_FORMS_DIRECTORY + "/json.form/");
+    public void readForms(@NotNull Context context, FormTesterContract.Presenter presenter) {
+        executorService.execute(() -> {
+            String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString();
+            File myDir = new File(root + "/" + JsonFormConstants.DEFAULT_FORMS_DIRECTORY + "/json.form/");
 
-        List<File> files = new ArrayList<>();
-        if (myDir.exists()) {
-            List<FormTesterContract.NativeForm> nativeForms = new ArrayList<>();
-            for (File file : myDir.listFiles()) {
-                String type = getFileExtension(file.getName());
-                if (type.equalsIgnoreCase("json"))
-                    nativeForms.add(new JsonForm(file, readFileForm(context, file.getName())));
+            List<File> files = new ArrayList<>();
+            if (myDir.exists()) {
+                List<FormTesterContract.NativeForm> nativeForms = new ArrayList<>();
+                for (File file : myDir.listFiles()) {
+                    String type = getFileExtension(file.getName());
+                    if (type.equalsIgnoreCase("json"))
+                        nativeForms.add(new JsonForm(file, readFileForm(context, file.getName())));
+                }
+
+                Collections.sort(nativeForms, (o1, o2) -> o1.getFileName().compareTo(o2.getFileName()));
+
+                executeOnMainThread(() -> presenter.onFormsRead(nativeForms));
             }
+        });
+    }
 
-            Collections.sort(nativeForms, (o1, o2) -> o1.getFileName().compareTo(o2.getFileName()));
-            presenter.onFormsRead(nativeForms);
-        }
-
-        return files;
+    @Override
+    public void executeOnMainThread(@NotNull Runnable runnable) {
+        new Handler(Looper.getMainLooper()).post(runnable);
     }
 
     @Nullable
