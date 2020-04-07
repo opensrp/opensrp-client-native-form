@@ -213,6 +213,10 @@ public class Utils {
         }
     }
 
+    public static ProgressDialog getProgressDialog() {
+        return progressDialog;
+    }
+
     public static int pixelToDp(int dpValue, Context context) {
         float dpRatio = context.getResources().getDisplayMetrics().density;
         float pixelForDp = dpValue * dpRatio;
@@ -265,8 +269,7 @@ public class Utils {
     public static void resetRadioButtonsSpecifyText(RadioButton button) throws JSONException {
         CustomTextView specifyText = (CustomTextView) button.getTag(R.id.specify_textview);
         CustomTextView reasonsText = (CustomTextView) button.getTag(R.id.specify_reasons_textview);
-        CustomTextView extraInfoTextView = (CustomTextView) button
-                .getTag(R.id.specify_extra_info_textview);
+        CustomTextView extraInfoTextView = (CustomTextView) button.getTag(R.id.specify_extra_info_textview);
         JSONObject optionsJson = (JSONObject) button.getTag(R.id.option_json_object);
         String radioButtonText = optionsJson.optString(JsonFormConstants.TEXT);
         button.setText(radioButtonText);
@@ -514,17 +517,17 @@ public class Utils {
     }
 
     protected Object processNumberValues(Object object) {
-        Object jsonObject = object;
+        Object value = object;
         try {
-            if (jsonObject.toString().contains(".")) {
-                jsonObject = String.valueOf((float) Math.round(Float.valueOf(jsonObject.toString()) * 100) / 100);
+            if (value.toString().contains(".")) {
+                value = String.valueOf((float) Math.round(Float.valueOf(value.toString()) * 100) / 100);
             } else {
-                jsonObject = Integer.valueOf(jsonObject.toString());
+                value = Integer.valueOf(value.toString());
             }
         } catch (NumberFormatException e) {
-            //Log.e(TAG, "Error trying to convert " + object + " to a number ", e);
+            Timber.e(e);
         }
-        return jsonObject;
+        return value;
     }
 
     protected boolean canHaveNumber(JSONObject object) throws JSONException {
