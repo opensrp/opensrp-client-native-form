@@ -296,7 +296,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
 
-    public Pair<String[], JSONObject> getAddressAndValue(View view) throws JSONException {
+    public Pair<String[], JSONObject> getCaclulcationAddressAndValue(View view) throws JSONException {
         String calculationTag = (String) view.getTag(R.id.calculation);
         String widgetKey = (String) view.getTag(R.id.key);
         String stepName = ((String) view.getTag(R.id.address)).split(":")[0];
@@ -329,13 +329,13 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     @Override
     public void refreshCalculationLogic(String parentKey, String childKey, boolean popup) {
-        Set<String> viewsIds= calculationDependencyMap.get("step1_"+parentKey);
-        if(parentKey==null || viewsIds==null)
-            viewsIds=calculationLogicViews.keySet();
+        Set<String> viewsIds = calculationDependencyMap.get("step1_" + parentKey);
+        if (parentKey == null || viewsIds == null)
+            viewsIds = calculationLogicViews.keySet();
         for (String viewId : viewsIds) {
             try {
-                View curView=calculationLogicViews.get(viewId);
-                Pair<String[], JSONObject> addressAndValue = getAddressAndValue(curView);
+                View curView = calculationLogicViews.get(viewId);
+                Pair<String[], JSONObject> addressAndValue = getCaclulcationAddressAndValue(curView);
                 if (addressAndValue != null && addressAndValue.first != null) {
                     String[] address = addressAndValue.first;
                     JSONObject valueSource = addressAndValue.second;
@@ -373,13 +373,13 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private void populateCalculationDependencyMap() {
         for (View view : calculationLogicViews.values()) {
             try {
-                Pair<String[], JSONObject> addressAndValue = getAddressAndValue(view);
+                Pair<String[], JSONObject> addressAndValue = getCaclulcationAddressAndValue(view);
                 if (addressAndValue != null) {
                     String[] address = addressAndValue.first;
-                    List<String> widgets = getRules(address[1], address[2],true);
+                    List<String> widgets = getRules(address[1], address[2], true);
                     for (String widget : widgets) {
-                        if(!widget.startsWith(RuleConstant.STEP)){
-                          continue;
+                        if (!widget.startsWith(RuleConstant.STEP)) {
+                            continue;
                         }
                         String key = (String) view.getTag(R.id.address);
                         if (!calculationDependencyMap.containsKey(widget)) {
@@ -433,7 +433,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 return fillFieldsWithValues(keysList, popup);
             } else if (RuleConstant.RULES_ENGINE.equals(address[0])) {
                 String fieldKey = address[2];
-                List<String> rulesList = getRules(address[1], fieldKey,false);
+                List<String> rulesList = getRules(address[1], fieldKey, false);
                 if (rulesList != null) {
                     return fillFieldsWithValues(rulesList, popup);
                 }
@@ -479,7 +479,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     if (RuleConstant.RULES_ENGINE.equals(address[0])) {
                         String fieldKey = address[2];
 
-                        List<String> rulesList = getRules(address[1], fieldKey,false);
+                        List<String> rulesList = getRules(address[1], fieldKey, false);
                         if (rulesList != null) {
                             JSONObject result = new JSONObject();
                             JSONArray rulesArray = new JSONArray();
@@ -988,46 +988,52 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         EventBus.getDefault().register(this);
     }
 
+
+    protected Pair<String[], JSONObject> getRelevanceAddress(View view, boolean popup) throws JSONException {
+        String relevanceTag = (String) view.getTag(R.id.relevance);
+        String widgetKey = (String) view.getTag(R.id.key);
+        String stepName = ((String) view.getTag(R.id.address)).split(":")[0];
+        boolean widgetDisplay = (boolean) view.getTag(R.id.extraPopup);
+        if ((relevanceTag != null && relevanceTag.length() > 0) && (widgetDisplay == popup)) {
+            JSONObject relevance = new JSONObject(relevanceTag);
+            Iterator<String> keys = relevance.keys();
+            while (keys.hasNext()) {
+                String curKey = keys.next();
+                JSONObject curRelevance = relevance.has(curKey) ? relevance.getJSONObject(curKey) : null;
+
+                String[] address = getAddressFromMap(widgetKey, stepName, JsonFormConstants.RELEVANCE);
+                if (address == null) {
+                    address = getAddress(view, curKey, curRelevance, JsonFormConstants.RELEVANCE);
+                }
+                return new Pair<>(address, curRelevance);
+
+            }
+        }
+        return null;
+    }
+
+
     protected void addRelevance(View view, boolean popup) {
         try {
-            String relevanceTag = (String) view.getTag(R.id.relevance);
-            String widgetKey = (String) view.getTag(R.id.key);
-            String stepName = ((String) view.getTag(R.id.address)).split(":")[0];
-            boolean widgetDisplay = (boolean) view.getTag(R.id.extraPopup);
-            if ((relevanceTag != null && relevanceTag.length() > 0) && (widgetDisplay == popup)) {
-                try {
-                    boolean isPopup = popup;
-                    JSONObject relevance = new JSONObject(relevanceTag);
-                    Iterator<String> keys = relevance.keys();
-                    boolean ok = true;
-                    while (keys.hasNext()) {
-                        String curKey = keys.next();
-                        JSONObject curRelevance = relevance.has(curKey) ? relevance.getJSONObject(curKey) : null;
-
-                        String[] address = getAddressFromMap(widgetKey, stepName, JsonFormConstants.RELEVANCE);
-                        if (address == null) {
-                            address = getAddress(view, curKey, curRelevance, JsonFormConstants.RELEVANCE);
-                        }
-
-                        isPopup = checkPopUpValidity(address, popup);
-                        if (address.length > 1) {
-                            Facts curValueMap = getValueFromAddress(address, isPopup);
-                            try {
-                                boolean comparison = isRelevant(curValueMap, curRelevance);
-
-                                ok = ok && comparison;
-                                if (!ok) break;
-                            } catch (Exception e) {
-                                Timber.e(e, "JsonFormActivity --> addRelevance --> comparison");
-                            }
-
-                        }
+            Pair<String[], JSONObject> addressPair = getRelevanceAddress(view, popup);
+            boolean comparison = true;
+            if (addressPair != null) {
+                String[] address = addressPair.first;
+                JSONObject curRelevance = addressPair.second;
+                boolean isPopup = checkPopUpValidity(address, popup);
+                if (address.length > 1) {
+                    Facts curValueMap = getValueFromAddress(address, isPopup);
+                    try {
+                        comparison = isRelevant(curValueMap, curRelevance);
+                    } catch (Exception e) {
+                        Timber.e(e, "JsonFormActivity --> addRelevance --> comparison");
                     }
-                    toggleViewVisibility(view, ok, isPopup);
-                } catch (Exception e) {
-                    Timber.e(e, "JsonFormActivity --> addRelevance");
+
                 }
+                toggleViewVisibility(view, comparison, isPopup);
             }
+
+
         } catch (Exception e) {
             Timber.e(e, "%s --> Main function", this.getClass().getCanonicalName());
         }
