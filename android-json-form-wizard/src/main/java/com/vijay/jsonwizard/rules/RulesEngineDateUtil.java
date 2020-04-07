@@ -25,7 +25,7 @@ public class RulesEngineDateUtil {
         Date date = Utils.getDateFromString(dateString);
 
         if (date != null) {
-            long msDiff = Calendar.getInstance().getTimeInMillis() - date.getTime();
+            long msDiff = getTimeInMillis() - date.getTime();
             return Math.abs(TimeUnit.MILLISECONDS.toDays(msDiff));
         } else {
             return 0;
@@ -240,6 +240,10 @@ public class RulesEngineDateUtil {
             return value;
         }
 
+    }
+
+    public long getTimeInMillis() {
+        return Calendar.getInstance().getTimeInMillis();
     }
 
 }
