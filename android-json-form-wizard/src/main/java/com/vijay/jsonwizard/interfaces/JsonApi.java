@@ -64,9 +64,9 @@ public interface JsonApi {
 
     void refreshSkipLogic(String parentKey, String childKey, boolean popup);
 
-    void refreshCalculationLogic(String parentKey, String childKey, boolean popup);
+    void refreshCalculationLogic(String parentKey, String childKey, boolean popup, String step);
 
-    void invokeRefreshLogic(String value, boolean popup, String parentKey, String childKey);
+    void invokeRefreshLogic(String value, boolean popup, String parentKey, String childKey,String step);
 
     void addFormDataView(View view);
 

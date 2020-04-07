@@ -130,7 +130,8 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         }
 
         try {
-            ((JsonApi) widgetArgs.getContext()).invokeRefreshLogic(null, false, null, null);
+            //TODO pass the step name
+            ((JsonApi) widgetArgs.getContext()).invokeRefreshLogic(null, false, null, null,null);
         } catch (Exception e) {
             Timber.e(e);
         }

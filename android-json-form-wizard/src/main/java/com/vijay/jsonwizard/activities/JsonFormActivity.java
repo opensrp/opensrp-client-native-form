@@ -328,8 +328,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     @Override
-    public void refreshCalculationLogic(String parentKey, String childKey, boolean popup) {
-        Set<String> viewsIds = calculationDependencyMap.get("step1_" + parentKey);
+    public void refreshCalculationLogic(String parentKey, String childKey, boolean popup,String stepName) {
+        Set<String> viewsIds = calculationDependencyMap.get(stepName + "_" + parentKey);
         if (parentKey == null || viewsIds == null)
             viewsIds = calculationLogicViews.keySet();
         for (String viewId : viewsIds) {
@@ -357,10 +357,10 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     @Override
-    public void invokeRefreshLogic(String value, boolean popup, String parentKey, String childKey) {
+    public void invokeRefreshLogic(String value, boolean popup, String parentKey, String childKey,String step) {
         populateCalculationDependencyMap();
         timingLogger.addSplit("invokeRefreshLogic " + childKey);
-        refreshCalculationLogic(parentKey, childKey, popup);
+        refreshCalculationLogic(parentKey, childKey, popup,step);
         timingLogger.addSplit("refreshCalculationLogic " + childKey);
         refreshSkipLogic(parentKey, childKey, popup);
         timingLogger.addSplit("refreshSkipLogic " + childKey);
@@ -817,7 +817,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     }
                     addOpenMrsAttributes(openMrsEntityParent, openMrsEntity, openMrsEntityId, item);
                     timingLogger.addSplit("widgetsWriteValue " + keyAtIndex);
-                    invokeRefreshLogic(value, popup, cleanKey, null);
+                    invokeRefreshLogic(value, popup, cleanKey, null,stepName);
                     return;
                 }
             }
@@ -925,7 +925,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 }
                 checkboxObject.put(JsonFormConstants.VALUE, getCheckboxValueJsonArray(currentValues));
             }
-            invokeRefreshLogic(value, popup, parentKey, childKey);
+            invokeRefreshLogic(value, popup, parentKey, childKey,stepName);
         }
     }
 

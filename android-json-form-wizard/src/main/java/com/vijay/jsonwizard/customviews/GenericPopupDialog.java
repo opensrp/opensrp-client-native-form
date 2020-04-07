@@ -301,7 +301,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         if (getDialog().getWindow() != null) {
             getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         }
-        getJsonApi().invokeRefreshLogic(null, true, null, null);
+        getJsonApi().invokeRefreshLogic(null, true, null, null,stepName);
         return dialogView;
     }
 

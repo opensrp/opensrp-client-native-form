@@ -83,7 +83,7 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
             loadSubForms();
             getJsonApi().updateGenericPopupSecondaryValues(getSpecifyContent());
             setViewList(initiateViews());
-            getJsonApi().invokeRefreshLogic(null, true, null, null);
+            getJsonApi().invokeRefreshLogic(null, true, null, null,getStepName());
         } catch (JSONException e) {
             Timber.e(e, "ExpansionPanelGenericPopupDialogTask --> doInBackground");
         }
