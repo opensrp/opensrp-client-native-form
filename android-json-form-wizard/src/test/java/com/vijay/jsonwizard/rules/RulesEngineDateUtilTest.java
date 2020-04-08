@@ -2,11 +2,16 @@ package com.vijay.jsonwizard.rules;
 
 import com.vijay.jsonwizard.BaseTest;
 
+import org.joda.time.LocalDate;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+
+import java.text.ParseException;
+
+import static com.vijay.jsonwizard.widgets.DatePickerFactory.DATE_FORMAT;
 
 
 public class RulesEngineDateUtilTest extends BaseTest {
@@ -20,9 +25,9 @@ public class RulesEngineDateUtilTest extends BaseTest {
     }
 
     @Test
-    public void testGetDifferenceDaysBtwTodayAndSaidDateShouldCalculateCorrectly() {
+    public void testGetDifferenceDaysBtwTodayAndSaidDateShouldCalculateCorrectly() throws ParseException {
         RulesEngineDateUtil spyRulesEngineDateUtil = Mockito.spy(rulesEngineDateUtil);
-        Mockito.doReturn(1586206800000l).when(spyRulesEngineDateUtil).getTimeInMillis();
+        Mockito.doReturn(LocalDate.fromDateFields(DATE_FORMAT.parse("07-04-2020")).toDate().getTime()).when(spyRulesEngineDateUtil).getTimeInMillis();
         long result = spyRulesEngineDateUtil.getDifferenceDays("06-04-2020");
         Assert.assertEquals(1, result);
     }

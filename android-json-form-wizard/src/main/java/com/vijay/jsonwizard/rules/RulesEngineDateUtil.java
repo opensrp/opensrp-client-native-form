@@ -243,7 +243,7 @@ public class RulesEngineDateUtil {
     }
 
     public long getTimeInMillis() {
-        return Calendar.getInstance().getTimeInMillis();
+        return System.currentTimeMillis();
     }
 
 }
