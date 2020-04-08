@@ -4,6 +4,7 @@ import android.view.View;
 
 import com.vijay.jsonwizard.customviews.GenericPopupDialog;
 import com.vijay.jsonwizard.domain.Form;
+import com.vijay.jsonwizard.rules.RulesEngineFactory;
 import com.vijay.jsonwizard.utils.AppExecutors;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 
@@ -127,4 +128,6 @@ public interface JsonApi {
     Form form();
 
     AppExecutors getAppExecutors();
+
+    RulesEngineFactory getRulesEngineFactory();
 }

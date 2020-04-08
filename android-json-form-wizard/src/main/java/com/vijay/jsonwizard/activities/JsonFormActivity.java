@@ -351,7 +351,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         Set<String> viewsIds = calculationDependencyMap.get(stepName + "_" + parentKey);
         if (parentKey == null || viewsIds == null)
             viewsIds = calculationLogicViews.keySet();
-        for (String viewId : viewsIds) {
+        for (String viewId : viewsIds.toArray(new String[0])) {
             try {
                 View curView = calculationLogicViews.get(viewId);
                 if(curView==null){
@@ -1055,7 +1055,9 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 JSONObject curRelevance = addressPair.second;
                 boolean isPopup = checkPopUpValidity(address, popup);
                 if (address.length > 1) {
+
                     Facts curValueMap = getValueFromAddress(address, isPopup);
+                    timingLogger.addSplit("addRelevance getRelevanceAddress" + view.getTag(R.id.key));
                     try {
                         comparison = isRelevant(curValueMap, curRelevance);
                     } catch (Exception e) {
@@ -1063,7 +1065,9 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     }
 
                 }
+                timingLogger.addSplit("addRelevance evaluate" + view.getTag(R.id.key));
                 toggleViewVisibility(view, comparison, isPopup);
+                timingLogger.addSplit("toggleViewVisibility" + view.getTag(R.id.key));
             }
 
 

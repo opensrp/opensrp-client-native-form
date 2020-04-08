@@ -44,6 +44,7 @@ import com.vijay.jsonwizard.fragments.JsonFormErrorFragment;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 import com.vijay.jsonwizard.mvp.MvpBasePresenter;
+import com.vijay.jsonwizard.rules.RuleConstant;
 import com.vijay.jsonwizard.task.ExpansionPanelGenericPopupDialogTask;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ImageUtils;
@@ -970,4 +971,48 @@ public class JsonFormFragmentPresenter extends
     public String getmCurrentPhotoPath() {
         return mCurrentPhotoPath;
     }
+
+    public void preLoadRules(final JSONObject formJSONObject, final String stepName) {
+        formFragment.getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                preLoadRules(formJSONObject, stepName, JsonFormConstants.CALCULATION);
+            }
+        });
+
+        formFragment.getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                preLoadRules(formJSONObject, stepName, JsonFormConstants.RELEVANCE);
+            }
+        });
+
+
+    }
+
+    private void preLoadRules(JSONObject formJSONObject, String stepName, String type) {
+        Set<String> ruleFiles = new HashSet<>();
+        JSONArray fields = formJSONObject.optJSONArray(stepName);
+        if (fields == null)
+            return;
+        for (int i = 0; i < fields.length(); i++) {
+            JSONObject relevance = fields.optJSONObject(i).optJSONObject(type);
+            if (relevance != null) {
+                JSONObject ruleEngine = relevance.optJSONObject(RuleConstant.RULES_ENGINE);
+                if (ruleEngine != null) {
+                    JSONObject exRules = ruleEngine.optJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES);
+                    String file = exRules.optString(RuleConstant.RULES_FILE, null);
+                    if (file != null) {
+                        ruleFiles.add(exRules.optString(RuleConstant.RULES_FILE));
+                    }
+                }
+            }
+
+        }
+
+        for (String fileName : ruleFiles) {
+            formFragment.getJsonApi().getRulesEngineFactory().getRulesFromAsset(fileName);
+        }
+    }
+
 }

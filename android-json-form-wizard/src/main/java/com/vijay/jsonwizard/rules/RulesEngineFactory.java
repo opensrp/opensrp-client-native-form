@@ -103,7 +103,7 @@ public class RulesEngineFactory implements RuleListener {
 
         facts.put(RuleConstant.IS_RELEVANT, false);
 
-        rules = getRulesFromAsset(RULE_FOLDER_PATH + ruleFilename);
+        rules = getRulesFromAsset( ruleFilename);
 
         processDefaultRules(rules, facts);
 
@@ -137,7 +137,8 @@ public class RulesEngineFactory implements RuleListener {
         return facts;
     }
 
-    private Rules getRulesFromAsset(String fileName) {
+    public Rules getRulesFromAsset(String ruleFileName) {
+        String fileName=RULE_FOLDER_PATH +ruleFileName;
         try {
             if (!ruleMap.containsKey(fileName)) {
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(context.getAssets().open(fileName)));
@@ -184,7 +185,7 @@ public class RulesEngineFactory implements RuleListener {
         //need to clean curValue map as constraint depend on valid values, empties wont do
         Facts facts = initializeFacts(calculationFact);
         facts.put(RuleConstant.CALCULATION, "");
-        rules = getRulesFromAsset(RULE_FOLDER_PATH + ruleFilename);
+        rules = getRulesFromAsset( ruleFilename);
         processDefaultRules(rules, facts);
 
         return formatCalculationReturnValue(facts.get(RuleConstant.CALCULATION));
@@ -222,7 +223,7 @@ public class RulesEngineFactory implements RuleListener {
     public String getConstraint(Facts constraintFact, String ruleFilename) {
         Facts facts = initializeFacts(constraintFact);
         facts.put(RuleConstant.CONSTRAINT, "0");
-        rules = getRulesFromAsset(RULE_FOLDER_PATH + ruleFilename);
+        rules = getRulesFromAsset(  ruleFilename);
         processDefaultRules(rules, facts);
 
         return formatCalculationReturnValue(facts.get(RuleConstant.CONSTRAINT));

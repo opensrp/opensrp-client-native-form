@@ -18,7 +18,7 @@ import java.util.concurrent.Executors;
  */
 public class AppExecutors {
 
-    private static final int THREAD_COUNT = Runtime.getRuntime().availableProcessors();
+    private static final int THREAD_COUNT = 3;
 
     private final Executor diskIO;
 
@@ -65,7 +65,7 @@ public class AppExecutors {
         private final Executor mDiskIO;
 
         public DiskIOThreadExecutor() {
-            mDiskIO = Executors.newSingleThreadExecutor();
+            mDiskIO = Executors.newFixedThreadPool(THREAD_COUNT);
         }
 
         @Override
