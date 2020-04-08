@@ -354,6 +354,10 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         for (String viewId : viewsIds) {
             try {
                 View curView = calculationLogicViews.get(viewId);
+                if(curView==null){
+                    Timber.w("calculationLogicViews Missing %s",viewId);
+                    continue;
+                }
                 Pair<String[], JSONObject> addressAndValue = getCalculationAddressAndValue(curView);
                 if (addressAndValue != null && addressAndValue.first != null) {
                     String[] address = addressAndValue.first;
@@ -404,6 +408,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     if (address.length <= 2)
                         continue;
                     List<String> widgets = getRules(address[1], address[2], true);
+                    if(widgets==null)
+                        continue;
                     for (String widget : widgets) {
                         if (!widget.startsWith(RuleConstant.STEP)) {
                             continue;

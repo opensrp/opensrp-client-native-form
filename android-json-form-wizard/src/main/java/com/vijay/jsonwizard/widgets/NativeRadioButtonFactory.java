@@ -279,7 +279,13 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
                 return new ValidationStatus(false, error, formFragmentView, radioGroup);
             } else if (errorTextView[0] != null) {
-                errorTextView[0].setVisibility(View.GONE);
+                ((JsonFormFragment)formFragmentView).getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        errorTextView[0].setVisibility(View.GONE);
+                    }
+                });
+
             }
         }
         return new ValidationStatus(true, null, formFragmentView, radioGroup);
