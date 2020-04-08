@@ -296,15 +296,15 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         initComparisons();
         Set<String> viewsIds = skipLogicDependencyMap.get(stepName + "_" + parentKey);
         if (parentKey == null || childKey == null) {
-            for (View curView : skipLogicViews.values()) {
+            for (View curView : skipLogicViews.values().toArray(new View[0])) {
                 addRelevance(curView, popup);
             }
         } else if (viewsIds == null) {
-            for (View curView : skipLogicViews.values()) {
+            for (String curViewId : skipLogicViews.keySet()) {
                 //skip any relevance by rules engine since the these components are not affected either way.
                 // Run relevance for native relevance functions as these are first and not optimized currently
-                if (!skipLogicDependencyMap.containsKey(curView.getTag(R.id.address))) {
-                    addRelevance(curView, popup);
+                if (!skipLogicDependencyMap.containsKey(curViewId)) {
+                    addRelevance(skipLogicViews.get(curViewId), popup);
                 }
             }
         } else {
