@@ -93,7 +93,7 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
     private String getForm() {
         String jsonForm = getIntent().getStringExtra(JsonFormConstants.JSON_FORM_KEY.JSON);
         if (translateForm) {
-            jsonForm = getTranslatedString(jsonForm);
+            jsonForm = getTranslatedString(jsonForm, this);
         }
         return jsonForm;
     }

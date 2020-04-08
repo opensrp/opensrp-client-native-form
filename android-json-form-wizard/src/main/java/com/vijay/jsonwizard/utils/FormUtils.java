@@ -629,7 +629,7 @@ public class FormUtils {
                                      Context context, boolean translateSubForm) throws IOException {
 
         String subForm = loadSubForm(formIdentity, defaultSubFormLocation, context);
-        return translateSubForm ? NativeFormLangUtils.getTranslatedString(subForm) : subForm;
+        return translateSubForm ? NativeFormLangUtils.getTranslatedString(subForm, context) : subForm;
     }
 
     public static String loadSubForm(String formIdentity, String defaultSubFormLocation,

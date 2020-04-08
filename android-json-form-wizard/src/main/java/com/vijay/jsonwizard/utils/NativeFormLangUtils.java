@@ -21,9 +21,13 @@ import static com.vijay.jsonwizard.constants.JsonFormConstants.MLS.PROPERTIES_FI
 
 public class NativeFormLangUtils {
 
-    public static String getLanguage(Context ctx) {
-        AllSharedPreferences allSharedPreferences = new AllSharedPreferences(PreferenceManager.getDefaultSharedPreferences(ctx));
+    public static String getLanguage(Context context) {
+        AllSharedPreferences allSharedPreferences = new AllSharedPreferences(PreferenceManager.getDefaultSharedPreferences(context));
         return allSharedPreferences.fetchLanguagePreference();
+    }
+
+    private static Locale getLocale(Context context) {
+        return new Locale(getLanguage(context));
     }
 
     public static Context setAppLocale(Context ctx, String language) {
@@ -52,18 +56,46 @@ public class NativeFormLangUtils {
      * @return
      */
     public static String getTranslatedString(String str) {
+        return getTranslatedString(str, null);
+    }
+
+    /**
+     * Performs translation on an interpolated {@param str}
+     * i.e. a String containing tokens in the format {{string_name}},
+     * replacing these tokens with their corresponding values for the current Locale.
+     *
+     * It attempts to fetch the default Locale from shared preferences.
+     *
+     * @param str
+     * @return
+     */
+    public static String getTranslatedString(String str, Context context) {
         String translationsFileName = getTranslationsFileName(str);
         if (translationsFileName.isEmpty()) {
             Timber.e("Could not translate the String. Translation file name is not specified!");
             return str;
         }
-        return translateString(str, ResourceBundle.getBundle(getTranslationsFileName(str)));
+        Locale currLocale = context == null ? Locale.getDefault() : getLocale(context);
+        return translateString(str, ResourceBundle.getBundle(translationsFileName, currLocale));
     }
 
-    public static String getTranslatedString(String str, String propertyFilesFolderPath) {
+    /**
+     * Performs translation on an interpolated {@param str}
+     * i.e. a String containing tokens in the format {{string_name}},
+     * replacing these tokens with their corresponding values for the current Locale.
+     *
+     * It attempts to fetch the default Locale from shared preferences and allows specifying an
+     * alternative file path to the translation property files at {@param propertyFilesFolderPath}.
+     *
+     * @param str
+     * @return
+     */
+    public static String getTranslatedString(String str, Context context, String propertyFilesFolderPath) {
         String translatedString = str;
         try {
-            ResourceBundle mlsResourceBundle = ResourceBundle.getBundle(getTranslationsFileName(str), Locale.getDefault(), getPathURL(propertyFilesFolderPath));
+            Locale currLocale = context == null ? Locale.getDefault() : getLocale(context);
+            ResourceBundle mlsResourceBundle = ResourceBundle.getBundle(getTranslationsFileName(str),
+                    currLocale, getPathURL(propertyFilesFolderPath));
             translatedString = translateString(str, mlsResourceBundle);
         } catch (MalformedURLException e) {
             Timber.e(e);
@@ -71,6 +103,13 @@ public class NativeFormLangUtils {
         return translatedString;
     }
 
+    /**
+     * Helper method that performs regex matching to replace placeholders with String literals
+     *
+     * @param str
+     * @param mlsResourceBundle
+     * @return
+     */
     private static String translateString(String str, ResourceBundle mlsResourceBundle) {
         StringBuffer stringBuffer = new StringBuffer();
         Pattern interpolatedStringPattern = Pattern.compile("\\{\\{([a-zA-Z_0-9\\.]+)\\}\\}");
@@ -85,6 +124,13 @@ public class NativeFormLangUtils {
         return stringBuffer.toString();
     }
 
+    /**
+     * Creates a {@link URLClassLoader} from a String {@param path}
+     *
+     * @param path
+     * @return
+     * @throws MalformedURLException
+     */
     private static URLClassLoader getPathURL(String path) throws MalformedURLException {
         File file = new File(path);
         URL[] urls = {file.toURI().toURL()};

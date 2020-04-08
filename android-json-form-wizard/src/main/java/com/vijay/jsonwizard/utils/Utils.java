@@ -630,7 +630,7 @@ public class Utils {
      *
      */
     public static String getTranslatedYamlFile(String fileName, Context context) {
-        return getTranslatedString(getAssetFileAsString(fileName, context));
+        return getTranslatedString(getAssetFileAsString(fileName, context), context);
     }
 
     /**
