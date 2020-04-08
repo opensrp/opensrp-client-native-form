@@ -59,7 +59,7 @@ public class HiddenTextFactory implements FormWidgetFactory {
     }
 
     protected void attachJson(String stepName, Context context, JsonFormFragment formFragment,
-                              JSONObject jsonObject, MaterialEditText hiddenText)
+                              JSONObject jsonObject, final MaterialEditText hiddenText)
             throws Exception {
 
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
@@ -98,9 +98,14 @@ public class HiddenTextFactory implements FormWidgetFactory {
 
         // Handle setting injected value (if exists) after attaching listener so that changes can be
         // effected by the listener and calculations applied
-        String value = jsonObject.optString(JsonFormConstants.VALUE);
+        final String value = jsonObject.optString(JsonFormConstants.VALUE);
         if (StringUtils.isNotBlank(value)) {
-            hiddenText.setText(value);
+            formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
+                @Override
+                public void run() {
+                    hiddenText.setText(value);
+                }
+            });
         }
     }
 
