@@ -399,7 +399,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     private void populateDependencyMap(Map<String, View> formViews, Map<String, Set<String>> dependencyMap, boolean calculation) {
-        for (View view : formViews.values()) {
+        for (View view : formViews.values().toArray(new View[0])) {
             try {
                 Pair<String[], JSONObject> addressAndValue = calculation ? getCalculationAddressAndValue(view) :
                         getRelevanceAddress(view, (boolean) view.getTag(R.id.extraPopup));

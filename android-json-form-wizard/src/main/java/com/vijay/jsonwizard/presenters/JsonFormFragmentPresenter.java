@@ -142,8 +142,12 @@ public class JsonFormFragmentPresenter extends
                     @Override
                     public void run() {
                         dialog.dismiss();
-                        getView().addFormElements(views);
-                        formFragment.getJsonApi().invokeRefreshLogic(null, false, null, null, mStepName);
+                        if (getView() != null) {
+                            getView().addFormElements(views);
+                            formFragment.getJsonApi().invokeRefreshLogic(null, false, null, null, mStepName);
+                        }else{
+                            Timber.w("View is null");
+                        }
                     }
                 });
             }
