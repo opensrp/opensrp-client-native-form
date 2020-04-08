@@ -3,6 +3,7 @@ package com.vijay.jsonwizard.utils;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -27,7 +28,14 @@ public class NativeFormLangUtils {
     }
 
     private static Locale getLocale(Context context) {
-        return new Locale(getLanguage(context));
+        String currLanguage = getLanguage(context);
+        Locale locale;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            locale = new Locale(currLanguage);
+        } else {
+            locale = Locale.forLanguageTag(currLanguage);
+        }
+        return locale;
     }
 
     public static Context setAppLocale(Context ctx, String language) {

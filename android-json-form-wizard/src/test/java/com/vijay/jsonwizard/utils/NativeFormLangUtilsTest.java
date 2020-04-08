@@ -1,5 +1,7 @@
 package com.vijay.jsonwizard.utils;
 
+import android.preference.PreferenceManager;
+
 import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.TestUtils;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
@@ -27,6 +29,19 @@ public class NativeFormLangUtilsTest extends BaseTest {
         assertEquals(expectedJsonForm, NativeFormLangUtils.getTranslatedString(interpolatedJsonForm, RuntimeEnvironment.application));
 
         Locale.setDefault(new Locale("en", "US"));
+        expectedJsonForm = testUtils.getResourceFileContentsAsString("test_form_translation_en_US");
+        assertEquals(expectedJsonForm, NativeFormLangUtils.getTranslatedString(interpolatedJsonForm, RuntimeEnvironment.application));
+    }
+
+    @Test
+    public void testJsonFormTranslationShouldTranslateFormUsingLanguagePreference() {
+        AllSharedPreferences allSharedPreferences = new AllSharedPreferences(PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application));
+        allSharedPreferences.saveLanguagePreference(new Locale("id").toLanguageTag());
+        String expectedJsonForm = testUtils.getResourceFileContentsAsString("test_form_translation_in");
+        String interpolatedJsonForm = testUtils.getResourceFileContentsAsString("test_form_translation_interpolated");
+        assertEquals(expectedJsonForm, NativeFormLangUtils.getTranslatedString(interpolatedJsonForm, RuntimeEnvironment.application));
+
+        allSharedPreferences.saveLanguagePreference(new Locale("en", "US").toLanguageTag());
         expectedJsonForm = testUtils.getResourceFileContentsAsString("test_form_translation_en_US");
         assertEquals(expectedJsonForm, NativeFormLangUtils.getTranslatedString(interpolatedJsonForm, RuntimeEnvironment.application));
     }
