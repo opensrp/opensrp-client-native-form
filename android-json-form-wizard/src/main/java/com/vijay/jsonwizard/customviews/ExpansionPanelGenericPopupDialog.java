@@ -77,35 +77,26 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
         }
 
         this.activity = (Activity) context;
-        try {
-            setJsonApi((JsonApi) activity);
-            setMainFormFields(formUtils.getFormFields(getStepName(), context));
-            getJsonApi().setGenericPopup(this);
-            setGenericPopUpDialog();
-            loadPartialSecondaryValues();
-            createSecondaryValuesMap();
-            loadSubForms();
-            getJsonApi().updateGenericPopupSecondaryValues(getSpecifyContent());
-            getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
-                @Override
-                public void run() {
-                    final List<View> views = initiateViews();
-                    getJsonApi().initializeDependencyMaps();
+        setJsonApi((JsonApi) activity);
+        getJsonApi().setGenericPopup(this);
+        setGenericPopUpDialog();
+        getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                final List<View> views = initiateViews();
+                getJsonApi().initializeDependencyMaps();
 
-                    getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            setViewList(views);
-                            getJsonApi().invokeRefreshLogic(null, true, null, null, getStepName());
-                            addWidgetViews(dialogView);
-                        }
-                    });
-                }
-            });
+                getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        setViewList(views);
+                        getJsonApi().invokeRefreshLogic(null, true, null, null, getStepName());
+                        addWidgetViews(dialogView);
+                    }
+                });
+            }
+        });
 
-        } catch (JSONException e) {
-            Timber.e(e, "ExpansionPanelGenericPopupDialogTask --> doInBackground");
-        }
         setStyle(DialogFragment.STYLE_NORMAL, R.style.FullScreenDialogStyle);
     }
 
