@@ -92,7 +92,6 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
             createSecondaryValuesMap();
             loadSubForms();
             getJsonApi().updateGenericPopupSecondaryValues(specifyContent);
-            setViewList(initiateViews());
         } catch (JSONException e) {
             Timber.e(e, " --> onCreate");
         }
@@ -301,6 +300,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         if (getDialog().getWindow() != null) {
             getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         }
+        setViewList(initiateViews());
         getJsonApi().invokeRefreshLogic(null, true, null, null,stepName);
         return dialogView;
     }
