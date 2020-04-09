@@ -20,7 +20,6 @@ import android.support.v4.util.Pair;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.util.TimingLogger;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -120,8 +119,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private Map<String, Set<String>> calculationDependencyMap = new HashMap<>();
     private Map<String, Set<String>> skipLogicDependencyMap = new HashMap<>();
 
-    TimingLogger timingLogger = new TimingLogger("TimingLogger", "JsonFormActivity");
-
     private AppExecutors appExecutors = new AppExecutors();
 
     private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
@@ -152,14 +149,12 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     @Override
     public void writeValue(String stepName, String key, String value, String openMrsEntityParent, String openMrsEntity,
                            String openMrsEntityId, boolean popup) throws JSONException {
-        timingLogger.reset();
         if (invokeRefreshLogic(stepName, null, key, value)) {
             if (!popup) {
                 cacheFormMapValues(stepName, null, key, value);
             }
             widgetsWriteValue(stepName, key, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
         }
-        timingLogger.dumpToLog();
     }
 
     @Override
@@ -368,7 +363,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     } else {
                         curValueMap = getValueFromAddress(address, popup);
                     }
-                    timingLogger.addSplit("refreshCalculationLogic " + childKey);
                     updateCalculation(curValueMap, curView, address);
                 }
 
@@ -387,15 +381,10 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     @Override
     public void invokeRefreshLogic(String value, boolean popup, String parentKey, String childKey, String stepName) {
-        timingLogger.addSplit("invokeRefreshLogic " + childKey);
         refreshCalculationLogic(parentKey, childKey, popup, stepName);
-        timingLogger.addSplit("refreshCalculationLogic " + childKey);
         refreshSkipLogic(parentKey, childKey, popup, stepName);
-        timingLogger.addSplit("refreshSkipLogic " + childKey);
         refreshConstraints(parentKey, childKey, popup);
-        timingLogger.addSplit("refreshConstraints " + childKey);
         refreshMediaLogic(parentKey, value);
-        timingLogger.addSplit("refreshMediaLogic " + childKey);
     }
 
     private void populateDependencyMap(Map<String, View> formViews, Map<String, Set<String>> dependencyMap, boolean calculation) {
@@ -831,7 +820,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     protected void widgetsWriteValue(String stepName, String key, String value, String openMrsEntityParent,
                                      String openMrsEntity, String openMrsEntityId, boolean popup) throws JSONException {
-        timingLogger.addSplit("widgetsWriteValue " + key);
         synchronized (getmJSONObject()) {
             JSONObject jsonObject = getmJSONObject().getJSONObject(stepName);
             JSONArray fields = fetchFields(jsonObject, popup);
@@ -849,7 +837,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         widgetWriteItemValue(value, item, itemType);
                     }
                     addOpenMrsAttributes(openMrsEntityParent, openMrsEntity, openMrsEntityId, item);
-                    timingLogger.addSplit("widgetsWriteValue " + keyAtIndex);
                     invokeRefreshLogic(value, popup, cleanKey, null, stepName);
                     return;
                 }
@@ -1057,7 +1044,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 if (address.length > 1) {
 
                     Facts curValueMap = getValueFromAddress(address, isPopup);
-                    timingLogger.addSplit("addRelevance getRelevanceAddress" + view.getTag(R.id.key));
                     try {
                         comparison = isRelevant(curValueMap, curRelevance);
                     } catch (Exception e) {
@@ -1065,16 +1051,13 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     }
 
                 }
-                timingLogger.addSplit("addRelevance evaluate" + view.getTag(R.id.key));
                 toggleViewVisibility(view, comparison, isPopup);
-                timingLogger.addSplit("toggleViewVisibility" + view.getTag(R.id.key));
             }
 
 
         } catch (Exception e) {
             Timber.e(e, "%s --> Main function", this.getClass().getCanonicalName());
         }
-        timingLogger.addSplit("addRelevance" + view.getTag(R.id.key));
     }
 
     protected void toggleViewVisibility(View view, boolean visible, boolean popup) {
@@ -1787,7 +1770,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             } else {
                 calculation = getRulesEngineFactory().getCalculation(valueMap, address[1]);
             }
-            timingLogger.addSplit("updateCalculation.getCalculation " + address[2]);
 
             if (calculation != null) {
                 if (view instanceof CheckBox) {
@@ -1830,7 +1812,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         } catch (Exception e) {
             Timber.e(e, "calling updateCalculation on Non TextView or Text View decendant");
         }
-        timingLogger.addSplit("updateCalculation " + address[2]);
 
     }
 
