@@ -3,7 +3,9 @@ package com.vijay.jsonwizard.mvp;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
 public abstract class MvpFragment<P extends MvpPresenter, V extends ViewState> extends BaseFragment<V> implements
@@ -20,6 +22,14 @@ public abstract class MvpFragment<P extends MvpPresenter, V extends ViewState> e
             presenter = createPresenter();
         }
         presenter.attachView(this);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (presenter == null) {
+            presenter = createPresenter();
+        }
     }
 
     @Override

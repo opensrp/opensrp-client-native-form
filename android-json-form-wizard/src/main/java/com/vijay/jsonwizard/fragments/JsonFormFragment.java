@@ -111,6 +111,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         if (step.optBoolean(JsonFormConstants.BOTTOM_NAVIGATION)) {
             initializeBottomNavigation(step, rootView);
         }
+
         presenter.preLoadRules(getJsonApi().getmJSONObject(), stepName);
         return rootView;
     }
