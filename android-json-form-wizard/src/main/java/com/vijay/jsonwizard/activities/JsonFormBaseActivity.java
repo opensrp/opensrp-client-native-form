@@ -78,7 +78,7 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
         translateForm = getIntent().getBooleanExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, false);
         if (savedInstanceState == null) {
             this.form = extractForm(getIntent().getSerializableExtra(JsonFormConstants.JSON_FORM_KEY.FORM));
-            init(getForm());
+            init(getJsonForm());
             initializeFormFragment();
             onFormStart();
         } else {
@@ -90,7 +90,7 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
         }
     }
 
-    private String getForm() {
+    protected String getJsonForm() {
         String jsonForm = getIntent().getStringExtra(JsonFormConstants.JSON_FORM_KEY.JSON);
         if (translateForm) {
             jsonForm = getTranslatedString(jsonForm, this);

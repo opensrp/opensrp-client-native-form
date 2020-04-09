@@ -34,6 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joda.time.LocalDate;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,7 +44,6 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -80,8 +80,8 @@ public class Utils {
     public static Date getDateFromString(String dtStart) {
         if (StringUtils.isNotBlank(dtStart) && !"0".equals(dtStart)) {
             try {
-                return DatePickerFactory.DATE_FORMAT.parse(dtStart);
-            } catch (ParseException e) {
+                return LocalDate.fromDateFields(DatePickerFactory.DATE_FORMAT.parse(dtStart)).toDate();
+            } catch (Exception e) {
                 Timber.e(e, " --> getDateFromString");
                 return null;
             }
@@ -504,17 +504,17 @@ public class Utils {
     }
 
     protected Object processNumberValues(Object object) {
-        Object jsonObject = object;
+        Object value = object;
         try {
-            if (jsonObject.toString().contains(".")) {
-                jsonObject = String.valueOf((float) Math.round(Float.valueOf(jsonObject.toString()) * 100) / 100);
+            if (value.toString().contains(".")) {
+                value = String.valueOf((float) Math.round(Float.valueOf(value.toString()) * 100) / 100);
             } else {
-                jsonObject = Integer.valueOf(jsonObject.toString());
+                value = Integer.valueOf(value.toString());
             }
         } catch (NumberFormatException e) {
-            //Log.e(TAG, "Error trying to convert " + object + " to a number ", e);
+            Timber.e(e);
         }
-        return jsonObject;
+        return value;
     }
 
     protected boolean canHaveNumber(JSONObject object) throws JSONException {
