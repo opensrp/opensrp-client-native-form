@@ -78,6 +78,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        preLoadRules(getJsonApi().getmJSONObject(), getStepName());
         if (context == null) {
             throw new IllegalStateException(
                     "The Context is not set. Did you forget to set context with Generic Dialog setContext method?");
@@ -599,5 +600,23 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
 
     public void setPopAssignedValue(Map<String, SecondaryValueModel> popAssignedValue) {
         this.popAssignedValue = popAssignedValue;
+    }
+
+    private void preLoadRules(final JSONObject formJSONObject, final String stepName) {
+        getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                FormUtils.preLoadRules(getJsonApi(), formJSONObject, stepName, JsonFormConstants.CALCULATION);
+            }
+        });
+
+        getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                FormUtils.preLoadRules(getJsonApi(), formJSONObject, stepName, JsonFormConstants.RELEVANCE);
+            }
+        });
+
+
     }
 }
