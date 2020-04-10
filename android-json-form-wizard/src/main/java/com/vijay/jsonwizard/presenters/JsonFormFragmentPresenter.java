@@ -123,19 +123,21 @@ public class JsonFormFragmentPresenter extends
         dialog.setTitle(formFragment.getContext().getString(com.vijay.jsonwizard.R.string.loading));
         dialog.setMessage(formFragment.getContext().getString(com.vijay.jsonwizard.R.string.loading_form_message));
         dialog.show();
-        if (getView() == null) {
-            //fragment has been detached when skipping steps
-            return;
+        mStepName = getView().getArguments().getString("stepName");
+        JSONObject step = getView().getStep(mStepName);
+        try {
+            mStepDetails = new JSONObject(step.toString());
+        } catch (JSONException e) {
+            Timber.e(e);
         }
         formFragment.getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                mStepName = getView().getArguments().getString("stepName");
-                JSONObject step = getView().getStep(mStepName);
-                try {
-                    mStepDetails = new JSONObject(step.toString());
-                } catch (JSONException e) {
-                    Log.e(TAG, e.getMessage(), e);
+                //fragment has been detached when skipping steps
+                if (getView() == null) {
+                    if (dialog.isShowing())
+                        dialog.dismiss();
+                    return;
                 }
                 final List<View> views = mJsonFormInteractor
                         .fetchFormElements(mStepName, formFragment, mStepDetails, getView().getCommonListener(),
@@ -210,7 +212,7 @@ public class JsonFormFragmentPresenter extends
     }
 
     public void validateAndWriteValues() {
-        for (View childView : formFragment.getJsonApi().getFormDataViews()) {
+        for (View childView : formFragment.getJsonApi().getFormDataViews().toArray(new View[0])) {
             ValidationStatus validationStatus = validateView(childView);
             String key = (String) childView.getTag(R.id.key);
             String openMrsEntityParent = (String) childView.getTag(R.id.openmrs_entity_parent);
