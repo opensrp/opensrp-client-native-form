@@ -103,6 +103,7 @@ public class JsonFormFragmentPresenter extends
     private Stack<String> incorrectlyFormattedFields;
     private JsonFormErrorFragment errorFragment;
     private FormUtils formUtils = new FormUtils();
+    private boolean cleanupAndExit;
 
     public JsonFormFragmentPresenter(JsonFormFragment formFragment,
                                      JsonFormInteractor jsonFormInteractor) {
@@ -123,35 +124,49 @@ public class JsonFormFragmentPresenter extends
         dialog.setTitle(formFragment.getContext().getString(com.vijay.jsonwizard.R.string.loading));
         dialog.setMessage(formFragment.getContext().getString(com.vijay.jsonwizard.R.string.loading_form_message));
         dialog.show();
+        mStepName = getView().getArguments().getString("stepName");
+        JSONObject step = getView().getStep(mStepName);
+        try {
+            mStepDetails = new JSONObject(step.toString());
+        } catch (JSONException e) {
+            Timber.e(e);
+        }
         formFragment.getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                mStepName = getView().getArguments().getString("stepName");
-                JSONObject step = getView().getStep(mStepName);
-                try {
-                    mStepDetails = new JSONObject(step.toString());
-                } catch (JSONException e) {
-                    Log.e(TAG, e.getMessage(), e);
+                //fragment has been detached when skipping steps
+                if (getView() == null || cleanupAndExit) {
+                    dismissDialog(dialog);
+                    return;
                 }
                 final List<View> views = mJsonFormInteractor
                         .fetchFormElements(mStepName, formFragment, mStepDetails, getView().getCommonListener(),
                                 false);
+                if (cleanupAndExit) {
+                    dismissDialog(dialog);
+                    return;
+                }
                 formFragment.getJsonApi().initializeDependencyMaps();
 
                 formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
                     @Override
                     public void run() {
-                        dialog.dismiss();
-                        if (getView() != null) {
+                        dismissDialog(dialog);
+                        if (getView() != null && !cleanupAndExit) {
                             getView().addFormElements(views);
                             formFragment.getJsonApi().invokeRefreshLogic(null, false, null, null, mStepName);
-                        } else {
-                            Timber.w("View is null");
                         }
                     }
                 });
             }
         });
+    }
+
+    private void dismissDialog(ProgressDialog dialog) {
+        if (dialog.isShowing()) {
+            dialog.dismiss();
+        }
+
     }
 
     @SuppressLint("ResourceAsColor")
@@ -980,18 +995,51 @@ public class JsonFormFragmentPresenter extends
         formFragment.getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                FormUtils.preLoadRules(formFragment.getJsonApi(), formJSONObject, stepName, JsonFormConstants.CALCULATION);
+                preLoadRules(formJSONObject, stepName, JsonFormConstants.CALCULATION);
             }
         });
 
         formFragment.getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                FormUtils.preLoadRules(formFragment.getJsonApi(), formJSONObject, stepName, JsonFormConstants.RELEVANCE);
+                preLoadRules(formJSONObject, stepName, JsonFormConstants.RELEVANCE);
             }
         });
 
 
     }
 
+
+    private void preLoadRules(JSONObject formJSONObject, String stepName, String type) {
+        Set<String> ruleFiles = new HashSet<>();
+        JSONArray fields = formJSONObject.optJSONArray(stepName);
+        if (fields == null)
+            return;
+        for (int i = 0; i < fields.length(); i++) {
+            if (cleanupAndExit)
+                return;
+            JSONObject relevance = fields.optJSONObject(i).optJSONObject(type);
+            if (relevance != null) {
+                JSONObject ruleEngine = relevance.optJSONObject(RuleConstant.RULES_ENGINE);
+                if (ruleEngine != null) {
+                    JSONObject exRules = ruleEngine.optJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES);
+                    String file = exRules.optString(RuleConstant.RULES_FILE, null);
+                    if (file != null) {
+                        ruleFiles.add(exRules.optString(RuleConstant.RULES_FILE));
+                    }
+                }
+            }
+
+        }
+
+        for (String fileName : ruleFiles) {
+            if (cleanupAndExit)
+                return;
+            formFragment.getJsonApi().getRulesEngineFactory().getRulesFromAsset(fileName);
+        }
+    }
+
+    public void cleanUp() {
+        cleanupAndExit = true;
+    }
 }

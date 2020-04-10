@@ -99,7 +99,7 @@ public class HiddenTextFactory implements FormWidgetFactory {
         // Handle setting injected value (if exists) after attaching listener so that changes can be
         // effected by the listener and calculations applied
         final String value = jsonObject.optString(JsonFormConstants.VALUE);
-        if (StringUtils.isNotBlank(value)) {
+        if (StringUtils.isNotBlank(value) && formFragment.getContext() != null) {
             formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
                 @Override
                 public void run() {
