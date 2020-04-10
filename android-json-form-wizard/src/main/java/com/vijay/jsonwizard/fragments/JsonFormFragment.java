@@ -228,6 +228,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     @Override
     public void onDetach() {
         setmJsonApi(null);
+        presenter.cleanUp();
         super.onDetach();
     }
 

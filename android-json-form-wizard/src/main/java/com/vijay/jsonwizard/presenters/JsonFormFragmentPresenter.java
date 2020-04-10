@@ -103,6 +103,7 @@ public class JsonFormFragmentPresenter extends
     private Stack<String> incorrectlyFormattedFields;
     private JsonFormErrorFragment errorFragment;
     private FormUtils formUtils = new FormUtils();
+    private boolean cleanupAndExit;
 
     public JsonFormFragmentPresenter(JsonFormFragment formFragment,
                                      JsonFormInteractor jsonFormInteractor) {
@@ -134,30 +135,38 @@ public class JsonFormFragmentPresenter extends
             @Override
             public void run() {
                 //fragment has been detached when skipping steps
-                if (getView() == null) {
-                    if (dialog.isShowing())
-                        dialog.dismiss();
+                if (getView() == null || cleanupAndExit) {
+                    dismissDialog(dialog);
                     return;
                 }
                 final List<View> views = mJsonFormInteractor
                         .fetchFormElements(mStepName, formFragment, mStepDetails, getView().getCommonListener(),
                                 false);
+                if (cleanupAndExit) {
+                    dismissDialog(dialog);
+                    return;
+                }
                 formFragment.getJsonApi().initializeDependencyMaps();
 
                 formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
                     @Override
                     public void run() {
-                        dialog.dismiss();
-                        if (getView() != null) {
+                        dismissDialog(dialog);
+                        if (getView() != null && !cleanupAndExit) {
                             getView().addFormElements(views);
                             formFragment.getJsonApi().invokeRefreshLogic(null, false, null, null, mStepName);
-                        } else {
-                            Timber.w("View is null");
                         }
                     }
                 });
             }
         });
+    }
+
+    private void dismissDialog(ProgressDialog dialog) {
+        if (dialog.isShowing()) {
+            dialog.dismiss();
+        }
+
     }
 
     @SuppressLint("ResourceAsColor")
@@ -1006,6 +1015,8 @@ public class JsonFormFragmentPresenter extends
         if (fields == null)
             return;
         for (int i = 0; i < fields.length(); i++) {
+            if (cleanupAndExit)
+                return;
             JSONObject relevance = fields.optJSONObject(i).optJSONObject(type);
             if (relevance != null) {
                 JSONObject ruleEngine = relevance.optJSONObject(RuleConstant.RULES_ENGINE);
@@ -1021,8 +1032,13 @@ public class JsonFormFragmentPresenter extends
         }
 
         for (String fileName : ruleFiles) {
+            if (cleanupAndExit)
+                return;
             formFragment.getJsonApi().getRulesEngineFactory().getRulesFromAsset(fileName);
         }
     }
 
+    public void cleanUp() {
+        cleanupAndExit = true;
+    }
 }
