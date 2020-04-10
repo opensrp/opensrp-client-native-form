@@ -123,6 +123,10 @@ public class JsonFormFragmentPresenter extends
         dialog.setTitle(formFragment.getContext().getString(com.vijay.jsonwizard.R.string.loading));
         dialog.setMessage(formFragment.getContext().getString(com.vijay.jsonwizard.R.string.loading_form_message));
         dialog.show();
+        if (getView() == null) {
+            //fragment has been detached when skipping steps
+            return;
+        }
         formFragment.getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -145,7 +149,7 @@ public class JsonFormFragmentPresenter extends
                         if (getView() != null) {
                             getView().addFormElements(views);
                             formFragment.getJsonApi().invokeRefreshLogic(null, false, null, null, mStepName);
-                        }else{
+                        } else {
                             Timber.w("View is null");
                         }
                     }
