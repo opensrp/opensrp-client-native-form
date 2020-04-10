@@ -221,7 +221,7 @@ public class JsonFormFragmentPresenter extends
     }
 
     public void validateAndWriteValues() {
-        for (View childView : formFragment.getJsonApi().getFormDataViews().toArray(new View[0])) {
+        for (View childView : formFragment.getJsonApi().getFormDataViews()) {
             ValidationStatus validationStatus = validateView(childView);
             String key = (String) childView.getTag(R.id.key);
             String openMrsEntityParent = (String) childView.getTag(R.id.openmrs_entity_parent);
