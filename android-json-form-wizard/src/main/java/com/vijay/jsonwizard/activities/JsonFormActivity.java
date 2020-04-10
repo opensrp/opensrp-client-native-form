@@ -1064,7 +1064,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     Facts curValueMap = getValueFromAddress(address, isPopup);
                     timingLogger.addSplit("addRelevance getRelevanceAddress" + view.getTag(R.id.key));
                     try {
-                        comparison = isRelevant(curValueMap, curRelevance);
+                        comparison = isRelevant(curValueMap, curRelevance, ((String)view.getTag(R.id.address)).split(":")[0]);
                     } catch (Exception e) {
                         Timber.e(e, "JsonFormActivity --> addRelevance --> comparison");
                     }
@@ -1644,7 +1644,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         return form;
     }
 
-    private boolean isRelevant(Facts curValueMap, JSONObject curRelevance) throws Exception {
+    private boolean isRelevant(Facts curValueMap, JSONObject curRelevance, String stepName) throws Exception {
         if (curRelevance != null) {
             if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_RULES)) {
 
@@ -1653,7 +1653,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 if (exRulesObject.has(RuleConstant.RULES_FILE)) {
 
                     return curValueMap.asMap().size() != 0 && getRulesEngineFactory().getRelevance(curValueMap,
-                            exRulesObject.getString(RuleConstant.RULES_FILE));
+                            exRulesObject.getString(RuleConstant.RULES_FILE), stepName);
 
                 } else if (exRulesObject.has(RuleConstant.RULES_DYNAMIC)) {
 
