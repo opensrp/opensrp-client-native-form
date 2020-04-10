@@ -83,12 +83,21 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
         getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
             @Override
             public void run() {
+                if (isDetached()) {
+                    return;
+                }
                 final List<View> views = initiateViews();
+                if (isDetached()) {
+                    return;
+                }
                 getJsonApi().initializeDependencyMaps();
 
                 getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
                     @Override
                     public void run() {
+                        if (isDetached()) {
+                            return;
+                        }
                         setViewList(views);
                         getJsonApi().invokeRefreshLogic(null, true, null, null, getStepName());
                         addWidgetViews(dialogView);

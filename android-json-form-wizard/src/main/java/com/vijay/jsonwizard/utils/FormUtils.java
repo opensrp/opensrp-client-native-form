@@ -1753,29 +1753,4 @@ public class FormUtils {
         return value.replaceAll(", $", "");
     }
 
-    public static void preLoadRules(JsonApi jsonApi,JSONObject formJSONObject, String stepName, String type) {
-        Set<String> ruleFiles = new HashSet<>();
-        JSONArray fields = formJSONObject.optJSONArray(stepName);
-        if (fields == null)
-            return;
-        for (int i = 0; i < fields.length(); i++) {
-            JSONObject relevance = fields.optJSONObject(i).optJSONObject(type);
-            if (relevance != null) {
-                JSONObject ruleEngine = relevance.optJSONObject(RuleConstant.RULES_ENGINE);
-                if (ruleEngine != null) {
-                    JSONObject exRules = ruleEngine.optJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES);
-                    String file = exRules.optString(RuleConstant.RULES_FILE, null);
-                    if (file != null) {
-                        ruleFiles.add(exRules.optString(RuleConstant.RULES_FILE));
-                    }
-                }
-            }
-
-        }
-
-        for (String fileName : ruleFiles) {
-            jsonApi.getRulesEngineFactory().getRulesFromAsset(fileName);
-        }
-    }
-
 }
