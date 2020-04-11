@@ -33,6 +33,7 @@ public class RulesEngineFactory implements RuleListener {
     private Context context;
     private RulesEngine defaultRulesEngine;
     private Map<String, Rules> ruleMap;
+    private Map<String, Rules> relevanceRules;
     private String RULE_FOLDER_PATH = "rule/";
     private Rules rules;
     private String selectedRuleName;
@@ -46,6 +47,7 @@ public class RulesEngineFactory implements RuleListener {
         this.defaultRulesEngine = new DefaultRulesEngine(parameters);
         ((DefaultRulesEngine) this.defaultRulesEngine).registerRuleListener(this);
         this.ruleMap = new HashMap<>();
+        relevanceRules = new HashMap<>();
         gson = new Gson();
         this.globalValues = globalValues;
         this.rulesEngineHelper = new RulesEngineHelper();
@@ -59,7 +61,7 @@ public class RulesEngineFactory implements RuleListener {
         try {
             Rules rules = new Rules();
             JSONObject keyJsonObject = Utils.getJsonObjectFromJsonArray(JsonFormConstants.KEY, jsonArray);
-            if(keyJsonObject != null) {
+            if (keyJsonObject != null) {
                 String key = keyJsonObject.optString(JsonFormConstants.KEY);
                 if (!ruleMap.containsKey(key)) {
                     for (int i = 0; i < jsonArray.length(); i++) {
@@ -97,13 +99,15 @@ public class RulesEngineFactory implements RuleListener {
         }
     }
 
-    public boolean getRelevance(Facts relevanceFact, String ruleFilename) {
+    public boolean getRelevance(Facts relevanceFact, String ruleFilename, String stepName) {
 
         Facts facts = initializeFacts(relevanceFact);
 
         facts.put(RuleConstant.IS_RELEVANT, false);
 
-        rules = getRulesFromAsset( ruleFilename);
+        getRulesFromAsset(ruleFilename);
+
+        rules = relevanceRules.get(ruleFilename + stepName);
 
         processDefaultRules(rules, facts);
 
@@ -138,11 +142,19 @@ public class RulesEngineFactory implements RuleListener {
     }
 
     public Rules getRulesFromAsset(String ruleFileName) {
-        String fileName=RULE_FOLDER_PATH +ruleFileName;
+        String fileName = RULE_FOLDER_PATH + ruleFileName;
         try {
             if (!ruleMap.containsKey(fileName)) {
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(context.getAssets().open(fileName)));
                 ruleMap.put(fileName, MVELRuleFactory.createRulesFrom(bufferedReader));
+                for (Rule rule : ruleMap.get(fileName)) {
+                    String step = ruleFileName + rule.getName().substring(0, rule.getName().indexOf("_"));
+                    if (!relevanceRules.containsKey(step)) {
+                        relevanceRules.put(step, new Rules());
+                    }
+                    relevanceRules.get(step).register(rule);
+
+                }
             }
             return ruleMap.get(fileName);
         } catch (IOException e) {
@@ -185,7 +197,7 @@ public class RulesEngineFactory implements RuleListener {
         //need to clean curValue map as constraint depend on valid values, empties wont do
         Facts facts = initializeFacts(calculationFact);
         facts.put(RuleConstant.CALCULATION, "");
-        rules = getRulesFromAsset( ruleFilename);
+        rules = getRulesFromAsset(ruleFilename);
         processDefaultRules(rules, facts);
 
         return formatCalculationReturnValue(facts.get(RuleConstant.CALCULATION));
@@ -223,7 +235,7 @@ public class RulesEngineFactory implements RuleListener {
     public String getConstraint(Facts constraintFact, String ruleFilename) {
         Facts facts = initializeFacts(constraintFact);
         facts.put(RuleConstant.CONSTRAINT, "0");
-        rules = getRulesFromAsset(  ruleFilename);
+        rules = getRulesFromAsset(ruleFilename);
         processDefaultRules(rules, facts);
 
         return formatCalculationReturnValue(facts.get(RuleConstant.CONSTRAINT));

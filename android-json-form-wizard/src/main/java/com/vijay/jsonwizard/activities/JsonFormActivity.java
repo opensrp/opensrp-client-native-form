@@ -92,6 +92,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -105,7 +106,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     private FormUtils formUtils = new FormUtils();
     private Map<String, View> constrainedViews;
-    private Map<String, View> formDataViews = new HashMap<>();
+    private Map<String, View> formDataViews = new ConcurrentHashMap<>();
     private String functionRegex;
     private HashMap<String, Comparison> comparisons;
     private Map<String, List<String>> ruleKeys = new HashMap<>();
@@ -291,7 +292,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         initComparisons();
         Set<String> viewsIds = skipLogicDependencyMap.get(stepName + "_" + parentKey);
         if (parentKey == null || childKey == null) {
-            for (View curView : skipLogicViews.values().toArray(new View[0])) {
+            for (View curView : skipLogicViews.values()) {
                 addRelevance(curView, popup);
             }
         } else if (viewsIds == null) {
@@ -346,11 +347,11 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         Set<String> viewsIds = calculationDependencyMap.get(stepName + "_" + parentKey);
         if (parentKey == null || viewsIds == null)
             viewsIds = calculationLogicViews.keySet();
-        for (String viewId : viewsIds.toArray(new String[0])) {
+        for (String viewId : viewsIds) {
             try {
                 View curView = calculationLogicViews.get(viewId);
-                if(curView==null){
-                    Timber.w("calculationLogicViews Missing %s",viewId);
+                if (curView == null) {
+                    Timber.w("calculationLogicViews Missing %s", viewId);
                     continue;
                 }
                 Pair<String[], JSONObject> addressAndValue = getCalculationAddressAndValue(curView);
@@ -374,7 +375,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     @Override
-    public void initializeDependencyMaps(){
+    public void initializeDependencyMaps() {
         populateDependencyMap(calculationLogicViews, calculationDependencyMap, true);
         populateDependencyMap(skipLogicViews, skipLogicDependencyMap, false);
     }
@@ -388,16 +389,20 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     private void populateDependencyMap(Map<String, View> formViews, Map<String, Set<String>> dependencyMap, boolean calculation) {
-        for (View view : formViews.values().toArray(new View[0])) {
+        for (View view : formViews.values()) {
             try {
+                boolean isPopup = false;
+                if (view.getTag(R.id.extraPopup) != null) {
+                    isPopup = (boolean) view.getTag(R.id.extraPopup);
+                }
                 Pair<String[], JSONObject> addressAndValue = calculation ? getCalculationAddressAndValue(view) :
-                        getRelevanceAddress(view, (boolean) view.getTag(R.id.extraPopup));
+                        getRelevanceAddress(view, isPopup);
                 if (addressAndValue != null) {
                     String[] address = addressAndValue.first;
                     if (address.length <= 2)
                         continue;
                     List<String> widgets = getRules(address[1], address[2], true);
-                    if(widgets==null)
+                    if (widgets == null)
                         continue;
                     for (String widget : widgets) {
                         if (!widget.startsWith(RuleConstant.STEP)) {
@@ -1045,7 +1050,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
                     Facts curValueMap = getValueFromAddress(address, isPopup);
                     try {
-                        comparison = isRelevant(curValueMap, curRelevance);
+                        comparison = isRelevant(curValueMap, curRelevance, ((String)view.getTag(R.id.address)).split(":")[0]);
                     } catch (Exception e) {
                         Timber.e(e, "JsonFormActivity --> addRelevance --> comparison");
                     }
@@ -1622,7 +1627,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         return form;
     }
 
-    private boolean isRelevant(Facts curValueMap, JSONObject curRelevance) throws Exception {
+    private boolean isRelevant(Facts curValueMap, JSONObject curRelevance, String stepName) throws Exception {
         if (curRelevance != null) {
             if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_RULES)) {
 
@@ -1631,7 +1636,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 if (exRulesObject.has(RuleConstant.RULES_FILE)) {
 
                     return curValueMap.asMap().size() != 0 && getRulesEngineFactory().getRelevance(curValueMap,
-                            exRulesObject.getString(RuleConstant.RULES_FILE));
+                            exRulesObject.getString(RuleConstant.RULES_FILE), stepName);
 
                 } else if (exRulesObject.has(RuleConstant.RULES_DYNAMIC)) {
 

@@ -22,6 +22,7 @@ import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.GenericDialogInterface;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.rules.RuleConstant;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.SecondaryValueModel;
 import com.vijay.jsonwizard.utils.Utils;
@@ -33,8 +34,10 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import timber.log.Timber;
 
@@ -302,7 +305,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
             getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         }
         setViewList(initiateViews());
-        getJsonApi().invokeRefreshLogic(null, true, null, null,stepName);
+        getJsonApi().invokeRefreshLogic(null, true, null, null, stepName);
         return dialogView;
     }
 
@@ -606,17 +609,47 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                FormUtils.preLoadRules(getJsonApi(), formJSONObject, stepName, JsonFormConstants.CALCULATION);
+                preLoadRules(formJSONObject, stepName, JsonFormConstants.CALCULATION);
             }
         });
 
         getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                FormUtils.preLoadRules(getJsonApi(), formJSONObject, stepName, JsonFormConstants.RELEVANCE);
+                preLoadRules(formJSONObject, stepName, JsonFormConstants.RELEVANCE);
             }
         });
 
+    }
 
+    public void preLoadRules(JSONObject formJSONObject, String stepName, String type) {
+        Set<String> ruleFiles = new HashSet<>();
+        JSONArray fields = formJSONObject.optJSONArray(stepName);
+        if (fields == null)
+            return;
+        for (int i = 0; i < fields.length(); i++) {
+            if (isDetached()) {
+                return;
+            }
+            JSONObject relevance = fields.optJSONObject(i).optJSONObject(type);
+            if (relevance != null) {
+                JSONObject ruleEngine = relevance.optJSONObject(RuleConstant.RULES_ENGINE);
+                if (ruleEngine != null) {
+                    JSONObject exRules = ruleEngine.optJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES);
+                    String file = exRules.optString(RuleConstant.RULES_FILE, null);
+                    if (file != null) {
+                        ruleFiles.add(exRules.optString(RuleConstant.RULES_FILE));
+                    }
+                }
+            }
+
+        }
+
+        for (String fileName : ruleFiles) {
+            if (isDetached()) {
+                return;
+            }
+            getJsonApi().getRulesEngineFactory().getRulesFromAsset(fileName);
+        }
     }
 }
