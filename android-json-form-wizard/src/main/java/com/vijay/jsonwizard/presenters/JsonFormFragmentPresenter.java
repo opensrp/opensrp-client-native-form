@@ -147,24 +147,12 @@ public class JsonFormFragmentPresenter extends
 
         dismissDialog(dialog);
         if (getView() != null && !cleanupAndExit) {
-            formFragment.getJsonApi().invokeRefreshLogic(null, false, null, null, mStepName);
-
-            JSONObject jsonObject = formFragment.getJsonApi().getmJSONObject().optJSONObject(mStepName);
-            if (jsonObject.has(JsonFormConstants.NEXT)) {
-                if (checkIfStepIsBlank(jsonObject, dialog) && jsonObject.has(JsonFormConstants.NEXT)) {
-                    JsonFormFragment next = getJsonWizardFormFragment(jsonObject);//
-                    formFragment.transactThis(next);
-                }
-            }
-
             getView().addFormElements(views);
 
+            formFragment.getJsonApi().invokeRefreshLogic(null, false, null, null, mStepName);
         }
     }
 
-    public JsonFormFragment getJsonWizardFormFragment(JSONObject jsonObject) {
-        return JsonWizardFormFragment.getFormFragment(jsonObject.optString(JsonFormConstants.NEXT));
-    }
 //        formFragment.getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
 //            @Override
 //            public void run() {
@@ -202,33 +190,6 @@ public class JsonFormFragmentPresenter extends
 //                        }
 //                    }
 //                });
-
-
-    private boolean checkIfStepIsBlank(JSONObject formStep, ProgressDialog dialog) {
-        if (!dialog.isShowing()) {
-            dialog.show();
-        }
-        boolean is = true;
-        try {
-            if (formStep.has(JsonFormConstants.FIELDS)) {
-                JSONArray fields = formStep.getJSONArray(JsonFormConstants.FIELDS);
-                for (int i = 0; i < fields.length(); i++) {
-                    JSONObject field = fields.getJSONObject(i);
-                    if (field.has(JsonFormConstants.TYPE) && !JsonFormConstants.HIDDEN.equals(field.getString(JsonFormConstants.TYPE))) {
-                        boolean isVisible = field.optBoolean(JsonFormConstants.IS_VISIBLE, true);
-                        if (isVisible) {
-                            is = false;
-                            break;
-                        }
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            Timber.e(e, "%s --> checkIfStepIsBlank", this.getClass().getCanonicalName());
-        }
-        dismissDialog(dialog);
-        return is;
-    }
 
     private void dismissDialog(ProgressDialog dialog) {
         if (dialog.isShowing()) {
