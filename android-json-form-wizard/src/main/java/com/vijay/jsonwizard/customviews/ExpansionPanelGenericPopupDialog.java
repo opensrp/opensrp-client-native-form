@@ -10,7 +10,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatImageButton;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.TimingLogger;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,31 +79,31 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
         setJsonApi((JsonApi) activity);
         getJsonApi().setGenericPopup(this);
         setGenericPopUpDialog();
-        getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
+//        getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
+//            @Override
+//            public void run() {
+        if (isDetached()) {
+            return;
+        }
+        final List<View> views = initiateViews();
+        if (isDetached()) {
+            return;
+        }
+        getJsonApi().initializeDependencyMaps();
+
+        getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
             @Override
             public void run() {
                 if (isDetached()) {
                     return;
                 }
-                final List<View> views = initiateViews();
-                if (isDetached()) {
-                    return;
-                }
-                getJsonApi().initializeDependencyMaps();
-
-                getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (isDetached()) {
-                            return;
-                        }
-                        setViewList(views);
-                        getJsonApi().invokeRefreshLogic(null, true, null, null, getStepName());
-                        addWidgetViews(dialogView);
-                    }
-                });
+                setViewList(views);
+                getJsonApi().invokeRefreshLogic(null, true, null, null, getStepName());
+                addWidgetViews(dialogView);
             }
         });
+//            }
+//        });
 
         setStyle(DialogFragment.STYLE_NORMAL, R.style.FullScreenDialogStyle);
     }
