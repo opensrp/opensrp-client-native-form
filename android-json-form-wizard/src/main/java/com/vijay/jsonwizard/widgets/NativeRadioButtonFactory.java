@@ -137,6 +137,8 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
                         Intent intent = new Intent(JsonFormConstants.INTENT_ACTION.JSON_FORM_ACTIVITY);
                         intent.putExtra(JsonFormConstants.INTENT_KEY.MESSAGE, map);
+                        intent.putExtra("essentials",((String) customTextView.getTag(R.id.specify_step_name)).concat(":").concat(((String) customTextView.getTag(R.id.key))));
+
                         intent.putExtra(JsonFormConstants.INTENT_KEY.MESSAGE_TYPE,
                                 JsonFormConstants.MESSAGE_TYPE.GLOBAL_VALUES);
 

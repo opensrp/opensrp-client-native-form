@@ -42,6 +42,7 @@ import com.vijay.jsonwizard.customviews.NativeEditText;
 import com.vijay.jsonwizard.customviews.RadioButton;
 import com.vijay.jsonwizard.fragments.JsonFormErrorFragment;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
+import com.vijay.jsonwizard.fragments.JsonWizardFormFragment;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 import com.vijay.jsonwizard.mvp.MvpBasePresenter;
 import com.vijay.jsonwizard.rules.RuleConstant;
@@ -131,35 +132,102 @@ public class JsonFormFragmentPresenter extends
         } catch (JSONException e) {
             Timber.e(e);
         }
-        formFragment.getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                //fragment has been detached when skipping steps
-                if (getView() == null || cleanupAndExit) {
-                    dismissDialog(dialog);
-                    return;
-                }
-                final List<View> views = mJsonFormInteractor
-                        .fetchFormElements(mStepName, formFragment, mStepDetails, getView().getCommonListener(),
-                                false);
-                if (cleanupAndExit) {
-                    dismissDialog(dialog);
-                    return;
-                }
-                formFragment.getJsonApi().initializeDependencyMaps();
+        if (getView() == null || cleanupAndExit) {
+            dismissDialog(dialog);
+            return;
+        }
+        final List<View> views = mJsonFormInteractor
+                .fetchFormElements(mStepName, formFragment, mStepDetails, getView().getCommonListener(),
+                        false);
+        if (cleanupAndExit) {
+            dismissDialog(dialog);
+            return;
+        }
+        formFragment.getJsonApi().initializeDependencyMaps();
 
-                formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        dismissDialog(dialog);
-                        if (getView() != null && !cleanupAndExit) {
-                            getView().addFormElements(views);
-                            formFragment.getJsonApi().invokeRefreshLogic(null, false, null, null, mStepName);
+        dismissDialog(dialog);
+        if (getView() != null && !cleanupAndExit) {
+            formFragment.getJsonApi().invokeRefreshLogic(null, false, null, null, mStepName);
+
+            JSONObject jsonObject = formFragment.getJsonApi().getmJSONObject().optJSONObject(mStepName);
+            if (jsonObject.has(JsonFormConstants.NEXT)) {
+                if (checkIfStepIsBlank(jsonObject, dialog) && jsonObject.has(JsonFormConstants.NEXT)) {
+                    JsonFormFragment next = getJsonWizardFormFragment(jsonObject);//
+                    formFragment.transactThis(next);
+                }
+            }
+
+            getView().addFormElements(views);
+
+        }
+    }
+
+    public JsonFormFragment getJsonWizardFormFragment(JSONObject jsonObject) {
+        return JsonWizardFormFragment.getFormFragment(jsonObject.optString(JsonFormConstants.NEXT));
+    }
+//        formFragment.getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                //fragment has been detached when skipping steps
+//                if (getView() == null || cleanupAndExit) {
+//                    dismissDialog(dialog);
+//                    return;
+//                }
+//                final List<View> views = mJsonFormInteractor
+//                        .fetchFormElements(mStepName, formFragment, mStepDetails, getView().getCommonListener(),
+//                                false);
+//                if (cleanupAndExit) {
+//                    dismissDialog(dialog);
+//                    return;
+//                }
+//                formFragment.getJsonApi().initializeDependencyMaps();
+//
+//                formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        dismissDialog(dialog);
+//                        if (getView() != null && !cleanupAndExit) {
+//                            formFragment.getJsonApi().invokeRefreshLogic(null, false, null, null, mStepName);
+//
+//                            JSONObject jsonObject = formFragment.getJsonApi().getmJSONObject().optJSONObject(mStepName);
+//                            if (jsonObject.has(JsonFormConstants.NEXT)) {
+//                                if (checkIfStepIsBlank(jsonObject, dialog) && jsonObject.has(JsonFormConstants.NEXT)) {
+//                                    JsonFormFragment next = JsonWizardFormFragment.getFormFragment(jsonObject.optString(JsonFormConstants.NEXT));
+//                                    formFragment.transactThis(next);
+//                                }
+//                            }
+//
+//                            getView().addFormElements(views);
+//
+//                        }
+//                    }
+//                });
+
+
+    private boolean checkIfStepIsBlank(JSONObject formStep, ProgressDialog dialog) {
+        if (!dialog.isShowing()) {
+            dialog.show();
+        }
+        boolean is = true;
+        try {
+            if (formStep.has(JsonFormConstants.FIELDS)) {
+                JSONArray fields = formStep.getJSONArray(JsonFormConstants.FIELDS);
+                for (int i = 0; i < fields.length(); i++) {
+                    JSONObject field = fields.getJSONObject(i);
+                    if (field.has(JsonFormConstants.TYPE) && !JsonFormConstants.HIDDEN.equals(field.getString(JsonFormConstants.TYPE))) {
+                        boolean isVisible = field.optBoolean(JsonFormConstants.IS_VISIBLE, true);
+                        if (isVisible) {
+                            is = false;
+                            break;
                         }
                     }
-                });
+                }
             }
-        });
+        } catch (JSONException e) {
+            Timber.e(e, "%s --> checkIfStepIsBlank", this.getClass().getCanonicalName());
+        }
+        dismissDialog(dialog);
+        return is;
     }
 
     private void dismissDialog(ProgressDialog dialog) {
@@ -221,7 +289,8 @@ public class JsonFormFragmentPresenter extends
     }
 
     public void validateAndWriteValues() {
-        for (View childView : formFragment.getJsonApi().getFormDataViews()) {
+        View[] views = formFragment.getJsonApi().getFormDataViews().toArray(new View[0]);
+        for (View childView : views) {
             ValidationStatus validationStatus = validateView(childView);
             String key = (String) childView.getTag(R.id.key);
             String openMrsEntityParent = (String) childView.getTag(R.id.openmrs_entity_parent);

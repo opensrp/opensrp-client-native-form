@@ -117,8 +117,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private Utils utils = new Utils();
     private HashMap<String, String[]> addressMap = new HashMap<>();
 
-    private Map<String, Set<String>> calculationDependencyMap = new HashMap<>();
-    private Map<String, Set<String>> skipLogicDependencyMap = new HashMap<>();
+    public Map<String, Set<String>> calculationDependencyMap = new HashMap<>();
+    public Map<String, Set<String>> skipLogicDependencyMap = new HashMap<>();
 
     private AppExecutors appExecutors = new AppExecutors();
 
@@ -130,10 +130,17 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 Map<String, String> map =
                         (Map<String, String>) intent.getSerializableExtra(JsonFormConstants.INTENT_KEY.MESSAGE);
                 globalValues.putAll(map);
+                String essentials = intent.getStringExtra("essentials");
+                if (StringUtils.isNotBlank(essentials))
+                    performActionOnReceived(essentials);
             }
             // Log.d(TAG, "Received Broadcast Message Type " + messageType);
         }
     };
+
+    public void performActionOnReceived(String essentials) {
+
+    }
 
     @Override
     public synchronized JSONObject getStep(String name) {
@@ -1050,7 +1057,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
                     Facts curValueMap = getValueFromAddress(address, isPopup);
                     try {
-                        comparison = isRelevant(curValueMap, curRelevance, ((String)view.getTag(R.id.address)).split(":")[0]);
+                        comparison = isRelevant(curValueMap, curRelevance, ((String) view.getTag(R.id.address)).split(":")[0]);
                     } catch (Exception e) {
                         Timber.e(e, "JsonFormActivity --> addRelevance --> comparison");
                     }
