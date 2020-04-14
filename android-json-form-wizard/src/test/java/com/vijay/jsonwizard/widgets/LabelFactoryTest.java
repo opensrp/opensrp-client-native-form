@@ -63,9 +63,9 @@ public class LabelFactoryTest extends BaseTest {
         Mockito.doReturn(resources).when(context).getResources();
         Assert.assertNotNull(resources);
 
-        String labelString = "";
+        String labelString = "{\"key\":\"enabled_label\",\"type\":\"label\",\"text\":\"This is enabled\",\"hint_on_text\":false,\"text_color\":\"#FFC100\",\"text_size\":\"17sp\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"label_info_text\":\"Checking out the display oof the info icon needed to display this infomation\",\"label_info_title\":\"Highest Level of School\"}";
 
-        List<View> viewList = factorySpy.getViewsFromJson("RandomStepName", context, formFragment, new JSONObject(), listener, false);
+        List<View> viewList = factorySpy.getViewsFromJson("RandomStepName", context, formFragment, new JSONObject(labelString), listener, false);
         Assert.assertNotNull(viewList);
         Assert.assertTrue(viewList.size() > 0);
     }
