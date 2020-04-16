@@ -10,7 +10,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import timber.log.Timber;
-
+/***
+ * @deprecated should now use MultiSelectListRepository
+ */
 public class AssetMultiSelectListFileReaderImpl implements MultiSelectListFileReader {
 
     private Context context;

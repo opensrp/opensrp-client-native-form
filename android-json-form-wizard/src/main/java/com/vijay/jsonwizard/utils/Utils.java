@@ -34,6 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joda.time.LocalDate;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,7 +43,6 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -79,8 +79,8 @@ public class Utils {
     public static Date getDateFromString(String dtStart) {
         if (StringUtils.isNotBlank(dtStart) && !"0".equals(dtStart)) {
             try {
-                return DatePickerFactory.DATE_FORMAT.parse(dtStart);
-            } catch (ParseException e) {
+                return LocalDate.fromDateFields(DatePickerFactory.DATE_FORMAT.parse(dtStart)).toDate();
+            } catch (Exception e) {
                 Timber.e(e, " --> getDateFromString");
                 return null;
             }
