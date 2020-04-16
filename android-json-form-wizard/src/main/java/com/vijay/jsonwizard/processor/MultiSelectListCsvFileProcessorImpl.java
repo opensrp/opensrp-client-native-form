@@ -11,6 +11,9 @@ import org.json.JSONObject;
 
 import timber.log.Timber;
 
+/***
+ * @deprecated should now use MultiSelectListRepository
+ */
 public class MultiSelectListCsvFileProcessorImpl implements MultiSelectListFileProcessor {
 
     @Override

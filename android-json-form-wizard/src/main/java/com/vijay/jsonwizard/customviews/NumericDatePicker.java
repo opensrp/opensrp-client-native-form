@@ -34,8 +34,6 @@ public class NumericDatePicker extends DatePicker {
     private long maxDate;
     private DatePicker.OnDateChangedListener onDateChangedListener;
 
-    private static final LocalDate localDate = new LocalDate();
-
     private int minDay;
     private int minMonth;
     private int minYear;
@@ -133,6 +131,14 @@ public class NumericDatePicker extends DatePicker {
 
             validator = validateCurrentSelectedDate();
 
+        }
+
+        //Before setting constraint, default to today's date if none is set
+
+        if (yearPicker.getValue() == 0) {
+            yearPicker.setValue(Calendar.getInstance().get(Calendar.YEAR));
+            monthPicker.setValue(Calendar.getInstance().get(Calendar.MONTH) + 1);
+            dayPicker.setValue(Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
         }
 
         //Year max and min never change
@@ -277,6 +283,9 @@ public class NumericDatePicker extends DatePicker {
      * Init's the widget components
      */
     private void setupView() {
+        int todayDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+        int todayMonth = Calendar.getInstance().get(Calendar.MONTH);
+        int todayYear = Calendar.getInstance().get(Calendar.YEAR);
 
         disableSuperCanvas();
         checkConstraintsConstraint();
@@ -287,9 +296,9 @@ public class NumericDatePicker extends DatePicker {
 
         monthPicker = initNumericPicker(R.id.month, 1, 12);
 
-        yearPicker = initNumericPicker(R.id.year, 0, localDate.getYear() + 1000);
+        yearPicker = initNumericPicker(R.id.year, 0, todayYear + 1000);
 
-        updateDate(localDate.getYear(), localDate.getMonthOfYear() - 1, localDate.getDayOfMonth());
+        updateDate(todayYear, todayMonth, todayDay);
 
     }
 
