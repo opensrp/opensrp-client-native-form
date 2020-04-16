@@ -1031,7 +1031,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     address = getAddress(view, curKey, curRelevance, JsonFormConstants.RELEVANCE);
                 }
                 return new Pair<>(address, curRelevance);
-
             }
         }
         return null;
@@ -1050,7 +1049,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
                     Facts curValueMap = getValueFromAddress(address, isPopup);
                     try {
-                        comparison = isRelevant(curValueMap, curRelevance, ((String)view.getTag(R.id.address)).split(":")[0]);
+                        comparison = isRelevant(curValueMap, curRelevance, ((String) view.getTag(R.id.address)).split(":")[0]);
                     } catch (Exception e) {
                         Timber.e(e, "JsonFormActivity --> addRelevance --> comparison");
                     }
