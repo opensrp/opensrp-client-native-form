@@ -476,18 +476,10 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private JSONObject fillFieldsWithValues(List<String> rulesList, boolean popup) throws JSONException {
         JSONObject result = new JSONObject();
         JSONArray rulesArray = new JSONArray();
-
-        for (int h = 1; h < getmJSONObject().getInt(JsonFormConstants.COUNT) + 1; h++) {
-            JSONArray fields = fetchFields(getmJSONObject().getJSONObject(RuleConstant.STEP + h), popup);
-            for (int i = 0; i < fields.length(); i++) {
-                if (rulesList.contains(RuleConstant.STEP + h + "_" +
-                        fields.getJSONObject(i).getString(JsonFormConstants.KEY))) {
-
-                    JSONObject fieldObject = fields.getJSONObject(i);
-                    fieldObject.put(RuleConstant.STEP, RuleConstant.STEP + h);
-                    rulesArray.put(fieldObject);
-                }
-            }
+        for (String rule : rulesList) {
+            JSONObject fieldObject = formFields.get(rule);
+            fieldObject.put(RuleConstant.STEP, rule.substring(0,rule.indexOf("_")));
+            rulesArray.put(fieldObject);
         }
         result.put(RuleConstant.RESULT, rulesArray);
         return result;
@@ -637,7 +629,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         JSONArray fields = FormUtils.fields(formJsonObject, step);
                         for (int j = 0; j < fields.length(); j++) {
                             JSONObject field = fields.getJSONObject(j);
-                            formFields.put(step + field.getString(JsonFormConstants.KEY), field);
+                            formFields.put(step + "_" + field.getString(JsonFormConstants.KEY), field);
                         }
                     }
                 } catch (JSONException e) {
@@ -806,7 +798,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     private JSONObject getRelevanceReferencedObject(String stepName, String key, boolean popup) {
-        return formFields.get(stepName + key);
+        return formFields.get(stepName + "_" + key);
     }
 
     private void getFieldObject(String stepName, List<String> rulesList, JSONArray rulesArray, JSONArray feilds)
@@ -837,7 +829,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     protected void widgetsWriteValue(String stepName, String key, String value, String openMrsEntityParent,
                                      String openMrsEntity, String openMrsEntityId, boolean popup) throws JSONException {
-        JSONObject item = formFields.get(stepName + key);
+        JSONObject item = formFields.get(stepName + "_" + key);
         String keyAtIndex = item.getString(JsonFormConstants.KEY);
         String itemType = item.has(JsonFormConstants.TYPE) ? item.getString(JsonFormConstants.TYPE) : "";
         boolean isSpecialWidget = isSpecialWidget(itemType);
@@ -919,7 +911,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                                       String value, boolean popup) throws JSONException {
 
         synchronized (getmJSONObject()) {
-            JSONObject checkboxObject = formFields.get(stepName + parentKey);
+            JSONObject checkboxObject = formFields.get(stepName + "_" + parentKey);
             JSONArray checkboxOptions = checkboxObject.getJSONArray(childObjectKey);
             HashSet<String> currentValues = new HashSet<>();
             //Get current values
@@ -1360,7 +1352,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     protected void refreshMediaLogic(String key, String value) {
         try {
-            JSONObject questionGroup = formFields.get(JsonFormConstants.STEP1 + key);
+            JSONObject questionGroup = formFields.get(JsonFormConstants.STEP1 + "_" + key);
             if ((questionGroup.has("key") && questionGroup.has("has_media_content")) &&
                     (questionGroup.getString("key").equalsIgnoreCase(key)) &&
                     (questionGroup.getBoolean("has_media_content"))) {
