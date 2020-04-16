@@ -150,6 +150,10 @@ public class JsonWizardFormFragment extends JsonFormFragment {
     public void onResume() {
         super.onResume();
         setJsonFormFragment(this);
+
+    }
+
+    public void processSkipSteps() {
         if (!getJsonApi().isPreviousPressed()) {
             skipStepsOnNextPressed();
         } else {

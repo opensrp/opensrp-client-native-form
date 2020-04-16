@@ -42,6 +42,7 @@ import com.vijay.jsonwizard.customviews.NativeEditText;
 import com.vijay.jsonwizard.customviews.RadioButton;
 import com.vijay.jsonwizard.fragments.JsonFormErrorFragment;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
+import com.vijay.jsonwizard.fragments.JsonWizardFormFragment;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 import com.vijay.jsonwizard.mvp.MvpBasePresenter;
 import com.vijay.jsonwizard.rules.RuleConstant;
@@ -155,6 +156,9 @@ public class JsonFormFragmentPresenter extends
                         if (getView() != null && !cleanupAndExit) {
                             getView().addFormElements(views);
                             formFragment.getJsonApi().invokeRefreshLogic(null, false, null, null, mStepName);
+                            if (formFragment instanceof JsonWizardFormFragment) {
+                                ((JsonWizardFormFragment) formFragment).processSkipSteps();
+                            }
                         }
                     }
                 });
