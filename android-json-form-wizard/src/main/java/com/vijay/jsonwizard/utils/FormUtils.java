@@ -435,7 +435,7 @@ public class FormUtils {
     }
 
     public static int dpToPixels(Context context, float dps) {
-        return  (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dps, context.getResources().getDisplayMetrics());
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dps, context.getResources().getDisplayMetrics());
     }
 
     public void showInfoIcon(String stepName, JSONObject jsonObject, CommonListener listener,
@@ -643,6 +643,7 @@ public class FormUtils {
                     if (widget.has(JsonFormConstants.KEY) && key
                             .equals(widget.getString(JsonFormConstants.KEY))) {
                         field = widget;
+                        break;
                     }
                 }
             }
@@ -993,6 +994,7 @@ public class FormUtils {
                         String key = option.getString(JsonFormConstants.KEY);
                         if (key.equals(value)) {
                             text = option.getString(JsonFormConstants.TEXT);
+                            break;
                         }
                     }
                 }
@@ -1474,6 +1476,7 @@ public class FormUtils {
                     String key = option.getString(JsonFormConstants.KEY);
                     String text = option.getString(JsonFormConstants.TEXT);
                     secondaryValue = key + ":" + text;
+                    break;
                 }
             }
         }
@@ -1593,6 +1596,7 @@ public class FormUtils {
                     JSONObject item = formFields.getJSONObject(i);
                     if (item.has(JsonFormConstants.KEY) && item.getString(JsonFormConstants.KEY).equals(parentKey) && item.has(JsonFormConstants.VALUE)) {
                         values = item.getJSONArray(JsonFormConstants.VALUE);
+                        break;
                     }
                 }
             }
@@ -1721,6 +1725,7 @@ public class FormUtils {
                     String key = getValueKey(secondValues.getString(j));
                     if (mainKey.equals(key)) {
                         jsonObject.put(JsonFormConstants.VALUE, true);
+                        break;
                     }
                 }
             } catch (JSONException e) {
