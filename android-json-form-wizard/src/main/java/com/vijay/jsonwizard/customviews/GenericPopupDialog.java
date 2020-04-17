@@ -294,9 +294,6 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
 
         attachOnShowListener();
         LinearLayout genericDialogContent = dialogView.findViewById(R.id.generic_dialog_content);
-        for (View view : getViewList()) {
-            genericDialogContent.addView(view);
-        }
 
         attachDialogCancelButton(dialogView);
         attachDialogOkButton(dialogView);
@@ -305,6 +302,9 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
             getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         }
         setViewList(initiateViews());
+        for (View view : getViewList()) {
+            genericDialogContent.addView(view);
+        }
         getJsonApi().invokeRefreshLogic(null, true, null, null, stepName);
         return dialogView;
     }
