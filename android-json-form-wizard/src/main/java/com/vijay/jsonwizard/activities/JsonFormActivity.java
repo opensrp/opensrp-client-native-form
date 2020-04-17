@@ -93,6 +93,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -108,7 +109,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private Map<String, View> constrainedViews;
     private Map<String, View> formDataViews = new ConcurrentHashMap<>();
     private Map<String, JSONObject> formFields = new ConcurrentHashMap<>();
-    private Set<String> popupFormFields = new HashSet<>();
+    private Set<String> popupFormFields = new ConcurrentSkipListSet<>();
     private String functionRegex;
     private HashMap<String, Comparison> comparisons;
     private Map<String, List<String>> ruleKeys = new HashMap<>();
@@ -478,7 +479,13 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         JSONObject result = new JSONObject();
         JSONArray rulesArray = new JSONArray();
         for (String rule : rulesList) {
+            if (!rule.startsWith(JsonFormConstants.STEP))
+                continue;
             JSONObject fieldObject = formFields.get(rule);
+            if (fieldObject == null) {
+                Timber.w("Missing field for rule %s", rule);
+                continue;
+            }
             fieldObject.put(RuleConstant.STEP, rule.substring(0, rule.indexOf("_")));
             rulesArray.put(fieldObject);
         }
