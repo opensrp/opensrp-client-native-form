@@ -388,7 +388,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         refreshCalculationLogic(parentKey, childKey, popup, stepName);
         refreshSkipLogic(parentKey, childKey, popup, stepName);
         refreshConstraints(parentKey, childKey, popup);
-        refreshMediaLogic(parentKey, value);
+        refreshMediaLogic(parentKey, value, stepName);
     }
 
     private void populateDependencyMap(Map<String, View> formViews, Map<String, Set<String>> dependencyMap, boolean calculation) {
@@ -1375,11 +1375,11 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         return args;
     }
 
-    protected void refreshMediaLogic(String key, String value) {
+    protected void refreshMediaLogic(String key, String value, String stepName) {
         if (StringUtils.isBlank(key))
             return;
         try {
-            JSONObject questionGroup = formFields.get(JsonFormConstants.STEP1 + "_" + key);
+            JSONObject questionGroup = formFields.get(stepName + "_" + key);
             if (questionGroup == null) {
                 Timber.d("refreshMediaLogic field %s is missing", key);
             } else if ((questionGroup.has("key") && questionGroup.has("has_media_content")) &&
