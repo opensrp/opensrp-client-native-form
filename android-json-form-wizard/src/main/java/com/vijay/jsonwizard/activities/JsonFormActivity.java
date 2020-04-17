@@ -1374,9 +1374,13 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     protected void refreshMediaLogic(String key, String value) {
+        if (StringUtils.isBlank(key))
+            return;
         try {
             JSONObject questionGroup = formFields.get(JsonFormConstants.STEP1 + "_" + key);
-            if ((questionGroup.has("key") && questionGroup.has("has_media_content")) &&
+            if (questionGroup == null) {
+                Timber.d("refreshMediaLogic field %s is missing", key);
+            } else if ((questionGroup.has("key") && questionGroup.has("has_media_content")) &&
                     (questionGroup.getString("key").equalsIgnoreCase(key)) &&
                     (questionGroup.getBoolean("has_media_content"))) {
                 JSONArray medias = questionGroup.getJSONArray("media");
