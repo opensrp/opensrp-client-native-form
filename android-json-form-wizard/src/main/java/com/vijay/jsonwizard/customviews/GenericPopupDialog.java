@@ -81,7 +81,6 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        preLoadRules(getJsonApi().getmJSONObject(), getStepName());
         if (context == null) {
             throw new IllegalStateException(
                     "The Context is not set. Did you forget to set context with Generic Dialog setContext method?");
@@ -91,10 +90,12 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         setJsonApi((JsonApi) activity);
 
         try {
+            loadSubForms();
+            preLoadRules(getSpecifyContent());
             setMainFormFields(formUtils.getFormFields(getStepName(), context));
             loadPartialSecondaryValues();
             createSecondaryValuesMap();
-            loadSubForms();
+
             getJsonApi().updateGenericPopupSecondaryValues(specifyContent, stepName);
         } catch (JSONException e) {
             Timber.e(e, " --> onCreate");
@@ -605,43 +606,29 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         this.popAssignedValue = popAssignedValue;
     }
 
-    private void preLoadRules(final JSONObject formJSONObject, final String stepName) {
+    private void preLoadRules(final JSONArray fields) {
         getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                preLoadRules(formJSONObject, stepName, JsonFormConstants.CALCULATION);
-            }
-        });
-
-        getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                preLoadRules(formJSONObject, stepName, JsonFormConstants.RELEVANCE);
+                preLoadRules(fields, JsonFormConstants.CALCULATION, JsonFormConstants.RELEVANCE);
             }
         });
 
     }
 
-    public void preLoadRules(JSONObject formJSONObject, String stepName, String type) {
+    public void preLoadRules(JSONArray fields, String calculationKey, String relevanceKey) {
         Set<String> ruleFiles = new HashSet<>();
-        JSONArray fields = formJSONObject.optJSONArray(stepName);
         if (fields == null)
             return;
         for (int i = 0; i < fields.length(); i++) {
             if (isDetached()) {
                 return;
             }
-            JSONObject relevance = fields.optJSONObject(i).optJSONObject(type);
-            if (relevance != null) {
-                JSONObject ruleEngine = relevance.optJSONObject(RuleConstant.RULES_ENGINE);
-                if (ruleEngine != null) {
-                    JSONObject exRules = ruleEngine.optJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES);
-                    String file = exRules.optString(RuleConstant.RULES_FILE, null);
-                    if (file != null) {
-                        ruleFiles.add(exRules.optString(RuleConstant.RULES_FILE));
-                    }
-                }
-            }
+            JSONObject relevance = fields.optJSONObject(i).optJSONObject(relevanceKey);
+            JSONObject calculation = fields.optJSONObject(i).optJSONObject(calculationKey);
+
+            addRules(calculation, ruleFiles);
+            addRules(relevance, ruleFiles);
 
         }
 
@@ -651,5 +638,19 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
             }
             getJsonApi().getRulesEngineFactory().getRulesFromAsset(fileName);
         }
+    }
+
+    private void addRules(JSONObject jsonObject, Set<String> ruleFiles) {
+        if (jsonObject != null) {
+            JSONObject ruleEngine = jsonObject.optJSONObject(RuleConstant.RULES_ENGINE);
+            if (ruleEngine != null) {
+                JSONObject exRules = ruleEngine.optJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES);
+                String file = exRules.optString(RuleConstant.RULES_FILE, null);
+                if (file != null) {
+                    ruleFiles.add(exRules.optString(RuleConstant.RULES_FILE));
+                }
+            }
+        }
+
     }
 }

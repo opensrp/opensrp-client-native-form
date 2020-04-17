@@ -999,22 +999,14 @@ public class JsonFormFragmentPresenter extends
         formFragment.getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                preLoadRules(formJSONObject, stepName, JsonFormConstants.CALCULATION);
+                preLoadRules(stepName, formJSONObject);
             }
         });
-
-        formFragment.getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                preLoadRules(formJSONObject, stepName, JsonFormConstants.RELEVANCE);
-            }
-        });
-
 
     }
 
 
-    private void preLoadRules(JSONObject formJSONObject, String stepName, String type) {
+    private void preLoadRules(String stepName, JSONObject formJSONObject) {
         Set<String> ruleFiles = new HashSet<>();
         JSONArray fields = formJSONObject.optJSONArray(stepName);
         if (fields == null)
@@ -1022,18 +1014,11 @@ public class JsonFormFragmentPresenter extends
         for (int i = 0; i < fields.length(); i++) {
             if (cleanupAndExit)
                 return;
-            JSONObject relevance = fields.optJSONObject(i).optJSONObject(type);
-            if (relevance != null) {
-                JSONObject ruleEngine = relevance.optJSONObject(RuleConstant.RULES_ENGINE);
-                if (ruleEngine != null) {
-                    JSONObject exRules = ruleEngine.optJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES);
-                    String file = exRules.optString(RuleConstant.RULES_FILE, null);
-                    if (file != null) {
-                        ruleFiles.add(exRules.optString(RuleConstant.RULES_FILE));
-                    }
-                }
-            }
+            JSONObject calculation = fields.optJSONObject(i).optJSONObject(JsonFormConstants.CALCULATION);
+            JSONObject relevance = fields.optJSONObject(i).optJSONObject(JsonFormConstants.RELEVANCE);
 
+            addRules(calculation, ruleFiles);
+            addRules(relevance, ruleFiles);
         }
 
         for (String fileName : ruleFiles) {
@@ -1041,6 +1026,20 @@ public class JsonFormFragmentPresenter extends
                 return;
             formFragment.getJsonApi().getRulesEngineFactory().getRulesFromAsset(fileName);
         }
+    }
+
+    private void addRules(JSONObject jsonObject, Set<String> ruleFiles) {
+        if (jsonObject != null) {
+            JSONObject ruleEngine = jsonObject.optJSONObject(RuleConstant.RULES_ENGINE);
+            if (ruleEngine != null) {
+                JSONObject exRules = ruleEngine.optJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES);
+                String file = exRules.optString(RuleConstant.RULES_FILE, null);
+                if (file != null) {
+                    ruleFiles.add(exRules.optString(RuleConstant.RULES_FILE));
+                }
+            }
+        }
+
     }
 
     public void cleanUp() {
