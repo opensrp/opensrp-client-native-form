@@ -665,14 +665,16 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             }
         }
         setExtraFieldsWithValues(jsonArray);
-        for (int j = 0; j < jsonArray.length(); j++) {
-            try {
-                JSONObject field = jsonArray.getJSONObject(j);
-                String key = stepName + "_" + field.getString(JsonFormConstants.KEY);
-                formFields.put(key, field);
-                popupFormFields.add(key);
-            } catch (JSONException e) {
-                Timber.e(e);
+        if (jsonArray != null) {
+            for (int j = 0; j < jsonArray.length(); j++) {
+                try {
+                    JSONObject field = jsonArray.getJSONObject(j);
+                    String key = stepName + "_" + field.getString(JsonFormConstants.KEY);
+                    formFields.put(key, field);
+                    popupFormFields.add(key);
+                } catch (JSONException e) {
+                    Timber.e(e);
+                }
             }
         }
     }
