@@ -235,7 +235,7 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getJsonApi().updateGenericPopupSecondaryValues(new JSONArray());
+                getJsonApi().updateGenericPopupSecondaryValues(new JSONArray(), getStepName());
                 setFormFragment(null);
                 setFormIdentity(null);
                 setFormLocation(null);
@@ -255,7 +255,7 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
             public void onClick(View v) {
                 passData();
                 getJsonApi().setGenericPopup(null);
-                getJsonApi().updateGenericPopupSecondaryValues(new JSONArray());
+                getJsonApi().updateGenericPopupSecondaryValues(new JSONArray(), getStepName());
                 ExpansionPanelGenericPopupDialog.this.dismissAllowingStateLoss();
             }
         });

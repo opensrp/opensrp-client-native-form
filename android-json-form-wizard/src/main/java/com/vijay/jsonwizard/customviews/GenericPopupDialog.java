@@ -95,7 +95,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
             loadPartialSecondaryValues();
             createSecondaryValuesMap();
             loadSubForms();
-            getJsonApi().updateGenericPopupSecondaryValues(specifyContent);
+            getJsonApi().updateGenericPopupSecondaryValues(specifyContent, stepName);
         } catch (JSONException e) {
             Timber.e(e, " --> onCreate");
         }
@@ -338,7 +338,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
                 setFormLocation(null);
                 setContext(null);
                 getJsonApi().setGenericPopup(null);
-                getJsonApi().updateGenericPopupSecondaryValues(null);
+                getJsonApi().updateGenericPopupSecondaryValues(null, getStepName());
                 GenericPopupDialog.this.dismiss();
             }
         });
@@ -352,7 +352,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
             public void onClick(View v) {
                 passData();
                 getJsonApi().setGenericPopup(null);
-                getJsonApi().updateGenericPopupSecondaryValues(null);
+                getJsonApi().updateGenericPopupSecondaryValues(null, getStepName());
                 GenericPopupDialog.this.dismiss();
             }
         });

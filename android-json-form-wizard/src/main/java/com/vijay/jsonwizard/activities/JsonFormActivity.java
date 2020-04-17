@@ -108,6 +108,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private Map<String, View> constrainedViews;
     private Map<String, View> formDataViews = new ConcurrentHashMap<>();
     private Map<String, JSONObject> formFields = new ConcurrentHashMap<>();
+    private Set<String> popupFormFields = new HashSet<>();
     private String functionRegex;
     private HashMap<String, Comparison> comparisons;
     private Map<String, List<String>> ruleKeys = new HashMap<>();
@@ -650,8 +651,23 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
 
     @Override
-    public void updateGenericPopupSecondaryValues(JSONArray jsonArray) {
+    public void updateGenericPopupSecondaryValues(JSONArray jsonArray, String stepName) {
+        if (jsonArray == null || jsonArray.length() == 0) {
+            for (String key : popupFormFields) {
+                popupFormFields.remove(key);
+            }
+        }
         setExtraFieldsWithValues(jsonArray);
+        for (int j = 0; j < jsonArray.length(); j++) {
+            try {
+                JSONObject field = jsonArray.getJSONObject(j);
+                String key = stepName + "_" + field.getString(JsonFormConstants.KEY);
+                formFields.put(key, field);
+                popupFormFields.add(key);
+            } catch (JSONException e) {
+                Timber.e(e);
+            }
+        }
     }
 
     @Override
@@ -828,20 +844,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     protected void widgetsWriteValue(String stepName, String key, String value, String openMrsEntityParent,
                                      String openMrsEntity, String openMrsEntityId, boolean popup) throws JSONException {
-        JSONObject item = null;
-        if (popup) {
-            JSONObject jsonObject = getmJSONObject().getJSONObject(stepName);
-            JSONArray fields = fetchFields(jsonObject, popup);
-            for (int i = 0; i < fields.length(); i++) {
-                JSONObject field = fields.getJSONObject(i);
-                if (field.getString(JsonFormConstants.KEY).equals(key)) {
-                    item = field;
-                    break;
-                }
-            }
-        } else {
-            item = formFields.get(stepName + "_" + key);
-        }
+
+        JSONObject item = formFields.get(stepName + "_" + key);
         String keyAtIndex = item.getString(JsonFormConstants.KEY);
         String itemType = item.has(JsonFormConstants.TYPE) ? item.getString(JsonFormConstants.TYPE) : "";
         boolean isSpecialWidget = isSpecialWidget(itemType);
@@ -923,20 +927,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                                       String value, boolean popup) throws JSONException {
 
         synchronized (getmJSONObject()) {
-            JSONObject checkboxObject = null;
-            if (popup) {
-                JSONObject jsonObject = getmJSONObject().getJSONObject(stepName);
-                JSONArray fields = fetchFields(jsonObject, popup);
-                for (int i = 0; i < fields.length(); i++) {
-                    JSONObject field = fields.getJSONObject(i);
-                    if (field.getString(JsonFormConstants.KEY).equals(parentKey)) {
-                        checkboxObject = field;
-                        break;
-                    }
-                }
-            } else {
-                checkboxObject = formFields.get(stepName + "_" + parentKey);
-            }
+            JSONObject checkboxObject = formFields.get(stepName + "_" + parentKey);
             JSONArray checkboxOptions = checkboxObject.getJSONArray(childObjectKey);
             HashSet<String> currentValues = new HashSet<>();
             //Get current values

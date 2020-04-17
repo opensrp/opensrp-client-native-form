@@ -97,7 +97,7 @@ public interface JsonApi {
 
     void setmJSONObject(JSONObject jsonObject);
 
-    void updateGenericPopupSecondaryValues(JSONArray jsonArray);
+    void updateGenericPopupSecondaryValues(JSONArray jsonArray, String stepName);
 
     void registerLifecycleListener(LifeCycleListener lifeCycleListener);
 
