@@ -140,4 +140,9 @@ public class JsonFormActivityTest extends BaseActivityTest {
         JSONArray result = activity.getSubFormFields(subFormName, subFormLocation, fields);
         Assert.assertEquals(7, result.length());
     }
+
+    @Test
+    public void testSetFilterTouchesWhenObscuredSetToTrueForActivityLayout() {
+        Assert.assertTrue(activity.findViewById(R.id.native_form_activity).getFilterTouchesWhenObscured());
+    }
 }
