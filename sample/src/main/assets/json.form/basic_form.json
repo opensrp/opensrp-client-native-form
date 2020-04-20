@@ -364,21 +364,18 @@
           {
             "key": "yes",
             "text": "Yes",
-            "value": false,
             "openmrs_entity": "",
             "openmrs_entity_id": ""
           },
           {
             "key": "no",
             "text": "No",
-            "value": false,
             "openmrs_entity": "",
             "openmrs_entity_id": ""
           },
           {
             "key": "maybe",
             "text": "Maybe",
-            "value": false,
             "openmrs_entity": "",
             "openmrs_entity_id": ""
           }
