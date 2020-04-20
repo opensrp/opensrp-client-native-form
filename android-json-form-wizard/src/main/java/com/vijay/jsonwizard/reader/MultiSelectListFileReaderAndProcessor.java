@@ -2,6 +2,9 @@ package com.vijay.jsonwizard.reader;
 
 import com.vijay.jsonwizard.processor.MultiSelectListFileProcessor;
 
+/***
+ * @deprecated should now use MultiSelectListRepository
+ */
 public abstract class MultiSelectListFileReaderAndProcessor {
 
     protected String fileName;
