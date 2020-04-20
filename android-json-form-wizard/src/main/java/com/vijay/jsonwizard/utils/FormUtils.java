@@ -1482,10 +1482,10 @@ public class FormUtils {
 
     public void getSpinnerValueOpenMRSAttributes(JSONObject item, JSONArray valueOpenMRSAttributes) throws JSONException {
 
-        if (item == null || !item.equals(JsonFormConstants.SPINNER)) { return; }
+        if (item == null || !item.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.SPINNER)) { return; }
 
         String spinnerValue = item.getString(JsonFormConstants.VALUE);
-        String spinnerKey = item.getString(JsonFormConstants.VALUE);
+        String spinnerKey = item.getString(JsonFormConstants.KEY);
         if (item.has(JsonFormConstants.OPENMRS_CHOICE_IDS)) {
             JSONObject openMRSChoiceIds = item.getJSONObject(JsonFormConstants.OPENMRS_CHOICE_IDS);
             Iterator<String> keys = openMRSChoiceIds.keys();
