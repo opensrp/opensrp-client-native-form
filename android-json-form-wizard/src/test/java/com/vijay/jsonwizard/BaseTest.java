@@ -18,4 +18,6 @@ public abstract class BaseTest {
     protected static final int CONSTANT_INT_1 = 1;
     protected static final String DEFAULT_ERROR_MSG = "Default Error Message";
     protected static final String DEFAULT_TEST_MESSAGE = "Native Form Test";
+
+    protected static long TIMEOUT=2000;
 }
