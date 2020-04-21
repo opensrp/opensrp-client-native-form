@@ -3,7 +3,6 @@ package com.vijay.jsonwizard.customviews;
 import android.app.Activity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 
 import com.vijay.jsonwizard.R;
