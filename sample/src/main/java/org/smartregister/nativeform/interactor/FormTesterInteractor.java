@@ -38,8 +38,8 @@ public class FormTesterInteractor implements FormTesterContract.Interactor {
             try {
                 String root = verifyOrCreateDiskDirectory();
 
-                String[] image_source = {"json.form", "json.form.config", "img", "image", "rule"};
-                for (String sourceDir : image_source) {
+                String[] imageSources = {JsonFormConstants.JSON_FORM_DIRECTORY, "json.form.config", "img", "image", "rule"};
+                for (String sourceDir : imageSources) {
                     exportDirectory(assetManager, sourceDir, context, root, true);
                 }
 
@@ -51,9 +51,9 @@ public class FormTesterInteractor implements FormTesterContract.Interactor {
     }
 
     private void exportDirectory(AssetManager assetManager, String sourceDir, Context context, String root, boolean createRoot) throws IOException {
-        String[] local_assets = assetManager.list(sourceDir);
-        if (local_assets != null && local_assets.length > 0) {
-            for (String assetName : local_assets) {
+        String[] localAssets = assetManager.list(sourceDir);
+        if (localAssets != null && localAssets.length > 0) {
+            for (String assetName : localAssets) {
                 // export all in
                 try {
 
@@ -124,7 +124,7 @@ public class FormTesterInteractor implements FormTesterContract.Interactor {
     @Override
     public boolean verifyFormsDirectoryExists() {
         String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString();
-        File myDir = new File(root + "/" + JsonFormConstants.DEFAULT_FORMS_DIRECTORY + "/json.form/");
+        File myDir = new File(root + "/" + JsonFormConstants.DEFAULT_FORMS_DIRECTORY + "/" + JsonFormConstants.JSON_FORM_DIRECTORY + "/");
         return myDir.exists();
     }
 
@@ -132,7 +132,7 @@ public class FormTesterInteractor implements FormTesterContract.Interactor {
     public void readForms(@NotNull Context context, FormTesterContract.Presenter presenter) {
         executorService.execute(() -> {
             String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString();
-            File myDir = new File(root + "/" + JsonFormConstants.DEFAULT_FORMS_DIRECTORY + "/json.form/");
+            File myDir = new File(root + "/" + JsonFormConstants.DEFAULT_FORMS_DIRECTORY + "/" + JsonFormConstants.JSON_FORM_DIRECTORY + "/");
 
             List<File> files = new ArrayList<>();
             if (myDir.exists()) {

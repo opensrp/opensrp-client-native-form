@@ -56,7 +56,7 @@ public class DiskFileSource implements FormFileSource {
     @Override
     public InputStream getFileInputStream(Context context, String fileName) throws Exception {
         String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString();
-        File sourceFile = new File(root + "/" + JsonFormConstants.DEFAULT_FORMS_DIRECTORY + "/json.form/" + fileName + ".json");
+        File sourceFile = new File(root + "/" + JsonFormConstants.DEFAULT_FORMS_DIRECTORY + "/" + JsonFormConstants.JSON_FORM_DIRECTORY + "/" + fileName + ".json");
         return new FileInputStream(sourceFile);
     }
 

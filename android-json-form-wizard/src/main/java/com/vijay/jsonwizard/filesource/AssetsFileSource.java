@@ -2,6 +2,7 @@ package com.vijay.jsonwizard.filesource;
 
 import android.content.Context;
 
+import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.interfaces.FormFileSource;
 
 import org.jeasy.rules.api.Rules;
@@ -36,7 +37,7 @@ public class AssetsFileSource implements FormFileSource {
     @Override
     public JSONObject getFormFromFile(Context context, String fileName) {
         try {
-            String newFileName = "json.form/" + fileName + ".json";
+            String newFileName = JsonFormConstants.JSON_FORM_DIRECTORY + "/" + fileName + ".json";
 
             InputStream inputStream = context.getAssets()
                     .open(newFileName);
