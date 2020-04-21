@@ -181,6 +181,8 @@ public class ImagePickerFactory implements FormWidgetFactory {
 
     @Override
     public Set<String> getCustomTranslatableWidgetFields() {
-        return new HashSet<>();
+        Set<String> customTranslatableWidgetFields = new HashSet<>();
+        customTranslatableWidgetFields.add(JsonFormConstants.UPLOAD_BUTTON_TEXT);
+        return customTranslatableWidgetFields;
     }
 }
