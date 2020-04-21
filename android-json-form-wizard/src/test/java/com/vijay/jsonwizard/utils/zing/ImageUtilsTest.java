@@ -1,11 +1,8 @@
 package com.vijay.jsonwizard.utils.zing;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
-import android.view.Display;
-import android.view.WindowManager;
 
 import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.utils.ImageUtils;
@@ -14,19 +11,12 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
 
 public class ImageUtilsTest extends BaseTest {
     @Mock
-    private WindowManager windowManager;
-
-    @Mock
     private Context context;
-
-    @Mock
-    private Display display;
 
     @Mock
     private BitmapFactory.Options options;
