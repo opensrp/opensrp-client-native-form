@@ -647,11 +647,17 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
 
         }
 
-        for (String fileName : ruleFiles) {
-            if (isDetached()) {
-                return;
-            }
-            getJsonApi().getRulesEngineFactory().getRulesFromAsset(fileName);
+        for (final String fileName : ruleFiles) {
+            getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    if (isDetached()) {
+                        return;
+                    }
+                    getJsonApi().getRulesEngineFactory().getRulesFromAsset(fileName);
+                }
+            });
+
         }
     }
 

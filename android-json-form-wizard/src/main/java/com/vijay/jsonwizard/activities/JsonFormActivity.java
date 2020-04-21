@@ -248,7 +248,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     @Override
     public void clearConstrainedViews() {
-        constrainedViews = new LinkedHashMap<>();
+        constrainedViews = new ConcurrentHashMap<>();
     }
 
     @Override

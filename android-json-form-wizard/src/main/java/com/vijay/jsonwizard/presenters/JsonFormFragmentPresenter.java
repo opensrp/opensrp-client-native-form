@@ -1021,10 +1021,15 @@ public class JsonFormFragmentPresenter extends
             addRules(relevance, ruleFiles);
         }
 
-        for (String fileName : ruleFiles) {
-            if (cleanupAndExit)
-                return;
-            formFragment.getJsonApi().getRulesEngineFactory().getRulesFromAsset(fileName);
+        for (final String fileName : ruleFiles) {
+            formFragment.getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    if (cleanupAndExit)
+                        return;
+                    formFragment.getJsonApi().getRulesEngineFactory().getRulesFromAsset(fileName);
+                }
+            });
         }
     }
 
