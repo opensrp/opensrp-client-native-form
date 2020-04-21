@@ -90,12 +90,11 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         setJsonApi((JsonApi) activity);
 
         try {
-            loadSubForms();
-            preLoadRules(getSpecifyContent());
+            preLoadRules();
             setMainFormFields(formUtils.getFormFields(getStepName(), context));
             loadPartialSecondaryValues();
             createSecondaryValuesMap();
-
+            loadSubForms();
             getJsonApi().updateGenericPopupSecondaryValues(specifyContent, stepName);
         } catch (JSONException e) {
             Timber.e(e, " --> onCreate");
@@ -160,6 +159,22 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
                 }
             }
         }
+    }
+
+
+    private JSONArray loadSpecifyContent() {
+        if (!TextUtils.isEmpty(getFormIdentity())) {
+            try {
+                JSONObject subForm = FormUtils.getSubFormJson(getFormIdentity(), getFormLocation(), context);
+                if (subForm != null && subForm.has(JsonFormConstants.CONTENT_FORM)) {
+                    return subForm.getJSONArray(JsonFormConstants.CONTENT_FORM);
+
+                }
+            } catch (Exception e) {
+                Timber.e(e, "GenericPopupDialog --> loadSpecifyContent");
+            }
+        }
+        return null;
     }
 
     protected void loadSubForms() {
@@ -606,11 +621,11 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         this.popAssignedValue = popAssignedValue;
     }
 
-    private void preLoadRules(final JSONArray fields) {
+    private void preLoadRules() {
         getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                preLoadRules(fields, JsonFormConstants.CALCULATION, JsonFormConstants.RELEVANCE);
+                preLoadRules(loadSpecifyContent(), JsonFormConstants.CALCULATION, JsonFormConstants.RELEVANCE);
             }
         });
 
