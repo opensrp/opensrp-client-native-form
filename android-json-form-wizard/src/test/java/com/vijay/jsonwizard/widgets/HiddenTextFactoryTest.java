@@ -30,9 +30,6 @@ public class HiddenTextFactoryTest extends BaseTest {
     private JsonFormFragment formFragment;
 
     @Mock
-    private Resources resources;
-
-    @Mock
     private CommonListener listener;
 
     @Mock
