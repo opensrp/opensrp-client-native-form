@@ -3,8 +3,6 @@ package com.vijay.jsonwizard.utils.zing;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
-import android.view.Display;
-import android.view.WindowManager;
 
 import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.utils.ImageUtils;
