@@ -69,8 +69,7 @@ public class BarcodeFactory implements FormWidgetFactory {
             final String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
             String value = jsonObject.optString(JsonFormConstants.VALUE, null);
 
-            RelativeLayout rootLayout = (RelativeLayout) LayoutInflater.from(context)
-                    .inflate(R.layout.native_form_item_barcode, null);
+            RelativeLayout rootLayout = getRootLayout(context);
             final int canvasId = ViewUtil.generateViewId();
             rootLayout.setId(canvasId);
             final MaterialEditText editText = createEditText(rootLayout, jsonObject, canvasId, stepName, popup);
@@ -106,27 +105,35 @@ public class BarcodeFactory implements FormWidgetFactory {
             addScanButton(context, jsonObject, editText, rootLayout);
 
             editText.addTextChangedListener(textWatcher);
-            if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
-                editText.setTag(R.id.relevance, relevance);
-                ((JsonApi) context).addSkipLogicView(editText);
-            }
-            if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
-                editText.setTag(R.id.constraints, constraints);
-                ((JsonApi) context).addConstrainedView(editText);
-            }
-            if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
-                editText.setTag(R.id.calculation, calculation);
-                ((JsonApi) context).addCalculationLogicView(editText);
-            }
+            attachRefreshLogic(context, relevance, calculation, constraints, editText);
 
             ((JsonApi) context).addFormDataView(editText);
 
             views.add(rootLayout);
         } catch (Exception e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
 
         return views;
+    }
+
+    private void attachRefreshLogic(Context context, String relevance, String calculation, String constraints, MaterialEditText editText) {
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+            editText.setTag(R.id.relevance, relevance);
+            ((JsonApi) context).addSkipLogicView(editText);
+        }
+        if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
+            editText.setTag(R.id.constraints, constraints);
+            ((JsonApi) context).addConstrainedView(editText);
+        }
+        if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
+            editText.setTag(R.id.calculation, calculation);
+            ((JsonApi) context).addCalculationLogicView(editText);
+        }
+    }
+
+    public RelativeLayout getRootLayout(Context context) {
+        return (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.native_form_item_barcode, null);
     }
 
     private void addOnClickActions(Context context, MaterialEditText editText, String barcodeType) {
