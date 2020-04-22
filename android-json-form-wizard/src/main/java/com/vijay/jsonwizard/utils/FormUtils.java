@@ -1486,26 +1486,45 @@ public class FormUtils {
     }
 
     public void getSpinnerValueOpenMRSAttributes(JSONObject item, JSONArray valueOpenMRSAttributes) throws JSONException {
-        if (item != null && item.equals(JsonFormConstants.SPINNER) && item.has(JsonFormConstants.OPENMRS_CHOICE_IDS)) {
+
+        if (item == null || !item.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.SPINNER)) { return; }
+
+        String spinnerValue = item.getString(JsonFormConstants.VALUE);
+        String spinnerKey = item.getString(JsonFormConstants.KEY);
+        if (item.has(JsonFormConstants.OPENMRS_CHOICE_IDS)) {
             JSONObject openMRSChoiceIds = item.getJSONObject(JsonFormConstants.OPENMRS_CHOICE_IDS);
-            String value = item.getString(JsonFormConstants.VALUE);
             Iterator<String> keys = openMRSChoiceIds.keys();
             while (keys.hasNext()) {
                 String key = keys.next();
-                if (value.equals(key)) {
-                    JSONObject jsonObject = new JSONObject();
-                    String optionOpenMRSConceptId = openMRSChoiceIds.get(key).toString();
-                    jsonObject.put(JsonFormConstants.KEY, item.getString(JsonFormConstants.KEY));
-                    jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_PARENT,
-                            item.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT));
-                    jsonObject.put(JsonFormConstants.OPENMRS_ENTITY, item.getString(JsonFormConstants.OPENMRS_ENTITY));
-                    jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_ID, optionOpenMRSConceptId);
-
-                    valueOpenMRSAttributes.put(jsonObject);
+                if (spinnerValue.equals(key)) {
+                   addOpenMRSAttributes(valueOpenMRSAttributes, item, spinnerKey,
+                           openMRSChoiceIds.getString(key));
+                   break;
                 }
-
+            }
+        } else if (item.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
+            // if an options block is defined
+            JSONArray options = item.optJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
+            for (int i = 0; i < options.length(); i++) {
+                JSONObject option = options.getJSONObject(i);
+                if (option.get(JsonFormConstants.KEY).equals(spinnerValue)) {
+                    addOpenMRSAttributes(valueOpenMRSAttributes, option, spinnerKey,
+                            option.getString(JsonFormConstants.OPENMRS_ENTITY_ID));
+                    break;
+                }
             }
         }
+    }
+
+
+    private void addOpenMRSAttributes(JSONArray valueOpenMRSAttributes, JSONObject item, String key, String openMRSEntityId) throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(JsonFormConstants.KEY, key);
+        jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_PARENT, item.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT));
+        jsonObject.put(JsonFormConstants.OPENMRS_ENTITY, item.getString(JsonFormConstants.OPENMRS_ENTITY));
+        jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_ID, openMRSEntityId);
+
+        valueOpenMRSAttributes.put(jsonObject);
     }
 
     private JSONObject createValueObject(String key, String type, String label, int index, JSONArray values, JSONObject openMRSAttributes, JSONArray valueOpenMRSAttributes) {
