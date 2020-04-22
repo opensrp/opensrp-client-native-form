@@ -99,6 +99,7 @@ public class NumericDatePickerTest extends BaseTest {
 
     }
 
+    @Test
     public void testNumericDatePickerSetMaxValueDoesNotThrowExceptionDateMoreThanMax() {
 
         //First constructor
@@ -142,6 +143,7 @@ public class NumericDatePickerTest extends BaseTest {
 
     }
 
+    @Test
     public void testNumericDatePickerSetMinValueDoesNotThrowsExceptionDateMoreThanMin() {
 
         //First constructor
@@ -280,13 +282,13 @@ public class NumericDatePickerTest extends BaseTest {
 
         //Set malformed date
 
-        ReflectionHelpers.setField(datePicker, "maxDate", 1595192400000l);
+        ReflectionHelpers.setField(datePicker, "maxDate", 1595192400000L);
 
         ReflectionHelpers.setField(datePicker, "maxYear", 2020);
 
         ReflectionHelpers.setField(datePicker, "maxMonth", Calendar.AUGUST);
 
-        ReflectionHelpers.setField(datePicker, "maxDay", 20);
+        ReflectionHelpers.setField(datePicker, "maxDay", 21);
 
         NumberPicker yearPicker = ReflectionHelpers.getField(datePicker, "yearPicker");
         yearPicker.setValue(2020);
