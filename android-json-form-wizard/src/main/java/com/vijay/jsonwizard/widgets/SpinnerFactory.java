@@ -2,10 +2,12 @@ package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -29,7 +31,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by nipun on 30/05/15.
@@ -112,8 +116,16 @@ public class SpinnerFactory implements FormWidgetFactory {
             spinner.setFloatingLabelText(jsonObject.getString(JsonFormConstants.HINT));
         }
 
+        // Support defining key-value pairs as part of an options field
+        // or as separate key and value JSON arrays
+        Pair<JSONArray, JSONArray> optionsKeyValPairs = null;
         JSONArray keysJson = null;
-        if (jsonObject.has(JsonFormConstants.KEYS)) {
+        JSONArray options = jsonObject.optJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
+        if (options != null) {
+            optionsKeyValPairs = getOptionsKeyValPairs(options);
+            keysJson = optionsKeyValPairs.first;
+            spinner.setTag(R.id.keys, keysJson);
+        } else if (jsonObject.has(JsonFormConstants.KEYS)) {
             keysJson = jsonObject.getJSONArray(JsonFormConstants.KEYS);
             spinner.setTag(R.id.keys, keysJson);
         }
@@ -140,8 +152,8 @@ public class SpinnerFactory implements FormWidgetFactory {
 
         FormUtils.setEditMode(jsonObject, spinner, editButton);
 
-        JSONArray valuesJson = jsonObject.optJSONArray(JsonFormConstants.VALUES);
         String[] values = null;
+        JSONArray valuesJson = optionsKeyValPairs == null ? jsonObject.optJSONArray(JsonFormConstants.VALUES) : optionsKeyValPairs.second;
         if (valuesJson != null && valuesJson.length() > 0) {
             values = new String[valuesJson.length()];
             for (int i = 0; i < valuesJson.length(); i++) {
@@ -165,6 +177,17 @@ public class SpinnerFactory implements FormWidgetFactory {
         formUtils.showInfoIcon(stepName, jsonObject, listener, FormUtils.getInfoDialogAttributes(jsonObject), spinnerInfoIconImageView,
                 canvasIds);
         spinner.setTag(R.id.canvas_ids, canvasIds.toString());
+    }
+
+
+    private Pair<JSONArray, JSONArray> getOptionsKeyValPairs(JSONArray options) throws JSONException {
+        JSONArray optionKeys = new JSONArray();
+        JSONArray optionValues = new JSONArray();
+        for (int i = 0; i < options.length(); i++) {
+            optionKeys.put(options.getJSONObject(i).optString(JsonFormConstants.KEY));
+            optionValues.put(options.getJSONObject(i).optString(JsonFormConstants.TEXT));
+        }
+        return new Pair<>(optionKeys, optionValues);
     }
 
     private void setViewTags(JSONObject jsonObject, JSONArray canvasIds, String stepName, boolean popup,
@@ -196,5 +219,13 @@ public class SpinnerFactory implements FormWidgetFactory {
             spinner.setTag(R.id.calculation, calculations);
             ((JsonApi) context).addCalculationLogicView(spinner);
         }
+    }
+
+    @Override
+    @NonNull
+    public Set<String> getCustomTranslatableWidgetFields() {
+        Set<String> customTranslatableWidgetFields = new HashSet<>();
+        customTranslatableWidgetFields.add(JsonFormConstants.OPTIONS_FIELD_NAME + "." + JsonFormConstants.TEXT);
+        return customTranslatableWidgetFields;
     }
 }

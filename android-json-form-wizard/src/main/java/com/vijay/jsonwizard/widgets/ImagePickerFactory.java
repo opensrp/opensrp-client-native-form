@@ -29,7 +29,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by vijay on 24-05-2015.
@@ -175,5 +177,12 @@ public class ImagePickerFactory implements FormWidgetFactory {
         ((JsonApi) context).addFormDataView(imageView);
         imageView.setOnClickListener(listener);
         views.add(imageView);
+    }
+
+    @Override
+    public Set<String> getCustomTranslatableWidgetFields() {
+        Set<String> customTranslatableWidgetFields = new HashSet<>();
+        customTranslatableWidgetFields.add(JsonFormConstants.UPLOAD_BUTTON_TEXT);
+        return customTranslatableWidgetFields;
     }
 }

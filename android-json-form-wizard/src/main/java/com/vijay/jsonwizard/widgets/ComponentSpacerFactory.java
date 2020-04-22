@@ -21,7 +21,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ComponentSpacerFactory implements FormWidgetFactory {
     @Override
@@ -78,5 +80,10 @@ public class ComponentSpacerFactory implements FormWidgetFactory {
         LinearLayout.LayoutParams layoutParams = FormUtils.getLinearLayoutParams(FormUtils.MATCH_PARENT, viewHeight, 0, 0, 0, 0);
         spacerView.setLayoutParams(layoutParams);
         views.add(linearLayout);
+    }
+
+    @Override
+    public Set<String> getCustomTranslatableWidgetFields() {
+        return new HashSet<>();
     }
 }

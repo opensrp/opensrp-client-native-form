@@ -41,8 +41,10 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import timber.log.Timber;
 
@@ -308,6 +310,11 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
 
     protected int getLayout() {
         return R.layout.native_form_repeating_group;
+    }
+
+    @Override
+    public Set<String> getCustomTranslatableWidgetFields() {
+        return new HashSet<>();
     }
 
     private boolean isRemoteReferenceValueUsed(@NonNull View referenceEditText) {

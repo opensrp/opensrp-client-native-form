@@ -69,6 +69,8 @@ import java.util.regex.Pattern;
 
 import timber.log.Timber;
 
+import static com.vijay.jsonwizard.utils.Utils.convertStreamToString;
+
 /**
  * Created by vijay on 24-05-2015.
  */
@@ -609,28 +611,31 @@ public class FormUtils {
 
     public static JSONObject getSubFormJson(String formIdentity, String subFormsLocation,
                                             Context context) throws Exception {
-        String defaultSubFormLocation = JsonFormConstants.DEFAULT_SUB_FORM_LOCATION;
-        if (!TextUtils.isEmpty(subFormsLocation)) {
-            defaultSubFormLocation = subFormsLocation;
-        }
-        return new JSONObject(loadSubForm(formIdentity, defaultSubFormLocation, context));
+
+        return new JSONObject(loadSubForm(formIdentity, getSubFormLocation(subFormsLocation), context));
+    }
+
+    public static JSONObject getSubFormJson(String formIdentity, String subFormsLocation,
+                                            Context context, boolean translateSubForm) throws Exception {
+
+        return new JSONObject(loadSubForm(formIdentity, getSubFormLocation(subFormsLocation), context, translateSubForm));
+    }
+
+    private static String getSubFormLocation(String subFormsLocation) {
+        return TextUtils.isEmpty(subFormsLocation) ? JsonFormConstants.DEFAULT_SUB_FORM_LOCATION : subFormsLocation;
     }
 
     public static String loadSubForm(String formIdentity, String defaultSubFormLocation,
-                                     Context context)
-            throws IOException {
-        StringBuilder stringBuilder = new StringBuilder();
-        InputStream inputStream = context.getAssets()
-                .open(defaultSubFormLocation + "/" + formIdentity + ".json");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+                                     Context context, boolean translateSubForm) throws IOException {
 
-        String jsonString;
-        while ((jsonString = reader.readLine()) != null) {
-            stringBuilder.append(jsonString);
-        }
-        inputStream.close();
+        String subForm = loadSubForm(formIdentity, defaultSubFormLocation, context);
+        return translateSubForm ? NativeFormLangUtils.getTranslatedString(subForm, context) : subForm;
+    }
 
-        return stringBuilder.toString();
+    public static String loadSubForm(String formIdentity, String defaultSubFormLocation,
+                                     Context context) throws IOException {
+
+        return convertStreamToString(context.getAssets().open(defaultSubFormLocation + "/" + formIdentity + ".json"));
     }
 
     public static JSONObject getFieldFromForm(JSONObject jsonForm, String key) throws JSONException {

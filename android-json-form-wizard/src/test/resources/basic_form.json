@@ -163,7 +163,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "hint": "User age",
-        "edit_type": "name",
+        "edit_type": "number",
         "v_required": {
           "value": "true",
           "err": "Please enter the last name"
@@ -229,11 +229,7 @@
         "openmrs_entity_id": "",
         "type": "normal_edit_text",
         "hint": "User Text ",
-        "edit_text_style": "bordered",
-        "v_required": {
-          "value": true,
-          "err": "Please enter the user ID"
-        }
+        "edit_text_style": "bordered"
       },
       {
         "key": "user_normal_edit_number",
@@ -243,11 +239,7 @@
         "type": "normal_edit_text",
         "hint": "User number",
         "edit_text_style": "bordered",
-        "edit_type": "number",
-        "v_required": {
-          "value": true,
-          "err": "Please enter the user ID"
-        }
+        "edit_type": "number"
       },
       {
         "key": "user_toaster_problem",
@@ -472,7 +464,7 @@
         }
       },
       {
-        "key": "user_check_box",
+        "key": "user check box",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
@@ -488,7 +480,7 @@
             "openmrs_choice_id": ""
           },
           {
-            "key": "yes",
+            "key": "yes choice",
             "text": "Yes",
             "value": false,
             "openmrs_choice_id": ""
@@ -512,5 +504,6 @@
         "value": "[yes]"
       }
     ]
-  }
+  },
+  "properties_file_name": "basic_form"
 }

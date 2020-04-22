@@ -325,4 +325,8 @@ public class JsonFormConstants {
     public interface RepeatingGroupFactory {
         String SHOW_GROUP_LABEL = "showGroupLabel";
     }
+
+    public interface MLS {
+        String PROPERTIES_FILE_NAME = "properties_file_name";
+    }
 }

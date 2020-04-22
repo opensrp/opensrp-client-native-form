@@ -60,6 +60,7 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
     private Map<String, ValidationStatus> invalidFields = new HashMap<>();
     private boolean isPreviousPressed = false;
     private ProgressDialog progressDialog;
+    protected boolean translateForm = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,9 +75,10 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
         onActivityRequestPermissionResultListeners = new HashMap<>();
         lifeCycleListeners = new ArrayList<>();
         isFormFragmentInitialized = false;
+        translateForm = getIntent().getBooleanExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, false);
         if (savedInstanceState == null) {
             this.form = extractForm(getIntent().getSerializableExtra(JsonFormConstants.JSON_FORM_KEY.FORM));
-            init(getForm());
+            init(getJsonForm());
             initializeFormFragment();
             onFormStart();
         } else {
@@ -88,10 +90,10 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
         }
     }
 
-    private String getForm() {
+    protected String getJsonForm() {
         String jsonForm = getIntent().getStringExtra(JsonFormConstants.JSON_FORM_KEY.JSON);
-        if (getIntent().getBooleanExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, false)) {
-            jsonForm = getTranslatedString(jsonForm);
+        if (translateForm) {
+            jsonForm = getTranslatedString(jsonForm, this);
         }
         return jsonForm;
     }
