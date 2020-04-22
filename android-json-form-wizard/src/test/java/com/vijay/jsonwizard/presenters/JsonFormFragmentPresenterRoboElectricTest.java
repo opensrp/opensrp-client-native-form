@@ -21,6 +21,7 @@ import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.OnFieldsInvalid;
 import com.vijay.jsonwizard.shadow.ShadowContextCompat;
 import com.vijay.jsonwizard.shadow.ShadowPermissionUtils;
+import com.vijay.jsonwizard.utils.AppExecutors;
 import com.vijay.jsonwizard.utils.FormUtils;
 
 import org.json.JSONException;
@@ -36,6 +37,7 @@ import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowToast;
 
@@ -47,6 +49,7 @@ import java.util.Stack;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
+import static android.os.Looper.getMainLooper;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP1;
 import static com.vijay.jsonwizard.presenters.JsonFormFragmentPresenter.RESULT_LOAD_IMG;
 import static com.vijay.jsonwizard.utils.PermissionUtils.CAMERA_PERMISSION_REQUEST_CODE;
@@ -63,6 +66,7 @@ import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -104,6 +108,8 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
 
     private Context context = RuntimeEnvironment.application;
 
+    private AppExecutors appExecutors = new AppExecutors();///new AppExecutors(Executors.newSingleThreadExecutor(),Executors.newSingleThreadExecutor(),Executors.newSingleThreadExecutor());
+
 
     @Before
     public void setUp() throws JSONException {
@@ -115,13 +121,17 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         JSONObject jsonForm = new JSONObject(TestConstants.PAOT_TEST_FORM);
         mStepDetails = jsonForm.getJSONObject(STEP1);
         when(jsonFormActivity.getmJSONObject()).thenReturn(jsonForm);
+        when(formFragment.getContext()).thenReturn(context);
+        when(jsonFormActivity.getAppExecutors()).thenReturn(appExecutors);
     }
 
     private void initWithActualForm() {
         Intent intent = new Intent();
         intent.putExtra("json", TestConstants.BASIC_FORM);
         jsonFormActivity = spy(Robolectric.buildActivity(JsonFormActivity.class, intent).create().resume().get());
+        when(jsonFormActivity.getAppExecutors()).thenReturn(appExecutors);
         formFragment = spy(JsonFormFragment.getFormFragment("step1"));
+        when(formFragment.getJsonApi()).thenReturn(jsonFormActivity);
         jsonFormActivity.getSupportFragmentManager().beginTransaction().add(formFragment, null).commit();
         formFragment.onFieldsInvalid = this.onFieldsInvalid;
         presenter = formFragment.getPresenter();
@@ -136,9 +146,10 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         List<View> views = Collections.singletonList(textView);
         when(jsonFormInteractor.fetchFormElements(anyString(), any(JsonFormFragment.class), any(JSONObject.class), isNull(CommonListener.class), anyBoolean())).thenReturn(views);
         presenter.addFormElements();
-        verify(jsonFormInteractor).fetchFormElements(eq(STEP1), eq(formFragment), jsonArgumentCaptor.capture(), isNull(CommonListener.class), eq(false));
+        Shadows.shadowOf(getMainLooper()).idle();
+        verify(jsonFormInteractor,timeout(TIMEOUT)).fetchFormElements(eq(STEP1), eq(formFragment), jsonArgumentCaptor.capture(), isNull(CommonListener.class), eq(false));
         assertEquals(mStepDetails.toString(), jsonArgumentCaptor.getValue().toString());
-        verify(formFragment).addFormElements(views);
+        verify(formFragment, timeout(TIMEOUT)).addFormElements(views);
     }
 
     @Test
@@ -337,7 +348,7 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         when(formFragment.getContext()).thenReturn(context);
         presenter.onRequestPermissionsResult(CAMERA_PERMISSION_REQUEST_CODE, new String[]{permission.CAMERA, permission.READ_EXTERNAL_STORAGE, permission.WRITE_EXTERNAL_STORAGE}, new int[5]);
         verify(formFragment).hideKeyBoard();
-       assertEquals("user_image",Whitebox.getInternalState(presenter,"mCurrentKey"));
+        assertEquals("user_image", Whitebox.getInternalState(presenter, "mCurrentKey"));
     }
 
 

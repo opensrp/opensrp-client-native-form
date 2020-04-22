@@ -35,8 +35,7 @@ public class HiddenTextFactory implements FormWidgetFactory {
         }
         List<View> views = new ArrayList<>(1);
 
-        RelativeLayout rootLayout = (RelativeLayout) LayoutInflater.from(context).inflate(
-                getLayout(), null);
+        RelativeLayout rootLayout = inflateLayout(context);
         MaterialEditText hiddenText = rootLayout.findViewById(R.id.edit_text);
         attachJson(stepName, context, formFragment, jsonObject, hiddenText);
 
@@ -50,6 +49,10 @@ public class HiddenTextFactory implements FormWidgetFactory {
         rootLayout.setVisibility(View.GONE);
         views.add(rootLayout);
         return views;
+    }
+
+    public RelativeLayout inflateLayout(Context context) {
+        return (RelativeLayout) LayoutInflater.from(context).inflate(getLayout(), null);
     }
 
     @Override
@@ -81,6 +84,22 @@ public class HiddenTextFactory implements FormWidgetFactory {
 
         hiddenText.addTextChangedListener(new GenericTextWatcher(stepName, formFragment, hiddenText));
 
+        attachRefreshLogic(context, hiddenText, relevance, constraints, calculation);
+
+        // Handle setting injected value (if exists) after attaching listener so that changes can be
+        // effected by the listener and calculations applied
+        final String value = jsonObject.optString(JsonFormConstants.VALUE);
+        if (StringUtils.isNotBlank(value) && formFragment.getContext() != null) {
+            formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
+                @Override
+                public void run() {
+                    hiddenText.setText(value);
+                }
+            });
+        }
+    }
+
+    private void attachRefreshLogic(Context context, MaterialEditText hiddenText, String relevance, String constraints, String calculation) {
         if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             hiddenText.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(hiddenText);
@@ -94,18 +113,6 @@ public class HiddenTextFactory implements FormWidgetFactory {
         if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
             hiddenText.setTag(R.id.calculation, calculation);
             ((JsonApi) context).addCalculationLogicView(hiddenText);
-        }
-
-        // Handle setting injected value (if exists) after attaching listener so that changes can be
-        // effected by the listener and calculations applied
-        final String value = jsonObject.optString(JsonFormConstants.VALUE);
-        if (StringUtils.isNotBlank(value) && formFragment.getContext() != null) {
-            formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
-                @Override
-                public void run() {
-                    hiddenText.setText(value);
-                }
-            });
         }
     }
 

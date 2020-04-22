@@ -93,6 +93,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -107,6 +108,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private FormUtils formUtils = new FormUtils();
     private Map<String, View> constrainedViews;
     private Map<String, View> formDataViews = new ConcurrentHashMap<>();
+    private Map<String, JSONObject> formFields = new ConcurrentHashMap<>();
+    private Set<String> popupFormFields = new ConcurrentSkipListSet<>();
     private String functionRegex;
     private HashMap<String, Comparison> comparisons;
     private Map<String, List<String>> ruleKeys = new HashMap<>();
@@ -136,7 +139,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     };
 
     @Override
-    public synchronized JSONObject getStep(String name) {
+    public synchronized JSONObject getStep(final String name) {
         synchronized (getmJSONObject()) {
             try {
                 return getmJSONObject().getJSONObject(name);
@@ -245,12 +248,12 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     @Override
     public void clearConstrainedViews() {
-        constrainedViews = new LinkedHashMap<>();
+        constrainedViews = new ConcurrentHashMap<>();
     }
 
     @Override
     public void clearFormDataViews() {
-        formDataViews = new HashMap<>();
+        formDataViews = new ConcurrentHashMap<>();
         clearSkipLogicViews();
         clearConstrainedViews();
         clearCalculationLogicViews();
@@ -385,7 +388,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         refreshCalculationLogic(parentKey, childKey, popup, stepName);
         refreshSkipLogic(parentKey, childKey, popup, stepName);
         refreshConstraints(parentKey, childKey, popup);
-        refreshMediaLogic(parentKey, value);
+        refreshMediaLogic(parentKey, value, stepName);
     }
 
     private void populateDependencyMap(Map<String, View> formViews, Map<String, Set<String>> dependencyMap, boolean calculation) {
@@ -475,18 +478,16 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private JSONObject fillFieldsWithValues(List<String> rulesList, boolean popup) throws JSONException {
         JSONObject result = new JSONObject();
         JSONArray rulesArray = new JSONArray();
-
-        for (int h = 1; h < getmJSONObject().getInt(JsonFormConstants.COUNT) + 1; h++) {
-            JSONArray fields = fetchFields(getmJSONObject().getJSONObject(RuleConstant.STEP + h), popup);
-            for (int i = 0; i < fields.length(); i++) {
-                if (rulesList.contains(RuleConstant.STEP + h + "_" +
-                        fields.getJSONObject(i).getString(JsonFormConstants.KEY))) {
-
-                    JSONObject fieldObject = fields.getJSONObject(i);
-                    fieldObject.put(RuleConstant.STEP, RuleConstant.STEP + h);
-                    rulesArray.put(fieldObject);
-                }
+        for (String rule : rulesList) {
+            if (!rule.startsWith(JsonFormConstants.STEP))
+                continue;
+            JSONObject fieldObject = formFields.get(rule);
+            if (fieldObject == null) {
+                Timber.w("Missing field for rule %s", rule);
+                continue;
             }
+            fieldObject.put(RuleConstant.STEP, rule.substring(0, rule.indexOf("_")));
+            rulesArray.put(fieldObject);
         }
         result.put(RuleConstant.RESULT, rulesArray);
         return result;
@@ -620,6 +621,29 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     @Override
     public void setmJSONObject(JSONObject mJSONObject) {
         super.setmJSONObject(mJSONObject);
+        initializeFormFieldsMap();
+    }
+
+    private void initializeFormFieldsMap() {
+        appExecutors.diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                JSONObject formJsonObject = getmJSONObject();
+                int count = formJsonObject.optInt(JsonFormConstants.COUNT);
+                try {
+                    for (int i = 1; i <= count; i++) {
+                        String step = JsonFormConstants.STEP + i;
+                        JSONArray fields = fetchFields(formJsonObject.getJSONObject(step), false);
+                        for (int j = 0; j < fields.length(); j++) {
+                            JSONObject field = fields.getJSONObject(j);
+                            formFields.put(step + "_" + field.getString(JsonFormConstants.KEY), field);
+                        }
+                    }
+                } catch (JSONException e) {
+                    Timber.e(e);
+                }
+            }
+        });
     }
 
     @Override
@@ -634,8 +658,25 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
 
     @Override
-    public void updateGenericPopupSecondaryValues(JSONArray jsonArray) {
+    public void updateGenericPopupSecondaryValues(JSONArray jsonArray, String stepName) {
+        if (jsonArray == null || jsonArray.length() == 0) {
+            for (String key : popupFormFields) {
+                popupFormFields.remove(key);
+            }
+        }
         setExtraFieldsWithValues(jsonArray);
+        if (jsonArray != null) {
+            for (int j = 0; j < jsonArray.length(); j++) {
+                try {
+                    JSONObject field = jsonArray.getJSONObject(j);
+                    String key = stepName + "_" + field.getString(JsonFormConstants.KEY);
+                    formFields.put(key, field);
+                    popupFormFields.add(key);
+                } catch (JSONException e) {
+                    Timber.e(e);
+                }
+            }
+        }
     }
 
     @Override
@@ -781,20 +822,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     private JSONObject getRelevanceReferencedObject(String stepName, String key, boolean popup) {
-        JSONObject field = new JSONObject();
-        try {
-            if (mJSONObject.has(stepName)) {
-                JSONArray fields = fetchFields(mJSONObject.getJSONObject(stepName), popup);
-                for (int i = 0; i < fields.length(); i++) {
-                    if (fields.getJSONObject(i).getString(JsonFormConstants.KEY).equals(key)) {
-                        return fields.getJSONObject(i);
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            Timber.e(e, "JsonFormActivity --> getRelevanceReferencedObject");
-        }
-        return field;
+        return formFields.get(stepName + "_" + key);
     }
 
     private void getFieldObject(String stepName, List<String> rulesList, JSONArray rulesArray, JSONArray feilds)
@@ -825,27 +853,21 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     protected void widgetsWriteValue(String stepName, String key, String value, String openMrsEntityParent,
                                      String openMrsEntity, String openMrsEntityId, boolean popup) throws JSONException {
-        synchronized (getmJSONObject()) {
-            JSONObject jsonObject = getmJSONObject().getJSONObject(stepName);
-            JSONArray fields = fetchFields(jsonObject, popup);
-            for (int i = 0; i < fields.length(); i++) {
-                JSONObject item = fields.getJSONObject(i);
-                String keyAtIndex = item.getString(JsonFormConstants.KEY);
-                String itemType = item.has(JsonFormConstants.TYPE) ? item.getString(JsonFormConstants.TYPE) : "";
-                boolean isSpecialWidget = isSpecialWidget(itemType);
-                String cleanKey = isSpecialWidget ? cleanWidgetKey(key, itemType) : key;
 
-                if (cleanKey.equals(keyAtIndex)) {
-                    if (item.has(JsonFormConstants.TEXT)) {
-                        item.put(JsonFormConstants.TEXT, value);
-                    } else {
-                        widgetWriteItemValue(value, item, itemType);
-                    }
-                    addOpenMrsAttributes(openMrsEntityParent, openMrsEntity, openMrsEntityId, item);
-                    invokeRefreshLogic(value, popup, cleanKey, null, stepName);
-                    return;
-                }
+        JSONObject item = formFields.get(stepName + "_" + key);
+        String keyAtIndex = item.getString(JsonFormConstants.KEY);
+        String itemType = item.has(JsonFormConstants.TYPE) ? item.getString(JsonFormConstants.TYPE) : "";
+        boolean isSpecialWidget = isSpecialWidget(itemType);
+        String cleanKey = isSpecialWidget ? cleanWidgetKey(key, itemType) : key;
+
+        if (cleanKey.equals(keyAtIndex)) {
+            if (item.has(JsonFormConstants.TEXT)) {
+                item.put(JsonFormConstants.TEXT, value);
+            } else {
+                widgetWriteItemValue(value, item, itemType);
             }
+            addOpenMrsAttributes(openMrsEntityParent, openMrsEntity, openMrsEntityId, item);
+            invokeRefreshLogic(value, popup, cleanKey, null, stepName);
         }
     }
 
@@ -914,17 +936,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                                       String value, boolean popup) throws JSONException {
 
         synchronized (getmJSONObject()) {
-            JSONObject checkboxObject = null;
-            JSONArray checkboxOptions = null;
-            JSONObject stepJson = mJSONObject.getJSONObject(stepName);
-            JSONArray fields = fetchFields(stepJson, popup);
-            for (int i = 0; i < fields.length(); i++) {
-                if (parentKey.equals(fields.getJSONObject(i).getString(JsonFormConstants.KEY))) {
-                    checkboxObject = fields.getJSONObject(i);
-                    checkboxOptions = checkboxObject.getJSONArray(childObjectKey);
-                    break;
-                }
-            }
+            JSONObject checkboxObject = formFields.get(stepName + "_" + parentKey);
+            JSONArray checkboxOptions = checkboxObject.getJSONArray(childObjectKey);
             HashSet<String> currentValues = new HashSet<>();
             //Get current values
             if (checkboxObject.has(JsonFormConstants.VALUE)) {
@@ -1031,7 +1044,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     address = getAddress(view, curKey, curRelevance, JsonFormConstants.RELEVANCE);
                 }
                 return new Pair<>(address, curRelevance);
-
             }
         }
         return null;
@@ -1050,7 +1062,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
                     Facts curValueMap = getValueFromAddress(address, isPopup);
                     try {
-                        comparison = isRelevant(curValueMap, curRelevance, ((String)view.getTag(R.id.address)).split(":")[0]);
+                        comparison = isRelevant(curValueMap, curRelevance, ((String) view.getTag(R.id.address)).split(":")[0]);
                     } catch (Exception e) {
                         Timber.e(e, "JsonFormActivity --> addRelevance --> comparison");
                     }
@@ -1363,20 +1375,20 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         return args;
     }
 
-    protected void refreshMediaLogic(String key, String value) {
+    protected void refreshMediaLogic(String key, String value, String stepName) {
+        if (StringUtils.isBlank(key))
+            return;
         try {
-            JSONObject object = getStep(JsonFormConstants.STEP1);
-            JSONArray fields = object.getJSONArray("fields");
-            for (int i = 0; i < fields.length(); i++) {
-                JSONObject questionGroup = fields.getJSONObject(i);
-                if ((questionGroup.has("key") && questionGroup.has("has_media_content")) &&
-                        (questionGroup.getString("key").equalsIgnoreCase(key)) &&
-                        (questionGroup.getBoolean("has_media_content"))) {
-                    JSONArray medias = questionGroup.getJSONArray("media");
-                    for (int j = 0; j < medias.length(); j++) {
-                        JSONObject media = medias.getJSONObject(j);
-                        mediaDialog(media, value);
-                    }
+            JSONObject questionGroup = formFields.get(stepName + "_" + key);
+            if (questionGroup == null) {
+                Timber.d("refreshMediaLogic field %s is missing", key);
+            } else if ((questionGroup.has("key") && questionGroup.has("has_media_content")) &&
+                    (questionGroup.getString("key").equalsIgnoreCase(key)) &&
+                    (questionGroup.getBoolean("has_media_content"))) {
+                JSONArray medias = questionGroup.getJSONArray("media");
+                for (int j = 0; j < medias.length(); j++) {
+                    JSONObject media = medias.getJSONObject(j);
+                    mediaDialog(media, value);
                 }
             }
         } catch (Exception e) {

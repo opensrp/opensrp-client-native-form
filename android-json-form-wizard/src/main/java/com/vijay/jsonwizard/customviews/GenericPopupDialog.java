@@ -81,7 +81,6 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        preLoadRules(getJsonApi().getmJSONObject(), getStepName());
         if (context == null) {
             throw new IllegalStateException(
                     "The Context is not set. Did you forget to set context with Generic Dialog setContext method?");
@@ -91,11 +90,12 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         setJsonApi((JsonApi) activity);
 
         try {
+            preLoadRules();
             setMainFormFields(formUtils.getFormFields(getStepName(), context));
             loadPartialSecondaryValues();
             createSecondaryValuesMap();
             loadSubForms();
-            getJsonApi().updateGenericPopupSecondaryValues(specifyContent);
+            getJsonApi().updateGenericPopupSecondaryValues(specifyContent, stepName);
         } catch (JSONException e) {
             Timber.e(e, " --> onCreate");
         }
@@ -159,6 +159,22 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
                 }
             }
         }
+    }
+
+
+    private JSONArray loadSpecifyContent() {
+        if (!TextUtils.isEmpty(getFormIdentity())) {
+            try {
+                JSONObject subForm = FormUtils.getSubFormJson(getFormIdentity(), getFormLocation(), context);
+                if (subForm != null && subForm.has(JsonFormConstants.CONTENT_FORM)) {
+                    return subForm.getJSONArray(JsonFormConstants.CONTENT_FORM);
+
+                }
+            } catch (Exception e) {
+                Timber.e(e, "GenericPopupDialog --> loadSpecifyContent");
+            }
+        }
+        return null;
     }
 
     protected void loadSubForms() {
@@ -294,9 +310,6 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
 
         attachOnShowListener();
         LinearLayout genericDialogContent = dialogView.findViewById(R.id.generic_dialog_content);
-        for (View view : getViewList()) {
-            genericDialogContent.addView(view);
-        }
 
         attachDialogCancelButton(dialogView);
         attachDialogOkButton(dialogView);
@@ -305,6 +318,9 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
             getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         }
         setViewList(initiateViews());
+        for (View view : getViewList()) {
+            genericDialogContent.addView(view);
+        }
         getJsonApi().invokeRefreshLogic(null, true, null, null, stepName);
         return dialogView;
     }
@@ -338,7 +354,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
                 setFormLocation(null);
                 setContext(null);
                 getJsonApi().setGenericPopup(null);
-                getJsonApi().updateGenericPopupSecondaryValues(null);
+                getJsonApi().updateGenericPopupSecondaryValues(null, getStepName());
                 GenericPopupDialog.this.dismiss();
             }
         });
@@ -352,7 +368,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
             public void onClick(View v) {
                 passData();
                 getJsonApi().setGenericPopup(null);
-                getJsonApi().updateGenericPopupSecondaryValues(null);
+                getJsonApi().updateGenericPopupSecondaryValues(null, getStepName());
                 GenericPopupDialog.this.dismiss();
             }
         });
@@ -605,51 +621,57 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         this.popAssignedValue = popAssignedValue;
     }
 
-    private void preLoadRules(final JSONObject formJSONObject, final String stepName) {
+    private void preLoadRules() {
         getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                preLoadRules(formJSONObject, stepName, JsonFormConstants.CALCULATION);
-            }
-        });
-
-        getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                preLoadRules(formJSONObject, stepName, JsonFormConstants.RELEVANCE);
+                preLoadRules(loadSpecifyContent(), JsonFormConstants.CALCULATION, JsonFormConstants.RELEVANCE);
             }
         });
 
     }
 
-    public void preLoadRules(JSONObject formJSONObject, String stepName, String type) {
+    public void preLoadRules(JSONArray fields, String calculationKey, String relevanceKey) {
         Set<String> ruleFiles = new HashSet<>();
-        JSONArray fields = formJSONObject.optJSONArray(stepName);
         if (fields == null)
             return;
         for (int i = 0; i < fields.length(); i++) {
             if (isDetached()) {
                 return;
             }
-            JSONObject relevance = fields.optJSONObject(i).optJSONObject(type);
-            if (relevance != null) {
-                JSONObject ruleEngine = relevance.optJSONObject(RuleConstant.RULES_ENGINE);
-                if (ruleEngine != null) {
-                    JSONObject exRules = ruleEngine.optJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES);
-                    String file = exRules.optString(RuleConstant.RULES_FILE, null);
-                    if (file != null) {
-                        ruleFiles.add(exRules.optString(RuleConstant.RULES_FILE));
+            JSONObject relevance = fields.optJSONObject(i).optJSONObject(relevanceKey);
+            JSONObject calculation = fields.optJSONObject(i).optJSONObject(calculationKey);
+
+            addRules(calculation, ruleFiles);
+            addRules(relevance, ruleFiles);
+
+        }
+
+        for (final String fileName : ruleFiles) {
+            getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    if (isDetached()) {
+                        return;
                     }
+                    getJsonApi().getRulesEngineFactory().getRulesFromAsset(fileName);
+                }
+            });
+
+        }
+    }
+
+    private void addRules(JSONObject jsonObject, Set<String> ruleFiles) {
+        if (jsonObject != null) {
+            JSONObject ruleEngine = jsonObject.optJSONObject(RuleConstant.RULES_ENGINE);
+            if (ruleEngine != null) {
+                JSONObject exRules = ruleEngine.optJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES);
+                String file = exRules.optString(RuleConstant.RULES_FILE, null);
+                if (file != null) {
+                    ruleFiles.add(exRules.optString(RuleConstant.RULES_FILE));
                 }
             }
-
         }
 
-        for (String fileName : ruleFiles) {
-            if (isDetached()) {
-                return;
-            }
-            getJsonApi().getRulesEngineFactory().getRulesFromAsset(fileName);
-        }
     }
 }

@@ -42,6 +42,7 @@ import com.vijay.jsonwizard.customviews.NativeEditText;
 import com.vijay.jsonwizard.customviews.RadioButton;
 import com.vijay.jsonwizard.fragments.JsonFormErrorFragment;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
+import com.vijay.jsonwizard.fragments.JsonWizardFormFragment;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 import com.vijay.jsonwizard.mvp.MvpBasePresenter;
 import com.vijay.jsonwizard.rules.RuleConstant;
@@ -155,6 +156,9 @@ public class JsonFormFragmentPresenter extends
                         if (getView() != null && !cleanupAndExit) {
                             getView().addFormElements(views);
                             formFragment.getJsonApi().invokeRefreshLogic(null, false, null, null, mStepName);
+                            if (formFragment instanceof JsonWizardFormFragment) {
+                                ((JsonWizardFormFragment) formFragment).processSkipSteps();
+                            }
                         }
                     }
                 });
@@ -995,22 +999,14 @@ public class JsonFormFragmentPresenter extends
         formFragment.getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                preLoadRules(formJSONObject, stepName, JsonFormConstants.CALCULATION);
+                preLoadRules(stepName, formJSONObject);
             }
         });
-
-        formFragment.getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                preLoadRules(formJSONObject, stepName, JsonFormConstants.RELEVANCE);
-            }
-        });
-
 
     }
 
 
-    private void preLoadRules(JSONObject formJSONObject, String stepName, String type) {
+    private void preLoadRules(String stepName, JSONObject formJSONObject) {
         Set<String> ruleFiles = new HashSet<>();
         JSONArray fields = formJSONObject.optJSONArray(stepName);
         if (fields == null)
@@ -1018,25 +1014,37 @@ public class JsonFormFragmentPresenter extends
         for (int i = 0; i < fields.length(); i++) {
             if (cleanupAndExit)
                 return;
-            JSONObject relevance = fields.optJSONObject(i).optJSONObject(type);
-            if (relevance != null) {
-                JSONObject ruleEngine = relevance.optJSONObject(RuleConstant.RULES_ENGINE);
-                if (ruleEngine != null) {
-                    JSONObject exRules = ruleEngine.optJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES);
-                    String file = exRules.optString(RuleConstant.RULES_FILE, null);
-                    if (file != null) {
-                        ruleFiles.add(exRules.optString(RuleConstant.RULES_FILE));
-                    }
+            JSONObject calculation = fields.optJSONObject(i).optJSONObject(JsonFormConstants.CALCULATION);
+            JSONObject relevance = fields.optJSONObject(i).optJSONObject(JsonFormConstants.RELEVANCE);
+
+            addRules(calculation, ruleFiles);
+            addRules(relevance, ruleFiles);
+        }
+
+        for (final String fileName : ruleFiles) {
+            formFragment.getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    if (cleanupAndExit)
+                        return;
+                    formFragment.getJsonApi().getRulesEngineFactory().getRulesFromAsset(fileName);
+                }
+            });
+        }
+    }
+
+    private void addRules(JSONObject jsonObject, Set<String> ruleFiles) {
+        if (jsonObject != null) {
+            JSONObject ruleEngine = jsonObject.optJSONObject(RuleConstant.RULES_ENGINE);
+            if (ruleEngine != null) {
+                JSONObject exRules = ruleEngine.optJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES);
+                String file = exRules.optString(RuleConstant.RULES_FILE, null);
+                if (file != null) {
+                    ruleFiles.add(exRules.optString(RuleConstant.RULES_FILE));
                 }
             }
-
         }
 
-        for (String fileName : ruleFiles) {
-            if (cleanupAndExit)
-                return;
-            formFragment.getJsonApi().getRulesEngineFactory().getRulesFromAsset(fileName);
-        }
     }
 
     public void cleanUp() {

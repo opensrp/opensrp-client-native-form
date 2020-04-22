@@ -29,6 +29,7 @@ import com.vijay.jsonwizard.utils.PermissionUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -75,20 +76,19 @@ public class GpsFactory implements FormWidgetFactory {
     public List<View> getViewsFromJson(String stepName, final Context context,
                                        JsonFormFragment formFragment, JSONObject jsonObject,
                                        CommonListener listener, boolean popup) throws Exception {
-        return attachJson(stepName, context, jsonObject, popup);
+        return attachJson(stepName, context, formFragment, jsonObject, popup);
     }
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
-        return attachJson(stepName, context, jsonObject, false);
+        return attachJson(stepName, context, formFragment, jsonObject, false);
     }
 
-    private List<View> attachJson(String stepName, final Context context, JSONObject jsonObject,
+    private List<View> attachJson(String stepName, final Context context, JsonFormFragment formFragment, JSONObject jsonObject,
                                   boolean popup) throws JSONException {
 
         List<View> views = new ArrayList<>();
-        View rootLayout = LayoutInflater.from(context)
-                .inflate(R.layout.item_gps, null);
+        View rootLayout = getRootLayout(context);
         final int canvasId = ViewUtil.generateViewId();
         rootLayout.setId(canvasId);
 
@@ -113,7 +113,7 @@ public class GpsFactory implements FormWidgetFactory {
                 .withJsonObject(jsonObject)
                 .withPopup(popup);
 
-        setUpViews(recordButton, widgetArgs, rootLayout, metadata);
+        setUpViews(recordButton, widgetArgs, rootLayout, metadata, formFragment);
 
         ((JsonApi) context).addFormDataView(recordButton);
         views.add(rootLayout);
@@ -121,7 +121,11 @@ public class GpsFactory implements FormWidgetFactory {
         return views;
     }
 
-    protected void setUpViews(Button recordButton, WidgetArgs widgetArgs, View rootLayout, WidgetMetadata metadata) throws JSONException {
+    public View getRootLayout(Context context) {
+        return LayoutInflater.from(context).inflate(R.layout.item_gps, null);
+    }
+
+    protected void setUpViews(final Button recordButton, WidgetArgs widgetArgs, View rootLayout, WidgetMetadata metadata, JsonFormFragment formFragment) throws JSONException {
 
         final Context context = widgetArgs.getContext();
         final JSONObject jsonObject = widgetArgs.getJsonObject();
@@ -153,14 +157,19 @@ public class GpsFactory implements FormWidgetFactory {
             recordButton.setFocusable(!readOnly);
         }
 
-        TextView latitudeTV = rootLayout.findViewById(R.id.latitude);
-        TextView longitudeTV = rootLayout.findViewById(R.id.longitude);
-        TextView altitudeTV = rootLayout.findViewById(R.id.altitude);
-        TextView accuracyTV = rootLayout.findViewById(R.id.accuracy);
+        final TextView latitudeTV = rootLayout.findViewById(R.id.latitude);
+        final TextView longitudeTV = rootLayout.findViewById(R.id.longitude);
+        final TextView altitudeTV = rootLayout.findViewById(R.id.altitude);
+        final TextView accuracyTV = rootLayout.findViewById(R.id.accuracy);
 
         attachLayout(context, jsonObject, recordButton, latitudeTV, longitudeTV, altitudeTV, accuracyTV);
 
-        gpsDialog = new GpsDialog(context, recordButton, latitudeTV, longitudeTV, altitudeTV, accuracyTV);
+        formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
+            @Override
+            public void run() {
+                gpsDialog = getGpsDialog(recordButton, context, latitudeTV, longitudeTV, altitudeTV, accuracyTV);
+            }
+        });
 
         customizeViews(recordButton, context);
 
@@ -177,6 +186,11 @@ public class GpsFactory implements FormWidgetFactory {
                 return false;
             }
         });
+    }
+
+    @NotNull
+    public GpsDialog getGpsDialog(Button recordButton, Context context, TextView latitudeTV, TextView longitudeTV, TextView altitudeTV, TextView accuracyTV) {
+        return new GpsDialog(context, recordButton, latitudeTV, longitudeTV, altitudeTV, accuracyTV);
     }
 
     protected void customizeViews(Button recordButton, Context context) {
@@ -217,12 +231,17 @@ public class GpsFactory implements FormWidgetFactory {
             }
         }
 
-        latitudeTv.setText(String.format(context.getString(R.string.latitude), latitude));
-        longitudeTv.setText(String.format(context.getString(R.string.longitude), longitude));
-        altitudeTv.setText(String.format(context.getString(R.string.altitude), altitude));
-        accuracyTv.setText(String.format(context.getString(R.string.accuracy), accuracy));
+        latitudeTv.setText(getText(context, latitude, R.string.latitude));
+        longitudeTv.setText(getText(context, longitude, R.string.longitude));
+        altitudeTv.setText(getText(context, altitude, R.string.altitude));
+        accuracyTv.setText(getText(context, accuracy, R.string.accuracy));
 
         dataView.setTag(R.id.raw_value, constructString(latitude, longitude));
+    }
+
+    @NotNull
+    public String getText(Context context, String latitude, int p) {
+        return String.format(context.getResources().getString(p), latitude);
     }
 
     public void requestPermissionsForLocation(Context context) {
