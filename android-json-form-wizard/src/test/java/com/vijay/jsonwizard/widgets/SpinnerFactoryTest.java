@@ -19,7 +19,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class SpinnerFactoryTest extends BaseTest {
 
-    private final String SPINNER_WIDGET_JSON_STR = "{\n" +
+    private final String spinnerWidgetString = "{\n" +
             "        \"key\": \"response_spinner_with_options\",\n" +
             "        \"openmrs_entity_parent\": \"\",\n" +
             "        \"openmrs_entity\": \"\",\n" +
@@ -60,13 +60,12 @@ public class SpinnerFactoryTest extends BaseTest {
             "      }";
 
     private SpinnerFactory spinnerFactory;
-    private JSONObject spinnerWidget;
     private JSONArray spinnerWidgetOptions;
 
     @Before
     public void setUp() throws JSONException {
         spinnerFactory = new SpinnerFactory();
-        spinnerWidget = new JSONObject(SPINNER_WIDGET_JSON_STR);
+        JSONObject spinnerWidget = new JSONObject(spinnerWidgetString);
         spinnerWidgetOptions = spinnerWidget.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
     }
 
