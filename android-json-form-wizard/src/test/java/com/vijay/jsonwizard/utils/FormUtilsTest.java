@@ -246,7 +246,7 @@ public class FormUtilsTest extends BaseTest {
 
     @Test
     public void testGetSubFormJson() throws Exception {
-        JSONObject form = FormUtils.getSubFormJson("expansion_panel_sub_form", null, RuntimeEnvironment.application);
+        JSONObject form = FormUtils.getSubFormJson("expansion_panel_sub_form", null, RuntimeEnvironment.application, true);
         Assert.assertNotNull(form);
         Assert.assertTrue(form.has(JsonFormConstants.CONTENT_FORM));
         Assert.assertEquals(7, form.getJSONArray(JsonFormConstants.CONTENT_FORM).length());

@@ -24,8 +24,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class ExtendedRadioButtonWidgetFactory extends NativeRadioButtonFactory {
     private FormUtils formUtils = new FormUtils();
@@ -162,5 +164,10 @@ public class ExtendedRadioButtonWidgetFactory extends NativeRadioButtonFactory {
         } else {
             Toast.makeText(context, "Please make sure you have set the radio button options", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public Set<String> getCustomTranslatableWidgetFields() {
+        return new HashSet<>();
     }
 }

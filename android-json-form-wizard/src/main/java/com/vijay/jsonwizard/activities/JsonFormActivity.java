@@ -905,7 +905,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     @Override
     protected void onPause() {
-        localBroadcastManager.unregisterReceiver(NumberSelectorFactory.getNumberSelectorsReceiver());
+        localBroadcastManager.unregisterReceiver(new NumberSelectorFactory().getNumberSelectorsReceiver());
         localBroadcastManager.unregisterReceiver(messageReceiver);
         super.onPause();
         for (LifeCycleListener lifeCycleListener : lifeCycleListeners) {
@@ -919,7 +919,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         super.onResume();
         localBroadcastManager
                 .registerReceiver(messageReceiver, new IntentFilter(JsonFormConstants.INTENT_ACTION.JSON_FORM_ACTIVITY));
-        localBroadcastManager.registerReceiver(NumberSelectorFactory.getNumberSelectorsReceiver(),
+        localBroadcastManager.registerReceiver(new NumberSelectorFactory().getNumberSelectorsReceiver(),
                 new IntentFilter(JsonFormConstants.INTENT_ACTION.NUMBER_SELECTOR_FACTORY));
 
         for (LifeCycleListener lifeCycleListener : lifeCycleListeners) {
@@ -1520,7 +1520,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         JSONArray fieldArray = new JSONArray();
         JSONObject jsonObject = null;
         try {
-            jsonObject = FormUtils.getSubFormJson(subFormName, subFormLocation, getApplicationContext());
+            jsonObject = FormUtils.getSubFormJson(subFormName, subFormLocation, getApplicationContext(), translateForm);
         } catch (Exception e) {
             Timber.e(e);
         }
