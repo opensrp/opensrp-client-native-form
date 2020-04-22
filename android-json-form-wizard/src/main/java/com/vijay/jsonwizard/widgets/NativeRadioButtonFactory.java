@@ -137,6 +137,8 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
                         Intent intent = new Intent(JsonFormConstants.INTENT_ACTION.JSON_FORM_ACTIVITY);
                         intent.putExtra(JsonFormConstants.INTENT_KEY.MESSAGE, map);
+                        intent.putExtra(JsonFormConstants.STEPNAME, ((String) customTextView.getTag(R.id.specify_step_name)));
+
                         intent.putExtra(JsonFormConstants.INTENT_KEY.MESSAGE_TYPE,
                                 JsonFormConstants.MESSAGE_TYPE.GLOBAL_VALUES);
 
@@ -279,7 +281,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
                 return new ValidationStatus(false, error, formFragmentView, radioGroup);
             } else if (errorTextView[0] != null) {
-                ((JsonFormFragment)formFragmentView).getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
+                ((JsonFormFragment) formFragmentView).getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
                     @Override
                     public void run() {
                         errorTextView[0].setVisibility(View.GONE);

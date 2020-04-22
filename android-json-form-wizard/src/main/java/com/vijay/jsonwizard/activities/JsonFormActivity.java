@@ -88,7 +88,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -133,10 +132,20 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 Map<String, String> map =
                         (Map<String, String>) intent.getSerializableExtra(JsonFormConstants.INTENT_KEY.MESSAGE);
                 globalValues.putAll(map);
+                String stepName = intent.getStringExtra(JsonFormConstants.STEPNAME);
+                if (StringUtils.isNotBlank(stepName))
+                    performActionOnReceived(stepName);
             }
-            // Log.d(TAG, "Received Broadcast Message Type " + messageType);
         }
     };
+
+    public void performActionOnReceived(String stepName) {
+        try {
+            invokeRefreshLogic(null, false, null, null, stepName);
+        } catch (Exception e) {
+            Timber.e(e);
+        }
+    }
 
     @Override
     public synchronized JSONObject getStep(final String name) {
