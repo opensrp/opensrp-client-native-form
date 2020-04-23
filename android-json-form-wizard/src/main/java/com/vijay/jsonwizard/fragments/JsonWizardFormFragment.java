@@ -49,6 +49,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
     private Toolbar navigationToolbar;
     private View bottomNavLayout;
     private JsonWizardFormFragment jsonFormFragment;
+    private String nextStep;
 
     public static JsonWizardFormFragment getFormFragment(String stepName) {
         JsonWizardFormFragment jsonFormFragment = new JsonWizardFormFragment();
@@ -139,6 +140,14 @@ public class JsonWizardFormFragment extends JsonFormFragment {
 
     }
 
+    public String getNextStep() {
+        return nextStep;
+    }
+
+    public void setNextStep(String nextStep) {
+        this.nextStep = nextStep;
+    }
+
     private Form getForm() {
         if (getActivity() != null && getActivity() instanceof JsonFormActivity) {
             return ((JsonFormActivity) getActivity()).getForm();
@@ -155,8 +164,9 @@ public class JsonWizardFormFragment extends JsonFormFragment {
 
     public void processSkipSteps() {
         if (!getJsonApi().isPreviousPressed()) {
-            skipStepsOnNextPressed();
+            //skipStepsOnNextPressed();//will be handled by previous step
         } else {
+            setShouldSkipStep(true);
             skipStepOnPreviousPressed();
         }
     }
@@ -279,6 +289,18 @@ public class JsonWizardFormFragment extends JsonFormFragment {
                 if (shouldSkipStep()) {
                     next();
                 }
+            }
+        }
+    }
+
+    public void skipStepsOnNextPressed(String step) {
+        JSONObject formStep = getJsonApi().getmJSONObject().optJSONObject(step);
+        String next = formStep.optString(JsonFormConstants.NEXT, "");
+        if (StringUtils.isNotEmpty(next)) {
+            checkIfStepIsBlank(formStep);
+            if (shouldSkipStep()) {
+                setNextStep(next);
+                next();
             }
         }
     }

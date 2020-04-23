@@ -1,6 +1,5 @@
 package com.vijay.jsonwizard.presenters;
 
-import android.view.View;
 import android.widget.LinearLayout;
 
 import com.vijay.jsonwizard.R;
@@ -10,8 +9,6 @@ import com.vijay.jsonwizard.fragments.JsonWizardFormFragment;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.List;
 
 /**
  * Created by keyman on 04/12/18.
@@ -45,22 +42,31 @@ public class JsonWizardFormFragmentPresenter extends JsonFormFragmentPresenter {
 
 
     public void executeRefreshLogicForNextStep() {
-        final String stepName = mStepDetails.optString(JsonFormConstants.NEXT);
+        String stepName = mStepDetails.optString(JsonFormConstants.NEXT);
         if (StringUtils.isNotBlank(stepName)) {
-            //start block
-            List<View> views = getmJsonFormInteractor().fetchFormElements(stepName, getFormFragment(), getFormFragment().getJsonApi().getmJSONObject().optJSONObject(stepName), getView().getCommonListener(), false);
-            //views is not useful if the formDataViews are cleared when the next fragment is opened
-            getFormFragment().getJsonApi().initializeDependencyMaps();
-            getFormFragment().getJsonApi().invokeRefreshLogic(null, false, null, null, stepName);
-            getFormFragment().getJsonApi().refreshHiddenViews(false);//not necessary
-            getFormFragment().getJsonApi().resetFocus();//not necessary
-            //end block this will be repeated when the next fragment is opened, not ideal
+            if (StringUtils.isBlank(((JsonWizardFormFragment) getFormFragment()).getNextStep())) {
+                ((JsonWizardFormFragment) getFormFragment()).setNextStep(stepName);
+            }
+            final String nextStep = ((JsonWizardFormFragment) getFormFragment()).getNextStep();
+            if (StringUtils.isNotBlank(nextStep)) {
+                getmJsonFormInteractor().fetchFormElements(nextStep, getFormFragment(), getFormFragment().getJsonApi().getmJSONObject().optJSONObject(nextStep), getView().getCommonListener(), false);
+                getFormFragment().getJsonApi().initializeDependencyMaps();
+                getFormFragment().getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        getFormFragment().getJsonApi().invokeRefreshLogic(null, false, null, null, nextStep);
+                        getFormFragment().setShouldSkipStep(true);
+                        ((JsonWizardFormFragment) getFormFragment()).skipStepsOnNextPressed(nextStep);
+                    }
+                });
+
+            }
         }
     }
 
     protected boolean moveToNextWizardStep() {
-        if (!"".equals(mStepDetails.optString(JsonFormConstants.NEXT))) {
-            JsonFormFragment next = JsonWizardFormFragment.getFormFragment(mStepDetails.optString(JsonFormConstants.NEXT));
+        if (!"".equals(((JsonWizardFormFragment) getFormFragment()).getNextStep())) {
+            JsonFormFragment next = JsonWizardFormFragment.getFormFragment(((JsonWizardFormFragment) getFormFragment()).getNextStep());
             getView().hideKeyBoard();
             getView().transactThis(next);
         }
