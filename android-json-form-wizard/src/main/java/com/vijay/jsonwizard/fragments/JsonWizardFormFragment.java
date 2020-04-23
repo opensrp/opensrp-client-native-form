@@ -149,8 +149,8 @@ public class JsonWizardFormFragment extends JsonFormFragment {
     @Override
     public void onResume() {
         super.onResume();
+        processSkipSteps();
         setJsonFormFragment(this);
-
     }
 
     public void processSkipSteps() {
