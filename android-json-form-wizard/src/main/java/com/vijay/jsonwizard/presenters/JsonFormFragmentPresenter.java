@@ -103,7 +103,6 @@ public class JsonFormFragmentPresenter extends
     private Stack<String> incorrectlyFormattedFields;
     private JsonFormErrorFragment errorFragment;
     private FormUtils formUtils = new FormUtils();
-    private List<View> tempViews = new ArrayList<>();
     private boolean cleanupAndExit;
 
     public JsonFormFragmentPresenter(JsonFormFragment formFragment,
@@ -117,10 +116,6 @@ public class JsonFormFragmentPresenter extends
         mJsonFormInteractor = JsonFormInteractor.getInstance();
         invalidFields = this.formFragment.getJsonApi().getInvalidFields();
         incorrectlyFormattedFields = new Stack<>();
-    }
-
-    public List<View> getTempViews() {
-        return tempViews;
     }
 
     public JsonFormFragment getFormFragment() {
