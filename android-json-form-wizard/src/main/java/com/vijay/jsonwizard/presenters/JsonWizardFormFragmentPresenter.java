@@ -1,6 +1,5 @@
 package com.vijay.jsonwizard.presenters;
 
-import android.view.View;
 import android.widget.LinearLayout;
 
 import com.vijay.jsonwizard.R;
@@ -10,10 +9,6 @@ import com.vijay.jsonwizard.fragments.JsonWizardFormFragment;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.List;
-
-import timber.log.Timber;
 
 /**
  * Created by keyman on 04/12/18.
@@ -49,9 +44,7 @@ public class JsonWizardFormFragmentPresenter extends JsonFormFragmentPresenter {
     public void executeRefreshLogicForNextStep() {
         final String stepName = mStepDetails.optString(JsonFormConstants.NEXT);
         if (StringUtils.isNotBlank(stepName)) {
-            final List<View> views = getmJsonFormInteractor().fetchFormElements(stepName, getFormFragment(), getFormFragment().getJsonApi().getmJSONObject().optJSONObject(stepName), getView().getCommonListener(), false);
-            getFormFragment().getTempViews().clear();
-            getFormFragment().getTempViews().addAll(views);
+            getmJsonFormInteractor().fetchFormElements(stepName, getFormFragment(), getFormFragment().getJsonApi().getmJSONObject().optJSONObject(stepName), getView().getCommonListener(), false);
             getFormFragment().getJsonApi().initializeDependencyMaps();
 
             getFormFragment().getJsonApi().invokeRefreshLogic(null, false, null, null, stepName);

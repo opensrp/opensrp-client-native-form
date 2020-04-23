@@ -47,7 +47,6 @@ import org.smartregister.simprint.SimPrintsLibrary;
 import org.smartregister.simprint.SimPrintsRegisterActivity;
 import org.smartregister.simprint.SimPrintsVerifyActivity;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,7 +71,6 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     private LinearLayout bottomNavigation;
     private BottomNavigationListener navigationListener;
     private boolean shouldSkipStep = true;
-    private List<View> tempViews = new ArrayList<>();
 
     private static NativeFormsProperties nativeFormProperties;
 
@@ -309,10 +307,6 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         super.onViewCreated(view, savedInstanceState);
         mJsonApi.clearFormDataViews();
         presenter.addFormElements();
-    }
-
-    public List<View> getTempViews() {
-        return tempViews;
     }
 
     @Override
