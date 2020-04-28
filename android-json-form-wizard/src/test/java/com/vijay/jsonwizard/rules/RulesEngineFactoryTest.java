@@ -235,12 +235,12 @@ public class RulesEngineFactoryTest {
                 "priority: 1\n" +
                 "condition: \"step1_first_Name.equalsIgnoreCase('Doe')\"\n" +
                 "actions:\n" +
-                "    - \"calculation = " + specifiedString + "\"";
+                "    - \"constraint = " + specifiedString + "\"";
         InputStream inputStream = new ByteArrayInputStream(relevance.getBytes());
         Mockito.when(assetManager.open("rule/test")).thenReturn(inputStream);
         relevanceFacts.put(RuleConstant.SELECTED_RULE, "step1_last_name");
         relevanceFacts.put("step1_first_Name", "Doe");
-        String result = rulesEngineFactory.getCalculation(relevanceFacts, "test");
+        String result = rulesEngineFactory.getConstraint(relevanceFacts, "test");
         Assert.assertEquals(specifiedString, result);
     }
 
