@@ -59,7 +59,7 @@ public class RulesEngineFactory implements RuleListener {
         try {
             Rules rules = new Rules();
             JSONObject keyJsonObject = Utils.getJsonObjectFromJsonArray(JsonFormConstants.KEY, jsonArray);
-            if(keyJsonObject != null) {
+            if (keyJsonObject != null) {
                 String key = keyJsonObject.optString(JsonFormConstants.KEY);
                 if (!ruleMap.containsKey(key)) {
                     for (int i = 0; i < jsonArray.length(); i++) {
@@ -82,7 +82,7 @@ public class RulesEngineFactory implements RuleListener {
         }
     }
 
-    private MVELRule getDynamicRulesFromJsonObject(JSONObject jsonObjectDynamicRule) {
+    private MVELRule getDynamicRulesFromJsonObject(@NonNull JSONObject jsonObjectDynamicRule) {
         try {
             MVELRule dynamicMvelRule = new MVELRule();
             dynamicMvelRule.setDescription(jsonObjectDynamicRule.optString(RuleConstant.DESCRIPTION));
@@ -97,7 +97,7 @@ public class RulesEngineFactory implements RuleListener {
         }
     }
 
-    public boolean getRelevance(Facts relevanceFact, String ruleFilename) {
+    public boolean getRelevance(@NonNull Facts relevanceFact, @NonNull String ruleFilename) {
 
         Facts facts = initializeFacts(relevanceFact);
 
