@@ -14,6 +14,8 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.AppCompatRadioButton;
@@ -1554,7 +1556,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         JSONArray fieldArray = new JSONArray();
         JSONObject jsonObject = null;
         try {
-            jsonObject = FormUtils.getSubFormJson(subFormName, subFormLocation, getApplicationContext(), translateForm);
+            jsonObject = getSubForm(subFormName, subFormLocation, getApplicationContext(), translateForm);
         } catch (Exception e) {
             Timber.e(e);
         }

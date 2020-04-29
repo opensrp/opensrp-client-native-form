@@ -1,5 +1,7 @@
 package com.vijay.jsonwizard.interfaces;
 
+import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.View;
 
 import com.vijay.jsonwizard.customviews.GenericPopupDialog;
@@ -16,7 +18,7 @@ import java.util.Map;
 /**
  * Created by vijay on 5/16/15.
  */
-public interface JsonApi {
+public interface JsonApi extends FileLoader {
     JSONObject getStep(String stepName);
 
     void writeValue(String stepName, String key, String value, String openMrsEntityParent,
@@ -122,4 +124,5 @@ public interface JsonApi {
     void setPreviousPressed(boolean previousPressed);
 
     Form form();
+
 }
