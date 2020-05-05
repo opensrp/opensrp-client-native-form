@@ -15,7 +15,6 @@ import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
-import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
@@ -41,7 +40,7 @@ import static com.vijay.jsonwizard.utils.FormUtils.getValueFromSpOrDpOrPx;
 /**
  * Created by vijay on 24-05-2015.
  */
-public class CheckBoxFactory implements FormWidgetFactory {
+public class CheckBoxFactory extends BaseFactory {
     private FormUtils formUtils = new FormUtils();
 
     public static ValidationStatus validate(JsonFormFragmentView formFragmentView, LinearLayout checkboxLinearLayout) {
@@ -144,15 +143,6 @@ public class CheckBoxFactory implements FormWidgetFactory {
 
         views.add(rootLayout);
         return views;
-    }
-
-    /**
-     * Generic method incase you want to alter or reference the widgets properties
-     *
-     * @param view the root layout
-     */
-    public void genericWidgetLayoutHookback(View view, JSONObject jsonObject, JsonFormFragment formFragment) {
-        // Override this in views if you require a reference to the widget's properties
     }
 
     protected int getLayout() {
