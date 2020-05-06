@@ -26,6 +26,7 @@ import com.vijay.jsonwizard.customviews.CompoundButton;
 import com.vijay.jsonwizard.customviews.ExpansionPanelGenericPopupDialog;
 import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.event.BaseEvent;
+import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.rules.RuleConstant;
 import com.vijay.jsonwizard.views.CustomTextView;
 import com.vijay.jsonwizard.widgets.DatePickerFactory;
@@ -621,26 +622,22 @@ public class Utils {
     }
 
     /**
-     *
      * Translates a yaml file specified by {@param fileName} and returns its String representation
      *
      * @param fileName
      * @param context
      * @return Translated Yaml file in its String representation
-     *
      */
     public static String getTranslatedYamlFile(String fileName, Context context) {
         return getTranslatedString(getAssetFileAsString(fileName, context), context);
     }
 
     /**
-     *
      * Gets the contents of a file specified by {@param fileName} from the assets folder as a {@link String}
      *
      * @param fileName
      * @param context
      * @return A file from the assets folder as a String
-     *
      */
     public static String getAssetFileAsString(String fileName, Context context) {
         InputStream inputStream = null;
@@ -648,7 +645,7 @@ public class Utils {
         try {
             inputStream = context.getAssets().open(fileName);
             fileContents = convertStreamToString(inputStream);
-        }  catch (IOException e) {
+        } catch (IOException e) {
             Timber.e(e);
         } finally {
             closeCloseable(inputStream);
@@ -673,9 +670,8 @@ public class Utils {
     }
 
     /**
-     *
      * Returns file contents for the file at {@param filePath} as a String
-     *
+     * <p>
      * Defaults to an empty {@link String} if the file does not exist or is empty
      *
      * @param filePath
@@ -750,6 +746,34 @@ public class Utils {
             return strings;
         }
         return null;
+    }
+
+
+    /***
+     *
+     * removes the generated rules by repeating group
+     */
+    public static void clearGeneratedLogicForRepeatingGroup(JsonFormFragment formFragment) {
+        JSONObject form = formFragment.getJsonApi().getmJSONObject();
+        JSONArray jsonArray = FormUtils.getMultiStepFormFields(form);
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = jsonArray.optJSONObject(i);
+            if (jsonObject.has(JsonFormConstants.RELEVANCE) &&
+                    jsonObject.optJSONObject(JsonFormConstants.RELEVANCE).has(RuleConstant.RULES_ENGINE) &&
+                    jsonObject.optJSONObject(JsonFormConstants.RELEVANCE).optJSONObject(RuleConstant.RULES_ENGINE)
+                            .has(JsonFormConstants.JSON_FORM_KEY.EX_RULES) &&
+                    jsonObject.optJSONObject(JsonFormConstants.RELEVANCE).optJSONObject(RuleConstant.RULES_ENGINE)
+                            .optJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).has(RuleConstant.RULES_DYNAMIC)) {
+                jsonArray.optJSONObject(i).remove(JsonFormConstants.RELEVANCE);
+            } else if (jsonObject.has(JsonFormConstants.CALCULATION) &&
+                    jsonObject.optJSONObject(JsonFormConstants.CALCULATION).has(RuleConstant.RULES_ENGINE) &&
+                    jsonObject.optJSONObject(JsonFormConstants.CALCULATION).optJSONObject(RuleConstant.RULES_ENGINE)
+                            .has(JsonFormConstants.JSON_FORM_KEY.EX_RULES) &&
+                    jsonObject.optJSONObject(JsonFormConstants.CALCULATION).optJSONObject(RuleConstant.RULES_ENGINE)
+                            .optJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).has(RuleConstant.RULES_DYNAMIC)) {
+                jsonArray.optJSONObject(i).remove(JsonFormConstants.CALCULATION);
+            }
+        }
     }
 }
 
