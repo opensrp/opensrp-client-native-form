@@ -750,10 +750,9 @@ public class Utils {
 
 
     /***
-     *
-     * removes the generated rules by repeating group
+     * removes the generated dynamic rules by repeating group
      */
-    public static void clearGeneratedLogicForRepeatingGroup(JsonFormFragment formFragment) {
+    public static void removeGeneratedDynamicRules(JsonFormFragment formFragment) {
         JSONObject form = formFragment.getJsonApi().getmJSONObject();
         JSONArray jsonArray = FormUtils.getMultiStepFormFields(form);
         for (int i = 0; i < jsonArray.length(); i++) {
