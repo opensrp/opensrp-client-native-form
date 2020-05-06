@@ -130,4 +130,6 @@ public interface JsonApi {
     AppExecutors getAppExecutors();
 
     RulesEngineFactory getRulesEngineFactory();
+
+    Map<String, JSONObject> getFormFieldsMap();
 }
