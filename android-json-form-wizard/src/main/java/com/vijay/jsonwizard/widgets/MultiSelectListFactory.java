@@ -384,16 +384,10 @@ public class MultiSelectListFactory implements FormWidgetFactory {
     }
 
     public Context getContext() {
-        if (context != null) {
-            return context;
-        }
-        throw new NullPointerException("Context is null");
+        return context;
     }
 
     public JsonFormFragment getJsonFormFragment() {
-        if (jsonFormFragment != null) {
-            return jsonFormFragment;
-        }
-        throw new NullPointerException("JsonFormFragment is null");
+        return jsonFormFragment;
     }
 }
