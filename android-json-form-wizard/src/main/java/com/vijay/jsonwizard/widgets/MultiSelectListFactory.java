@@ -49,8 +49,8 @@ import timber.log.Timber;
 public class MultiSelectListFactory implements FormWidgetFactory {
     public JSONObject jsonObject = new JSONObject();
     public String currentAdapterKey;
-    public Context context;
-    public JsonFormFragment jsonFormFragment;
+    private Context context;
+    private JsonFormFragment jsonFormFragment;
     private HashMap<String, MultiSelectListAccessory> multiSelectListAccessoryHashMap = new HashMap<>();
 
     @Override
@@ -381,5 +381,19 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         });
 
         return relativeLayout;
+    }
+
+    public Context getContext() {
+        if (context != null) {
+            return context;
+        }
+        throw new NullPointerException("Context is null");
+    }
+
+    public JsonFormFragment getJsonFormFragment() {
+        if (jsonFormFragment != null) {
+            return jsonFormFragment;
+        }
+        throw new NullPointerException("JsonFormFragment is null");
     }
 }

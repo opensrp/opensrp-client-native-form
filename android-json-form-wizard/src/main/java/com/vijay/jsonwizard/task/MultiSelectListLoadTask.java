@@ -31,19 +31,19 @@ public class MultiSelectListLoadTask {
         this.multiSelectListFactory = multiSelectListFactory;
         this.jsonObject = multiSelectListFactory.jsonObject;
         this.currentAdapterKey = multiSelectListFactory.currentAdapterKey;
-        multiSelectListFactory.jsonFormFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
+        multiSelectListFactory.getJsonFormFragment().getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
             @Override
             public void run() {
-                progressBar = new ProgressDialog(multiSelectListFactory.context);
-                progressBar.setMessage(multiSelectListFactory.context.getString(R.string.loading_multi_select_list));
+                progressBar = new ProgressDialog(multiSelectListFactory.getContext());
+                progressBar.setMessage(multiSelectListFactory.getContext().getString(R.string.loading_multi_select_list));
                 progressBar.show();
             }
         });
-        doInBackground();
+        init();
     }
 
-    protected void doInBackground() {
-        multiSelectListFactory.jsonFormFragment.getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
+    private void init() {
+        multiSelectListFactory.getJsonFormFragment().getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
             @Override
             public void run() {
                 String source = jsonObject.optString(JsonFormConstants.MultiSelectUtils.SOURCE);
@@ -79,7 +79,7 @@ public class MultiSelectListLoadTask {
                         Timber.e(e);
                     }
                 }
-                multiSelectListFactory.jsonFormFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
+                multiSelectListFactory.getJsonFormFragment().getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
                     @Override
                     public void run() {
                         onPostExecute(multiSelectItems);
@@ -89,8 +89,10 @@ public class MultiSelectListLoadTask {
         });
     }
 
-    protected void onPostExecute(List<MultiSelectItem> multiSelectItems) {
-        progressBar.dismiss();
+    private void onPostExecute(List<MultiSelectItem> multiSelectItems) {
+        if (progressBar != null) {
+            progressBar.dismiss();
+        }
         if (multiSelectItems != null) {
             MultiSelectListAccessory multiSelectListAccessory = multiSelectListFactory.getMultiSelectListAccessoryHashMap().get(currentAdapterKey);
             multiSelectListAccessory.setItemList(multiSelectItems);
