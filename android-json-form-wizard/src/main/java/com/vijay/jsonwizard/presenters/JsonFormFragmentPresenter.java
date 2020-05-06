@@ -426,9 +426,9 @@ public class JsonFormFragmentPresenter extends
     public void onSaveClick(LinearLayout mainView) {
         validateAndWriteValues();
         checkAndStopCountdownAlarm();
-        Utils.clearGeneratedLogicForRepeatingGroup(formFragment);
         boolean isFormValid = isFormValid();
         if (isFormValid || Boolean.valueOf(mainView.getTag(R.id.skip_validation).toString())) {
+            Utils.clearGeneratedLogicForRepeatingGroup(formFragment);
             Intent returnIntent = new Intent();
             getView().onFormFinish();
             returnIntent.putExtra("json", formUtils.addFormDetails(getView().getCurrentJsonState()));
