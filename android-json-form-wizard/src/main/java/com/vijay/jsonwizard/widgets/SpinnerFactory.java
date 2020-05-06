@@ -20,7 +20,6 @@ import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.MaterialSpinner;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
-import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
@@ -38,7 +37,7 @@ import java.util.Set;
 /**
  * Created by nipun on 30/05/15.
  */
-public class SpinnerFactory implements FormWidgetFactory {
+public class SpinnerFactory extends BaseFactory {
     private FormUtils formUtils = new FormUtils();
 
     public static ValidationStatus validate(JsonFormFragmentView formFragmentView, MaterialSpinner spinner) {
@@ -66,16 +65,16 @@ public class SpinnerFactory implements FormWidgetFactory {
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
                                        JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
-        return attachJson(stepName, context, jsonObject, listener, popup);
+        return attachJson(stepName, context, jsonObject, listener, formFragment, popup);
     }
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
                                        JSONObject jsonObject, CommonListener listener) throws Exception {
-        return attachJson(stepName, context, jsonObject, listener, false);
+        return attachJson(stepName, context, jsonObject, listener, formFragment, false);
     }
 
-    private List<View> attachJson(String stepName, Context context, JSONObject jsonObject, CommonListener listener,
+    private List<View> attachJson(String stepName, Context context, JSONObject jsonObject, CommonListener listener, JsonFormFragment formFragment,
                                   boolean popup) throws JSONException {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
@@ -90,12 +89,15 @@ public class SpinnerFactory implements FormWidgetFactory {
                 spinnerRelativeLayout);
         spinnerRelativeLayout.setTag(R.id.canvas_ids, canvasIds.toString());
 
-        addSpinner(jsonObject, spinnerRelativeLayout, listener, canvasIds, stepName, popup, context);
+        addSpinner(jsonObject, spinnerRelativeLayout, listener, formFragment, canvasIds, stepName, popup, context);
+
+        genericWidgetLayoutHookback(spinnerRelativeLayout, jsonObject, formFragment);
+
         views.add(spinnerRelativeLayout);
         return views;
     }
 
-    private void addSpinner(JSONObject jsonObject, RelativeLayout spinnerRelativeLayout, CommonListener listener,
+    private void addSpinner(JSONObject jsonObject, RelativeLayout spinnerRelativeLayout, CommonListener listener, JsonFormFragment jsonFormFragment,
                             JSONArray canvasIds, String stepName, boolean popup, Context context) throws JSONException {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
