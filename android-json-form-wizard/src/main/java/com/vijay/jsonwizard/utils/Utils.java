@@ -765,7 +765,8 @@ public class Utils {
                     jsonObject.optJSONObject(JsonFormConstants.RELEVANCE).optJSONObject(RuleConstant.RULES_ENGINE)
                             .optJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).has(RuleConstant.RULES_DYNAMIC)) {
                 jsonArray.optJSONObject(i).remove(JsonFormConstants.RELEVANCE);
-            } else if (jsonObject.has(JsonFormConstants.CALCULATION) &&
+            }
+            if (jsonObject.has(JsonFormConstants.CALCULATION) &&
                     jsonObject.optJSONObject(JsonFormConstants.CALCULATION).has(RuleConstant.RULES_ENGINE) &&
                     jsonObject.optJSONObject(JsonFormConstants.CALCULATION).optJSONObject(RuleConstant.RULES_ENGINE)
                             .has(JsonFormConstants.JSON_FORM_KEY.EX_RULES) &&
