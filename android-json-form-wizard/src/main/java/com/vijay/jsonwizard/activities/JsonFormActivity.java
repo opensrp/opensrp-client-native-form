@@ -16,6 +16,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.AppCompatRadioButton;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -1012,6 +1013,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private void setReadOnlyAndFocus(View view, boolean visible, boolean popup) {
         try {
             String addressString = (String) view.getTag(R.id.address);
+            String widgetType = (String) view.getTag(R.id.type);
             String[] address = addressString.split(":");
             JSONObject object = getObjectUsingAddress(address, popup);
 
@@ -1022,6 +1024,9 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             }
 
             view.setEnabled(enabled);
+            if (StringUtils.isNotBlank(widgetType) && JsonFormConstants.NATIVE_RADIO_BUTTON.equals(widgetType) && view instanceof RadioGroup) {
+                setReadOnlyRadioButtonOptions(view, enabled);
+            }
             if (view instanceof MaterialEditText || view instanceof RelativeLayout || view instanceof LinearLayout) {
                 view.setFocusable(enabled);
                 if (view instanceof MaterialEditText) {
@@ -1030,6 +1035,30 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             }
         } catch (JSONException e) {
             Timber.e(e, "JsonFormActivity --> setReadOnlyAndFocus");
+        }
+    }
+
+    /**
+     * Gets the {@link AppCompatRadioButton} views on the whole {@link com.vijay.jsonwizard.widgets.NativeRadioButtonFactory} and updates the enabled status
+     *
+     * @param view    {@link View}
+     * @param enabled {@link Boolean}
+     */
+    private void setReadOnlyRadioButtonOptions(View view, boolean enabled) {
+        if (view != null) {
+            for (int i = 0; i < ((RadioGroup) view).getChildCount(); i++) {
+                RelativeLayout relativeLayout = (RelativeLayout) ((RadioGroup) view).getChildAt(i);
+                if (relativeLayout != null) {
+                    LinearLayout linearLayout = (LinearLayout) (relativeLayout).getChildAt(0);
+                    if (linearLayout != null) {
+                        LinearLayout linearLayout1 = (LinearLayout) (linearLayout).getChildAt(0);
+                        if (linearLayout1 != null) {
+                            AppCompatRadioButton appCompatRadioButton = (AppCompatRadioButton) (linearLayout1).getChildAt(0);
+                            appCompatRadioButton.setEnabled(enabled);
+                        }
+                    }
+                }
+            }
         }
     }
 
