@@ -54,8 +54,7 @@ public class ToasterNotesFactory implements FormWidgetFactory {
         List<View> views = new ArrayList<>(1);
         JSONArray canvasIds = new JSONArray();
 
-        ToasterLinearLayout linearLayout = (ToasterLinearLayout) LayoutInflater.from(context)
-                .inflate(R.layout.native_form_toaster_notes, null);
+        ToasterLinearLayout linearLayout = getLinearLayout(context);
         linearLayout.setId(ViewUtil.generateViewId());
         canvasIds.put(linearLayout.getId());
         linearLayout.setTag(R.id.canvas_ids, canvasIds.toString());
@@ -67,6 +66,16 @@ public class ToasterNotesFactory implements FormWidgetFactory {
         linearLayout.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
         linearLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
 
+        attachRefreshLogic(context, relevance, calculation, linearLayout);
+        attachLayout(views, context, jsonObject, linearLayout, listener);
+        return views;
+    }
+
+    public ToasterLinearLayout getLinearLayout(Context context) {
+        return (ToasterLinearLayout) LayoutInflater.from(context).inflate(R.layout.native_form_toaster_notes, null);
+    }
+
+    private void attachRefreshLogic(Context context, String relevance, String calculation, ToasterLinearLayout linearLayout) {
         if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             linearLayout.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(linearLayout);
@@ -75,9 +84,6 @@ public class ToasterNotesFactory implements FormWidgetFactory {
             linearLayout.setTag(R.id.calculation, calculation);
             ((JsonApi) context).addCalculationLogicView(linearLayout);
         }
-
-        attachLayout(views, context, jsonObject, linearLayout, listener);
-        return views;
     }
 
     private void attachLayout(List<View> views, Context context, JSONObject jsonObject, LinearLayout linearLayout,
