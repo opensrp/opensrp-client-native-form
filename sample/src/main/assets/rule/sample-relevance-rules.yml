@@ -189,10 +189,3 @@ priority: 1
 condition: "step1_toaster26_hidden > 2"
 actions:
     - "isRelevant = true"
----
-name: step1_method_at_intake_m
-description: Slill births
-priority: 1
-condition: "true"
-actions:
-    - "isRelevant = true"
