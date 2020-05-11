@@ -47,8 +47,7 @@ script:
   - ls -la
   - travis_wait ./gradlew clean --stacktrace
   #Run All tests Unit and Instrumentation
-  - travis_wait ./gradlew :android-json-form-wizard:jacocoTestReport --stacktrace
-  - travis_wait ./gradlew :android-json-form-wizard:coveralls
+  - travis_wait 30 ./gradlew :android-json-form-wizard:jacocoTestReport :android-json-form-wizard:coveralls--stacktrace
   # Generate javadoc
   - travis_wait ./gradlew javadoc
 
