@@ -1,6 +1,7 @@
 package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
+import android.support.annotation.VisibleForTesting;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -416,7 +417,7 @@ public class EditTextFactory implements FormWidgetFactory {
         }
     }
 
-    public MaterialEditText getViewUsingAddress(String stepName, String fieldKey, JsonApi jsonApi) {
+    private MaterialEditText getViewUsingAddress(String stepName, String fieldKey, JsonApi jsonApi) {
         View view = jsonApi.getFormDataView(stepName + ":" + fieldKey);
         if (view instanceof MaterialEditText)
             return (MaterialEditText) view;
