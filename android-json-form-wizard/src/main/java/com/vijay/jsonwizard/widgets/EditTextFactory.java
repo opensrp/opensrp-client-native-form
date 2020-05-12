@@ -416,7 +416,7 @@ public class EditTextFactory implements FormWidgetFactory {
         }
     }
 
-    private MaterialEditText getViewUsingAddress(String stepName, String fieldKey, JsonApi jsonApi) {
+    public MaterialEditText getViewUsingAddress(String stepName, String fieldKey, JsonApi jsonApi) {
         View view = jsonApi.getFormDataView(stepName + ":" + fieldKey);
         if (view instanceof MaterialEditText)
             return (MaterialEditText) view;

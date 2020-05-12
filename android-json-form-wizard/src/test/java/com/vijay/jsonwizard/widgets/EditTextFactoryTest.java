@@ -13,6 +13,7 @@ import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
+import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
 
 import org.json.JSONObject;
@@ -51,8 +52,16 @@ public class EditTextFactoryTest extends BaseTest {
     @Mock
     private ImageView editButton;
 
-    private String jsonForm = "{\"encounter_type\":\"Birth Registration\",\"show_errors_on_submit\":true,\"count\":\"1\",\"display_scroll_bars\":true,\"mother\":{\"encounter_type\":\"New Woman Registration\"},\"entity_id\":\"\",\"relational_id\":\"\",\"metadata\":{\"start\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"start\",\"openmrs_entity_id\":\"163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"end\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"end\",\"openmrs_entity_id\":\"163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"today\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"encounter\",\"openmrs_entity_id\":\"encounter_date\"},\"deviceid\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"deviceid\",\"openmrs_entity_id\":\"163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"subscriberid\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"subscriberid\",\"openmrs_entity_id\":\"163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"simserial\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"simserial\",\"openmrs_entity_id\":\"163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"phonenumber\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"phonenumber\",\"openmrs_entity_id\":\"163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"encounter_location\":\"\",\"look_up\":{\"entity_id\":\"\",\"value\":\"\"}},\"step1\":{\"display_back_button\":\"true\",\"title\":\"Birth Registration\",\"fields\":[{\"key\":\"medications_other\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"type\":\"edit_text\",\"hint\":\"Specify\",\"v_regex\":{\"value\":\"[A-Za-z\\\\s\\\\.\\\\-]*\",\"err\":\"Please enter valid content\"},\"relevance\":{\"step1:medications\":{\"ex-checkbox\":[{\"or\":[\"other\"]}]}}},{\"key\":\"danger_sign\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"type\":\"native_radio\",\"label\":\"Does the woman have any of the danger signs in the image?\",\"label_text_style\":\"bold\",\"text_color\":\"#000000\",\"label_info_text\":\"A maximum of up to 3 weekly doses may be required.\",\"label_info_title\":\"Syphilis Compliance\",\"label_info_image_src\":\"img/chw.png\",\"label_info_has_image\":true,\"options\":[{\"key\":\"1\",\"text\":\"Yes\"},{\"key\":\"0\",\"text\":\"No\"}]},{\"key\":\"gps\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"geopoint\",\"openmrs_data_type\":\"text\",\"type\":\"gps\"}]}}";
+    @Mock
+    private MaterialEditText totalValueEditText;
 
+    @Mock
+    private MaterialEditText relatedEditText1;
+
+    @Mock
+    private MaterialEditText relatedEditText2;
+
+    private String jsonForm = "{\"encounter_type\":\"Birth Registration\",\"show_errors_on_submit\":true,\"count\":\"1\",\"display_scroll_bars\":true,\"mother\":{\"encounter_type\":\"New Woman Registration\"},\"entity_id\":\"\",\"relational_id\":\"\",\"metadata\":{\"start\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"start\",\"openmrs_entity_id\":\"163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"end\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"end\",\"openmrs_entity_id\":\"163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"today\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"encounter\",\"openmrs_entity_id\":\"encounter_date\"},\"deviceid\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"deviceid\",\"openmrs_entity_id\":\"163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"subscriberid\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"subscriberid\",\"openmrs_entity_id\":\"163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"simserial\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"simserial\",\"openmrs_entity_id\":\"163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"phonenumber\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"phonenumber\",\"openmrs_entity_id\":\"163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"encounter_location\":\"\",\"look_up\":{\"entity_id\":\"\",\"value\":\"\"}},\"step1\":{\"display_back_button\":\"true\",\"title\":\"Birth Registration\",\"fields\":[{\"key\":\"medications_other\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"type\":\"edit_text\",\"hint\":\"Specify\",\"v_regex\":{\"value\":\"[A-Za-z\\\\s\\\\.\\\\-]*\",\"err\":\"Please enter valid content\"},\"value\":\"10\",\"relevance\":{\"step1:medications\":{\"ex-checkbox\":[{\"or\":[\"other\"]}]}}},{\"key\":\"medications_other2\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"type\":\"edit_text\",\"hint\":\"Specify\",\"v_regex\":{\"value\":\"[A-Za-z\\\\s\\\\.\\\\-]*\",\"err\":\"Please enter valid content\"},\"value\":\"10\",\"relevance\":{\"step1:medications\":{\"ex-checkbox\":[{\"or\":[\"other\"]}]}}},{\"key\":\"medications_other3\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"type\":\"edit_text\",\"hint\":\"Specify\",\"v_regex\":{\"value\":\"[A-Za-z\\\\s\\\\.\\\\-]*\",\"err\":\"Please enter valid content\"},\"value\":\"20\",\"relevance\":{\"step1:medications\":{\"ex-checkbox\":[{\"or\":[\"other\"]}]}}}]}}";
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
@@ -160,8 +169,48 @@ public class EditTextFactoryTest extends BaseTest {
 
         Mockito.doReturn(jsonForm).when(formFragment).getCurrentJsonState();
 
-        String gpsString = "{\"key\":\"user_last_name\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"type\":\"edit_text\",\"hint\":\"User Last name\",\"edit_type\":\"name\",\"value\":\"Lifted\",\"v_min_length\":{\"value\":\"6\",\"err\":\"Please enter a valid name\"},\"v_max_length\":{\"value\":\"10\",\"is_fixed_size\":\"true\",\"err\":\"Please enter a valid name\"},\"v_required\":{\"value\":\"true\",\"err\":\"Please enter the last name\"},\"v_relative_max\":{\"value\":\"gps\",\"err\":\"Enter required fields\"}}";
+        String gpsString = "{\"key\":\"user_last_name\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"type\":\"edit_text\",\"hint\":\"User Last name\",\"edit_type\":\"name\",\"value\":\"Lifted\",\"v_min_length\":{\"value\":\"6\",\"err\":\"Please enter a valid name\"},\"v_max_length\":{\"value\":\"10\",\"is_fixed_size\":\"true\",\"err\":\"Please enter a valid name\"},\"v_required\":{\"value\":\"true\",\"err\":\"Please enter the last name\"},\"v_relative_max\":{\"value\":\"medications_other3\",\"err\":\"Enter required fields\"}}";
         List<View> viewList = factorySpy.getViewsFromJson("RandomStepName", context, formFragment, new JSONObject(gpsString), listener);
+        Assert.assertNotNull(viewList);
+        Assert.assertTrue(viewList.size() > 0);
+    }
+    @Test
+    public void testNameWithCumulativeTotalValidatorEditTextFactoryInstantiatesViewsCorrectly() throws Exception {
+        Assert.assertNotNull(factory);
+        EditTextFactory factorySpy = Mockito.spy(factory);
+        Assert.assertNotNull(factorySpy);
+
+        FormUtils formUtils = new FormUtils();
+        FormUtils formUtilsSpy = Mockito.spy(formUtils);
+        Assert.assertNotNull(formUtilsSpy);
+
+        Mockito.doReturn(resources).when(context).getResources();
+        Assert.assertNotNull(resources);
+
+        context.setTheme(R.style.NativeFormsAppTheme);
+        Mockito.doReturn(rootLayout).when(factorySpy).getRelativeLayout(context);
+        Assert.assertNotNull(rootLayout);
+
+        Mockito.doReturn(editTextLayout).when(rootLayout).findViewById(R.id.edit_text_layout);
+        Assert.assertNotNull(editTextLayout);
+
+        Mockito.doReturn(editText).when(editTextLayout).findViewById(R.id.edit_text);
+        Assert.assertNotNull(editText);
+
+        Mockito.doReturn(editButton).when(editTextLayout).findViewById(R.id.material_edit_text_edit_button);
+        Assert.assertNotNull(editButton);
+
+        Editable editable = new SpannableStringBuilder("Lifted");
+        Mockito.doReturn(editable).when(editText).getText();
+
+        Mockito.doReturn(jsonForm).when(formFragment).getCurrentJsonState();
+
+        Mockito.doReturn(relatedEditText1).when((JsonApi) context).getFormDataView("step1:medications_other");
+        Mockito.doReturn(relatedEditText2).when((JsonApi) context).getFormDataView("step1:medications_other2");
+        Mockito.doReturn(totalValueEditText).when((JsonApi) context).getFormDataView("step1:medications_other3");
+
+        String gpsString = "{\"key\":\"user_last_name\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"type\":\"edit_text\",\"hint\":\"User Last name\",\"edit_type\":\"name\",\"value\":\"Lifted\",\"v_min_length\":{\"value\":\"6\",\"err\":\"Please enter a valid name\"},\"v_max_length\":{\"value\":\"10\",\"is_fixed_size\":\"true\",\"err\":\"Please enter a valid name\"},\"v_required\":{\"value\":\"true\",\"err\":\"Please enter the last name\"},\"v_cumulative_total\":{\"value\":\"medications_other3\",\"err\":\"Enter required fields\",\"related_fields\":[\"medications_other\",\"medications_other2\"]}}";
+        List<View> viewList = factorySpy.getViewsFromJson("step1", context, formFragment, new JSONObject(gpsString), listener);
         Assert.assertNotNull(viewList);
         Assert.assertTrue(viewList.size() > 0);
     }
