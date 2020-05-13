@@ -87,7 +87,7 @@ public class EditTextFactory implements FormWidgetFactory {
                                     CommonListener listener, boolean popup) throws Exception {
         List<View> views = new ArrayList<>(1);
 
-        RelativeLayout rootLayout = (RelativeLayout) LayoutInflater.from(context).inflate(getLayout(), null);
+        RelativeLayout rootLayout = getRelativeLayout(context);
         RelativeLayout editTextLayout = rootLayout.findViewById(R.id.edit_text_layout);
         MaterialEditText editText = editTextLayout.findViewById(R.id.edit_text);
         ImageView editButton = editTextLayout.findViewById(R.id.material_edit_text_edit_button);
@@ -106,6 +106,10 @@ public class EditTextFactory implements FormWidgetFactory {
         ((JsonApi) context).addFormDataView(editText);
         views.add(rootLayout);
         return views;
+    }
+
+    public RelativeLayout getRelativeLayout(Context context) {
+        return (RelativeLayout) LayoutInflater.from(context).inflate(getLayout(), null);
     }
 
     protected int getLayout() {
