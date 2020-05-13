@@ -60,7 +60,6 @@ public class ToasterNotesFactory implements FormWidgetFactory {
         String openMrsEntityId = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_ID);
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
         String calculation = jsonObject.optString(JsonFormConstants.CALCULATION);
-        String type = jsonObject.optString(JsonFormConstants.TYPE);
 
         List<View> views = new ArrayList<>(1);
         JSONArray canvasIds = new JSONArray();
