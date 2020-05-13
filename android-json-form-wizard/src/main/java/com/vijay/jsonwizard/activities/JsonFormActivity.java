@@ -16,6 +16,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.AppCompatRadioButton;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -1012,6 +1013,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private void setReadOnlyAndFocus(View view, boolean visible, boolean popup) {
         try {
             String addressString = (String) view.getTag(R.id.address);
+            String widgetType = (String) view.getTag(R.id.type);
             String[] address = addressString.split(":");
             JSONObject object = getObjectUsingAddress(address, popup);
 
@@ -1022,6 +1024,9 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             }
 
             view.setEnabled(enabled);
+            if (StringUtils.isNotBlank(widgetType) && JsonFormConstants.NATIVE_RADIO_BUTTON.equals(widgetType) && view instanceof RadioGroup) {
+                setReadOnlyRadioButtonOptions(view, enabled);
+            }
             if (view instanceof MaterialEditText || view instanceof RelativeLayout || view instanceof LinearLayout) {
                 view.setFocusable(enabled);
                 if (view instanceof MaterialEditText) {
@@ -1030,6 +1035,29 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             }
         } catch (JSONException e) {
             Timber.e(e, "JsonFormActivity --> setReadOnlyAndFocus");
+        }
+    }
+
+    /**
+     * Gets the {@link AppCompatRadioButton} views on the whole {@link com.vijay.jsonwizard.widgets.NativeRadioButtonFactory} and updates the enabled status
+     *
+     * @param view    {@link View}
+     * @param enabled {@link Boolean}
+     */
+    private void setReadOnlyRadioButtonOptions(View view, boolean enabled) {
+        if (view != null) {
+            try {
+                int viewChildrenCount = ((RadioGroup) view).getChildCount();
+                for (int i = 0; i < viewChildrenCount; i++) {
+                    RelativeLayout radioGroupChildLayout = (RelativeLayout) ((RadioGroup) view).getChildAt(i);
+                    LinearLayout linearLayout = (LinearLayout) (radioGroupChildLayout).getChildAt(0);
+                    LinearLayout radioButtonMainLayout = (LinearLayout) (linearLayout).getChildAt(0);
+                    AppCompatRadioButton appCompatRadioButton = (AppCompatRadioButton) (radioButtonMainLayout).getChildAt(0);
+                    appCompatRadioButton.setEnabled(enabled);
+                }
+            } catch (ClassCastException e) {
+                Timber.e(e, " --> setReadOnlyRadioButtonOptions");
+            }
         }
     }
 
@@ -1132,7 +1160,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         }
     }
 
-    private Facts getValueFromAddress(String[] address, boolean popup, JSONObject valueSource) throws Exception {
+    private Facts getValueFromAddress(String[] address, boolean popup, JSONObject valueSource) throws
+            Exception {
         JSONObject object = getObjectUsingAddress(address, popup, valueSource);
         return getEntries(address, object);
     }
@@ -1340,7 +1369,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
      * @return An error message if constraint has not been enforced or NULL if constraint enforced
      * @throws Exception
      */
-    private String enforceConstraint(String value, View view, JSONObject constraint) throws Exception {
+    private String enforceConstraint(String value, View view, JSONObject constraint) throws
+            Exception {
 
         String type = constraint.getString("type").toLowerCase();
         String ex = constraint.getString(JsonFormConstants.EX);
@@ -1369,7 +1399,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         return errorMessage;
     }
 
-    private boolean checkViewValues(String type, String functionName, String[] args, boolean viewDoesNotHaveValue) {
+    private boolean checkViewValues(String type, String functionName, String[] args,
+                                    boolean viewDoesNotHaveValue) {
         return viewDoesNotHaveValue || TextUtils.isEmpty(args[0]) || TextUtils.isEmpty(args[1]) ||
                 comparisons.get(functionName).compare(args[0], type, args[1]);
     }
@@ -1421,7 +1452,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
      * @throws JSONException
      * @author dubdabasoduba
      */
-    protected JSONArray returnFormWithSectionFields(JSONObject sectionJson, boolean popup) throws JSONException {
+    protected JSONArray returnFormWithSectionFields(JSONObject sectionJson, boolean popup) throws
+            JSONException {
         JSONArray fields = new JSONArray();
         if (sectionJson.has(JsonFormConstants.FIELDS)) {
             if (popup) {
@@ -1453,7 +1485,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
      * @throws JSONException
      * @author dubdabasoduba
      */
-    protected JSONArray returnWithFormFields(JSONObject parentJson, boolean popup) throws JSONException {
+    protected JSONArray returnWithFormFields(JSONObject parentJson, boolean popup) throws
+            JSONException {
         JSONArray fields = new JSONArray();
         if (popup) {
             JSONArray jsonArray = parentJson.getJSONArray(JsonFormConstants.FIELDS);
@@ -1516,7 +1549,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         return fields;
     }
 
-    protected JSONArray getSubFormFields(String subFormName, String subFormLocation, JSONArray fields) {
+    protected JSONArray getSubFormFields(String subFormName, String subFormLocation, JSONArray
+            fields) {
         JSONArray fieldArray = new JSONArray();
         JSONObject jsonObject = null;
         try {
@@ -1581,7 +1615,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         return false;
     }
 
-    private ExObjectResult isExObjectRelevant(Facts curValueMap, JSONObject object) throws Exception {
+    private ExObjectResult isExObjectRelevant(Facts curValueMap, JSONObject object) throws
+            Exception {
         if (object.has(JsonFormConstants.JSON_FORM_KEY.NOT)) {
             JSONArray orArray = object.getJSONArray(JsonFormConstants.JSON_FORM_KEY.NOT);
 
@@ -1749,7 +1784,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         }
     }
 
-    private void addRadioButtonCalculation(String calculation, RadioGroup view, int childPosition) {
+    private void addRadioButtonCalculation(String calculation, RadioGroup view,
+                                           int childPosition) {
         if (!TextUtils.isEmpty(calculation)) {
             RelativeLayout radioButtonLayout = (RelativeLayout) view.getChildAt(childPosition);
             int radioButtonViewId = (int) radioButtonLayout.getTag(R.id.native_radio_button_view_id);
@@ -1818,7 +1854,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         }
     }
 
-    private void selectNumber(String calculation, TextView textView, String text, CommonListener commonListener) {
+    private void selectNumber(String calculation, TextView textView, String
+            text, CommonListener commonListener) {
         if (calculation.equals(text) && !textView.equals(selectedTextView)) {
             selectedTextView = textView;
             textView.setOnClickListener(commonListener);
@@ -1894,7 +1931,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         }
     }
 
-    private void updateCanvas(View view, boolean visible, JSONArray canvasViewIds, String addressString, JSONObject object)
+    private void updateCanvas(View view, boolean visible, JSONArray canvasViewIds, String
+            addressString, JSONObject object)
             throws JSONException {
         for (int i = 0; i < canvasViewIds.length(); i++) {
             int curId = canvasViewIds.getInt(i);
@@ -2149,7 +2187,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
      * @return values {@link List<String>}
      * @throws JSONException
      */
-    private List<String> getExpansionPanelValues(RefreshExpansionPanelEvent refreshExpansionPanelEvent) throws JSONException {
+    private List<String> getExpansionPanelValues(RefreshExpansionPanelEvent
+                                                         refreshExpansionPanelEvent) throws JSONException {
         List<String> values;
         if (refreshExpansionPanelEvent.getValues() != null) {
             values = utils.createExpansionPanelChildren(refreshExpansionPanelEvent.getValues());

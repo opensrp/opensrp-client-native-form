@@ -1,8 +1,12 @@
 package com.vijay.jsonwizard.activities;
 
 import android.content.Intent;
+import android.support.v7.widget.AppCompatRadioButton;
 import android.text.Html;
 import android.text.Spanned;
+import android.widget.LinearLayout;
+import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
@@ -144,5 +148,62 @@ public class JsonFormActivityTest extends BaseActivityTest {
     @Test
     public void testSetFilterTouchesWhenObscuredSetToTrueForActivityLayout() {
         Assert.assertTrue(activity.findViewById(R.id.native_form_activity).getFilterTouchesWhenObscured());
+    }
+
+    @Test
+    public void testSetRadioButtonOptionsDisabled() throws Exception {
+        AppCompatRadioButton appCompatRadioButton = new AppCompatRadioButton(activity.getBaseContext());
+        appCompatRadioButton.setEnabled(true);
+
+        LinearLayout radioButtonMainLayout = new LinearLayout(activity.getBaseContext());
+        LinearLayout linearLayout = new LinearLayout(activity.getBaseContext());
+        RelativeLayout radioGroupChildLayout = new RelativeLayout(activity.getBaseContext());
+
+        radioButtonMainLayout.addView(appCompatRadioButton);
+        linearLayout.addView(radioButtonMainLayout);
+        radioGroupChildLayout.addView(linearLayout);
+        RadioGroup radioGroup = new RadioGroup(activity.getBaseContext());
+        radioGroup.addView(radioGroupChildLayout);
+
+        Whitebox.invokeMethod(activity, "setReadOnlyRadioButtonOptions",radioGroup, false);
+        Assert.assertFalse(appCompatRadioButton.isEnabled());
+    }
+
+    @Test
+    public void testSetRadioButtonOptionsEnabled() throws Exception {
+        AppCompatRadioButton appCompatRadioButton = new AppCompatRadioButton(activity.getBaseContext());
+        appCompatRadioButton.setEnabled(false);
+
+        LinearLayout radioButtonMainLayout = new LinearLayout(activity.getBaseContext());
+        LinearLayout linearLayout = new LinearLayout(activity.getBaseContext());
+        RelativeLayout radioGroupChildLayout = new RelativeLayout(activity.getBaseContext());
+
+        radioButtonMainLayout.addView(appCompatRadioButton);
+        linearLayout.addView(radioButtonMainLayout);
+        radioGroupChildLayout.addView(linearLayout);
+        RadioGroup radioGroup = new RadioGroup(activity.getBaseContext());
+        radioGroup.addView(radioGroupChildLayout);
+
+        Whitebox.invokeMethod(activity, "setReadOnlyRadioButtonOptions",radioGroup, true);
+        Assert.assertTrue(appCompatRadioButton.isEnabled());
+    }
+
+    @Test
+    public void testSetRadioButtonOptionsEnabledWithTheWrongView() throws Exception {
+        AppCompatRadioButton appCompatRadioButton = new AppCompatRadioButton(activity.getBaseContext());
+        appCompatRadioButton.setEnabled(false);
+
+        LinearLayout radioButtonMainLayout = new LinearLayout(activity.getBaseContext());
+        LinearLayout linearLayout = new LinearLayout(activity.getBaseContext());
+        RelativeLayout radioGroupChildLayout = new RelativeLayout(activity.getBaseContext());
+
+        radioButtonMainLayout.addView(appCompatRadioButton);
+        linearLayout.addView(radioButtonMainLayout);
+        radioGroupChildLayout.addView(linearLayout);
+        RelativeLayout radioGroup = new RelativeLayout(activity.getBaseContext());
+        radioGroup.addView(radioGroupChildLayout);
+
+        Whitebox.invokeMethod(activity, "setReadOnlyRadioButtonOptions",radioGroup, true);
+        Assert.assertFalse(appCompatRadioButton.isEnabled());
     }
 }

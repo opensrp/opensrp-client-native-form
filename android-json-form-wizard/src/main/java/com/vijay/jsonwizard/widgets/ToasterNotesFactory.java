@@ -3,6 +3,7 @@ package com.vijay.jsonwizard.widgets;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,6 +44,15 @@ public class ToasterNotesFactory implements FormWidgetFactory {
         return attachJson(stepName, context, jsonObject, listener, false);
     }
 
+    @Override
+    @NonNull
+    public Set<String> getCustomTranslatableWidgetFields() {
+        Set<String> customTranslatableWidgetFields = new HashSet<>();
+        customTranslatableWidgetFields.add(JsonFormConstants.TOASTER_INFO_TITLE);
+        customTranslatableWidgetFields.add(JsonFormConstants.TOASTER_INFO_TEXT);
+        return customTranslatableWidgetFields;
+    }
+
     private List<View> attachJson(String stepName, Context context, JSONObject jsonObject, CommonListener
             listener, boolean popup) throws JSONException {
         String openMrsEntityParent = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
@@ -54,7 +64,7 @@ public class ToasterNotesFactory implements FormWidgetFactory {
         List<View> views = new ArrayList<>(1);
         JSONArray canvasIds = new JSONArray();
 
-        ToasterLinearLayout linearLayout = getLinearLayout(context);
+        ToasterLinearLayout linearLayout = getToasterLinearLayout(context);
         linearLayout.setId(ViewUtil.generateViewId());
         canvasIds.put(linearLayout.getId());
         linearLayout.setTag(R.id.canvas_ids, canvasIds.toString());
@@ -71,7 +81,8 @@ public class ToasterNotesFactory implements FormWidgetFactory {
         return views;
     }
 
-    public ToasterLinearLayout getLinearLayout(Context context) {
+    @VisibleForTesting
+    protected ToasterLinearLayout getToasterLinearLayout(Context context) {
         return (ToasterLinearLayout) LayoutInflater.from(context).inflate(R.layout.native_form_toaster_notes, null);
     }
 
@@ -148,14 +159,5 @@ public class ToasterNotesFactory implements FormWidgetFactory {
         toasterNoteInfo.setTag(R.id.label_dialog_title, infoTitle);
         toasterNoteInfo.setOnClickListener(listener);
         views.add(linearLayout);
-    }
-
-    @Override
-    @NonNull
-    public Set<String> getCustomTranslatableWidgetFields() {
-        Set<String> customTranslatableWidgetFields = new HashSet<>();
-        customTranslatableWidgetFields.add(JsonFormConstants.TOASTER_INFO_TITLE);
-        customTranslatableWidgetFields.add(JsonFormConstants.TOASTER_INFO_TEXT);
-        return customTranslatableWidgetFields;
     }
 }
