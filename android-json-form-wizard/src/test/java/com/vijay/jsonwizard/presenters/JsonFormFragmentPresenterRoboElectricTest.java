@@ -117,16 +117,6 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         when(jsonFormActivity.getmJSONObject()).thenReturn(jsonForm);
     }
 
-    private void initWithActualForm() {
-        Intent intent = new Intent();
-        intent.putExtra("json", TestConstants.BASIC_FORM);
-        jsonFormActivity = spy(Robolectric.buildActivity(JsonFormActivity.class, intent).create().resume().get());
-        formFragment = spy(JsonFormFragment.getFormFragment("step1"));
-        jsonFormActivity.getSupportFragmentManager().beginTransaction().add(formFragment, null).commit();
-        formFragment.onFieldsInvalid = this.onFieldsInvalid;
-        presenter = formFragment.getPresenter();
-    }
-
     @Test
     public void testAddFormElements() {
         Bundle bundle = new Bundle();
@@ -159,7 +149,6 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
 
     }
 
-
     @Test
     public void testSetUpToolBarIfStepHasNext() throws JSONException {
         Whitebox.setInternalState(presenter, "mStepDetails", mStepDetails);
@@ -169,7 +158,6 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         verify(formFragment).updateVisibilityOfNextAndSave(true, false);
 
     }
-
 
     @Test
     public void testSetUpToolBarForLastLastStep() {
@@ -197,7 +185,6 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         assertEquals(stack, presenter.getIncorrectlyFormattedFields());
     }
 
-
     @Test
     public void testSetErrorFragment() {
         presenter.setErrorFragment(errorFragment);
@@ -209,7 +196,6 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         Whitebox.setInternalState(presenter, "mStepDetails", mStepDetails);
         assertFalse(presenter.onNextClick(null));
     }
-
 
     @Test
     public void testValidateAndWriteValuesWithInvalidFields() {
@@ -225,6 +211,15 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         verify(onFieldsInvalid).passInvalidFields(presenter.getInvalidFields());
     }
 
+    private void initWithActualForm() {
+        Intent intent = new Intent();
+        intent.putExtra("json", TestConstants.BASIC_FORM);
+        jsonFormActivity = spy(Robolectric.buildActivity(JsonFormActivity.class, intent).create().resume().get());
+        formFragment = spy(JsonFormFragment.getFormFragment("step1"));
+        jsonFormActivity.getSupportFragmentManager().beginTransaction().add(formFragment, null).commit();
+        formFragment.onFieldsInvalid = this.onFieldsInvalid;
+        presenter = formFragment.getPresenter();
+    }
 
     @Test
     public void testValidateAndWriteValues() {
@@ -337,7 +332,7 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         when(formFragment.getContext()).thenReturn(context);
         presenter.onRequestPermissionsResult(CAMERA_PERMISSION_REQUEST_CODE, new String[]{permission.CAMERA, permission.READ_EXTERNAL_STORAGE, permission.WRITE_EXTERNAL_STORAGE}, new int[5]);
         verify(formFragment).hideKeyBoard();
-       assertEquals("user_image",Whitebox.getInternalState(presenter,"mCurrentKey"));
+        assertEquals("user_image", Whitebox.getInternalState(presenter, "mCurrentKey"));
     }
 
 
