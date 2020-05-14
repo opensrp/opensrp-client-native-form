@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * Created by vijay on 5/16/15.
  */
-public interface JsonApi extends FileLoader {
+public interface JsonApi extends JsonSubFormAndRulesLoader {
     JSONObject getStep(String stepName);
 
     void writeValue(String stepName, String key, String value, String openMrsEntityParent,
