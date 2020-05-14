@@ -27,9 +27,16 @@ public class RulesEngineHelperTest extends BaseTest {
 
     @Test
     @Config(shadows = {ShadowRulesEngineDateUtil.class})
-    public void testGetDateTimeToday() {
+    public void getDateTimeTodayReturnsExpectedDateTime() {
         RulesEngineHelper helper = new RulesEngineHelper();
         Assert.assertEquals("2020-05-30 13:15:30", helper.getDateTimeToday());
+    }
+
+    @Test
+    @Config(shadows = {ShadowRulesEngineDateUtil.class})
+    public void getDateTodayReturnsExpectedDate() {
+        RulesEngineHelper helper = new RulesEngineHelper();
+        Assert.assertEquals("30-05-2020", helper.getDateToday());
     }
 
 }
