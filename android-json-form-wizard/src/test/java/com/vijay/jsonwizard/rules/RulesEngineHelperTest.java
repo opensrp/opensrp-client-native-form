@@ -3,7 +3,6 @@ package com.vijay.jsonwizard.rules;
 import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.shadow.ShadowRulesEngineDateUtil;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.robolectric.annotation.Config;
 
