@@ -17,7 +17,7 @@ import static com.vijay.jsonwizard.rules.RulesEngineHelperTest.TEST_DATE_TIME;
 @Implements(RulesEngineDateUtil.class)
 public class ShadowRulesEngineDateUtil {
 
-    private Clock clock = Clock.fixed(Instant.parse(TEST_DATE_TIME), ZoneId.systemDefault());
+    private Clock clock = Clock.fixed(Instant.parse(TEST_DATE_TIME), ZoneId.of("UTC"));
 
     @Implementation
     public String getDateTimeToday() {
