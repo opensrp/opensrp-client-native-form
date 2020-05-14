@@ -6,6 +6,9 @@ import com.vijay.jsonwizard.shadow.ShadowRulesEngineDateUtil;
 import org.junit.Test;
 import org.robolectric.annotation.Config;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -28,7 +31,7 @@ public class RulesEngineHelperTest extends BaseTest {
     @Config(shadows = {ShadowRulesEngineDateUtil.class})
     public void getDateTimeTodayReturnsExpectedDateTime() {
         RulesEngineHelper helper = new RulesEngineHelper();
-        assertEquals("2020-05-30 13:15:30", helper.getDateTimeToday());
+        assertEquals("2020-05-30 10:15:30", helper.getDateTimeToday());
     }
 
     @Test
@@ -36,6 +39,15 @@ public class RulesEngineHelperTest extends BaseTest {
     public void getDateTodayReturnsExpectedDate() {
         RulesEngineHelper helper = new RulesEngineHelper();
         assertEquals("30-05-2020", helper.getDateToday());
+    }
+
+    @Test
+    public void canGetNonNullValueFromList() {
+        List<String> stringList = new ArrayList<>();
+        RulesEngineHelper helper = new RulesEngineHelper();
+        stringList.add("Hello");
+        stringList.add("");
+        assertEquals("Hello", helper.getNonBlankValue(stringList));
     }
 
 }
