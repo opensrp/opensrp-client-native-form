@@ -621,7 +621,7 @@ public class FormUtils {
         return new JSONObject(loadSubForm(formIdentity, getSubFormLocation(subFormsLocation), context, translateSubForm));
     }
 
-    private static String getSubFormLocation(String subFormsLocation) {
+    public static String getSubFormLocation(String subFormsLocation) {
         return TextUtils.isEmpty(subFormsLocation) ? JsonFormConstants.DEFAULT_SUB_FORM_LOCATION : subFormsLocation;
     }
 

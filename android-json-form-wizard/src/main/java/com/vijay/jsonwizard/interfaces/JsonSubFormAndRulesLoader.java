@@ -11,7 +11,7 @@ import java.io.IOException;
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 29-04-2020.
  */
-public interface FileLoader {
+public interface JsonSubFormAndRulesLoader {
 
     @NonNull
     JSONObject getSubForm(String formIdentity, String subFormsLocation, Context context, boolean translateSubForm)  throws Exception;

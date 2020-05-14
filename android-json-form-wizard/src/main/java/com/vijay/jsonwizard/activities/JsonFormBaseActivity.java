@@ -15,7 +15,7 @@ import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
-import com.vijay.jsonwizard.interfaces.FileLoader;
+import com.vijay.jsonwizard.interfaces.JsonSubFormAndRulesLoader;
 import com.vijay.jsonwizard.interfaces.LifeCycleListener;
 import com.vijay.jsonwizard.interfaces.OnActivityRequestPermissionResultListener;
 import com.vijay.jsonwizard.interfaces.OnActivityResultListener;
@@ -43,7 +43,7 @@ import timber.log.Timber;
 
 import static com.vijay.jsonwizard.utils.NativeFormLangUtils.getTranslatedString;
 
-abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnFieldsInvalid, FileLoader {
+abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnFieldsInvalid, JsonSubFormAndRulesLoader {
     protected static final String TAG = JsonFormActivity.class.getSimpleName();
     protected static final String JSON_STATE = "jsonState";
     protected static final String FORM_STATE = "formState";
