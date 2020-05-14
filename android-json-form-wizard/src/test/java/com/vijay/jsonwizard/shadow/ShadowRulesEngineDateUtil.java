@@ -12,20 +12,20 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
 
-import static com.vijay.jsonwizard.rules.RulesEngineHelperTest.TEST_TIME_EXPECTED;
+import static com.vijay.jsonwizard.rules.RulesEngineHelperTest.TEST_DATE_TIME;
 
 @Implements(RulesEngineDateUtil.class)
 public class ShadowRulesEngineDateUtil {
 
+    private Clock clock = Clock.fixed(Instant.parse(TEST_DATE_TIME), ZoneId.systemDefault());
+
     @Implementation
     public String getDateTimeToday() {
-        Clock clock = Clock.fixed(Instant.parse(TEST_TIME_EXPECTED), ZoneId.systemDefault());
         return new LocalDateTime(clock.millis()).toString("yyyy-MM-dd HH:mm:ss");
     }
 
     @Implementation
     public String getDateToday() {
-        Clock clock = Clock.fixed(Instant.parse(TEST_TIME_EXPECTED), ZoneId.systemDefault());
         return new LocalDate(clock.millis()).toString(FormUtils.NATIIVE_FORM_DATE_FORMAT_PATTERN);
     }
 }

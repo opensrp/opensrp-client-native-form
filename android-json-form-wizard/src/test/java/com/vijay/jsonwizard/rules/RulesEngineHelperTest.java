@@ -14,7 +14,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class RulesEngineHelperTest extends BaseTest {
 
-    public static String TEST_TIME_EXPECTED = "2020-05-30T10:15:30Z";
+    public static String TEST_DATE_TIME = "2020-05-30T10:15:30Z";
 
     @Test
     public void testIfNull() {
@@ -29,14 +29,14 @@ public class RulesEngineHelperTest extends BaseTest {
     @Config(shadows = {ShadowRulesEngineDateUtil.class})
     public void getDateTimeTodayReturnsExpectedDateTime() {
         RulesEngineHelper helper = new RulesEngineHelper();
-        Assert.assertEquals("2020-05-30 13:15:30", helper.getDateTimeToday());
+        assertEquals("2020-05-30 13:15:30", helper.getDateTimeToday());
     }
 
     @Test
     @Config(shadows = {ShadowRulesEngineDateUtil.class})
     public void getDateTodayReturnsExpectedDate() {
         RulesEngineHelper helper = new RulesEngineHelper();
-        Assert.assertEquals("30-05-2020", helper.getDateToday());
+        assertEquals("30-05-2020", helper.getDateToday());
     }
 
 }
