@@ -42,6 +42,7 @@ import com.vijay.jsonwizard.customviews.NativeEditText;
 import com.vijay.jsonwizard.customviews.RadioButton;
 import com.vijay.jsonwizard.fragments.JsonFormErrorFragment;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
+import com.vijay.jsonwizard.fragments.JsonWizardFormFragment;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 import com.vijay.jsonwizard.mvp.MvpBasePresenter;
 import com.vijay.jsonwizard.rules.RuleConstant;
@@ -134,8 +135,15 @@ public class JsonFormFragmentPresenter extends
         dialog.show();
         mStepName = getView().getArguments().getString("stepName");
         JSONObject step = getView().getStep(mStepName);
+        if (step == null) {
+            return;
+        }
         try {
             mStepDetails = new JSONObject(step.toString());
+            if (formFragment instanceof JsonWizardFormFragment) {
+                String next = mStepDetails.optString("next");
+                ((JsonWizardFormFragment) formFragment).setNextStep(next);
+            }
         } catch (JSONException e) {
             Timber.e(e);
         }
@@ -163,6 +171,15 @@ public class JsonFormFragmentPresenter extends
                         if (getView() != null && !cleanupAndExit) {
                             getView().addFormElements(views);
                             formFragment.getJsonApi().invokeRefreshLogic(null, false, null, null, mStepName);
+                            if (formFragment.getJsonApi().skipBlankSteps()) {
+                                formFragment.getJsonApi().updateUiBaseOnRules(JsonFormConstants.RELEVANCE);
+                                formFragment.getJsonApi().updateUiBaseOnRules(JsonFormConstants.CALCULATION);
+
+                                //for the first step
+                                if (!formFragment.getJsonApi().isNextStepRelevant() && mStepName.equals(JsonFormConstants.STEP1) && !formFragment.getJsonApi().isPreviousPressed()) {
+                                    onNextClick(formFragment.getMainView());
+                                }
+                            }
                         }
                     }
                 });

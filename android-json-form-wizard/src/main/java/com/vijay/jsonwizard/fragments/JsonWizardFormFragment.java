@@ -166,7 +166,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
         if (!getJsonApi().isPreviousPressed()) {
             //skipStepsOnNextPressed();//will be handled by previous step
         } else {
-            setShouldSkipStep(true);
+//            setShouldSkipStep(true);
             skipStepOnPreviousPressed();
         }
     }
@@ -295,10 +295,10 @@ public class JsonWizardFormFragment extends JsonFormFragment {
 
     public void skipStepsOnNextPressed(String step) {
         JSONObject formStep = getJsonApi().getmJSONObject().optJSONObject(step);
+        JSONArray jsonArrayFields = formStep.optJSONArray(JsonFormConstants.FIELDS);
         String next = formStep.optString(JsonFormConstants.NEXT, "");
         if (StringUtils.isNotEmpty(next)) {
-            checkIfStepIsBlank(formStep);
-            if (shouldSkipStep()) {
+            if (!getJsonApi().isNextStepRelevant() && (jsonArrayFields.length() == getJsonApi().getPreComputedRelevanceMap().size())) {
                 setNextStep(next);
                 next();
             }

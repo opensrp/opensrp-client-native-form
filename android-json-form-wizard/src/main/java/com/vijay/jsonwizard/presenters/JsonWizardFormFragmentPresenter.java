@@ -3,7 +3,6 @@ package com.vijay.jsonwizard.presenters;
 import android.widget.LinearLayout;
 
 import com.vijay.jsonwizard.R;
-import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.fragments.JsonWizardFormFragment;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
@@ -28,8 +27,8 @@ public class JsonWizardFormFragmentPresenter extends JsonFormFragmentPresenter {
         validateAndWriteValues();
         checkAndStopCountdownAlarm();
         boolean validateOnSubmit = validateOnSubmit();
-        executeRefreshLogicForNextStep();
         if (validateOnSubmit && getIncorrectlyFormattedFields().isEmpty()) {
+            executeRefreshLogicForNextStep();
             return moveToNextWizardStep();
         } else if (isFormValid()) {
             return moveToNextWizardStep();
@@ -42,26 +41,16 @@ public class JsonWizardFormFragmentPresenter extends JsonFormFragmentPresenter {
 
 
     public void executeRefreshLogicForNextStep() {
-        String stepName = mStepDetails.optString(JsonFormConstants.NEXT);
-        if (StringUtils.isNotBlank(stepName)) {
-            if (StringUtils.isBlank(((JsonWizardFormFragment) getFormFragment()).getNextStep())) {
-                ((JsonWizardFormFragment) getFormFragment()).setNextStep(stepName);
-            }
-            final String nextStep = ((JsonWizardFormFragment) getFormFragment()).getNextStep();
-            if (StringUtils.isNotBlank(nextStep)) {
-                getmJsonFormInteractor().fetchFormElements(nextStep, getFormFragment(), getFormFragment().getJsonApi().getmJSONObject().optJSONObject(nextStep), getView().getCommonListener(), false);
-                getFormFragment().getJsonApi().initializeDependencyMaps();
-                getFormFragment().getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        getFormFragment().getJsonApi().invokeRefreshLogic(null, false, null, null, nextStep);
-                        getFormFragment().setShouldSkipStep(true);
-                        ((JsonWizardFormFragment) getFormFragment()).skipStepsOnNextPressed(nextStep);
-                    }
-                });
 
-            }
+        final String nextStep = ((JsonWizardFormFragment) getFormFragment()).getNextStep();
+        if (StringUtils.isNotBlank(nextStep)) {
+            getmJsonFormInteractor().fetchFormElements(nextStep, getFormFragment(), getFormFragment().getJsonApi().getmJSONObject().optJSONObject(nextStep), getView().getCommonListener(), false);
+            getFormFragment().getJsonApi().initializeDependencyMaps();
+            getFormFragment().getJsonApi().invokeRefreshLogic(null, false, null, null, nextStep);
+            getFormFragment().setShouldSkipStep(true);
+            ((JsonWizardFormFragment) getFormFragment()).skipStepsOnNextPressed(nextStep);
         }
+
     }
 
     protected boolean moveToNextWizardStep() {

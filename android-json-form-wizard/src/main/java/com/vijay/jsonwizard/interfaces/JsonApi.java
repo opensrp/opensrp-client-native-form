@@ -130,4 +130,12 @@ public interface JsonApi {
     AppExecutors getAppExecutors();
 
     RulesEngineFactory getRulesEngineFactory();
+
+    Map<View, String> getPreComputedCalculationMap();
+
+    Map<View, String> getPreComputedRelevanceMap();
+
+    boolean isNextStepRelevant();
+
+    void updateUiBaseOnRules(String type);
 }

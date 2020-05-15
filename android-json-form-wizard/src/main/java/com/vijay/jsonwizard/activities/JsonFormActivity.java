@@ -14,6 +14,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.util.Pair;
@@ -121,6 +122,12 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     private Map<String, Set<String>> calculationDependencyMap = new HashMap<>();
     private Map<String, Set<String>> skipLogicDependencyMap = new HashMap<>();
+
+
+    private Map<View, String> preComputedCalculationMap = new ConcurrentHashMap<>();
+    private Map<View, String> preComputedRelevanceMap = new ConcurrentHashMap<>();
+
+    private boolean isNextStepRelevant;
 
     private AppExecutors appExecutors = new AppExecutors();
 
@@ -303,6 +310,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     public void refreshSkipLogic(String parentKey, String childKey, boolean popup, String stepName) {
         initComparisons();
         Set<String> viewsIds = skipLogicDependencyMap.get(stepName + "_" + parentKey);
+        preComputedRelevanceMap.clear();
         if (parentKey == null || childKey == null) {
             for (View curView : skipLogicViews.values()) {
                 addRelevance(curView, popup);
@@ -357,6 +365,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     @Override
     public void refreshCalculationLogic(String parentKey, String childKey, boolean popup, String stepName) {
         Set<String> viewsIds = calculationDependencyMap.get(stepName + "_" + parentKey);
+        preComputedCalculationMap.clear();
         if (parentKey == null || viewsIds == null)
             viewsIds = calculationLogicViews.keySet();
         for (String viewId : viewsIds) {
@@ -376,6 +385,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     } else {
                         curValueMap = getValueFromAddress(address, popup);
                     }
+                    //update ui
                     updateCalculation(curValueMap, curView, address);
                 }
 
@@ -394,10 +404,12 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     @Override
     public void invokeRefreshLogic(String value, boolean popup, String parentKey, String childKey, String stepName) {
+        preComputedRelevanceMap.clear();
+        preComputedCalculationMap.clear();
         refreshCalculationLogic(parentKey, childKey, popup, stepName);
         refreshSkipLogic(parentKey, childKey, popup, stepName);
-        refreshConstraints(parentKey, childKey, popup);
-        refreshMediaLogic(parentKey, value, stepName);
+//        refreshConstraints(parentKey, childKey, popup);
+//        refreshMediaLogic(parentKey, value, stepName);
     }
 
     private void populateDependencyMap(Map<String, View> formViews, Map<String, Set<String>> dependencyMap, boolean calculation) {
@@ -1077,7 +1089,15 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     }
 
                 }
-                toggleViewVisibility(view, comparison, isPopup);
+                //update ui
+                if (skipBlankSteps()) {
+                    if (comparison) {
+                        setNextStepRelevant(true);
+                    }
+                    preComputedRelevanceMap.put(view, comparison + ":" + popup);
+                } else {
+                    toggleViewVisibility(view, comparison, isPopup);
+                }
             }
 
 
@@ -1110,8 +1130,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             setReadOnlyAndFocus(view, visible, popup);
 
         } catch (Exception e) {
-            Timber.e(view.toString());
-            Timber.e(e, "JsonFormActivity --> toggleViewVisibility");
+            Timber.e(e, "JsonFormActivity --> toggleViewVisibility %s", view.toString());
         }
     }
 
@@ -1788,6 +1807,46 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         return Utils.getConditionKeys(condition);
     }
 
+    private void updateUiByCalculation(@NonNull String calculation, View view) {
+        if (view instanceof CheckBox) {
+            //For now were only handling checkbox titles only
+            TextView checkboxLabel = ((View) view.getParent().getParent()).findViewById(R.id.label_text);
+            if (checkboxLabel != null) {
+                checkboxLabel.setText(getRenderText(calculation, checkboxLabel.getTag(R.id.original_text).toString(), false));
+            }
+
+        } else if (view instanceof TextableView) {
+            TextableView textView = ((TextableView) view);
+            if (!TextUtils.isEmpty(calculation)) {
+                CharSequence spanned = calculation.charAt(0) == '{' ? getRenderText(calculation, textView.getTag(R.id.original_text).toString(), true) :
+                        (textView.getTag(R.id.original_text) != null && "0".equals(calculation)) ? textView.getTag(R.id.original_text).toString() : calculation;
+                textView.setText(spanned);
+            }
+        } else if (view instanceof EditText) {
+            String type = (String) view.getTag(R.id.type);
+            if (JsonFormConstants.HIDDEN.equals(type) && TextUtils.isEmpty(calculation)) {
+                calculation = "0";
+            }
+
+            if (!TextUtils.isEmpty(calculation)) {
+                ((EditText) view).setText(calculation);
+            }
+
+        } else if (view instanceof RadioGroup) {
+            setRadioButtonCalculation((RadioGroup) view, calculation);
+
+        } else if (view instanceof LinearLayout) {
+            LinearLayout linearLayout = (LinearLayout) view;
+            String type = (String) linearLayout.getTag(R.id.type);
+            if (JsonFormConstants.NUMBER_SELECTOR.equals(type)) {
+                setNumberSelectorCalculation(calculation, linearLayout);
+            }
+        } else {
+            ((TextView) view).setText(calculation);
+        }
+
+    }
+
     private void updateCalculation(Facts valueMap, View view, String[] address) {
         String calculation;
         try {
@@ -1797,44 +1856,12 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 calculation = getRulesEngineFactory().getCalculation(valueMap, address[1]);
             }
 
-            if (calculation != null) {
-                if (view instanceof CheckBox) {
-                    //For now were only handling checkbox titles only
-                    TextView checkboxLabel = ((View) view.getParent().getParent()).findViewById(R.id.label_text);
-                    if (checkboxLabel != null) {
-                        checkboxLabel.setText(getRenderText(calculation, checkboxLabel.getTag(R.id.original_text).toString(), false));
-                    }
-
-                } else if (view instanceof TextableView) {
-                    TextableView textView = ((TextableView) view);
-                    if (!TextUtils.isEmpty(calculation)) {
-                        CharSequence spanned = calculation.charAt(0) == '{' ? getRenderText(calculation, textView.getTag(R.id.original_text).toString(), true) :
-                                (textView.getTag(R.id.original_text) != null && "0".equals(calculation)) ? textView.getTag(R.id.original_text).toString() : calculation;
-                        textView.setText(spanned);
-                    }
-                } else if (view instanceof EditText) {
-                    String type = (String) view.getTag(R.id.type);
-                    if (JsonFormConstants.HIDDEN.equals(type) && TextUtils.isEmpty(calculation)) {
-                        calculation = "0";
-                    }
-
-                    if (!TextUtils.isEmpty(calculation)) {
-                        ((EditText) view).setText(calculation);
-                    }
-
-                } else if (view instanceof RadioGroup) {
-                    setRadioButtonCalculation((RadioGroup) view, calculation);
-
-                } else if (view instanceof LinearLayout) {
-                    LinearLayout linearLayout = (LinearLayout) view;
-                    String type = (String) linearLayout.getTag(R.id.type);
-                    if (JsonFormConstants.NUMBER_SELECTOR.equals(type)) {
-                        setNumberSelectorCalculation(calculation, linearLayout);
-                    }
-                } else {
-                    ((TextView) view).setText(calculation);
-                }
+            if (skipBlankSteps()) {
+                preComputedCalculationMap.put(view, calculation);
+            } else {
+                updateUiByCalculation(calculation, view);
             }
+
         } catch (Exception e) {
             Timber.e(e, "calling updateCalculation on Non TextView or Text View decendant");
         }
@@ -2193,7 +2220,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         formValuesCacheMap.put(stepName + "_" + (parentKey != null ? parentKey + "_" : "") + childKey, value);
     }
 
-    private boolean invokeRefreshLogic(String stepName, String parentKey, String
+    public boolean invokeRefreshLogic(String stepName, String parentKey, String
             childKey, String value) {
         String oldValue = formValuesCacheMap.get(stepName + "_" + (parentKey != null ? parentKey + "_" : "") + childKey);
 
@@ -2267,5 +2294,47 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     @Override
     public AppExecutors getAppExecutors() {
         return appExecutors;
+    }
+
+    @Override
+    public Map<View, String> getPreComputedCalculationMap() {
+        return preComputedCalculationMap;
+    }
+
+    @Override
+    public Map<View, String> getPreComputedRelevanceMap() {
+        return preComputedRelevanceMap;
+    }
+
+    @Override
+    public boolean isNextStepRelevant() {
+        return isNextStepRelevant;
+    }
+
+    @Override
+    public void updateUiBaseOnRules(String type) {
+        if (JsonFormConstants.RELEVANCE.equals(type)) {
+            for (Map.Entry<View, String> entry : getPreComputedRelevanceMap().entrySet()) {
+                View view = entry.getKey();
+                if (StringUtils.isNotBlank(entry.getValue()) && entry.getValue().contains(":")) {
+                    String values[] = entry.getValue().split(":");
+                    boolean comparison = Boolean.parseBoolean(values[0]);
+                    boolean popUp = Boolean.parseBoolean(values[1]);
+                    toggleViewVisibility(view, comparison, popUp);
+                }
+            }
+        } else if (JsonFormConstants.CALCULATION.equals(type)) {
+            for (Map.Entry<View, String> entry : getPreComputedCalculationMap().entrySet()) {
+                View view = entry.getKey();
+                if (entry.getValue() != null) {
+                    String calculation = entry.getValue();
+                    updateUiByCalculation(calculation, view);
+                }
+            }
+        }
+    }
+
+    public void setNextStepRelevant(boolean nextStepRelevant) {
+        isNextStepRelevant = nextStepRelevant;
     }
 }
