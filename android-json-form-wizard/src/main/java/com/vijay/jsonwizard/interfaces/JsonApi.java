@@ -131,6 +131,8 @@ public interface JsonApi {
 
     RulesEngineFactory getRulesEngineFactory();
 
+    Map<String, JSONObject> getFormFieldsMap();
+
     Map<View, String> getPreComputedCalculationMap();
 
     Map<View, String> getPreComputedRelevanceMap();

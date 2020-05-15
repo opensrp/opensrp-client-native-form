@@ -876,19 +876,21 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                                      String openMrsEntity, String openMrsEntityId, boolean popup) throws JSONException {
 
         JSONObject item = formFields.get(stepName + "_" + key);
-        String keyAtIndex = item.getString(JsonFormConstants.KEY);
-        String itemType = item.has(JsonFormConstants.TYPE) ? item.getString(JsonFormConstants.TYPE) : "";
-        boolean isSpecialWidget = isSpecialWidget(itemType);
-        String cleanKey = isSpecialWidget ? cleanWidgetKey(key, itemType) : key;
+        if (item != null) {
+            String keyAtIndex = item.getString(JsonFormConstants.KEY);
+            String itemType = item.has(JsonFormConstants.TYPE) ? item.getString(JsonFormConstants.TYPE) : "";
+            boolean isSpecialWidget = isSpecialWidget(itemType);
+            String cleanKey = isSpecialWidget ? cleanWidgetKey(key, itemType) : key;
 
-        if (cleanKey.equals(keyAtIndex)) {
-            if (item.has(JsonFormConstants.TEXT)) {
-                item.put(JsonFormConstants.TEXT, value);
-            } else {
-                widgetWriteItemValue(value, item, itemType);
+            if (cleanKey.equals(keyAtIndex)) {
+                if (item.has(JsonFormConstants.TEXT)) {
+                    item.put(JsonFormConstants.TEXT, value);
+                } else {
+                    widgetWriteItemValue(value, item, itemType);
+                }
+                addOpenMrsAttributes(openMrsEntityParent, openMrsEntity, openMrsEntityId, item);
+                invokeRefreshLogic(value, popup, cleanKey, null, stepName);
             }
-            addOpenMrsAttributes(openMrsEntityParent, openMrsEntity, openMrsEntityId, item);
-            invokeRefreshLogic(value, popup, cleanKey, null, stepName);
         }
     }
 
@@ -2220,7 +2222,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         formValuesCacheMap.put(stepName + "_" + (parentKey != null ? parentKey + "_" : "") + childKey, value);
     }
 
-    public boolean invokeRefreshLogic(String stepName, String parentKey, String
+    private boolean invokeRefreshLogic(String stepName, String parentKey, String
             childKey, String value) {
         String oldValue = formValuesCacheMap.get(stepName + "_" + (parentKey != null ? parentKey + "_" : "") + childKey);
 
@@ -2337,4 +2339,10 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     public void setNextStepRelevant(boolean nextStepRelevant) {
         isNextStepRelevant = nextStepRelevant;
     }
+
+    @Override
+    public Map<String, JSONObject> getFormFieldsMap() {
+        return formFields;
+    }
+
 }

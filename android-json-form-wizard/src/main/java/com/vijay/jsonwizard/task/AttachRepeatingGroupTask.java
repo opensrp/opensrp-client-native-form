@@ -102,20 +102,22 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
                     keysToRemove.add(repeatingGroupKey);
                     rootLayout.removeViewAt(i);
                 }
-//                remove deleted fields from form json
-                ArrayList<String> removeThisFields = new ArrayList<>();
+                //remove deleted fields from form json
+                ArrayList<String> deletedFields = new ArrayList<>();
                 int len = fields.length();
                 for (int i = len - 1; i >= 0; i--) {
                     String[] key = ((String) fields.getJSONObject(i).get(KEY)).split("_");
                     if (keysToRemove.contains(key[key.length - 1])) {
-                        removeThisFields.add((String) fields.getJSONObject(i).get(KEY));
+                        String fieldKey = fields.getJSONObject(i).optString(KEY);
+                        deletedFields.add((String) fields.getJSONObject(i).get(KEY));
+                        widgetArgs.getFormFragment().getJsonApi().getFormFieldsMap().remove(widgetArgs.getStepName() + "_" + fieldKey);
                         fields.remove(i);
                     }
                 }
-//                remove deleted views to avoid validation errors while saving the form
+                //remove deleted views to avoid validation errors while saving the form
                 Collection<View> viewCollection = widgetArgs.getFormFragment().getJsonApi().getFormDataViews();
                 if (viewCollection != null) {
-                    Utils.removeDeletedViewsFromJsonForm(viewCollection, removeThisFields);
+                    Utils.removeDeletedViewsFromJsonForm(viewCollection, deletedFields);
                 }
 
                 LinearLayout referenceLayout = (LinearLayout) ((LinearLayout) parent).getChildAt(0);
@@ -130,8 +132,7 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         }
 
         try {
-            //TODO pass the step name
-            ((JsonApi) widgetArgs.getContext()).invokeRefreshLogic(null, false, null, null,null);
+            ((JsonApi) widgetArgs.getContext()).invokeRefreshLogic(null, false, null, null, widgetArgs.getStepName());
         } catch (Exception e) {
             Timber.e(e);
         }
@@ -164,6 +165,7 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
             if (elementType != null) {
                 addUniqueIdentifiers(element, groupUniqueId);
                 FormWidgetFactory factory = widgetArgs.getFormFragment().getPresenter().getInteractor().map.get(elementType);
+                widgetArgs.getFormFragment().getJsonApi().getFormFieldsMap().put(widgetArgs.getStepName() + "_" + element.optString(KEY), element);
                 List<View> widgetViews = factory.getViewsFromJson(widgetArgs.getStepName(), context, widgetArgs.getFormFragment(), element, widgetArgs.getListener(), widgetArgs.isPopup());
                 for (View view : widgetViews) {
                     view.setLayoutParams(WIDTH_MATCH_PARENT_HEIGHT_WRAP_CONTENT);
