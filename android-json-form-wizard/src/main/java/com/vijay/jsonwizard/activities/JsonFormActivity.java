@@ -128,6 +128,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private Map<View, String> preComputedRelevanceMap = new ConcurrentHashMap<>();
 
     private boolean isNextStepRelevant;
+    private int numRelFileds = 0;
+    private String nextStep = "";
 
     private AppExecutors appExecutors = new AppExecutors();
 
@@ -148,7 +150,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     public void performActionOnReceived(String stepName) {
         try {
-            invokeRefreshLogic(null, false, null, null, stepName);
+            invokeRefreshLogic(null, false, null, null, stepName, false);
         } catch (Exception e) {
             Timber.e(e);
         }
@@ -307,25 +309,25 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     @Override
-    public void refreshSkipLogic(String parentKey, String childKey, boolean popup, String stepName) {
+    public void refreshSkipLogic(String parentKey, String childKey, boolean popup, String stepName, boolean isForNextStep) {
         initComparisons();
         Set<String> viewsIds = skipLogicDependencyMap.get(stepName + "_" + parentKey);
         preComputedRelevanceMap.clear();
         if (parentKey == null || childKey == null) {
             for (View curView : skipLogicViews.values()) {
-                addRelevance(curView, popup);
+                addRelevance(curView, popup, isForNextStep);
             }
         } else if (viewsIds == null) {
             for (String curViewId : skipLogicViews.keySet()) {
                 //skip any relevance by rules engine since the these components are not affected either way.
                 // Run relevance for native relevance functions as these are first and not optimized currently
                 if (!skipLogicDependencyMap.containsKey(curViewId)) {
-                    addRelevance(skipLogicViews.get(curViewId), popup);
+                    addRelevance(skipLogicViews.get(curViewId), popup, isForNextStep);
                 }
             }
         } else {
             for (String viewId : viewsIds) {
-                addRelevance(skipLogicViews.get(viewId), popup);
+                addRelevance(skipLogicViews.get(viewId), popup, isForNextStep);
             }
         }
     }
@@ -363,7 +365,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     @Override
-    public void refreshCalculationLogic(String parentKey, String childKey, boolean popup, String stepName) {
+    public void refreshCalculationLogic(String parentKey, String childKey, boolean popup, String stepName, boolean isForNextStep) {
         Set<String> viewsIds = calculationDependencyMap.get(stepName + "_" + parentKey);
         preComputedCalculationMap.clear();
         if (parentKey == null || viewsIds == null)
@@ -386,7 +388,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         curValueMap = getValueFromAddress(address, popup);
                     }
                     //update ui
-                    updateCalculation(curValueMap, curView, address);
+                    updateCalculation(curValueMap, curView, address, isForNextStep);
                 }
 
             } catch (Exception e) {
@@ -403,11 +405,11 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     @Override
-    public void invokeRefreshLogic(String value, boolean popup, String parentKey, String childKey, String stepName) {
+    public void invokeRefreshLogic(String value, boolean popup, String parentKey, String childKey, String stepName, boolean isForNextStep) {
         preComputedRelevanceMap.clear();
         preComputedCalculationMap.clear();
-        refreshCalculationLogic(parentKey, childKey, popup, stepName);
-        refreshSkipLogic(parentKey, childKey, popup, stepName);
+        refreshCalculationLogic(parentKey, childKey, popup, stepName, isForNextStep);
+        refreshSkipLogic(parentKey, childKey, popup, stepName, isForNextStep);
 //        refreshConstraints(parentKey, childKey, popup);
 //        refreshMediaLogic(parentKey, value, stepName);
     }
@@ -889,7 +891,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     widgetWriteItemValue(value, item, itemType);
                 }
                 addOpenMrsAttributes(openMrsEntityParent, openMrsEntity, openMrsEntityId, item);
-                invokeRefreshLogic(value, popup, cleanKey, null, stepName);
+                invokeRefreshLogic(value, popup, cleanKey, null, stepName, false);
             }
         }
     }
@@ -986,7 +988,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 }
                 checkboxObject.put(JsonFormConstants.VALUE, getCheckboxValueJsonArray(currentValues));
             }
-            invokeRefreshLogic(value, popup, parentKey, childKey, stepName);
+            invokeRefreshLogic(value, popup, parentKey, childKey, stepName, false);
         }
     }
 
@@ -1073,7 +1075,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
 
-    protected void addRelevance(View view, boolean popup) {
+    protected void addRelevance(View view, boolean popup, boolean isForNextStep) {
         try {
             Pair<String[], JSONObject> addressPair = getRelevanceAddress(view, popup);
             boolean comparison = true;
@@ -1092,9 +1094,11 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
                 }
                 //update ui
-                if (skipBlankSteps()) {
-                    if (comparison) {
-                        setNextStepRelevant(true);
+                if (isForNextStep) {
+                    if (((address.length == 2 && address[0].equals(nextStep())) || (address.length == 3 && address[2].contains(nextStep())))) {
+                        if (comparison) {
+                            setNextStepRelevant(true);
+                        }
                     }
                     preComputedRelevanceMap.put(view, comparison + ":" + popup);
                 } else {
@@ -1849,7 +1853,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     }
 
-    private void updateCalculation(Facts valueMap, View view, String[] address) {
+    private void updateCalculation(Facts valueMap, View view, String[] address, boolean isForNextStep) {
         String calculation;
         try {
             if (address[0].equals(RuleConstant.RULES_DYNAMIC)) {
@@ -1858,7 +1862,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 calculation = getRulesEngineFactory().getCalculation(valueMap, address[1]);
             }
 
-            if (skipBlankSteps()) {
+            if (isForNextStep) {
                 preComputedCalculationMap.put(view, calculation);
             } else {
                 updateUiByCalculation(calculation, view);
@@ -2334,6 +2338,16 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 }
             }
         }
+    }
+
+    @Override
+    public String nextStep() {
+        return nextStep;
+    }
+
+    @Override
+    public void setNextStep(String nextStep) {
+        this.nextStep = nextStep;
     }
 
     public void setNextStepRelevant(boolean nextStepRelevant) {

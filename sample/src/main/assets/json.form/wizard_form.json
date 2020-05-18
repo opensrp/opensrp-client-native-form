@@ -178,13 +178,6 @@
         "hidden": true,
         "edit_text_style": "bordered",
         "edit_type": "number",
-        "calculation": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "sample-calculation-rules.yml"
-            }
-          }
-        },
         "relevance": {
           "step1:last_name": {
             "type": "string",
@@ -211,24 +204,6 @@
         "value": "Kuku",
         "relevance": {
           "step1:first_name": {
-            "type": "string",
-            "ex": "equalTo(., \"Health facility\")"
-          }
-        }
-      },
-      {
-        "key": "test_stuff",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "hint": "Specify",
-        "v_regex": {
-          "value": "[A-Za-z\\\\s\\\\.\\\\-]*",
-          "err": "Please enter valid content"
-        },
-        "relevance": {
-          "step1:last_name": {
             "type": "string",
             "ex": "equalTo(., \"Health facility\")"
           }
@@ -658,6 +633,13 @@
         "selected_text_color": "#ffffff",
         "v_required": {
           "value": true
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-relevance-rules.yml"
+            }
+          }
         }
       }
     ]

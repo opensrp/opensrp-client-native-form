@@ -26,6 +26,8 @@ import com.vijay.jsonwizard.customviews.CompoundButton;
 import com.vijay.jsonwizard.customviews.ExpansionPanelGenericPopupDialog;
 import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.event.BaseEvent;
+import com.vijay.jsonwizard.fragments.JsonFormFragment;
+import com.vijay.jsonwizard.fragments.JsonWizardFormFragment;
 import com.vijay.jsonwizard.rules.RuleConstant;
 import com.vijay.jsonwizard.views.CustomTextView;
 import com.vijay.jsonwizard.widgets.DatePickerFactory;
@@ -705,6 +707,19 @@ public class Utils {
             return strings;
         }
         return null;
+    }
+
+    public static void checkIfStepHasNoRelevance(JsonFormFragment formFragment) {
+        JSONObject jsonObject = formFragment.getJsonApi().getmJSONObject();
+        JSONObject jsonObject1 = jsonObject.optJSONObject(formFragment.getJsonApi().nextStep());
+        JSONArray fields = jsonObject1.optJSONArray("fields");
+        for (int i = 0; i < fields.length(); i++) {
+            JSONObject object = fields.optJSONObject(i);
+            if (object.has("type") && !object.optString("type").equals("hidden") && !object.has("relevance")) {
+                ((JsonWizardFormFragment) formFragment).setNextStepHaveNoRelevance(true);
+                break;
+            }
+        }
     }
 }
 

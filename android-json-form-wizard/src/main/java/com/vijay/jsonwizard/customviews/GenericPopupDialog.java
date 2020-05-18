@@ -321,7 +321,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         for (View view : getViewList()) {
             genericDialogContent.addView(view);
         }
-        getJsonApi().invokeRefreshLogic(null, true, null, null, stepName);
+        getJsonApi().invokeRefreshLogic(null, true, null, null, stepName, false);
         return dialogView;
     }
 

@@ -98,7 +98,7 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
                             return;
                         }
                         setViewList(views);
-                        getJsonApi().invokeRefreshLogic(null, true, null, null, getStepName());
+                        getJsonApi().invokeRefreshLogic(null, true, null, null, getStepName(), false);
                         if (dialogView != null) {
                             addWidgetViews(dialogView);
                         }

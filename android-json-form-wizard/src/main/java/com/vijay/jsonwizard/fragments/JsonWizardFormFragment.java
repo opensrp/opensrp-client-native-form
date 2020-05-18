@@ -49,7 +49,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
     private Toolbar navigationToolbar;
     private View bottomNavLayout;
     private JsonWizardFormFragment jsonFormFragment;
-    private String nextStep;
+    private boolean nextStepHaveNoRelevance;
 
     public static JsonWizardFormFragment getFormFragment(String stepName) {
         JsonWizardFormFragment jsonFormFragment = new JsonWizardFormFragment();
@@ -140,14 +140,6 @@ public class JsonWizardFormFragment extends JsonFormFragment {
 
     }
 
-    public String getNextStep() {
-        return nextStep;
-    }
-
-    public void setNextStep(String nextStep) {
-        this.nextStep = nextStep;
-    }
-
     private Form getForm() {
         if (getActivity() != null && getActivity() instanceof JsonFormActivity) {
             return ((JsonFormActivity) getActivity()).getForm();
@@ -163,10 +155,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
     }
 
     public void processSkipSteps() {
-        if (!getJsonApi().isPreviousPressed()) {
-            //skipStepsOnNextPressed();//will be handled by previous step
-        } else {
-//            setShouldSkipStep(true);
+        if (getJsonApi().isPreviousPressed()) {
             skipStepOnPreviousPressed();
         }
     }
@@ -295,11 +284,10 @@ public class JsonWizardFormFragment extends JsonFormFragment {
 
     public void skipStepsOnNextPressed(String step) {
         JSONObject formStep = getJsonApi().getmJSONObject().optJSONObject(step);
-        JSONArray jsonArrayFields = formStep.optJSONArray(JsonFormConstants.FIELDS);
         String next = formStep.optString(JsonFormConstants.NEXT, "");
         if (StringUtils.isNotEmpty(next)) {
-            if (!getJsonApi().isNextStepRelevant() && (jsonArrayFields.length() == getJsonApi().getPreComputedRelevanceMap().size())) {
-                setNextStep(next);
+            if (!getJsonApi().isNextStepRelevant() && !nextStepHaveNoRelevance()) {
+                getJsonApi().setNextStep(next);
                 next();
             }
         }
@@ -339,7 +327,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
                 for (int i = 0; i < fields.length(); i++) {
                     JSONObject field = fields.getJSONObject(i);
                     if (field.has(JsonFormConstants.TYPE) && !JsonFormConstants.HIDDEN.equals(field.getString(JsonFormConstants.TYPE))) {
-                        boolean isVisible = field.optBoolean(JsonFormConstants.IS_VISIBLE, true);
+                        boolean isVisible = field.optBoolean(JsonFormConstants.IS_VISIBLE, false);
                         if (isVisible) {
                             setShouldSkipStep(false);
                             break;
@@ -427,6 +415,14 @@ public class JsonWizardFormFragment extends JsonFormFragment {
                 }
             }
         }
+    }
+
+    public boolean nextStepHaveNoRelevance() {
+        return nextStepHaveNoRelevance;
+    }
+
+    public void setNextStepHaveNoRelevance(boolean value) {
+        this.nextStepHaveNoRelevance = value;
     }
 
 }

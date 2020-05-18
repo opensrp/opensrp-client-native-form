@@ -64,13 +64,13 @@ public interface JsonApi {
 
     void refreshHiddenViews(boolean popup);
 
-    void refreshSkipLogic(String parentKey, String childKey, boolean popup, String stepName);
+    void refreshSkipLogic(String parentKey, String childKey, boolean popup, String stepName, boolean isForNextStep);
 
-    void refreshCalculationLogic(String parentKey, String childKey, boolean popup, String stepName);
+    void refreshCalculationLogic(String parentKey, String childKey, boolean popup, String stepName, boolean isForNextStep);
 
     void initializeDependencyMaps();
 
-    void invokeRefreshLogic(String value, boolean popup, String parentKey, String childKey, String stepName);
+    void invokeRefreshLogic(String value, boolean popup, String parentKey, String childKey, String stepName, boolean isForNextStep);
 
     void addFormDataView(View view);
 
@@ -139,5 +139,11 @@ public interface JsonApi {
 
     boolean isNextStepRelevant();
 
+    void setNextStepRelevant(boolean is);
+
     void updateUiBaseOnRules(String type);
+
+    String nextStep();
+
+    void setNextStep(String nextStep);
 }

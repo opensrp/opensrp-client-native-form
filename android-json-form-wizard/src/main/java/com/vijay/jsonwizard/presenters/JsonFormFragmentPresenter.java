@@ -50,6 +50,7 @@ import com.vijay.jsonwizard.task.ExpansionPanelGenericPopupDialogTask;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ImageUtils;
 import com.vijay.jsonwizard.utils.PermissionUtils;
+import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.CustomTextView;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
@@ -141,8 +142,7 @@ public class JsonFormFragmentPresenter extends
         try {
             mStepDetails = new JSONObject(step.toString());
             if (formFragment instanceof JsonWizardFormFragment) {
-                String next = mStepDetails.optString("next");
-                ((JsonWizardFormFragment) formFragment).setNextStep(next);
+                formFragment.getJsonApi().setNextStep(mStepName);
             }
         } catch (JSONException e) {
             Timber.e(e);
@@ -170,14 +170,17 @@ public class JsonFormFragmentPresenter extends
                         dismissDialog(dialog);
                         if (getView() != null && !cleanupAndExit) {
                             getView().addFormElements(views);
-                            formFragment.getJsonApi().invokeRefreshLogic(null, false, null, null, mStepName);
-                            if (formFragment.getJsonApi().skipBlankSteps()) {
-                                formFragment.getJsonApi().updateUiBaseOnRules(JsonFormConstants.RELEVANCE);
-                                formFragment.getJsonApi().updateUiBaseOnRules(JsonFormConstants.CALCULATION);
-
-                                //for the first step
-                                if (!formFragment.getJsonApi().isNextStepRelevant() && mStepName.equals(JsonFormConstants.STEP1) && !formFragment.getJsonApi().isPreviousPressed()) {
-                                    onNextClick(formFragment.getMainView());
+                            formFragment.getJsonApi().invokeRefreshLogic(null, false, null, null, mStepName, false);
+                            if (formFragment instanceof JsonWizardFormFragment) {
+                                Utils.checkIfStepHasNoRelevance(getFormFragment());
+                                String next = mStepDetails.optString("next");
+                                formFragment.getJsonApi().setNextStep(next);
+                                if (formFragment.getJsonApi().skipBlankSteps()) {
+                                    formFragment.getJsonApi().updateUiBaseOnRules(JsonFormConstants.RELEVANCE);
+                                    formFragment.getJsonApi().updateUiBaseOnRules(JsonFormConstants.CALCULATION);
+                                    if (mStepName.equals(JsonFormConstants.STEP1)) {
+                                        ((JsonWizardFormFragment) formFragment).skipStepsOnNextPressed();
+                                    }
                                 }
                             }
                         }

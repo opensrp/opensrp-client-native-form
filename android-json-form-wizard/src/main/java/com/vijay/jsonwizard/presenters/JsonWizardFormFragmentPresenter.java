@@ -6,6 +6,7 @@ import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.fragments.JsonWizardFormFragment;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
+import com.vijay.jsonwizard.utils.Utils;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -41,21 +42,25 @@ public class JsonWizardFormFragmentPresenter extends JsonFormFragmentPresenter {
 
 
     public void executeRefreshLogicForNextStep() {
-
-        final String nextStep = ((JsonWizardFormFragment) getFormFragment()).getNextStep();
+        final String nextStep = getFormFragment().getJsonApi().nextStep();
         if (StringUtils.isNotBlank(nextStep)) {
             getmJsonFormInteractor().fetchFormElements(nextStep, getFormFragment(), getFormFragment().getJsonApi().getmJSONObject().optJSONObject(nextStep), getView().getCommonListener(), false);
             getFormFragment().getJsonApi().initializeDependencyMaps();
-            getFormFragment().getJsonApi().invokeRefreshLogic(null, false, null, null, nextStep);
+            getFormFragment().getJsonApi().setNextStepRelevant(false);
+            ((JsonWizardFormFragment) getFormFragment()).setNextStepHaveNoRelevance(false);
+            getFormFragment().getJsonApi().invokeRefreshLogic(null, false, null, null, nextStep, true);
             getFormFragment().setShouldSkipStep(true);
+            if (!getFormFragment().getJsonApi().isNextStepRelevant()) {
+                Utils.checkIfStepHasNoRelevance(getFormFragment());
+            }
             ((JsonWizardFormFragment) getFormFragment()).skipStepsOnNextPressed(nextStep);
         }
-
     }
 
     protected boolean moveToNextWizardStep() {
-        if (!"".equals(((JsonWizardFormFragment) getFormFragment()).getNextStep())) {
-            JsonFormFragment next = JsonWizardFormFragment.getFormFragment(((JsonWizardFormFragment) getFormFragment()).getNextStep());
+        final String nextStep = getFormFragment().getJsonApi().nextStep();
+        if (!"".equals(nextStep)) {
+            JsonFormFragment next = JsonWizardFormFragment.getFormFragment(nextStep);
             getView().hideKeyBoard();
             getView().transactThis(next);
         }
