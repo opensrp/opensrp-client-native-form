@@ -713,7 +713,7 @@ public class Utils {
      * Checks if step has no skip logic fields and that fields does not have type hidden
      * @param formFragment
      */
-    public static void checkIfStepNoSkipLogic(JsonFormFragment formFragment) {
+    public static void checkIfStepHasNoSkipLogic(JsonFormFragment formFragment) {
         JSONObject jsonObject = formFragment.getJsonApi().getmJSONObject();
         JSONObject jsonObject1 = jsonObject.optJSONObject(formFragment.getJsonApi().nextStep());
         JSONArray fields = jsonObject1.optJSONArray(JsonFormConstants.FIELDS);

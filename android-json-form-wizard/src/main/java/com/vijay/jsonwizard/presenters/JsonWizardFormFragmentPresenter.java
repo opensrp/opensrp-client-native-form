@@ -50,7 +50,7 @@ public class JsonWizardFormFragmentPresenter extends JsonFormFragmentPresenter {
             ((JsonWizardFormFragment) getFormFragment()).setNextStepHasNoSkipLogic(false);
             getFormFragment().getJsonApi().invokeRefreshLogic(null, false, null, null, nextStep, true);
             if (!getFormFragment().getJsonApi().isNextStepRelevant()) {
-                Utils.checkIfStepNoSkipLogic(getFormFragment());
+                Utils.checkIfStepHasNoSkipLogic(getFormFragment());
             }
             ((JsonWizardFormFragment) getFormFragment()).skipStepsOnNextPressed(nextStep);
         }
