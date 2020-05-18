@@ -720,7 +720,7 @@ public class Utils {
         for (int i = 0; i < fields.length(); i++) {
             JSONObject object = fields.optJSONObject(i);
             if (object.has(JsonFormConstants.TYPE) && !object.optString(JsonFormConstants.TYPE).equals(JsonFormConstants.HIDDEN) && !object.has(JsonFormConstants.RELEVANCE)) {
-                ((JsonWizardFormFragment) formFragment).setNextStepHasNoRelevance(true);
+                ((JsonWizardFormFragment) formFragment).setNextStepHasNoSkipLogic(true);
                 break;
             }
         }

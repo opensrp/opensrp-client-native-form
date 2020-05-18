@@ -47,7 +47,7 @@ public class JsonWizardFormFragmentPresenter extends JsonFormFragmentPresenter {
             getmJsonFormInteractor().fetchFormElements(nextStep, getFormFragment(), getFormFragment().getJsonApi().getmJSONObject().optJSONObject(nextStep), getView().getCommonListener(), false);
             getFormFragment().getJsonApi().initializeDependencyMaps();
             getFormFragment().getJsonApi().setNextStepRelevant(false);
-            ((JsonWizardFormFragment) getFormFragment()).setNextStepHasNoRelevance(false);
+            ((JsonWizardFormFragment) getFormFragment()).setNextStepHasNoSkipLogic(false);
             getFormFragment().getJsonApi().invokeRefreshLogic(null, false, null, null, nextStep, true);
             if (!getFormFragment().getJsonApi().isNextStepRelevant()) {
                 Utils.checkIfStepNoSkipLogic(getFormFragment());

@@ -286,7 +286,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
         JSONObject formStep = getJsonApi().getmJSONObject().optJSONObject(step);
         String next = formStep.optString(JsonFormConstants.NEXT, "");
         if (StringUtils.isNotEmpty(next)) {
-            if (!getJsonApi().isNextStepRelevant() && !nextStepHasNoRelevance()) {
+            if (!getJsonApi().isNextStepRelevant() && !nextStepHasNoSkipLogic()) {
                 getJsonApi().setNextStep(next);
                 next();
             }
@@ -417,11 +417,11 @@ public class JsonWizardFormFragment extends JsonFormFragment {
         }
     }
 
-    public boolean nextStepHasNoRelevance() {
+    public boolean nextStepHasNoSkipLogic() {
         return nextStepHasNoRelevance;
     }
 
-    public void setNextStepHasNoRelevance(boolean value) {
+    public void setNextStepHasNoSkipLogic(boolean value) {
         this.nextStepHasNoRelevance = value;
     }
 
