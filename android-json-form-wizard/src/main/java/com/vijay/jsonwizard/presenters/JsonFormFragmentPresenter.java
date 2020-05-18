@@ -172,7 +172,6 @@ public class JsonFormFragmentPresenter extends
                             getView().addFormElements(views);
                             formFragment.getJsonApi().invokeRefreshLogic(null, false, null, null, mStepName, false);
                             if (formFragment instanceof JsonWizardFormFragment) {
-                                Utils.checkIfStepHasNoRelevance(getFormFragment());
                                 String next = mStepDetails.optString("next");
                                 formFragment.getJsonApi().setNextStep(next);
                                 if (formFragment.getJsonApi().skipBlankSteps()) {

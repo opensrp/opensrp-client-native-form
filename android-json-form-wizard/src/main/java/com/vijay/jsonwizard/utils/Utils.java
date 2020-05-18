@@ -709,14 +709,18 @@ public class Utils {
         return null;
     }
 
-    public static void checkIfStepHasNoRelevance(JsonFormFragment formFragment) {
+    /***
+     * Checks if step has no skip logic fields and that fields does not have type hidden
+     * @param formFragment
+     */
+    public static void checkIfStepNoSkipLogic(JsonFormFragment formFragment) {
         JSONObject jsonObject = formFragment.getJsonApi().getmJSONObject();
         JSONObject jsonObject1 = jsonObject.optJSONObject(formFragment.getJsonApi().nextStep());
-        JSONArray fields = jsonObject1.optJSONArray("fields");
+        JSONArray fields = jsonObject1.optJSONArray(JsonFormConstants.FIELDS);
         for (int i = 0; i < fields.length(); i++) {
             JSONObject object = fields.optJSONObject(i);
-            if (object.has("type") && !object.optString("type").equals("hidden") && !object.has("relevance")) {
-                ((JsonWizardFormFragment) formFragment).setNextStepHaveNoRelevance(true);
+            if (object.has(JsonFormConstants.TYPE) && !object.optString(JsonFormConstants.TYPE).equals(JsonFormConstants.HIDDEN) && !object.has(JsonFormConstants.RELEVANCE)) {
+                ((JsonWizardFormFragment) formFragment).setNextStepHasNoRelevance(true);
                 break;
             }
         }
