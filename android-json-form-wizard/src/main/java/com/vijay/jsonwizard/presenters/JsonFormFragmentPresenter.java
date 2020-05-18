@@ -252,69 +252,65 @@ public class JsonFormFragmentPresenter extends
         for (View childView : formFragment.getJsonApi().getFormDataViews()) {
             ValidationStatus validationStatus = validateView(childView);
             String key = (String) childView.getTag(R.id.key);
-            String address = (String) childView.getTag(R.id.address);
-            if (mStepName.equals(address.split(":")[0])) {
-                String openMrsEntityParent = (String) childView.getTag(R.id.openmrs_entity_parent);
-                String openMrsEntity = (String) childView.getTag(R.id.openmrs_entity);
-                String openMrsEntityId = (String) childView.getTag(R.id.openmrs_entity_id);
-                Boolean popup = (Boolean) childView.getTag(R.id.extraPopup);
-                String fieldKey = mStepName + "#" + getStepTitle() + ":" + key;
+            String openMrsEntityParent = (String) childView.getTag(R.id.openmrs_entity_parent);
+            String openMrsEntity = (String) childView.getTag(R.id.openmrs_entity);
+            String openMrsEntityId = (String) childView.getTag(R.id.openmrs_entity_id);
+            Boolean popup = (Boolean) childView.getTag(R.id.extraPopup);
+            String fieldKey = mStepName + "#" + getStepTitle() + ":" + key;
 
-                if (childView instanceof MaterialEditText) {
-                    MaterialEditText editText = (MaterialEditText) childView;
+            if (childView instanceof MaterialEditText) {
+                MaterialEditText editText = (MaterialEditText) childView;
 
-                    String rawValue = (String) editText.getTag(R.id.raw_value);
-                    if (rawValue == null) {
-                        rawValue = editText.getText().toString();
-                    }
-
-                    handleWrongFormatInputs(validationStatus, fieldKey, rawValue);
-
-                    String type = (String) childView.getTag(R.id.type);
-                    rawValue = JsonFormConstants.DATE_PICKER.equals(type) || JsonFormConstants.TIME_PICKER.equals(type) ? childView.getTag(R.id.locale_independent_value).toString() : rawValue;
-                    Log.d("Writing values ..", key + " " + rawValue);
-
-                    getView().writeValue(mStepName, key, rawValue, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
-                } else if (childView instanceof NativeEditText) {
-                    NativeEditText editText = (NativeEditText) childView;
-
-                    String rawValue = (String) editText.getTag(R.id.raw_value);
-                    if (rawValue == null) {
-                        rawValue = editText.getText().toString();
-                    }
-
-                    handleWrongFormatInputs(validationStatus, fieldKey, rawValue);
-
-                    getView().writeValue(mStepName, key, rawValue, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
-                } else if (childView instanceof ImageView) {
-                    Object path = childView.getTag(R.id.imagePath);
-                    if (path instanceof String) {
-                        getView().writeValue(mStepName, key, (String) path, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
-                    }
-                } else if (childView instanceof CheckBox) {
-                    String parentKey = (String) childView.getTag(R.id.key);
-                    String childKey = (String) childView.getTag(R.id.childKey);
-                    getView().writeValue(mStepName, parentKey, JsonFormConstants.OPTIONS_FIELD_NAME, childKey, String.valueOf(((CheckBox) childView).isChecked()), openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
-                } else if (childView instanceof RadioButton) {
-                    String parentKey = (String) childView.getTag(R.id.key);
-                    String childKey = (String) childView.getTag(R.id.childKey);
-                    if (((RadioButton) childView).isChecked()) {
-                        getView().writeValue(mStepName, parentKey, childKey, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
-                    }
-                } else if (childView instanceof Button) {
-                    Button button = (Button) childView;
-                    String rawValue = (String) button.getTag(R.id.raw_value);
-                    getView().writeValue(mStepName, key, rawValue, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
+                String rawValue = (String) editText.getTag(R.id.raw_value);
+                if (rawValue == null) {
+                    rawValue = editText.getText().toString();
                 }
 
-                if (!validationStatus.isValid()) {
-                    invalidFields.put(fieldKey, validationStatus);
-                } else {
-                    if (invalidFields.size() > 0) {
-                        invalidFields.remove(fieldKey);
-                    }
+                handleWrongFormatInputs(validationStatus, fieldKey, rawValue);
+
+                String type = (String) childView.getTag(R.id.type);
+                rawValue = JsonFormConstants.DATE_PICKER.equals(type) || JsonFormConstants.TIME_PICKER.equals(type) ? childView.getTag(R.id.locale_independent_value).toString() : rawValue;
+                Log.d("Writing values ..", key + " " + rawValue);
+
+                getView().writeValue(mStepName, key, rawValue, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
+            } else if (childView instanceof NativeEditText) {
+                NativeEditText editText = (NativeEditText) childView;
+
+                String rawValue = (String) editText.getTag(R.id.raw_value);
+                if (rawValue == null) {
+                    rawValue = editText.getText().toString();
                 }
 
+                handleWrongFormatInputs(validationStatus, fieldKey, rawValue);
+
+                getView().writeValue(mStepName, key, rawValue, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
+            } else if (childView instanceof ImageView) {
+                Object path = childView.getTag(R.id.imagePath);
+                if (path instanceof String) {
+                    getView().writeValue(mStepName, key, (String) path, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
+                }
+            } else if (childView instanceof CheckBox) {
+                String parentKey = (String) childView.getTag(R.id.key);
+                String childKey = (String) childView.getTag(R.id.childKey);
+                getView().writeValue(mStepName, parentKey, JsonFormConstants.OPTIONS_FIELD_NAME, childKey, String.valueOf(((CheckBox) childView).isChecked()), openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
+            } else if (childView instanceof RadioButton) {
+                String parentKey = (String) childView.getTag(R.id.key);
+                String childKey = (String) childView.getTag(R.id.childKey);
+                if (((RadioButton) childView).isChecked()) {
+                    getView().writeValue(mStepName, parentKey, childKey, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
+                }
+            } else if (childView instanceof Button) {
+                Button button = (Button) childView;
+                String rawValue = (String) button.getTag(R.id.raw_value);
+                getView().writeValue(mStepName, key, rawValue, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
+            }
+
+            if (!validationStatus.isValid()) {
+                invalidFields.put(fieldKey, validationStatus);
+            } else {
+                if (invalidFields.size() > 0) {
+                    invalidFields.remove(fieldKey);
+                }
             }
         }
         formFragment.onFieldsInvalid.passInvalidFields(invalidFields);
