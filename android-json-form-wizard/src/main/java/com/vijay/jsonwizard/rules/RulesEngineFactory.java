@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.interfaces.JsonSubFormAndRulesLoader;
 import com.vijay.jsonwizard.utils.Utils;
 
 import org.jeasy.rules.api.Facts;
@@ -138,9 +139,15 @@ public class RulesEngineFactory implements RuleListener {
     }
 
     private Rules getRulesFromAsset(String fileName) {
+
         try {
             if (!ruleMap.containsKey(fileName)) {
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(context.getAssets().open(fileName)));
+                BufferedReader bufferedReader;
+                if (context instanceof JsonSubFormAndRulesLoader) {
+                    bufferedReader = ((JsonSubFormAndRulesLoader) context).getRules(context, fileName);
+                } else {
+                    bufferedReader = new BufferedReader(new InputStreamReader(context.getAssets().open(fileName)));
+                }
                 ruleMap.put(fileName, MVELRuleFactory.createRulesFrom(bufferedReader));
             }
             return ruleMap.get(fileName);

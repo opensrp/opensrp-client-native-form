@@ -221,7 +221,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
     protected JSONObject getSubForm() {
         JSONObject subForm = new JSONObject();
         try {
-            subForm = FormUtils.getSubFormJson(getFormIdentity(), getFormLocation(), context, translateSubForm);
+            subForm = getJsonApi().getSubForm(getFormIdentity(), getFormLocation(), context, translateSubForm);
             Utils.updateSubFormFields(subForm, getJsonApi().form());
 
         } catch (Exception e) {
