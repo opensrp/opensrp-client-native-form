@@ -120,7 +120,7 @@ public class NativeFormLangUtils {
      */
     private static String translateString(String str, ResourceBundle mlsResourceBundle) {
         StringBuffer stringBuffer = new StringBuffer();
-        Pattern interpolatedStringPattern = Pattern.compile("\\{\\{([a-zA-Z_0-9\\.]+)\\}\\}");
+        Pattern interpolatedStringPattern = Pattern.compile("\\{\\{([a-zA-Z_0-9\\.\\-]+)\\}\\}");
         Matcher matcher = interpolatedStringPattern.matcher(str);
         while (matcher.find()) {
             String replacement = Matcher.quoteReplacement(mlsResourceBundle.getString(matcher.group(1))
@@ -152,7 +152,7 @@ public class NativeFormLangUtils {
      * @return
      */
     public static String getTranslationsFileName(String str) {
-        Pattern propertiesFileNamePattern = Pattern.compile("\"?" + PROPERTIES_FILE_NAME + "\"?: ?\"([a-zA-Z_0-9\\.]+)\"");
+        Pattern propertiesFileNamePattern = Pattern.compile("\"?" + PROPERTIES_FILE_NAME + "\"?: ?\"([a-zA-Z_0-9\\.\\-]+)\"");
         Matcher matcher = propertiesFileNamePattern.matcher(str);
         return matcher.find() ? matcher.group(1) : "";
     }
