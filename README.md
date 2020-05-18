@@ -2185,7 +2185,7 @@ An Android client application wishing to use MLS needs to take the following ste
 4. Step 2. will be repeated for each language that the Android client wishes to support. 
    - The `string_identifier`s would remain the same but the String literals would change - taking on their translated versions for each locale. 
    - To distinguish between the different property files for each locale, the following [convention](https://developer.android.com/reference/java/util/ResourceBundle.html#getBundle(java.lang.String,%20java.util.Locale,%20java.lang.ClassLoader)) should be used e.g. `basic_form_en_US.properties` for US English and `basic_form_fr.properties` for French.
-5. Set the `JsonFormConstants.PERFORM_FORM_TRANSLATION` intent extra to true when launching each JsonForm to activate MLS for that form (for sub-forms, `setArguments` can be used).
+5. Set the `JsonFormConstants.PERFORM_FORM_TRANSLATION` intent extra to true when launching each JsonForm to activate MLS for that form (and its sub-forms if any).
 
 The process of generating the assets in steps 1-3 may be a bit tedious and error prone. To this end, a utility is provided to ease the process. The tool (`JsonForm MLS Asset Generator`) is described below. 
    
@@ -2204,7 +2204,7 @@ As part of the JMAG configuration, the following steps will need to be taken:
 3. Add the following configurations:
    - Name: `JsonForm MLS Asset Generator`
    - Main class: `com.vijay.jsonwizard.utils.JsonFormMLSAssetGenerator`
-   - Use classpath of module: `android-json-form-wizard`
+   - Use classpath of module: `<your-module-name>`
    - JRE: `Android API 21 Platform` (you can use a different API level)
 4. Within the same `Run/Debug Configurations` dialog, specify the JsonForm against which assets are to be generated: 
    - Create an environment variable named `FORM_TO_TRANSLATE` and set its value to the absolute path of the JsonForm to translate.
