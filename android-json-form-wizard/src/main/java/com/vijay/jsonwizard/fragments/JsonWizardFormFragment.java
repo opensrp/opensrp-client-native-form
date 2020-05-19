@@ -409,11 +409,21 @@ public class JsonWizardFormFragment extends JsonFormFragment {
                     getJsonApi().setPreviousPressed(false);
                     Object nextStateTag = view.getTag(R.id.NEXT_STATE);
                     if (nextStateTag == null) {
-                        new NextProgressDialogTask(getJsonFormFragment()).execute();
+                        getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                next();
+                            }
+                        });
                     } else {
                         boolean next = (boolean) nextStateTag;
                         if (next) {
-                            new NextProgressDialogTask(getJsonFormFragment()).execute();
+                            getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    next();
+                                }
+                            });
                         } else {
                             save();
                         }
