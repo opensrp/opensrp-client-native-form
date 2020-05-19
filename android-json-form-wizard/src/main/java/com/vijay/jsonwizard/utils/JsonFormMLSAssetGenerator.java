@@ -10,6 +10,7 @@ import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -32,7 +33,7 @@ public class JsonFormMLSAssetGenerator {
     private static Map<String, String> placeholdersToTranslationsMap = new HashMap<>();
     private static String formName;
 
-    private static final JsonFormInteractor jsonFormInteractor = JsonFormInteractor.getInstance();
+    private static JsonFormInteractor jsonFormInteractor;
 
     /**
      *
@@ -300,7 +301,17 @@ public class JsonFormMLSAssetGenerator {
         }
     }
 
-    public static void main(String[] args) {
+    private static  JsonFormInteractor getJsonFormInteractor() throws Exception {
+        String jsonFormInteractorName = System.getenv("JSON_FORM_INTERACTOR_NAME");
+        jsonFormInteractorName = jsonFormInteractorName == null
+                ? "com.vijay.jsonwizard.interactors.JsonFormInteractor" : jsonFormInteractorName;
+        Class<?> clazz = Class.forName(jsonFormInteractorName);
+        Method factoryMethod = clazz.getDeclaredMethod("getInstance");
+        return (JsonFormInteractor) factoryMethod.invoke(null, null);
+    }
+
+    public static void main(String[] args) throws Exception {
+        jsonFormInteractor = getJsonFormInteractor();
         String formToTranslate = System.getenv("FORM_TO_TRANSLATE");
         printToSystemOut("Injecting placeholders in form at path: " + formToTranslate + " ...\n");
         processForm(formToTranslate);
