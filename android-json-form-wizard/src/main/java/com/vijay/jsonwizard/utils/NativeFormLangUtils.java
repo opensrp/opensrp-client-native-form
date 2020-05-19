@@ -132,8 +132,8 @@ public class NativeFormLangUtils {
     }
 
     public static String getEscapedValue(String value) {
-        value = value.replace("\n", "\\n"); // ensure \n is preserved in a String
-        return value.replace("\"", "\\\""); // ensure "" is preserved in a String
+        return value.replace("\n", "\\n") // ensure \n is preserved in a String
+        .replace("\"", "\\\""); // ensure "" is preserved in a String
     }
 
     /**
