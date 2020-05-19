@@ -23,6 +23,7 @@ import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.MLS.PROPERTIES_FILE_NAME;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.TYPE;
+import static com.vijay.jsonwizard.utils.NativeFormLangUtils.getEscapedValue;
 import static com.vijay.jsonwizard.utils.Utils.getFileContentsAsString;
 
 /**
@@ -282,7 +283,7 @@ public class JsonFormMLSAssetGenerator {
     private static void createTranslationsPropertyFile() {
         StringBuilder stringBuilder = new StringBuilder();
         for (Map.Entry<String, String> entry : placeholdersToTranslationsMap.entrySet()) {
-            stringBuilder.append(entry.getKey() + " = " + entry.getValue().replace("\n", "\\n") + "\n"); // ensures \n is preserved in a String
+            stringBuilder.append(entry.getKey() + " = " + getEscapedValue(entry.getValue()) + "\n");
         }
         writeToFile(stringBuilder.toString(), File.separator + getMLSAssetsFolder() + File.separator + formName + ".properties");
     }
