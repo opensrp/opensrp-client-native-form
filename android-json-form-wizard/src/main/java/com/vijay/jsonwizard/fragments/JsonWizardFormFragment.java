@@ -276,19 +276,31 @@ public class JsonWizardFormFragment extends JsonFormFragment {
             if (StringUtils.isNotEmpty(next)) {
                 checkIfStepIsBlank(formStep);
                 if (shouldSkipStep()) {
+                    markStepAsSkipped(formStep);
                     next();
                 }
             }
         }
     }
 
+    private void markStepAsSkipped(JSONObject formStep) {
+        try {
+            formStep.put("skipped", true);
+        } catch (JSONException e) {
+            Timber.e(e);
+        }
+    }
+
     public void skipStepsOnNextPressed(String step) {
-        JSONObject formStep = getJsonApi().getmJSONObject().optJSONObject(step);
-        String next = formStep.optString(JsonFormConstants.NEXT, "");
-        if (StringUtils.isNotEmpty(next)) {
-            if (!getJsonApi().isNextStepRelevant() && !nextStepHasNoSkipLogic()) {
-                getJsonApi().setNextStep(next);
-                next();
+        if (skipBlankSteps()) {
+            JSONObject formStep = getJsonApi().getmJSONObject().optJSONObject(step);
+            String next = formStep.optString(JsonFormConstants.NEXT, "");
+            if (StringUtils.isNotEmpty(next)) {
+                if (!getJsonApi().isNextStepRelevant() && !nextStepHasNoSkipLogic()) {
+                    markStepAsSkipped(formStep);
+                    getJsonApi().setNextStep(next);
+                    next();
+                }
             }
         }
     }

@@ -128,6 +128,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private Map<View, String> preComputedRelevanceMap = new ConcurrentHashMap<>();
 
     private boolean isNextStepRelevant;
+
     private String nextStep = "";
 
     private AppExecutors appExecutors = new AppExecutors();
