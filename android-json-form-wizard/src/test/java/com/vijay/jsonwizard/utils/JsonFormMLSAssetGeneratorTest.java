@@ -23,7 +23,7 @@ public class JsonFormMLSAssetGeneratorTest {
     }
 
     @Test
-    public void testFormInterpolationShouldPerformCorrectTransformationForJsonForm() {
+    public void testFormInterpolationShouldPerformCorrectTransformationForJsonForm() throws Exception {
         String formName = "basic_form";
         jsonFormMLSAssetGenerator.processForm(testUtils.getResourcesFilePath() + File.separator + formName + ".json");
 
@@ -37,7 +37,7 @@ public class JsonFormMLSAssetGeneratorTest {
     }
 
     @Test
-    public void testFormInterpolationShouldPerformCorrectTransformationForJsonSubForm() {
+    public void testFormInterpolationShouldPerformCorrectTransformationForJsonSubForm() throws Exception {
         String formName = "expansion_panel_sub_form";
         jsonFormMLSAssetGenerator.processForm(testUtils.getResourcesFilePath() + File.separator + formName + ".json");
 

@@ -42,7 +42,8 @@ public class JsonFormMLSAssetGenerator {
      *
      * @param formToTranslate
      */
-    public static void processForm(String formToTranslate) {
+    public static void processForm(String formToTranslate) throws Exception {
+        jsonFormInteractor = getJsonFormInteractor();
         String form = getFileContentsAsString(formToTranslate);
 
         printToSystemOut("\nForm before placeholder injection:\n\n" + form);
@@ -311,7 +312,6 @@ public class JsonFormMLSAssetGenerator {
     }
 
     public static void main(String[] args) throws Exception {
-        jsonFormInteractor = getJsonFormInteractor();
         String formToTranslate = System.getenv("FORM_TO_TRANSLATE");
         printToSystemOut("Injecting placeholders in form at path: " + formToTranslate + " ...\n");
         processForm(formToTranslate);
