@@ -2209,6 +2209,7 @@ As part of the JMAG configuration, the following steps will need to be taken:
 4. Within the same `Run/Debug Configurations` dialog, specify the JsonForm against which assets are to be generated: 
    - Create an environment variable named `FORM_TO_TRANSLATE` and set its value to the absolute path of the JsonForm to translate.
    - This environment variable will need to be reset any time a different form needs to be translated.
+   - Optionally create an environment variable named `JSON_FORM_INTERACTOR_NAME` and specify the fully qualified name of a custom `JsonFormInteractor`.
 5. Press `Apply` and `OK`
 6. To run JMAG: switch to your newly created configuration and click the `Run` button.
 
@@ -2220,6 +2221,6 @@ Two asset files will be created under the `/tmp` folder : a translations propert
 
 Alternatively, a different folder can be specified by setting the `MLS_ASSETS_FOLDER` environment variable, just ensure the folder exists and has the correct write permissions.
 
-For a form named `example_form` the generated assets will follow the following naming covention : `example_form.json` and `example_form.properties`. 
+For a form named `example_form` the generated assets will follow the following naming convention : `example_form.json` and `example_form.properties`.
 
 The properties file can then be copied over to the `resources` folder of your Android project under `src/main`. The placeholder-injected JsonForm will typically be copied over to the `assets` folder of your Android project (although not mandatory).
