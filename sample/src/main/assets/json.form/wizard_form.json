@@ -59,6 +59,59 @@
     "next": "step2",
     "fields": [
       {
+        "key": "village",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "tree",
+        "tree": [
+          {
+            "key": "Kenya",
+            "level": "",
+            "name": "Kenya",
+            "nodes": [
+              {
+                "key": "Rift Valley",
+                "level": "",
+                "name": "Rift Valley",
+                "nodes": [
+                  {
+                    "key": "Nakuru",
+                    "level": "",
+                    "name": "Nakuru",
+                    "nodes": [
+                      {
+                        "key": "Narok HF",
+                        "level": "",
+                        "name": "Narok HF",
+                        "nodes": [
+                          {
+                            "key": "Iminuet",
+                            "level": "",
+                            "name": "Iminuet"
+                          },
+                          {
+                            "key": "Lemek",
+                            "level": "",
+                            "name": "Lemek"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "hint": "Village",
+        "v_required": {
+          "value": false,
+          "err": "Please enter the Woman's Village"
+        },
+        "default": "[\"Kenya\",\"Rift Valley\",\"Nakuru\",\"Narok HF\"]"
+      },
+      {
         "key": "delivery_complications",
         "openmrs_entity_parent": "",
         "openmrs_entity": "concept",

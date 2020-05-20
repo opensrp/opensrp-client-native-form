@@ -275,7 +275,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
             String next = formStep.optString(JsonFormConstants.NEXT, "");
             if (StringUtils.isNotEmpty(next)) {
                 checkIfStepIsBlank(formStep);
-                if (shouldSkipStep()) {
+                if (!getJsonApi().isNextStepRelevant() && !nextStepHasNoSkipLogic()) {
                     markStepAsSkipped(formStep);
                     next();
                 }

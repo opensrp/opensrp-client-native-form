@@ -117,7 +117,7 @@ public class TreeViewFactory implements FormWidgetFactory {
         }
 
         final TreeViewDialog treeViewDialog = new TreeViewDialog(context,
-                jsonObject.getJSONArray(JsonFormConstants.TREE), defaultValue, value);
+                jsonObject.optJSONArray(JsonFormConstants.TREE), defaultValue, value);
 
         if (!TextUtils.isEmpty(jsonObject.optString(JsonFormConstants.VALUE))) {
             JSONArray name = new JSONArray(treeViewDialog.getName());
