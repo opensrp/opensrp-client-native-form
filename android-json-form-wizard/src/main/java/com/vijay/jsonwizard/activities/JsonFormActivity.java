@@ -410,8 +410,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         preComputedCalculationMap.clear();
         refreshCalculationLogic(parentKey, childKey, popup, stepName, isForNextStep);
         refreshSkipLogic(parentKey, childKey, popup, stepName, isForNextStep);
-//        refreshConstraints(parentKey, childKey, popup);
-//        refreshMediaLogic(parentKey, value, stepName);
+//        refreshConstraints(parentKey, childKey, popup, isForNextStep);
+//        refreshMediaLogic(parentKey, value, stepName, isForNextStep);
     }
 
     private void populateDependencyMap(Map<String, View> formViews, Map<String, Set<String>> dependencyMap, boolean calculation) {
@@ -1878,12 +1878,19 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         int count = view.getChildCount();
         for (int i = 0; i < count; i++) {
             final int childPosition = i;
-            runOnUiThread(new Runnable() {
+            getAppExecutors().mainThread().execute(new Runnable() {
                 @Override
                 public void run() {
                     addRadioButtonCalculation(calculation, view, childPosition);
                 }
             });
+
+//            runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    addRadioButtonCalculation(calculation, view, childPosition);
+//                }
+//            });
         }
     }
 

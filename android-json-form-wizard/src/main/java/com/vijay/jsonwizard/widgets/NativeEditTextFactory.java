@@ -42,7 +42,8 @@ public class NativeEditTextFactory implements FormWidgetFactory {
     public static ValidationStatus validate(final JsonFormFragmentView formFragmentView,
                                             final NativeEditText editText) {
         final ValidationStatus[] validationStatus = {new ValidationStatus(true, null, formFragmentView, editText)};
-        ((JsonFormActivity) formFragmentView.getContext()).runOnUiThread(new Runnable() {
+
+        ((JsonFormActivity) formFragmentView.getContext()).getAppExecutors().mainThread().execute(new Runnable() {
             @Override
             public void run() {
                 if (editText.isEnabled()) {
@@ -53,6 +54,12 @@ public class NativeEditTextFactory implements FormWidgetFactory {
                 }
             }
         });
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//
+//            }
+//        });
         return validationStatus[0];
     }
 
