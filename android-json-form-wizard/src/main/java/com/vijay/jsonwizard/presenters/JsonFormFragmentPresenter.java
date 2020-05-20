@@ -50,7 +50,6 @@ import com.vijay.jsonwizard.task.ExpansionPanelGenericPopupDialogTask;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ImageUtils;
 import com.vijay.jsonwizard.utils.PermissionUtils;
-import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.CustomTextView;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
@@ -172,14 +171,10 @@ public class JsonFormFragmentPresenter extends
                             getView().addFormElements(views);
                             formFragment.getJsonApi().invokeRefreshLogic(null, false, null, null, mStepName, false);
                             if (formFragment instanceof JsonWizardFormFragment) {
-                                if (mStepName.equals(JsonFormConstants.STEP1) && !formFragment.getJsonApi().isPreviousPressed()) {
-                                    Utils.checkIfStepHasNoSkipLogic(formFragment);
-                                }
                                 String next = mStepDetails.optString("next");
                                 formFragment.getJsonApi().setNextStep(next);
                                 if (formFragment.getJsonApi().skipBlankSteps()) {
-                                    formFragment.getJsonApi().updateUiBaseOnRules(JsonFormConstants.RELEVANCE);
-                                    formFragment.getJsonApi().updateUiBaseOnRules(JsonFormConstants.CALCULATION);
+                                    updateUiBaseOnRules();
                                     if (mStepName.equals(JsonFormConstants.STEP1) && !formFragment.getJsonApi().isPreviousPressed()) {
                                         ((JsonWizardFormFragment) formFragment).skipStepsOnNextPressed();
                                     }
@@ -190,6 +185,13 @@ public class JsonFormFragmentPresenter extends
                 });
             }
         });
+    }
+
+    private void updateUiBaseOnRules() {
+        formFragment.getJsonApi().updateUiBaseOnRules(JsonFormConstants.RELEVANCE);
+        formFragment.getJsonApi().updateUiBaseOnRules(JsonFormConstants.CALCULATION);
+        formFragment.getJsonApi().updateUiBaseOnRules(JsonFormConstants.MEDIA_LOGIC);
+        formFragment.getJsonApi().updateUiBaseOnRules(JsonFormConstants.CONSTRAINTS);
     }
 
     private void dismissDialog(ProgressDialog dialog) {

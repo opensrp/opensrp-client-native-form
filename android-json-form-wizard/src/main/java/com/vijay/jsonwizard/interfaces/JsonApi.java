@@ -82,7 +82,7 @@ public interface JsonApi {
 
     JSONObject getObjectUsingAddress(String[] address, boolean popup, JSONObject valueSource) throws JSONException;
 
-    void refreshConstraints(String parentKey, String childKey, boolean popup);
+    void refreshConstraints(String parentKey, String childKey, boolean popup, boolean isForNextStep);
 
     void addOnActivityResultListener(Integer requestCode, OnActivityResultListener onActivityResultListener);
 
@@ -136,6 +136,10 @@ public interface JsonApi {
     Map<View, String> getPreComputedCalculationMap();
 
     Map<View, String> getPreComputedRelevanceMap();
+
+    Map<JSONObject, String> getPreComputedMediaLogicMap();
+
+    Map<View, String> getPreComputedConstraintMap();
 
     boolean isNextStepRelevant();
 

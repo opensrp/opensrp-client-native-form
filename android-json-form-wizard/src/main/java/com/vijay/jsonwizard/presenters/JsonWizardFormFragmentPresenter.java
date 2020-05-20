@@ -46,14 +46,22 @@ public class JsonWizardFormFragmentPresenter extends JsonFormFragmentPresenter {
         if (StringUtils.isNotBlank(nextStep)) {
             getmJsonFormInteractor().fetchFormElements(nextStep, getFormFragment(), getFormFragment().getJsonApi().getmJSONObject().optJSONObject(nextStep), getView().getCommonListener(), false);
             getFormFragment().getJsonApi().initializeDependencyMaps();
-            getFormFragment().getJsonApi().setNextStepRelevant(false);
-            ((JsonWizardFormFragment) getFormFragment()).setNextStepHasNoSkipLogic(false);
+            cleanDataForNextStep();
             getFormFragment().getJsonApi().invokeRefreshLogic(null, false, null, null, nextStep, true);
             if (!getFormFragment().getJsonApi().isNextStepRelevant()) {
                 Utils.checkIfStepHasNoSkipLogic(getFormFragment());
             }
             ((JsonWizardFormFragment) getFormFragment()).skipStepsOnNextPressed(nextStep);
         }
+    }
+
+    private void cleanDataForNextStep() {
+        getFormFragment().getJsonApi().setNextStepRelevant(false);
+        ((JsonWizardFormFragment) getFormFragment()).setNextStepHasNoSkipLogic(false);
+        getFormFragment().getJsonApi().getPreComputedRelevanceMap().clear();
+        getFormFragment().getJsonApi().getPreComputedCalculationMap().clear();
+        getFormFragment().getJsonApi().getPreComputedMediaLogicMap().clear();
+        getFormFragment().getJsonApi().getPreComputedConstraintMap().clear();
     }
 
     protected boolean moveToNextWizardStep() {

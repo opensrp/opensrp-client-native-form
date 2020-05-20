@@ -220,6 +220,7 @@ public class JsonFormConstants {
     public static final String ENCOUNTER_TYPE = "encounter_type";
     public static final String FORM_NAME = "form_name";
     public static final String FORM_CONFIG_LOCATION = "json.form/json.form.config.json";
+    public static final String MEDIA_LOGIC = "media_logic";
 
     public interface MultiSelectUtils {
         String IS_HEADER = "isHeader";

@@ -24,7 +24,6 @@ import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 import com.vijay.jsonwizard.presenters.JsonFormFragmentPresenter;
 import com.vijay.jsonwizard.presenters.JsonWizardFormFragmentPresenter;
-import com.vijay.jsonwizard.task.NextProgressDialogTask;
 import com.vijay.jsonwizard.viewstates.JsonFormFragmentViewState;
 
 import org.apache.commons.lang3.StringUtils;
@@ -275,7 +274,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
             String next = formStep.optString(JsonFormConstants.NEXT, "");
             if (StringUtils.isNotEmpty(next)) {
                 checkIfStepIsBlank(formStep);
-                if (!getJsonApi().isNextStepRelevant() && !nextStepHasNoSkipLogic()) {
+                if (shouldSkipStep()) { //this check is insufficient
                     markStepAsSkipped(formStep);
                     next();
                 }
