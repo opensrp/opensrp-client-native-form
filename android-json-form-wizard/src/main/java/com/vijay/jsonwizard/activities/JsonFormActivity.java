@@ -1432,7 +1432,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     JSONObject media = medias.getJSONObject(j);
                     if (isForNextStep) {
                         preComputedMediaLogicMap.put(media, value);
-                        return;
+                        continue;
                     }
                     mediaDialog(media, value);
                 }
