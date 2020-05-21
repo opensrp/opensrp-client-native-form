@@ -43,7 +43,7 @@ public class NativeEditTextFactory implements FormWidgetFactory {
                                             final NativeEditText editText) {
         final ValidationStatus[] validationStatus = {new ValidationStatus(true, null, formFragmentView, editText)};
 
-        ((JsonFormActivity) formFragmentView.getContext()).getAppExecutors().mainThread().execute(new Runnable() {
+        ((JsonFormActivity) formFragmentView.getContext()).runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (editText.isEnabled()) {

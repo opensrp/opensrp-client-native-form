@@ -258,7 +258,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             boolean isValid = performValidation(radioGroup);
             final TextView[] errorTextView = {linearLayout.findViewById(R.id.error_textView)};
             if (!isValid) {
-                ((JsonFormActivity) formFragmentView.getContext()).getAppExecutors().mainThread().execute(new Runnable() {
+                ((JsonFormActivity) formFragmentView.getContext()).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         if (linearLayout.getChildAt(0) instanceof ConstraintLayout) {
@@ -301,7 +301,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
                 return new ValidationStatus(false, error, formFragmentView, radioGroup);
             } else if (errorTextView[0] != null) {
-                ((JsonFormFragment) formFragmentView).getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
+                ((JsonFormFragment) formFragmentView).getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         errorTextView[0].setVisibility(View.GONE);
