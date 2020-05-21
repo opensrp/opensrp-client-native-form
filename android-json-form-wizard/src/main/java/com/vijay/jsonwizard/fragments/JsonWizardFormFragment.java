@@ -266,6 +266,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
     }
 
     /**
+     * @deprecated use {@link #skipStepsOnNextPressed(String)}
      * Skips blank by relevance steps when next is clicked on the json wizard forms.
      */
     public void skipStepsOnNextPressed() {
@@ -282,6 +283,10 @@ public class JsonWizardFormFragment extends JsonFormFragment {
         }
     }
 
+    /***
+     * Adds a property 'skipped=true' to a step object if the step is skipped
+     * @param formStep {@link JSONObject}
+     */
     private void markStepAsSkipped(JSONObject formStep) {
         try {
             formStep.put("skipped", true);
@@ -289,6 +294,11 @@ public class JsonWizardFormFragment extends JsonFormFragment {
             Timber.e(e);
         }
     }
+
+    /***
+     * Skips blank steps when next is clicked on the json wizard forms.
+     * @param step {@link JSONObject}
+     */
 
     public void skipStepsOnNextPressed(String step) {
         if (skipBlankSteps()) {
@@ -327,9 +337,9 @@ public class JsonWizardFormFragment extends JsonFormFragment {
     }
 
     /**
-     * Checks if a given step is blank due to relevance hidding all the widgets
-     *
      * @param formStep {@link JSONObject}
+     * @deprecated use a combination of {@link #!getJsonApi().isNextStepRelevant and !getJsonApi().nextStepHasNoSkipLogic}
+     * Checks if a given step is blank due to relevance hidding all the widgets
      */
     private void checkIfStepIsBlank(JSONObject formStep) {
         try {

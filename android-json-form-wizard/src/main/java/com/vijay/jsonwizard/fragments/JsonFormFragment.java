@@ -545,24 +545,6 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
                     }
                 }
             });
-//            Activity().runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    view.requestFocus();
-//                    if (!(view instanceof MaterialEditText)) {
-//                        mScrollView.post(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                int viewLength = view.getBottom() - view.getHeight();
-//                                if (viewLength < 0) {
-//                                    viewLength = 0;
-//                                }
-//                                mScrollView.scrollTo(0, viewLength);
-//                            }
-//                        });
-//                    }
-//                }
-//            });
         }
     }
 
