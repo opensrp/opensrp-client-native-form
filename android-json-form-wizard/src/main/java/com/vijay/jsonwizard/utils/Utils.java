@@ -709,7 +709,7 @@ public class Utils {
     }
 
     /***
-     * Checks if step has no skip logic fields and that fields does not have type hidden
+     * Checks if step has no skip logic fields and that fields do not have type hidden
      * @param formFragment {@link JsonFormFragment}
      */
     public static void checkIfStepHasNoSkipLogic(JsonFormFragment formFragment) {

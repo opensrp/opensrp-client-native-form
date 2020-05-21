@@ -195,12 +195,6 @@ public class MultiSelectListFactory implements FormWidgetFactory {
 
                             }
                         });
-//                        Activity().runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                Utils.showToast(context, context.getString(R.string.multi_select_list_msg_data_source_invalid));
-//                            }
-//                        });
                     }
                     return null;
                 }

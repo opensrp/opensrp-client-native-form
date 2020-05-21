@@ -184,7 +184,7 @@ public class JsonFormInteractor {
                             final String type, final JSONObject jsonObject, final CommonListener listener, final Boolean popup) {
 
         try {
-            if (type.equals("tree") || type.equals("edit_text")) { ///some fields need to be loaded on the main thread TO-DO can re-done
+            if (type.equals("tree") || type.equals("edit_text")) { ///some fields need to be loaded on the main thread TO-DO re-write
                 formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
                     @Override
                     public void run() {
