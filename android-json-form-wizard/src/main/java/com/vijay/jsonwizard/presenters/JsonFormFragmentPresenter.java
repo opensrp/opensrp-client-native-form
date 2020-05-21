@@ -36,6 +36,7 @@ import android.widget.TextView;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rey.material.widget.Button;
 import com.vijay.jsonwizard.R;
+import com.vijay.jsonwizard.activities.JsonFormActivity;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.MaterialSpinner;
 import com.vijay.jsonwizard.customviews.NativeEditText;
@@ -446,13 +447,18 @@ public class JsonFormFragmentPresenter extends
                 }
             }
         } else if (childAt instanceof MaterialSpinner) {
-            MaterialSpinner spinner = (MaterialSpinner) childAt;
-            ValidationStatus validationStatus = SpinnerFactory.validate(formFragmentView, spinner);
+            final MaterialSpinner spinner = (MaterialSpinner) childAt;
+            final ValidationStatus validationStatus = SpinnerFactory.validate(formFragmentView, spinner);
             if (!validationStatus.isValid()) {
                 if (requestFocus) {
                     validationStatus.requestAttention();
                 }
-                setSpinnerError(spinner, validationStatus.getErrorMessage());
+                ((JsonFormActivity) formFragmentView.getContext()).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setSpinnerError(spinner, validationStatus.getErrorMessage());
+                    }
+                });
                 return validationStatus;
             }
         } else if (childAt instanceof ViewGroup
