@@ -175,11 +175,11 @@ public class JsonFormFragmentPresenter extends
                             if (formFragment instanceof JsonWizardFormFragment) {
                                 if (formFragment.getJsonApi().skipBlankSteps()) {
                                     Utils.checkIfStepHasNoSkipLogic(formFragment);
-                                    String next = mStepDetails.optString("next");
+                                    String next = mStepDetails.optString(JsonFormConstants.NEXT);
                                     formFragment.getJsonApi().setNextStep(next);
                                     updateUiBaseOnRules();
                                     if (mStepName.equals(JsonFormConstants.STEP1) && !formFragment.getJsonApi().isPreviousPressed()) {
-                                        ((JsonWizardFormFragment) formFragment).skipStepsOnNextPressed(mStepName);
+                                        ((JsonWizardFormFragment) formFragment).skipStepsOnNextPressed();
                                     }
                                 }
                             }

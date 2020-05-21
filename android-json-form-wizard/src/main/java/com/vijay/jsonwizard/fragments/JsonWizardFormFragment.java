@@ -275,7 +275,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
             String next = formStep.optString(JsonFormConstants.NEXT, "");
             if (StringUtils.isNotEmpty(next)) {
                 checkIfStepIsBlank(formStep);
-                if (shouldSkipStep()) { //this check is insufficient
+                if (shouldSkipStep() && !nextStepHasNoSkipLogic()) { //this check is insufficient
                     markStepAsSkipped(formStep);
                     next();
                 }
@@ -338,7 +338,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
 
     /**
      * @param formStep {@link JSONObject}
-     * @deprecated use a combination of {@link #!getJsonApi().isNextStepRelevant and !getJsonApi().nextStepHasNoSkipLogic}
+     * @deprecated use a combination of #isNextStepRelevant and {@link #nextStepHasNoSkipLogic()}
      * Checks if a given step is blank due to relevance hidding all the widgets
      */
     private void checkIfStepIsBlank(JSONObject formStep) {
