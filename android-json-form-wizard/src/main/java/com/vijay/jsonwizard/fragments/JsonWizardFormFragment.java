@@ -325,7 +325,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
                 JSONObject formStep = getJsonApi().getmJSONObject().optJSONObject(JsonFormConstants.STEP + i);
                 if (formStep != null) {
                     checkIfStepIsBlank(formStep);
-                    if (shouldSkipStep()) {
+                    if (shouldSkipStep() && !stepHasNoSkipLogic(JsonFormConstants.STEP + i)) {
                         getFragmentManager().popBackStack();
                     } else {
                         break;
@@ -447,12 +447,24 @@ public class JsonWizardFormFragment extends JsonFormFragment {
         }
     }
 
-    public boolean nextStepHasNoSkipLogic() {
+    private boolean nextStepHasNoSkipLogic() {
         Boolean nextStepHasNoRelevance = getJsonApi().stepSkipLogicPresenceMap().get(getJsonApi().nextStep());
         if (nextStepHasNoRelevance != null) {
             return nextStepHasNoRelevance;
         }
         return false;
+    }
+
+    public boolean stepHasNoSkipLogic(@Nullable String step) {
+        if (StringUtils.isNotBlank(step)) {
+            Boolean nextStepHasNoRelevance = getJsonApi().stepSkipLogicPresenceMap().get(step);
+            if (nextStepHasNoRelevance != null) {
+                return nextStepHasNoRelevance;
+            }
+            return false;
+        } else {
+            return nextStepHasNoSkipLogic();
+        }
     }
 }
 
