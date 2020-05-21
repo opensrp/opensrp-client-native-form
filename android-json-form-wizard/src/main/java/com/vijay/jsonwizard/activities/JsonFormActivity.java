@@ -129,6 +129,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private Map<JSONObject, String> preComputedMediaLogicMap = new ConcurrentHashMap<>();
     private Map<View, String> preComputedConstraintMap = new ConcurrentHashMap<>();
 
+    private Map<String, Boolean> stepSkipLogicPresenceMap = new ConcurrentHashMap<>();
 
     private boolean isNextStepRelevant;
 
@@ -2314,22 +2315,27 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     @Override
-    public Map<View, String> getPreComputedCalculationMap() {
+    public Map<View, String> preComputedCalculationMap() {
         return preComputedCalculationMap;
     }
 
     @Override
-    public Map<View, String> getPreComputedRelevanceMap() {
+    public Map<View, String> preComputedRelevanceMap() {
         return preComputedRelevanceMap;
     }
 
     @Override
-    public Map<JSONObject, String> getPreComputedMediaLogicMap() {
+    public Map<JSONObject, String> preComputedMediaLogicMap() {
         return preComputedMediaLogicMap;
     }
 
-    public Map<View, String> getPreComputedConstraintMap() {
+    public Map<View, String> preComputedConstraintMap() {
         return preComputedConstraintMap;
+    }
+
+    @Override
+    public Map<String, Boolean> stepSkipLogicPresenceMap() {
+        return stepSkipLogicPresenceMap;
     }
 
     @Override
@@ -2340,7 +2346,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     @Override
     public void updateUiBaseOnRules(String type) {
         if (JsonFormConstants.RELEVANCE.equals(type)) {
-            for (Map.Entry<View, String> entry : getPreComputedRelevanceMap().entrySet()) {
+            for (Map.Entry<View, String> entry : preComputedRelevanceMap().entrySet()) {
                 View view = entry.getKey();
                 if (StringUtils.isNotBlank(entry.getValue()) && entry.getValue().contains(":")) {
                     String values[] = entry.getValue().split(":");
@@ -2350,7 +2356,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 }
             }
         } else if (JsonFormConstants.CALCULATION.equals(type)) {
-            for (Map.Entry<View, String> entry : getPreComputedCalculationMap().entrySet()) {
+            for (Map.Entry<View, String> entry : preComputedCalculationMap().entrySet()) {
                 View view = entry.getKey();
                 if (entry.getValue() != null) {
                     String calculation = entry.getValue();
@@ -2358,7 +2364,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 }
             }
         } else if (JsonFormConstants.MEDIA_LOGIC.equals(type)) {
-            for (Map.Entry<JSONObject, String> entry : getPreComputedMediaLogicMap().entrySet()) {
+            for (Map.Entry<JSONObject, String> entry : preComputedMediaLogicMap().entrySet()) {
                 JSONObject entryKey = entry.getKey();
                 if (entry.getValue() != null) {
                     String value = entry.getValue();
@@ -2366,7 +2372,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 }
             }
         } else if (JsonFormConstants.CONSTRAINTS.equals(type)) {
-            for (Map.Entry<View, String> entry : getPreComputedConstraintMap().entrySet()) {
+            for (Map.Entry<View, String> entry : preComputedConstraintMap().entrySet()) {
                 View entryKey = entry.getKey();
                 if (entry.getValue() != null) {
                     String value = entry.getValue();

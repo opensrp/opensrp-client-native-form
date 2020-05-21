@@ -133,13 +133,15 @@ public interface JsonApi {
 
     Map<String, JSONObject> getFormFieldsMap();
 
-    Map<View, String> getPreComputedCalculationMap();
+    Map<View, String> preComputedCalculationMap();
 
-    Map<View, String> getPreComputedRelevanceMap();
+    Map<View, String> preComputedRelevanceMap();
 
-    Map<JSONObject, String> getPreComputedMediaLogicMap();
+    Map<JSONObject, String> preComputedMediaLogicMap();
 
-    Map<View, String> getPreComputedConstraintMap();
+    Map<View, String> preComputedConstraintMap();
+
+    Map<String, Boolean> stepSkipLogicPresenceMap();
 
     boolean isNextStepRelevant();
 

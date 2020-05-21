@@ -27,7 +27,6 @@ import com.vijay.jsonwizard.customviews.ExpansionPanelGenericPopupDialog;
 import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.event.BaseEvent;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
-import com.vijay.jsonwizard.fragments.JsonWizardFormFragment;
 import com.vijay.jsonwizard.rules.RuleConstant;
 import com.vijay.jsonwizard.views.CustomTextView;
 import com.vijay.jsonwizard.widgets.DatePickerFactory;
@@ -711,18 +710,25 @@ public class Utils {
 
     /***
      * Checks if step has no skip logic fields and that fields does not have type hidden
-     * @param formFragment
+     * @param formFragment {@link JsonFormFragment}
      */
     public static void checkIfStepHasNoSkipLogic(JsonFormFragment formFragment) {
-        JSONObject jsonObject = formFragment.getJsonApi().getmJSONObject();
-        JSONObject jsonObject1 = jsonObject.optJSONObject(formFragment.getJsonApi().nextStep());
-        JSONArray fields = jsonObject1.optJSONArray(JsonFormConstants.FIELDS);
-        for (int i = 0; i < fields.length(); i++) {
-            JSONObject object = fields.optJSONObject(i);
-            if (object.has(JsonFormConstants.TYPE) && !object.optString(JsonFormConstants.TYPE).equals(JsonFormConstants.HIDDEN) && !object.has(JsonFormConstants.RELEVANCE)) {
-                ((JsonWizardFormFragment) formFragment).setNextStepHasNoSkipLogic(true);
-                break;
+        String step = formFragment.getJsonApi().nextStep();
+        if (formFragment.getJsonApi().stepSkipLogicPresenceMap().get(step) == null) {
+            boolean hasNoSkipLogic = false;
+            JSONObject jsonObject = formFragment.getJsonApi().getmJSONObject();
+            JSONObject jsonStepObject = jsonObject.optJSONObject(step);
+            JSONArray fields = jsonStepObject.optJSONArray(JsonFormConstants.FIELDS);
+            for (int i = 0; i < fields.length(); i++) {
+                JSONObject object = fields.optJSONObject(i);
+                if (object.has(JsonFormConstants.TYPE)
+                        && !object.optString(JsonFormConstants.TYPE).equals(JsonFormConstants.HIDDEN)
+                        && !object.has(JsonFormConstants.RELEVANCE)) {
+                    hasNoSkipLogic = true;
+                    break;
+                }
             }
+            formFragment.getJsonApi().stepSkipLogicPresenceMap().put(step, hasNoSkipLogic);
         }
     }
 }

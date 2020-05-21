@@ -48,7 +48,6 @@ public class JsonWizardFormFragment extends JsonFormFragment {
     private Toolbar navigationToolbar;
     private View bottomNavLayout;
     private JsonWizardFormFragment jsonFormFragment;
-    private boolean nextStepHasNoRelevance;
 
     public static JsonWizardFormFragment getFormFragment(String stepName) {
         JsonWizardFormFragment jsonFormFragment = new JsonWizardFormFragment();
@@ -449,13 +448,12 @@ public class JsonWizardFormFragment extends JsonFormFragment {
     }
 
     public boolean nextStepHasNoSkipLogic() {
-        return nextStepHasNoRelevance;
+        Boolean nextStepHasNoRelevance = getJsonApi().stepSkipLogicPresenceMap().get(getJsonApi().nextStep());
+        if (nextStepHasNoRelevance != null) {
+            return nextStepHasNoRelevance;
+        }
+        return false;
     }
-
-    public void setNextStepHasNoSkipLogic(boolean value) {
-        this.nextStepHasNoRelevance = value;
-    }
-
 }
 
 
