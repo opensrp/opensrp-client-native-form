@@ -236,4 +236,9 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
     public BufferedReader getRules(@NonNull Context context, @NonNull String fileName) throws IOException {
         return new BufferedReader(new InputStreamReader(context.getAssets().open(fileName)));
     }
+
+    @Override
+    public void handleFormError(@NonNull String formIdentifier) {
+        // Do nothing here
+    }
 }
