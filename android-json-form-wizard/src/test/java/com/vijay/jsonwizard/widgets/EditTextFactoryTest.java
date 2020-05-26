@@ -62,6 +62,7 @@ public class EditTextFactoryTest extends BaseTest {
     private MaterialEditText relatedEditText2;
 
     private String jsonForm = "{\"encounter_type\":\"Birth Registration\",\"show_errors_on_submit\":true,\"count\":\"1\",\"display_scroll_bars\":true,\"mother\":{\"encounter_type\":\"New Woman Registration\"},\"entity_id\":\"\",\"relational_id\":\"\",\"metadata\":{\"start\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"start\",\"openmrs_entity_id\":\"163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"end\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"end\",\"openmrs_entity_id\":\"163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"today\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"encounter\",\"openmrs_entity_id\":\"encounter_date\"},\"deviceid\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"deviceid\",\"openmrs_entity_id\":\"163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"subscriberid\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"subscriberid\",\"openmrs_entity_id\":\"163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"simserial\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"simserial\",\"openmrs_entity_id\":\"163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"phonenumber\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"phonenumber\",\"openmrs_entity_id\":\"163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"encounter_location\":\"\",\"look_up\":{\"entity_id\":\"\",\"value\":\"\"}},\"step1\":{\"display_back_button\":\"true\",\"title\":\"Birth Registration\",\"fields\":[{\"key\":\"medications_other\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"type\":\"edit_text\",\"hint\":\"Specify\",\"v_regex\":{\"value\":\"[A-Za-z\\\\s\\\\.\\\\-]*\",\"err\":\"Please enter valid content\"},\"value\":\"10\",\"relevance\":{\"step1:medications\":{\"ex-checkbox\":[{\"or\":[\"other\"]}]}}},{\"key\":\"medications_other2\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"type\":\"edit_text\",\"hint\":\"Specify\",\"v_regex\":{\"value\":\"[A-Za-z\\\\s\\\\.\\\\-]*\",\"err\":\"Please enter valid content\"},\"value\":\"10\",\"relevance\":{\"step1:medications\":{\"ex-checkbox\":[{\"or\":[\"other\"]}]}}},{\"key\":\"medications_other3\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"type\":\"edit_text\",\"hint\":\"Specify\",\"v_regex\":{\"value\":\"[A-Za-z\\\\s\\\\.\\\\-]*\",\"err\":\"Please enter valid content\"},\"value\":\"20\",\"relevance\":{\"step1:medications\":{\"ex-checkbox\":[{\"or\":[\"other\"]}]}}}]}}";
+
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
@@ -174,6 +175,7 @@ public class EditTextFactoryTest extends BaseTest {
         Assert.assertNotNull(viewList);
         Assert.assertEquals(1, viewList.size());
     }
+
     @Test
     public void testNameWithCumulativeTotalValidatorEditTextFactoryInstantiatesViewsCorrectly() throws Exception {
         Assert.assertNotNull(factory);
