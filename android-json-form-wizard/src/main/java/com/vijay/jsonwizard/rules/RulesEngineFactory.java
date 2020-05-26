@@ -143,12 +143,26 @@ public class RulesEngineFactory implements RuleListener {
         try {
             if (!ruleMap.containsKey(fileName)) {
                 BufferedReader bufferedReader;
+                boolean loadedFromDb = false;
                 if (context instanceof JsonSubFormAndRulesLoader) {
                     bufferedReader = ((JsonSubFormAndRulesLoader) context).getRules(context, fileName);
+                    loadedFromDb = true;
                 } else {
                     bufferedReader = new BufferedReader(new InputStreamReader(context.getAssets().open(fileName)));
                 }
-                ruleMap.put(fileName, MVELRuleFactory.createRulesFrom(bufferedReader));
+
+                try {
+                    // This catches the yaml syntax violation error thrown by org.jeasy.rules.support.RuleDefinitionReader.read
+                    ruleMap.put(fileName, MVELRuleFactory.createRulesFrom(bufferedReader));
+                } catch (Exception ex) {
+                    Timber.e(ex);
+
+                    if (loadedFromDb) {
+                        ((JsonSubFormAndRulesLoader) context).handleFormError(fileName);
+                    }
+
+                    return null;
+                }
             }
             return ruleMap.get(fileName);
         } catch (IOException e) {
