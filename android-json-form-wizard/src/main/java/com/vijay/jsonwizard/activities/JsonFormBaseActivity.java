@@ -238,7 +238,7 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
     }
 
     @Override
-    public void handleFormError(@NonNull String formIdentifier) {
+    public void handleFormError(boolean isRulesFile, @NonNull String formIdentifier) {
         // Do nothing here
     }
 }

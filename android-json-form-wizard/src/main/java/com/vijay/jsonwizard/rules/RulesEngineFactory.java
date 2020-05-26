@@ -158,7 +158,7 @@ public class RulesEngineFactory implements RuleListener {
                     Timber.e(ex);
 
                     if (loadedFromDb) {
-                        ((JsonSubFormAndRulesLoader) context).handleFormError(fileName);
+                        ((JsonSubFormAndRulesLoader) context).handleFormError(true, fileName);
                     }
 
                     return null;
