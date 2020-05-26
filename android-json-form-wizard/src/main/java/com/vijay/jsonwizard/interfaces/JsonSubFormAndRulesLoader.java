@@ -18,4 +18,6 @@ public interface JsonSubFormAndRulesLoader {
 
     @NonNull
     BufferedReader getRules(@NonNull Context context, @NonNull String fileName) throws IOException;
+
+    void handleFormError(@NonNull String formIdentifier);
 }
