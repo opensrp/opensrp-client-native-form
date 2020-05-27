@@ -139,7 +139,8 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
                 } catch (JSONException e) {
                     Timber.e(e, "FullScreenGenericPopupDialog --> loadSubForms");
                 }
-
+            } else {
+                ExpansionPanelGenericPopupDialog.this.dismiss();
             }
         }
     }

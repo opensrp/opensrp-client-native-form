@@ -69,6 +69,8 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
     private ProgressDialog progressDialog;
     protected boolean translateForm = false;
 
+    protected boolean isVisibleFormErrorAndRollbackDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -243,4 +245,16 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
     public void handleFormError(boolean isRulesFile, @NonNull String formIdentifier) {
         // Do nothing here
     }
+
+    @Override
+    public void setVisibleFormErrorAndRollbackDialog(boolean isVisible) {
+        isVisibleFormErrorAndRollbackDialog = isVisible;
+    }
+
+    @Override
+    public boolean isVisibleFormErrorAndRollbackDialog() {
+        return isVisibleFormErrorAndRollbackDialog;
+    }
+
+
 }
