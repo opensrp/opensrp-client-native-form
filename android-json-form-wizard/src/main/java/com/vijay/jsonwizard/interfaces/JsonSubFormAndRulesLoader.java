@@ -21,4 +21,8 @@ public interface JsonSubFormAndRulesLoader {
     BufferedReader getRules(@NonNull Context context, @NonNull String fileName) throws IOException;
 
     void handleFormError(boolean isRulesFile, @NonNull String formIdentifier);
+
+    void setVisibleFormErrorAndRollbackDialog(boolean isVisible);
+
+    boolean isVisibleFormErrorAndRollbackDialog();
 }
