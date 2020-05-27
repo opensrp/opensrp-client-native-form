@@ -46,6 +46,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import timber.log.Timber;
+
 /**
  * Created by vijay on 5/19/15.
  */
@@ -180,41 +182,19 @@ public class JsonFormInteractor {
         }
     }
 
-    private void fetchViews(final List<View> viewsFromJson, final String stepName, final JsonFormFragment formFragment,
-                            final String type, final JSONObject jsonObject, final CommonListener listener, final Boolean popup) {
+    private void fetchViews(List<View> viewsFromJson, String stepName, JsonFormFragment formFragment,
+                            String type, JSONObject jsonObject, CommonListener listener, Boolean popup) {
 
         try {
-            if (type.equals("tree") || type.equals("edit_text")) { ///some fields need to be loaded on the main thread TO-DO re-write
-                formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        List<View> views = null;
-                        try {
-                            views = map
-                                    .get(type)
-                                    .getViewsFromJson(stepName, formFragment.getActivity(), formFragment, jsonObject, listener, popup);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        if (views.size() > 0) {
-                            viewsFromJson.addAll(views);
-                        }
-                    }
-                });
-
-            } else {
-                List<View> views = map
-                        .get(type)
-                        .getViewsFromJson(stepName, formFragment.getActivity(), formFragment, jsonObject, listener, popup);
-                if (views.size() > 0) {
-                    viewsFromJson.addAll(views);
-                }
+            List<View> views = map
+                    .get(type)
+                    .getViewsFromJson(stepName, formFragment.getActivity(), formFragment, jsonObject, listener, popup);
+            if (views.size() > 0) {
+                viewsFromJson.addAll(views);
             }
+
         } catch (Exception e) {
-            Log.e(TAG,
-                    "Exception occurred in making view : Exception is : "
-                            + e.getMessage());
-            e.printStackTrace();
+            Timber.e("Exception occurred in making view : Exception is : %s ", e.getMessage());
         }
 
     }

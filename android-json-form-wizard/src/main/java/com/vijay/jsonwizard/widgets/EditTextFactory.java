@@ -111,7 +111,7 @@ public class EditTextFactory implements FormWidgetFactory {
     }
 
     protected void attachLayout(String stepName, Context context, JsonFormFragment formFragment,
-                                JSONObject jsonObject, MaterialEditText editText, ImageView editButton)
+                                final JSONObject jsonObject, final MaterialEditText editText, ImageView editButton)
             throws Exception {
 
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
@@ -127,8 +127,13 @@ public class EditTextFactory implements FormWidgetFactory {
         editText.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
 
         if (!TextUtils.isEmpty(jsonObject.optString(JsonFormConstants.VALUE))) {
-            editText.setText(jsonObject.optString(JsonFormConstants.VALUE));
-            editText.setSelection(editText.getText().length());
+            formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
+                @Override
+                public void run() {
+                    editText.setText(jsonObject.optString(JsonFormConstants.VALUE));
+                    editText.setSelection(editText.getText().length());
+                }
+            });
         }
         if (jsonObject.has(JsonFormConstants.HINT)) {
             editText.setHint(jsonObject.getString(JsonFormConstants.HINT));

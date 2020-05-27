@@ -1093,13 +1093,13 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     }
 
                 }
-                //update ui
-                if (isForNextStep) {
-                    if (((address.length == 2 && address[0].equals(nextStep())) || (address.length == 3 && address[2].contains(nextStep())))) {
-                        if (comparison) {
-                            setNextStepRelevant(true);
-                        }
+
+                if (isForNextStep && ((address.length == 2 && address[0].equals(nextStep())) || (address.length == 3 && address[2].contains(nextStep())))) {
+
+                    if (comparison) {
+                        setNextStepRelevant(true);
                     }
+
                     preComputedRelevanceMap.put(view, comparison + ":" + popup);
                 } else {
                     toggleViewVisibility(view, comparison, isPopup);
