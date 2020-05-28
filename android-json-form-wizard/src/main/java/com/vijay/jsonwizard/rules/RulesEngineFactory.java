@@ -101,7 +101,7 @@ public class RulesEngineFactory implements RuleListener {
     }
 
 
-    public boolean getRelevance(@NonNull Facts relevanceFact, @NonNull String ruleFilename,String stepName) {
+    public boolean getRelevance(@NonNull Facts relevanceFact, @NonNull String ruleFilename, String stepName) {
 
         Facts facts = initializeFacts(relevanceFact);
 
@@ -149,19 +149,31 @@ public class RulesEngineFactory implements RuleListener {
         try {
             if (!ruleMap.containsKey(fileName)) {
                 BufferedReader bufferedReader;
+                boolean loadedFromDb = false;
                 if (context instanceof JsonSubFormAndRulesLoader) {
                     bufferedReader = ((JsonSubFormAndRulesLoader) context).getRules(context, fileName);
+                    loadedFromDb = true;
                 } else {
                     bufferedReader = new BufferedReader(new InputStreamReader(context.getAssets().open(fileName)));
                 }
-                ruleMap.put(fileName, MVELRuleFactory.createRulesFrom(bufferedReader));
-                for (Rule rule : ruleMap.get(fileName)) {
-                    String step = ruleFileName + rule.getName().substring(0, rule.getName().indexOf("_"));
-                    if (!relevanceRules.containsKey(step)) {
-                        relevanceRules.put(step, new Rules());
+                try {
+                    // This catches the yaml syntax violation error thrown by org.jeasy.rules.support.RuleDefinitionReader.read
+                    ruleMap.put(fileName, MVELRuleFactory.createRulesFrom(bufferedReader));
+                    for (Rule rule : ruleMap.get(fileName)) {
+                        String step = ruleFileName + rule.getName().substring(0, rule.getName().indexOf("_"));
+                        if (!relevanceRules.containsKey(step)) {
+                            relevanceRules.put(step, new Rules());
+                        }
+                        relevanceRules.get(step).register(rule);
                     }
-                    relevanceRules.get(step).register(rule);
+                } catch (Exception ex) {
+                    Timber.e(ex);
 
+                    if (loadedFromDb) {
+                        ((JsonSubFormAndRulesLoader) context).handleFormError(true, fileName);
+                    }
+
+                    return null;
                 }
             }
             return ruleMap.get(fileName);

@@ -1662,10 +1662,11 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         JSONArray fieldArray = new JSONArray();
         JSONObject jsonObject = null;
         try {
-            jsonObject = getSubForm(subFormName, subFormLocation, getApplicationContext(), translateForm);
+            jsonObject = getSubForm(subFormName, subFormLocation, this, translateForm);
         } catch (Exception e) {
             Timber.e(e);
         }
+
         if (jsonObject != null) {
             try {
                 JSONArray jsonArray = jsonObject.getJSONArray(JsonFormConstants.CONTENT_FORM);

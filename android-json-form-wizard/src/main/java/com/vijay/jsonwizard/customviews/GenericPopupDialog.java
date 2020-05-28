@@ -200,6 +200,8 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
                 } catch (JSONException e) {
                     Timber.e(e, "GenericPopupDialog --> loadSubForms");
                 }
+            } else {
+                GenericPopupDialog.this.dismiss();
             }
         }
     }
