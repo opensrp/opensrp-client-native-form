@@ -3,7 +3,6 @@ package com.vijay.jsonwizard.presenters;
 import android.Manifest.permission;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatSpinner;
 import android.view.View;
@@ -14,7 +13,6 @@ import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.TestConstants;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
-import com.vijay.jsonwizard.application.TestApplication;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormErrorFragment;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
@@ -25,14 +23,12 @@ import com.vijay.jsonwizard.shadow.ShadowContextCompat;
 import com.vijay.jsonwizard.shadow.ShadowPermissionUtils;
 import com.vijay.jsonwizard.utils.AppExecutors;
 import com.vijay.jsonwizard.utils.FormUtils;
-import com.vijay.jsonwizard.utils.ValidationStatus;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -40,7 +36,6 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
@@ -48,13 +43,10 @@ import org.robolectric.annotation.LooperMode;
 import org.robolectric.shadows.ShadowToast;
 
 import java.lang.ref.WeakReference;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Stack;
-import java.util.concurrent.Executors;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -265,11 +257,11 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         setTextValue("step1:user_last_name", "Doe");
         setTextValue("step1:user_first_name", "John");
         setTextValue("step1:user_age", "21");
-        ((AppCompatSpinner) formFragment.getJsonApi().getFormDataView("step1:user_spinner")).setSelection(1);
+        ((AppCompatSpinner) formFragment.getJsonApi().getFormDataView("step1:user_spinner")).setSelection(1,false);
         presenter.validateAndWriteValues();
         shadowOf(getMainLooper()).idle();
         assertEquals(0, presenter.getInvalidFields().size());
-        verify(formFragment, times(13)).writeValue(anyString(), anyString(), anyString(), anyString(), anyString(),
+        verify(formFragment, times(12)).writeValue(anyString(), anyString(), anyString(), anyString(), anyString(),
                 anyString(), anyBoolean());
         verify(onFieldsInvalid, times(2)).passInvalidFields(presenter.getInvalidFields());
     }
@@ -309,11 +301,11 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         setTextValue("step1:user_last_name", "Doe");
         setTextValue("step1:user_first_name", "John");
         setTextValue("step1:user_age", "21");
-        ((AppCompatSpinner) formFragment.getJsonApi().getFormDataView("step1:user_spinner")).setSelection(1);
+        ((AppCompatSpinner) formFragment.getJsonApi().getFormDataView("step1:user_spinner")).setSelection(1,false);
         presenter.onSaveClick(formFragment.getMainView());
         shadowOf(getMainLooper()).idle();
         assertEquals(0, presenter.getInvalidFields().size());
-        verify(formFragment, times(7)).writeValue(anyString(), anyString(), anyString(), anyString(), anyString(),
+        verify(formFragment, times(6)).writeValue(anyString(), anyString(), anyString(), anyString(), anyString(),
                 anyString(), anyBoolean());
         assertNull(presenter.getErrorFragment());
         assertNull(ShadowToast.getLatestToast());
