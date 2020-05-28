@@ -469,22 +469,22 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         }
                     }
                 }
-                return fillFieldsWithValues(keysList, popup);
+                return fillFieldsWithValues(keysList);
             } else if (RuleConstant.RULES_ENGINE.equals(address[0])) {
                 String fieldKey = address[2];
                 List<String> rulesList = getRules(address[1], fieldKey, false);
                 if (rulesList != null) {
-                    return fillFieldsWithValues(rulesList, popup);
+                    return fillFieldsWithValues(rulesList);
                 }
             } else {
-                return getRelevanceReferencedObject(address[0], address[1], popup);
+                return getRelevanceReferencedObject(address[0], address[1]);
             }
         }
 
         return null;
     }
 
-    private JSONObject fillFieldsWithValues(List<String> rulesList, boolean popup) throws JSONException {
+    private JSONObject fillFieldsWithValues(List<String> rulesList) throws JSONException {
         JSONObject result = new JSONObject();
         JSONArray rulesArray = new JSONArray();
         for (String rule : rulesList) {
@@ -552,7 +552,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                             return result;
                         }
                     } else {
-                        return getRelevanceReferencedObject(address[0], address[1], popup);
+                        return getRelevanceReferencedObject(address[0], address[1]);
                     }
                 }
             } catch (Exception e) {
@@ -830,15 +830,15 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         return address;
     }
 
-    private JSONObject getRelevanceReferencedObject(String stepName, String key, boolean popup) {
+    private JSONObject getRelevanceReferencedObject(String stepName, String key) {
         return formFields.get(stepName + "_" + key);
     }
 
-    private void getFieldObject(String stepName, List<String> rulesList, JSONArray rulesArray, JSONArray feilds)
+    private void getFieldObject(String stepName, List<String> rulesList, JSONArray rulesArray, JSONArray fields)
             throws JSONException {
-        if (feilds.length() > 0) {
-            for (int j = 0; j < feilds.length(); j++) {
-                JSONObject fieldObject = feilds.getJSONObject(j);
+        if (fields.length() > 0) {
+            for (int j = 0; j < fields.length(); j++) {
+                JSONObject fieldObject = fields.getJSONObject(j);
                 if (rulesList.contains(stepName + "_" + fieldObject.getString(JsonFormConstants.KEY)) &&
                         !JsonFormConstants.LABEL.equals(fieldObject.getString(JsonFormConstants.TYPE))) {
                     if (fieldObject.has(JsonFormConstants.VALUES)) {

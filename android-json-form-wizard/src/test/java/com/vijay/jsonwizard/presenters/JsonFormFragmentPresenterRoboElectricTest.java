@@ -154,7 +154,7 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         List<View> views = Collections.singletonList(textView);
         when(jsonFormInteractor.fetchFormElements(anyString(), any(JsonFormFragment.class), any(JSONObject.class), isNull(CommonListener.class), anyBoolean())).thenReturn(views);
         presenter.addFormElements();
-        Shadows.shadowOf(getMainLooper()).idle();
+        shadowOf(getMainLooper()).idle();
         verify(jsonFormInteractor, timeout(TIMEOUT)).fetchFormElements(eq(STEP1), eq(formFragment), jsonArgumentCaptor.capture(), isNull(CommonListener.class), eq(false));
         assertEquals(mStepDetails.toString(), jsonArgumentCaptor.getValue().toString());
         verify(formFragment, timeout(TIMEOUT)).addFormElements(views);
