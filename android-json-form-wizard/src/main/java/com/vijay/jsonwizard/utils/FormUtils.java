@@ -69,6 +69,8 @@ import java.util.regex.Pattern;
 
 import timber.log.Timber;
 
+import static com.vijay.jsonwizard.utils.Utils.convertStreamToString;
+
 /**
  * Created by vijay on 24-05-2015.
  */
@@ -609,28 +611,31 @@ public class FormUtils {
 
     public static JSONObject getSubFormJson(String formIdentity, String subFormsLocation,
                                             Context context) throws Exception {
-        String defaultSubFormLocation = JsonFormConstants.DEFAULT_SUB_FORM_LOCATION;
-        if (!TextUtils.isEmpty(subFormsLocation)) {
-            defaultSubFormLocation = subFormsLocation;
-        }
-        return new JSONObject(loadSubForm(formIdentity, defaultSubFormLocation, context));
+
+        return new JSONObject(loadSubForm(formIdentity, getSubFormLocation(subFormsLocation), context));
+    }
+
+    public static JSONObject getSubFormJson(String formIdentity, String subFormsLocation,
+                                            Context context, boolean translateSubForm) throws Exception {
+
+        return new JSONObject(loadSubForm(formIdentity, getSubFormLocation(subFormsLocation), context, translateSubForm));
+    }
+
+    public static String getSubFormLocation(String subFormsLocation) {
+        return TextUtils.isEmpty(subFormsLocation) ? JsonFormConstants.DEFAULT_SUB_FORM_LOCATION : subFormsLocation;
     }
 
     public static String loadSubForm(String formIdentity, String defaultSubFormLocation,
-                                     Context context)
-            throws IOException {
-        StringBuilder stringBuilder = new StringBuilder();
-        InputStream inputStream = context.getAssets()
-                .open(defaultSubFormLocation + "/" + formIdentity + ".json");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+                                     Context context, boolean translateSubForm) throws IOException {
 
-        String jsonString;
-        while ((jsonString = reader.readLine()) != null) {
-            stringBuilder.append(jsonString);
-        }
-        inputStream.close();
+        String subForm = loadSubForm(formIdentity, defaultSubFormLocation, context);
+        return translateSubForm ? NativeFormLangUtils.getTranslatedString(subForm, context) : subForm;
+    }
 
-        return stringBuilder.toString();
+    public static String loadSubForm(String formIdentity, String defaultSubFormLocation,
+                                     Context context) throws IOException {
+
+        return convertStreamToString(context.getAssets().open(defaultSubFormLocation + "/" + formIdentity + ".json"));
     }
 
     public static JSONObject getFieldFromForm(JSONObject jsonForm, String key) throws JSONException {
@@ -1484,26 +1489,45 @@ public class FormUtils {
     }
 
     public void getSpinnerValueOpenMRSAttributes(JSONObject item, JSONArray valueOpenMRSAttributes) throws JSONException {
-        if (item != null && item.equals(JsonFormConstants.SPINNER) && item.has(JsonFormConstants.OPENMRS_CHOICE_IDS)) {
+
+        if (item == null || !item.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.SPINNER)) { return; }
+
+        String spinnerValue = item.getString(JsonFormConstants.VALUE);
+        String spinnerKey = item.getString(JsonFormConstants.KEY);
+        if (item.has(JsonFormConstants.OPENMRS_CHOICE_IDS)) {
             JSONObject openMRSChoiceIds = item.getJSONObject(JsonFormConstants.OPENMRS_CHOICE_IDS);
-            String value = item.getString(JsonFormConstants.VALUE);
             Iterator<String> keys = openMRSChoiceIds.keys();
             while (keys.hasNext()) {
                 String key = keys.next();
-                if (value.equals(key)) {
-                    JSONObject jsonObject = new JSONObject();
-                    String optionOpenMRSConceptId = openMRSChoiceIds.get(key).toString();
-                    jsonObject.put(JsonFormConstants.KEY, item.getString(JsonFormConstants.KEY));
-                    jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_PARENT,
-                            item.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT));
-                    jsonObject.put(JsonFormConstants.OPENMRS_ENTITY, item.getString(JsonFormConstants.OPENMRS_ENTITY));
-                    jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_ID, optionOpenMRSConceptId);
-
-                    valueOpenMRSAttributes.put(jsonObject);
+                if (spinnerValue.equals(key)) {
+                   addOpenMRSAttributes(valueOpenMRSAttributes, item, spinnerKey,
+                           openMRSChoiceIds.getString(key));
+                   break;
                 }
-
+            }
+        } else if (item.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
+            // if an options block is defined
+            JSONArray options = item.optJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
+            for (int i = 0; i < options.length(); i++) {
+                JSONObject option = options.getJSONObject(i);
+                if (option.get(JsonFormConstants.KEY).equals(spinnerValue)) {
+                    addOpenMRSAttributes(valueOpenMRSAttributes, option, spinnerKey,
+                            option.getString(JsonFormConstants.OPENMRS_ENTITY_ID));
+                    break;
+                }
             }
         }
+    }
+
+
+    private void addOpenMRSAttributes(JSONArray valueOpenMRSAttributes, JSONObject item, String key, String openMRSEntityId) throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(JsonFormConstants.KEY, key);
+        jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_PARENT, item.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT));
+        jsonObject.put(JsonFormConstants.OPENMRS_ENTITY, item.getString(JsonFormConstants.OPENMRS_ENTITY));
+        jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_ID, openMRSEntityId);
+
+        valueOpenMRSAttributes.put(jsonObject);
     }
 
     private JSONObject createValueObject(String key, String type, String label, int index, JSONArray values, JSONObject openMRSAttributes, JSONArray valueOpenMRSAttributes) {

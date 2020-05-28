@@ -67,6 +67,10 @@ public class RulesEngineHelper {
         return rulesEngineDateUtil.getDateToday();
     }
 
+    public String getDateTimeToday() {
+        return rulesEngineDateUtil.getDateTimeToday();
+    }
+
     //A secondary value has the format key:name e.g. ultrasound_done:yes
     public String getSecondaryValue(String value) {
         if (value.contains(":")) {
@@ -82,7 +86,7 @@ public class RulesEngineHelper {
     }
 
     public String getNonBlankValue(List<String> values) {
-        if (values != null){
+        if (values != null) {
             for (String value : values) {
                 if (value != null && !value.isEmpty()) {
                     return value;

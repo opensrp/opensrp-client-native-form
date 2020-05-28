@@ -130,6 +130,7 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         when(jsonFormActivity.getAppExecutors()).thenReturn(appExecutors);
     }
 
+
     private void initWithActualForm() throws InterruptedException {
         Intent intent = new Intent();
         intent.putExtra("json", TestConstants.BASIC_FORM);
@@ -177,7 +178,6 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
 
     }
 
-
     @Test
     public void testSetUpToolBarIfStepHasNext() throws JSONException {
         Whitebox.setInternalState(presenter, "mStepDetails", mStepDetails);
@@ -187,7 +187,6 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         verify(formFragment).updateVisibilityOfNextAndSave(true, false);
 
     }
-
 
     @Test
     public void testSetUpToolBarForLastLastStep() {
@@ -214,7 +213,6 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         Whitebox.setInternalState(presenter, "incorrectlyFormattedFields", stack);
         assertEquals(stack, presenter.getIncorrectlyFormattedFields());
     }
-
 
     @Test
     public void testSetErrorFragment() {
@@ -243,7 +241,6 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
                 anyString(), anyBoolean());
         verify(onFieldsInvalid).passInvalidFields(presenter.getInvalidFields());
     }
-
 
     @Test
     public void testValidateAndWriteValues() throws InterruptedException {

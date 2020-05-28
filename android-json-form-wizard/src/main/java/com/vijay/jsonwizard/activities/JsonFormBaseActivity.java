@@ -1,8 +1,10 @@
 package com.vijay.jsonwizard.activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -13,6 +15,7 @@ import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
+import com.vijay.jsonwizard.interfaces.JsonSubFormAndRulesLoader;
 import com.vijay.jsonwizard.interfaces.LifeCycleListener;
 import com.vijay.jsonwizard.interfaces.OnActivityRequestPermissionResultListener;
 import com.vijay.jsonwizard.interfaces.OnActivityResultListener;
@@ -25,6 +28,9 @@ import com.vijay.jsonwizard.utils.ValidationStatus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +43,7 @@ import timber.log.Timber;
 
 import static com.vijay.jsonwizard.utils.NativeFormLangUtils.getTranslatedString;
 
-abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnFieldsInvalid {
+abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnFieldsInvalid, JsonSubFormAndRulesLoader {
     protected static final String TAG = JsonFormActivity.class.getSimpleName();
     protected static final String JSON_STATE = "jsonState";
     protected static final String FORM_STATE = "formState";
@@ -60,6 +66,7 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
     private Map<String, ValidationStatus> invalidFields = new HashMap<>();
     private boolean isPreviousPressed = false;
     private ProgressDialog progressDialog;
+    protected boolean translateForm = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,9 +81,10 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
         onActivityRequestPermissionResultListeners = new HashMap<>();
         lifeCycleListeners = new ArrayList<>();
         isFormFragmentInitialized = false;
+        translateForm = getIntent().getBooleanExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, false);
         if (savedInstanceState == null) {
             this.form = extractForm(getIntent().getSerializableExtra(JsonFormConstants.JSON_FORM_KEY.FORM));
-            init(getForm());
+            init(getJsonForm());
             initializeFormFragment();
             onFormStart();
         } else {
@@ -88,10 +96,10 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
         }
     }
 
-    private String getForm() {
+    protected String getJsonForm() {
         String jsonForm = getIntent().getStringExtra(JsonFormConstants.JSON_FORM_KEY.JSON);
-        if (getIntent().getBooleanExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, false)) {
-            jsonForm = getTranslatedString(jsonForm);
+        if (translateForm) {
+            jsonForm = getTranslatedString(jsonForm, this);
         }
         return jsonForm;
     }
@@ -215,5 +223,17 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
 
     public void setProgressDialog(ProgressDialog progressDialog) {
         this.progressDialog = progressDialog;
+    }
+
+    @NonNull
+    public JSONObject getSubForm(String formIdentity, String subFormsLocation,
+                                 Context context, boolean translateSubForm) throws Exception {
+        return FormUtils.getSubFormJson(formIdentity, subFormsLocation, getApplicationContext(), translateForm);
+    }
+
+    @NonNull
+    @Override
+    public BufferedReader getRules(@NonNull Context context, @NonNull String fileName) throws IOException {
+        return new BufferedReader(new InputStreamReader(context.getAssets().open(fileName)));
     }
 }

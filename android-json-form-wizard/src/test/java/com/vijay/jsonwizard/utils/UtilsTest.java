@@ -13,6 +13,8 @@ import android.widget.RadioGroup;
 import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.fragments.JsonFormFragment;
+import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.rules.RuleConstant;
 import com.vijay.jsonwizard.views.CustomTextView;
 import com.vijay.jsonwizard.widgets.DatePickerFactory;
@@ -329,5 +331,17 @@ public class UtilsTest extends BaseTest {
         Utils utils = new Utils();
         String expected = "yes, no, don't know";
         Assert.assertEquals(expected, WhiteboxImpl.invokeMethod(utils, "getStringValue", jsonObject));
+    }
+
+    @Test
+    public void testRemoveGeneratedDynamicRulesShouldRemoveRules() throws JSONException {
+        String formSample = "{\"count\":\"1\",\"step1\":{\"fields\":[{\"key\":\"diagnostic_test_result_d724bdfb19584539af33b1826ea0b989\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"hint\":\"The result of the test conducted\",\"type\":\"spinner\",\"values\":[\"Positive\",\"Negative\",\"Inconclusive\"],\"relevance\":{\"rules-engine\":{\"ex-rules\":{\"rules-dynamic\":[{\"key\":\"d724bdfb19584539af33b1826ea0b989\"},{\"name\":\"step4_diagnostic_test_result_d724bdfb19584539af33b1826ea0b989\",\"description\":\"diagnostic_test_result_d724bdfb19584539af33b1826ea0b989\",\"priority\":1,\"actions\":\"isRelevant = true\",\"condition\":\"step4_diagnostic_test_d724bdfb19584539af33b1826ea0b989 == 'Pregnancy Test' || step4_diagnostic_test_d724bdfb19584539af33b1826ea0b989 == 'Malaria test' || step4_diagnostic_test_d724bdfb19584539af33b1826ea0b989 == 'HIV test - Rapid Test' || step4_diagnostic_test_d724bdfb19584539af33b1826ea0b989 == 'HIV test' || step4_diagnostic_test_d724bdfb19584539af33b1826ea0b989 == 'Syphilis Test - VDRL' || step4_diagnostic_test_d724bdfb19584539af33b1826ea0b989 == 'HIV EID' || step4_diagnostic_test_d724bdfb19584539af33b1826ea0b989 == 'Hep B test' || step4_diagnostic_test_d724bdfb19584539af33b1826ea0b989 == 'Hep C test' || step4_diagnostic_test_d724bdfb19584539af33b1826ea0b989 == 'TB-urine LAM' || step4_diagnostic_test_d724bdfb19584539af33b1826ea0b989 == 'TB Screening' || step4_diagnostic_test_d724bdfb19584539af33b1826ea0b989 == 'Midstream urine Gram-staining' || step4_diagnostic_test_d724bdfb19584539af33b1826ea0b989 == 'Malaria - MRDT'\"}]}}}}]}}";
+        JSONObject form = new JSONObject(formSample);
+        JsonFormFragment jsonFormFragment = Mockito.mock(JsonFormFragment.class);
+        JsonApi jsonApi = Mockito.mock(JsonApi.class);
+        Mockito.when(jsonFormFragment.getJsonApi()).thenReturn(jsonApi);
+        Mockito.when(jsonApi.getmJSONObject()).thenReturn(form);
+        Utils.removeGeneratedDynamicRules(jsonFormFragment);
+        Assert.assertFalse(form.optJSONObject(JsonFormConstants.STEP1).optJSONArray(JsonFormConstants.FIELDS).optJSONObject(0).has(JsonFormConstants.RELEVANCE));
     }
 }

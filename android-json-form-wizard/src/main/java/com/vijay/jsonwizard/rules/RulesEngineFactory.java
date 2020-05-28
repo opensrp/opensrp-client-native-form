@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.interfaces.JsonSubFormAndRulesLoader;
 import com.vijay.jsonwizard.utils.Utils;
 
 import org.jeasy.rules.api.Facts;
@@ -84,7 +85,7 @@ public class RulesEngineFactory implements RuleListener {
         }
     }
 
-    private MVELRule getDynamicRulesFromJsonObject(JSONObject jsonObjectDynamicRule) {
+    private MVELRule getDynamicRulesFromJsonObject(@NonNull JSONObject jsonObjectDynamicRule) {
         try {
             MVELRule dynamicMvelRule = new MVELRule();
             dynamicMvelRule.setDescription(jsonObjectDynamicRule.optString(RuleConstant.DESCRIPTION));
@@ -99,7 +100,8 @@ public class RulesEngineFactory implements RuleListener {
         }
     }
 
-    public boolean getRelevance(Facts relevanceFact, String ruleFilename, String stepName) {
+
+    public boolean getRelevance(@NonNull Facts relevanceFact, @NonNull String ruleFilename,String stepName) {
 
         Facts facts = initializeFacts(relevanceFact);
 
@@ -141,11 +143,17 @@ public class RulesEngineFactory implements RuleListener {
         return facts;
     }
 
+
     public Rules getRulesFromAsset(String ruleFileName) {
         String fileName = RULE_FOLDER_PATH + ruleFileName;
         try {
             if (!ruleMap.containsKey(fileName)) {
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(context.getAssets().open(fileName)));
+                BufferedReader bufferedReader;
+                if (context instanceof JsonSubFormAndRulesLoader) {
+                    bufferedReader = ((JsonSubFormAndRulesLoader) context).getRules(context, fileName);
+                } else {
+                    bufferedReader = new BufferedReader(new InputStreamReader(context.getAssets().open(fileName)));
+                }
                 ruleMap.put(fileName, MVELRuleFactory.createRulesFrom(bufferedReader));
                 for (Rule rule : ruleMap.get(fileName)) {
                     String step = ruleFileName + rule.getName().substring(0, rule.getName().indexOf("_"));

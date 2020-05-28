@@ -28,8 +28,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 public class CountDownTimerFactory implements FormWidgetFactory {
@@ -228,5 +230,10 @@ public class CountDownTimerFactory implements FormWidgetFactory {
     protected void onCountdownFinish(Context context) {
         // Countdown complete post processing
         ringAlarm(context);
+    }
+
+    @Override
+    public Set<String> getCustomTranslatableWidgetFields() {
+        return new HashSet<>();
     }
 }

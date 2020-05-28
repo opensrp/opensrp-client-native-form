@@ -26,6 +26,7 @@ import com.vijay.jsonwizard.customviews.CompoundButton;
 import com.vijay.jsonwizard.customviews.ExpansionPanelGenericPopupDialog;
 import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.event.BaseEvent;
+import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.rules.RuleConstant;
 import com.vijay.jsonwizard.views.CustomTextView;
 import com.vijay.jsonwizard.widgets.DatePickerFactory;
@@ -40,9 +41,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.yaml.snakeyaml.Yaml;
 
+import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -303,20 +305,6 @@ public class Utils {
         }
 
         return conditionString.replaceAll("  ", " ");
-    }
-
-    public static Iterable<Object> readYamlFile(String fileName, Context context) {
-        Yaml yaml = new Yaml();
-        InputStreamReader inputStreamReader;
-        Iterable<Object> objectIterable = null;
-        try {
-            inputStreamReader = new InputStreamReader(context.getAssets().open(fileName));
-            objectIterable = yaml.loadAll(inputStreamReader);
-        } catch (IOException e) {
-            Timber.e(e);
-        }
-
-        return objectIterable;
     }
 
     public static void buildRulesWithUniqueId(JSONObject element, String uniqueId, String ruleType, Context context, Map<String, List<Map<String, Object>>> rulesFileMap) throws JSONException {
@@ -629,40 +617,91 @@ public class Utils {
         return new ArrayList<>(conditionKeys.keySet());
     }
 
+    public static Iterable<Object> readYamlFile(String fileName, Context context) {
+        return new Yaml().loadAll(getTranslatedYamlFile(fileName, context));
+    }
+
     /**
      * Translates a yaml file specified by {@param fileName} and returns its String representation
      *
      * @param fileName
      * @param context
      * @return Translated Yaml file in its String representation
-     * @throws IOException
      */
-    public static String getTranslatedYamlFile(String fileName, Context context) throws IOException {
-        return getTranslatedString(getAssetFileAsString(fileName, context));
+    public static String getTranslatedYamlFile(String fileName, Context context) {
+        return getTranslatedString(getAssetFileAsString(fileName, context), context);
     }
 
     /**
-     * Gets a file specified by {@param fileName} from the assets folder as a String
+     * Gets the contents of a file specified by {@param fileName} from the assets folder as a {@link String}
      *
      * @param fileName
      * @param context
      * @return A file from the assets folder as a String
-     * @throws IOException
      */
-    public static String getAssetFileAsString(String fileName, Context context) throws IOException {
-        InputStream inputStream = context.getAssets().open(fileName);
-        return convertStreamToString(inputStream);
+    public static String getAssetFileAsString(String fileName, Context context) {
+        InputStream inputStream = null;
+        String fileContents = "";
+        try {
+            inputStream = context.getAssets().open(fileName);
+            fileContents = convertStreamToString(inputStream);
+        } catch (IOException e) {
+            Timber.e(e);
+        } finally {
+            closeCloseable(inputStream);
+        }
+        return fileContents;
+    }
+
+    public static void closeCloseable(Closeable closeable) {
+        try {
+            if (closeable != null) {
+                closeable.close();
+            }
+        } catch (IOException e) {
+            Timber.e(e);
+        }
+    }
+
+    private static void closeScanner(Scanner scanner) {
+        if (scanner != null) {
+            scanner.close();
+        }
     }
 
     /**
-     * Converts an {@link InputStream} into a String
+     * Returns file contents for the file at {@param filePath} as a String
+     * <p>
+     * Defaults to an empty {@link String} if the file does not exist or is empty
+     *
+     * @param filePath
+     * @return
+     */
+    public static String getFileContentsAsString(String filePath) {
+        Scanner scanner = null;
+        String fileContents = "";
+        try {
+            scanner = new Scanner(new File(filePath));
+            fileContents = scanner.useDelimiter("\\A").next();
+        } catch (IOException e) {
+            Timber.e(e);
+        } finally {
+            closeScanner(scanner);
+        }
+        return fileContents;
+    }
+
+    /**
+     * Converts an {@link InputStream} into a {@link String}
      *
      * @param inputStream
      * @return String representation of an {@link InputStream}
      */
     public static String convertStreamToString(InputStream inputStream) {
-        Scanner s = new Scanner(inputStream).useDelimiter("\\A");
-        return s.hasNext() ? s.next() : "";
+        Scanner scanner = new Scanner(inputStream).useDelimiter("\\A");
+        String data = scanner.hasNext() ? scanner.next() : "";
+        closeScanner(scanner);
+        return data;
     }
 
 
@@ -678,16 +717,18 @@ public class Utils {
      */
     public static JSONObject getFormConfig(@NonNull String formName, @NonNull String configLocation, @NonNull Context context) throws JSONException, IOException {
         String fileContent = getAssetFileAsString(configLocation, context);
+        JSONObject formConfig = null;
         if (StringUtils.isNotBlank(fileContent)) {
             JSONArray jsonArray = new JSONArray(fileContent);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.optJSONObject(i);
                 if (formName.equals(jsonObject.optString(JsonFormConstants.FORM_NAME))) {
-                    return jsonObject;
+                    formConfig = jsonObject;
+                    break;
                 }
             }
         }
-        return null;
+        return formConfig;
     }
 
     /**
@@ -705,6 +746,34 @@ public class Utils {
             return strings;
         }
         return null;
+    }
+
+
+    /***
+     * removes the generated dynamic rules by repeating group
+     */
+    public static void removeGeneratedDynamicRules(JsonFormFragment formFragment) {
+        JSONObject form = formFragment.getJsonApi().getmJSONObject();
+        JSONArray jsonArray = FormUtils.getMultiStepFormFields(form);
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = jsonArray.optJSONObject(i);
+            if (jsonObject.has(JsonFormConstants.RELEVANCE) &&
+                    jsonObject.optJSONObject(JsonFormConstants.RELEVANCE).has(RuleConstant.RULES_ENGINE) &&
+                    jsonObject.optJSONObject(JsonFormConstants.RELEVANCE).optJSONObject(RuleConstant.RULES_ENGINE)
+                            .has(JsonFormConstants.JSON_FORM_KEY.EX_RULES) &&
+                    jsonObject.optJSONObject(JsonFormConstants.RELEVANCE).optJSONObject(RuleConstant.RULES_ENGINE)
+                            .optJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).has(RuleConstant.RULES_DYNAMIC)) {
+                jsonArray.optJSONObject(i).remove(JsonFormConstants.RELEVANCE);
+            }
+            if (jsonObject.has(JsonFormConstants.CALCULATION) &&
+                    jsonObject.optJSONObject(JsonFormConstants.CALCULATION).has(RuleConstant.RULES_ENGINE) &&
+                    jsonObject.optJSONObject(JsonFormConstants.CALCULATION).optJSONObject(RuleConstant.RULES_ENGINE)
+                            .has(JsonFormConstants.JSON_FORM_KEY.EX_RULES) &&
+                    jsonObject.optJSONObject(JsonFormConstants.CALCULATION).optJSONObject(RuleConstant.RULES_ENGINE)
+                            .optJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES).has(RuleConstant.RULES_DYNAMIC)) {
+                jsonArray.optJSONObject(i).remove(JsonFormConstants.CALCULATION);
+            }
+        }
     }
 }
 

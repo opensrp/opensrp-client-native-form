@@ -2,6 +2,7 @@ package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +15,6 @@ import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
-import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
@@ -26,8 +26,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT;
 import static com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT;
@@ -38,7 +40,7 @@ import static com.vijay.jsonwizard.utils.FormUtils.getValueFromSpOrDpOrPx;
 /**
  * Created by vijay on 24-05-2015.
  */
-public class CheckBoxFactory implements FormWidgetFactory {
+public class CheckBoxFactory extends BaseFactory {
     private FormUtils formUtils = new FormUtils();
 
     public static ValidationStatus validate(JsonFormFragmentView formFragmentView, LinearLayout checkboxLinearLayout) {
@@ -141,15 +143,6 @@ public class CheckBoxFactory implements FormWidgetFactory {
 
         views.add(rootLayout);
         return views;
-    }
-
-    /**
-     * Generic method incase you want to alter or reference the widgets properties
-     *
-     * @param view the root layout
-     */
-    public void genericWidgetLayoutHookback(View view, JSONObject jsonObject, JsonFormFragment formFragment) {
-        // Override this in views if you require a reference to the widget's properties
     }
 
     protected int getLayout() {
@@ -296,5 +289,13 @@ public class CheckBoxFactory implements FormWidgetFactory {
         checkBox.setTextSize(getValueFromSpOrDpOrPx(optionTextSize, context));
         checkBox.setEnabled(!readOnly);
         checkBox.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
+    }
+
+    @Override
+    @NonNull
+    public Set<String> getCustomTranslatableWidgetFields() {
+        Set<String> customTranslatableWidgetFields = new HashSet<>();
+        customTranslatableWidgetFields.add(JsonFormConstants.OPTIONS_FIELD_NAME + "." + JsonFormConstants.TEXT);
+        return customTranslatableWidgetFields;
     }
 }

@@ -38,8 +38,12 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+
+import static com.vijay.jsonwizard.widgets.TimePickerFactory.KEY.DURATION;
 
 import timber.log.Timber;
 
@@ -339,6 +343,14 @@ public class DatePickerFactory implements FormWidgetFactory {
         return datePickerDialog;
     }
 
+    @Override
+    @NonNull
+    public Set<String> getCustomTranslatableWidgetFields() {
+        Set<String> customTranslatableWidgetFields = new HashSet<>();
+        customTranslatableWidgetFields.add(DURATION + "." + JsonFormConstants.LABEL);
+        return customTranslatableWidgetFields;
+    }
+
     protected int getLayout() {
         return R.layout.native_form_item_date_picker;
     }
@@ -354,5 +366,4 @@ public class DatePickerFactory implements FormWidgetFactory {
 
         public static final String DEFAULT = "default";
     }
-
 }
