@@ -9,7 +9,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(sdk = Build.VERSION_CODES.O_MR1, application = TestApplication.class)
+@Config(sdk = Build.VERSION_CODES.P, application = TestApplication.class)
 public abstract class BaseTest {
     protected static final int CONSTANT_INT_50 = 50;
     protected static final int CONSTANT_INT_20 = 20;
