@@ -47,8 +47,6 @@ import java.util.Set;
 
 import timber.log.Timber;
 
-import static com.vijay.jsonwizard.widgets.TimePickerFactory.KEY.DURATION;
-
 /**
  * @author Jason Rogena - jrogena@ona.io
  * @since 25/01/2017
@@ -129,7 +127,7 @@ public class DatePickerFactory implements FormWidgetFactory {
     @NonNull
     public Set<String> getCustomTranslatableWidgetFields() {
         Set<String> customTranslatableWidgetFields = new HashSet<>();
-        customTranslatableWidgetFields.add(DURATION + "." + JsonFormConstants.LABEL);
+        customTranslatableWidgetFields.add(DatePickerFactory.KEY.DURATION + "." + JsonFormConstants.LABEL);
         return customTranslatableWidgetFields;
     }
 
@@ -182,8 +180,8 @@ public class DatePickerFactory implements FormWidgetFactory {
             duration.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
             duration.setTag(R.id.openmrs_entity, openMrsEntity);
             duration.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-            if (jsonObject.has(KEY.DURATION) && jsonObject.getJSONObject(KEY.DURATION) != null) {
-                duration.setTag(R.id.label, jsonObject.getJSONObject(KEY.DURATION).getString(JsonFormConstants.LABEL));
+            if (jsonObject.has(DatePickerFactory.KEY.DURATION) && jsonObject.getJSONObject(DatePickerFactory.KEY.DURATION) != null) {
+                duration.setTag(R.id.label, jsonObject.getJSONObject(DatePickerFactory.KEY.DURATION).getString(JsonFormConstants.LABEL));
             }
 
             updateEditText(editText, jsonObject, stepName, context, duration);
@@ -376,13 +374,9 @@ public class DatePickerFactory implements FormWidgetFactory {
 
     public static class KEY {
         public static final String DURATION = "duration";
-
         public static final String HINT = "hint";
-
         public static final String KEY = "key";
-
         public static final String VALUE = (JsonFormConstants.VALUE);
-
         public static final String DEFAULT = "default";
     }
 }

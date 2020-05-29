@@ -39,9 +39,6 @@ public class DatePickerFactoryTest extends BaseTest {
     private Resources resources;
 
     @Mock
-    private Configuration configuration;
-
-    @Mock
     private CommonListener listener;
 
     @Mock
@@ -72,7 +69,6 @@ public class DatePickerFactoryTest extends BaseTest {
         Mockito.doReturn(resources).when(context).getResources();
         Assert.assertNotNull(resources);
 
-
         context.setTheme(R.style.NativeFormsAppTheme);
         Mockito.doReturn(rootLayout).when(factorySpy).getRelativeLayout(context);
         Mockito.doReturn(editText).when(rootLayout).findViewById(R.id.edit_text);
@@ -81,7 +77,6 @@ public class DatePickerFactoryTest extends BaseTest {
         Mockito.doReturn(Locale.ENGLISH).when(factorySpy).getCurrentLocale(context);
         Mockito.doReturn("Age").when(duration).getTag(ArgumentMatchers.anyInt());
         Mockito.doReturn(Locale.ENGLISH).when(factorySpy).getSetLanguage(context);
-        Locale locale = Locale.ENGLISH;
         Mockito.doReturn("12 Age").when(factorySpy).getDurationText(context, "12-05-2010", Locale.ENGLISH);
         Mockito.doReturn(resources).when(context).getResources();
         Mockito.doReturn("%1$dw").when(resources).getString(ArgumentMatchers.anyInt());
