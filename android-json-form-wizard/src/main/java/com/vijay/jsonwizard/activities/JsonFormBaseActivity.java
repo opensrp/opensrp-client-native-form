@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -67,6 +68,8 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
     private boolean isPreviousPressed = false;
     private ProgressDialog progressDialog;
     protected boolean translateForm = false;
+
+    protected boolean isVisibleFormErrorAndRollbackDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -225,15 +228,33 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
         this.progressDialog = progressDialog;
     }
 
-    @NonNull
+    @Nullable
+    @Override
     public JSONObject getSubForm(String formIdentity, String subFormsLocation,
                                  Context context, boolean translateSubForm) throws Exception {
         return FormUtils.getSubFormJson(formIdentity, subFormsLocation, getApplicationContext(), translateForm);
     }
 
-    @NonNull
+    @Nullable
     @Override
     public BufferedReader getRules(@NonNull Context context, @NonNull String fileName) throws IOException {
         return new BufferedReader(new InputStreamReader(context.getAssets().open(fileName)));
     }
+
+    @Override
+    public void handleFormError(boolean isRulesFile, @NonNull String formIdentifier) {
+        // Do nothing here
+    }
+
+    @Override
+    public void setVisibleFormErrorAndRollbackDialog(boolean isVisible) {
+        isVisibleFormErrorAndRollbackDialog = isVisible;
+    }
+
+    @Override
+    public boolean isVisibleFormErrorAndRollbackDialog() {
+        return isVisibleFormErrorAndRollbackDialog;
+    }
+
+
 }
