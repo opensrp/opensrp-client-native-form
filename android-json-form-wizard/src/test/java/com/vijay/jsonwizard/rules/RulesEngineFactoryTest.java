@@ -3,6 +3,8 @@ package com.vijay.jsonwizard.rules;
 import android.content.Context;
 import android.content.res.AssetManager;
 
+import com.vijay.jsonwizard.activities.JsonFormActivity;
+
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rule;
 import org.jeasy.rules.api.Rules;
@@ -18,10 +20,13 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.powermock.reflect.internal.WhiteboxImpl;
+import org.robolectric.util.ReflectionHelpers;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -266,5 +271,18 @@ public class RulesEngineFactoryTest {
     public void testFormatCalculationShouldReturnFloatTo2dp() throws Exception {
         String result = WhiteboxImpl.invokeMethod(rulesEngineFactory, "formatCalculationReturnValue", "34.789");
         Assert.assertEquals("34.79", result);
+    }
+
+    @Test
+    public void testGetRulesFromAssetShouldCallActivityHandleError() throws IOException {
+        String ruleFileName = "rules/calculation_file.yml";
+        JsonFormActivity jsonFormActivity = Mockito.mock(JsonFormActivity.class);
+
+        Mockito.doReturn(new BufferedReader(new StringReader("{"))).when(jsonFormActivity).getRules(jsonFormActivity, ruleFileName);
+
+        rulesEngineFactory = new RulesEngineFactory(jsonFormActivity, new HashMap<String, String>());
+        ReflectionHelpers.callInstanceMethod(rulesEngineFactory, "getRulesFromAsset", ReflectionHelpers.ClassParameter.from(String.class, ruleFileName));
+
+        Mockito.verify(jsonFormActivity).handleFormError(true, ruleFileName);
     }
 }
