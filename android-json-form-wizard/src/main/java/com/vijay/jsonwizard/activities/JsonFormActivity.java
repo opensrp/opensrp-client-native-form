@@ -92,6 +92,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.regex.Matcher;
@@ -129,6 +130,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private Map<JSONObject, String> preComputedMediaLogicMap = new ConcurrentHashMap<>();
     private Map<View, String> preComputedConstraintMap = new ConcurrentHashMap<>();
 
+    private Stack<String> stack = new Stack<>();
     private Map<String, Boolean> stepSkipLogicPresenceMap = new ConcurrentHashMap<>();
 
     private boolean isNextStepRelevant;
@@ -1094,12 +1096,12 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
                 }
 
-                if (isForNextStep && ((address.length == 2 && address[0].equals(nextStep())) || (address.length == 3 && address[2].contains(nextStep())))) {
-
-                    if (comparison) {
-                        setNextStepRelevant(true);
+                if (isForNextStep) {
+                    if (((address.length == 2 && address[0].equals(nextStep())) || (address.length == 3 && address[2].contains(nextStep())))) {
+                        if (comparison) {
+                            setNextStepRelevant(true);
+                        }
                     }
-
                     preComputedRelevanceMap.put(view, comparison + ":" + popup);
                 } else {
                     toggleViewVisibility(view, comparison, isPopup);
@@ -2398,6 +2400,18 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     @Override
     public void setNextStep(String nextStep) {
         this.nextStep = nextStep;
+    }
+
+    @Override
+    public void addStack(String s) {
+        if (!stack.contains(s)) {
+            stack.push(s);
+        }
+    }
+
+    @Override
+    public Stack<String> getStack() {
+        return stack;
     }
 
     public void setNextStepRelevant(boolean nextStepRelevant) {

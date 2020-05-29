@@ -1,7 +1,6 @@
 package com.vijay.jsonwizard.interactors;
 
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
 
 import com.vijay.jsonwizard.constants.JsonFormConstants;
@@ -132,7 +131,7 @@ public class JsonFormInteractor {
             }
 
         } catch (JSONException e) {
-            Log.e(TAG, "Json exception occurred : " + e.getMessage());
+            Timber.e(e);
         }
         return viewsFromJson;
     }
@@ -160,7 +159,7 @@ public class JsonFormInteractor {
 
             }
         } catch (JSONException e) {
-            Log.e(TAG, "Json exception occurred : " + e.getMessage());
+            Timber.e(e);
         }
     }
 
@@ -178,13 +177,12 @@ public class JsonFormInteractor {
                         listener, popup);
             }
         } catch (JSONException e) {
-            Log.e(TAG, "Json exception occurred : " + e.getMessage());
+            Timber.e(e);
         }
     }
 
     private void fetchViews(List<View> viewsFromJson, String stepName, JsonFormFragment formFragment,
                             String type, JSONObject jsonObject, CommonListener listener, Boolean popup) {
-
         try {
             List<View> views = map
                     .get(type)
@@ -194,8 +192,9 @@ public class JsonFormInteractor {
             }
 
         } catch (Exception e) {
-            Timber.e("Exception occurred in making view : Exception is : %s ", e.getMessage());
+            Timber.e(e);
         }
 
     }
+
 }

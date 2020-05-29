@@ -32,6 +32,7 @@ public class JsonWizardFormFragmentPresenter extends JsonFormFragmentPresenter {
             executeRefreshLogicForNextStep();
             return moveToNextWizardStep();
         } else if (isFormValid()) {
+            executeRefreshLogicForNextStep();
             return moveToNextWizardStep();
         } else {
             getView().showSnackBar(getView().getContext().getResources()

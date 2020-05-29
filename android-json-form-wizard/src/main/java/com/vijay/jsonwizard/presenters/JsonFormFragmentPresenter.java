@@ -145,6 +145,7 @@ public class JsonFormFragmentPresenter extends
             if (formFragment instanceof JsonWizardFormFragment) {
                 formFragment.getJsonApi().setNextStep(mStepName);
             }
+            formFragment.getJsonApi().addStack(mStepName);
         } catch (JSONException e) {
             Timber.e(e);
         }

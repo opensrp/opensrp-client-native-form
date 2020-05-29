@@ -29,6 +29,7 @@ import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.BuildConfig;
 import com.vijay.jsonwizard.R;
@@ -287,21 +288,31 @@ public class FormUtils {
         }
     }
 
+    public static <T> T deepCopy(T object, Class<T> type) {
+        try {
+            Gson gson = new Gson();
+            return gson.fromJson(gson.toJson(object, type), type);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public Map<String, View> createRadioButtonAndCheckBoxLabel(String stepName, LinearLayout linearLayout,
                                                                JSONObject jsonObject, Context context,
-                                                               JSONArray canvasIds, Boolean readOnly,
+                                                               JSONArray canvasIds, final Boolean readOnly,
                                                                CommonListener listener, boolean popup) throws JSONException {
         Map<String, View> createdViewsMap = new HashMap<>();
         String label = jsonObject.optString(JsonFormConstants.LABEL, "");
         if (!TextUtils.isEmpty(label)) {
             String asterisks = "";
-            int labelTextSize = FormUtils.getValueFromSpOrDpOrPx(jsonObject.optString(JsonFormConstants.LABEL_TEXT_SIZE, String.valueOf(context
+            final int labelTextSize = FormUtils.getValueFromSpOrDpOrPx(jsonObject.optString(JsonFormConstants.LABEL_TEXT_SIZE, String.valueOf(context
                     .getResources().getDimension(R.dimen.default_label_text_size))), context);
             String labelTextColor = jsonObject.optString(JsonFormConstants.LABEL_TEXT_COLOR, JsonFormConstants.DEFAULT_TEXT_COLOR);
             JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
-            ConstraintLayout labelConstraintLayout = createLabelLinearLayout(stepName, canvasIds, jsonObject, context, listener);
+            final ConstraintLayout labelConstraintLayout = createLabelLinearLayout(stepName, canvasIds, jsonObject, context, listener);
             labelConstraintLayout.setTag(R.id.extraPopup, popup);
-            CustomTextView labelText = labelConstraintLayout.findViewById(R.id.label_text);
+            final CustomTextView labelText = labelConstraintLayout.findViewById(R.id.label_text);
             ImageView editButton = labelConstraintLayout.findViewById(R.id.label_edit_button);
             if (requiredObject != null) {
                 String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
@@ -310,18 +321,23 @@ public class FormUtils {
                 }
             }
 
-            String combinedLabelText = "<font color=" + labelTextColor + ">" + label + "</font>" + asterisks;
+            final String combinedLabelText = "<font color=" + labelTextColor + ">" + label + "</font>" + asterisks;
 
             //Applying textStyle to the text;
-            String textStyle = jsonObject.optString(JsonFormConstants.TEXT_STYLE, JsonFormConstants.NORMAL);
+            final String textStyle = jsonObject.optString(JsonFormConstants.TEXT_STYLE, JsonFormConstants.NORMAL);
             if (labelText != null && editButton != null) {
-                setTextStyle(textStyle, labelText);
-                labelText.setText(Html.fromHtml(combinedLabelText));
+                ((Activity) context).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setTextStyle(textStyle, labelText);
+                        labelText.setText(Html.fromHtml(combinedLabelText));
+                        labelText.setTextSize(labelTextSize);
+                        labelConstraintLayout.setEnabled(!readOnly);
+                    }
+                });
                 labelText.setTag(R.id.extraPopup, popup);
                 labelText.setTag(R.id.original_text, Html.fromHtml(combinedLabelText));
-                labelText.setTextSize(labelTextSize);
                 canvasIds.put(labelConstraintLayout.getId());
-                labelConstraintLayout.setEnabled(!readOnly);
                 linearLayout.addView(labelConstraintLayout);
                 createdViewsMap.put(JsonFormConstants.EDIT_BUTTON, editButton);
                 createdViewsMap.put(JsonFormConstants.CUSTOM_TEXT, labelText);

@@ -238,7 +238,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
         }
 
         if (getFragmentManager() != null) {
-            if (getFragmentManager().getBackStackEntryCount() == 0) {
+            if (getFragmentManager().getBackStackEntryCount() == 0 || getJsonApi().getStack().size() < 2) {
                 previousButton.setVisibility(View.INVISIBLE);
                 previousIcon.setVisibility(View.INVISIBLE);
             } else {
@@ -275,6 +275,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
             if (StringUtils.isNotEmpty(next)) {
                 checkIfStepIsBlank(formStep);
                 if (shouldSkipStep() && !nextStepHasNoSkipLogic()) {
+                    getJsonApi().setNextStep(next);
                     markStepAsSkipped(formStep);
                     next();
                 }
@@ -326,7 +327,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
                 if (formStep != null) {
                     checkIfStepIsBlank(formStep);
                     if (shouldSkipStep() && !stepHasNoSkipLogic(JsonFormConstants.STEP + i)) {
-                        getFragmentManager().popBackStack();
+                        getFragmentManager().popBackStack(getJsonApi().getStack().pop(), 0);
                     } else {
                         break;
                     }
@@ -441,7 +442,8 @@ public class JsonWizardFormFragment extends JsonFormFragment {
                     assert getFragmentManager() != null;
                     presenter.checkAndStopCountdownAlarm();
                     getJsonApi().setPreviousPressed(true);
-                    getFragmentManager().popBackStack();
+                    getJsonApi().getStack().pop();
+                    getFragmentManager().popBackStack(getJsonApi().getStack().pop(), 0);
                 }
             }
         }
