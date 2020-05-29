@@ -283,6 +283,6 @@ public class RulesEngineFactoryTest {
         rulesEngineFactory = new RulesEngineFactory(jsonFormActivity, new HashMap<String, String>());
         ReflectionHelpers.callInstanceMethod(rulesEngineFactory, "getRulesFromAsset", ReflectionHelpers.ClassParameter.from(String.class, ruleFileName));
 
-        Mockito.verify(jsonFormActivity).handleFormError(true, ruleFileName);
+        Mockito.verify(jsonFormActivity).handleFormError(true, rulesEngineFactory.getRulesFolderPath()+ruleFileName);
     }
 }
