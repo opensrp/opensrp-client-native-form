@@ -506,6 +506,7 @@ public class JsonFormFragmentPresenter extends
         checkAndStopCountdownAlarm();
         boolean isFormValid = isFormValid();
         if (isFormValid || Boolean.valueOf(mainView.getTag(R.id.skip_validation).toString())) {
+            Utils.removeGeneratedDynamicRules(formFragment);
             Intent returnIntent = new Intent();
             getView().onFormFinish();
             returnIntent.putExtra("json", formUtils.addFormDetails(getView().getCurrentJsonState()));

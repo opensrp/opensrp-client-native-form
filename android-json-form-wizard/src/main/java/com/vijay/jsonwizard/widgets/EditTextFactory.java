@@ -39,7 +39,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_CUMULATIVE_VALIDATION_ERR;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_RELATIVE_MAX_VALIDATION_ERR;
@@ -85,7 +87,7 @@ public class EditTextFactory implements FormWidgetFactory {
                                     CommonListener listener, boolean popup) throws Exception {
         List<View> views = new ArrayList<>(1);
 
-        RelativeLayout rootLayout = (RelativeLayout) LayoutInflater.from(context).inflate(getLayout(), null);
+        RelativeLayout rootLayout = getRelativeLayout(context);
         RelativeLayout editTextLayout = rootLayout.findViewById(R.id.edit_text_layout);
         MaterialEditText editText = editTextLayout.findViewById(R.id.edit_text);
         ImageView editButton = editTextLayout.findViewById(R.id.material_edit_text_edit_button);
@@ -104,6 +106,10 @@ public class EditTextFactory implements FormWidgetFactory {
         ((JsonApi) context).addFormDataView(editText);
         views.add(rootLayout);
         return views;
+    }
+
+    public RelativeLayout getRelativeLayout(Context context) {
+        return (RelativeLayout) LayoutInflater.from(context).inflate(getLayout(), null);
     }
 
     protected int getLayout() {
@@ -421,5 +427,10 @@ public class EditTextFactory implements FormWidgetFactory {
             return (MaterialEditText) view;
         else
             return null;
+    }
+
+    @Override
+    public Set<String> getCustomTranslatableWidgetFields() {
+        return new HashSet<>();
     }
 }
