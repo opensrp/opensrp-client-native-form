@@ -1,6 +1,5 @@
 package com.vijay.jsonwizard.widgets;
 
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.view.View;
 import android.widget.RelativeLayout;
