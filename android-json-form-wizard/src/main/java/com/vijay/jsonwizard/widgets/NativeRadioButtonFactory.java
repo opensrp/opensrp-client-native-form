@@ -381,6 +381,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
                 }
             }
         }
+
         rootLayout.setTag(R.id.extraPopup, popup);
         views.add(rootLayout);
         return views;
@@ -441,8 +442,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         FormUtils.setRadioExclusiveClick(radioGroup);
         radioGroup.setLayoutParams(FormUtils.getLinearLayoutParams(FormUtils.MATCH_PARENT, FormUtils.WRAP_CONTENT, 0, 0, 0,
                 (int) context.getResources().getDimension(R.dimen.extra_bottom_margin)));
-        JSONArray jsonArray = FormUtils.deepCopy(canvasIds, JSONArray.class);
-        radioGroup.setTag(R.id.canvas_ids, jsonArray.toString());
+        radioGroup.setTag(R.id.canvas_ids, canvasIds.toString());
 
         linearLayout.addView(radioGroup);
         return radioGroup;
@@ -478,8 +478,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         radioGroupLayout.setTag(R.id.extraPopup, popup);
         canvasIds.put(radioGroupLayout.getId());
         radioGroupLayout.setTag(R.id.native_radio_button_layout_view_id, radioGroupLayout.getId());
-        JSONArray jsonArray = FormUtils.deepCopy(canvasIds, JSONArray.class);
-        radioGroupLayout.setTag(R.id.canvas_ids, jsonArray.toString());
+        radioGroupLayout.setTag(R.id.canvas_ids, canvasIds.toString());
         return radioGroupLayout;
     }
 
