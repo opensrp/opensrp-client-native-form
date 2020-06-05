@@ -123,13 +123,17 @@ public class NativeFormLangUtils {
         Pattern interpolatedStringPattern = Pattern.compile("\\{\\{([a-zA-Z_0-9\\.\\-]+)\\}\\}");
         Matcher matcher = interpolatedStringPattern.matcher(str);
         while (matcher.find()) {
-            String replacement = Matcher.quoteReplacement(mlsResourceBundle.getString(matcher.group(1))
-                            .replace("\n", "\\n")); // ensures \n is preserved in a String
+            String replacement = Matcher.quoteReplacement(getEscapedValue(mlsResourceBundle.getString(matcher.group(1))));
             matcher.appendReplacement(stringBuffer, replacement);
         }
         matcher.appendTail(stringBuffer);
 
         return stringBuffer.toString();
+    }
+
+    public static String getEscapedValue(String value) {
+        return value.replace("\n", "\\n") // ensure \n is preserved in a String
+        .replace("\"", "\\\""); // ensure "" is preserved in a String
     }
 
     /**
