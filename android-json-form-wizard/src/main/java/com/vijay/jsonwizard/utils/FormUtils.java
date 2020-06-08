@@ -29,7 +29,6 @@ import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.BuildConfig;
 import com.vijay.jsonwizard.R;
@@ -51,11 +50,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -287,16 +283,6 @@ public class FormUtils {
                 }
                 simSerial.put(JsonFormConstants.VALUE, value);
             }
-        }
-    }
-
-    public static <T> T deepCopy(T object, Class<T> type) {
-        try {
-            Gson gson = new Gson();
-            return gson.fromJson(gson.toJson(object, type), type);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
         }
     }
 
@@ -1506,7 +1492,9 @@ public class FormUtils {
 
     public void getSpinnerValueOpenMRSAttributes(JSONObject item, JSONArray valueOpenMRSAttributes) throws JSONException {
 
-        if (item == null || !item.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.SPINNER)) { return; }
+        if (item == null || !item.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.SPINNER)) {
+            return;
+        }
 
         String spinnerValue = item.getString(JsonFormConstants.VALUE);
         String spinnerKey = item.getString(JsonFormConstants.KEY);
@@ -1516,9 +1504,9 @@ public class FormUtils {
             while (keys.hasNext()) {
                 String key = keys.next();
                 if (spinnerValue.equals(key)) {
-                   addOpenMRSAttributes(valueOpenMRSAttributes, item, spinnerKey,
-                           openMRSChoiceIds.getString(key));
-                   break;
+                    addOpenMRSAttributes(valueOpenMRSAttributes, item, spinnerKey,
+                            openMRSChoiceIds.getString(key));
+                    break;
                 }
             }
         } else if (item.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {

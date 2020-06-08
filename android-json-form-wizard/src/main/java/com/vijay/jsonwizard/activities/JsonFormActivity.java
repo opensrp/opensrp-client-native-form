@@ -1236,11 +1236,11 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         if (errorMessage != null) break;
                     }
                 }
-                if (isForNextStep) {
+                if (!isForNextStep) {
+                    updateUiByConstraints(curView, popup, errorMessage);
+                } else {
                     preComputedConstraintMap.put(curView, popup + ":" + errorMessage);
-                    return;
                 }
-                updateUiByConstraints(curView, popup, errorMessage);
             } catch (Exception e) {
                 Timber.e(e, "JsonFormActivity --> checkViewConstraints");
             }
@@ -1461,11 +1461,11 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 JSONArray medias = questionGroup.getJSONArray("media");
                 for (int j = 0; j < medias.length(); j++) {
                     JSONObject media = medias.getJSONObject(j);
-                    if (isForNextStep) {
+                    if (!isForNextStep) {
+                        mediaDialog(media, value);
+                    } else {
                         preComputedMediaLogicMap.put(media, value);
-                        continue;
                     }
-                    mediaDialog(media, value);
                 }
             }
         } catch (Exception e) {

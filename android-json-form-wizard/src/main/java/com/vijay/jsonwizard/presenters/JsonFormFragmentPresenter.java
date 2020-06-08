@@ -178,7 +178,7 @@ public class JsonFormFragmentPresenter extends
                                     Utils.checkIfStepHasNoSkipLogic(formFragment);
                                     updateUiBaseOnRules();
                                     if (mStepName.equals(JsonFormConstants.STEP1) && !formFragment.getJsonApi().isPreviousPressed()) {
-                                        ((JsonWizardFormFragment) formFragment).skipStepsOnNextPressed();
+                                        ((JsonWizardFormFragment) formFragment).skipLoadedStepsOnNextPressed();
                                     }
                                 }
                                 String next = mStepDetails.optString(JsonFormConstants.NEXT);

@@ -148,14 +148,12 @@ public class JsonWizardFormFragment extends JsonFormFragment {
     @Override
     public void onResume() {
         super.onResume();
-        processSkipSteps();
-        setJsonFormFragment(this);
-    }
 
-    public void processSkipSteps() {
         if (getJsonApi().isPreviousPressed()) {
             skipStepOnPreviousPressed();
         }
+
+        setJsonFormFragment(this);
     }
 
     @Override
@@ -238,7 +236,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
         }
 
         if (getFragmentManager() != null) {
-            if (getFragmentManager().getBackStackEntryCount() == 0 || getJsonApi().getStack().size() < 2) {
+            if (getFragmentManager().getBackStackEntryCount() == 0 || getJsonApi().getStack().size() <= 1) {
                 previousButton.setVisibility(View.INVISIBLE);
                 previousIcon.setVisibility(View.INVISIBLE);
             } else {
@@ -265,16 +263,15 @@ public class JsonWizardFormFragment extends JsonFormFragment {
     }
 
     /**
-     * @deprecated use {@link #skipStepsOnNextPressed(String)}
      * Skips blank by relevance steps when next is clicked on the json wizard forms.
      */
-    public void skipStepsOnNextPressed() {
+    public void skipLoadedStepsOnNextPressed() {
         if (skipBlankSteps()) {
             JSONObject formStep = getStep(getArguments().getString(JsonFormConstants.STEPNAME));
             String next = formStep.optString(JsonFormConstants.NEXT, "");
             if (StringUtils.isNotEmpty(next)) {
                 checkIfStepIsBlank(formStep);
-                if (shouldSkipStep() && !nextStepHasNoSkipLogic()) {
+                if (shouldSkipStep()) {
                     getJsonApi().setNextStep(next);
                     markStepAsSkipped(formStep);
                     next();
@@ -326,7 +323,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
                 JSONObject formStep = getJsonApi().getmJSONObject().optJSONObject(JsonFormConstants.STEP + i);
                 if (formStep != null) {
                     checkIfStepIsBlank(formStep);
-                    if (shouldSkipStep() && !stepHasNoSkipLogic(JsonFormConstants.STEP + i)) {
+                    if (shouldSkipStep()) {
                         getFragmentManager().popBackStack(getJsonApi().getStack().pop(), 0);
                     } else {
                         break;
@@ -337,9 +334,10 @@ public class JsonWizardFormFragment extends JsonFormFragment {
     }
 
     /**
+     * should not be used alone, use with {@link #nextStepHasNoSkipLogic()}
+     * Checks if a given step is blank due to relevance hiding all the widgets
+     *
      * @param formStep {@link JSONObject}
-     * @deprecated use a combination of #isNextStepRelevant and {@link #nextStepHasNoSkipLogic()}
-     * Checks if a given step is blank due to relevance hidding all the widgets
      */
     private void checkIfStepIsBlank(JSONObject formStep) {
         try {
@@ -348,7 +346,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
                 for (int i = 0; i < fields.length(); i++) {
                     JSONObject field = fields.getJSONObject(i);
                     if (field.has(JsonFormConstants.TYPE) && !JsonFormConstants.HIDDEN.equals(field.getString(JsonFormConstants.TYPE))) {
-                        boolean isVisible = field.optBoolean(JsonFormConstants.IS_VISIBLE, false);
+                        boolean isVisible = field.optBoolean(JsonFormConstants.IS_VISIBLE, true);
                         if (isVisible) {
                             setShouldSkipStep(false);
                             break;
@@ -450,11 +448,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
     }
 
     private boolean nextStepHasNoSkipLogic() {
-        Boolean nextStepHasNoRelevance = getJsonApi().stepSkipLogicPresenceMap().get(getJsonApi().nextStep());
-        if (nextStepHasNoRelevance != null) {
-            return nextStepHasNoRelevance;
-        }
-        return false;
+        return stepHasNoSkipLogic(getJsonApi().nextStep());
     }
 
     public boolean stepHasNoSkipLogic(@Nullable String step) {
