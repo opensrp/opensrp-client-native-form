@@ -6,11 +6,11 @@ buildscript {
     dependencies {
         classpath('com.android.tools.build:gradle:3.5.3') {
             transitive = true
-           // exclude group: 'org.apache.httpcomponents', module: 'httpmime'
+           exclude group: 'org.apache.httpcomponents', module: 'httpmime'
         }
         classpath 'org.apache.commons:commons-lang3:3.7'
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.3'
-        //classpath 'org.apache.httpcomponents:httpmime:4.3'
+        classpath 'org.apache.httpcomponents:httpmime:4.3'
     }
 }
 
