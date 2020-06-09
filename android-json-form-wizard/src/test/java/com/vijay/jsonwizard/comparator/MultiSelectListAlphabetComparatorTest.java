@@ -5,8 +5,6 @@ import com.vijay.jsonwizard.domain.MultiSelectItem;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.Comparator;
-
 public class MultiSelectListAlphabetComparatorTest {
 
     @Test
