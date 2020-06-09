@@ -7,7 +7,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.CountDownTimer;
 import android.provider.Settings;
-import android.text.TextUtils;
+import android.support.annotation.VisibleForTesting;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -23,6 +23,7 @@ import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -64,7 +65,7 @@ public class CountDownTimerFactory implements FormWidgetFactory {
                 .withContext(context)
                 .withPopup(popup);
 
-        rootLayout = LayoutInflater.from(context).inflate(getLayout(), null);
+        rootLayout = getRootView(context);
         initializeViewConfigs(jsonObject);
         setWidgetTags(jsonObject, stepName);
         formatWidget(jsonObject, context);
@@ -77,6 +78,11 @@ public class CountDownTimerFactory implements FormWidgetFactory {
         List<View> views = new ArrayList<>(1);
         views.add(rootLayout);
         return views;
+    }
+
+    @VisibleForTesting
+    protected View getRootView(Context context) {
+        return LayoutInflater.from(context).inflate(getLayout(), null);
     }
 
     @Override
@@ -147,17 +153,17 @@ public class CountDownTimerFactory implements FormWidgetFactory {
         String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
         String calculation = jsonObject.optString(JsonFormConstants.CALCULATION);
 
-        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+        if (StringUtils.isNotBlank(relevance) && context instanceof JsonApi) {
             circleProgressBar.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(circleProgressBar);
         }
 
-        if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
+        if (StringUtils.isNotBlank(constraints) && context instanceof JsonApi) {
             circleProgressBar.setTag(R.id.constraints, constraints);
             ((JsonApi) context).addConstrainedView(circleProgressBar);
         }
 
-        if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
+        if (StringUtils.isNotBlank(calculation) && context instanceof JsonApi) {
             circleProgressBar.setTag(R.id.calculation, calculation);
             ((JsonApi) context).addCalculationLogicView(circleProgressBar);
         }
@@ -212,7 +218,9 @@ public class CountDownTimerFactory implements FormWidgetFactory {
 
     public void ringAlarm(Context context) {
         Uri alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-        alarmTone = (alert == null) ? RingtoneManager.getRingtone(context, Settings.System.DEFAULT_RINGTONE_URI) : RingtoneManager.getRingtone(context, alert);
+        if (alert == null)
+            alarmTone = RingtoneManager.getRingtone(context, Settings.System.DEFAULT_RINGTONE_URI);
+        else alarmTone = RingtoneManager.getRingtone(context, alert);
         if (!alarmTone.isPlaying()) {
             alarmTone.play();
         }
@@ -227,6 +235,7 @@ public class CountDownTimerFactory implements FormWidgetFactory {
     /**
      * Override this to provide more on countdown complete post processing
      */
+    @VisibleForTesting
     protected void onCountdownFinish(Context context) {
         // Countdown complete post processing
         ringAlarm(context);
