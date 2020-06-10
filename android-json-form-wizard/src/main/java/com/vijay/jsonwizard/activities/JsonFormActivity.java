@@ -309,7 +309,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 if (viewData.has(JsonFormConstants.HIDDEN) && viewData.getBoolean(JsonFormConstants.HIDDEN)) {
                     toggleViewVisibility(curView, false, popup);
                 }
-            } catch (Exception e) {
+            } catch (JSONException e) {
                 Timber.e(e);
             }
         }
@@ -1111,7 +1111,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
 
         } catch (Exception e) {
-            Timber.e(e, "%s --> Main function", this.getClass().getCanonicalName());
+            Timber.e(e);
         }
     }
 
@@ -1138,8 +1138,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             updateCanvas(view, visible, canvasViewIds, addressString, object);
             setReadOnlyAndFocus(view, visible, popup);
 
-        } catch (Exception e) {
-            Timber.e(e, "JsonFormActivity --> toggleViewVisibility %s", view.toString());
+        } catch (JSONException e) {
+            Timber.e(e);
         }
     }
 
@@ -1896,6 +1896,15 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             String type = (String) linearLayout.getTag(R.id.type);
             if (JsonFormConstants.NUMBER_SELECTOR.equals(type)) {
                 setNumberSelectorCalculation(calculation, linearLayout);
+            }
+            try {
+                View view1 = linearLayout.getChildAt(0);
+                if (view1 instanceof RadioGroup) {
+                    setRadioButtonCalculation((RadioGroup) view1, calculation);
+
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         } else {
             ((TextView) view).setText(calculation);

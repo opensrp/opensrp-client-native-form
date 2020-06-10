@@ -382,9 +382,51 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             }
         }
 
+        populateTags(rootLayout, stepName, popup, "","","", jsonObject);
+
+        prepareViewChecks(rootLayout, context, jsonObject);
+
         rootLayout.setTag(R.id.extraPopup, popup);
         views.add(rootLayout);
         return views;
+    }
+
+    private void prepareViewChecks(@NonNull View view, @NonNull Context context, JSONObject jsonObject) {
+        String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
+        String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
+        String calculation = jsonObject.optString(JsonFormConstants.CALCULATION);
+
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+            view.setTag(R.id.relevance, relevance);
+            ((JsonApi) context).addSkipLogicView(view);
+        }
+
+        if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
+            view.setTag(R.id.constraints, constraints);
+            ((JsonApi) context).addConstrainedView(view);
+        }
+
+        if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
+            view.setTag(R.id.calculation, calculation);
+            ((JsonApi) context).addCalculationLogicView(view);
+        }
+    }
+
+    private void populateTags(@NonNull View view, @NonNull String stepName,
+                              boolean popUp,
+                              String openmrsEntity, String openmrsEntityParent,
+                              String openmrsEntityId, JSONObject jsonObject) {
+        JSONArray canvasIds = new JSONArray();
+        view.setId(ViewUtil.generateViewId());
+        canvasIds.put(view.getId());
+        view.setTag(R.id.canvas_ids, canvasIds.toString());
+        view.setTag(R.id.key, jsonObject.optString(JsonFormConstants.KEY));
+        view.setTag(R.id.openmrs_entity_parent, openmrsEntityParent);
+        view.setTag(R.id.openmrs_entity, openmrsEntity);
+        view.setTag(R.id.openmrs_entity_id, openmrsEntityId);
+        view.setTag(R.id.type, jsonObject.optString(JsonFormConstants.TYPE));
+        view.setTag(R.id.extraPopup, popUp);
+        view.setTag(R.id.address, stepName + ":" + jsonObject.optString(JsonFormConstants.KEY));
     }
 
     public LinearLayout getLinearRootLayout(Context context) {
@@ -476,9 +518,9 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         radioGroupLayout.setTag(R.id.childKey, item.getString(JsonFormConstants.KEY));
         radioGroupLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
         radioGroupLayout.setTag(R.id.extraPopup, popup);
-        canvasIds.put(radioGroupLayout.getId());
+//        canvasIds.put(radioGroupLayout.getId());
         radioGroupLayout.setTag(R.id.native_radio_button_layout_view_id, radioGroupLayout.getId());
-        radioGroupLayout.setTag(R.id.canvas_ids, canvasIds.toString());
+//        radioGroupLayout.setTag(R.id.canvas_ids, canvasIds.toString());
         return radioGroupLayout;
     }
 
@@ -565,9 +607,9 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             radioButton.setTextSize(FormUtils.getValueFromSpOrDpOrPx(optionTextSize, this.context));
             radioButton.setText(optionText);
             radioButton.setEnabled(!readOnly);
-            this.canvasIds.put(radioButton.getId());
+//            this.canvasIds.put(radioButton.getId());
             radioButton.setOnCheckedChangeListener(listener);
-            radioButton.setTag(R.id.canvas_ids, canvasIds.toString());
+//            radioButton.setTag(R.id.canvas_ids, canvasIds.toString());
         }
     }
 

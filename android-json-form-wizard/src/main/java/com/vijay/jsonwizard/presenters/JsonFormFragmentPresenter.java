@@ -192,7 +192,7 @@ public class JsonFormFragmentPresenter extends
     }
 
     private void updateUiBaseOnRules() {
-        formFragment.getJsonApi().updateUiBaseOnRules(JsonFormConstants.RELEVANCE);
+//        formFragment.getJsonApi().updateUiBaseOnRules(JsonFormConstants.RELEVANCE);
         formFragment.getJsonApi().updateUiBaseOnRules(JsonFormConstants.CALCULATION);
         formFragment.getJsonApi().updateUiBaseOnRules(JsonFormConstants.MEDIA_LOGIC);
         formFragment.getJsonApi().updateUiBaseOnRules(JsonFormConstants.CONSTRAINTS);

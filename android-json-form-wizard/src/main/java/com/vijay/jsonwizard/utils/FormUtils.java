@@ -365,7 +365,9 @@ public class FormUtils {
         String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
 
         ConstraintLayout constraintLayout = getConstraintLayout(stepName, canvasIds, jsonObject, context, openMrsEntityParent, openMrsEntity, openMrsEntityId);
-        attachRefreshLogic(context, relevance, calculation, constraints, constraintLayout);
+//        if(!JsonFormConstants.NATIVE_RADIO_BUTTON.equals(jsonObject.optString(JsonFormConstants.TYPE))) {
+            attachRefreshLogic(context, relevance, calculation, constraints, constraintLayout);
+//        }
 
         ImageView imageView = constraintLayout.findViewById(R.id.label_info);
         showInfoIcon(stepName, jsonObject, listener, FormUtils.getInfoDialogAttributes(jsonObject), imageView, canvasIds);
