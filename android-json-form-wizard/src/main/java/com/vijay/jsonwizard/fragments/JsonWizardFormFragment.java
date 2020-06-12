@@ -24,6 +24,7 @@ import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 import com.vijay.jsonwizard.presenters.JsonFormFragmentPresenter;
 import com.vijay.jsonwizard.presenters.JsonWizardFormFragmentPresenter;
+import com.vijay.jsonwizard.task.NextProgressDialogTask;
 import com.vijay.jsonwizard.viewstates.JsonFormFragmentViewState;
 
 import org.apache.commons.lang3.StringUtils;
@@ -416,21 +417,11 @@ public class JsonWizardFormFragment extends JsonFormFragment {
                     getJsonApi().setPreviousPressed(false);
                     Object nextStateTag = view.getTag(R.id.NEXT_STATE);
                     if (nextStateTag == null) {
-                        getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                next();
-                            }
-                        });
+                        new NextProgressDialogTask(getJsonFormFragment()).execute();
                     } else {
                         boolean next = (boolean) nextStateTag;
                         if (next) {
-                            getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
-                                @Override
-                                public void run() {
-                                    next();
-                                }
-                            });
+                            new NextProgressDialogTask(getJsonFormFragment()).execute();
                         } else {
                             save();
                         }
