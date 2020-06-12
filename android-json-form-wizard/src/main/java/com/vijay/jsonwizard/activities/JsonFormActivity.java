@@ -125,13 +125,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private Map<String, Set<String>> calculationDependencyMap = new HashMap<>();
     private Map<String, Set<String>> skipLogicDependencyMap = new HashMap<>();
 
-
-    private Map<View, String> preComputedCalculationMap = new ConcurrentHashMap<>();
-    private Map<View, String> preComputedRelevanceMap = new ConcurrentHashMap<>();
-    private Map<JSONObject, String> preComputedMediaLogicMap = new ConcurrentHashMap<>();
-    private Map<View, String> preComputedConstraintMap = new ConcurrentHashMap<>();
-
-    private Stack<String> stack = new Stack<>();
     private Map<String, Boolean> stepSkipLogicPresenceMap = new ConcurrentHashMap<>();
 
     private boolean isNextStepRelevant;
@@ -321,18 +314,27 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         Set<String> viewsIds = skipLogicDependencyMap.get(stepName + "_" + parentKey);
         if (parentKey == null || childKey == null) {
             for (View curView : skipLogicViews.values()) {
+                if (isForNextStep && isNextStepRelevant()) {
+                    break;
+                }
                 addRelevance(curView, popup, isForNextStep);
             }
         } else if (viewsIds == null) {
             for (String curViewId : skipLogicViews.keySet()) {
                 //skip any relevance by rules engine since the these components are not affected either way.
                 // Run relevance for native relevance functions as these are first and not optimized currently
+                if (isForNextStep && isNextStepRelevant()) {
+                    break;
+                }
                 if (!skipLogicDependencyMap.containsKey(curViewId)) {
                     addRelevance(skipLogicViews.get(curViewId), popup, isForNextStep);
                 }
             }
         } else {
             for (String viewId : viewsIds) {
+                if (isForNextStep && isNextStepRelevant()) {
+                    break;
+                }
                 addRelevance(skipLogicViews.get(viewId), popup, isForNextStep);
             }
         }
@@ -1108,7 +1110,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                             setNextStepRelevant(true);
                         }
                     }
-                    preComputedRelevanceMap.put(view, comparison + ":" + popup);
                 } else {
                     toggleViewVisibility(view, comparison, isPopup);
                 }
@@ -1243,9 +1244,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 }
                 if (!isForNextStep) {
                     updateUiByConstraints(curView, popup, errorMessage);
-                } else {
-                    preComputedConstraintMap.put(curView, popup + ":" + errorMessage);
                 }
+
             } catch (Exception e) {
                 Timber.e(e, "JsonFormActivity --> checkViewConstraints");
             }
@@ -1468,8 +1468,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     JSONObject media = medias.getJSONObject(j);
                     if (!isForNextStep) {
                         mediaDialog(media, value);
-                    } else {
-                        preComputedMediaLogicMap.put(media, value);
                     }
                 }
             }
@@ -1926,9 +1924,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 calculation = getRulesEngineFactory().getCalculation(valueMap, address[1]);
             }
 
-            if (isForNextStep) {
-                preComputedCalculationMap.put(view, calculation);
-            } else {
+            if (!isForNextStep) {
                 updateUiByCalculation(calculation, view);
             }
 
@@ -2371,25 +2367,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     @Override
-    public Map<View, String> preComputedCalculationMap() {
-        return preComputedCalculationMap;
-    }
-
-    @Override
-    public Map<View, String> preComputedRelevanceMap() {
-        return preComputedRelevanceMap;
-    }
-
-    @Override
-    public Map<JSONObject, String> preComputedMediaLogicMap() {
-        return preComputedMediaLogicMap;
-    }
-
-    public Map<View, String> preComputedConstraintMap() {
-        return preComputedConstraintMap;
-    }
-
-    @Override
     public Map<String, Boolean> stepSkipLogicPresenceMap() {
         return stepSkipLogicPresenceMap;
     }
@@ -2400,53 +2377,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     }
 
     @Override
-    public void updateUiBaseOnRules(String type) {
-        if (JsonFormConstants.RELEVANCE.equals(type)) {
-            for (Map.Entry<View, String> entry : preComputedRelevanceMap().entrySet()) {
-                View view = entry.getKey();
-                if (StringUtils.isNotBlank(entry.getValue()) && entry.getValue().contains(":")) {
-                    String values[] = entry.getValue().split(":");
-                    boolean comparison = Boolean.parseBoolean(values[0]);
-                    boolean popUp = Boolean.parseBoolean(values[1]);
-                    toggleViewVisibility(view, comparison, popUp);
-                }
-            }
-        } else if (JsonFormConstants.CALCULATION.equals(type)) {
-            for (Map.Entry<View, String> entry : preComputedCalculationMap().entrySet()) {
-                View view = entry.getKey();
-                if (entry.getValue() != null) {
-                    String calculation = entry.getValue();
-                    updateUiByCalculation(calculation, view);
-                }
-            }
-        } else if (JsonFormConstants.MEDIA_LOGIC.equals(type)) {
-            for (Map.Entry<JSONObject, String> entry : preComputedMediaLogicMap().entrySet()) {
-                JSONObject entryKey = entry.getKey();
-                if (entry.getValue() != null) {
-                    String value = entry.getValue();
-                    mediaDialog(entryKey, value);
-                }
-            }
-        } else if (JsonFormConstants.CONSTRAINTS.equals(type)) {
-            for (Map.Entry<View, String> entry : preComputedConstraintMap().entrySet()) {
-                View entryKey = entry.getKey();
-                if (entry.getValue() != null) {
-                    String value = entry.getValue();
-                    if (StringUtils.isNotBlank(value)) {
-                        String popUp = value.substring(0, value.indexOf(":"));
-                        String errorMsg = value.substring(value.indexOf(":") + 1);
-                        try {
-                            updateUiByConstraints(entryKey, Boolean.parseBoolean(popUp), errorMsg);
-                        } catch (JSONException e) {
-                            Timber.e(e);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    @Override
     public String nextStep() {
         return nextStep;
     }
@@ -2454,18 +2384,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     @Override
     public void setNextStep(String nextStep) {
         this.nextStep = nextStep;
-    }
-
-    @Override
-    public void addStack(String s) {
-        if (!stack.contains(s)) {
-            stack.push(s);
-        }
-    }
-
-    @Override
-    public Stack<String> getStack() {
-        return stack;
     }
 
     public void setNextStepRelevant(boolean nextStepRelevant) {

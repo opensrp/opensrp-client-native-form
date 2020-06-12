@@ -14,7 +14,6 @@ import org.json.JSONObject;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Stack;
 
 /**
  * Created by vijay on 5/16/15.
@@ -134,27 +133,13 @@ public interface JsonApi extends JsonSubFormAndRulesLoader {
 
     Map<String, JSONObject> getFormFieldsMap();
 
-    Map<View, String> preComputedCalculationMap();
-
-    Map<View, String> preComputedRelevanceMap();
-
-    Map<JSONObject, String> preComputedMediaLogicMap();
-
-    Map<View, String> preComputedConstraintMap();
-
     Map<String, Boolean> stepSkipLogicPresenceMap();
 
     boolean isNextStepRelevant();
 
     void setNextStepRelevant(boolean is);
 
-    void updateUiBaseOnRules(String type);
-
     String nextStep();
 
     void setNextStep(String nextStep);
-
-    void addStack(String s);
-
-    Stack<String> getStack();
 }

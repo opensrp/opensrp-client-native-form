@@ -145,7 +145,6 @@ public class JsonFormFragmentPresenter extends
             if (formFragment instanceof JsonWizardFormFragment) {
                 formFragment.getJsonApi().setNextStep(mStepName);
             }
-            formFragment.getJsonApi().addStack(mStepName);
         } catch (JSONException e) {
             Timber.e(e);
         }
@@ -176,7 +175,6 @@ public class JsonFormFragmentPresenter extends
                             if (formFragment instanceof JsonWizardFormFragment) {
                                 if (formFragment.getJsonApi().skipBlankSteps()) {
                                     Utils.checkIfStepHasNoSkipLogic(formFragment);
-                                    updateUiBaseOnRules();
                                     if (mStepName.equals(JsonFormConstants.STEP1) && !formFragment.getJsonApi().isPreviousPressed()) {
                                         ((JsonWizardFormFragment) formFragment).skipLoadedStepsOnNextPressed();
                                     }
@@ -189,13 +187,6 @@ public class JsonFormFragmentPresenter extends
                 });
             }
         });
-    }
-
-    private void updateUiBaseOnRules() {
-//        formFragment.getJsonApi().updateUiBaseOnRules(JsonFormConstants.RELEVANCE);
-        formFragment.getJsonApi().updateUiBaseOnRules(JsonFormConstants.CALCULATION);
-        formFragment.getJsonApi().updateUiBaseOnRules(JsonFormConstants.MEDIA_LOGIC);
-        formFragment.getJsonApi().updateUiBaseOnRules(JsonFormConstants.CONSTRAINTS);
     }
 
     private void dismissDialog(ProgressDialog dialog) {

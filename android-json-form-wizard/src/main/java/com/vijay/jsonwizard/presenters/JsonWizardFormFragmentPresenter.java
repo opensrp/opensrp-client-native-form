@@ -58,10 +58,6 @@ public class JsonWizardFormFragmentPresenter extends JsonFormFragmentPresenter {
 
     private void cleanDataForNextStep() {
         getFormFragment().getJsonApi().setNextStepRelevant(false);
-        getFormFragment().getJsonApi().preComputedRelevanceMap().clear();
-        getFormFragment().getJsonApi().preComputedCalculationMap().clear();
-        getFormFragment().getJsonApi().preComputedMediaLogicMap().clear();
-        getFormFragment().getJsonApi().preComputedConstraintMap().clear();
     }
 
     protected boolean moveToNextWizardStep() {
