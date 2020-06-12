@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.AppCompatRadioButton;
 import android.support.v7.widget.Toolbar;
@@ -371,10 +372,15 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     @Override
     public void transactThis(JsonFormFragment next) {
-        getActivity().getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left,
-                        R.anim.exit_to_right).replace(R.id.container, next).addToBackStack(next.getArguments().getString(JsonFormConstants.STEPNAME))
-                .commitAllowingStateLoss(); // use https://stackoverflow.com/a/10261449/9782187
+        if(getFragmentManager().getBackStackEntryCount() > 0) {
+            FragmentManager.BackStackEntry stackEntry = getFragmentManager().getBackStackEntryAt(getFragmentManager().getBackStackEntryCount() - 1);
+            if(!stackEntry.getName().equalsIgnoreCase(next.getArguments().getString(JsonFormConstants.STEPNAME))) {
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left,
+                                R.anim.exit_to_right).replace(R.id.container, next).addToBackStack(next.getArguments().getString(JsonFormConstants.STEPNAME))
+                        .commitAllowingStateLoss(); // use https://stackoverflow.com/a/10261449/9782187
+            }
+        }
     }
 
     @Override
