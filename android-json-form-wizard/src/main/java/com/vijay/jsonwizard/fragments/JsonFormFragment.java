@@ -70,7 +70,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     private String stepName;
     private LinearLayout bottomNavigation;
     private BottomNavigationListener navigationListener;
-    private boolean shouldSkipStep;
+    private boolean shouldSkipStep = true;
 
     private static NativeFormsProperties nativeFormProperties;
 

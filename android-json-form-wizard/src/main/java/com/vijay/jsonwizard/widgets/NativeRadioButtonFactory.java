@@ -258,18 +258,20 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         final String error = (String) radioGroup.getTag(R.id.error);
         if (radioGroup.isEnabled() && error != null) {
             final LinearLayout linearLayout = (LinearLayout) radioGroup.getParent();
-            boolean isValid = performValidation(radioGroup);
-            final TextView errorTextView = linearLayout.findViewById(R.id.error_textView);
-            if (!isValid) {
-                updateRadioButtonGroupWithError(formFragmentView, error, linearLayout);
-                return new ValidationStatus(false, error, formFragmentView, radioGroup);
-            } else if (errorTextView != null) {
-                ((JsonFormActivity) formFragmentView.getContext()).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        errorTextView.setVisibility(View.GONE);
-                    }
-                });
+            if (linearLayout != null && linearLayout.getVisibility() != View.GONE) {
+                boolean isValid = performValidation(radioGroup);
+                final TextView errorTextView = linearLayout.findViewById(R.id.error_textView);
+                if (!isValid) {
+                    updateRadioButtonGroupWithError(formFragmentView, error, linearLayout);
+                    return new ValidationStatus(false, error, formFragmentView, radioGroup);
+                } else if (errorTextView != null) {
+                    ((JsonFormActivity) formFragmentView.getContext()).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            errorTextView.setVisibility(View.GONE);
+                        }
+                    });
+                }
             }
         }
         return new ValidationStatus(true, null, formFragmentView, radioGroup);
@@ -382,33 +384,20 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             }
         }
 
-        populateTags(rootLayout, stepName, popup, "","","", jsonObject);
+        populateTags(rootLayout, stepName, popup, "", "", "", jsonObject);
 
-        prepareViewChecks(rootLayout, context, jsonObject);
+        attachRelevanceToRoot(rootLayout, context, jsonObject);
 
         rootLayout.setTag(R.id.extraPopup, popup);
         views.add(rootLayout);
         return views;
     }
 
-    private void prepareViewChecks(@NonNull View view, @NonNull Context context, JSONObject jsonObject) {
+    private void attachRelevanceToRoot(@NonNull View view, @NonNull Context context, JSONObject jsonObject) {
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
-        String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
-        String calculation = jsonObject.optString(JsonFormConstants.CALCULATION);
-
         if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             view.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(view);
-        }
-
-        if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
-            view.setTag(R.id.constraints, constraints);
-            ((JsonApi) context).addConstrainedView(view);
-        }
-
-        if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
-            view.setTag(R.id.calculation, calculation);
-            ((JsonApi) context).addCalculationLogicView(view);
         }
     }
 
@@ -479,7 +468,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             ((JsonApi) context).addFormDataView(radioGroup);
         }
 
-        attachRelevance(context, relevance, constraints, calculation, radioGroup);
+        prepareViewChecks(context, relevance, constraints, calculation, radioGroup);
 
         FormUtils.setRadioExclusiveClick(radioGroup);
         radioGroup.setLayoutParams(FormUtils.getLinearLayoutParams(FormUtils.MATCH_PARENT, FormUtils.WRAP_CONTENT, 0, 0, 0,
@@ -528,7 +517,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         return (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.native_item_radio_button, null);
     }
 
-    private void attachRelevance(Context context, String relevance, String constraints, String calculation, RadioGroup radioGroup) {
+    private void prepareViewChecks(Context context, String relevance, String constraints, String calculation, RadioGroup radioGroup) {
         if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             radioGroup.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(radioGroup);

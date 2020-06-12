@@ -484,6 +484,11 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         if (StringUtils.isNotBlank(condition)) {
                             keysList.addAll(Utils.getConditionKeys(condition));
                         }
+
+                        String action = jsonObject.optString(RuleConstant.ACTIONS);
+                        if (StringUtils.isNotBlank(action) && !action.trim().startsWith(RuleConstant.IS_RELEVANT)) {
+                            keysList.addAll(Utils.getConditionKeys(action));
+                        }
                     }
                 }
                 return fillFieldsWithValues(keysList);
