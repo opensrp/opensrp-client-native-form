@@ -93,7 +93,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.regex.Matcher;
@@ -1105,10 +1104,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 }
 
                 if (isForNextStep) {
-                    if (((address.length == 2 && address[0].equals(nextStep())) || (address.length == 3 && address[2].contains(nextStep())))) {
-                        if (comparison) {
-                            setNextStepRelevant(true);
-                        }
+                    if (((address.length == 2 && address[0].equals(nextStep())) || (address.length == 3 && address[2].contains(nextStep()))) && comparison) {
+                        setNextStepRelevant(true);
                     }
                 } else {
                     toggleViewVisibility(view, comparison, isPopup);
@@ -1302,6 +1299,24 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     jsonObject.put(key, jsonObjectNew.getString(key));
                 }
 
+            } else if (curView instanceof LinearLayout) {
+                LinearLayout linearLayout = (LinearLayout) curView;
+                try {
+                    View viewRadioGroup = linearLayout.getChildAt(0);
+                    if (viewRadioGroup instanceof RadioGroup && curView.getTag(R.id.type).toString().equals(JsonFormConstants.NATIVE_RADIO_BUTTON) &&
+                            !TextUtils.isEmpty(errorMessage) &&
+                            (curView.getTag(R.id.previous) == null || !curView.getTag(R.id.previous).equals(errorMessage))) {
+                        JSONObject jsonObject = (JSONObject) curView.getTag(R.id.json_object);
+                        JSONObject jsonObjectNew = new JSONObject(errorMessage);
+                        Iterator<String> keys = jsonObjectNew.keys();
+                        while (keys.hasNext()) {
+                            String key = keys.next();
+                            jsonObject.put(key, jsonObjectNew.getString(key));
+                        }
+                    }
+                } catch (IndexOutOfBoundsException e) {
+                    Timber.e(e);
+                }
             }
         }
     }
@@ -1901,13 +1916,12 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 setNumberSelectorCalculation(calculation, linearLayout);
             }
             try {
-                View view1 = linearLayout.getChildAt(0);
-                if (view1 instanceof RadioGroup) {
-                    setRadioButtonCalculation((RadioGroup) view1, calculation);
-
+                View viewRadioGroup = linearLayout.getChildAt(0);
+                if (viewRadioGroup instanceof RadioGroup) {
+                    setRadioButtonCalculation((RadioGroup) viewRadioGroup, calculation);
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (IndexOutOfBoundsException e) {
+                Timber.e(e);
             }
         } else {
             ((TextView) view).setText(calculation);
