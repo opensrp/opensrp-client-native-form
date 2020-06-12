@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.text.TextUtils;
 import android.util.Log;
@@ -386,15 +387,15 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
         populateTags(rootLayout, stepName, popup, "", "", "", jsonObject);
 
-        attachRelevanceToRoot(rootLayout, context, jsonObject);
+        String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
+        attachRelevance(rootLayout, context, relevance);
 
         rootLayout.setTag(R.id.extraPopup, popup);
         views.add(rootLayout);
         return views;
     }
 
-    private void attachRelevanceToRoot(@NonNull View view, @NonNull Context context, JSONObject jsonObject) {
-        String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
+    private void attachRelevance(@NonNull View view, @NonNull Context context, @Nullable String relevance) {
         if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             view.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(view);
@@ -507,9 +508,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         radioGroupLayout.setTag(R.id.childKey, item.getString(JsonFormConstants.KEY));
         radioGroupLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
         radioGroupLayout.setTag(R.id.extraPopup, popup);
-//        canvasIds.put(radioGroupLayout.getId());
         radioGroupLayout.setTag(R.id.native_radio_button_layout_view_id, radioGroupLayout.getId());
-//        radioGroupLayout.setTag(R.id.canvas_ids, canvasIds.toString());
         return radioGroupLayout;
     }
 
@@ -518,10 +517,8 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
     }
 
     private void prepareViewChecks(Context context, String relevance, String constraints, String calculation, RadioGroup radioGroup) {
-        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
-            radioGroup.setTag(R.id.relevance, relevance);
-            ((JsonApi) context).addSkipLogicView(radioGroup);
-        }
+
+        attachRelevance(radioGroup, context, relevance);
 
         if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
             radioGroup.setTag(R.id.constraints, constraints);
@@ -596,9 +593,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             radioButton.setTextSize(FormUtils.getValueFromSpOrDpOrPx(optionTextSize, this.context));
             radioButton.setText(optionText);
             radioButton.setEnabled(!readOnly);
-//            this.canvasIds.put(radioButton.getId());
             radioButton.setOnCheckedChangeListener(listener);
-//            radioButton.setTag(R.id.canvas_ids, canvasIds.toString());
         }
     }
 

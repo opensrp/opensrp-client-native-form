@@ -446,10 +446,19 @@ public class JsonWizardFormFragment extends JsonFormFragment {
         }
     }
 
+    /***
+     * check @link{{@link #stepHasNoSkipLogic(String)}}
+     * @return boolean
+     */
     private boolean nextStepHasNoSkipLogic() {
         return stepHasNoSkipLogic(getJsonApi().nextStep());
     }
 
+    /***
+     * It returns true if the step has no relevance fields
+     * @param step
+     * @return boolean
+     */
     public boolean stepHasNoSkipLogic(@Nullable String step) {
         if (StringUtils.isNotBlank(step)) {
             Boolean nextStepHasNoRelevance = getJsonApi().stepSkipLogicPresenceMap().get(step);

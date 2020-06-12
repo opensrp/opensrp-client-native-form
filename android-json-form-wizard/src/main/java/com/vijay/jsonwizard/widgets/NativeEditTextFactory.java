@@ -56,12 +56,6 @@ public class NativeEditTextFactory implements FormWidgetFactory {
                 }
             }
         });
-//        runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//
-//            }
-//        });
         return validationStatus[0];
     }
 
