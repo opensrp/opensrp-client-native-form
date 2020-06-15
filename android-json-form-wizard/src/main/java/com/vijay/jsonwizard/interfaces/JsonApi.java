@@ -82,7 +82,7 @@ public interface JsonApi extends JsonSubFormAndRulesLoader {
 
     JSONObject getObjectUsingAddress(String[] address, boolean popup, JSONObject valueSource) throws JSONException;
 
-    void refreshConstraints(String parentKey, String childKey, boolean popup, boolean isForNextStep);
+    void refreshConstraints(String parentKey, String childKey, boolean popup);
 
     void addOnActivityResultListener(Integer requestCode, OnActivityResultListener onActivityResultListener);
 

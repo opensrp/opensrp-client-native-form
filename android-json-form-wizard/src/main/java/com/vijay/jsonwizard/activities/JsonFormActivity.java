@@ -414,8 +414,11 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     public void invokeRefreshLogic(String value, boolean popup, String parentKey, String childKey, String stepName, boolean isForNextStep) {
         refreshCalculationLogic(parentKey, childKey, popup, stepName, isForNextStep);
         refreshSkipLogic(parentKey, childKey, popup, stepName, isForNextStep);
-        refreshConstraints(parentKey, childKey, popup, isForNextStep);
-        refreshMediaLogic(parentKey, value, stepName, isForNextStep);
+
+        if (!isForNextStep) {
+            refreshConstraints(parentKey, childKey, popup);
+            refreshMediaLogic(parentKey, value, stepName);
+        }
     }
 
     private void populateDependencyMap(Map<String, View> formViews, Map<String, Set<String>> dependencyMap, boolean calculation) {
@@ -598,7 +601,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
      * @param popup     {@link Boolean}
      */
     @Override
-    public void refreshConstraints(String parentKey, String childKey, boolean popup, boolean isForNextStep) {
+    public void refreshConstraints(String parentKey, String childKey, boolean popup) {
         initComparisons();
 
         // Priorities constraints on the view that has just been changed
@@ -608,13 +611,13 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         }
 
         if (changedViewKey != null && (constrainedViews != null && constrainedViews.containsKey(changedViewKey))) {
-            checkViewConstraints(constrainedViews.get(changedViewKey), popup, isForNextStep);
+            checkViewConstraints(constrainedViews.get(changedViewKey), popup);
         }
 
         for (View curView : constrainedViews.values()) {
             String viewKey = getViewKey(curView);
             if (changedViewKey == null || (!TextUtils.isEmpty(viewKey) && !viewKey.equals(changedViewKey))) {
-                checkViewConstraints(curView, popup, isForNextStep);
+                checkViewConstraints(curView, popup);
             }
         }
     }
@@ -1197,7 +1200,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         }
     }
 
-    private void checkViewConstraints(View curView, boolean popup, boolean isForNextStep) {
+    private void checkViewConstraints(View curView, boolean popup) {
         String constraintTag = (String) curView.getTag(R.id.constraints);
         String widgetKey = (String) curView.getTag(R.id.key);
         String stepName = ((String) curView.getTag(R.id.address)).split(":")[0];
@@ -1239,9 +1242,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         if (errorMessage != null) break;
                     }
                 }
-                if (!isForNextStep) {
-                    updateUiByConstraints(curView, popup, errorMessage);
-                }
+
+                updateUiByConstraints(curView, popup, errorMessage);
 
             } catch (Exception e) {
                 Timber.e(e, "JsonFormActivity --> checkViewConstraints");
@@ -1468,7 +1470,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         return args;
     }
 
-    protected void refreshMediaLogic(String key, String value, String stepName, boolean isForNextStep) {
+    protected void refreshMediaLogic(String key, String value, String stepName) {
         if (StringUtils.isBlank(key))
             return;
         try {
@@ -1481,9 +1483,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 JSONArray medias = questionGroup.getJSONArray("media");
                 for (int j = 0; j < medias.length(); j++) {
                     JSONObject media = medias.getJSONObject(j);
-                    if (!isForNextStep) {
-                        mediaDialog(media, value);
-                    }
+                    mediaDialog(media, value);
                 }
             }
         } catch (Exception e) {
