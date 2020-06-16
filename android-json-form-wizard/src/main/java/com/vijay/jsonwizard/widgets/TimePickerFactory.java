@@ -68,23 +68,18 @@ public class TimePickerFactory implements FormWidgetFactory {
     private List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject,
                                   boolean popup) {
         List<View> views = new ArrayList<>(1);
-        try {
-            RelativeLayout dateViewRelativeLayout = getRelativeLayout(context);
-            MaterialEditText editText = dateViewRelativeLayout.findViewById(R.id.edit_text);
-            TextView duration = dateViewRelativeLayout.findViewById(R.id.duration);
-            attachLayout(stepName, context, formFragment, jsonObject, editText, duration);
-            JSONArray canvasIds = new JSONArray();
-            dateViewRelativeLayout.setId(ViewUtil.generateViewId());
-            canvasIds.put(dateViewRelativeLayout.getId());
-            editText.setTag(R.id.canvas_ids, canvasIds.toString());
-            editText.setTag(R.id.extraPopup, popup);
+        RelativeLayout dateViewRelativeLayout = getRelativeLayout(context);
+        MaterialEditText editText = dateViewRelativeLayout.findViewById(R.id.edit_text);
+        TextView duration = dateViewRelativeLayout.findViewById(R.id.duration);
+        attachLayout(stepName, context, formFragment, jsonObject, editText, duration);
+        JSONArray canvasIds = new JSONArray();
+        dateViewRelativeLayout.setId(ViewUtil.generateViewId());
+        canvasIds.put(dateViewRelativeLayout.getId());
+        editText.setTag(R.id.canvas_ids, canvasIds.toString());
+        editText.setTag(R.id.extraPopup, popup);
 
-            ((JsonApi) context).addFormDataView(editText);
-            views.add(dateViewRelativeLayout);
-
-        } catch (Exception e) {
-            Timber.e(e);
-        }
+        ((JsonApi) context).addFormDataView(editText);
+        views.add(dateViewRelativeLayout);
 
         return views;
     }
@@ -147,7 +142,6 @@ public class TimePickerFactory implements FormWidgetFactory {
         } catch (ParseException e) {
             Timber.e(e);
         }
-
     }
 
     protected int getLayout() {
