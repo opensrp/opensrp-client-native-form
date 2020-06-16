@@ -3,6 +3,7 @@ package com.vijay.jsonwizard.widgets;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -85,8 +86,6 @@ public class CheckBoxFactory extends BaseFactory {
 
     private List<View> attachJson(String stepName, Context context, JSONObject jsonObject, CommonListener listener, JsonFormFragment formFragment,
                                   boolean popup) throws JSONException {
-
-
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
@@ -104,7 +103,7 @@ public class CheckBoxFactory extends BaseFactory {
         List<View> views = new ArrayList<>(1);
         JSONArray canvasIds = new JSONArray();
         ImageView editButton;
-        LinearLayout rootLayout = (LinearLayout) LayoutInflater.from(context).inflate(getLayout(), null);
+        LinearLayout rootLayout = getLinearLayout(context);
 
         rootLayout.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
         rootLayout.setId(ViewUtil.generateViewId());
@@ -145,8 +144,9 @@ public class CheckBoxFactory extends BaseFactory {
         return views;
     }
 
-    protected int getLayout() {
-        return R.layout.native_form_compound_button_parent;
+    @VisibleForTesting
+    protected LinearLayout getLinearLayout(Context context) {
+        return (LinearLayout) LayoutInflater.from(context).inflate(R.layout.native_form_compound_button_parent, null);
     }
 
     private void addRequiredValidator(LinearLayout rootLayout, JSONObject jsonObject) throws JSONException {
@@ -183,8 +183,7 @@ public class CheckBoxFactory extends BaseFactory {
             String openMrsEntity = item.optString(JsonFormConstants.OPENMRS_ENTITY);
             String openMrsEntityId = item.optString(JsonFormConstants.OPENMRS_ENTITY_ID);
 
-            LinearLayout checkboxLayout = (LinearLayout) LayoutInflater.from(context)
-                    .inflate(R.layout.native_form_item_checkbox, null);
+            LinearLayout checkboxLayout = getCheckboxLayout(context);
 
             final CheckBox checkBox = checkboxLayout.findViewById(R.id.checkbox);
             createCheckBoxText(checkBox, item, context, readOnly);
@@ -232,6 +231,12 @@ public class CheckBoxFactory extends BaseFactory {
         }
 
         return checkboxLayouts;
+    }
+
+    @VisibleForTesting
+    protected LinearLayout getCheckboxLayout(Context context) {
+        return (LinearLayout) LayoutInflater.from(context)
+                .inflate(R.layout.native_form_item_checkbox, null);
     }
 
     private void showEditButton(JSONObject jsonObject, List<View> editableViews, ImageView editButton,
