@@ -86,6 +86,7 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -432,9 +433,13 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         getRelevanceAddress(view, isPopup);
                 if (addressAndValue != null) {
                     String[] address = addressAndValue.first;
-                    if (address.length <= 2)
-                        continue;
-                    List<String> widgets = getRules(address[1], address[2], true);
+                    List<String> widgets = null;
+                    if (address.length > 2) {
+                        widgets = getRules(address[1], address[2], true);
+                    } else if (address.length == 2) {
+                        widgets = Arrays.asList(address[0] + "_" + address[1]);
+                    }
+
                     if (widgets == null)
                         continue;
                     for (String widget : widgets) {
@@ -2129,8 +2134,12 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 if (view instanceof EditText) {
                     view.setFocusable(true);
                 }
+
+                curCanvasView.invalidate();
             } else {
-                clearHiddenViewsValues(object, addressString);
+                if (!JsonFormConstants.REPEATING_GROUP.contains(object.optString(JsonFormConstants.TYPE))) {
+                    clearHiddenViewsValues(object, addressString);
+                }
                 curCanvasView.setEnabled(false);
                 curCanvasView.setVisibility(View.GONE);
                 refreshViews(curCanvasView);

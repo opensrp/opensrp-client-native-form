@@ -93,7 +93,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
 
         // support translation of sub-forms
         Intent activityIntent = getActivity().getIntent();
-        translateSubForm =  activityIntent == null ? translateSubForm
+        translateSubForm = activityIntent == null ? translateSubForm
                 : activityIntent.getBooleanExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, false);
 
         try {
@@ -656,18 +656,13 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
 
         }
 
-        for (final String fileName : ruleFiles) {
-            getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
-                @Override
-                public void run() {
-                    if (isDetached()) {
-                        return;
-                    }
-                    getJsonApi().getRulesEngineFactory().getRulesFromAsset(fileName);
-                }
-            });
-
+        for (String fileName : ruleFiles) {
+            if (isDetached()) {
+                return;
+            }
+            getJsonApi().getRulesEngineFactory().getRulesFromAsset(fileName);
         }
+
     }
 
     private void addRules(JSONObject jsonObject, Set<String> ruleFiles) {
