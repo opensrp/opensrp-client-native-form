@@ -60,8 +60,7 @@ public class TimePickerFactoryTest extends BaseTest {
     public void testTimePickerFactoryInstantiatesViewsCorrectly() throws Exception {
         Assert.assertNotNull(factory);
         TimePickerFactory factorySpy = Mockito.spy(factory);
-        Assert.assertNotNull(factorySpy);
-
+        
         Mockito.doReturn(resources).when(context).getResources();
         Assert.assertNotNull(resources);
 
