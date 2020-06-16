@@ -12,7 +12,6 @@ import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
-import com.vijay.jsonwizard.utils.FormUtils;
 
 import org.json.JSONObject;
 import org.junit.Assert;
@@ -63,10 +62,6 @@ public class TimePickerFactoryTest extends BaseTest {
         TimePickerFactory factorySpy = Mockito.spy(factory);
         Assert.assertNotNull(factorySpy);
 
-        FormUtils formUtils = new FormUtils();
-        FormUtils formUtilsSpy = Mockito.spy(formUtils);
-        Assert.assertNotNull(formUtilsSpy);
-
         Mockito.doReturn(resources).when(context).getResources();
         Assert.assertNotNull(resources);
 
@@ -87,11 +82,10 @@ public class TimePickerFactoryTest extends BaseTest {
     public void testUpdateTimeText() throws Exception {
         Assert.assertNotNull(factory);
         TimePickerFactory factorySpy = Mockito.spy(factory);
-        Assert.assertNotNull(factorySpy);
         Mockito.doReturn(rootLayout).when(factorySpy).getRelativeLayout(context);
         Mockito.doReturn(editText).when(rootLayout).findViewById(R.id.edit_text);
-        Editable editable = new  Editable.Factory().newEditable("23:03");
-        Whitebox.invokeMethod(factorySpy,"updateTimeText",editText,22, 3);
+        Editable editable = new Editable.Factory().newEditable("23:03");
+        Whitebox.invokeMethod(factorySpy, "updateTimeText", editText, 22, 3);
         Mockito.doReturn(editable).when(editText).getText();
         Assert.assertEquals("23:03", editable.toString());
 
@@ -101,7 +95,6 @@ public class TimePickerFactoryTest extends BaseTest {
     public void testGetCustomTranslatableWidgetFields() {
         Assert.assertNotNull(factory);
         TimePickerFactory factorySpy = Mockito.spy(factory);
-        Assert.assertNotNull(factorySpy);
 
         Set<String> editableProperties = factorySpy.getCustomTranslatableWidgetFields();
         Assert.assertEquals(1, editableProperties.size());

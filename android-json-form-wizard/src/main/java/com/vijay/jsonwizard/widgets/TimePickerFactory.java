@@ -142,7 +142,9 @@ public class TimePickerFactory implements FormWidgetFactory {
             editText.addTextChangedListener(genericTextWatcher);
             addRefreshLogicView(context, editText, relevance, constraints, calculations);
             editText.setFocusable(false);
-        } catch (Exception e) {
+        } catch (JSONException e) {
+            Timber.e(e);
+        } catch (ParseException e) {
             Timber.e(e);
         }
 

@@ -11,7 +11,6 @@ import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
-import com.vijay.jsonwizard.utils.FormUtils;
 
 import org.json.JSONObject;
 import org.junit.Assert;
@@ -56,11 +55,6 @@ public class CountDownTimerFactoryTest extends BaseTest {
     public void testCountDownTimerFactoryInstantiatesViewsCorrectly() throws Exception {
         Assert.assertNotNull(factory);
         CountDownTimerFactory factorySpy = Mockito.spy(factory);
-        Assert.assertNotNull(factorySpy);
-
-        FormUtils formUtils = new FormUtils();
-        FormUtils formUtilsSpy = Mockito.spy(formUtils);
-        Assert.assertNotNull(formUtilsSpy);
 
         Mockito.doReturn(resources).when(context).getResources();
         Assert.assertNotNull(resources);
@@ -82,9 +76,8 @@ public class CountDownTimerFactoryTest extends BaseTest {
     public void testGetFormattedTimeText() throws Exception {
         Assert.assertNotNull(factory);
         CountDownTimerFactory factorySpy = Mockito.spy(factory);
-        Assert.assertNotNull(factorySpy);
 
-       String timeText = Whitebox.invokeMethod(factorySpy, "getFormattedTimeText", 20000L);
-       Assert.assertEquals("00:20", timeText);
+        String timeText = Whitebox.invokeMethod(factorySpy, "getFormattedTimeText", 20000L);
+        Assert.assertEquals("00:20", timeText);
     }
 }
