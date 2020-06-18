@@ -33,7 +33,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import timber.log.Timber;
@@ -56,8 +55,6 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
     private String header;
     private LinearLayout linearLayout;
     private Utils utils = new Utils();
-    private ViewGroup dialogView;
-
 
     @Override
     public void onAttach(Context context) {
@@ -65,49 +62,6 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
         this.context = context;
         this.activity = (Activity) context;
         setGenericPopUpDialog();
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (context == null) {
-            throw new IllegalStateException(
-                    "The Context is not set. Did you forget to set context with Anc Generic Dialog setContext method?");
-        }
-
-        this.activity = (Activity) context;
-        setJsonApi((JsonApi) activity);
-        getJsonApi().setGenericPopup(this);
-        setGenericPopUpDialog();
-        getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                if (isDetached()) {
-                    return;
-                }
-                final List<View> views = initiateViews();
-                if (isDetached()) {
-                    return;
-                }
-                getJsonApi().initializeDependencyMaps();
-
-                getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (isDetached()) {
-                            return;
-                        }
-                        setViewList(views);
-                        getJsonApi().invokeRefreshLogic(null, true, null, null, getStepName(), false);
-                        if (dialogView != null) {
-                            addWidgetViews(dialogView);
-                        }
-                    }
-                });
-            }
-        });
-
-        setStyle(DialogFragment.STYLE_NORMAL, R.style.FullScreenDialogStyle);
     }
 
     /**
@@ -186,7 +140,8 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (!TextUtils.isEmpty(getWidgetType()) && getWidgetType().equals(JsonFormConstants.EXPANSION_PANEL)) {
-            dialogView = (ViewGroup) inflater.inflate(R.layout.fragment_generic_dialog, container, false);
+            ViewGroup dialogView = (ViewGroup) inflater.inflate(R.layout.fragment_generic_dialog, container, false);
+            setDialogView(dialogView);
             attachToolBar(dialogView);
             attachDialogShowListener();
             attachCancelDialogButton(dialogView);
@@ -203,11 +158,9 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
         }
     }
 
-    private void addWidgetViews(ViewGroup dialogView) {
-        LinearLayout genericDialogContent = dialogView.findViewById(R.id.generic_dialog_content);
-        for (View view : getViewList()) {
-            genericDialogContent.addView(view);
-        }
+    @Override
+    public void setStyle() {
+        setStyle(DialogFragment.STYLE_NORMAL, R.style.FullScreenDialogStyle);
     }
 
     private void attachToolBar(ViewGroup dialogView) {
@@ -286,6 +239,10 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
      */
     public String getContainer() {
         return container;
+    }
+
+    public void setContainer(String container) {
+        this.container = container;
     }
 
     /**
@@ -387,10 +344,6 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
         }
     }
 
-    public void setContainer(String container) {
-        this.container = container;
-    }
-
     @Override
     public void setContext(Context context) throws IllegalStateException {
         super.setContext(context);
@@ -460,17 +413,6 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
             Timber.e(e, " --> createValues");
         }
         return selectedValues;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (!TextUtils.isEmpty(getWidgetType()) && getWidgetType().equals(JsonFormConstants.EXPANSION_PANEL)) {
-            ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
-            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            params.height = ViewGroup.LayoutParams.MATCH_PARENT;
-            getDialog().getWindow().setAttributes((WindowManager.LayoutParams) params);
-        }
     }
 
     @Override
