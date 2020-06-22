@@ -1070,22 +1070,24 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
 
     protected Pair<String[], JSONObject> getRelevanceAddress(View view, boolean popup) throws JSONException {
-        String relevanceTag = (String) view.getTag(R.id.relevance);
-        String widgetKey = (String) view.getTag(R.id.key);
-        String stepName = ((String) view.getTag(R.id.address)).split(":")[0];
-        boolean widgetDisplay = (boolean) view.getTag(R.id.extraPopup);
-        if ((relevanceTag != null && relevanceTag.length() > 0) && (widgetDisplay == popup)) {
-            JSONObject relevance = new JSONObject(relevanceTag);
-            Iterator<String> keys = relevance.keys();
-            while (keys.hasNext()) {
-                String curKey = keys.next();
-                JSONObject curRelevance = relevance.has(curKey) ? relevance.getJSONObject(curKey) : null;
+        if (view != null) {
+            String relevanceTag = (String) view.getTag(R.id.relevance);
+            String widgetKey = (String) view.getTag(R.id.key);
+            String stepName = ((String) view.getTag(R.id.address)).split(":")[0];
+            boolean widgetDisplay = (boolean) view.getTag(R.id.extraPopup);
+            if ((relevanceTag != null && relevanceTag.length() > 0) && (widgetDisplay == popup)) {
+                JSONObject relevance = new JSONObject(relevanceTag);
+                Iterator<String> keys = relevance.keys();
+                while (keys.hasNext()) {
+                    String curKey = keys.next();
+                    JSONObject curRelevance = relevance.has(curKey) ? relevance.getJSONObject(curKey) : null;
 
-                String[] address = getAddressFromMap(widgetKey, stepName, JsonFormConstants.RELEVANCE);
-                if (address == null) {
-                    address = getAddress(view, curKey, curRelevance, JsonFormConstants.RELEVANCE);
+                    String[] address = getAddressFromMap(widgetKey, stepName, JsonFormConstants.RELEVANCE);
+                    if (address == null) {
+                        address = getAddress(view, curKey, curRelevance, JsonFormConstants.RELEVANCE);
+                    }
+                    return new Pair<>(address, curRelevance);
                 }
-                return new Pair<>(address, curRelevance);
             }
         }
         return null;

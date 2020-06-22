@@ -176,7 +176,12 @@ public class JsonFormFragmentPresenter extends
                                 if (formFragment.getJsonApi().skipBlankSteps()) {
                                     Utils.checkIfStepHasNoSkipLogic(formFragment);
                                     if (mStepName.equals(JsonFormConstants.STEP1) && !formFragment.getJsonApi().isPreviousPressed()) {
-                                        ((JsonWizardFormFragment) formFragment).skipLoadedStepsOnNextPressed();
+                                        formFragment.getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                ((JsonWizardFormFragment) formFragment).skipLoadedStepsOnNextPressed();
+                                            }
+                                        });
                                     }
                                 }
                                 String next = mStepDetails.optString(JsonFormConstants.NEXT);
@@ -886,13 +891,14 @@ public class JsonFormFragmentPresenter extends
                     }
 
                 } catch (Exception e) {
-                    Log.e(TAG, e.getMessage(), e);
+                    Timber.e(e);
                 }
             }
 
-            getView().writeValue(mStepName, parentKey, JsonFormConstants.OPTIONS_FIELD_NAME, childKey,
-                    String.valueOf(compoundButton.isChecked()), openMrsEntityParent, openMrsEntity,
-                    openMrsEntityId, popup);
+            if (getView() != null)
+                getView().writeValue(mStepName, parentKey, JsonFormConstants.OPTIONS_FIELD_NAME, childKey,
+                        String.valueOf(compoundButton.isChecked()), openMrsEntityParent, openMrsEntity,
+                        openMrsEntityId, popup);
         } else if (
                 (compoundButton instanceof AppCompatRadioButton || compoundButton instanceof RadioButton)
                         && isChecked) {
@@ -984,16 +990,18 @@ public class JsonFormFragmentPresenter extends
 
     private JSONObject getFormObjectForStep(String mStepName, String fieldKey) {
         try {
-            JSONArray array = getView().getStep(mStepName).getJSONArray(JsonFormConstants.FIELDS);
+            if (getView() != null) {
+                JSONArray array = getView().getStep(mStepName).getJSONArray(JsonFormConstants.FIELDS);
 
-            for (int i = 0; i < array.length(); i++) {
-                if (array.getJSONObject(i).get(JsonFormConstants.KEY).equals(fieldKey)) {
-                    return array.getJSONObject(i);
+                for (int i = 0; i < array.length(); i++) {
+                    if (array.getJSONObject(i).get(JsonFormConstants.KEY).equals(fieldKey)) {
+                        return array.getJSONObject(i);
+                    }
                 }
             }
 
         } catch (JSONException e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e);
         }
         return null;
     }

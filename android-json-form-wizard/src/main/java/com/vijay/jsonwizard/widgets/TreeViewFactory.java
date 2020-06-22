@@ -105,6 +105,7 @@ public class TreeViewFactory implements FormWidgetFactory {
                     defaultValue.add(jsonArray.getString(i));
                 }
             } catch (JSONException e) {
+                Timber.e(e);
             }
         }
 
@@ -117,6 +118,7 @@ public class TreeViewFactory implements FormWidgetFactory {
                     value.add(jsonArray.getString(i));
                 }
             } catch (JSONException e) {
+                Timber.e(e);
             }
         }
 
