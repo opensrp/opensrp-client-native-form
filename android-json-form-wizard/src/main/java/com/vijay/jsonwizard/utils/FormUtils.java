@@ -295,7 +295,7 @@ public class FormUtils {
                                                                CommonListener listener, boolean popup) throws JSONException {
         Map<String, View> createdViewsMap = new HashMap<>();
         String label = jsonObject.optString(JsonFormConstants.LABEL, "");
-        if (!TextUtils.isEmpty(label)) {
+        if (StringUtils.isNotBlank(label)) {
             String asterisks = "";
             int labelTextSize = FormUtils.getValueFromSpOrDpOrPx(jsonObject.optString(JsonFormConstants.LABEL_TEXT_SIZE, String.valueOf(context
                     .getResources().getDimension(R.dimen.default_label_text_size))), context);
@@ -307,7 +307,7 @@ public class FormUtils {
             ImageView editButton = labelConstraintLayout.findViewById(R.id.label_edit_button);
             if (requiredObject != null) {
                 String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
-                if (!TextUtils.isEmpty(requiredValue) && (Boolean.TRUE.toString().equalsIgnoreCase(requiredValue) || Boolean.valueOf(requiredValue))) {
+                if (StringUtils.isNotBlank(requiredValue) && (Boolean.TRUE.toString().equalsIgnoreCase(requiredValue) || Boolean.parseBoolean(requiredValue))) {
                     asterisks = "<font color=#CF0800> *</font>";
                 }
             }
