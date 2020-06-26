@@ -128,8 +128,8 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
      */
     private void setRepeatingGroupNumLimits() {
         try {
-            MIN_NUM_REPEATING_GROUPS = widgetArgs.getJsonObject().optInt(REPEATING_GROUP_MIN);
-            MAX_NUM_REPEATING_GROUPS = widgetArgs.getJsonObject().optInt(REPEATING_GROUP_MAX);
+            MIN_NUM_REPEATING_GROUPS = widgetArgs.getJsonObject().optInt(REPEATING_GROUP_MIN, MIN_NUM_REPEATING_GROUPS);
+            MAX_NUM_REPEATING_GROUPS = widgetArgs.getJsonObject().optInt(REPEATING_GROUP_MAX, MAX_NUM_REPEATING_GROUPS);
         } catch (NumberFormatException e) {
             Timber.e(e);
         }
