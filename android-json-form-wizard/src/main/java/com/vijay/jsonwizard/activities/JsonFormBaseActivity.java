@@ -27,7 +27,7 @@ import com.vijay.jsonwizard.utils.ValidationStatus;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.smartregister.client.utils.contract.JsonSubFormAndRulesLoader;
+import org.smartregister.client.utils.contract.ClientFormContract;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -44,7 +44,7 @@ import timber.log.Timber;
 
 import static com.vijay.jsonwizard.utils.NativeFormLangUtils.getTranslatedString;
 
-abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnFieldsInvalid, JsonSubFormAndRulesLoader {
+abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnFieldsInvalid, ClientFormContract.View {
     protected static final String TAG = JsonFormActivity.class.getSimpleName();
     protected static final String JSON_STATE = "jsonState";
     protected static final String FORM_STATE = "formState";

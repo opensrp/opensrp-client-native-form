@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
-import com.vijay.jsonwizard.interfaces.JsonSubFormAndRulesLoader;
 import com.vijay.jsonwizard.utils.Utils;
 
 import org.jeasy.rules.api.Facts;
@@ -19,6 +18,7 @@ import org.jeasy.rules.mvel.MVELRule;
 import org.jeasy.rules.mvel.MVELRuleFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.smartregister.client.utils.contract.ClientFormContract;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -144,8 +144,8 @@ public class RulesEngineFactory implements RuleListener {
             if (!ruleMap.containsKey(fileName)) {
                 BufferedReader bufferedReader;
                 boolean loadedFromDb = false;
-                if (context instanceof JsonSubFormAndRulesLoader) {
-                    bufferedReader = ((JsonSubFormAndRulesLoader) context).getRules(context, fileName);
+                if (context instanceof ClientFormContract.View) {
+                    bufferedReader = ((ClientFormContract.View) context).getRules(context, fileName);
                     loadedFromDb = true;
                 } else {
                     bufferedReader = new BufferedReader(new InputStreamReader(context.getAssets().open(fileName)));
@@ -158,7 +158,7 @@ public class RulesEngineFactory implements RuleListener {
                     Timber.e(ex);
 
                     if (loadedFromDb) {
-                        ((JsonSubFormAndRulesLoader) context).handleFormError(true, fileName);
+                        ((ClientFormContract.View) context).handleFormError(true, fileName);
                     }
 
                     return null;
