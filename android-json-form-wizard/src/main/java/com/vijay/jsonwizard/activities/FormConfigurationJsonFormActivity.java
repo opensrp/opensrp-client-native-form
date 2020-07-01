@@ -17,8 +17,6 @@ import com.vijay.jsonwizard.utils.FormUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.smartregister.client.utils.contract.ClientFormContract;
-import org.smartregister.client.utils.contract.JsonSubFormAndRulesLoader;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -29,7 +27,7 @@ import timber.log.Timber;
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 29-06-2020.
  */
-public class FormConfigurationJsonFormActivity extends JsonFormActivity implements ClientFormContract.View {
+public class FormConfigurationJsonFormActivity extends JsonFormActivity {
 
     private FormUtils formUtils;
 

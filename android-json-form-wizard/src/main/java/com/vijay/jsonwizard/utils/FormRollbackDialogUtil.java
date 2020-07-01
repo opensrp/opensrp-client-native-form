@@ -12,8 +12,7 @@ import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.interfaces.RollbackDialogCallback;
 
-import org.smartregister.client.utils.contract.ClientFormDao;
-import org.smartregister.client.utils.contract.JsonSubFormAndRulesLoader;
+import org.smartregister.client.utils.contract.ClientFormContract;
 
 import java.util.List;
 
@@ -23,9 +22,9 @@ import java.util.List;
 public class FormRollbackDialogUtil {
 
     public static AlertDialog showAvailableRollbackFormsDialog(@NonNull final Context context
-            , @NonNull final ClientFormDao clientFormRepository
-            , @NonNull final List<ClientFormDao.ClientFormModel> clientFormList
-            , @NonNull final ClientFormDao.ClientFormModel currentClientForm
+            , @NonNull final ClientFormContract.Dao clientFormRepository
+            , @NonNull final List<ClientFormContract.Model> clientFormList
+            , @NonNull final ClientFormContract.Model currentClientForm
             , final @NonNull RollbackDialogCallback rollbackDialogCallback) {
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
         builderSingle.setIcon(R.drawable.ic_icon_danger);
@@ -36,7 +35,7 @@ public class FormRollbackDialogUtil {
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, android.R.layout.select_dialog_singlechoice);
 
         int counter = 0;
-        for (ClientFormDao.ClientFormModel clientForm : clientFormList) {
+        for (ClientFormContract.Model clientForm : clientFormList) {
             if (clientForm.getVersion().equals(currentClientForm.getVersion())) {
                 selectedItem = counter;
                 arrayAdapter.add("v" + clientForm.getVersion() + context.getString(R.string.current_corrupted_form));
@@ -74,26 +73,26 @@ public class FormRollbackDialogUtil {
         builderSingle.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                if (context instanceof JsonSubFormAndRulesLoader) {
-                    ((JsonSubFormAndRulesLoader) context).setVisibleFormErrorAndRollbackDialog(false);
+                if (context instanceof ClientFormContract.View) {
+                    ((ClientFormContract.View) context).setVisibleFormErrorAndRollbackDialog(false);
                 }
             }
         });
 
 
-        if (context instanceof JsonSubFormAndRulesLoader) {
-            ((JsonSubFormAndRulesLoader) context).setVisibleFormErrorAndRollbackDialog(true);
+        if (context instanceof ClientFormContract.View) {
+            ((ClientFormContract.View) context).setVisibleFormErrorAndRollbackDialog(true);
         }
         return builderSingle.show();
     }
 
     @VisibleForTesting
-    protected static boolean selectForm(@NonNull ClientFormDao clientFormRepository, int pos, @NonNull String formVersion, @NonNull Context context, @NonNull List<ClientFormDao.ClientFormModel> clientFormList, @NonNull ClientFormDao.ClientFormModel currentClientForm, @NonNull RollbackDialogCallback rollbackDialogCallback) {
+    protected static boolean selectForm(@NonNull ClientFormContract.Dao clientFormRepository, int pos, @NonNull String formVersion, @NonNull Context context, @NonNull List<ClientFormContract.Model> clientFormList, @NonNull ClientFormContract.Model currentClientForm, @NonNull RollbackDialogCallback rollbackDialogCallback) {
         if (formVersion.contains(context.getString(R.string.current_corrupted_form))) {
             Toast.makeText(context, R.string.cannot_select_corrupted_form_rollback, Toast.LENGTH_LONG).show();
             return false;
         } else {
-            ClientFormDao.ClientFormModel selectedClientForm;
+            ClientFormContract.Model selectedClientForm;
             if (formVersion.equals(JsonFormConstants.CLIENT_FORM_ASSET_VERSION)) {
                 selectedClientForm = clientFormRepository.createNewClientFormModel();
                 selectedClientForm.setVersion(JsonFormConstants.CLIENT_FORM_ASSET_VERSION);
