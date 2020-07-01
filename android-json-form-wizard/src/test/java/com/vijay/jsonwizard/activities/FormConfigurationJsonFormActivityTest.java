@@ -46,18 +46,16 @@ public class FormConfigurationJsonFormActivityTest extends BaseActivityTest {
     public void getRulesShouldReturnCallFormUtils() throws Exception {
         FormUtils formUtils = Mockito.mock(FormUtils.class);
 
-        ReflectionHelpers.setStaticField(FormUtils.class, "instance", formUtils);
-        ReflectionHelpers.setField(formUtils, "mContext", RuntimeEnvironment.application);
         String rulesFileIdentifier = "registration_calculation.yml";
 
         ClientFormContract.Dao clientFormRepository = Mockito.mock(ClientFormContract.Dao.class);
-
         NativeFormLibrary.getInstance().setClientFormDao(clientFormRepository);
+        ReflectionHelpers.setField(formConfigurationJsonFormActivity, "formUtils", formUtils);
 
         Mockito.doReturn(new BufferedReader(new StringReader(""))).when(formUtils).getRulesFromRepository(
                 Mockito.eq(RuntimeEnvironment.application),
                 Mockito.eq(clientFormRepository),
-                rulesFileIdentifier);
+                Mockito.eq(rulesFileIdentifier));
 
 
         formConfigurationJsonFormActivity.getRules(RuntimeEnvironment.application, rulesFileIdentifier);
@@ -70,12 +68,12 @@ public class FormConfigurationJsonFormActivityTest extends BaseActivityTest {
     public void getSubFormShouldCallFormUtils() throws Exception {
         FormUtils formUtils = Mockito.mock(FormUtils.class);
 
-        ReflectionHelpers.setStaticField(FormUtils.class, "instance", formUtils);
-        ReflectionHelpers.setField(formUtils, "mContext", RuntimeEnvironment.application);
         String subFormIdentifier = "tuberculosis_test";
 
         JSONObject jsonObject = new JSONObject();
         ClientFormContract.Dao clientFormRepository = Mockito.mock(ClientFormContract.Dao.class);
+        NativeFormLibrary.getInstance().setClientFormDao(clientFormRepository);
+        ReflectionHelpers.setField(formConfigurationJsonFormActivity, "formUtils", formUtils);
 
         Mockito.doReturn(jsonObject).when(formUtils).getSubFormJsonFromRepository(RuntimeEnvironment.application, clientFormRepository, subFormIdentifier, null, false);
 
@@ -89,8 +87,9 @@ public class FormConfigurationJsonFormActivityTest extends BaseActivityTest {
         FormConfigurationJsonFormActivity spiedActivity = Mockito.spy(formConfigurationJsonFormActivity);
 
         ClientFormContract.Dao clientFormRepository = Mockito.mock(ClientFormContract.Dao.class);
-        ReflectionHelpers.setStaticField(FormUtils.class, "instance", formUtils);
         String subFormIdentifier = "tuberculosis_test.json";
+        NativeFormLibrary.getInstance().setClientFormDao(clientFormRepository);
+        ReflectionHelpers.setField(spiedActivity, "formUtils", formUtils);
 
         Mockito.doAnswer(new Answer() {
             @Override
@@ -111,20 +110,20 @@ public class FormConfigurationJsonFormActivityTest extends BaseActivityTest {
         //formConfigurationJsonFormActivity.contex
         FormConfigurationJsonFormActivity spiedActivity = Mockito.spy(formConfigurationJsonFormActivity);
         ClientFormContract.Dao clientFormRepository = Mockito.mock(ClientFormContract.Dao.class);
+        NativeFormLibrary.getInstance().setClientFormDao(clientFormRepository);
+        ReflectionHelpers.setField(spiedActivity, "formUtils", formUtils);
 
-        ReflectionHelpers.setStaticField(FormUtils.class, "instance", formUtils);
-        ReflectionHelpers.setField(formUtils, "mContext", RuntimeEnvironment.application);
         Mockito.doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                OnFormFetchedCallback<String> onFormFetchedCallback = invocation.getArgument(2);
+                OnFormFetchedCallback<String> onFormFetchedCallback = invocation.getArgument(4);
                 onFormFetchedCallback.onFormFetched("");
                 return null;
             }
-        }).when(formUtils).handleJsonFormOrRulesError(RuntimeEnvironment.application, clientFormRepository, Mockito.eq(false), Mockito.eq(formIdentifier), Mockito.any(OnFormFetchedCallback.class));
+        }).when(formUtils).handleJsonFormOrRulesError(Mockito.eq(spiedActivity), Mockito.eq(clientFormRepository), Mockito.eq(false), Mockito.eq(formIdentifier), Mockito.any(OnFormFetchedCallback.class));
 
         spiedActivity.handleFormError(false, formIdentifier);
-        Mockito.verify(formUtils).handleJsonFormOrRulesError(RuntimeEnvironment.application, clientFormRepository, Mockito.eq(false), Mockito.eq(formIdentifier), Mockito.any(OnFormFetchedCallback.class));
+        Mockito.verify(formUtils).handleJsonFormOrRulesError(Mockito.eq(spiedActivity), Mockito.eq(clientFormRepository), Mockito.eq(false), Mockito.eq(formIdentifier), Mockito.any(OnFormFetchedCallback.class));
         Mockito.verify(spiedActivity).finish();
     }
 
@@ -188,7 +187,9 @@ public class FormConfigurationJsonFormActivityTest extends BaseActivityTest {
         Mockito.doNothing().when(spiedActivity).init(Mockito.anyString());
         Mockito.doNothing().when(spiedActivity).showFormVersionUpdateDialog(jsonObject, getString(R.string.form_update_title), getString(R.string.form_update_message));
 
-        spiedActivity.onCreate(new Bundle());
+        Bundle bundle = new Bundle();
+        bundle.putString(JsonFormBaseActivity.JSON_STATE, "{}");
+        spiedActivity.onCreate(bundle);
 
         Mockito.verify(spiedActivity).showFormVersionUpdateDialog(jsonObject, getString(R.string.form_update_title), getString(R.string.form_update_message));
     }

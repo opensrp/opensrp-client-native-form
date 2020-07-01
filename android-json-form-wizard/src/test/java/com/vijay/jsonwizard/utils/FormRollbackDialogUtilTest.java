@@ -87,6 +87,7 @@ public class FormRollbackDialogUtilTest extends BaseTest {
         clientFormsList.add(clientForm);
 
         ClientFormContract.Dao clientFormRepository = Mockito.mock(ClientFormContract.Dao.class);
+        Mockito.doReturn(new TestClientForm()).when(clientFormRepository).createNewClientFormModel();
 
         RollbackDialogCallback rollbackDialogCallback = Mockito.mock(RollbackDialogCallback.class);
         assertTrue(FormRollbackDialogUtil.selectForm(clientFormRepository,0, "base version"
