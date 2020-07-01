@@ -9,16 +9,28 @@ import org.smartregister.client.utils.contract.ClientFormContract;
  */
 public class NativeFormLibrary {
 
+    private ClientFormContract.Dao clientFormDao;
+    private static NativeFormLibrary instance;
+
     @NonNull
-    public static final NativeFormLibrary getInstance() {
-        return null;
+    public static NativeFormLibrary getInstance() {
+        if (instance == null) {
+            instance = new NativeFormLibrary();
+        }
+
+        return instance;
     }
 
+/*
     public static final boolean init() {
         return false;
-    }
+    }*/
 
     public ClientFormContract.Dao getClientFormDao() {
-        return null;
+        return clientFormDao;
+    }
+
+    public void setClientFormDao(@NonNull ClientFormContract.Dao clientFormDao) {
+        this.clientFormDao = clientFormDao;
     }
 }

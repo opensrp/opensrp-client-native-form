@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.Window;
 
+import com.vijay.jsonwizard.NativeFormLibrary;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.interfaces.OnFormFetchedCallback;
@@ -23,6 +24,7 @@ import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.util.ReflectionHelpers;
+import org.smartregister.client.utils.contract.ClientFormContract;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
@@ -36,7 +38,6 @@ public class FormConfigurationJsonFormActivityTest extends BaseActivityTest {
 
     @Before
     public void setUp() throws Exception {
-        //formConfigurationJsonFormActivity = new FormConfigurationJsonFormActivity();
         formConfigurationJsonFormActivity = Robolectric.buildActivity(FormConfigurationJsonFormActivity.class)
                 .get();
     }
@@ -49,11 +50,20 @@ public class FormConfigurationJsonFormActivityTest extends BaseActivityTest {
         ReflectionHelpers.setField(formUtils, "mContext", RuntimeEnvironment.application);
         String rulesFileIdentifier = "registration_calculation.yml";
 
-        Mockito.doReturn(new BufferedReader(new StringReader(""))).when(formUtils).getRulesFromRepository(Mockito.eq(rulesFileIdentifier));
+        ClientFormContract.Dao clientFormRepository = Mockito.mock(ClientFormContract.Dao.class);
+
+        NativeFormLibrary.getInstance().setClientFormDao(clientFormRepository);
+
+        Mockito.doReturn(new BufferedReader(new StringReader(""))).when(formUtils).getRulesFromRepository(
+                Mockito.eq(RuntimeEnvironment.application),
+                Mockito.eq(clientFormRepository),
+                rulesFileIdentifier);
 
 
         formConfigurationJsonFormActivity.getRules(RuntimeEnvironment.application, rulesFileIdentifier);
-        Mockito.verify(formUtils).getRulesFromRepository(Mockito.eq(rulesFileIdentifier));
+        Mockito.verify(formUtils).getRulesFromRepository(
+                Mockito.eq(RuntimeEnvironment.application),
+                Mockito.eq(clientFormRepository),Mockito.eq(rulesFileIdentifier));
     }
 
     @Test
@@ -65,11 +75,12 @@ public class FormConfigurationJsonFormActivityTest extends BaseActivityTest {
         String subFormIdentifier = "tuberculosis_test";
 
         JSONObject jsonObject = new JSONObject();
+        ClientFormContract.Dao clientFormRepository = Mockito.mock(ClientFormContract.Dao.class);
 
-        Mockito.doReturn(jsonObject).when(formUtils).getSubFormJsonFromRepository(subFormIdentifier, null, RuntimeEnvironment.application, false);
+        Mockito.doReturn(jsonObject).when(formUtils).getSubFormJsonFromRepository(RuntimeEnvironment.application, clientFormRepository, subFormIdentifier, null, false);
 
         formConfigurationJsonFormActivity.getSubForm(subFormIdentifier, null, RuntimeEnvironment.application, false);
-        Mockito.verify(formUtils).getSubFormJsonFromRepository(subFormIdentifier, null, RuntimeEnvironment.application, false);
+        Mockito.verify(formUtils).getSubFormJsonFromRepository(RuntimeEnvironment.application, clientFormRepository, subFormIdentifier, null, false);
     }
 
     @Test
@@ -77,8 +88,8 @@ public class FormConfigurationJsonFormActivityTest extends BaseActivityTest {
         FormUtils formUtils = Mockito.mock(FormUtils.class);
         FormConfigurationJsonFormActivity spiedActivity = Mockito.spy(formConfigurationJsonFormActivity);
 
+        ClientFormContract.Dao clientFormRepository = Mockito.mock(ClientFormContract.Dao.class);
         ReflectionHelpers.setStaticField(FormUtils.class, "instance", formUtils);
-        ReflectionHelpers.setField(formUtils, "mContext", RuntimeEnvironment.application);
         String subFormIdentifier = "tuberculosis_test.json";
 
         Mockito.doAnswer(new Answer() {
@@ -86,7 +97,7 @@ public class FormConfigurationJsonFormActivityTest extends BaseActivityTest {
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 throw new JSONException("Test exception");
             }
-        }).when(formUtils).getSubFormJsonFromRepository(subFormIdentifier, null, RuntimeEnvironment.application, false);
+        }).when(formUtils).getSubFormJsonFromRepository(RuntimeEnvironment.application, clientFormRepository, subFormIdentifier, null, false);
 
 
         Assert.assertNull(spiedActivity.getSubForm(subFormIdentifier, null, RuntimeEnvironment.application, false));
@@ -99,6 +110,7 @@ public class FormConfigurationJsonFormActivityTest extends BaseActivityTest {
         FormUtils formUtils = Mockito.mock(FormUtils.class);
         //formConfigurationJsonFormActivity.contex
         FormConfigurationJsonFormActivity spiedActivity = Mockito.spy(formConfigurationJsonFormActivity);
+        ClientFormContract.Dao clientFormRepository = Mockito.mock(ClientFormContract.Dao.class);
 
         ReflectionHelpers.setStaticField(FormUtils.class, "instance", formUtils);
         ReflectionHelpers.setField(formUtils, "mContext", RuntimeEnvironment.application);
@@ -109,10 +121,10 @@ public class FormConfigurationJsonFormActivityTest extends BaseActivityTest {
                 onFormFetchedCallback.onFormFetched("");
                 return null;
             }
-        }).when(formUtils).handleJsonFormOrRulesError(Mockito.eq(false), Mockito.eq(formIdentifier), Mockito.any(OnFormFetchedCallback.class));
+        }).when(formUtils).handleJsonFormOrRulesError(RuntimeEnvironment.application, clientFormRepository, Mockito.eq(false), Mockito.eq(formIdentifier), Mockito.any(OnFormFetchedCallback.class));
 
         spiedActivity.handleFormError(false, formIdentifier);
-        Mockito.verify(formUtils).handleJsonFormOrRulesError(Mockito.eq(false), Mockito.eq(formIdentifier), Mockito.any(OnFormFetchedCallback.class));
+        Mockito.verify(formUtils).handleJsonFormOrRulesError(RuntimeEnvironment.application, clientFormRepository, Mockito.eq(false), Mockito.eq(formIdentifier), Mockito.any(OnFormFetchedCallback.class));
         Mockito.verify(spiedActivity).finish();
     }
 
@@ -130,7 +142,7 @@ public class FormConfigurationJsonFormActivityTest extends BaseActivityTest {
 
         Mockito.doReturn(jsonObject).when(spiedActivity).getmJSONObject();
 
-        spiedActivity.showFormVersionUpdateDialog(title, message);
+        spiedActivity.showFormVersionUpdateDialog(jsonObject, title, message);
 
         AlertDialog alertDialog = (AlertDialog) ShadowDialog.getLatestDialog();
         Object alertDialogController = ReflectionHelpers.getField(alertDialog, "mAlert");
@@ -154,7 +166,7 @@ public class FormConfigurationJsonFormActivityTest extends BaseActivityTest {
 
         Mockito.doReturn(jsonObject).when(spiedActivity).getmJSONObject();
 
-        spiedActivity.showFormVersionUpdateDialog(title, message);
+        spiedActivity.showFormVersionUpdateDialog(jsonObject, title, message);
         AlertDialog alertDialog = (AlertDialog) ShadowDialog.getLatestDialog();
         alertDialog.getButton(Dialog.BUTTON_POSITIVE).callOnClick();
 
@@ -173,12 +185,12 @@ public class FormConfigurationJsonFormActivityTest extends BaseActivityTest {
         spiedActivity.setTheme(R.style.Theme_AppCompat_Light_Dialog_Alert);
 
         Mockito.doReturn(jsonObject).when(spiedActivity).getmJSONObject();
-        Mockito.doNothing().when(spiedActivity).init(Mockito.any());
-        Mockito.doNothing().when(spiedActivity).showFormVersionUpdateDialog(getString(R.string.form_update_title), getString(R.string.form_update_message));
+        Mockito.doNothing().when(spiedActivity).init(Mockito.anyString());
+        Mockito.doNothing().when(spiedActivity).showFormVersionUpdateDialog(jsonObject, getString(R.string.form_update_title), getString(R.string.form_update_message));
 
         spiedActivity.onCreate(new Bundle());
 
-        Mockito.verify(spiedActivity).showFormVersionUpdateDialog(getString(R.string.form_update_title), getString(R.string.form_update_message));
+        Mockito.verify(spiedActivity).showFormVersionUpdateDialog(jsonObject, getString(R.string.form_update_title), getString(R.string.form_update_message));
     }
 
     protected String getString(int stringId) {
