@@ -53,7 +53,6 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.smartregister.client.utils.contract.ClientFormDao;
 import org.smartregister.client.utils.contract.JsonSubFormAndRulesLoader;
 
 import java.io.BufferedReader;
