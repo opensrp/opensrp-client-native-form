@@ -95,7 +95,6 @@ public class DatePickerFactory implements FormWidgetFactory {
             }
             duration.setText(durationText);
         }
-
     }
 
     @NotNull
@@ -293,6 +292,11 @@ public class DatePickerFactory implements FormWidgetFactory {
         editText.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         editText.setTag(R.id.address, stepName + ":" + jsonObject.getString(KEY.KEY));
         editText.setTag(R.id.locale_independent_value, jsonObject.optString(KEY.VALUE));
+
+        if (jsonObject.has(JsonFormConstants.DISPLAY_DATE_FORMAT)) {
+            DATE_FORMAT_LOCALE.applyPattern(jsonObject.getString(JsonFormConstants.DISPLAY_DATE_FORMAT));
+        }
+
         if (jsonObject.has(JsonFormConstants.V_REQUIRED)) {
             JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
             boolean requiredValue = requiredObject.getBoolean(KEY.VALUE);
@@ -325,6 +329,10 @@ public class DatePickerFactory implements FormWidgetFactory {
 
         Locale locale = getCurrentLocale(context);
         final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy", locale);
+
+        if (jsonObject.has(JsonFormConstants.DISPLAY_DATE_FORMAT)) {
+            DATE_FORMAT.applyPattern(jsonObject.getString(JsonFormConstants.DISPLAY_DATE_FORMAT));
+        }
 
         datePickerDialog.setOnDateSetListener(new android.app.DatePickerDialog.OnDateSetListener() {
             @Override
