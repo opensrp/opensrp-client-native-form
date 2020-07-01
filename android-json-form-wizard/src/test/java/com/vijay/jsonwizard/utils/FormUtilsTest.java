@@ -373,7 +373,6 @@ public class FormUtilsTest extends BaseTest {
         clientForm.setJson("");
         ClientFormContract.Dao clientFormRepository = Mockito.mock(ClientFormContract.Dao.class);
         Mockito.doReturn(clientForm).when(clientFormRepository).getActiveClientFormByIdentifier(Mockito.eq(rulesFileIdentifier));
-        ReflectionHelpers.setField(formUtils, "mContext", RuntimeEnvironment.application);
 
         Assert.assertNotNull(formUtils.getRulesFromRepository(context, clientFormRepository, rulesFileIdentifier));
 
@@ -388,7 +387,6 @@ public class FormUtilsTest extends BaseTest {
         clientForm.setJson("{}");
         ClientFormContract.Dao clientFormRepository = Mockito.mock(ClientFormContract.Dao.class);
         Mockito.doReturn(clientForm).when(clientFormRepository).getActiveClientFormByIdentifier(Mockito.eq("json.form/sub_form/" + subFormIdentifier));
-        ReflectionHelpers.setField(formUtils, "mContext", RuntimeEnvironment.application);
 
         JSONObject jsonObject = formUtils.getSubFormJsonFromRepository(context, clientFormRepository, subFormIdentifier, null, false);
 
