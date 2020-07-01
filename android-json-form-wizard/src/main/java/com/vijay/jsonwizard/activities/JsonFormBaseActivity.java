@@ -16,7 +16,6 @@ import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
-import com.vijay.jsonwizard.interfaces.JsonSubFormAndRulesLoader;
 import com.vijay.jsonwizard.interfaces.LifeCycleListener;
 import com.vijay.jsonwizard.interfaces.OnActivityRequestPermissionResultListener;
 import com.vijay.jsonwizard.interfaces.OnActivityResultListener;
@@ -28,6 +27,7 @@ import com.vijay.jsonwizard.utils.ValidationStatus;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.smartregister.client.utils.contract.JsonSubFormAndRulesLoader;
 
 import java.io.BufferedReader;
 import java.io.IOException;
