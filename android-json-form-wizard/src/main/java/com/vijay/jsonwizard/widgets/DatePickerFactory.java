@@ -21,6 +21,7 @@ import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.DatePickerDialog;
 import com.vijay.jsonwizard.customviews.GenericTextWatcher;
+import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
@@ -293,8 +294,8 @@ public class DatePickerFactory implements FormWidgetFactory {
         editText.setTag(R.id.address, stepName + ":" + jsonObject.getString(KEY.KEY));
         editText.setTag(R.id.locale_independent_value, jsonObject.optString(KEY.VALUE));
 
-        if (jsonObject.has(JsonFormConstants.DISPLAY_DATE_FORMAT)) {
-            DATE_FORMAT_LOCALE.applyPattern(jsonObject.getString(JsonFormConstants.DISPLAY_DATE_FORMAT));
+        if (StringUtils.isNoneEmpty(Form.getDatePickerDisplayFormat())) {
+            DATE_FORMAT_LOCALE.applyPattern(Form.getDatePickerDisplayFormat());
         }
 
         if (jsonObject.has(JsonFormConstants.V_REQUIRED)) {
@@ -330,8 +331,8 @@ public class DatePickerFactory implements FormWidgetFactory {
         Locale locale = getCurrentLocale(context);
         final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy", locale);
 
-        if (jsonObject.has(JsonFormConstants.DISPLAY_DATE_FORMAT)) {
-            DATE_FORMAT.applyPattern(jsonObject.getString(JsonFormConstants.DISPLAY_DATE_FORMAT));
+        if (StringUtils.isNoneEmpty(Form.getDatePickerDisplayFormat())) {
+            DATE_FORMAT.applyPattern(Form.getDatePickerDisplayFormat());
         }
 
         datePickerDialog.setOnDateSetListener(new android.app.DatePickerDialog.OnDateSetListener() {
@@ -375,6 +376,7 @@ public class DatePickerFactory implements FormWidgetFactory {
 
         return datePickerDialog;
     }
+
 
     protected int getLayout() {
         return R.layout.native_form_item_date_picker;
