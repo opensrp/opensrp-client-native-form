@@ -1912,7 +1912,7 @@ public class FormUtils {
 
                             if (isRulesFile) {
                                 try {
-                                    clientForm.setJson(Utils.convertStreamToString(context.getAssets().open(formIdentity)));
+                                    clientForm.setJson(convertStreamToString(context.getAssets().open(formIdentity)));
                                 } catch (IOException e) {
                                     Timber.e(e);
                                 }
@@ -1955,7 +1955,7 @@ public class FormUtils {
             clientForm = clientFormDao.getActiveClientFormByIdentifier(revisedFormName);
 
             if (clientForm == null) {
-                String finalSubFormsLocation = com.vijay.jsonwizard.utils.FormUtils.getSubFormLocation(subFormsLocation);
+                String finalSubFormsLocation = getSubFormLocation(subFormsLocation);
                 dbFormName = StringUtils.isBlank(finalSubFormsLocation) ? localeFormIdentity : finalSubFormsLocation + "/" + localeFormIdentity;
                 clientForm = clientFormDao.getActiveClientFormByIdentifier(dbFormName);
 
