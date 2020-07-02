@@ -276,7 +276,12 @@ public class DatePickerFactory implements FormWidgetFactory {
 
     private void updateEditText(MaterialEditText editText, JSONObject jsonObject, String stepName, Context context, TextView duration) throws JSONException {
 
-        SimpleDateFormat DATE_FORMAT_LOCALE = getSimpleDateFormat(context);
+        Locale locale = getCurrentLocale(context);
+        final SimpleDateFormat DATE_FORMAT_LOCALE = new SimpleDateFormat("dd-MM-yyyy", locale);
+
+        if (StringUtils.isNoneEmpty(Form.getDatePickerDisplayFormat())) {
+            DATE_FORMAT.applyPattern(Form.getDatePickerDisplayFormat());
+        }
 
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
@@ -314,16 +319,6 @@ public class DatePickerFactory implements FormWidgetFactory {
     }
 
     @VisibleForTesting
-    protected SimpleDateFormat getSimpleDateFormat(Context context) {
-        Locale locale = getCurrentLocale(context);
-
-        return StringUtils.isNoneEmpty(Form.getDatePickerDisplayFormat()) ?
-                new SimpleDateFormat(Form.getDatePickerDisplayFormat(), locale) :
-                new SimpleDateFormat("dd-MM-yyyy", locale);
-
-    }
-
-    @VisibleForTesting
     protected Locale getCurrentLocale(Context context) {
         return context.getResources().getConfiguration().locale.getLanguage().equals("ar") ? Locale.ENGLISH : context.getResources().getConfiguration().locale;//Arabic should render normal numbers/numeric digits
     }
@@ -333,7 +328,12 @@ public class DatePickerFactory implements FormWidgetFactory {
         final DatePickerDialog datePickerDialog = new DatePickerDialog();
         datePickerDialog.setContext(context);
 
-        final SimpleDateFormat DATE_FORMAT = getSimpleDateFormat(context);
+        Locale locale = getCurrentLocale(context);
+        final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy", locale);
+
+        if (StringUtils.isNoneEmpty(Form.getDatePickerDisplayFormat())) {
+            DATE_FORMAT.applyPattern(Form.getDatePickerDisplayFormat());
+        }
 
         datePickerDialog.setOnDateSetListener(new android.app.DatePickerDialog.OnDateSetListener() {
             @Override
