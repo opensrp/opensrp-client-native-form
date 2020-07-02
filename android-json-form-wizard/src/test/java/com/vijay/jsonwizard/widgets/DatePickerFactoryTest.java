@@ -169,7 +169,8 @@ public class DatePickerFactoryTest extends BaseTest {
 
         Mockito.doReturn(Locale.ENGLISH).when(factorySpy).getCurrentLocale(context);
         TextView duration = Mockito.mock(TextView.class);
-        JSONObject jsonObject = new JSONObject("{\"key\":\"Date_Birth\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"person\",\"openmrs_entity_id\":\"birthdate\",\"type\":\"date_picker\",\"hint\":\"Child's DOB\",\"label_info_title\":\"Child's Date of Birth\",\"label_info_text\":\"here is some text on this dialog\",\"expanded\":false,\"duration\":{\"label\":\"Age\"},\"min_date\":\"today-5y\",\"max_date\":\"today\",\"v_required\":{\"value\":\"true\",\"err\":\"Please enter the date of birth\"}}");
+        String jsonString = "{\"key\":\"Date_Birth\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"person\",\"openmrs_entity_id\":\"birthdate\",\"type\":\"date_picker\",\"hint\":\"Child's DOB\",\"label_info_title\":\"Child's Date of Birth\",\"label_info_text\":\"here is some text on this dialog\",\"expanded\":false,\"duration\":{\"label\":\"Age\"},\"min_date\":\"today-5y\",\"max_date\":\"today\",\"v_required\":{\"value\":\"true\",\"err\":\"Please enter the date of birth\"}}";
+        JSONObject jsonObject = new JSONObject(jsonString);
 
         DatePickerDialog pickerDialog = factorySpy.createDateDialog(context, duration, editText,jsonObject);
         Assert.assertNotNull(pickerDialog);
