@@ -1,5 +1,6 @@
 package com.vijay.jsonwizard.widgets;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -13,6 +14,7 @@ import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.utils.FormUtils;
+import com.vijay.jsonwizard.utils.NativeFormLangUtils;
 
 import org.json.JSONObject;
 import org.junit.Assert;
@@ -124,4 +126,31 @@ public class DatePickerFactoryTest extends BaseTest {
         SimpleDateFormat simpleDateFormat2 = factorySpy.getSimpleDateFormat(context);
         Assert.assertEquals("dd MMM YYY", simpleDateFormat2.toPattern());
     }
+
+
+    @Mock
+    private Context mContext;
+
+
+    @PrepareForTest(NativeFormLangUtils.class)
+    @Test
+    public void testUpdateDateText() {
+        Assert.assertNotNull(factory);
+        DatePickerFactory factorySpy = Mockito.spy(factory);
+        Assert.assertNotNull(factorySpy);
+
+        TextView duration = Mockito.mock(TextView.class);
+        duration.setTag(R.id.label);
+
+        String label = "Age";
+        Mockito.when(duration.getTag(R.id.label)).thenReturn(label);
+        Mockito.doReturn(Locale.ENGLISH).when(factorySpy).getSetLanguage(context);
+        Mockito.doReturn("12 Age").when(factorySpy).getDurationText(context, "12-05-2010", Locale.ENGLISH);
+        factorySpy.updateDateText(context, editText, duration, "12-05-2010");
+
+        Mockito.verify(factorySpy).getDurationText(context, "12-05-2010", Locale.ENGLISH);
+
+    }
+
 }
+

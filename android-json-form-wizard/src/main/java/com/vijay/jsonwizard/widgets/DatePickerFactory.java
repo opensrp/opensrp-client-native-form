@@ -85,7 +85,8 @@ public class DatePickerFactory implements FormWidgetFactory {
         }
     }
 
-    private void updateDateText(Context context, MaterialEditText editText, TextView duration, String date) {
+    @VisibleForTesting
+    protected void updateDateText(Context context, MaterialEditText editText, TextView duration, String date) {
         editText.setText(date);
         String durationLabel = (String) duration.getTag(R.id.label);
         if (StringUtils.isNotBlank(durationLabel)) {
