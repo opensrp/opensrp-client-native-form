@@ -1,6 +1,5 @@
 package com.vijay.jsonwizard.widgets;
 
-import android.content.Context;
 import android.content.res.Resources;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -126,10 +125,6 @@ public class DatePickerFactoryTest extends BaseTest {
         SimpleDateFormat simpleDateFormat2 = factorySpy.getSimpleDateFormat(context);
         Assert.assertEquals("dd MMM YYY", simpleDateFormat2.toPattern());
     }
-
-
-    @Mock
-    private Context mContext;
 
 
     @PrepareForTest(NativeFormLangUtils.class)
