@@ -19,7 +19,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RuntimeEnvironment;
-import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.client.utils.contract.ClientFormContract;
 
 import java.text.SimpleDateFormat;
