@@ -276,8 +276,7 @@ public class DatePickerFactory implements FormWidgetFactory {
 
     private void updateEditText(MaterialEditText editText, JSONObject jsonObject, String stepName, Context context, TextView duration) throws JSONException {
 
-        Locale locale = getCurrentLocale(context);
-        SimpleDateFormat DATE_FORMAT_LOCALE = new SimpleDateFormat("dd-MM-yyyy", locale);
+        SimpleDateFormat DATE_FORMAT_LOCALE = getSimpleDateFormat(context);
 
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
@@ -293,10 +292,6 @@ public class DatePickerFactory implements FormWidgetFactory {
         editText.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         editText.setTag(R.id.address, stepName + ":" + jsonObject.getString(KEY.KEY));
         editText.setTag(R.id.locale_independent_value, jsonObject.optString(KEY.VALUE));
-
-        if (StringUtils.isNoneEmpty(Form.getDatePickerDisplayFormat())) {
-            DATE_FORMAT_LOCALE.applyPattern(Form.getDatePickerDisplayFormat());
-        }
 
         if (jsonObject.has(JsonFormConstants.V_REQUIRED)) {
             JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
@@ -319,6 +314,16 @@ public class DatePickerFactory implements FormWidgetFactory {
     }
 
     @VisibleForTesting
+    protected SimpleDateFormat getSimpleDateFormat(Context context) {
+        Locale locale = getCurrentLocale(context);
+
+        return StringUtils.isNoneEmpty(Form.getDatePickerDisplayFormat()) ?
+                new SimpleDateFormat(Form.getDatePickerDisplayFormat(), locale) :
+                new SimpleDateFormat("dd-MM-yyyy", locale);
+
+    }
+
+    @VisibleForTesting
     protected Locale getCurrentLocale(Context context) {
         return context.getResources().getConfiguration().locale.getLanguage().equals("ar") ? Locale.ENGLISH : context.getResources().getConfiguration().locale;//Arabic should render normal numbers/numeric digits
     }
@@ -328,12 +333,7 @@ public class DatePickerFactory implements FormWidgetFactory {
         final DatePickerDialog datePickerDialog = new DatePickerDialog();
         datePickerDialog.setContext(context);
 
-        Locale locale = getCurrentLocale(context);
-        final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy", locale);
-
-        if (StringUtils.isNoneEmpty(Form.getDatePickerDisplayFormat())) {
-            DATE_FORMAT.applyPattern(Form.getDatePickerDisplayFormat());
-        }
+        final SimpleDateFormat DATE_FORMAT = getSimpleDateFormat(context);
 
         datePickerDialog.setOnDateSetListener(new android.app.DatePickerDialog.OnDateSetListener() {
             @Override
