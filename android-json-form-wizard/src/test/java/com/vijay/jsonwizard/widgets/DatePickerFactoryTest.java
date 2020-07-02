@@ -9,6 +9,7 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
+import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.utils.FormUtils;
@@ -22,8 +23,11 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -101,4 +105,23 @@ public class DatePickerFactoryTest extends BaseTest {
         Assert.assertEquals("duration.label", editableProperties.iterator().next());
     }
 
+    @PrepareForTest(Form.class)
+    @Test
+    public void testGetSimpleDateFormat() {
+        Assert.assertNotNull(factory);
+        DatePickerFactory factorySpy = Mockito.spy(factory);
+        Assert.assertNotNull(factorySpy);
+
+        Mockito.doReturn(Locale.ENGLISH).when(factorySpy).getCurrentLocale(context);
+
+        SimpleDateFormat simpleDateFormat = factorySpy.getSimpleDateFormat(context);
+        Assert.assertNotNull(simpleDateFormat);
+        Assert.assertEquals("dd-MM-yyyy", simpleDateFormat.toPattern());
+
+        PowerMockito.mockStatic(Form.class);
+        PowerMockito.when(Form.getDatePickerDisplayFormat()).thenReturn("dd MMM YYY");
+
+        SimpleDateFormat simpleDateFormat2 = factorySpy.getSimpleDateFormat(context);
+        Assert.assertEquals("dd MMM YYY", simpleDateFormat2.toPattern());
+    }
 }
