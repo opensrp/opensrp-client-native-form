@@ -240,8 +240,9 @@ public class DatePickerFactory implements FormWidgetFactory {
 
     }
 
+    @VisibleForTesting
     @NonNull
-    private GenericTextWatcher getGenericTextWatcher(String stepName, final Activity context, JsonFormFragment formFragment,
+    protected GenericTextWatcher getGenericTextWatcher(String stepName, final Activity context, JsonFormFragment formFragment,
                                                      final MaterialEditText editText,
                                                      final DatePickerDialog datePickerDialog) {
         GenericTextWatcher genericTextWatcher = new GenericTextWatcher(stepName, formFragment, editText);

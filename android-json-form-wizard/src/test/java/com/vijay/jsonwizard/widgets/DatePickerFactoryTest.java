@@ -9,12 +9,15 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
+import com.vijay.jsonwizard.customviews.DatePickerDialog;
+import com.vijay.jsonwizard.customviews.GenericTextWatcher;
 import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.NativeFormLangUtils;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
@@ -145,6 +148,31 @@ public class DatePickerFactoryTest extends BaseTest {
 
         Mockito.verify(factorySpy).getDurationText(context, "12-05-2010", Locale.ENGLISH);
 
+    }
+
+    @Test
+    public void testGetGenericTextWatcher() {
+        Assert.assertNotNull(factory);
+        DatePickerFactory factorySpy = Mockito.spy(factory);
+        Assert.assertNotNull(factorySpy);
+        DatePickerDialog datePickerDialog = Mockito.mock(DatePickerDialog.class);
+
+        GenericTextWatcher genericTextWatcher = factorySpy.getGenericTextWatcher("RandomStepName", context, formFragment, editText, datePickerDialog);
+        Assert.assertNotNull(genericTextWatcher);
+    }
+
+    @Test
+    public void testCreateDateDialog() throws JSONException {
+        Assert.assertNotNull(factory);
+        DatePickerFactory factorySpy = Mockito.spy(factory);
+        Assert.assertNotNull(factorySpy);
+
+        Mockito.doReturn(Locale.ENGLISH).when(factorySpy).getCurrentLocale(context);
+        TextView duration = Mockito.mock(TextView.class);
+        JSONObject jsonObject = new JSONObject("{\"key\":\"Date_Birth\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"person\",\"openmrs_entity_id\":\"birthdate\",\"type\":\"date_picker\",\"hint\":\"Child's DOB\",\"label_info_title\":\"Child's Date of Birth\",\"label_info_text\":\"here is some text on this dialog\",\"expanded\":false,\"duration\":{\"label\":\"Age\"},\"min_date\":\"today-5y\",\"max_date\":\"today\",\"v_required\":{\"value\":\"true\",\"err\":\"Please enter the date of birth\"}}");
+
+        DatePickerDialog pickerDialog = factorySpy.createDateDialog(context, duration, editText,jsonObject);
+        Assert.assertNotNull(pickerDialog);
     }
 
 }
