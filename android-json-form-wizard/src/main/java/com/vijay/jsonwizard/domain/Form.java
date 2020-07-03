@@ -28,8 +28,6 @@ public class Form implements Serializable {
 
     private Set<String> disabledFields;
 
-    private static String datePickerDisplayFormat;
-
     public String getName() {
         return name;
     }
@@ -140,13 +138,5 @@ public class Form implements Serializable {
 
     public void setDisabledFields(Set<String> disabledFields) {
         this.disabledFields = disabledFields;
-    }
-
-    public static String getDatePickerDisplayFormat() {
-        return datePickerDisplayFormat;
-    }
-
-    public void setDatePickerDisplayFormat(String datePickerDisplayFormat) {
-        Form.datePickerDisplayFormat = datePickerDisplayFormat;
     }
 }
