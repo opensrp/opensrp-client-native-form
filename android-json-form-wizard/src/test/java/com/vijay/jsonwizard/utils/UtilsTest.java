@@ -43,6 +43,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static com.vijay.jsonwizard.utils.Utils.formatDateToPattern;
+import static org.junit.Assert.assertEquals;
+
 public class UtilsTest extends BaseTest {
 
     @Mock
@@ -343,5 +346,14 @@ public class UtilsTest extends BaseTest {
         Mockito.when(jsonApi.getmJSONObject()).thenReturn(form);
         Utils.removeGeneratedDynamicRules(jsonFormFragment);
         Assert.assertFalse(form.optJSONObject(JsonFormConstants.STEP1).optJSONArray(JsonFormConstants.FIELDS).optJSONObject(0).has(JsonFormConstants.RELEVANCE));
+    }
+
+    @Test
+    public void testFormatDateToPattern() {
+        String date = "5/29/2020";
+        String inputFormat = "dd/MM/yyyy";
+        String outputFormat = "dd MMM yyyy";
+        String formattedDate = formatDateToPattern(date, inputFormat, outputFormat);
+        assertEquals("05 May 2022", formattedDate);
     }
 }
