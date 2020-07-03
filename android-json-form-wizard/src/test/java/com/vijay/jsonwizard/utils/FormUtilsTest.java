@@ -437,4 +437,9 @@ public class FormUtilsTest extends BaseTest {
         jsonObject.put(JsonFormConstants.Properties.IS_NEW, true);
         Assert.assertTrue(FormUtils.isFormNew(jsonObject));
     }
+
+    @Test
+    public void getFormJsonShouldReturnCorrectFormWithSameLength() {
+        Assert.assertEquals(10011, formUtils.getFormJson(RuntimeEnvironment.application, "test_basic_form").toString().length());
+    }
 }
