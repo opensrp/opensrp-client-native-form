@@ -73,7 +73,9 @@ public class DatePickerFactory implements FormWidgetFactory {
             context.getFragmentManager().executePendingTransactions();
 
             String text = editText.getText().toString();
-            Calendar date = FormUtils.getDate(text);
+            Calendar date = FormUtils.getDate(StringUtils.isNoneBlank(Form.getDatePickerDisplayFormat()) ?
+                    Utils.formatDateToPattern(text, Form.getDatePickerDisplayFormat(), DATE_FORMAT.toPattern())
+                    : text);
             if (text.isEmpty()) {
                 Object defaultValue = datePickerDialog.getArguments().get(JsonFormConstants.DEFAULT);
                 if (defaultValue != null)
