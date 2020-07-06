@@ -21,6 +21,7 @@ import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.DatePickerDialog;
 import com.vijay.jsonwizard.customviews.GenericTextWatcher;
+import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
@@ -29,6 +30,7 @@ import com.vijay.jsonwizard.utils.DateUtil;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.NativeFormLangUtils;
 import com.vijay.jsonwizard.utils.NativeFormsProperties;
+import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
 
 import org.apache.commons.lang3.StringUtils;
@@ -71,7 +73,9 @@ public class DatePickerFactory implements FormWidgetFactory {
             context.getFragmentManager().executePendingTransactions();
 
             String text = editText.getText().toString();
-            Calendar date = FormUtils.getDate(text);
+            Calendar date = FormUtils.getDate(StringUtils.isNoneBlank(Form.getDatePickerDisplayFormat()) ?
+                    Utils.formatDateToPattern(text, Form.getDatePickerDisplayFormat(), DATE_FORMAT.toPattern())
+                    : text);
             if (text.isEmpty()) {
                 Object defaultValue = datePickerDialog.getArguments().get(JsonFormConstants.DEFAULT);
                 if (defaultValue != null)
@@ -85,7 +89,9 @@ public class DatePickerFactory implements FormWidgetFactory {
     }
 
     private void updateDateText(Context context, MaterialEditText editText, TextView duration, String date) {
-        editText.setText(date);
+        editText.setText(StringUtils.isNoneBlank(Form.getDatePickerDisplayFormat()) ?
+                Utils.formatDateToPattern(date, DATE_FORMAT.toPattern(), Form.getDatePickerDisplayFormat())
+                : date);
         String durationLabel = (String) duration.getTag(R.id.label);
         if (StringUtils.isNotBlank(durationLabel)) {
             Locale locale = getSetLanguage(context);
@@ -95,7 +101,6 @@ public class DatePickerFactory implements FormWidgetFactory {
             }
             duration.setText(durationText);
         }
-
     }
 
     @NotNull
@@ -277,7 +282,7 @@ public class DatePickerFactory implements FormWidgetFactory {
     private void updateEditText(MaterialEditText editText, JSONObject jsonObject, String stepName, Context context, TextView duration) throws JSONException {
 
         Locale locale = getCurrentLocale(context);
-        SimpleDateFormat DATE_FORMAT_LOCALE = new SimpleDateFormat("dd-MM-yyyy", locale);
+        final SimpleDateFormat DATE_FORMAT_LOCALE = new SimpleDateFormat("dd-MM-yyyy", locale);
 
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
@@ -293,6 +298,7 @@ public class DatePickerFactory implements FormWidgetFactory {
         editText.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         editText.setTag(R.id.address, stepName + ":" + jsonObject.getString(KEY.KEY));
         editText.setTag(R.id.locale_independent_value, jsonObject.optString(KEY.VALUE));
+
         if (jsonObject.has(JsonFormConstants.V_REQUIRED)) {
             JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
             boolean requiredValue = requiredObject.getBoolean(KEY.VALUE);
@@ -312,6 +318,7 @@ public class DatePickerFactory implements FormWidgetFactory {
             editText.setFocusable(!readOnly);
         }
     }
+
 
     @VisibleForTesting
     protected Locale getCurrentLocale(Context context) {
@@ -367,6 +374,7 @@ public class DatePickerFactory implements FormWidgetFactory {
 
         return datePickerDialog;
     }
+
 
     protected int getLayout() {
         return R.layout.native_form_item_date_picker;
