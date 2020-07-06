@@ -32,6 +32,7 @@ import android.widget.Toast;
 
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.BuildConfig;
+import com.vijay.jsonwizard.NativeFormLibrary;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.ExpansionPanelGenericPopupDialog;
@@ -1782,9 +1783,22 @@ public class FormUtils {
         return value.replaceAll(", $", "");
     }
 
+
+    @Nullable
+    public JSONObject getFormJsonFromRepositoryOrAssets(@NonNull Context context, @NonNull String formIdentity) {
+        ClientFormContract.Dao clientFormRepository = NativeFormLibrary.getInstance().getClientFormDao();
+        return getFormJsonFromRepositoryOrAssetsWithOptionalCallback(context, clientFormRepository, formIdentity, null);
+    }
+
     @Nullable
     public JSONObject getFormJsonFromRepositoryOrAssets(@NonNull Context context, @NonNull ClientFormContract.Dao clientFormRepository, @NonNull String formIdentity) {
         return getFormJsonFromRepositoryOrAssetsWithOptionalCallback(context, clientFormRepository, formIdentity, null);
+    }
+
+
+    public void getFormJsonFromRepositoryOrAssets(@NonNull Context context, @NonNull String formIdentity, @Nullable OnFormFetchedCallback<JSONObject> onFormFetchedCallback) {
+        ClientFormContract.Dao clientFormRepository = NativeFormLibrary.getInstance().getClientFormDao();
+        getFormJsonFromRepositoryOrAssetsWithOptionalCallback(context, clientFormRepository, formIdentity, onFormFetchedCallback);
     }
 
     public void getFormJsonFromRepositoryOrAssets(@NonNull Context context, @NonNull ClientFormContract.Dao clientFormRepository, @NonNull String formIdentity, @Nullable OnFormFetchedCallback<JSONObject> onFormFetchedCallback) {
@@ -1829,7 +1843,7 @@ public class FormUtils {
         }
 
         Timber.d("============%s form loaded from Assets=============", formIdentity);
-        JSONObject jsonObject = getFormJson(context, clientFormRepository, formIdentity);
+        JSONObject jsonObject = getFormJson(context, formIdentity);
 
         if (onFormFetchedCallback != null) {
             onFormFetchedCallback.onFormFetched(jsonObject);
@@ -1839,7 +1853,7 @@ public class FormUtils {
         }
     }
 
-    public JSONObject getFormJson(@NonNull Context context, @NonNull ClientFormContract.Dao clientFormRepository, String formIdentity) {
+    public JSONObject getFormJson(@NonNull Context context, String formIdentity) {
         if (context != null) {
             try {
                 String locale = context.getResources().getConfiguration().locale.getLanguage();
@@ -1889,6 +1903,11 @@ public class FormUtils {
         return clientForm;
     }
 
+    public void handleJsonFormOrRulesError(@NonNull Context context, @NonNull String formIdentity, @NonNull OnFormFetchedCallback<String> onFormFetchedCallback) {
+        ClientFormContract.Dao clientFormRepository = NativeFormLibrary.getInstance().getClientFormDao();
+        handleJsonFormOrRulesError(context, clientFormRepository, false, formIdentity, onFormFetchedCallback);
+    }
+
     public void handleJsonFormOrRulesError(@NonNull Context context, @NonNull ClientFormContract.Dao clientFormRepository, @NonNull String formIdentity, @NonNull OnFormFetchedCallback<String> onFormFetchedCallback) {
         handleJsonFormOrRulesError(context, clientFormRepository, false, formIdentity, onFormFetchedCallback);
     }
@@ -1917,7 +1936,7 @@ public class FormUtils {
                                     Timber.e(e);
                                 }
                             } else {
-                                JSONObject jsonObject = getFormJson(context, clientFormRepository, formIdentity);
+                                JSONObject jsonObject = getFormJson(context, formIdentity);
 
                                 if (jsonObject != null) {
                                     clientForm.setJson(jsonObject.toString());

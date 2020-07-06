@@ -30,6 +30,7 @@ import com.vijay.jsonwizard.utils.DateUtil;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.NativeFormLangUtils;
 import com.vijay.jsonwizard.utils.NativeFormsProperties;
+import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
 
 import org.apache.commons.lang3.StringUtils;
@@ -72,7 +73,9 @@ public class DatePickerFactory implements FormWidgetFactory {
             context.getFragmentManager().executePendingTransactions();
 
             String text = editText.getText().toString();
-            Calendar date = FormUtils.getDate(text);
+            Calendar date = FormUtils.getDate(StringUtils.isNoneBlank(Form.getDatePickerDisplayFormat()) ?
+                    Utils.formatDateToPattern(text, Form.getDatePickerDisplayFormat(), DATE_FORMAT.toPattern())
+                    : text);
             if (text.isEmpty()) {
                 Object defaultValue = datePickerDialog.getArguments().get(JsonFormConstants.DEFAULT);
                 if (defaultValue != null)
@@ -85,9 +88,10 @@ public class DatePickerFactory implements FormWidgetFactory {
         }
     }
 
-    @VisibleForTesting
-    protected void updateDateText(Context context, MaterialEditText editText, TextView duration, String date) {
-        editText.setText(date);
+    private void updateDateText(Context context, MaterialEditText editText, TextView duration, String date) {
+        editText.setText(StringUtils.isNoneBlank(Form.getDatePickerDisplayFormat()) ?
+                Utils.formatDateToPattern(date, DATE_FORMAT.toPattern(), Form.getDatePickerDisplayFormat())
+                : date);
         String durationLabel = (String) duration.getTag(R.id.label);
         if (StringUtils.isNotBlank(durationLabel)) {
             Locale locale = getSetLanguage(context);
@@ -277,7 +281,8 @@ public class DatePickerFactory implements FormWidgetFactory {
 
     private void updateEditText(MaterialEditText editText, JSONObject jsonObject, String stepName, Context context, TextView duration) throws JSONException {
 
-        SimpleDateFormat DATE_FORMAT_LOCALE = getSimpleDateFormat(context);
+        Locale locale = getCurrentLocale(context);
+        final SimpleDateFormat DATE_FORMAT_LOCALE = new SimpleDateFormat("dd-MM-yyyy", locale);
 
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
@@ -314,15 +319,6 @@ public class DatePickerFactory implements FormWidgetFactory {
         }
     }
 
-    @VisibleForTesting
-    protected SimpleDateFormat getSimpleDateFormat(Context context) {
-        Locale locale = getCurrentLocale(context);
-
-        return StringUtils.isNoneEmpty(Form.getDatePickerDisplayFormat()) ?
-                new SimpleDateFormat(Form.getDatePickerDisplayFormat(), locale) :
-                new SimpleDateFormat("dd-MM-yyyy", locale);
-
-    }
 
     @VisibleForTesting
     protected Locale getCurrentLocale(Context context) {
@@ -334,7 +330,8 @@ public class DatePickerFactory implements FormWidgetFactory {
         final DatePickerDialog datePickerDialog = new DatePickerDialog();
         datePickerDialog.setContext(context);
 
-        final SimpleDateFormat DATE_FORMAT = getSimpleDateFormat(context);
+        Locale locale = getCurrentLocale(context);
+        final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy", locale);
 
         datePickerDialog.setOnDateSetListener(new android.app.DatePickerDialog.OnDateSetListener() {
             @Override
