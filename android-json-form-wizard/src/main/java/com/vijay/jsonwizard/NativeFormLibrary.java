@@ -1,0 +1,36 @@
+package com.vijay.jsonwizard;
+
+import android.support.annotation.NonNull;
+
+import org.smartregister.client.utils.contract.ClientFormContract;
+
+/**
+ * Created by Ephraim Kigamba - nek.eam@gmail.com on 29-06-2020.
+ */
+public class NativeFormLibrary {
+
+    private ClientFormContract.Dao clientFormDao;
+    private static NativeFormLibrary instance;
+
+    @NonNull
+    public static NativeFormLibrary getInstance() {
+        if (instance == null) {
+            instance = new NativeFormLibrary();
+        }
+
+        return instance;
+    }
+
+/*
+    public static final boolean init() {
+        return false;
+    }*/
+
+    public ClientFormContract.Dao getClientFormDao() {
+        return clientFormDao;
+    }
+
+    public void setClientFormDao(@NonNull ClientFormContract.Dao clientFormDao) {
+        this.clientFormDao = clientFormDao;
+    }
+}

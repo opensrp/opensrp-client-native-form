@@ -28,7 +28,6 @@ import com.vijay.jsonwizard.widgets.MultiSelectListFactory;
 import com.vijay.jsonwizard.widgets.NativeEditTextFactory;
 import com.vijay.jsonwizard.widgets.NativeRadioButtonFactory;
 import com.vijay.jsonwizard.widgets.NumberSelectorFactory;
-import com.vijay.jsonwizard.widgets.RDTCaptureFactory;
 import com.vijay.jsonwizard.widgets.RadioButtonFactory;
 import com.vijay.jsonwizard.widgets.RepeatingGroupFactory;
 import com.vijay.jsonwizard.widgets.SectionFactory;
@@ -36,6 +35,7 @@ import com.vijay.jsonwizard.widgets.SpinnerFactory;
 import com.vijay.jsonwizard.widgets.TimePickerFactory;
 import com.vijay.jsonwizard.widgets.ToasterNotesFactory;
 import com.vijay.jsonwizard.widgets.TreeViewFactory;
+import com.vijay.jsonwizard.widgets.BasicRDTCaptureFactory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -133,7 +133,7 @@ public class JsonFormInteractor {
         map.put(JsonFormConstants.NATIVE_EDIT_TEXT, new NativeEditTextFactory());
         map.put(JsonFormConstants.TIME_PICKER, new TimePickerFactory());
         map.put(JsonFormConstants.REPEATING_GROUP, new RepeatingGroupFactory());
-        map.put(JsonFormConstants.RDT_CAPTURE, new RDTCaptureFactory());
+        map.put(JsonFormConstants.RDT_CAPTURE, new BasicRDTCaptureFactory());
         map.put(JsonFormConstants.COUNTDOWN_TIMER, new CountDownTimerFactory());
         map.put(JsonFormConstants.IMAGE_VIEW, new ImageViewFactory());
         map.put(JsonFormConstants.EXTENDED_RADIO_BUTTON, new ExtendedRadioButtonWidgetFactory());

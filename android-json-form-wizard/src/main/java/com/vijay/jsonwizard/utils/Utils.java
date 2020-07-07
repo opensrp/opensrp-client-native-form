@@ -45,6 +45,8 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -774,6 +776,20 @@ public class Utils {
                 jsonArray.optJSONObject(i).remove(JsonFormConstants.CALCULATION);
             }
         }
+    }
+
+
+    public static String formatDateToPattern(String date, String inputFormat, String outputFormat) {
+        if (StringUtils.isEmpty(date)) return "";
+        SimpleDateFormat format = new SimpleDateFormat(inputFormat);
+        Date newDate = null;
+        try {
+            newDate = format.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        format = new SimpleDateFormat(outputFormat);
+        return format.format(newDate);
     }
 }
 
