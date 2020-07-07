@@ -48,8 +48,6 @@ public class NumberSelectorFactoryTest extends BaseTest {
         String numberSelectorFactoryString = "{\"key\":\"user_form\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"type\":\"numbers_selector\",\"number_of_selectors\":\"5\",\"start_number\":\"1\",\"max_value\":\"15\",\"text_size\":\"16px\",\"text_color\":\"#000000\",\"selected_text_color\":\"#ffffff\",\"v_required\":{\"value\":true},\"calculation\":{\"rules-engine\":{\"ex-rules\":{\"rules-file\":\"sample-calculation-rules.yml\"}}},\"relevance\":{\"rules-engine\":{\"ex-rules\":{\"rules-file\":\"sample-relevance-rules.yml\"}}},\"constraints\":{\"rules-engine\":{\"ex-rules\":{\"rules-file\":\"sample-constraints-rules.yml\"}}}}";
         JSONObject numberSelectorObject = new JSONObject(numberSelectorFactoryString);
         Assert.assertNotNull(numberSelectorFactoryString);
-
-        Assert.assertNotNull(factory);
         NumberSelectorFactory factorySpy = Mockito.spy(factory);
         Assert.assertNotNull(factorySpy);
 
@@ -60,7 +58,7 @@ public class NumberSelectorFactoryTest extends BaseTest {
 
         List<View> viewList = factorySpy.getViewsFromJson("RandomStepName", context, formFragment, numberSelectorObject, listener);
         Assert.assertNotNull(viewList);
-        Assert.assertEquals(viewList.size(), 1);
+        Assert.assertEquals(1, viewList.size());
     }
 
     @Test
@@ -131,7 +129,6 @@ public class NumberSelectorFactoryTest extends BaseTest {
 
     @Test
     public void testGetCustomTranslatableWidgetFields() {
-        Assert.assertNotNull(factory);
         NumberSelectorFactory factorySpy = Mockito.spy(factory);
 
         Set<String> editableProperties = factorySpy.getCustomTranslatableWidgetFields();

@@ -41,7 +41,6 @@ public class BasicRDTCaptureFactoryTest extends BaseTest {
         JSONObject rdtCapture = new JSONObject(rdtCaptureString);
         Assert.assertNotNull(rdtCapture);
 
-        Assert.assertNotNull(factory);
         BasicRDTCaptureFactory factorySpy = Mockito.spy(factory);
         Assert.assertNotNull(factorySpy);
 
@@ -50,12 +49,11 @@ public class BasicRDTCaptureFactoryTest extends BaseTest {
 
         List<View> viewList = factorySpy.getViewsFromJson("RandomStepName", context, formFragment, rdtCapture, listener);
         Assert.assertNotNull(viewList);
-        Assert.assertEquals(viewList.size(), 1);
+        Assert.assertEquals(1, viewList.size());
     }
 
     @Test
     public void testGetCustomTranslatableWidgetFields() {
-        Assert.assertNotNull(factory);
         BasicRDTCaptureFactory factorySpy = Mockito.spy(factory);
 
         Set<String> editableProperties = factorySpy.getCustomTranslatableWidgetFields();
