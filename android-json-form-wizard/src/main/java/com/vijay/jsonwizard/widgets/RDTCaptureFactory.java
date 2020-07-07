@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.support.annotation.VisibleForTesting;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -52,7 +53,7 @@ public class RDTCaptureFactory implements FormWidgetFactory {
         protected Void doInBackground(Void... voids) {
             Activity activity = (Activity) widgetArgs.getContext();
             Intent intent = new Intent(activity, RDTCaptureActivity.class);
-            activity.startActivityForResult(intent,JsonFormConstants.RDT_CAPTURE_CODE);
+            activity.startActivityForResult(intent, JsonFormConstants.RDT_CAPTURE_CODE);
             return null;
         }
 
@@ -60,11 +61,13 @@ public class RDTCaptureFactory implements FormWidgetFactory {
         protected void onPreExecute() {
             showProgressDialog(R.string.please_wait_title, R.string.launching_rdt_capture_message, widgetArgs.getContext());
         }
-    }    @Override
+    }
+
+    @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
         widgetArgs = new WidgetArgs();
         widgetArgs.withStepName(stepName).withContext(context).withFormFragment(formFragment).withJsonObject(jsonObject).withListener(listener).withPopup(popup);
-        rootLayout = LayoutInflater.from(context).inflate(getLayout(), null);
+        rootLayout = getRootLayout(context);
 
         addWidgetTags(jsonObject);
         setUpRDTCaptureActivity();
@@ -74,6 +77,11 @@ public class RDTCaptureFactory implements FormWidgetFactory {
         views.add(rootLayout);
 
         return views;
+    }
+
+    @VisibleForTesting
+    protected View getRootLayout(Context context) {
+        return LayoutInflater.from(context).inflate(getLayout(), null);
     }
 
     @Override
@@ -134,16 +142,20 @@ public class RDTCaptureFactory implements FormWidgetFactory {
         Context context = widgetArgs.getContext();
         if (context instanceof JsonApi) {
             final JsonApi jsonApi = (JsonApi) context;
-            jsonApi.addOnActivityResultListener(JsonFormConstants.RDT_CAPTURE_CODE , createOnActivityResultListener());
+            jsonApi.addOnActivityResultListener(JsonFormConstants.RDT_CAPTURE_CODE, createOnActivityResultListener());
         }
     }
 
 
-
     protected void launchRDTCaptureActivity() {
-        if (ContextCompat.checkSelfPermission(widgetArgs.getContext(), Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+        if (isPermissionGiven()) {
             new LaunchRDTCameraTask().execute();
         }
+    }
+
+    @VisibleForTesting
+    protected boolean isPermissionGiven() {
+        return ContextCompat.checkSelfPermission(widgetArgs.getContext(), Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED;
     }
 
     protected int getLayout() {
