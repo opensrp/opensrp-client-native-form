@@ -1,6 +1,7 @@
 package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
+import android.support.annotation.VisibleForTesting;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -33,7 +34,7 @@ public abstract class RDTCaptureFactory implements FormWidgetFactory, OnActivity
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
         widgetArgs = new WidgetArgs();
         widgetArgs.withStepName(stepName).withContext(context).withFormFragment(formFragment).withJsonObject(jsonObject).withListener(listener).withPopup(popup);
-        rootLayout = LayoutInflater.from(context).inflate(getLayout(), null);
+        rootLayout = getRootLayout(context);
 
         addWidgetTags(jsonObject);
         setUpRDTCaptureActivity();
@@ -43,6 +44,11 @@ public abstract class RDTCaptureFactory implements FormWidgetFactory, OnActivity
         views.add(rootLayout);
 
         return views;
+    }
+
+    @VisibleForTesting
+    protected View getRootLayout(Context context) {
+        return LayoutInflater.from(context).inflate(getLayout(), null);
     }
 
     @Override
@@ -72,7 +78,7 @@ public abstract class RDTCaptureFactory implements FormWidgetFactory, OnActivity
         Context context = widgetArgs.getContext();
         if (context instanceof JsonApi) {
             final JsonApi jsonApi = (JsonApi) context;
-            jsonApi.addOnActivityResultListener(JsonFormConstants.RDT_CAPTURE_CODE , this);
+            jsonApi.addOnActivityResultListener(JsonFormConstants.RDT_CAPTURE_CODE, this);
         }
     }
 
