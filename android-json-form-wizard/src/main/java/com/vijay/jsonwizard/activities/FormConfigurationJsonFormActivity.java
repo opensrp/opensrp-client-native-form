@@ -17,6 +17,7 @@ import com.vijay.jsonwizard.utils.FormUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.smartregister.client.utils.contract.ClientFormContract;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -76,8 +77,10 @@ public class FormConfigurationJsonFormActivity extends JsonFormActivity {
                 .execute(new Runnable() {
                     @Override
                     public void run() {
-                        NativeFormLibrary.getInstance().getClientFormDao()
-                                .setIsNew(false, clientFormId);
+                        ClientFormContract.Dao clientFormRepository = NativeFormLibrary.getInstance().getClientFormDao();
+                        if (clientFormRepository != null) {
+                            clientFormRepository.setIsNew(false, clientFormId);
+                        }
                     }
                 });
     }
@@ -86,9 +89,12 @@ public class FormConfigurationJsonFormActivity extends JsonFormActivity {
     @Override
     public BufferedReader getRules(@NonNull Context context, @NonNull String fileName) throws IOException {
         try {
-            BufferedReader bufferedReader = formUtils.getRulesFromRepository(context, NativeFormLibrary.getInstance().getClientFormDao(), fileName);
-            if (bufferedReader != null) {
-                return bufferedReader;
+            ClientFormContract.Dao clientFormRepository = NativeFormLibrary.getInstance().getClientFormDao();
+            if (clientFormRepository != null) {
+                BufferedReader bufferedReader = formUtils.getRulesFromRepository(context, clientFormRepository, fileName);
+                if (bufferedReader != null) {
+                    return bufferedReader;
+                }
             }
         } catch (Exception e) {
             Timber.e(e);
@@ -102,8 +108,10 @@ public class FormConfigurationJsonFormActivity extends JsonFormActivity {
     public JSONObject getSubForm(String formIdentity, String subFormsLocation, Context context, boolean translateSubForm) throws Exception {
         JSONObject dbForm = null;
         try {
-            dbForm = formUtils.getSubFormJsonFromRepository(context, NativeFormLibrary.getInstance().getClientFormDao(), formIdentity, subFormsLocation, translateSubForm);
-
+            ClientFormContract.Dao clientFormRepository = NativeFormLibrary.getInstance().getClientFormDao();
+            if (clientFormRepository != null) {
+                dbForm = formUtils.getSubFormJsonFromRepository(context, clientFormRepository, formIdentity, subFormsLocation, translateSubForm);
+            }
         } catch (JSONException ex) {
             Timber.e(ex);
             handleFormError(false, formIdentity);
@@ -119,7 +127,13 @@ public class FormConfigurationJsonFormActivity extends JsonFormActivity {
 
     @Override
     public void handleFormError(boolean isRulesFile, @NonNull String formIdentifier) {
-        formUtils.handleJsonFormOrRulesError(this, NativeFormLibrary.getInstance().getClientFormDao(), isRulesFile, formIdentifier, new OnFormFetchedCallback<String>() {
+        ClientFormContract.Dao clientFormRepository = NativeFormLibrary.getInstance().getClientFormDao();
+        if (clientFormRepository == null) {
+            Timber.e(new Exception(), "Cannot handle form error because ClientFormRepository is null");
+            return;
+        }
+
+        formUtils.handleJsonFormOrRulesError(this, clientFormRepository, isRulesFile, formIdentifier, new OnFormFetchedCallback<String>() {
             @Override
             public void onFormFetched(@Nullable String form) {
                 if (form != null) {
