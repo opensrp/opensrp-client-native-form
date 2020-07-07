@@ -18,8 +18,8 @@ import org.mockito.MockitoAnnotations;
 import java.util.List;
 import java.util.Set;
 
-public class RDTCaptureFactoryTest extends BaseTest {
-    private RDTCaptureFactory factory;
+public class BasicRDTCaptureFactoryTest extends BaseTest {
+    private BasicRDTCaptureFactory factory;
     @Mock
     private JsonFormActivity context;
     @Mock
@@ -32,7 +32,7 @@ public class RDTCaptureFactoryTest extends BaseTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        factory = new RDTCaptureFactory();
+        factory = new BasicRDTCaptureFactory();
     }
 
     @Test
@@ -42,7 +42,7 @@ public class RDTCaptureFactoryTest extends BaseTest {
         Assert.assertNotNull(rdtCapture);
 
         Assert.assertNotNull(factory);
-        RDTCaptureFactory factorySpy = Mockito.spy(factory);
+        BasicRDTCaptureFactory factorySpy = Mockito.spy(factory);
         Assert.assertNotNull(factorySpy);
 
         Mockito.doReturn(rootLayout).when(factorySpy).getRootLayout(context);
@@ -56,7 +56,7 @@ public class RDTCaptureFactoryTest extends BaseTest {
     @Test
     public void testGetCustomTranslatableWidgetFields() {
         Assert.assertNotNull(factory);
-        RDTCaptureFactory factorySpy = Mockito.spy(factory);
+        BasicRDTCaptureFactory factorySpy = Mockito.spy(factory);
 
         Set<String> editableProperties = factorySpy.getCustomTranslatableWidgetFields();
         Assert.assertEquals(0, editableProperties.size());
