@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.support.annotation.VisibleForTesting;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
@@ -27,7 +28,6 @@ import static edu.washington.cs.ubicomplab.rdt_reader.core.Constants.SAVED_IMAGE
  * Created by Vincent Karuri on 17/06/2020
  */
 public class BasicRDTCaptureFactory extends RDTCaptureFactory {
-
     private static final String TAG = BasicRDTCaptureFactory.class.getName();
 
     private class LaunchRDTCameraTask extends AsyncTask<Void, Void, Void> {
@@ -47,9 +47,14 @@ public class BasicRDTCaptureFactory extends RDTCaptureFactory {
     }
 
     protected void launchRDTCaptureActivity() {
-        if (ContextCompat.checkSelfPermission(widgetArgs.getContext(), Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+        if (isPermissionGiven()) {
             new LaunchRDTCameraTask().execute();
         }
+    }
+
+    @VisibleForTesting
+    protected boolean isPermissionGiven() {
+        return ContextCompat.checkSelfPermission(widgetArgs.getContext(), Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED;
     }
 
     @Override
