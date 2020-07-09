@@ -1118,7 +1118,9 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         setNextStepRelevant(true);
                     }
                 } else {
-                    toggleViewVisibility(view, comparison, isPopup);
+                    if (Utils.isRunningOnUiThread()) {
+                        toggleViewVisibility(view, comparison, isPopup);
+                    }
                 }
             }
 

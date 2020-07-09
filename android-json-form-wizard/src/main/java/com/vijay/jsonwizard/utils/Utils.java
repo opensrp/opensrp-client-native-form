@@ -6,6 +6,7 @@ import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
@@ -806,6 +807,10 @@ public class Utils {
                 jsonArray.optJSONObject(i).remove(JsonFormConstants.CALCULATION);
             }
         }
+    }
+
+    public static final boolean isRunningOnUiThread() {
+        return Looper.getMainLooper().getThread() == Thread.currentThread();
     }
 }
 

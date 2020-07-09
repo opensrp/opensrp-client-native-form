@@ -278,6 +278,9 @@ public class JsonFormFragmentPresenter extends
                     String type = (String) childView.getTag(R.id.type);
                     rawValue = JsonFormConstants.DATE_PICKER.equals(type) || JsonFormConstants.TIME_PICKER.equals(type) ? childView.getTag(R.id.locale_independent_value).toString() : rawValue;
                     getView().writeValue(mStepName, key, rawValue, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
+
+                    //for repeating grp referenceEditTtext
+
                 } else if (childView instanceof NativeEditText) {
                     NativeEditText editText = (NativeEditText) childView;
 
