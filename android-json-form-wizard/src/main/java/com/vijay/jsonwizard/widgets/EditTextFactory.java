@@ -43,6 +43,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import timber.log.Timber;
+
 import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_CUMULATIVE_VALIDATION_ERR;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_RELATIVE_MAX_VALIDATION_ERR;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
@@ -136,8 +138,12 @@ public class EditTextFactory implements FormWidgetFactory {
             formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
                 @Override
                 public void run() {
-                    editText.setText(jsonObject.optString(JsonFormConstants.VALUE));
-                    editText.setSelection(editText.getText().length());
+                    try {
+                        editText.setText(jsonObject.optString(JsonFormConstants.VALUE));
+                        editText.setSelection(editText.getText().length());
+                    } catch (Exception e) {
+                        Timber.e(e, "Catching an error throw on spannable, when loading report form");
+                    }
                 }
             });
         }
