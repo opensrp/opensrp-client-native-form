@@ -71,6 +71,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -444,7 +445,7 @@ public class FormUtils {
     }
 
     public static int dpToPixels(Context context, float dps) {
-        return  (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dps, context.getResources().getDisplayMetrics());
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dps, context.getResources().getDisplayMetrics());
     }
 
     public void showInfoIcon(String stepName, JSONObject jsonObject, CommonListener listener,
@@ -1494,7 +1495,9 @@ public class FormUtils {
 
     public void getSpinnerValueOpenMRSAttributes(JSONObject item, JSONArray valueOpenMRSAttributes) throws JSONException {
 
-        if (item == null || !item.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.SPINNER)) { return; }
+        if (item == null || !item.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.SPINNER)) {
+            return;
+        }
 
         String spinnerValue = item.getString(JsonFormConstants.VALUE);
         String spinnerKey = item.getString(JsonFormConstants.KEY);
@@ -1504,9 +1507,9 @@ public class FormUtils {
             while (keys.hasNext()) {
                 String key = keys.next();
                 if (spinnerValue.equals(key)) {
-                   addOpenMRSAttributes(valueOpenMRSAttributes, item, spinnerKey,
-                           openMRSChoiceIds.getString(key));
-                   break;
+                    addOpenMRSAttributes(valueOpenMRSAttributes, item, spinnerKey,
+                            openMRSChoiceIds.getString(key));
+                    break;
                 }
             }
         } else if (item.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
@@ -1888,7 +1891,7 @@ public class FormUtils {
         return null;
     }
 
-    private ClientFormContract.Model  getClientFormFromRepository(@NonNull Context context, @NonNull ClientFormContract.Dao clientFormRepository, String formIdentity) {
+    private ClientFormContract.Model getClientFormFromRepository(@NonNull Context context, @NonNull ClientFormContract.Dao clientFormRepository, String formIdentity) {
         //Check the current locale of the app to load the correct version of the form in the desired language
         String locale = context.getResources().getConfiguration().locale.getLanguage();
         String localeFormIdentity = formIdentity;
@@ -1896,7 +1899,7 @@ public class FormUtils {
             localeFormIdentity = localeFormIdentity + "-" + locale;
         }
 
-        ClientFormContract.Model  clientForm = clientFormRepository.getActiveClientFormByIdentifier(localeFormIdentity);
+        ClientFormContract.Model clientForm = clientFormRepository.getActiveClientFormByIdentifier(localeFormIdentity);
 
         if (clientForm == null) {
             String revisedFormName = extractFormNameWithoutExtension(localeFormIdentity);
@@ -1919,8 +1922,8 @@ public class FormUtils {
     }
 
     public void handleJsonFormOrRulesError(@NonNull final Context context, @NonNull final ClientFormContract.Dao clientFormRepository, final boolean isRulesFile, @NonNull final String formIdentity, @NonNull final OnFormFetchedCallback<String> onFormFetchedCallback) {
-        final ClientFormContract.Model  clientForm = getClientFormFromRepository(context, clientFormRepository, formIdentity);
-        List<ClientFormContract.Model > clientForms = clientFormRepository.getClientFormByIdentifier(clientForm.getIdentifier());
+        final ClientFormContract.Model clientForm = getClientFormFromRepository(context, clientFormRepository, formIdentity);
+        List<ClientFormContract.Model> clientForms = clientFormRepository.getClientFormByIdentifier(clientForm.getIdentifier());
 
         if (clientForms.size() > 0) {
             // Show dialog asking user if they want to rollback to the previous available version X
@@ -1932,7 +1935,7 @@ public class FormUtils {
             if (!dialogIsShowing) {
                 FormRollbackDialogUtil.showAvailableRollbackFormsDialog(context, clientFormRepository, clientForms, clientForm, new RollbackDialogCallback() {
                     @Override
-                    public void onFormSelected(@NonNull ClientFormContract.Model  selectedForm) {
+                    public void onFormSelected(@NonNull ClientFormContract.Model selectedForm) {
                         if (selectedForm.getJson() == null && selectedForm.getVersion().equals(JsonFormConstants.CLIENT_FORM_ASSET_VERSION)) {
 
                             if (isRulesFile) {
@@ -1973,7 +1976,7 @@ public class FormUtils {
         }
 
         String dbFormName = StringUtils.isBlank(subFormsLocation) ? localeFormIdentity : subFormsLocation + "/" + localeFormIdentity;
-        ClientFormContract.Model  clientForm = clientFormDao.getActiveClientFormByIdentifier(dbFormName);
+        ClientFormContract.Model clientForm = clientFormDao.getActiveClientFormByIdentifier(dbFormName);
 
         if (clientForm == null) {
             String revisedFormName = extractFormNameWithoutExtension(dbFormName);
@@ -1992,12 +1995,29 @@ public class FormUtils {
             String originalJson = clientForm.getJson();
 
             if (translateSubForm) {
-                originalJson = NativeFormLangUtils.getTranslatedString(originalJson, context);
+                ResourceBundle resourceBundle = NativeFormLangUtils.getResourceBundleFromString(getPropertiesFileFromDB(originalJson));
+                if (resourceBundle != null) {
+                    originalJson = NativeFormLangUtils.getTranslatedStringWithResourceBundle(originalJson, resourceBundle);
+                } else {
+                    originalJson = NativeFormLangUtils.getTranslatedString(originalJson, context);
+                }
             }
-
             return new JSONObject(originalJson);
         }
 
+        return null;
+    }
+
+    @Nullable
+    public String getPropertiesFileFromDB(String str) {
+        ClientFormContract.Dao clientFormRepository = NativeFormLibrary.getInstance().getClientFormDao();
+        if (clientFormRepository != null) {
+            String formIdentity = NativeFormLangUtils.getTranslationsFileName(str);
+            ClientFormContract.Model clientForm = clientFormRepository.getActiveClientFormByIdentifier(formIdentity);
+            if (clientForm != null) {
+                return clientForm.getJson();
+            }
+        }
         return null;
     }
 

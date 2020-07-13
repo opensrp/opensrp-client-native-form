@@ -11,16 +11,20 @@ import android.widget.Toast;
 
 import com.vijay.jsonwizard.NativeFormLibrary;
 import com.vijay.jsonwizard.R;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.interfaces.OnFormFetchedCallback;
 import com.vijay.jsonwizard.utils.AppExecutors;
 import com.vijay.jsonwizard.utils.FormUtils;
+import com.vijay.jsonwizard.utils.NativeFormLangUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.smartregister.client.domain.DocumentConfigResourceBundle;
 import org.smartregister.client.utils.contract.ClientFormContract;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.ResourceBundle;
 
 import timber.log.Timber;
 
@@ -101,6 +105,16 @@ public class FormConfigurationJsonFormActivity extends JsonFormActivity {
         }
 
         return super.getRules(context, fileName);
+    }
+
+    @Override
+    protected String getJsonForm() {
+        String jsonForm = getIntent().getStringExtra(JsonFormConstants.JSON_FORM_KEY.JSON);
+        if (translateForm) {
+            ResourceBundle resourceBundle = NativeFormLangUtils.getResourceBundleFromString(formUtils.getPropertiesFileFromDB(jsonForm));
+            jsonForm = NativeFormLangUtils.getTranslatedStringWithResourceBundle(jsonForm, resourceBundle);
+        }
+        return jsonForm;
     }
 
     @Nullable
