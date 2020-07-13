@@ -19,7 +19,6 @@ import com.vijay.jsonwizard.utils.NativeFormLangUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.smartregister.client.domain.DocumentConfigResourceBundle;
 import org.smartregister.client.utils.contract.ClientFormContract;
 
 import java.io.BufferedReader;
