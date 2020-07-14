@@ -8,8 +8,10 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.vijay.jsonwizard.domain.DBResourceBundle;
+import com.vijay.jsonwizard.domain.DBResourceBundleControl;
+
 import org.apache.commons.lang3.StringUtils;
-import org.smartregister.client.domain.DocumentConfigResourceBundle;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -115,7 +117,11 @@ public class NativeFormLangUtils {
         return translatedString;
     }
 
-    public static String getTranslatedStringWithResourceBundle(String str, ResourceBundle mlsResourceBundle) {
+    public static String getTranslatedStringWithDBResourceBundle(String str, ResourceBundle dbResourceBundle) {
+        ResourceBundle mlsResourceBundle = dbResourceBundle;
+        if (dbResourceBundle == null) {
+            mlsResourceBundle = getResourceBundleFromRepository(str);
+        }
         return (mlsResourceBundle == null) ? getTranslatedString(str) : translateString(str, mlsResourceBundle);
     }
 
@@ -170,15 +176,7 @@ public class NativeFormLangUtils {
     }
 
     @Nullable
-    public static ResourceBundle getResourceBundleFromString(String propertiesString) {
-        if (StringUtils.isNotBlank(propertiesString)) {
-            String[] propertiesArray = propertiesString.split("\n");
-            Object[][] properties = new Object[propertiesArray.length][1];
-            for (int i = 0; i < propertiesArray.length; i++) {
-                properties[i][0] = propertiesArray[i].split("=");
-            }
-            return new DocumentConfigResourceBundle(properties);
-        }
-        return null;
+    public static ResourceBundle getResourceBundleFromRepository(String form) {
+        return ResourceBundle.getBundle(DBResourceBundle.class.getCanonicalName(), new DBResourceBundleControl(getTranslationsFileName(form)));
     }
 }

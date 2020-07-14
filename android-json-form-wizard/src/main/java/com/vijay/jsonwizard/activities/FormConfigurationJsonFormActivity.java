@@ -110,8 +110,7 @@ public class FormConfigurationJsonFormActivity extends JsonFormActivity {
     protected String getJsonForm() {
         String jsonForm = getIntent().getStringExtra(JsonFormConstants.JSON_FORM_KEY.JSON);
         if (translateForm) {
-            ResourceBundle resourceBundle = NativeFormLangUtils.getResourceBundleFromString(formUtils.getPropertiesFileFromDB(jsonForm));
-            jsonForm = NativeFormLangUtils.getTranslatedStringWithResourceBundle(jsonForm, resourceBundle);
+            jsonForm = NativeFormLangUtils.getTranslatedStringWithDBResourceBundle(jsonForm, null);
         }
         return jsonForm;
     }

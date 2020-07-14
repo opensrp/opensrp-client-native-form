@@ -71,7 +71,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -1986,7 +1985,6 @@ public class FormUtils {
                 String finalSubFormsLocation = getSubFormLocation(subFormsLocation);
                 dbFormName = StringUtils.isBlank(finalSubFormsLocation) ? localeFormIdentity : finalSubFormsLocation + "/" + localeFormIdentity;
                 clientForm = clientFormDao.getActiveClientFormByIdentifier(dbFormName);
-
             }
         }
 
@@ -1995,29 +1993,11 @@ public class FormUtils {
             String originalJson = clientForm.getJson();
 
             if (translateSubForm) {
-                ResourceBundle resourceBundle = NativeFormLangUtils.getResourceBundleFromString(getPropertiesFileFromDB(originalJson));
-                if (resourceBundle != null) {
-                    originalJson = NativeFormLangUtils.getTranslatedStringWithResourceBundle(originalJson, resourceBundle);
-                } else {
-                    originalJson = NativeFormLangUtils.getTranslatedString(originalJson, context);
-                }
+                originalJson = NativeFormLangUtils.getTranslatedStringWithDBResourceBundle(originalJson, null);
             }
             return new JSONObject(originalJson);
         }
 
-        return null;
-    }
-
-    @Nullable
-    public String getPropertiesFileFromDB(String str) {
-        ClientFormContract.Dao clientFormRepository = NativeFormLibrary.getInstance().getClientFormDao();
-        if (clientFormRepository != null) {
-            String formIdentity = NativeFormLangUtils.getTranslationsFileName(str);
-            ClientFormContract.Model clientForm = clientFormRepository.getActiveClientFormByIdentifier(formIdentity);
-            if (clientForm != null) {
-                return clientForm.getJson();
-            }
-        }
         return null;
     }
 
@@ -2039,6 +2019,17 @@ public class FormUtils {
             return new BufferedReader(new StringReader(originalJson));
         }
 
+        return null;
+    }
+
+    public String getPropertiesFileContentsFromDB(String identifier) {
+        ClientFormContract.Dao clientFormRepository = NativeFormLibrary.getInstance().getClientFormDao();
+        if (clientFormRepository != null) {
+            ClientFormContract.Model clientForm = clientFormRepository.getActiveClientFormByIdentifier(identifier);
+            if (clientForm != null) {
+                return clientForm.getJson();
+            }
+        }
         return null;
     }
 
