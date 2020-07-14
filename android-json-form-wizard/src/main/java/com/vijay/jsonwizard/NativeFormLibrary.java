@@ -1,6 +1,7 @@
 package com.vijay.jsonwizard;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import org.smartregister.client.utils.contract.ClientFormContract;
 
@@ -21,11 +22,7 @@ public class NativeFormLibrary {
         return instance;
     }
 
-/*
-    public static final boolean init() {
-        return false;
-    }*/
-
+    @Nullable
     public ClientFormContract.Dao getClientFormDao() {
         return clientFormDao;
     }

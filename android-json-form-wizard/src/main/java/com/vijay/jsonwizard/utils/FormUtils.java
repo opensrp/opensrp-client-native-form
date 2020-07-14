@@ -1783,62 +1783,93 @@ public class FormUtils {
         return value.replaceAll(", $", "");
     }
 
-
     @Nullable
-    public JSONObject getFormJsonFromRepositoryOrAssets(@NonNull Context context, @NonNull String formIdentity) {
+    public JSONObject getFormJsonFromRepositoryOrAssets(@NonNull Context context, @NonNull String formIdentity) throws JSONException {
         ClientFormContract.Dao clientFormRepository = NativeFormLibrary.getInstance().getClientFormDao();
         return getFormJsonFromRepositoryOrAssetsWithOptionalCallback(context, clientFormRepository, formIdentity, null);
     }
 
     @Nullable
-    public JSONObject getFormJsonFromRepositoryOrAssets(@NonNull Context context, @NonNull ClientFormContract.Dao clientFormRepository, @NonNull String formIdentity) {
+    public JSONObject getFormJsonFromRepositoryOrAssets(@NonNull Context context, @NonNull ClientFormContract.Dao clientFormRepository, @NonNull String formIdentity) throws JSONException {
         return getFormJsonFromRepositoryOrAssetsWithOptionalCallback(context, clientFormRepository, formIdentity, null);
     }
 
 
-    public void getFormJsonFromRepositoryOrAssets(@NonNull Context context, @NonNull String formIdentity, @Nullable OnFormFetchedCallback<JSONObject> onFormFetchedCallback) {
+    /**
+     * Fetches the JSON form from the repository or assets folder and handles the JSONException thrown
+     * by providing the user with rollback capability. The rollback form chosen by the user will be
+     * returned in the callback
+     *
+     * @param context
+     * @param formIdentity
+     * @param onFormFetchedCallback
+     */
+    public void getFormJsonFromRepositoryOrAssets(@NonNull Context context, @NonNull String formIdentity, @NonNull OnFormFetchedCallback<JSONObject> onFormFetchedCallback) {
         ClientFormContract.Dao clientFormRepository = NativeFormLibrary.getInstance().getClientFormDao();
-        getFormJsonFromRepositoryOrAssetsWithOptionalCallback(context, clientFormRepository, formIdentity, onFormFetchedCallback);
+        try {
+            getFormJsonFromRepositoryOrAssetsWithOptionalCallback(context, clientFormRepository, formIdentity, onFormFetchedCallback);
+        } catch (JSONException ex) {
+            Timber.wtf(ex, "This should never happen --> Error was handled but onFormFetchedCallback was NULL");
+        }
     }
+
 
     public void getFormJsonFromRepositoryOrAssets(@NonNull Context context, @NonNull ClientFormContract.Dao clientFormRepository, @NonNull String formIdentity, @Nullable OnFormFetchedCallback<JSONObject> onFormFetchedCallback) {
-        getFormJsonFromRepositoryOrAssetsWithOptionalCallback(context, clientFormRepository, formIdentity, onFormFetchedCallback);
+        try {
+            getFormJsonFromRepositoryOrAssetsWithOptionalCallback(context, clientFormRepository, formIdentity, onFormFetchedCallback);
+        } catch (JSONException ex) {
+            Timber.wtf(ex, "This should never happen --> Error was handled but onFormFetchedCallback was NULL");
+        }
     }
 
-    private JSONObject getFormJsonFromRepositoryOrAssetsWithOptionalCallback(@NonNull Context context, @NonNull ClientFormContract.Dao clientFormRepository, String formIdentity, @Nullable final OnFormFetchedCallback<JSONObject> onFormFetchedCallback) {
-        ClientFormContract.Model  clientForm = getClientFormFromRepository(context, clientFormRepository, formIdentity);
+    /**
+     * Fetches the JSON form from the repository or assets folder and handles the JSONException thrown
+     * by providing the user with rollback capability. The rollback form chosen by the user will be
+     *      * returned in the callback
+     *
+     * @param context
+     * @param clientFormRepository
+     * @param formIdentity
+     * @param onFormFetchedCallback
+     * @return
+     * @throws JSONException
+     */
+    private JSONObject getFormJsonFromRepositoryOrAssetsWithOptionalCallback(@NonNull Context context, @Nullable ClientFormContract.Dao clientFormRepository, String formIdentity, @Nullable final OnFormFetchedCallback<JSONObject> onFormFetchedCallback) throws JSONException {
+        if (clientFormRepository != null) {
+            ClientFormContract.Model clientForm = getClientFormFromRepository(context, clientFormRepository, formIdentity);
 
-        try {
-            if (clientForm != null) {
-                Timber.d("============%s form loaded from db============", formIdentity);
+            try {
+                if (clientForm != null) {
+                    Timber.d("============%s form loaded from db============", formIdentity);
 
-                JSONObject formJson = new JSONObject(clientForm.getJson());
-                injectFormStatus(formJson, clientForm);
+                    JSONObject formJson = new JSONObject(clientForm.getJson());
+                    injectFormStatus(formJson, clientForm);
+
+                    if (onFormFetchedCallback != null) {
+                        onFormFetchedCallback.onFormFetched(formJson);
+                        return null;
+                    } else {
+                        return formJson;
+                    }
+                }
+            } catch (JSONException e) {
+                Timber.e(e);
 
                 if (onFormFetchedCallback != null) {
-                    onFormFetchedCallback.onFormFetched(formJson);
-                    return null;
-                } else {
-                    return formJson;
-                }
-            }
-        } catch (JSONException e) {
-            Timber.e(e);
-
-            if (onFormFetchedCallback != null) {
-                handleJsonFormOrRulesError(context, clientFormRepository, false, formIdentity, new OnFormFetchedCallback<String>() {
-                    @Override
-                    public void onFormFetched(@Nullable String form) {
-                        try {
-                            JSONObject jsonObject = form == null ? null : new JSONObject(form);
-                            onFormFetchedCallback.onFormFetched(jsonObject);
-                        } catch (JSONException ex) {
-                            Timber.e(ex);
+                    handleJsonFormOrRulesError(context, clientFormRepository, false, formIdentity, new OnFormFetchedCallback<String>() {
+                        @Override
+                        public void onFormFetched(@Nullable String form) {
+                            try {
+                                JSONObject jsonObject = form == null ? null : new JSONObject(form);
+                                onFormFetchedCallback.onFormFetched(jsonObject);
+                            } catch (JSONException ex) {
+                                Timber.e(ex);
+                            }
                         }
-                    }
-                });
-            } else {
-                return null;
+                    });
+                } else {
+                    throw e;
+                }
             }
         }
 
@@ -1853,37 +1884,35 @@ public class FormUtils {
         }
     }
 
-    public JSONObject getFormJson(@NonNull Context context, String formIdentity) {
-        if (context != null) {
+    public JSONObject getFormJson(@NonNull Context context, @NonNull String formIdentity) {
+        try {
+            String locale = context.getResources().getConfiguration().locale.getLanguage();
+            locale = locale.equalsIgnoreCase(Locale.ENGLISH.getLanguage()) ? "" : "-" + locale;
+
+            InputStream inputStream;
             try {
-                String locale = context.getResources().getConfiguration().locale.getLanguage();
-                locale = locale.equalsIgnoreCase(Locale.ENGLISH.getLanguage()) ? "" : "-" + locale;
-
-                InputStream inputStream;
-                try {
-                    inputStream = context.getApplicationContext().getAssets()
-                            .open("json.form" + locale + "/" + formIdentity + JsonFormConstants.JSON_FILE_EXTENSION);
-                } catch (FileNotFoundException e) {
-                    // file for the language not found, defaulting to english language
-                    inputStream = context.getApplicationContext().getAssets()
-                            .open("json.form/" + formIdentity + JsonFormConstants.JSON_FILE_EXTENSION);
-                }
-                BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(inputStream, CharEncoding.UTF_8));
-                String jsonString;
-                StringBuilder stringBuilder = new StringBuilder();
-
-                while ((jsonString = reader.readLine()) != null) {
-                    stringBuilder.append(jsonString);
-                }
-                inputStream.close();
-
-                return new JSONObject(stringBuilder.toString());
-            } catch (IOException | JSONException e) {
-                Timber.e(e);
+                inputStream = context.getApplicationContext().getAssets()
+                        .open("json.form" + locale + "/" + formIdentity + JsonFormConstants.JSON_FILE_EXTENSION);
+            } catch (FileNotFoundException e) {
+                // file for the language not found, defaulting to english language
+                inputStream = context.getApplicationContext().getAssets()
+                        .open("json.form/" + formIdentity + JsonFormConstants.JSON_FILE_EXTENSION);
             }
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(inputStream, CharEncoding.UTF_8));
+            String jsonString;
+            StringBuilder stringBuilder = new StringBuilder();
+
+            while ((jsonString = reader.readLine()) != null) {
+                stringBuilder.append(jsonString);
+            }
+            inputStream.close();
+
+            return new JSONObject(stringBuilder.toString());
+        } catch (IOException | JSONException e) {
+            Timber.e(e);
+            return null;
         }
-        return null;
     }
 
     private ClientFormContract.Model  getClientFormFromRepository(@NonNull Context context, @NonNull ClientFormContract.Dao clientFormRepository, String formIdentity) {
@@ -1905,7 +1934,11 @@ public class FormUtils {
 
     public void handleJsonFormOrRulesError(@NonNull Context context, @NonNull String formIdentity, @NonNull OnFormFetchedCallback<String> onFormFetchedCallback) {
         ClientFormContract.Dao clientFormRepository = NativeFormLibrary.getInstance().getClientFormDao();
-        handleJsonFormOrRulesError(context, clientFormRepository, false, formIdentity, onFormFetchedCallback);
+        if (clientFormRepository != null) {
+            handleJsonFormOrRulesError(context, clientFormRepository, false, formIdentity, onFormFetchedCallback);
+        } else {
+            Timber.e(new Exception(), "Cannot handle JSON Form/Rules File error because client form respository is null");
+        }
     }
 
     public void handleJsonFormOrRulesError(@NonNull Context context, @NonNull ClientFormContract.Dao clientFormRepository, @NonNull String formIdentity, @NonNull OnFormFetchedCallback<String> onFormFetchedCallback) {

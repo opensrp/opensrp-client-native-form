@@ -8,6 +8,7 @@ import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.ExpansionPanelItemModel;
 import com.vijay.jsonwizard.domain.ExpansionPanelValuesModel;
+import com.vijay.jsonwizard.interfaces.OnFormFetchedCallback;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -16,6 +17,7 @@ import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RuntimeEnvironment;
@@ -441,5 +443,127 @@ public class FormUtilsTest extends BaseTest {
     @Test
     public void getFormJsonShouldReturnCorrectFormWithSameLength() {
         Assert.assertEquals(10011, formUtils.getFormJson(RuntimeEnvironment.application, "test_basic_form").toString().length());
+    }
+
+    @Test(expected = JSONException.class)
+    public void getFormJsonFromRepositoryOrAssetsShouldThrowExceptionWhenJsonIsSyntacticallyIncorrect() throws JSONException {
+        String formIdentity = "reg.json";
+        ClientFormContract.Dao clientFormRepository = Mockito.mock(ClientFormContract.Dao.class);
+
+        TestClientForm clientForm = new TestClientForm();
+        clientForm.setJson("{\"sonic");
+
+        Mockito.doReturn(clientForm).when(clientFormRepository).getActiveClientFormByIdentifier(formIdentity);
+
+        formUtils.getFormJsonFromRepositoryOrAssets(RuntimeEnvironment.application, clientFormRepository, formIdentity);
+    }
+
+    @Test
+    public void getFormJsonFromRepositoryOrAssetsShouldReturnCorrectJsonFromDb() throws JSONException {
+        String formIdentity = "reg.json";
+        String jsonText = "{\"count\":\"3\",\"encounter_type\":\"Test\",\"entity_id\":\"\",\"relational_id\":\"\",\"validate_on_submit\":true}";
+        ClientFormContract.Dao clientFormRepository = Mockito.mock(ClientFormContract.Dao.class);
+
+        TestClientForm clientForm = new TestClientForm();
+        clientForm.setJson(jsonText);
+
+        Mockito.doReturn(clientForm).when(clientFormRepository).getActiveClientFormByIdentifier(formIdentity);
+
+        JSONObject retrievedJson = formUtils.getFormJsonFromRepositoryOrAssets(RuntimeEnvironment.application, clientFormRepository, formIdentity);
+        Assert.assertEquals(jsonText, retrievedJson.toString());
+        Mockito.verify(clientFormRepository).getActiveClientFormByIdentifier(formIdentity);
+    }
+
+
+    @Test
+    public void getFormJsonFromRepositoryOrAssetsShouldCallCallbackWithCorrectClientFormFromDb() throws JSONException {
+        String formIdentity = "reg.json";
+        String jsonText = "{\"count\":\"3\",\"encounter_type\":\"Test\",\"entity_id\":\"\",\"relational_id\":\"\",\"validate_on_submit\":true}";
+        ClientFormContract.Dao clientFormRepository = Mockito.mock(ClientFormContract.Dao.class);
+
+        TestClientForm clientForm = new TestClientForm();
+        clientForm.setJson(jsonText);
+
+        OnFormFetchedCallback<JSONObject> onFormFetchedCallback = (OnFormFetchedCallback<JSONObject>) Mockito.mock(OnFormFetchedCallback.class);
+
+        Mockito.doReturn(clientForm).when(clientFormRepository).getActiveClientFormByIdentifier(formIdentity);
+
+        formUtils.getFormJsonFromRepositoryOrAssets(RuntimeEnvironment.application, clientFormRepository, formIdentity, onFormFetchedCallback);
+        Mockito.verify(clientFormRepository).getActiveClientFormByIdentifier(formIdentity);
+
+        ArgumentCaptor<JSONObject> jsonObjectArgumentCaptor = ArgumentCaptor.forClass(JSONObject.class);
+        Mockito.verify(onFormFetchedCallback).onFormFetched(jsonObjectArgumentCaptor.capture());
+
+        Assert.assertEquals(jsonText, jsonObjectArgumentCaptor.getValue().toString());
+    }
+
+    @Test
+    public void getFormJsonFromRepositoryOrAssetsShouldRetrieveFormFromAssetsWhenNotAvailableOnRepository() throws JSONException {
+        formUtils = Mockito.spy(formUtils);
+
+        String formIdentity = "reg.json";
+        String jsonText = "{\"count\":\"3\",\"encounter_type\":\"Test\",\"entity_id\":\"\",\"relational_id\":\"\",\"validate_on_submit\":true}";
+        ClientFormContract.Dao clientFormRepository = Mockito.mock(ClientFormContract.Dao.class);
+
+        TestClientForm clientForm = new TestClientForm();
+        clientForm.setJson(jsonText);
+
+        OnFormFetchedCallback<JSONObject> onFormFetchedCallback = (OnFormFetchedCallback<JSONObject>) Mockito.mock(OnFormFetchedCallback.class);
+
+        Mockito.doReturn(new JSONObject(jsonText)).when(formUtils).getFormJson(RuntimeEnvironment.application, formIdentity);
+
+        formUtils.getFormJsonFromRepositoryOrAssets(RuntimeEnvironment.application, clientFormRepository, formIdentity, onFormFetchedCallback);
+        Mockito.verify(clientFormRepository).getActiveClientFormByIdentifier(formIdentity);
+        Mockito.verify(formUtils).getFormJson(RuntimeEnvironment.application, formIdentity);
+
+        ArgumentCaptor<JSONObject> jsonObjectArgumentCaptor = ArgumentCaptor.forClass(JSONObject.class);
+        Mockito.verify(onFormFetchedCallback).onFormFetched(jsonObjectArgumentCaptor.capture());
+
+        Assert.assertEquals(jsonText, jsonObjectArgumentCaptor.getValue().toString());
+    }
+
+
+    @Test
+    public void getFormJsonFromRepositoryOrAssetsShouldRetrieveFormFromAssetsAndReturnCorrectJsonWhenNotAvailableOnRepository() throws JSONException {
+        formUtils = Mockito.spy(formUtils);
+
+        String formIdentity = "reg.json";
+        String jsonText = "{\"count\":\"3\",\"encounter_type\":\"Test\",\"entity_id\":\"\",\"relational_id\":\"\",\"validate_on_submit\":true}";
+        ClientFormContract.Dao clientFormRepository = Mockito.mock(ClientFormContract.Dao.class);
+
+        TestClientForm clientForm = new TestClientForm();
+        clientForm.setJson(jsonText);
+
+        Mockito.doReturn(new JSONObject(jsonText)).when(formUtils).getFormJson(RuntimeEnvironment.application, formIdentity);
+
+        JSONObject jsonObject = formUtils.getFormJsonFromRepositoryOrAssets(RuntimeEnvironment.application, clientFormRepository, formIdentity);
+
+        Mockito.verify(clientFormRepository).getActiveClientFormByIdentifier(formIdentity);
+        Mockito.verify(formUtils).getFormJson(RuntimeEnvironment.application, formIdentity);
+        Assert.assertEquals(jsonText, jsonObject.toString());
+    }
+
+
+    @Test
+    public void getFormJsonFromRepositoryOrAssetsShouldCallHandleJsonFormOrRulesErrorWhenCallbackIsProvidedAndJsonIsIncorrect() throws JSONException {
+        formUtils = Mockito.spy(formUtils);
+
+        String formIdentity = "reg.json";
+        String jsonText = "{\"count\":\"3\"";
+        ClientFormContract.Dao clientFormRepository = Mockito.mock(ClientFormContract.Dao.class);
+
+        TestClientForm clientForm = new TestClientForm();
+        clientForm.setJson(jsonText);
+
+        OnFormFetchedCallback<JSONObject> onFormFetchedCallback = (OnFormFetchedCallback<JSONObject>) Mockito.mock(OnFormFetchedCallback.class);
+
+        Mockito.doReturn(clientForm).when(clientFormRepository).getActiveClientFormByIdentifier(formIdentity);
+
+        formUtils.getFormJsonFromRepositoryOrAssets(RuntimeEnvironment.application, clientFormRepository, formIdentity, onFormFetchedCallback);
+
+        Mockito.verify(clientFormRepository, Mockito.times(2)).getActiveClientFormByIdentifier(formIdentity);
+        Mockito.verify(formUtils).getFormJson(RuntimeEnvironment.application, formIdentity);
+        Mockito.verify(formUtils).handleJsonFormOrRulesError(Mockito.eq(RuntimeEnvironment.application), Mockito.eq(clientFormRepository), Mockito.eq(false), Mockito.eq(formIdentity), Mockito.any(OnFormFetchedCallback.class));
+
     }
 }
