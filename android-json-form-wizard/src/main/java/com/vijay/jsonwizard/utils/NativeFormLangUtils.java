@@ -11,8 +11,6 @@ import android.util.Log;
 import com.vijay.jsonwizard.domain.DBResourceBundle;
 import com.vijay.jsonwizard.domain.DBResourceBundleControl;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;

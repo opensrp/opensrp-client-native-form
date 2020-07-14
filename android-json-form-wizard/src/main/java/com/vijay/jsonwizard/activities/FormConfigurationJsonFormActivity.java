@@ -23,7 +23,6 @@ import org.smartregister.client.utils.contract.ClientFormContract;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.ResourceBundle;
 
 import timber.log.Timber;
 
