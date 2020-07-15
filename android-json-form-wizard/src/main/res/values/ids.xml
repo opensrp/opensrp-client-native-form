@@ -84,5 +84,6 @@
     <item name="maxSelectable" type="id"/>
 
     <item name="simprints_guid" type="id" />
+    <item name="is_repeating_group_generated" type="id" />
 
 </resources>

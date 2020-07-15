@@ -281,8 +281,19 @@ public class JsonFormFragmentPresenter extends
 
                     //for repeating grp referenceEditText
                     if (editText.getId() == R.id.reference_edit_text) {
+
                         if (!((ViewGroup) editText.getParent().getParent()).isShown()) {
                             validationStatus.setIsValid(true);
+                        }
+
+                        if (validationStatus.isValid()) {
+                            View doneButton = ((ViewGroup) editText.getParent()).findViewById(R.id.btn_repeating_group_done);
+                            Object o = doneButton.getTag(R.id.is_repeating_group_generated);
+                            if (o == null) {
+                                validationStatus.setIsValid(false);
+                                editText.setError(getFormFragment().getString(R.string.repeating_group_not_generated_error_message));
+                                validationStatus.setErrorMessage(getFormFragment().getString(R.string.repeating_group_not_generated_error_message));
+                            }
                         }
                     }
 

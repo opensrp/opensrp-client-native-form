@@ -43,9 +43,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import static com.vijay.jsonwizard.widgets.TimePickerFactory.KEY.DURATION;
-
 import timber.log.Timber;
+
+import static com.vijay.jsonwizard.widgets.TimePickerFactory.KEY.DURATION;
 
 /**
  * @author Jason Rogena - jrogena@ona.io
@@ -58,8 +58,14 @@ public class DatePickerFactory implements FormWidgetFactory {
     private static final String TAG = "DatePickerFactory";
     private FormUtils formUtils = new FormUtils();
 
-    private static void updateDateText(Context context, MaterialEditText editText, TextView duration, String date) {
-        editText.setText(date);
+    private static void updateDateText(Context context, final MaterialEditText editText, final TextView duration, final String date) {
+        ((JsonApi) context).getAppExecutors().mainThread().execute(new Runnable() {
+            @Override
+            public void run() {
+                editText.setText(date);
+            }
+        });
+
         String durationLabel = (String) duration.getTag(R.id.label);
         if (!TextUtils.isEmpty(durationLabel)) {
             Locale locale = new Locale(NativeFormLangUtils.getLanguage(context));
@@ -67,7 +73,13 @@ public class DatePickerFactory implements FormWidgetFactory {
             if (!TextUtils.isEmpty(durationText)) {
                 durationText = String.format("(%s: %s)", durationLabel, durationText);
             }
-            duration.setText(durationText);
+            final String finalDurationText = durationText;
+            ((JsonApi) context).getAppExecutors().mainThread().execute(new Runnable() {
+                @Override
+                public void run() {
+                    duration.setText(finalDurationText);
+                }
+            });
         }
 
     }

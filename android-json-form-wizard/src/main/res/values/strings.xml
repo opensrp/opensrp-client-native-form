@@ -106,5 +106,6 @@
     <string name="x_months_weeks">%1$dm %2$dw</string>
     <string name="x_years">%1$dy</string>
     <string name="x_years_months">%1$dy %2$dm</string>
+    <string name="repeating_group_not_generated_error_message">Please click the &#9989; button to generate the questions</string>
 
 </resources>

@@ -13,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.rengwuxian.materialedittext.MaterialEditText;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.WidgetArgs;
@@ -139,6 +140,12 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
 
         hideProgressDialog();
         doneButton.setImageResource(R.drawable.ic_done_green);
+
+        //for validation
+        doneButton.setTag(R.id.is_repeating_group_generated, true);
+        LinearLayout referenceLayout = (LinearLayout) ((LinearLayout) parent).getChildAt(0);
+        MaterialEditText materialEditText = (MaterialEditText) referenceLayout.getChildAt(0);
+        materialEditText.setError(null);
     }
 
     private LinearLayout buildRepeatingGroupLayout(final ViewParent parent) throws Exception {
