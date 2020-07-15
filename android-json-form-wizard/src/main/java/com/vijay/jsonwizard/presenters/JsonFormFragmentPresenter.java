@@ -284,9 +284,7 @@ public class JsonFormFragmentPresenter extends
 
                         if (!((ViewGroup) editText.getParent().getParent()).isShown()) {
                             validationStatus.setIsValid(true);
-                        }
-
-                        if (validationStatus.isValid()) {
+                        } else if (editText.getTag(R.id.has_required_validator) != null && validationStatus.isValid()) {
                             View doneButton = ((ViewGroup) editText.getParent()).findViewById(R.id.btn_repeating_group_done);
                             Object o = doneButton.getTag(R.id.is_repeating_group_generated);
                             if (o == null) {

@@ -279,6 +279,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
             boolean requiredValue = requiredObject.getBoolean(VALUE);
             if (Boolean.TRUE.equals(requiredValue)) {
                 editText.addValidator(new RequiredValidator(requiredObject.getString(JsonFormConstants.ERR)));
+                editText.setTag(R.id.has_required_validator, true);
                 FormUtils.setRequiredOnHint(editText);
             }
         }
