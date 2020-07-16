@@ -13,9 +13,12 @@ import org.robolectric.RuntimeEnvironment;
 import org.smartregister.client.utils.contract.ClientFormContract;
 
 import java.util.Locale;
+import java.util.ResourceBundle;
 
 import static com.vijay.jsonwizard.utils.Utils.getTranslatedYamlFile;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Vincent Karuri on 20/02/2020
@@ -94,6 +97,20 @@ public class NativeFormLangUtilsTest extends BaseTest {
         clientForm.setJson(properties);
         Mockito.doReturn(clientForm).when(clientFormRepository).getActiveClientFormByIdentifier(Mockito.eq("form_strings.properties"));
 
-        assertEquals("New client record", NativeFormLangUtils.getResourceBundleFromRepository(interpolatedJsonForm).getString("step1.title"));
+        ResourceBundle mlsResourceBundle = NativeFormLangUtils.getResourceBundleFromRepository(interpolatedJsonForm);
+        assertTrue(mlsResourceBundle.getKeys().hasMoreElements());
+        assertEquals("New client record", mlsResourceBundle.getString("step1.title"));
+    }
+
+    @Test
+    public void testResourceBundleWithPropertiesFromDbIsEmptyWhenClientFormDoesntExist() {
+        ClientFormContract.Dao clientFormRepository = Mockito.mock(ClientFormContract.Dao.class);
+        NativeFormLibrary.getInstance().setClientFormDao(clientFormRepository);
+        String interpolatedJsonForm = testUtils.getResourceFileContentsAsString("test_form_translation_interpolated");
+
+        Mockito.doReturn(null).when(clientFormRepository).getActiveClientFormByIdentifier(Mockito.eq("form_strings.properties"));
+
+        ResourceBundle mlsResourceBundle = NativeFormLangUtils.getResourceBundleFromRepository(interpolatedJsonForm);
+        assertFalse(mlsResourceBundle.getKeys().hasMoreElements());
     }
 }
