@@ -2,7 +2,6 @@ package com.vijay.jsonwizard.utils;
 
 import com.vijay.jsonwizard.TestUtils;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
@@ -15,12 +14,6 @@ import static org.junit.Assert.assertEquals;
 public class JsonFormMLSAssetGeneratorTest {
 
     private final TestUtils testUtils = new TestUtils();
-    private JsonFormMLSAssetGenerator jsonFormMLSAssetGenerator;
-
-    @Before
-    public void setUp() {
-        jsonFormMLSAssetGenerator = new JsonFormMLSAssetGenerator();
-    }
 
     @Test
     public void testFormInterpolationShouldPerformCorrectTransformationForJsonForm() throws Exception {

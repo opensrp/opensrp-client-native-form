@@ -17,7 +17,6 @@ import org.jeasy.rules.core.DefaultRulesEngine;
 import org.jeasy.rules.core.RulesEngineParameters;
 import org.jeasy.rules.mvel.MVELRule;
 import org.jeasy.rules.mvel.MVELRuleFactory;
-import org.jeasy.rules.support.YamlRuleDefinitionReader;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.smartregister.client.utils.contract.ClientFormContract;
@@ -42,7 +41,6 @@ public class RulesEngineFactory implements RuleListener {
     private Gson gson;
     private Map<String, String> globalValues;
     private RulesEngineHelper rulesEngineHelper;
-    private MVELRuleFactory mvelRuleFactory;
 
     public RulesEngineFactory(Context context, Map<String, String> globalValues) {
         this.context = context;
@@ -53,8 +51,6 @@ public class RulesEngineFactory implements RuleListener {
         gson = new Gson();
         this.globalValues = globalValues;
         this.rulesEngineHelper = new RulesEngineHelper();
-        YamlRuleDefinitionReader yamlRuleDefinitionReader = new YamlRuleDefinitionReader();
-        mvelRuleFactory = new MVELRuleFactory(yamlRuleDefinitionReader);
     }
 
     public RulesEngineFactory() {
