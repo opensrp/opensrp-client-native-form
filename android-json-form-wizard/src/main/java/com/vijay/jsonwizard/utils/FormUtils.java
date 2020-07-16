@@ -2019,7 +2019,6 @@ public class FormUtils {
                 String finalSubFormsLocation = getSubFormLocation(subFormsLocation);
                 dbFormName = StringUtils.isBlank(finalSubFormsLocation) ? localeFormIdentity : finalSubFormsLocation + "/" + localeFormIdentity;
                 clientForm = clientFormDao.getActiveClientFormByIdentifier(dbFormName);
-
             }
         }
 
@@ -2028,9 +2027,8 @@ public class FormUtils {
             String originalJson = clientForm.getJson();
 
             if (translateSubForm) {
-                originalJson = NativeFormLangUtils.getTranslatedString(originalJson, context);
+                originalJson = NativeFormLangUtils.getTranslatedStringWithDBResourceBundle(originalJson, null);
             }
-
             return new JSONObject(originalJson);
         }
 
@@ -2055,6 +2053,17 @@ public class FormUtils {
             return new BufferedReader(new StringReader(originalJson));
         }
 
+        return null;
+    }
+
+    public String getPropertiesFileContentsFromDB(String identifier) {
+        ClientFormContract.Dao clientFormRepository = NativeFormLibrary.getInstance().getClientFormDao();
+        if (clientFormRepository != null) {
+            ClientFormContract.Model clientForm = clientFormRepository.getActiveClientFormByIdentifier(identifier);
+            if (clientForm != null) {
+                return clientForm.getJson();
+            }
+        }
         return null;
     }
 
