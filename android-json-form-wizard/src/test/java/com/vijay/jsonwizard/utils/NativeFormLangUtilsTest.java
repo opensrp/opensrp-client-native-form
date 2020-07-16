@@ -92,7 +92,7 @@ public class NativeFormLangUtilsTest extends BaseTest {
 
         ClientFormContract.Model clientForm = new TestClientForm();
         clientForm.setJson(properties);
-        Mockito.doReturn(clientForm).when(clientFormRepository).getActiveClientFormByIdentifier(Mockito.eq("form_strings"));
+        Mockito.doReturn(clientForm).when(clientFormRepository).getActiveClientFormByIdentifier(Mockito.eq("form_strings.properties"));
 
         assertEquals("New client record", NativeFormLangUtils.getResourceBundleFromRepository(interpolatedJsonForm).getString("step1.title"));
     }
