@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent">
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:id="@+id/customDialogMainLayout"
@@ -39,15 +38,15 @@
             android:scaleType="fitXY"
             android:visibility="gone" />
 
-    <androidx.appcompat.widget.AppCompatButton
-      android:text="@string/ok"
-      android:textStyle="bold"
-      android:padding="6dp"
-      android:background="@drawable/okay_button"
-      android:textColor="@color/toaster_note_blue_icon"
-      android:textAlignment="center"
-      android:id="@+id/dialogButton"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"/>
-  </LinearLayout>
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/dialogButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/okay_button"
+            android:padding="6dp"
+            android:text="@string/ok"
+            android:textAlignment="center"
+            android:textColor="@color/toaster_note_blue_icon"
+            android:textStyle="bold" />
+    </LinearLayout>
 </androidx.core.widget.NestedScrollView>
