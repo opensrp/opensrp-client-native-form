@@ -21,6 +21,9 @@ import org.json.JSONArray;
 
 import timber.log.Timber;
 
+/**
+ * The {@link AsyncTask} to start and set the required variables on the {@link ExpansionPanelGenericPopupDialog}
+ */
 public class ExpansionPanelGenericPopupDialogTask extends AsyncTask<Void, Void, Void> {
     private FormUtils formUtils = new FormUtils();
     private Utils utils = new Utils();
@@ -29,6 +32,13 @@ public class ExpansionPanelGenericPopupDialogTask extends AsyncTask<Void, Void, 
 
     public ExpansionPanelGenericPopupDialogTask(View view) {
         this.view = view;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        Context context = (Context) view.getTag(R.id.specify_context);
+        Utils.showProgressDialog(R.string.loading, R.string.loading_form_message, context);
     }
 
     @Override
@@ -69,7 +79,6 @@ public class ExpansionPanelGenericPopupDialogTask extends AsyncTask<Void, Void, 
                 genericPopupDialog.setCustomTextView(customTextView);
                 genericPopupDialog.setPopupReasonsTextView(reasonsTextView);
             }
-
             utils.setChildKey(view, type, genericPopupDialog);
 
             FragmentTransaction fragmentTransaction = utils.getFragmentTransaction((Activity) context);

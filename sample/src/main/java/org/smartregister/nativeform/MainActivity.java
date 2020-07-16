@@ -65,19 +65,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return true;
         } else if (id == R.id.action_single) {
             try {
-                startForm(REQUEST_CODE_GET_JSON, "single_form", null);
+                startForm(REQUEST_CODE_GET_JSON, "single_form", null, false);
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage(), e);
             }
         } else if (id == R.id.action_wizard) {
             try {
-                startForm(REQUEST_CODE_GET_JSON, "wizard_form", null);
+                startForm(REQUEST_CODE_GET_JSON, "wizard_form", null, false);
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage(), e);
             }
         } else if (id == R.id.action_validation) {
             try {
-                startForm(REQUEST_CODE_GET_JSON, "validation_form", null);
+                startForm(REQUEST_CODE_GET_JSON, "validation_form", null, false);
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage(), e);
             }
@@ -97,8 +97,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    public void startForm(int jsonFormActivityRequestCode,
-                          String formName, String entityId) throws Exception {
+    public void startForm(int jsonFormActivityRequestCode, String formName, String entityId, boolean translate) throws Exception {
 
         final String STEP1 = "step1";
         final String FIELDS = "fields";
@@ -211,6 +210,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     Intent intent = new Intent(this, JsonFormActivity.class);
                     intent.putExtra("json", jsonForm.toString());
+                    intent.putExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, translate);
                     Log.d(getClass().getName(), "form is " + jsonForm.toString());
                     startActivityForResult(intent, jsonFormActivityRequestCode);
                     break;
@@ -252,34 +252,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         try {
             switch (id) {
                 case R.id.child_enrollment:
-                    startForm(REQUEST_CODE_GET_JSON, "single_form", null);
+                    startForm(REQUEST_CODE_GET_JSON, "single_form", null, true);
                     break;
                 case R.id.wizard_form:
-                    startForm(REQUEST_CODE_GET_JSON, "wizard_form", null);
+                    startForm(REQUEST_CODE_GET_JSON, "wizard_form", null, false);
                     break;
                 case R.id.native_form_basic:
-                    startForm(REQUEST_CODE_GET_JSON, "basic_form", null);
+                    startForm(REQUEST_CODE_GET_JSON, "basic_form", null, false);
                     break;
                 case R.id.rules_engine_skip_logic:
-                    startForm(REQUEST_CODE_GET_JSON, "rules_engine_demo", null);
+                    startForm(REQUEST_CODE_GET_JSON, "rules_engine_demo", null, false);
                     break;
                 case R.id.numbers_selector_widget:
-                    startForm(REQUEST_CODE_GET_JSON, "constraints_demo", null);
+                    startForm(REQUEST_CODE_GET_JSON, "constraints_demo", null, false);
                     break;
                 case R.id.generic_dialog_button:
-                    startForm(REQUEST_CODE_GET_JSON, "generic_popup_form", null);
+                    startForm(REQUEST_CODE_GET_JSON, "generic_popup_form", null, false);
                     break;
                 case R.id.validation_form_button:
-                    startForm(REQUEST_CODE_GET_JSON, "validation_form", null);
+                    startForm(REQUEST_CODE_GET_JSON, "validation_form", null, false);
                     break;
                 case R.id.expansion_panel_button:
-                    startForm(REQUEST_CODE_GET_JSON, "expansion_panel_form", null);
+                    startForm(REQUEST_CODE_GET_JSON, "expansion_panel_form", null, false);
                     break;
                 case R.id.repeating_group_button:
-                    startForm(REQUEST_CODE_GET_JSON, "repeating_group", null);
+                    startForm(REQUEST_CODE_GET_JSON, "repeating_group", null, false);
                     break;
                 case R.id.multiselect_list:
-                    startForm(REQUEST_CODE_GET_JSON, "multi_select_list_form", null);
+                    startForm(REQUEST_CODE_GET_JSON, "multi_select_list_form", null, false);
                     break;
                 default:
                     break;

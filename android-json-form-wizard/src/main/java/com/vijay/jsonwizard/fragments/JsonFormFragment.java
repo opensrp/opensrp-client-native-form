@@ -36,6 +36,7 @@ import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.interfaces.OnFieldsInvalid;
 import com.vijay.jsonwizard.mvp.MvpFragment;
 import com.vijay.jsonwizard.presenters.JsonFormFragmentPresenter;
+import com.vijay.jsonwizard.utils.NativeFormsProperties;
 import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 import com.vijay.jsonwizard.viewstates.JsonFormFragmentViewState;
@@ -70,12 +71,14 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     private LinearLayout bottomNavigation;
     private BottomNavigationListener navigationListener;
     private boolean shouldSkipStep = true;
+    private static NativeFormsProperties nativeFormProperties;
 
     public static JsonFormFragment getFormFragment(String stepName) {
         JsonFormFragment jsonFormFragment = new JsonFormFragment();
         Bundle bundle = new Bundle();
         bundle.putString(JsonFormConstants.JSON_FORM_KEY.STEPNAME, stepName);
         jsonFormFragment.setArguments(bundle);
+
         return jsonFormFragment;
     }
 
@@ -83,6 +86,8 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     public void onCreate(Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
+
+        nativeFormProperties = Utils.getProperties(getContext());
     }
 
     @Override
@@ -518,16 +523,23 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     @Override
     public void scrollToView(final View view) {
-        view.requestFocus();
-        if (!(view instanceof MaterialEditText)) {
-            mScrollView.post(new Runnable() {
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    int y = view.getBottom() - view.getHeight();
-                    if (y < 0) {
-                        y = 0;
+                    view.requestFocus();
+                    if (!(view instanceof MaterialEditText)) {
+                        mScrollView.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                int viewLength = view.getBottom() - view.getHeight();
+                                if (viewLength < 0) {
+                                    viewLength = 0;
+                                }
+                                mScrollView.scrollTo(0, viewLength);
+                            }
+                        });
                     }
-                    mScrollView.scrollTo(0, y);
                 }
             });
         }
@@ -614,17 +626,34 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     protected class BottomNavigationListener implements View.OnClickListener {
         @Override
-        public void onClick(View v) {
-            if (v.getId() == R.id.next_button) {
-                Object isSubmit = v.getTag(R.id.submit);
-                if (isSubmit != null && Boolean.valueOf(isSubmit.toString())) {
-                    save(false);
-                } else {
-                    next();
+        public void onClick(View view) {
+            if (view != null) {
+                if (view.getId() == R.id.next_button) {
+                    Object isSubmit = view.getTag(R.id.submit);
+                    if (isSubmit != null && Boolean.valueOf(isSubmit.toString())) {
+                        save(false);
+                    } else {
+                        next();
+                    }
+                } else if (view.getId() == R.id.previous_button) {
+                    getFragmentManager().popBackStack();
                 }
-            } else if (v.getId() == R.id.previous_button) {
-                getFragmentManager().popBackStack();
             }
         }
+    }
+
+    public OnFieldsInvalid getOnFieldsInvalidCallback() {
+        return onFieldsInvalid;
+    }
+
+    public void setOnFieldsInvalid(OnFieldsInvalid onFieldsInvalid) {
+        this.onFieldsInvalid = onFieldsInvalid;
+    }
+
+    /**
+     * Getter for native form properties
+     */
+    public static NativeFormsProperties getNativeFormProperties() {
+        return nativeFormProperties;
     }
 }

@@ -2,7 +2,6 @@ package com.vijay.jsonwizard.utils;
 
 import android.app.DatePickerDialog;
 import android.content.res.Resources;
-import android.util.Log;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.DatePicker;
@@ -10,12 +9,12 @@ import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
+
 /**
  * Created by keyman on 25/04/2017.
  */
 public class DatePickerUtils {
 
-    private static final String TAG = DatePickerUtils.class.getCanonicalName();
     private static final int SPINNER_COUNT = 3;
 
     public static void themeDatePicker(DatePickerDialog dialog, char[] ymdOrder) {
@@ -31,41 +30,43 @@ public class DatePickerUtils {
     }
 
     public static void themeDatePicker(DatePicker datePicker, char[] ymdOrder) {
-        try {
-            preventShowingKeyboard(datePicker);
-            final int idYear = Resources.getSystem().getIdentifier("year", "id", "android");
-            final int idMonth = Resources.getSystem().getIdentifier("month", "id", "android");
-            final int idDay = Resources.getSystem().getIdentifier("day", "id", "android");
-            final int idLayout = Resources.getSystem().getIdentifier("pickers", "id", "android");
+        preventShowingKeyboard(datePicker);
+        themeDatePickerCore(datePicker, ymdOrder, Resources.getSystem());
+    }
 
-            final NumberPicker spinnerYear = (NumberPicker) datePicker.findViewById(idYear);
-            final NumberPicker spinnerMonth = (NumberPicker) datePicker.findViewById(idMonth);
-            final NumberPicker spinnerDay = (NumberPicker) datePicker.findViewById(idDay);
-            final LinearLayout layout = (LinearLayout) datePicker.findViewById(idLayout);
+    private static void themeDatePickerCore(DatePicker datePicker, char[] ymdOrder, Resources resources) {
 
-            layout.removeAllViews();
-            for (int i = 0; i < SPINNER_COUNT; i++) {
-                switch (ymdOrder[i]) {
-                    case 'y':
-                        layout.addView(spinnerYear);
-                        setImeOptions(spinnerYear, i);
-                        break;
-                    case 'm':
-                        layout.addView(spinnerMonth);
-                        setImeOptions(spinnerMonth, i);
-                        break;
-                    case 'd':
-                        layout.addView(spinnerDay);
-                        setImeOptions(spinnerDay, i);
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Invalid char[] ymdOrder");
-                }
+        String appPackage = "android";
+
+        final int idYear = resources.getIdentifier("year", "id", appPackage);
+        final int idMonth = resources.getIdentifier("month", "id", appPackage);
+        final int idDay = resources.getIdentifier("day", "id", appPackage);
+        final int idLayout = resources.getIdentifier("pickers", "id", appPackage);
+
+        final NumberPicker spinnerYear = datePicker.findViewById(idYear);
+        final NumberPicker spinnerMonth = datePicker.findViewById(idMonth);
+        final NumberPicker spinnerDay = datePicker.findViewById(idDay);
+        final LinearLayout layout = datePicker.findViewById(idLayout);
+
+        layout.removeAllViews();
+        for (int i = 0; i < SPINNER_COUNT; i++) {
+            switch (ymdOrder[i]) {
+                case 'y':
+                    layout.addView(spinnerYear);
+                    setImeOptions(spinnerYear, i);
+                    break;
+                case 'm':
+                    layout.addView(spinnerMonth);
+                    setImeOptions(spinnerMonth, i);
+                    break;
+                case 'd':
+                    layout.addView(spinnerDay);
+                    setImeOptions(spinnerDay, i);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalid char[] ymdOrder");
             }
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
         }
-
     }
 
     private static void setImeOptions(NumberPicker spinner, int spinnerIndex) {

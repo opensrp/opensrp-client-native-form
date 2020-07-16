@@ -9,6 +9,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewParent;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rengwuxian.materialedittext.validation.RegexpValidator;
@@ -41,8 +43,10 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import timber.log.Timber;
 
@@ -55,21 +59,21 @@ import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUE;
  */
 public class RepeatingGroupFactory implements FormWidgetFactory {
 
-    protected int MAX_NUM_REPEATING_GROUPS = 35;
+    private static Map<Integer, String> repeatingGroupLayouts = new HashMap<>();
     private final String REFERENCE_EDIT_TEXT_HINT = "reference_edit_text_hint";
     private final String REPEATING_GROUP_LABEL = "repeating_group_label";
     private final String REFERENCE_EDIT_TEXT = "reference_edit_text";
-    private static Map<Integer, String> repeatingGroupLayouts = new HashMap<>();
-
+    private final String REPEATING_GROUP_MAX = "repeating_group_max";
+    private final String REPEATING_GROUP_MIN = "repeating_group_min";
+    protected int MAX_NUM_REPEATING_GROUPS = 35;
+    protected int MIN_NUM_REPEATING_GROUPS = 0;
     private ImageButton doneButton;
     private WidgetArgs widgetArgs;
-    private boolean isRemoteReferenceValueUsed;
-    private int remoteReferenceValue;
 
     @Override
     public List<View> getViewsFromJson(final String stepName, final Context context, final JsonFormFragment formFragment, final JSONObject jsonObject, final CommonListener listener, final boolean popup) throws Exception {
         List<View> views = new ArrayList<>(1);
-        LinearLayout rootLayout = (LinearLayout) LayoutInflater.from(context).inflate(getLayout(), null);
+        LinearLayout rootLayout = getRootLayout(context);
 
         final int rootLayoutId = View.generateViewId();
         doneButton = rootLayout.findViewById(R.id.btn_repeating_group_done);
@@ -93,12 +97,14 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         final String repeatingGroupLabel = jsonObject.optString(REPEATING_GROUP_LABEL, context.getString(R.string.repeating_group_item));
         String remoteReferenceEditText = jsonObject.optString(REFERENCE_EDIT_TEXT);
 
+        setRepeatingGroupNumLimits();
+
         // Enables us to fetch this value from a previous edit_text & disable this one
-        retrieveRepeatingGroupCountFromRemoteReferenceEditText((JsonApi) context, referenceEditText, remoteReferenceEditText);
+        retrieveRepeatingGroupCountFromRemoteReferenceEditText(rootLayout, (JsonApi) context, referenceEditText, remoteReferenceEditText);
         setUpReferenceEditText(referenceEditText, referenceEditTextHint, repeatingGroupLabel);
 
         // Disable the done button if the reference edit text being used is remote & has a valid value
-        if (isRemoteReferenceValueUsed) {
+        if (isRemoteReferenceValueUsed(referenceEditText)) {
             doneButton.setVisibility(View.GONE);
         } else {
             doneButton.setOnClickListener(new View.OnClickListener() {
@@ -110,11 +116,71 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         }
 
         ((JsonApi) context).addFormDataView(referenceEditText);
+        setViewTags(rootLayout);
+        prepareViewChecks(rootLayout, context);
 
         return views;
     }
 
-    private void retrieveRepeatingGroupCountFromRemoteReferenceEditText(@NonNull JsonApi context, @NonNull MaterialEditText referenceEditText, @Nullable String remoteReferenceEditTextAddress) throws JSONException {
+    @Override
+    public List<View> getViewsFromJson(final String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+        return getViewsFromJson(stepName, context, formFragment, jsonObject, listener, false);
+    }
+
+    @Override
+    public Set<String> getCustomTranslatableWidgetFields() {
+        return new HashSet<>();
+    }
+
+    @VisibleForTesting
+    protected LinearLayout getRootLayout(Context context) {
+        return (LinearLayout) LayoutInflater.from(context).inflate(getLayout(), null);
+    }
+
+    /**
+     * Sets min and max number of repeating groups
+     */
+    private void setRepeatingGroupNumLimits() {
+        try {
+            MIN_NUM_REPEATING_GROUPS = widgetArgs.getJsonObject().optInt(REPEATING_GROUP_MIN, MIN_NUM_REPEATING_GROUPS);
+            MAX_NUM_REPEATING_GROUPS = widgetArgs.getJsonObject().optInt(REPEATING_GROUP_MAX, MAX_NUM_REPEATING_GROUPS);
+        } catch (NumberFormatException e) {
+            Timber.e(e);
+        }
+    }
+
+    private void setViewTags(@NonNull LinearLayout rootLayout) {
+        JSONArray canvasIds = new JSONArray();
+        canvasIds.put(rootLayout.getId());
+        rootLayout.setTag(R.id.canvas_ids, canvasIds.toString());
+        rootLayout.setTag(R.id.key, widgetArgs.getJsonObject().optString(KEY));
+        rootLayout.setTag(R.id.type, widgetArgs.getJsonObject().optString(JsonFormConstants.TYPE));
+        rootLayout.setTag(R.id.extraPopup, widgetArgs.isPopup());
+        rootLayout.setTag(R.id.address, widgetArgs.getStepName() + ":" + widgetArgs.getJsonObject().optString(KEY));
+    }
+
+    private void prepareViewChecks(@NonNull LinearLayout view, @NonNull Context context) {
+        String relevance = widgetArgs.getJsonObject().optString(JsonFormConstants.RELEVANCE);
+        String constraints = widgetArgs.getJsonObject().optString(JsonFormConstants.CONSTRAINTS);
+        String calculation = widgetArgs.getJsonObject().optString(JsonFormConstants.CALCULATION);
+
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+            view.setTag(R.id.relevance, relevance);
+            ((JsonApi) context).addSkipLogicView(view);
+        }
+
+        if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
+            view.setTag(R.id.constraints, constraints);
+            ((JsonApi) context).addConstrainedView(view);
+        }
+
+        if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
+            view.setTag(R.id.calculation, calculation);
+            ((JsonApi) context).addCalculationLogicView(view);
+        }
+    }
+
+    private void retrieveRepeatingGroupCountFromRemoteReferenceEditText(final @NonNull View rootLayout, @NonNull JsonApi context, @NonNull final MaterialEditText referenceEditText, @Nullable String remoteReferenceEditTextAddress) throws JSONException {
         if (!TextUtils.isEmpty(remoteReferenceEditTextAddress) && remoteReferenceEditTextAddress.contains(":")) {
             String finalRemoteReferenceEditTextAddress = remoteReferenceEditTextAddress.trim();
             String[] addressSections = finalRemoteReferenceEditTextAddress.split(":");
@@ -134,11 +200,16 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
 
                             if (!StringUtils.isEmpty(fieldValue)) {
                                 try {
-                                    remoteReferenceValue = Integer.parseInt(fieldValue);
-                                    isRemoteReferenceValueUsed = true;
+                                    final int remoteReferenceValue = Integer.parseInt(fieldValue);
+                                    referenceEditText.setTag(R.id.repeating_group_remote_reference_value, remoteReferenceValue);
 
                                     // Start the repeating groups
-                                    attachRepeatingGroup(referenceEditText.getParent().getParent(), remoteReferenceValue);
+                                    Object visibilityTag = rootLayout.getTag(R.id.relevance_decided);
+                                    if (visibilityTag != null && (boolean) visibilityTag) {
+                                        attachRepeatingGroup(referenceEditText.getParent().getParent(), remoteReferenceValue);
+                                    } else {
+                                        setGlobalLayoutListener(rootLayout, referenceEditText, remoteReferenceValue);
+                                    }
                                 } catch (NumberFormatException ex) {
                                     Timber.e(ex);
                                 }
@@ -150,10 +221,26 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         }
     }
 
+    @VisibleForTesting
+    protected void setGlobalLayoutListener(@NonNull final View rootLayout, @NonNull final MaterialEditText referenceEditText, final int remoteReferenceValue) {
+        rootLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+
+            @Override
+            public void onGlobalLayout() {
+                Object visibilityTag = rootLayout.getTag(R.id.relevance_decided);
+                if (visibilityTag != null && (boolean) visibilityTag) {
+                    attachRepeatingGroup(referenceEditText.getParent().getParent(), remoteReferenceValue);
+
+                    rootLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+            }
+        });
+    }
+
     private void setUpReferenceEditText(final MaterialEditText referenceEditText, String referenceEditTextHint, String repeatingGroupLabel) throws JSONException {
         // We should disable this edit_text if another referenced edit text is being used
         Context context = widgetArgs.getContext();
-        if (isRemoteReferenceValueUsed) {
+        if (isRemoteReferenceValueUsed(referenceEditText)) {
             referenceEditText.setVisibility(View.GONE);
         } else {
             referenceEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -179,12 +266,11 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         referenceEditText.setTag(R.id.openmrs_entity, "");
         referenceEditText.setTag(R.id.openmrs_entity_id, "");
 
-        if (!isRemoteReferenceValueUsed) {
+        if (!isRemoteReferenceValueUsed(referenceEditText)) {
             referenceEditText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
             referenceEditText.addValidator(new RegexpValidator(context.getString(R.string.repeating_group_number_format_err_msg), "\\d*"));
             referenceEditText.addValidator(new MaxNumericValidator(context.getString(R.string.repeating_group_max_value_err_msg, MAX_NUM_REPEATING_GROUPS), MAX_NUM_REPEATING_GROUPS));
-            referenceEditText.addValidator(new MinNumericValidator(context.getString(R.string.repeating_group_min_value_err_msg), 0));
-
+            referenceEditText.addValidator(new MinNumericValidator(context.getString(R.string.repeating_group_min_value_err_msg, MIN_NUM_REPEATING_GROUPS), MIN_NUM_REPEATING_GROUPS));
             addRequiredValidator(widgetArgs.getJsonObject(), referenceEditText);
         }
     }
@@ -220,11 +306,6 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         }
     }
 
-    @Override
-    public List<View> getViewsFromJson(final String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
-        return getViewsFromJson(stepName, context, formFragment, jsonObject, listener, false);
-    }
-
     protected void addOnDoneAction(TextView textView) {
         try {
             InputMethodManager inputMethodManager = (InputMethodManager) widgetArgs.getFormFragment().getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -232,7 +313,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
             textView.clearFocus();
             attachRepeatingGroup(textView.getParent().getParent(), Integer.parseInt(textView.getText().toString()));
         } catch (Exception e) {
-            Timber.e(e, " --> addOnDoneAction");
+            Timber.e(e);
         }
     }
 
@@ -246,5 +327,15 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
 
     protected int getLayout() {
         return R.layout.native_form_repeating_group;
+    }
+
+    private boolean isRemoteReferenceValueUsed(@NonNull View referenceEditText) {
+        Object tagValue = referenceEditText.getTag(R.id.repeating_group_remote_reference_value);
+        return tagValue instanceof Integer && (int) tagValue > -1;
+    }
+
+    public int remoteReferenceValue(@NonNull View referenceEditText) {
+        Object tagValue = referenceEditText.getTag(R.id.repeating_group_remote_reference_value);
+        return tagValue instanceof Integer ? (int) tagValue : 0;
     }
 }

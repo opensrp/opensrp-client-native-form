@@ -26,7 +26,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by vijay on 24-05-2015.
@@ -34,6 +36,7 @@ import java.util.List;
 public class LabelFactory implements FormWidgetFactory {
     private final String TAG = this.getClass().getSimpleName();
     private CustomTextView numberText;
+    private FormUtils formUtils = new FormUtils();
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
@@ -53,8 +56,7 @@ public class LabelFactory implements FormWidgetFactory {
         List<View> views = new ArrayList<>(1);
         if (jsonObject.has(JsonFormConstants.TEXT)) {
             JSONArray canvasIds = new JSONArray();
-            ConstraintLayout constraintLayout = FormUtils
-                    .createLabelLinearLayout(stepName, canvasIds, jsonObject, context, listener);
+            ConstraintLayout constraintLayout = formUtils.createLabelLinearLayout(stepName, canvasIds, jsonObject, context, listener);
 
             constraintLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
 
@@ -65,10 +67,10 @@ public class LabelFactory implements FormWidgetFactory {
                 bottomMargin = jsonObject.optString("bottom_margin", "0dp");
             }
 
-            int topMarginInt = FormUtils.getValueFromSpOrDpOrPx(topMargin, context);
+            int topMarginInt = getValueFromSpOrDpOrPx(context, topMargin);
             int bottomMarginInt = (int) context.getResources().getDimension(R.dimen.default_bottom_margin);
             if (hasBg) {
-                bottomMarginInt = FormUtils.getValueFromSpOrDpOrPx(bottomMargin, context);
+                bottomMarginInt = getValueFromSpOrDpOrPx(context, bottomMargin);
             }
 
             LinearLayout.LayoutParams layoutParams = FormUtils
@@ -88,6 +90,10 @@ public class LabelFactory implements FormWidgetFactory {
             Log.e(TAG, "A label requires a text. You cannot have a label with blank text");
         }
         return views;
+    }
+
+    public int getValueFromSpOrDpOrPx(Context context, String bottomMargin) {
+        return FormUtils.getValueFromSpOrDpOrPx(bottomMargin, context);
     }
 
     /**
@@ -125,22 +131,21 @@ public class LabelFactory implements FormWidgetFactory {
         CustomTextView labelText = constraintLayout.findViewById(R.id.label_text);
         if (bgColorInt != 0) {
             labelText.setBackgroundColor(bgColorInt);
-            if (labelNumber != null) {
+            if (labelNumber != null && numberText != null) {
                 numberText.setBackgroundColor(bgColorInt);
             }
         }
 
         if (hasBg) {
             labelText.setPadding(
-                    FormUtils.getValueFromSpOrDpOrPx(leftPadding, context),
-                    FormUtils.getValueFromSpOrDpOrPx(topPadding, context),
-                    FormUtils.getValueFromSpOrDpOrPx(rightPadding, context),
-                    FormUtils.getValueFromSpOrDpOrPx(bottomPadding, context)
+                    getValueFromSpOrDpOrPx(context, leftPadding),
+                    getValueFromSpOrDpOrPx(context, topPadding),
+                    getValueFromSpOrDpOrPx(context, rightPadding),
+                    getValueFromSpOrDpOrPx(context, bottomPadding)
             );
         }
-        int labelTextSize = FormUtils.getValueFromSpOrDpOrPx(
-                jsonObject.optString(JsonFormConstants.TEXT_SIZE, String.valueOf(context.getResources().getDimension(R
-                        .dimen.default_label_text_size))), context);
+        int labelTextSize = getValueFromSpOrDpOrPx(context, jsonObject.optString(JsonFormConstants.TEXT_SIZE, String.valueOf(context.getResources().getDimension(R
+                .dimen.default_label_text_size))));
         String textStyle = jsonObject.optString(JsonFormConstants.TEXT_STYLE, JsonFormConstants.NORMAL);
         FormUtils.setTextStyle(textStyle, labelText);
         labelText.setTextSize(labelTextSize);
@@ -183,10 +188,10 @@ public class LabelFactory implements FormWidgetFactory {
                 numberText.setTextColor(Color.parseColor(labelTextColor));
             }
             numberText.setPadding(
-                    FormUtils.getValueFromSpOrDpOrPx(leftPadding, context),
-                    FormUtils.getValueFromSpOrDpOrPx(topPadding, context),
-                    FormUtils.getValueFromSpOrDpOrPx(rightPadding, context),
-                    FormUtils.getValueFromSpOrDpOrPx(bottomPadding, context));
+                    getValueFromSpOrDpOrPx(context, leftPadding),
+                    getValueFromSpOrDpOrPx(context, topPadding),
+                    getValueFromSpOrDpOrPx(context, rightPadding),
+                    getValueFromSpOrDpOrPx(context, bottomPadding));
         }
     }
 
@@ -228,4 +233,8 @@ public class LabelFactory implements FormWidgetFactory {
                 asterisks;
     }
 
+    @Override
+    public Set<String> getCustomTranslatableWidgetFields() {
+        return new HashSet<>();
+    }
 }

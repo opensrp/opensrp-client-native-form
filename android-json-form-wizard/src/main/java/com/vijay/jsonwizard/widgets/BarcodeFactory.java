@@ -34,7 +34,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import timber.log.Timber;
 
@@ -47,11 +49,19 @@ import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 
 public class BarcodeFactory implements FormWidgetFactory {
     private static final String TYPE_QR = "qrcode";
+    public static final String SCAN_BUTTON_TEXT = "scanButtonText";
 
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
         return attachJson(stepName, context, formFragment, jsonObject, true);
+    }
+
+    @Override
+    public Set<String> getCustomTranslatableWidgetFields() {
+        Set<String> customTranslatableWidgetFields = new HashSet<>();
+        customTranslatableWidgetFields.add(SCAN_BUTTON_TEXT);
+        return customTranslatableWidgetFields;
     }
 
     @Override
@@ -69,8 +79,7 @@ public class BarcodeFactory implements FormWidgetFactory {
             final String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
             String value = jsonObject.optString(JsonFormConstants.VALUE, null);
 
-            RelativeLayout rootLayout = (RelativeLayout) LayoutInflater.from(context)
-                    .inflate(R.layout.native_form_item_barcode, null);
+            RelativeLayout rootLayout = getRootLayout(context);
             final int canvasId = ViewUtil.generateViewId();
             rootLayout.setId(canvasId);
             final MaterialEditText editText = createEditText(rootLayout, jsonObject, canvasId, stepName, popup);
@@ -106,27 +115,35 @@ public class BarcodeFactory implements FormWidgetFactory {
             addScanButton(context, jsonObject, editText, rootLayout);
 
             editText.addTextChangedListener(textWatcher);
-            if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
-                editText.setTag(R.id.relevance, relevance);
-                ((JsonApi) context).addSkipLogicView(editText);
-            }
-            if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
-                editText.setTag(R.id.constraints, constraints);
-                ((JsonApi) context).addConstrainedView(editText);
-            }
-            if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
-                editText.setTag(R.id.calculation, calculation);
-                ((JsonApi) context).addCalculationLogicView(editText);
-            }
+            attachRefreshLogic(context, relevance, calculation, constraints, editText);
 
             ((JsonApi) context).addFormDataView(editText);
 
             views.add(rootLayout);
         } catch (Exception e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
 
         return views;
+    }
+
+    private void attachRefreshLogic(Context context, String relevance, String calculation, String constraints, MaterialEditText editText) {
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+            editText.setTag(R.id.relevance, relevance);
+            ((JsonApi) context).addSkipLogicView(editText);
+        }
+        if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
+            editText.setTag(R.id.constraints, constraints);
+            ((JsonApi) context).addConstrainedView(editText);
+        }
+        if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
+            editText.setTag(R.id.calculation, calculation);
+            ((JsonApi) context).addCalculationLogicView(editText);
+        }
+    }
+
+    public RelativeLayout getRootLayout(Context context) {
+        return (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.native_form_item_barcode, null);
     }
 
     private void addOnClickActions(Context context, MaterialEditText editText, String barcodeType) {
@@ -190,7 +207,7 @@ public class BarcodeFactory implements FormWidgetFactory {
         scanButton.setBackgroundColor(context.getResources().getColor(R.color.primary));
         scanButton.setMinHeight(0);
         scanButton.setMinimumHeight(0);
-        scanButton.setText(jsonObject.getString("scanButtonText"));
+        scanButton.setText(jsonObject.getString(SCAN_BUTTON_TEXT));
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -212,7 +229,7 @@ public class BarcodeFactory implements FormWidgetFactory {
         }
     }
 
-    private void launchBarcodeScanner(Activity activity, MaterialEditText editText, String barcodeType) {
+    protected void launchBarcodeScanner(Activity activity, MaterialEditText editText, String barcodeType) {
         InputMethodManager inputManager = (InputMethodManager) activity.getSystemService(
                 Context.INPUT_METHOD_SERVICE);
         inputManager.hideSoftInputFromWindow(editText.getWindowToken(), HIDE_NOT_ALWAYS);

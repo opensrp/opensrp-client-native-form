@@ -23,12 +23,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.vijay.jsonwizard.activities.JsonFormActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/NativeFormsAppTheme.NoActionBar"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-        <activity
-            android:name="com.vijay.jsonwizard.activities.JsonWizardFormActivity"
+            android:name="com.vijay.jsonwizard.activities.FormConfigurationJsonFormActivity"
             android:screenOrientation="portrait"
             android:theme="@style/NativeFormsAppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />

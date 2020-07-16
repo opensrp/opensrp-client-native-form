@@ -20,7 +20,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.vijay.jsonwizard.utils.FormUtils.FONT_BOLD_PATH;
 import static com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT;
@@ -106,5 +108,10 @@ public class RadioButtonFactory implements FormWidgetFactory {
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
         return null;
+    }
+
+    @Override
+    public Set<String> getCustomTranslatableWidgetFields() {
+        return new HashSet<>();
     }
 }

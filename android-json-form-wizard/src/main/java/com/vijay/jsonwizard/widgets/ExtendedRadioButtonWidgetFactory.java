@@ -24,10 +24,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class ExtendedRadioButtonWidgetFactory extends NativeRadioButtonFactory {
+    private FormUtils formUtils = new FormUtils();
     @Override
     protected List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject,
                                     CommonListener commonListener, boolean popup) throws JSONException {
@@ -40,9 +43,8 @@ public class ExtendedRadioButtonWidgetFactory extends NativeRadioButtonFactory {
             if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
                 readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
             }
-            LinearLayout rootLayout = (LinearLayout) LayoutInflater.from(context).inflate(getLayout(), null);
-            Map<String, View> labelViews = FormUtils
-                    .createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly,
+            LinearLayout rootLayout = getLinearRootLayout(context);
+            Map<String, View> labelViews = formUtils.createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly,
                             commonListener, popup);
             String openMrsEntityParent = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
             String openMrsEntity = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY);
@@ -162,5 +164,10 @@ public class ExtendedRadioButtonWidgetFactory extends NativeRadioButtonFactory {
         } else {
             Toast.makeText(context, "Please make sure you have set the radio button options", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public Set<String> getCustomTranslatableWidgetFields() {
+        return new HashSet<>();
     }
 }

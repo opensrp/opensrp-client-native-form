@@ -1,13 +1,15 @@
 package com.vijay.jsonwizard.activities;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
-import android.util.Log;
 import android.view.View;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.vijay.jsonwizard.R;
@@ -25,7 +27,11 @@ import com.vijay.jsonwizard.utils.ValidationStatus;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.smartregister.client.utils.contract.ClientFormContract;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,7 +40,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnFieldsInvalid {
+import timber.log.Timber;
+
+import static com.vijay.jsonwizard.utils.NativeFormLangUtils.getTranslatedString;
+
+abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnFieldsInvalid, ClientFormContract.View {
     protected static final String TAG = JsonFormActivity.class.getSimpleName();
     protected static final String JSON_STATE = "jsonState";
     protected static final String FORM_STATE = "formState";
@@ -56,11 +66,16 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
     private Toolbar mToolbar;
     private Map<String, ValidationStatus> invalidFields = new HashMap<>();
     private boolean isPreviousPressed = false;
+    private ProgressDialog progressDialog;
+    protected boolean translateForm = false;
+
+    protected boolean isVisibleFormErrorAndRollbackDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.native_form_activity_json_form);
+        findViewById(R.id.native_form_activity).setFilterTouchesWhenObscured(true);
         mToolbar = findViewById(R.id.tb_top);
         setSupportActionBar(mToolbar);
         skipLogicViews = new LinkedHashMap<>();
@@ -69,24 +84,33 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
         onActivityRequestPermissionResultListeners = new HashMap<>();
         lifeCycleListeners = new ArrayList<>();
         isFormFragmentInitialized = false;
+        translateForm = getIntent().getBooleanExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, false);
         if (savedInstanceState == null) {
-            init(getIntent().getStringExtra(JsonFormConstants.JSON_FORM_KEY.JSON));
+            this.form = extractForm(getIntent().getSerializableExtra(JsonFormConstants.JSON_FORM_KEY.FORM));
+            init(getJsonForm());
             initializeFormFragment();
             onFormStart();
-            this.form = extractForm(getIntent().getSerializableExtra(JsonFormConstants.JSON_FORM_KEY.FORM));
         } else {
-            init(savedInstanceState.getString(JSON_STATE));
             this.form = extractForm(savedInstanceState.getSerializable(FORM_STATE));
+            init(savedInstanceState.getString(JSON_STATE));
         }
         for (LifeCycleListener lifeCycleListener : lifeCycleListeners) {
             lifeCycleListener.onCreate(savedInstanceState);
         }
     }
 
+    protected String getJsonForm() {
+        String jsonForm = getIntent().getStringExtra(JsonFormConstants.JSON_FORM_KEY.JSON);
+        if (translateForm) {
+            jsonForm = getTranslatedString(jsonForm, this);
+        }
+        return jsonForm;
+    }
+
     public void init(String json) {
         try {
             setmJSONObject(new JSONObject(json));
-            if (!mJSONObject.has("encounter_type")) {
+            if (!mJSONObject.has(JsonFormConstants.ENCOUNTER_TYPE)) {
                 mJSONObject = new JSONObject();
                 throw new JSONException("Form encounter_type not set");
             }
@@ -108,9 +132,11 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
             localBroadcastManager = LocalBroadcastManager.getInstance(this);
 
         } catch (JSONException e) {
-            Log.e(TAG, "Initialization error. Json passed is invalid : " + e.getMessage(), e);
+            Timber.e(e, "Initialization error. Json passed is invalid");
         }
     }
+
+    protected abstract void initiateFormUpdate(JSONObject json);
 
     public synchronized void initializeFormFragment() {
         isFormFragmentInitialized = true;
@@ -125,7 +151,7 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
             }
             FormUtils.updateStartProperties(propertyManager, mJSONObject);
         } catch (Exception e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
     }
 
@@ -138,6 +164,7 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
     }
 
     public void setmJSONObject(JSONObject mJSONObject) {
+        initiateFormUpdate(mJSONObject);
         this.mJSONObject = mJSONObject;
     }
 
@@ -192,4 +219,42 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
     public void setRulesEngineFactory(RulesEngineFactory rulesEngineFactory) {
         this.rulesEngineFactory = rulesEngineFactory;
     }
+
+    public ProgressDialog getProgressDialog() {
+        return progressDialog;
+    }
+
+    public void setProgressDialog(ProgressDialog progressDialog) {
+        this.progressDialog = progressDialog;
+    }
+
+    @Nullable
+    @Override
+    public JSONObject getSubForm(String formIdentity, String subFormsLocation,
+                                 Context context, boolean translateSubForm) throws Exception {
+        return FormUtils.getSubFormJson(formIdentity, subFormsLocation, getApplicationContext(), translateForm);
+    }
+
+    @Nullable
+    @Override
+    public BufferedReader getRules(@NonNull Context context, @NonNull String fileName) throws IOException {
+        return new BufferedReader(new InputStreamReader(context.getAssets().open(fileName)));
+    }
+
+    @Override
+    public void handleFormError(boolean isRulesFile, @NonNull String formIdentifier) {
+        // Do nothing here
+    }
+
+    @Override
+    public void setVisibleFormErrorAndRollbackDialog(boolean isVisible) {
+        isVisibleFormErrorAndRollbackDialog = isVisible;
+    }
+
+    @Override
+    public boolean isVisibleFormErrorAndRollbackDialog() {
+        return isVisibleFormErrorAndRollbackDialog;
+    }
+
+
 }

@@ -5,7 +5,8 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import androidx.annotation.NonNull;
-import android.text.TextUtils;
+import androidx.annotation.VisibleForTesting;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -25,6 +26,7 @@ import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,8 +34,14 @@ import org.json.JSONObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+
+import timber.log.Timber;
+
+import static com.vijay.jsonwizard.widgets.TimePickerFactory.KEY.DURATION;
 
 public class TimePickerFactory implements FormWidgetFactory {
     public static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm");
@@ -49,35 +57,39 @@ public class TimePickerFactory implements FormWidgetFactory {
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
         return attachJson(stepName, context, formFragment, jsonObject, false);
     }
+
+    @Override
+    @NonNull
+    public Set<String> getCustomTranslatableWidgetFields() {
+        Set<String> customTranslatableWidgetFields = new HashSet<>();
+        customTranslatableWidgetFields.add(DURATION + "." + JsonFormConstants.LABEL);
+        return customTranslatableWidgetFields;
+    }
+
     private List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject,
                                   boolean popup) {
         List<View> views = new ArrayList<>(1);
-        try {
+        RelativeLayout dateViewRelativeLayout = getRelativeLayout(context);
+        MaterialEditText editText = dateViewRelativeLayout.findViewById(R.id.edit_text);
+        TextView duration = dateViewRelativeLayout.findViewById(R.id.duration);
+        attachLayout(stepName, context, formFragment, jsonObject, editText, duration);
+        JSONArray canvasIds = new JSONArray();
+        dateViewRelativeLayout.setId(ViewUtil.generateViewId());
+        canvasIds.put(dateViewRelativeLayout.getId());
+        editText.setTag(R.id.canvas_ids, canvasIds.toString());
+        editText.setTag(R.id.extraPopup, popup);
 
-            RelativeLayout dateViewRelativeLayout = (RelativeLayout) LayoutInflater
-                    .from(context).inflate(getLayout(), null);
-
-            MaterialEditText editText = dateViewRelativeLayout.findViewById(R.id.edit_text);
-
-            TextView duration = dateViewRelativeLayout.findViewById(R.id.duration);
-
-            attachLayout(stepName, context, formFragment, jsonObject, editText, duration);
-
-            JSONArray canvasIds = new JSONArray();
-            dateViewRelativeLayout.setId(ViewUtil.generateViewId());
-            canvasIds.put(dateViewRelativeLayout.getId());
-            editText.setTag(R.id.canvas_ids, canvasIds.toString());
-            editText.setTag(R.id.extraPopup, popup);
-
-            ((JsonApi) context).addFormDataView(editText);
-            views.add(dateViewRelativeLayout);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        ((JsonApi) context).addFormDataView(editText);
+        views.add(dateViewRelativeLayout);
 
         return views;
     }
+
+    @VisibleForTesting
+    protected RelativeLayout getRelativeLayout(Context context) {
+        return (RelativeLayout) LayoutInflater.from(context).inflate(getLayout(), null);
+    }
+
     protected void attachLayout(String stepName, final Context context, JsonFormFragment formFragment, JSONObject jsonObject,
                                 final MaterialEditText editText, final TextView duration) {
 
@@ -94,7 +106,8 @@ public class TimePickerFactory implements FormWidgetFactory {
             duration.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
             duration.setTag(R.id.openmrs_entity, openMrsEntity);
             duration.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-            editText.setTag(com.vijay.jsonwizard.R.id.locale_independent_value,jsonObject.optString(TimePickerFactory.KEY.VALUE));
+
+            editText.setTag(com.vijay.jsonwizard.R.id.locale_independent_value, jsonObject.optString(TimePickerFactory.KEY.VALUE));
             if (jsonObject.has(TimePickerFactory.KEY.DURATION)) {
                 duration.setTag(R.id.label, jsonObject.getJSONObject(TimePickerFactory.KEY.DURATION).getString(JsonFormConstants.LABEL));
             }
@@ -103,7 +116,6 @@ public class TimePickerFactory implements FormWidgetFactory {
             editText.setTag(R.id.json_object, jsonObject);
 
             final TimePickerDialog timePickerDialog = createTimeDialog(context, editText);
-
 
 
             editText.setOnClickListener(new View.OnClickListener() {
@@ -126,75 +138,22 @@ public class TimePickerFactory implements FormWidgetFactory {
             editText.addTextChangedListener(genericTextWatcher);
             addRefreshLogicView(context, editText, relevance, constraints, calculations);
             editText.setFocusable(false);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private void addRefreshLogicView(Context context, MaterialEditText editText, String relevance, String constraints,
-                                     String calculations) {
-        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
-            editText.setTag(R.id.relevance, relevance);
-            ((JsonApi) context).addSkipLogicView(editText);
-        }
-
-        if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
-            editText.setTag(R.id.constraints, constraints);
-            ((JsonApi) context).addConstrainedView(editText);
-        }
-
-        if (!TextUtils.isEmpty(calculations) && context instanceof JsonApi) {
-            editText.setTag(R.id.calculation, calculations);
-            ((JsonApi) context).addCalculationLogicView(editText);
+        } catch (JSONException e) {
+            Timber.e(e);
+        } catch (ParseException e) {
+            Timber.e(e);
         }
     }
 
-    @NonNull
-    private GenericTextWatcher getGenericTextWatcher(String stepName, final Activity context, JsonFormFragment formFragment,
-                                                     final MaterialEditText editText,
-                                                     final TimePickerDialog timePickerDialog) {
-        GenericTextWatcher genericTextWatcher = new GenericTextWatcher(stepName, formFragment, editText);
-        genericTextWatcher.addOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    showTimePickerDialog(context, timePickerDialog);
-                }
-            }
-        });
-        return genericTextWatcher;
-    }
-    private static void showTimePickerDialog(Activity context,
-                                             TimePickerDialog timePickerDialog
-                                             ) {
-        FragmentTransaction ft = context.getFragmentManager().beginTransaction();
-        Fragment prev = context.getFragmentManager().findFragmentByTag(TAG);
-        if (prev != null) {
-            ft.remove(prev);
-        }
-
-        ft.addToBackStack(null);
-
-        timePickerDialog.show(ft,TAG);
-
-    }
-    private TimePickerDialog createTimeDialog(Context context, final MaterialEditText editText) {
-        final TimePickerDialog mTimePicker = new TimePickerDialog();
-        mTimePicker.setContext(context);
-        mTimePicker.setOnTimeSetListener(new android.app.TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                editText.setTag(R.id.locale_independent_value,  String.format(Locale.ENGLISH,"%02d", hourOfDay)+":"+ String.format(Locale.ENGLISH,"%02d", minute));
-                updateTimeText(editText,hourOfDay,minute);
-            }
-        });
-        return mTimePicker;
+    protected int getLayout() {
+        return R.layout.native_form_item_time_picker;
     }
 
     private void updateEditText(MaterialEditText editText, JSONObject jsonObject, String stepName, Context context
-                                ) throws JSONException, ParseException {
-        SimpleDateFormat TIME_FORMAT_LOCALE = new SimpleDateFormat("hh:mm", context.getResources().getConfiguration().locale);
+    ) throws JSONException, ParseException {
+
+        Locale locale = getCurrentLocale(context);
+        SimpleDateFormat TIME_FORMAT_LOCALE = new SimpleDateFormat("hh:mm", locale);
 
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
@@ -218,7 +177,7 @@ public class TimePickerFactory implements FormWidgetFactory {
             }
         }
 
-        if (!TextUtils.isEmpty(jsonObject.optString(TimePickerFactory.KEY.VALUE))) {
+        if (StringUtils.isNotBlank(jsonObject.optString(TimePickerFactory.KEY.VALUE))) {
             updateTimeText(editText, TIME_FORMAT_LOCALE.format(TIME_FORMAT.parse(jsonObject.optString(TimePickerFactory.KEY.VALUE))));
         } else if (jsonObject.has(TimePickerFactory.KEY.DEFAULT)) {
             updateTimeText(editText, TIME_FORMAT_LOCALE.format(TIME_FORMAT.parse(jsonObject.optString(TimePickerFactory.KEY.VALUE))));
@@ -231,30 +190,86 @@ public class TimePickerFactory implements FormWidgetFactory {
         }
     }
 
-    private void updateTimeText(MaterialEditText editText, String durationText) {
+    private TimePickerDialog createTimeDialog(Context context, final MaterialEditText editText) {
+        final TimePickerDialog mTimePicker = new TimePickerDialog();
+        mTimePicker.setContext(context);
+        mTimePicker.setOnTimeSetListener(new android.app.TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                editText.setTag(R.id.locale_independent_value, String.format(Locale.ENGLISH, "%02d", hourOfDay) + ":" + String.format(Locale.ENGLISH, "%02d", minute));
+                updateTimeText(editText, hourOfDay, minute);
+            }
+        });
+        return mTimePicker;
+    }
 
-        editText.setText(durationText);
+    private static void showTimePickerDialog(Activity context,
+                                             TimePickerDialog timePickerDialog
+    ) {
+        FragmentTransaction ft = context.getFragmentManager().beginTransaction();
+        Fragment prev = context.getFragmentManager().findFragmentByTag(TAG);
+        if (prev != null) {
+            ft.remove(prev);
+        }
+
+        ft.addToBackStack(null);
+        timePickerDialog.show(ft, TAG);
 
     }
-    private void updateTimeText(MaterialEditText editText, int selectedHour,int selectedMinute) {
+
+    private void updateTimeText(MaterialEditText editText, String durationText) {
+        editText.setText(durationText);
+    }
+
+    @NonNull
+    private GenericTextWatcher getGenericTextWatcher(String stepName, final Activity context, JsonFormFragment formFragment,
+                                                     final MaterialEditText editText,
+                                                     final TimePickerDialog timePickerDialog) {
+        GenericTextWatcher genericTextWatcher = new GenericTextWatcher(stepName, formFragment, editText);
+        genericTextWatcher.addOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    showTimePickerDialog(context, timePickerDialog);
+                }
+            }
+        });
+        return genericTextWatcher;
+    }
+
+    private void addRefreshLogicView(Context context, MaterialEditText editText, String relevance, String constraints,
+                                     String calculations) {
+        if (StringUtils.isNotBlank(relevance) && context instanceof JsonApi) {
+            editText.setTag(R.id.relevance, relevance);
+            ((JsonApi) context).addSkipLogicView(editText);
+        }
+
+        if (StringUtils.isNotBlank(constraints) && context instanceof JsonApi) {
+            editText.setTag(R.id.constraints, constraints);
+            ((JsonApi) context).addConstrainedView(editText);
+        }
+
+        if (StringUtils.isNotBlank(calculations) && context instanceof JsonApi) {
+            editText.setTag(R.id.calculation, calculations);
+            ((JsonApi) context).addCalculationLogicView(editText);
+        }
+    }
+
+    @VisibleForTesting
+    protected Locale getCurrentLocale(Context context) {
+        return context.getResources().getConfiguration().locale.getLanguage().equals("ar") ? Locale.ENGLISH : context.getResources().getConfiguration().locale;
+    }
+
+    private void updateTimeText(MaterialEditText editText, int selectedHour, int selectedMinute) {
         String durationText = String.format("%02d:%02d", selectedHour, selectedMinute);
         editText.setText(durationText);
-        
-    }
-
-    protected int getLayout() {
-        return R.layout.native_form_item_time_picker;
     }
 
     public static class KEY {
         public static final String DURATION = "duration";
-
         public static final String HINT = "hint";
-
         public static final String KEY = "key";
-
         public static final String VALUE = (JsonFormConstants.VALUE);
-
         public static final String DEFAULT = "default";
     }
 }

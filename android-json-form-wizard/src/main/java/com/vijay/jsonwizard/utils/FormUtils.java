@@ -9,11 +9,6 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatEditText;
-import androidx.appcompat.widget.AppCompatTextView;
-import androidx.constraintlayout.widget.ConstraintLayout;
-
 import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -30,8 +25,14 @@ import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatEditText;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.BuildConfig;
+import com.vijay.jsonwizard.NativeFormLibrary;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.ExpansionPanelGenericPopupDialog;
@@ -41,20 +42,27 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.GenericDialogInterface;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.interfaces.OnFormFetchedCallback;
+import com.vijay.jsonwizard.interfaces.RollbackDialogCallback;
 import com.vijay.jsonwizard.rules.RuleConstant;
 import com.vijay.jsonwizard.views.CustomTextView;
 
+import org.apache.commons.lang3.CharEncoding;
 import org.apache.commons.lang3.StringUtils;
 import org.jeasy.rules.api.Facts;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.smartregister.client.utils.contract.ClientFormContract;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
+import java.io.StringReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -68,6 +76,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import timber.log.Timber;
+
+import static com.vijay.jsonwizard.utils.Utils.convertStreamToString;
 
 /**
  * Created by vijay on 24-05-2015.
@@ -287,50 +297,45 @@ public class FormUtils {
         }
     }
 
-    public static Map<String, View> createRadioButtonAndCheckBoxLabel(String stepName, LinearLayout linearLayout,
-                                                                      JSONObject jsonObject, Context context,
-                                                                      JSONArray canvasIds, Boolean readOnly,
-                                                                      CommonListener listener, boolean popup) throws JSONException {
+    public Map<String, View> createRadioButtonAndCheckBoxLabel(String stepName, LinearLayout linearLayout,
+                                                               JSONObject jsonObject, Context context,
+                                                               JSONArray canvasIds, Boolean readOnly,
+                                                               CommonListener listener, boolean popup) throws JSONException {
         Map<String, View> createdViewsMap = new HashMap<>();
         String label = jsonObject.optString(JsonFormConstants.LABEL, "");
-        if (!TextUtils.isEmpty(label)) {
+        if (StringUtils.isNotBlank(label)) {
             String asterisks = "";
-            int labelTextSize = FormUtils
-                    .getValueFromSpOrDpOrPx(
-                            jsonObject.optString(JsonFormConstants.LABEL_TEXT_SIZE, String.valueOf(context
-                                    .getResources().getDimension(R.dimen.default_label_text_size))), context);
-            String labelTextColor = jsonObject
-                    .optString(JsonFormConstants.LABEL_TEXT_COLOR, JsonFormConstants.DEFAULT_TEXT_COLOR);
+            int labelTextSize = FormUtils.getValueFromSpOrDpOrPx(jsonObject.optString(JsonFormConstants.LABEL_TEXT_SIZE, String.valueOf(context
+                    .getResources().getDimension(R.dimen.default_label_text_size))), context);
+            String labelTextColor = jsonObject.optString(JsonFormConstants.LABEL_TEXT_COLOR, JsonFormConstants.DEFAULT_TEXT_COLOR);
             JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
             ConstraintLayout labelConstraintLayout = createLabelLinearLayout(stepName, canvasIds, jsonObject, context, listener);
             labelConstraintLayout.setTag(R.id.extraPopup, popup);
             CustomTextView labelText = labelConstraintLayout.findViewById(R.id.label_text);
-            labelText.setTag(R.id.extraPopup, popup);
             ImageView editButton = labelConstraintLayout.findViewById(R.id.label_edit_button);
             if (requiredObject != null) {
                 String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
-                if (!TextUtils.isEmpty(requiredValue) && (
-                        Boolean.TRUE.toString().equalsIgnoreCase(requiredValue) || Boolean
-                                .valueOf(requiredValue))) {
+                if (StringUtils.isNotBlank(requiredValue) && (Boolean.TRUE.toString().equalsIgnoreCase(requiredValue) || Boolean.parseBoolean(requiredValue))) {
                     asterisks = "<font color=#CF0800> *</font>";
                 }
             }
 
-            String combinedLabelText =
-                    "<font color=" + labelTextColor + ">" + label + "</font>" + asterisks;
+            String combinedLabelText = "<font color=" + labelTextColor + ">" + label + "</font>" + asterisks;
 
             //Applying textStyle to the text;
-            String textStyle = jsonObject
-                    .optString(JsonFormConstants.TEXT_STYLE, JsonFormConstants.NORMAL);
-            setTextStyle(textStyle, labelText);
-            labelText.setText(Html.fromHtml(combinedLabelText));
-            labelText.setTag(R.id.original_text, Html.fromHtml(combinedLabelText));
-            labelText.setTextSize(labelTextSize);
-            canvasIds.put(labelConstraintLayout.getId());
-            labelConstraintLayout.setEnabled(!readOnly);
-            linearLayout.addView(labelConstraintLayout);
-            createdViewsMap.put(JsonFormConstants.EDIT_BUTTON, editButton);
-            createdViewsMap.put(JsonFormConstants.CUSTOM_TEXT, labelText);
+            String textStyle = jsonObject.optString(JsonFormConstants.TEXT_STYLE, JsonFormConstants.NORMAL);
+            if (labelText != null && editButton != null) {
+                setTextStyle(textStyle, labelText);
+                labelText.setText(Html.fromHtml(combinedLabelText));
+                labelText.setTag(R.id.extraPopup, popup);
+                labelText.setTag(R.id.original_text, Html.fromHtml(combinedLabelText));
+                labelText.setTextSize(labelTextSize);
+                canvasIds.put(labelConstraintLayout.getId());
+                labelConstraintLayout.setEnabled(!readOnly);
+                linearLayout.addView(labelConstraintLayout);
+                createdViewsMap.put(JsonFormConstants.EDIT_BUTTON, editButton);
+                createdViewsMap.put(JsonFormConstants.CUSTOM_TEXT, labelText);
+            }
         }
         return createdViewsMap;
     }
@@ -354,31 +359,27 @@ public class FormUtils {
         return px;
     }
 
-    public static ConstraintLayout createLabelLinearLayout(String stepName, JSONArray canvasIds,
-                                                           JSONObject jsonObject,
-                                                           Context context,
-                                                           CommonListener listener) throws JSONException {
-        String openMrsEntityParent = jsonObject
-                .optString(JsonFormConstants.OPENMRS_ENTITY_PARENT, null);
+    public ConstraintLayout createLabelLinearLayout(String stepName, JSONArray canvasIds,
+                                                    JSONObject jsonObject,
+                                                    Context context,
+                                                    CommonListener listener) throws JSONException {
+        String openMrsEntityParent = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT, null);
         String openMrsEntity = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY, null);
         String openMrsEntityId = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_ID, null);
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
         String calculation = jsonObject.optString(JsonFormConstants.CALCULATION);
         String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
 
-        ConstraintLayout constraintLayout = (ConstraintLayout) LayoutInflater.from(context)
-                .inflate(R.layout.native_form_labels, null);
-        constraintLayout.setId(ViewUtil.generateViewId());
-        canvasIds.put(constraintLayout.getId());
-        constraintLayout.setTag(R.id.canvas_ids, canvasIds.toString());
-        constraintLayout.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
-        constraintLayout.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
-        constraintLayout.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
-        constraintLayout.setTag(R.id.openmrs_entity, openMrsEntity);
-        constraintLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-        constraintLayout
-                .setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
-        constraintLayout.setId(ViewUtil.generateViewId());
+        ConstraintLayout constraintLayout = getConstraintLayout(stepName, canvasIds, jsonObject, context, openMrsEntityParent, openMrsEntity, openMrsEntityId);
+        attachRefreshLogic(context, relevance, calculation, constraints, constraintLayout);
+
+        ImageView imageView = constraintLayout.findViewById(R.id.label_info);
+        showInfoIcon(stepName, jsonObject, listener, FormUtils.getInfoDialogAttributes(jsonObject), imageView, canvasIds);
+
+        return constraintLayout;
+    }
+
+    private void attachRefreshLogic(Context context, String relevance, String calculation, String constraints, ConstraintLayout constraintLayout) {
         if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             constraintLayout.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(constraintLayout);
@@ -393,33 +394,48 @@ public class FormUtils {
             constraintLayout.setTag(R.id.constraints, constraints);
             ((JsonApi) context).addCalculationLogicView(constraintLayout);
         }
+    }
 
-        ImageView imageView = constraintLayout.findViewById(R.id.label_info);
-        showInfoIcon(stepName, jsonObject, listener, FormUtils.getInfoDialogAttributes(jsonObject),
-                imageView,
-                canvasIds);
-
+    @NotNull
+    public ConstraintLayout getConstraintLayout(String stepName, JSONArray canvasIds, JSONObject jsonObject, Context context, String openMrsEntityParent, String openMrsEntity, String openMrsEntityId) throws JSONException {
+        ConstraintLayout constraintLayout = getRootConstraintLayout(context);
+        constraintLayout.setId(ViewUtil.generateViewId());
+        canvasIds.put(constraintLayout.getId());
+        constraintLayout.setTag(R.id.canvas_ids, canvasIds.toString());
+        constraintLayout.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+        constraintLayout.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
+        constraintLayout.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
+        constraintLayout.setTag(R.id.openmrs_entity, openMrsEntity);
+        constraintLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
+        constraintLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+        constraintLayout.setId(ViewUtil.generateViewId());
         return constraintLayout;
+    }
+
+    public ConstraintLayout getRootConstraintLayout(Context context) {
+        return (ConstraintLayout) LayoutInflater.from(context).inflate(R.layout.native_form_labels, null);
     }
 
     /**
      *
      */
     public static void setTextStyle(String textStyle, AppCompatTextView view) {
-        switch (textStyle) {
-            case JsonFormConstants.BOLD:
-                view.setTypeface(null, Typeface.BOLD);
-                break;
-            case JsonFormConstants.ITALIC:
-                view.setTypeface(null, Typeface.ITALIC);
-                break;
-            case JsonFormConstants.BOLD_ITALIC:
-                view.setTypeface(null, Typeface.BOLD_ITALIC);
-                break;
-            case JsonFormConstants.NORMAL:
-            default:
-                view.setTypeface(null, Typeface.NORMAL);
-                break;
+        if (view != null && StringUtils.isNotBlank(textStyle)) {
+            switch (textStyle) {
+                case JsonFormConstants.BOLD:
+                    view.setTypeface(null, Typeface.BOLD);
+                    break;
+                case JsonFormConstants.ITALIC:
+                    view.setTypeface(null, Typeface.ITALIC);
+                    break;
+                case JsonFormConstants.BOLD_ITALIC:
+                    view.setTypeface(null, Typeface.BOLD_ITALIC);
+                    break;
+                case JsonFormConstants.NORMAL:
+                default:
+                    view.setTypeface(null, Typeface.NORMAL);
+                    break;
+            }
         }
     }
 
@@ -429,39 +445,39 @@ public class FormUtils {
     }
 
     public static int dpToPixels(Context context, float dps) {
-        float scale = context.getResources().getDisplayMetrics().density;
-        return (int) (dps * scale + 0.5f);
+        return  (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dps, context.getResources().getDisplayMetrics());
     }
 
-    public static void showInfoIcon(String stepName, JSONObject jsonObject, CommonListener listener,
-                                    @NonNull HashMap<String, String> imageAttributes, ImageView imageView, JSONArray canvasIds)
+    public void showInfoIcon(String stepName, JSONObject jsonObject, CommonListener listener,
+                             @NonNull HashMap<String, String> imageAttributes, ImageView imageView, JSONArray canvasIds)
             throws JSONException {
+        if (imageView != null) {
+            //Display custom dialog if has image is true otherwise normal alert dialog is enough
+            if (imageAttributes.get(JsonFormConstants.LABEL_INFO_HAS_IMAGE) != null &&
+                    Boolean.parseBoolean(imageAttributes.get(JsonFormConstants.LABEL_INFO_HAS_IMAGE))) {
 
-        //Display custom dialog if has image is true otherwise normal alert dialog is enough
-        if (imageAttributes.get(JsonFormConstants.LABEL_INFO_HAS_IMAGE) != null &&
-                Boolean.parseBoolean(imageAttributes.get(JsonFormConstants.LABEL_INFO_HAS_IMAGE))) {
+                imageView.setTag(R.id.label_dialog_image_src,
+                        imageAttributes.get(JsonFormConstants.LABEL_INFO_IMAGE_SRC));
+                imageView.setVisibility(View.VISIBLE);
 
-            imageView.setTag(R.id.label_dialog_image_src,
-                    imageAttributes.get(JsonFormConstants.LABEL_INFO_IMAGE_SRC));
-            imageView.setVisibility(View.VISIBLE);
+            }
 
+            if (imageAttributes.get(JsonFormConstants.LABEL_INFO_TEXT) != null) {
+
+                imageView
+                        .setTag(R.id.label_dialog_info, imageAttributes.get(JsonFormConstants.LABEL_INFO_TEXT));
+                imageView
+                        .setTag(R.id.label_dialog_title, imageAttributes.get(JsonFormConstants.LABEL_INFO_TITLE));
+                imageView.setVisibility(View.VISIBLE);
+
+            }
+
+            imageView.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+            imageView.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
+            imageView.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+            imageView.setTag(R.id.canvas_ids, canvasIds.toString());
+            imageView.setOnClickListener(listener);
         }
-
-        if (imageAttributes.get(JsonFormConstants.LABEL_INFO_TEXT) != null) {
-
-            imageView
-                    .setTag(R.id.label_dialog_info, imageAttributes.get(JsonFormConstants.LABEL_INFO_TEXT));
-            imageView
-                    .setTag(R.id.label_dialog_title, imageAttributes.get(JsonFormConstants.LABEL_INFO_TITLE));
-            imageView.setVisibility(View.VISIBLE);
-
-        }
-
-        imageView.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
-        imageView.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
-        imageView.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
-        imageView.setTag(R.id.canvas_ids, canvasIds.toString());
-        imageView.setOnClickListener(listener);
     }
 
     public static HashMap<String, String> getInfoDialogAttributes(JSONObject jsonObject) {
@@ -603,28 +619,31 @@ public class FormUtils {
 
     public static JSONObject getSubFormJson(String formIdentity, String subFormsLocation,
                                             Context context) throws Exception {
-        String defaultSubFormLocation = JsonFormConstants.DEFAULT_SUB_FORM_LOCATION;
-        if (!TextUtils.isEmpty(subFormsLocation)) {
-            defaultSubFormLocation = subFormsLocation;
-        }
-        return new JSONObject(loadSubForm(formIdentity, defaultSubFormLocation, context));
+
+        return new JSONObject(loadSubForm(formIdentity, getSubFormLocation(subFormsLocation), context));
+    }
+
+    public static JSONObject getSubFormJson(String formIdentity, String subFormsLocation,
+                                            Context context, boolean translateSubForm) throws Exception {
+
+        return new JSONObject(loadSubForm(formIdentity, getSubFormLocation(subFormsLocation), context, translateSubForm));
+    }
+
+    public static String getSubFormLocation(String subFormsLocation) {
+        return TextUtils.isEmpty(subFormsLocation) ? JsonFormConstants.DEFAULT_SUB_FORM_LOCATION : subFormsLocation;
     }
 
     public static String loadSubForm(String formIdentity, String defaultSubFormLocation,
-                                     Context context)
-            throws IOException {
-        StringBuilder stringBuilder = new StringBuilder();
-        InputStream inputStream = context.getAssets()
-                .open(defaultSubFormLocation + "/" + formIdentity + ".json");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+                                     Context context, boolean translateSubForm) throws IOException {
 
-        String jsonString;
-        while ((jsonString = reader.readLine()) != null) {
-            stringBuilder.append(jsonString);
-        }
-        inputStream.close();
+        String subForm = loadSubForm(formIdentity, defaultSubFormLocation, context);
+        return translateSubForm ? NativeFormLangUtils.getTranslatedString(subForm, context) : subForm;
+    }
 
-        return stringBuilder.toString();
+    public static String loadSubForm(String formIdentity, String defaultSubFormLocation,
+                                     Context context) throws IOException {
+
+        return convertStreamToString(context.getAssets().open(defaultSubFormLocation + "/" + formIdentity + ".json"));
     }
 
     public static JSONObject getFieldFromForm(JSONObject jsonForm, String key) throws JSONException {
@@ -650,7 +669,7 @@ public class FormUtils {
             if (jsonForm.has(JsonFormConstants.COUNT)) {
                 int stepCount = Integer.parseInt(jsonForm.getString(JsonFormConstants.COUNT));
                 for (int i = 0; i < stepCount; i++) {
-                    String stepName = "step" + (i + 1);
+                    String stepName = JsonFormConstants.STEP + (i + 1);
                     JSONObject step = jsonForm.has(stepName) ? jsonForm.getJSONObject(stepName) : null;
                     if (step != null && step.has(JsonFormConstants.FIELDS)) {
                         JSONArray stepFields = step.getJSONArray(JsonFormConstants.FIELDS);
@@ -999,7 +1018,6 @@ public class FormUtils {
     }
 
     public String getSpecifyText(JSONArray jsonArray) {
-        FormUtils formUtils = new FormUtils();
         StringBuilder specifyText = new StringBuilder();
         for (int i = 0; i < jsonArray.length(); i++) {
             try {
@@ -1008,7 +1026,7 @@ public class FormUtils {
                     String type = jsonObject.optString(JsonFormConstants.TYPE, null);
                     JSONArray itemArray = jsonObject.getJSONArray(JsonFormConstants.VALUES);
                     for (int j = 0; j < itemArray.length(); j++) {
-                        String s = formUtils.getValueFromSecondaryValues(type, itemArray.getString(j));
+                        String s = getValueFromSecondaryValues(type, itemArray.getString(j));
                         if (!TextUtils.isEmpty(s)) {
                             specifyText.append(s).append(",").append(" ");
                         }
@@ -1121,19 +1139,19 @@ public class FormUtils {
                 contentView.removeAllViews();
             }
             for (int i = 0; i < expansionWidgetValues.size(); i++) {
-                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                LinearLayout valuesLayout = (LinearLayout) inflater.inflate(R.layout.native_expansion_panel_list_item, null);
-                CustomTextView listHeader = valuesLayout.findViewById(R.id.item_header);
-                CustomTextView listValue = valuesLayout.findViewById(R.id.item_value);
-                listValue.setTextColor(context.getResources().getColor(R.color.text_color_primary));
                 String[] valueObject = expansionWidgetValues.get(i).split(":");
                 if (valueObject.length >= 2 && !JsonFormConstants.AncRadioButtonOptionTextUtils.DONE_EARLIER.equals(valueObject[1]) &&
                         !JsonFormConstants.AncRadioButtonOptionTextUtils.DONE_TODAY.equals(valueObject[1])) {
+                    LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    LinearLayout valuesLayout = (LinearLayout) inflater.inflate(R.layout.native_expansion_panel_list_item, null);
+                    CustomTextView listHeader = valuesLayout.findViewById(R.id.item_header);
+                    CustomTextView listValue = valuesLayout.findViewById(R.id.item_value);
+                    listValue.setTextColor(context.getResources().getColor(R.color.text_color_primary));
                     listHeader.setText(valueObject[0]);
                     listValue.setText(valueObject[1]);
-                }
 
-                contentView.addView(valuesLayout);
+                    contentView.addView(valuesLayout);
+                }
             }
         }
     }
@@ -1281,14 +1299,16 @@ public class FormUtils {
     public String addFormDetails(String formString) {
         String form = "";
         try {
-            JSONObject jsonForm = new JSONObject(formString);
-            String formVersion = jsonForm.optString(JsonFormConstants.FORM_VERSION, "");
-            JSONObject formData = new JSONObject();
-            formData.put(JsonFormConstants.Properties.APP_VERSION_NAME, BuildConfig.VERSION_NAME);
-            formData.put(JsonFormConstants.Properties.APP_FORM_VERSION, formVersion);
-            jsonForm.put(JsonFormConstants.Properties.DETAILS, formData);
+            if (StringUtils.isNoneBlank(formString)) {
+                JSONObject jsonForm = new JSONObject(formString);
+                String formVersion = jsonForm.optString(JsonFormConstants.FORM_VERSION, "");
+                JSONObject formData = new JSONObject();
+                formData.put(JsonFormConstants.Properties.APP_VERSION_NAME, BuildConfig.VERSION_NAME);
+                formData.put(JsonFormConstants.Properties.APP_FORM_VERSION, formVersion);
+                jsonForm.put(JsonFormConstants.Properties.DETAILS, formData);
 
-            form = String.valueOf(jsonForm);
+                form = String.valueOf(jsonForm);
+            }
         } catch (JSONException e) {
             Timber.e(e, "%s --> addFormDetails", this.getClass().getCanonicalName());
         }
@@ -1474,26 +1494,45 @@ public class FormUtils {
     }
 
     public void getSpinnerValueOpenMRSAttributes(JSONObject item, JSONArray valueOpenMRSAttributes) throws JSONException {
-        if (item != null && item.equals(JsonFormConstants.SPINNER) && item.has(JsonFormConstants.OPENMRS_CHOICE_IDS)) {
+
+        if (item == null || !item.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.SPINNER)) { return; }
+
+        String spinnerValue = item.getString(JsonFormConstants.VALUE);
+        String spinnerKey = item.getString(JsonFormConstants.KEY);
+        if (item.has(JsonFormConstants.OPENMRS_CHOICE_IDS)) {
             JSONObject openMRSChoiceIds = item.getJSONObject(JsonFormConstants.OPENMRS_CHOICE_IDS);
-            String value = item.getString(JsonFormConstants.VALUE);
             Iterator<String> keys = openMRSChoiceIds.keys();
             while (keys.hasNext()) {
                 String key = keys.next();
-                if (value.equals(key)) {
-                    JSONObject jsonObject = new JSONObject();
-                    String optionOpenMRSConceptId = openMRSChoiceIds.get(key).toString();
-                    jsonObject.put(JsonFormConstants.KEY, item.getString(JsonFormConstants.KEY));
-                    jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_PARENT,
-                            item.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT));
-                    jsonObject.put(JsonFormConstants.OPENMRS_ENTITY, item.getString(JsonFormConstants.OPENMRS_ENTITY));
-                    jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_ID, optionOpenMRSConceptId);
-
-                    valueOpenMRSAttributes.put(jsonObject);
+                if (spinnerValue.equals(key)) {
+                   addOpenMRSAttributes(valueOpenMRSAttributes, item, spinnerKey,
+                           openMRSChoiceIds.getString(key));
+                   break;
                 }
-
+            }
+        } else if (item.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
+            // if an options block is defined
+            JSONArray options = item.optJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
+            for (int i = 0; i < options.length(); i++) {
+                JSONObject option = options.getJSONObject(i);
+                if (option.get(JsonFormConstants.KEY).equals(spinnerValue)) {
+                    addOpenMRSAttributes(valueOpenMRSAttributes, option, spinnerKey,
+                            option.getString(JsonFormConstants.OPENMRS_ENTITY_ID));
+                    break;
+                }
             }
         }
+    }
+
+
+    private void addOpenMRSAttributes(JSONArray valueOpenMRSAttributes, JSONObject item, String key, String openMRSEntityId) throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(JsonFormConstants.KEY, key);
+        jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_PARENT, item.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT));
+        jsonObject.put(JsonFormConstants.OPENMRS_ENTITY, item.getString(JsonFormConstants.OPENMRS_ENTITY));
+        jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_ID, openMRSEntityId);
+
+        valueOpenMRSAttributes.put(jsonObject);
     }
 
     private JSONObject createValueObject(String key, String type, String label, int index, JSONArray values, JSONObject openMRSAttributes, JSONArray valueOpenMRSAttributes) {
@@ -1744,4 +1783,304 @@ public class FormUtils {
 
         return value.replaceAll(", $", "");
     }
+
+    @Nullable
+    public JSONObject getFormJsonFromRepositoryOrAssets(@NonNull Context context, @NonNull String formIdentity) throws JSONException {
+        ClientFormContract.Dao clientFormRepository = NativeFormLibrary.getInstance().getClientFormDao();
+        return getFormJsonFromRepositoryOrAssetsWithOptionalCallback(context, clientFormRepository, formIdentity, null);
+    }
+
+    @Nullable
+    public JSONObject getFormJsonFromRepositoryOrAssets(@NonNull Context context, @NonNull ClientFormContract.Dao clientFormRepository, @NonNull String formIdentity) throws JSONException {
+        return getFormJsonFromRepositoryOrAssetsWithOptionalCallback(context, clientFormRepository, formIdentity, null);
+    }
+
+
+    /**
+     * Fetches the JSON form from the repository or assets folder and handles the JSONException thrown
+     * by providing the user with rollback capability. The rollback form chosen by the user will be
+     * returned in the callback
+     *
+     * @param context
+     * @param formIdentity
+     * @param onFormFetchedCallback
+     */
+    public void getFormJsonFromRepositoryOrAssets(@NonNull Context context, @NonNull String formIdentity, @NonNull OnFormFetchedCallback<JSONObject> onFormFetchedCallback) {
+        ClientFormContract.Dao clientFormRepository = NativeFormLibrary.getInstance().getClientFormDao();
+        try {
+            getFormJsonFromRepositoryOrAssetsWithOptionalCallback(context, clientFormRepository, formIdentity, onFormFetchedCallback);
+        } catch (JSONException ex) {
+            Timber.wtf(ex, "This should never happen --> Error was handled but onFormFetchedCallback was NULL");
+        }
+    }
+
+
+    public void getFormJsonFromRepositoryOrAssets(@NonNull Context context, @NonNull ClientFormContract.Dao clientFormRepository, @NonNull String formIdentity, @Nullable OnFormFetchedCallback<JSONObject> onFormFetchedCallback) {
+        try {
+            getFormJsonFromRepositoryOrAssetsWithOptionalCallback(context, clientFormRepository, formIdentity, onFormFetchedCallback);
+        } catch (JSONException ex) {
+            Timber.wtf(ex, "This should never happen --> Error was handled but onFormFetchedCallback was NULL");
+        }
+    }
+
+    /**
+     * Fetches the JSON form from the repository or assets folder and handles the JSONException thrown
+     * by providing the user with rollback capability. The rollback form chosen by the user will be
+     *      * returned in the callback
+     *
+     * @param context
+     * @param clientFormRepository
+     * @param formIdentity
+     * @param onFormFetchedCallback
+     * @return
+     * @throws JSONException
+     */
+    private JSONObject getFormJsonFromRepositoryOrAssetsWithOptionalCallback(@NonNull Context context, @Nullable ClientFormContract.Dao clientFormRepository, String formIdentity, @Nullable final OnFormFetchedCallback<JSONObject> onFormFetchedCallback) throws JSONException {
+        if (clientFormRepository != null) {
+            ClientFormContract.Model clientForm = getClientFormFromRepository(context, clientFormRepository, formIdentity);
+
+            try {
+                if (clientForm != null) {
+                    Timber.d("============%s form loaded from db============", formIdentity);
+
+                    JSONObject formJson = new JSONObject(clientForm.getJson());
+                    injectFormStatus(formJson, clientForm);
+
+                    if (onFormFetchedCallback != null) {
+                        onFormFetchedCallback.onFormFetched(formJson);
+                        return null;
+                    } else {
+                        return formJson;
+                    }
+                }
+            } catch (JSONException e) {
+                Timber.e(e);
+
+                if (onFormFetchedCallback != null) {
+                    handleJsonFormOrRulesError(context, clientFormRepository, false, formIdentity, new OnFormFetchedCallback<String>() {
+                        @Override
+                        public void onFormFetched(@Nullable String form) {
+                            try {
+                                JSONObject jsonObject = form == null ? null : new JSONObject(form);
+                                onFormFetchedCallback.onFormFetched(jsonObject);
+                            } catch (JSONException ex) {
+                                Timber.e(ex);
+                            }
+                        }
+                    });
+                } else {
+                    throw e;
+                }
+            }
+        }
+
+        Timber.d("============%s form loaded from Assets=============", formIdentity);
+        JSONObject jsonObject = getFormJson(context, formIdentity);
+
+        if (onFormFetchedCallback != null) {
+            onFormFetchedCallback.onFormFetched(jsonObject);
+            return null;
+        } else {
+            return jsonObject;
+        }
+    }
+
+    public JSONObject getFormJson(@NonNull Context context, @NonNull String formIdentity) {
+        try {
+            String locale = context.getResources().getConfiguration().locale.getLanguage();
+            locale = locale.equalsIgnoreCase(Locale.ENGLISH.getLanguage()) ? "" : "-" + locale;
+
+            InputStream inputStream;
+            try {
+                inputStream = context.getApplicationContext().getAssets()
+                        .open("json.form" + locale + "/" + formIdentity + JsonFormConstants.JSON_FILE_EXTENSION);
+            } catch (FileNotFoundException e) {
+                // file for the language not found, defaulting to english language
+                inputStream = context.getApplicationContext().getAssets()
+                        .open("json.form/" + formIdentity + JsonFormConstants.JSON_FILE_EXTENSION);
+            }
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(inputStream, CharEncoding.UTF_8));
+            String jsonString;
+            StringBuilder stringBuilder = new StringBuilder();
+
+            while ((jsonString = reader.readLine()) != null) {
+                stringBuilder.append(jsonString);
+            }
+            inputStream.close();
+
+            return new JSONObject(stringBuilder.toString());
+        } catch (IOException | JSONException e) {
+            Timber.e(e);
+            return null;
+        }
+    }
+
+    private ClientFormContract.Model  getClientFormFromRepository(@NonNull Context context, @NonNull ClientFormContract.Dao clientFormRepository, String formIdentity) {
+        //Check the current locale of the app to load the correct version of the form in the desired language
+        String locale = context.getResources().getConfiguration().locale.getLanguage();
+        String localeFormIdentity = formIdentity;
+        if (!Locale.ENGLISH.getLanguage().equals(locale)) {
+            localeFormIdentity = localeFormIdentity + "-" + locale;
+        }
+
+        ClientFormContract.Model  clientForm = clientFormRepository.getActiveClientFormByIdentifier(localeFormIdentity);
+
+        if (clientForm == null) {
+            String revisedFormName = extractFormNameWithoutExtension(localeFormIdentity);
+            clientForm = clientFormRepository.getActiveClientFormByIdentifier(revisedFormName);
+        }
+        return clientForm;
+    }
+
+    public void handleJsonFormOrRulesError(@NonNull Context context, @NonNull String formIdentity, @NonNull OnFormFetchedCallback<String> onFormFetchedCallback) {
+        ClientFormContract.Dao clientFormRepository = NativeFormLibrary.getInstance().getClientFormDao();
+        if (clientFormRepository != null) {
+            handleJsonFormOrRulesError(context, clientFormRepository, false, formIdentity, onFormFetchedCallback);
+        } else {
+            Timber.e(new Exception(), "Cannot handle JSON Form/Rules File error because client form respository is null");
+        }
+    }
+
+    public void handleJsonFormOrRulesError(@NonNull Context context, @NonNull ClientFormContract.Dao clientFormRepository, @NonNull String formIdentity, @NonNull OnFormFetchedCallback<String> onFormFetchedCallback) {
+        handleJsonFormOrRulesError(context, clientFormRepository, false, formIdentity, onFormFetchedCallback);
+    }
+
+    public void handleJsonFormOrRulesError(@NonNull final Context context, @NonNull final ClientFormContract.Dao clientFormRepository, final boolean isRulesFile, @NonNull final String formIdentity, @NonNull final OnFormFetchedCallback<String> onFormFetchedCallback) {
+        final ClientFormContract.Model  clientForm = getClientFormFromRepository(context, clientFormRepository, formIdentity);
+        List<ClientFormContract.Model > clientForms = clientFormRepository.getClientFormByIdentifier(clientForm.getIdentifier());
+
+        if (clientForms.size() > 0) {
+            // Show dialog asking user if they want to rollback to the previous available version X
+            // if YES, then provide that form instead
+            // if NO, then continue down
+
+            boolean dialogIsShowing = (context instanceof ClientFormContract.View) && ((ClientFormContract.View) context).isVisibleFormErrorAndRollbackDialog();
+
+            if (!dialogIsShowing) {
+                FormRollbackDialogUtil.showAvailableRollbackFormsDialog(context, clientFormRepository, clientForms, clientForm, new RollbackDialogCallback() {
+                    @Override
+                    public void onFormSelected(@NonNull ClientFormContract.Model  selectedForm) {
+                        if (selectedForm.getJson() == null && selectedForm.getVersion().equals(JsonFormConstants.CLIENT_FORM_ASSET_VERSION)) {
+
+                            if (isRulesFile) {
+                                try {
+                                    clientForm.setJson(convertStreamToString(context.getAssets().open(formIdentity)));
+                                } catch (IOException e) {
+                                    Timber.e(e);
+                                }
+                            } else {
+                                JSONObject jsonObject = getFormJson(context, formIdentity);
+
+                                if (jsonObject != null) {
+                                    clientForm.setJson(jsonObject.toString());
+                                }
+                            }
+                        }
+
+                        onFormFetchedCallback.onFormFetched(clientForm.getJson());
+                    }
+
+                    @Override
+                    public void onCancelClicked() {
+                        onFormFetchedCallback.onFormFetched(null);
+                    }
+                });
+            }
+        }
+    }
+
+    @Nullable
+    public JSONObject getSubFormJsonFromRepository(@NonNull Context context, @NonNull ClientFormContract.Dao clientFormDao, String formIdentity, String subFormsLocation, boolean translateSubForm) throws JSONException {
+        String locale = context.getResources().getConfiguration().locale.getLanguage();
+
+        //Check the current locale of the app to load the correct version of the form in the desired language
+        String localeFormIdentity = formIdentity;
+        if (!Locale.ENGLISH.getLanguage().equals(locale)) {
+            localeFormIdentity = localeFormIdentity + "-" + locale;
+        }
+
+        String dbFormName = StringUtils.isBlank(subFormsLocation) ? localeFormIdentity : subFormsLocation + "/" + localeFormIdentity;
+        ClientFormContract.Model  clientForm = clientFormDao.getActiveClientFormByIdentifier(dbFormName);
+
+        if (clientForm == null) {
+            String revisedFormName = extractFormNameWithoutExtension(dbFormName);
+            clientForm = clientFormDao.getActiveClientFormByIdentifier(revisedFormName);
+
+            if (clientForm == null) {
+                String finalSubFormsLocation = getSubFormLocation(subFormsLocation);
+                dbFormName = StringUtils.isBlank(finalSubFormsLocation) ? localeFormIdentity : finalSubFormsLocation + "/" + localeFormIdentity;
+                clientForm = clientFormDao.getActiveClientFormByIdentifier(dbFormName);
+
+            }
+        }
+
+        if (clientForm != null) {
+            Timber.d("============%s form loaded from db============", dbFormName);
+            String originalJson = clientForm.getJson();
+
+            if (translateSubForm) {
+                originalJson = NativeFormLangUtils.getTranslatedString(originalJson, context);
+            }
+
+            return new JSONObject(originalJson);
+        }
+
+        return null;
+    }
+
+    @Nullable
+    public BufferedReader getRulesFromRepository(@NonNull Context context, @NonNull ClientFormContract.Dao clientFormDao, @NonNull String fileName) {
+        String locale = context.getResources().getConfiguration().locale.getLanguage();
+
+        //Check the current locale of the app to load the correct version of the form in the desired language
+        String localeFormIdentity = fileName;
+        if (!Locale.ENGLISH.getLanguage().equals(locale)) {
+            localeFormIdentity = localeFormIdentity + "-" + locale;
+        }
+
+        ClientFormContract.Model clientForm = clientFormDao.getActiveClientFormByIdentifier(localeFormIdentity);
+        if (clientForm != null) {
+            Timber.d("============%s form loaded from db============", localeFormIdentity);
+            String originalJson = clientForm.getJson();
+
+            return new BufferedReader(new StringReader(originalJson));
+        }
+
+        return null;
+    }
+
+    @NonNull
+    protected String extractFormNameWithoutExtension(String localeFormIdentity) {
+        return localeFormIdentity.endsWith(JsonFormConstants.JSON_FILE_EXTENSION)
+                ? localeFormIdentity.substring(0, localeFormIdentity.length() - JsonFormConstants.JSON_FILE_EXTENSION.length()) :
+                localeFormIdentity + JsonFormConstants.JSON_FILE_EXTENSION;
+    }
+
+    public void injectFormStatus(@NonNull JSONObject jsonObject, @NonNull ClientFormContract.Model clientForm) {
+        if (clientForm.isNew()) {
+            try {
+                jsonObject.put(JsonFormConstants.Properties.IS_NEW, clientForm.isNew());
+                jsonObject.put(JsonFormConstants.Properties.CLIENT_FORM_ID, clientForm.getId());
+                jsonObject.put(JsonFormConstants.Properties.FORM_VERSION, clientForm.getVersion());
+            } catch (JSONException e) {
+                Timber.e(e);
+            }
+        }
+    }
+
+    public static int getClientFormId(@NonNull JSONObject jsonObject) {
+        try {
+            return jsonObject.getInt(JsonFormConstants.Properties.CLIENT_FORM_ID);
+        } catch (JSONException e) {
+            Timber.e(e);
+            return 0;
+        }
+    }
+
+    public static boolean isFormNew(@NonNull JSONObject jsonObject) {
+        return jsonObject.optBoolean(JsonFormConstants.Properties.IS_NEW, false);
+    }
+
+
 }

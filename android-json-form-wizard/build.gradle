@@ -5,8 +5,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.3'
-        classpath 'org.apache.commons:commons-lang3:3.9'
-        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.2'
+        classpath 'org.apache.commons:commons-lang3:3.10'
     }
 }
 
@@ -16,6 +15,7 @@ apply plugin: 'com.github.kt3k.coveralls'
 
 jacoco {
     toolVersion = "0.8.3"
+    reportsDir = file("$buildDir/reports/jacoco")
 }
 
 android {
@@ -29,6 +29,14 @@ android {
         targetSdkVersion androidTargetSdkVersion
         versionCode Integer.parseInt(project.VERSION_CODE)
         versionName project.VERSION_NAME
+        multiDexEnabled true
+        testInstrumentationRunner "com.android.test.runner.MultiDexTestRunner"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                includeCompileClasspath = true
+            }
+        }
     }
 
     buildTypes {
@@ -37,7 +45,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
-            testCoverageEnabled false
+            testCoverageEnabled true
         }
     }
 
@@ -50,15 +58,17 @@ android {
             includeAndroidResources = true
         }
     }
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+    }
 }
-
 
 tasks.withType(Test) {
     jacoco.includeNoLocationClasses = true
 }
 
 repositories {
-    maven { url "https://clojars.org/repo/" }
+    mavenCentral()
     google()
 }
 
@@ -68,11 +78,10 @@ dependencies {
         exclude group: 'com.android.support', module: 'appcompat-v7'
     }
     implementation 'com.github.bmelnychuk:atv:1.2.9'
-    implementation('com.google.android.material:material:1.0.0') {
+    implementation('com.google.android.material:material:1.1.0') {
         exclude group: 'com.android.support', module: 'recyclerview-v7'
         exclude group: 'com.android.support', module: 'appcompat-v7'
         exclude group: 'com.android.support', module: 'support-v4'
-
     }
     implementation 'com.github.johnkil.print:print:1.3.1'
     implementation 'com.github.rey5137:material:1.2.5'
@@ -90,25 +99,26 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
         exclude group: 'com.android.support', module: 'recyclerview-v7'
     }
-    implementation('com.google.android.gms:play-services-vision:19.0.0') {
+    implementation('com.google.android.gms:play-services-vision:20.1.0') {
         exclude group: 'com.android.support', module: 'appcompat-v7'
         exclude group: 'com.android.support', module: 'support-v4'
         exclude group: 'com.android.support', module: 'support-annotations'
         exclude group: 'com.android.support', module: 'recyclerview-v7'
     }
+    implementation 'org.smartregister:opensrp-client-utils:0.0.2-SNAPSHOT'
     implementation 'org.jeasy:easy-rules-core:3.3.0'
     implementation 'org.jeasy:easy-rules-mvel:3.3.0'
-    implementation 'joda-time:joda-time:2.10.5'
+    implementation 'joda-time:joda-time:2.10.6'
     implementation 'com.google.code.gson:gson:2.8.6'
-    implementation('io.ona.rdt-capture:lib:1.3.0') {
+    implementation('io.ona.rdt-capture:lib:2.0.1') {
         exclude group: 'com.android.support.constraint', module: 'constraint-layout'
         exclude group: 'com.android.support', module: 'design'
         exclude group: 'com.android.support', module: 'appcompat-v7'
         exclude group: 'com.android.support.test', module: 'runner'
         exclude group: 'com.android.support.test.espresso', module: 'espresso-core'
+        exclude group: 'com.google.android.gms', module: 'play-services-vision'
     }
-    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
-
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.10'
     implementation('io.ona.CircleProgressbar:lib:0.1.0@aar') {
         exclude group: 'com.android.support.constraint', module: 'constraint-layout'
         exclude group: 'com.android.support', module: 'design'
@@ -118,6 +128,7 @@ dependencies {
     }
     implementation 'com.jakewharton.timber:timber:4.7.1'
     implementation 'org.greenrobot:eventbus:3.1.1'
+    implementation 'com.android.support:multidex:1.0.3'
 
     // PowerMock
     def powerMockVersion = '2.0.4'
@@ -127,15 +138,22 @@ dependencies {
     testImplementation "org.powermock:powermock-classloading-xstream:$powerMockVersion"
     implementation('com.github.raihan-mpower:FancyAlertDialog-Android:0.3') {
         exclude group: 'com.android.support', module: 'appcompat-v7'
-
     }
-}
 
-dependencies {
     androidTestImplementation 'com.jayway.android.robotium:robotium-solo:5.6.3'
     androidTestImplementation 'com.google.dexmaker:dexmaker-mockito:1.2'
     androidTestImplementation 'junit:junit:4.12'
+    androidTestImplementation("com.android.support.test:runner:1.0.2") {
+        exclude group: 'com.android.support', module: 'appcompat-v7'
 
+    }
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+    androidTestImplementation('com.android.support.test:rules:1.0.2') {
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+
+    }
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.apache.maven:maven-ant-tasks:2.1.3'
     testImplementation 'org.mockito:mockito-core:3.1.0'
@@ -144,30 +162,38 @@ dependencies {
     testImplementation "org.json:json:20190722"
 }
 
-task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
-
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'createDebugCoverageReport']) {
     reports {
         xml.enabled = true
+        xml.destination = file("${buildDir}/reports/jacoco/jacocoRootReport/merged.xml")
         html.enabled = true
+        html.destination file("${buildDir}/reports/jacoco/jacocoRootReport/html")
     }
-
-    getReports().getXml().setDestination(file("${buildDir}/reports/jacoco/jacocoRootReport/merged.xml"))
-    getReports().getHtml().setDestination(file("${buildDir}/reports/jacoco/jacocoRootReport/html"))
 
     def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*', '**/*$ViewBinder*.*']
     def debugTree = fileTree(dir: "$project.buildDir/intermediates/javac/debug/classes/", excludes: fileFilter)
     def mainSrc = "$project.projectDir/src/main/java"
 
-    sourceDirectories = files([mainSrc])
-    classDirectories = files([debugTree])
-    executionData = fileTree(dir: project.buildDir, includes: [
+    sourceDirectories.from = files([mainSrc])
+    classDirectories.from = files([debugTree])
+    executionData.from = fileTree(dir: project.buildDir, includes: [
             'jacoco/testDebugUnitTest.exec', 'outputs/code-coverage/connected/*coverage.ec'
     ])
+}
+
+tasks.coveralls {
+    dependsOn 'jacocoTestReport'
 }
 
 coveralls {
     jacocoReportPath = "${buildDir}/reports/jacoco/jacocoRootReport/merged.xml"
 }
 
-
 apply from: '../maven.gradle'
+task javadoc(type: Javadoc) {
+    failOnError false
+    def mainSrc = "$project.projectDir/src/main/java"
+    source = files([mainSrc])
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    classpath += configurations.compile
+}

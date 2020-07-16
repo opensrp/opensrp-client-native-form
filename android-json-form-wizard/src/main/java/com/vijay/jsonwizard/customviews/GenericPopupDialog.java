@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import android.text.TextUtils;
@@ -64,6 +65,8 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
     private String suffix = "";
     private Activity activity;
     private JSONArray specifyContent;
+    private List<View> viewList;
+    private boolean translateSubForm = false;
 
     @Override
     public void onAttach(Context context) {
@@ -85,12 +88,18 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         activity = (Activity) context;
         setJsonApi((JsonApi) activity);
 
+        // support translation of sub-forms
+        Intent activityIntent = getActivity().getIntent();
+        translateSubForm =  activityIntent == null ? translateSubForm
+                : activityIntent.getBooleanExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, false);
+
         try {
             setMainFormFields(formUtils.getFormFields(getStepName(), context));
             loadPartialSecondaryValues();
             createSecondaryValuesMap();
             loadSubForms();
             getJsonApi().updateGenericPopupSecondaryValues(specifyContent);
+            setViewList(initiateViews());
         } catch (JSONException e) {
             Timber.e(e, " --> onCreate");
         }
@@ -98,8 +107,20 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Light_Dialog);
     }
 
+    public List<View> getViewList() {
+        return viewList;
+    }
+
+    public void setViewList(List<View> viewList) {
+        this.viewList = viewList;
+    }
+
     public String getStepName() {
         return stepName;
+    }
+
+    public void setStepName(String stepName) {
+        this.stepName = stepName;
     }
 
     protected void loadPartialSecondaryValues() throws JSONException {
@@ -160,6 +181,8 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
                 } catch (JSONException e) {
                     Timber.e(e, "GenericPopupDialog --> loadSubForms");
                 }
+            } else {
+                GenericPopupDialog.this.dismiss();
             }
         }
     }
@@ -176,19 +199,33 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         return mainFormFields;
     }
 
+    public void setMainFormFields(JSONArray mainFormFields) {
+        this.mainFormFields = mainFormFields;
+    }
+
     public JSONArray getSecondaryValues() {
         return secondaryValues;
+    }
+
+    public void setSecondaryValues(JSONArray secondaryValues) {
+        this.secondaryValues = secondaryValues;
     }
 
     public Map<String, SecondaryValueModel> getSecondaryValuesMap() {
         return secondaryValuesMap;
     }
 
+    public void setSecondaryValuesMap(Map<String, SecondaryValueModel> secondaryValuesMap) {
+        this.secondaryValuesMap = secondaryValuesMap;
+    }
+
     @Nullable
     protected JSONObject getSubForm() {
         JSONObject subForm = new JSONObject();
         try {
-            subForm = FormUtils.getSubFormJson(getFormIdentity(), getFormLocation(), context);
+            subForm = getJsonApi().getSubForm(getFormIdentity(), getFormLocation(), context, translateSubForm);
+            Utils.updateSubFormFields(subForm, getJsonApi().form());
+
         } catch (Exception e) {
             Timber.e(e, "GenericPopupDialog --> getSubForm");
         }
@@ -234,6 +271,10 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         return specifyContent;
     }
 
+    public void setSpecifyContent(JSONArray specifyContent) {
+        this.specifyContent = specifyContent;
+    }
+
     public String getFormLocation() {
         return formLocation;
     }
@@ -252,36 +293,14 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         this.widgetType = widgetType;
     }
 
-    public void setSpecifyContent(JSONArray specifyContent) {
-        this.specifyContent = specifyContent;
-    }
-
-    public void setSecondaryValuesMap(Map<String, SecondaryValueModel> secondaryValuesMap) {
-        this.secondaryValuesMap = secondaryValuesMap;
-    }
-
-    public void setSecondaryValues(JSONArray secondaryValues) {
-        this.secondaryValues = secondaryValues;
-    }
-
-    public void setMainFormFields(JSONArray mainFormFields) {
-        this.mainFormFields = mainFormFields;
-    }
-
-    public void setStepName(String stepName) {
-        this.stepName = stepName;
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup dialogView = (ViewGroup) inflater.inflate(R.layout.native_form_generic_dialog, container, false);
 
         attachOnShowListener();
-
-        List<View> viewList = initiateViews();
         LinearLayout genericDialogContent = dialogView.findViewById(R.id.generic_dialog_content);
-        for (View view : viewList) {
+        for (View view : getViewList()) {
             genericDialogContent.addView(view);
         }
 
@@ -356,6 +375,10 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         return commonListener;
     }
 
+    public void setCommonListener(CommonListener commonListener) {
+        this.commonListener = commonListener;
+    }
+
     public void setContext(Context context) throws IllegalStateException {
         this.context = context;
     }
@@ -401,6 +424,10 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
 
     public String getChildKey() {
         return childKey;
+    }
+
+    public void setChildKey(String childKey) {
+        this.childKey = childKey;
     }
 
     /**
@@ -463,6 +490,10 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         return newSelectedValues;
     }
 
+    public void setNewSelectedValues(JSONArray newSelectedValues) {
+        this.newSelectedValues = newSelectedValues;
+    }
+
     protected JSONArray createValues() throws JSONException {
         JSONArray selectedValues = new JSONArray();
         JSONArray formFields = getSubFormsFields();
@@ -512,18 +543,6 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
 
     public void setSubFormsFields(JSONArray subFormsFields) {
         this.subFormsFields = subFormsFields;
-    }
-
-    public void setNewSelectedValues(JSONArray newSelectedValues) {
-        this.newSelectedValues = newSelectedValues;
-    }
-
-    public void setChildKey(String childKey) {
-        this.childKey = childKey;
-    }
-
-    public void setCommonListener(CommonListener commonListener) {
-        this.commonListener = commonListener;
     }
 
     @Override

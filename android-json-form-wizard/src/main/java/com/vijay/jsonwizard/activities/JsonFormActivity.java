@@ -31,6 +31,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.widget.AppCompatRadioButton;
 import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -133,7 +134,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             try {
                 return getmJSONObject().getJSONObject(name);
             } catch (JSONException e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
         }
         return null;
@@ -221,7 +222,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             }
             FormUtils.updateEndProperties(propertyManager, mJSONObject);
         } catch (Exception e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
     }
 
@@ -274,7 +275,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     toggleViewVisibility(curView, false, popup);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
         }
     }
@@ -282,7 +283,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     @Override
     public void refreshSkipLogic(String parentKey, String childKey, boolean popup) {
         initComparisons();
-        for (View curView : skipLogicViews.values()) {
+        View[] views = skipLogicViews.values().toArray(new View[0]);
+        for (View curView : views) {
             addRelevance(curView, popup);
         }
     }
@@ -302,15 +304,20 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     while (keys.hasNext()) {
                         String curKey = keys.next();
 
-                        JSONObject curRelevance = calculation.getJSONObject(curKey);
+                        JSONObject curCalculation = calculation.getJSONObject(curKey);
                         JSONObject valueSource = new JSONObject();
                         if (calculation.has(JsonFormConstants.SRC)) {
                             valueSource = calculation.getJSONObject(JsonFormConstants.SRC);
                         }
 
                         String[] address = getAddressFromMap(widgetKey, stepName, JsonFormConstants.CALCULATION);
-                        if (address == null && curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_RULES)) {
-                            address = getRulesEngineAddress(curKey, curRelevance, curView, JsonFormConstants.CALCULATION);
+                        if (address == null && curCalculation.has(JsonFormConstants.JSON_FORM_KEY.EX_RULES)) {
+                            JSONObject exRulesObject = curCalculation.getJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES);
+                            if (exRulesObject.has(RuleConstant.RULES_DYNAMIC)) {
+                                address = getDynamicRulesEngineAddress(curKey, curCalculation, curView, JsonFormConstants.CALCULATION);
+                            } else {
+                                address = getRulesEngineAddress(curKey, curCalculation, curView, JsonFormConstants.CALCULATION);
+                            }
                         }
 
                         if (address != null) {
@@ -321,13 +328,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                                 curValueMap = getValueFromAddress(address, popup);
                             }
 
+                            updateCalculation(curValueMap, curView, address);
 
-                            if (RuleConstant.RULES_ENGINE.equals(address[0]) && !JsonFormConstants.TOASTER_NOTES.equals(curView.getTag(R.id.type)) && !JsonFormConstants.NATIVE_RADIO_BUTTON.equals(curView.getTag(R.id.type))) {
-                                //check for integrity of values
-                                updateCalculation(curValueMap, curView, address[1]);
-                            } else {
-                                updateCalculation(curValueMap, curView, address[1]);
-                            }
                         }
                     }
 
@@ -541,8 +543,19 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     @Override
     public void setmJSONObject(JSONObject mJSONObject) {
-        this.mJSONObject = mJSONObject;
+        super.setmJSONObject(mJSONObject);
     }
+
+    @Override
+    protected void initiateFormUpdate(JSONObject json) {
+        if (getForm() != null && ((getForm().getHiddenFields() != null && !getForm().getHiddenFields().isEmpty()) || (getForm().getDisabledFields() != null && !getForm().getDisabledFields().isEmpty()))) {
+            JSONArray fieldsJsonObject = FormUtils.getMultiStepFormFields(json);
+            for (int k = 0; k < fieldsJsonObject.length(); k++) {
+                Utils.handleFieldBehaviour(fieldsJsonObject.optJSONObject(k), getForm());
+            }
+        }
+    }
+
 
     @Override
     public void updateGenericPopupSecondaryValues(JSONArray jsonArray) {
@@ -622,6 +635,11 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         synchronized (getmJSONObject()) {
             return getmJSONObject().optBoolean(JsonFormConstants.SKIP_BLANK_STEPS, false);
         }
+    }
+
+    @Override
+    public Form form() {
+        return getForm();
     }
 
     private String getViewKey(View view) {
@@ -889,7 +907,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     @Override
     protected void onPause() {
-        localBroadcastManager.unregisterReceiver(NumberSelectorFactory.getNumberSelectorsReceiver());
+        localBroadcastManager.unregisterReceiver(new NumberSelectorFactory().getNumberSelectorsReceiver());
         localBroadcastManager.unregisterReceiver(messageReceiver);
         super.onPause();
         for (LifeCycleListener lifeCycleListener : lifeCycleListeners) {
@@ -903,7 +921,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         super.onResume();
         localBroadcastManager
                 .registerReceiver(messageReceiver, new IntentFilter(JsonFormConstants.INTENT_ACTION.JSON_FORM_ACTIVITY));
-        localBroadcastManager.registerReceiver(NumberSelectorFactory.getNumberSelectorsReceiver(),
+        localBroadcastManager.registerReceiver(new NumberSelectorFactory().getNumberSelectorsReceiver(),
                 new IntentFilter(JsonFormConstants.INTENT_ACTION.NUMBER_SELECTOR_FACTORY));
 
         for (LifeCycleListener lifeCycleListener : lifeCycleListeners) {
@@ -986,6 +1004,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
             updateCanvas(view, visible, canvasViewIds, addressString, object);
             setReadOnlyAndFocus(view, visible, popup);
+
         } catch (Exception e) {
             Timber.e(view.toString());
             Timber.e(e, "JsonFormActivity --> toggleViewVisibility");
@@ -995,6 +1014,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private void setReadOnlyAndFocus(View view, boolean visible, boolean popup) {
         try {
             String addressString = (String) view.getTag(R.id.address);
+            String widgetType = (String) view.getTag(R.id.type);
             String[] address = addressString.split(":");
             JSONObject object = getObjectUsingAddress(address, popup);
 
@@ -1005,6 +1025,9 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             }
 
             view.setEnabled(enabled);
+            if (StringUtils.isNotBlank(widgetType) && JsonFormConstants.NATIVE_RADIO_BUTTON.equals(widgetType) && view instanceof RadioGroup) {
+                setReadOnlyRadioButtonOptions(view, enabled);
+            }
             if (view instanceof MaterialEditText || view instanceof RelativeLayout || view instanceof LinearLayout) {
                 view.setFocusable(enabled);
                 if (view instanceof MaterialEditText) {
@@ -1013,6 +1036,29 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             }
         } catch (JSONException e) {
             Timber.e(e, "JsonFormActivity --> setReadOnlyAndFocus");
+        }
+    }
+
+    /**
+     * Gets the {@link AppCompatRadioButton} views on the whole {@link com.vijay.jsonwizard.widgets.NativeRadioButtonFactory} and updates the enabled status
+     *
+     * @param view    {@link View}
+     * @param enabled {@link Boolean}
+     */
+    private void setReadOnlyRadioButtonOptions(View view, boolean enabled) {
+        if (view != null) {
+            try {
+                int viewChildrenCount = ((RadioGroup) view).getChildCount();
+                for (int i = 0; i < viewChildrenCount; i++) {
+                    RelativeLayout radioGroupChildLayout = (RelativeLayout) ((RadioGroup) view).getChildAt(i);
+                    LinearLayout linearLayout = (LinearLayout) (radioGroupChildLayout).getChildAt(0);
+                    LinearLayout radioButtonMainLayout = (LinearLayout) (linearLayout).getChildAt(0);
+                    AppCompatRadioButton appCompatRadioButton = (AppCompatRadioButton) (radioButtonMainLayout).getChildAt(0);
+                    appCompatRadioButton.setEnabled(enabled);
+                }
+            } catch (ClassCastException e) {
+                Timber.e(e, " --> setReadOnlyRadioButtonOptions");
+            }
         }
     }
 
@@ -1115,7 +1161,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         }
     }
 
-    private Facts getValueFromAddress(String[] address, boolean popup, JSONObject valueSource) throws Exception {
+    private Facts getValueFromAddress(String[] address, boolean popup, JSONObject valueSource) throws
+            Exception {
         JSONObject object = getObjectUsingAddress(address, popup, valueSource);
         return getEntries(address, object);
     }
@@ -1323,7 +1370,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
      * @return An error message if constraint has not been enforced or NULL if constraint enforced
      * @throws Exception
      */
-    private String enforceConstraint(String value, View view, JSONObject constraint) throws Exception {
+    private String enforceConstraint(String value, View view, JSONObject constraint) throws
+            Exception {
 
         String type = constraint.getString("type").toLowerCase();
         String ex = constraint.getString(JsonFormConstants.EX);
@@ -1352,7 +1400,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         return errorMessage;
     }
 
-    private boolean checkViewValues(String type, String functionName, String[] args, boolean viewDoesNotHaveValue) {
+    private boolean checkViewValues(String type, String functionName, String[] args,
+                                    boolean viewDoesNotHaveValue) {
         return viewDoesNotHaveValue || TextUtils.isEmpty(args[0]) || TextUtils.isEmpty(args[1]) ||
                 comparisons.get(functionName).compare(args[0], type, args[1]);
     }
@@ -1404,7 +1453,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
      * @throws JSONException
      * @author dubdabasoduba
      */
-    protected JSONArray returnFormWithSectionFields(JSONObject sectionJson, boolean popup) throws JSONException {
+    protected JSONArray returnFormWithSectionFields(JSONObject sectionJson, boolean popup) throws
+            JSONException {
         JSONArray fields = new JSONArray();
         if (sectionJson.has(JsonFormConstants.FIELDS)) {
             if (popup) {
@@ -1436,7 +1486,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
      * @throws JSONException
      * @author dubdabasoduba
      */
-    protected JSONArray returnWithFormFields(JSONObject parentJson, boolean popup) throws JSONException {
+    protected JSONArray returnWithFormFields(JSONObject parentJson, boolean popup) throws
+            JSONException {
         JSONArray fields = new JSONArray();
         if (popup) {
             JSONArray jsonArray = parentJson.getJSONArray(JsonFormConstants.FIELDS);
@@ -1499,14 +1550,16 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         return fields;
     }
 
-    protected JSONArray getSubFormFields(String subFormName, String subFormLocation, JSONArray fields) {
+    protected JSONArray getSubFormFields(String subFormName, String subFormLocation, JSONArray
+            fields) {
         JSONArray fieldArray = new JSONArray();
         JSONObject jsonObject = null;
         try {
-            jsonObject = FormUtils.getSubFormJson(subFormName, subFormLocation, getApplicationContext());
+            jsonObject = getSubForm(subFormName, subFormLocation, this, translateForm);
         } catch (Exception e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
+
         if (jsonObject != null) {
             try {
                 JSONArray jsonArray = jsonObject.getJSONArray(JsonFormConstants.CONTENT_FORM);
@@ -1564,7 +1617,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         return false;
     }
 
-    private ExObjectResult isExObjectRelevant(Facts curValueMap, JSONObject object) throws Exception {
+    private ExObjectResult isExObjectRelevant(Facts curValueMap, JSONObject object) throws
+            Exception {
         if (object.has(JsonFormConstants.JSON_FORM_KEY.NOT)) {
             JSONArray orArray = object.getJSONArray(JsonFormConstants.JSON_FORM_KEY.NOT);
 
@@ -1666,11 +1720,14 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         return Utils.getConditionKeys(condition);
     }
 
-    private void updateCalculation(Facts valueMap, View view, String rulesFile) {
-
+    private void updateCalculation(Facts valueMap, View view, String[] address) {
+        String calculation;
         try {
-
-            String calculation = getRulesEngineFactory().getCalculation(valueMap, rulesFile);
+            if (address[0].equals(RuleConstant.RULES_DYNAMIC)) {
+                calculation = getRulesEngineFactory().getDynamicCalculation(valueMap, new JSONArray(address[1]));
+            } else {
+                calculation = getRulesEngineFactory().getCalculation(valueMap, address[1]);
+            }
 
             if (calculation != null) {
                 if (view instanceof CheckBox) {
@@ -1716,37 +1773,48 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     }
 
-    private void setRadioButtonCalculation(RadioGroup view, String calculation) {
+    private void setRadioButtonCalculation(final RadioGroup view, final String calculation) {
         int count = view.getChildCount();
         for (int i = 0; i < count; i++) {
-            if (!TextUtils.isEmpty(calculation)) {
-                RelativeLayout radioButtonLayout = (RelativeLayout) view.getChildAt(i);
-                int radioButtonViewId = (int) radioButtonLayout.getTag(R.id.native_radio_button_view_id);
-                RadioButton radioButton = radioButtonLayout.findViewById(radioButtonViewId);
-                boolean showExtraInfo = (boolean) radioButton.getTag(R.id.native_radio_button_extra_info);
-                String radioButtonKey = (String) radioButton.getTag(R.id.childKey);
-
-                if (!TextUtils.isEmpty(radioButtonKey) && calculation.equals(radioButtonKey)) {
-                    radioButton.setChecked(true);
-                    radioButton.performClick();
+            final int childPosition = i;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    addRadioButtonCalculation(calculation, view, childPosition);
                 }
+            });
+        }
+    }
 
-                if (showExtraInfo) {
-                    CustomTextView renderView = view.getChildAt(i).findViewById(R.id.extraInfoTextView);
+    private void addRadioButtonCalculation(String calculation, RadioGroup view,
+                                           int childPosition) {
+        if (!TextUtils.isEmpty(calculation)) {
+            RelativeLayout radioButtonLayout = (RelativeLayout) view.getChildAt(childPosition);
+            int radioButtonViewId = (int) radioButtonLayout.getTag(R.id.native_radio_button_view_id);
+            RadioButton radioButton = radioButtonLayout.findViewById(radioButtonViewId);
+            boolean showExtraInfo = (boolean) radioButton.getTag(R.id.native_radio_button_extra_info);
+            String radioButtonKey = (String) radioButton.getTag(R.id.childKey);
 
-                    if (renderView.getTag(R.id.original_text) == null) {
-                        renderView.setTag(R.id.original_text, renderView.getText());
-                    }
-                    if (!TextUtils.isEmpty(calculation)) {
-                        renderView.setText(calculation.charAt(0) == '{' ? getRenderText(calculation, renderView.getTag(R.id.original_text).toString(), false) : calculation);
-                    }
-
-                    renderView.setVisibility(renderView.getText().toString().contains("{") ||
-                            renderView.getText().toString().equals("0") ? View.GONE : View.VISIBLE);
-                }
+            if (!TextUtils.isEmpty(radioButtonKey) && calculation.equals(radioButtonKey)) {
+                radioButton.setChecked(true);
+                radioButton.performClick();
             }
 
+            if (showExtraInfo) {
+                CustomTextView renderView = view.getChildAt(childPosition).findViewById(R.id.extraInfoTextView);
 
+                if (renderView.getTag(R.id.original_text) == null) {
+                    renderView.setTag(R.id.original_text, renderView.getText());
+                }
+
+
+                if (!TextUtils.isEmpty(calculation)) {
+                    renderView.setText(calculation.charAt(0) == '{' ? getRenderText(calculation, renderView.getTag(R.id.original_text).toString(), false) : calculation);
+                }
+
+                renderView.setVisibility(renderView.getText().toString().contains("{") ||
+                        renderView.getText().toString().equals("0") ? View.GONE : View.VISIBLE);
+            }
         }
     }
 
@@ -1788,7 +1856,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         }
     }
 
-    private void selectNumber(String calculation, TextView textView, String text, CommonListener commonListener) {
+    private void selectNumber(String calculation, TextView textView, String
+            text, CommonListener commonListener) {
         if (calculation.equals(text) && !textView.equals(selectedTextView)) {
             selectedTextView = textView;
             textView.setOnClickListener(commonListener);
@@ -1864,7 +1933,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         }
     }
 
-    private void updateCanvas(View view, boolean visible, JSONArray canvasViewIds, String addressString, JSONObject object)
+    private void updateCanvas(View view, boolean visible, JSONArray canvasViewIds, String
+            addressString, JSONObject object)
             throws JSONException {
         for (int i = 0; i < canvasViewIds.length(); i++) {
             int curId = canvasViewIds.getInt(i);
@@ -1890,6 +1960,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 curCanvasView.setVisibility(View.GONE);
                 refreshViews(curCanvasView);
             }
+
+            curCanvasView.setTag(R.id.relevance_decided, visible);
 
             if (object != null) {
                 object.put(JsonFormConstants.IS_VISIBLE, visible);
@@ -1917,13 +1989,11 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         getmJSONObject().put(JsonFormConstants.INVISIBLE_REQUIRED_FIELDS, invisibleRequiredFields);
                     }
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    Timber.e(e);
                 }
                 return null;
             }
-        }.
-
-                execute();
+        }.execute();
     }
 
     private void refreshViews(View childElement) {
@@ -2119,7 +2189,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
      * @return values {@link List<String>}
      * @throws JSONException
      */
-    private List<String> getExpansionPanelValues(RefreshExpansionPanelEvent refreshExpansionPanelEvent) throws JSONException {
+    private List<String> getExpansionPanelValues(RefreshExpansionPanelEvent
+                                                         refreshExpansionPanelEvent) throws JSONException {
         List<String> values;
         if (refreshExpansionPanelEvent.getValues() != null) {
             values = utils.createExpansionPanelChildren(refreshExpansionPanelEvent.getValues());

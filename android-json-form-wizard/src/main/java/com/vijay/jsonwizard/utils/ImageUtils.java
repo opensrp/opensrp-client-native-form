@@ -1,14 +1,13 @@
 package com.vijay.jsonwizard.utils;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.util.Log;
-import android.view.Display;
-import android.view.WindowManager;
 import androidx.collection.LruCache;
 import org.jetbrains.annotations.Nullable;
 
@@ -69,9 +68,7 @@ public class ImageUtils {
     }
 
     public static int getDeviceWidth(Context context) {
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        return display.getWidth();
+       return  Resources.getSystem().getDisplayMetrics().widthPixels;
     }
 
     /**

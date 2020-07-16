@@ -1,6 +1,7 @@
 package com.vijay.jsonwizard.domain;
 
 import java.io.Serializable;
+import java.util.Set;
 
 public class Form implements Serializable {
 
@@ -22,6 +23,12 @@ public class Form implements Serializable {
 
     private boolean hideNextButton = false;
     private boolean hidePreviousButton = false;
+
+    private Set<String> hiddenFields;
+
+    private Set<String> disabledFields;
+
+    private static String datePickerDisplayFormat;
 
     public String getName() {
         return name;
@@ -117,5 +124,29 @@ public class Form implements Serializable {
 
     public boolean isHidePreviousButton() {
         return hidePreviousButton;
+    }
+
+    public Set<String> getHiddenFields() {
+        return hiddenFields;
+    }
+
+    public void setHiddenFields(Set<String> hiddenFields) {
+        this.hiddenFields = hiddenFields;
+    }
+
+    public Set<String> getDisabledFields() {
+        return disabledFields;
+    }
+
+    public void setDisabledFields(Set<String> disabledFields) {
+        this.disabledFields = disabledFields;
+    }
+
+    public static String getDatePickerDisplayFormat() {
+        return datePickerDisplayFormat;
+    }
+
+    public void setDatePickerDisplayFormat(String datePickerDisplayFormat) {
+        Form.datePickerDisplayFormat = datePickerDisplayFormat;
     }
 }

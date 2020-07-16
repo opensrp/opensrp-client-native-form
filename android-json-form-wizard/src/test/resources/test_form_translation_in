@@ -1,0 +1,180 @@
+{
+  "count": "1",
+  "encounter_type": "patient_registration",
+  "entity_id": "",
+  "properties_file_name": "form_strings",
+  "metadata": {
+    "start": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "start",
+      "openmrs_entity_id": "163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "end": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "end",
+      "openmrs_entity_id": "163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "today": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "encounter",
+      "openmrs_entity_id": "encounter_date"
+    },
+    "deviceid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "deviceid",
+      "openmrs_entity_id": "163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "subscriberid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "subscriberid",
+      "openmrs_entity_id": "163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "simserial": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "simserial",
+      "openmrs_entity_id": "163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "phonenumber": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "phonenumber",
+      "openmrs_entity_id": "163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "encounter_location": ""
+  },
+  "step1": {
+    "title": "Data Pasien Baru",
+    "display_back_button": "true",
+    "previous_label": "SIMPAN DAN KELUAR",
+    "bottom_navigation": "true",
+    "bottom_navigation_orientation": "vertical",
+    "next_type": "submit",
+    "submit_label": "SIMPAN",
+    "next_form": "json.form/patient-registration-form.json",
+    "fields": [
+      {
+        "key": "patient_name_label",
+        "type": "label",
+        "text": "Nama",
+        "text_color": "#000000"
+      },
+      {
+        "key": "patient_name",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person",
+        "openmrs_entity_id": "first_name",
+        "type": "edit_text",
+        "edit_type": "name"
+      },
+      {
+        "key": "patient_id_label",
+        "type": "label",
+        "text": "Patient ID",
+        "text_color": "#000000"
+      },
+      {
+        "key": "patient_id",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "v_required": {
+          "value": "true",
+          "err": "Please enter patient ID"
+        }
+      },
+      {
+        "key": "sex",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person",
+        "openmrs_entity_id": "gender",
+        "type": "native_radio",
+        "label": "Jenis kelamin pasien",
+        "options": [
+          {
+            "key": "Female",
+            "text": "Perempuan"
+          },
+          {
+            "key": "Male",
+            "text": "Laki-laki"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Silakan sebutkan jenis kelamin"
+        }
+      },
+      {
+        "key": "patient_dob",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "person_attribute",
+        "openmrs_entity_id": "birthdate",
+        "type": "date_picker",
+        "hint": "Tanggal lahir pasien",
+        "expanded": false,
+        "duration": {
+          "label": "Usia"
+        },
+        "min_date": "today-100y",
+        "max_date": "today"
+      },
+      {
+        "key": "age",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "value": ""
+      },
+      {
+        "key": "patient_occupation_label",
+        "type": "label",
+        "text": "Pekerjaan pasien",
+        "text_color": "#000000"
+      },
+      {
+        "key": "patient_occupation",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "v_required": {
+          "value": "false",
+          "err": ""
+        }
+      },
+      {
+        "key": "been_treated",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Pernah dirawat karena Malaria dalam 3 bulan terakhir?",
+        "options": [
+          {
+            "key": "Yes",
+            "text": "Ya"
+          },
+          {
+            "key": "No",
+            "text": "Tidak"
+          },
+          {
+            "key": "Not Answered",
+            "text": "Tidak dijawab"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Pernahkah pasien dirawat karena malaria dalam 3 bulan terakhir?"
+        }
+      }
+    ]
+  }
+}

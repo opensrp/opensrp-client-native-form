@@ -3,11 +3,13 @@ package com.vijay.jsonwizard.interfaces;
 import android.view.View;
 
 import com.vijay.jsonwizard.customviews.GenericPopupDialog;
+import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.smartregister.client.utils.contract.ClientFormContract;
 
 import java.util.Collection;
 import java.util.Map;
@@ -15,7 +17,8 @@ import java.util.Map;
 /**
  * Created by vijay on 5/16/15.
  */
-public interface JsonApi {
+public interface JsonApi extends ClientFormContract.View {
+
     JSONObject getStep(String stepName);
 
     void writeValue(String stepName, String key, String value, String openMrsEntityParent,
@@ -119,4 +122,7 @@ public interface JsonApi {
     boolean isPreviousPressed();
 
     void setPreviousPressed(boolean previousPressed);
+
+    Form form();
+
 }

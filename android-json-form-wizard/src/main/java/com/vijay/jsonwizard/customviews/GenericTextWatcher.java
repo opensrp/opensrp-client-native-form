@@ -3,7 +3,6 @@ package com.vijay.jsonwizard.customviews;
 import android.app.Activity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 
 import com.vijay.jsonwizard.R;
@@ -16,6 +15,8 @@ import com.vijay.jsonwizard.utils.ValidationStatus;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+
+import timber.log.Timber;
 
 public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListener {
 
@@ -74,14 +75,15 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
         String openMrsEntity = (String) mView.getTag(R.id.openmrs_entity);
         String openMrsEntityId = (String) mView.getTag(R.id.openmrs_entity_id);
         Boolean popup = (Boolean) mView.getTag(R.id.extraPopup);
+        popup = popup == null ? false : popup; // Handle nulls as a result of injected values
         ValidationStatus validationStatus = JsonFormFragmentPresenter.validate(formFragment, mView,
                 false);
-        if(validationStatus.isValid()) {
+        if (validationStatus.isValid()) {
             try {
                 api.writeValue(mStepName, key, text, openMrsEntityParent, openMrsEntity,
                         openMrsEntityId, popup);
             } catch (JSONException e) {
-                Log.e(TAG, e.getMessage(), e);
+                Timber.e(e);
             }
         }
 

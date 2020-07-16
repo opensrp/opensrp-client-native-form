@@ -28,7 +28,6 @@ import com.vijay.jsonwizard.widgets.MultiSelectListFactory;
 import com.vijay.jsonwizard.widgets.NativeEditTextFactory;
 import com.vijay.jsonwizard.widgets.NativeRadioButtonFactory;
 import com.vijay.jsonwizard.widgets.NumberSelectorFactory;
-import com.vijay.jsonwizard.widgets.RDTCaptureFactory;
 import com.vijay.jsonwizard.widgets.RadioButtonFactory;
 import com.vijay.jsonwizard.widgets.RepeatingGroupFactory;
 import com.vijay.jsonwizard.widgets.SectionFactory;
@@ -36,15 +35,19 @@ import com.vijay.jsonwizard.widgets.SpinnerFactory;
 import com.vijay.jsonwizard.widgets.TimePickerFactory;
 import com.vijay.jsonwizard.widgets.ToasterNotesFactory;
 import com.vijay.jsonwizard.widgets.TreeViewFactory;
+import com.vijay.jsonwizard.widgets.BasicRDTCaptureFactory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by vijay on 5/19/15.
@@ -54,6 +57,8 @@ public class JsonFormInteractor {
     private static final String TAG = "JsonFormInteractor";
     protected static JsonFormInteractor INSTANCE;
     public Map<String, FormWidgetFactory> map;
+    private Set<String> defaultTranslatableWidgetFields;
+    private Set<String> defaultTranslatableStepFields;
 
     public JsonFormInteractor() {
         this(null);
@@ -61,13 +66,13 @@ public class JsonFormInteractor {
 
     public JsonFormInteractor(@Nullable Map<String, FormWidgetFactory> additionalWidgetsMap) {
         registerWidgets();
+        registerDefaultTranslatableFields();
         if (additionalWidgetsMap != null) {
             for (Map.Entry<String, FormWidgetFactory> widgetFactoryEntry : additionalWidgetsMap.entrySet()) {
                 map.put(widgetFactoryEntry.getKey(), widgetFactoryEntry.getValue());
             }
         }
     }
-
 
     public static JsonFormInteractor getInstance(@Nullable Map<String, FormWidgetFactory> additionalWidgetsMap) {
         if (INSTANCE == null) {
@@ -79,6 +84,29 @@ public class JsonFormInteractor {
 
     public static JsonFormInteractor getInstance() {
         return getInstance(null);
+    }
+
+    private void registerDefaultTranslatableFields() {
+        // step fields
+        defaultTranslatableStepFields = new HashSet<>();
+        defaultTranslatableStepFields.add(JsonFormConstants.PREVIOUS_LABEL);
+        defaultTranslatableStepFields.add(JsonFormConstants.NEXT_LABEL);
+        defaultTranslatableStepFields.add(JsonFormConstants.SUBMIT_LABEL);
+        defaultTranslatableStepFields.add(JsonFormConstants.STEP_TITLE);
+        defaultTranslatableStepFields = Collections.unmodifiableSet(defaultTranslatableStepFields);
+
+        // widget fields
+        defaultTranslatableWidgetFields = new HashSet<>();
+        defaultTranslatableWidgetFields.add(JsonFormConstants.LABEL);
+        defaultTranslatableWidgetFields.add(JsonFormConstants.TEXT);
+        defaultTranslatableWidgetFields.add(JsonFormConstants.HINT);
+        defaultTranslatableWidgetFields.add(JsonFormConstants.V_REQUIRED + "." + JsonFormConstants.ERR);
+        defaultTranslatableWidgetFields.add(JsonFormConstants.V_REGEX + "." + JsonFormConstants.ERR);
+        defaultTranslatableWidgetFields.add(JsonFormConstants.V_NUMERIC + "." + JsonFormConstants.ERR);
+        defaultTranslatableWidgetFields.add(JsonFormConstants.V_NUMERIC_INTEGER + "." + JsonFormConstants.ERR);
+        defaultTranslatableWidgetFields.add(JsonFormConstants.V_MIN + "." + JsonFormConstants.ERR);
+        defaultTranslatableWidgetFields.add(JsonFormConstants.V_MAX + "." + JsonFormConstants.ERR);
+        defaultTranslatableWidgetFields = Collections.unmodifiableSet(defaultTranslatableWidgetFields);
     }
 
     protected void registerWidgets() {
@@ -105,7 +133,7 @@ public class JsonFormInteractor {
         map.put(JsonFormConstants.NATIVE_EDIT_TEXT, new NativeEditTextFactory());
         map.put(JsonFormConstants.TIME_PICKER, new TimePickerFactory());
         map.put(JsonFormConstants.REPEATING_GROUP, new RepeatingGroupFactory());
-        map.put(JsonFormConstants.RDT_CAPTURE, new RDTCaptureFactory());
+        map.put(JsonFormConstants.RDT_CAPTURE, new BasicRDTCaptureFactory());
         map.put(JsonFormConstants.COUNTDOWN_TIMER, new CountDownTimerFactory());
         map.put(JsonFormConstants.IMAGE_VIEW, new ImageViewFactory());
         map.put(JsonFormConstants.EXTENDED_RADIO_BUTTON, new ExtendedRadioButtonWidgetFactory());
@@ -197,6 +225,13 @@ public class JsonFormInteractor {
                             + e.getMessage());
             e.printStackTrace();
         }
+    }
 
+    public final Set<String> getDefaultTranslatableWidgetFields() {
+        return defaultTranslatableWidgetFields;
+    }
+
+    public final Set<String> getDefaultTranslatableStepFields() {
+        return defaultTranslatableStepFields;
     }
 }

@@ -2,6 +2,8 @@ package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +16,6 @@ import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
-import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
@@ -26,21 +27,21 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT;
 import static com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT;
-import static com.vijay.jsonwizard.utils.FormUtils.createRadioButtonAndCheckBoxLabel;
 import static com.vijay.jsonwizard.utils.FormUtils.getCurrentCheckboxValues;
 import static com.vijay.jsonwizard.utils.FormUtils.getLinearLayoutParams;
 import static com.vijay.jsonwizard.utils.FormUtils.getValueFromSpOrDpOrPx;
-import static com.vijay.jsonwizard.utils.FormUtils.showInfoIcon;
 
 /**
  * Created by vijay on 24-05-2015.
  */
-public class CheckBoxFactory implements FormWidgetFactory {
+public class CheckBoxFactory extends BaseFactory {
     private FormUtils formUtils = new FormUtils();
 
     public static ValidationStatus validate(JsonFormFragmentView formFragmentView, LinearLayout checkboxLinearLayout) {
@@ -73,21 +74,18 @@ public class CheckBoxFactory implements FormWidgetFactory {
     }
 
     @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
-                                       JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
-        return attachJson(stepName, context, jsonObject, listener, popup);
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
+        return attachJson(stepName, context, jsonObject, listener, formFragment, popup);
     }
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
                                        JSONObject jsonObject, CommonListener listener) throws Exception {
-        return attachJson(stepName, context, jsonObject, listener, false);
+        return attachJson(stepName, context, jsonObject, listener, formFragment, false);
     }
 
-    private List<View> attachJson(String stepName, Context context, JSONObject jsonObject, CommonListener listener,
+    private List<View> attachJson(String stepName, Context context, JSONObject jsonObject, CommonListener listener, JsonFormFragment formFragment,
                                   boolean popup) throws JSONException {
-
-
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
@@ -105,7 +103,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
         List<View> views = new ArrayList<>(1);
         JSONArray canvasIds = new JSONArray();
         ImageView editButton;
-        LinearLayout rootLayout = (LinearLayout) LayoutInflater.from(context).inflate(getLayout(), null);
+        LinearLayout rootLayout = getLinearLayout(context);
 
         rootLayout.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
         rootLayout.setId(ViewUtil.generateViewId());
@@ -119,7 +117,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
         canvasIds.put(rootLayout.getId());
         addRequiredValidator(rootLayout, jsonObject);
 
-        Map<String, View> labelViews = createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly, listener, popup);
+        Map<String, View> labelViews = formUtils.createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly, listener, popup);
 
 
         ArrayList<View> editableCheckBoxes = addCheckBoxOptionsElements(jsonObject, context, readOnly, canvasIds, stepName,
@@ -139,12 +137,16 @@ public class CheckBoxFactory implements FormWidgetFactory {
         formUtils.updateValueToJSONArray(jsonObject, jsonObject.optString(JsonFormConstants.VALUE, ""));
         attachRefreshLogic(jsonObject, context, rootLayout);
         rootLayout.setTag(R.id.canvas_ids, canvasIds.toString());
+
+        genericWidgetLayoutHookback(rootLayout, jsonObject, formFragment);
+
         views.add(rootLayout);
         return views;
     }
 
-    protected int getLayout() {
-        return R.layout.native_form_compound_button_parent;
+    @VisibleForTesting
+    protected LinearLayout getLinearLayout(Context context) {
+        return (LinearLayout) LayoutInflater.from(context).inflate(R.layout.native_form_compound_button_parent, null);
     }
 
     private void addRequiredValidator(LinearLayout rootLayout, JSONObject jsonObject) throws JSONException {
@@ -181,8 +183,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
             String openMrsEntity = item.optString(JsonFormConstants.OPENMRS_ENTITY);
             String openMrsEntityId = item.optString(JsonFormConstants.OPENMRS_ENTITY_ID);
 
-            LinearLayout checkboxLayout = (LinearLayout) LayoutInflater.from(context)
-                    .inflate(R.layout.native_form_item_checkbox, null);
+            LinearLayout checkboxLayout = getCheckboxLayout(context);
 
             final CheckBox checkBox = checkboxLayout.findViewById(R.id.checkbox);
             createCheckBoxText(checkBox, item, context, readOnly);
@@ -222,8 +223,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
             }
             //Displaying optional info alert dialog
             ImageView imageView = checkboxLayout.findViewById(R.id.checkbox_info_icon);
-
-            showInfoIcon(stepName, jsonObject, listener, FormUtils.getInfoDialogAttributes(item), imageView, canvasIds);
+            formUtils.showInfoIcon(stepName, jsonObject, listener, FormUtils.getInfoDialogAttributes(item), imageView, canvasIds);
 
             checkboxLayout.setTag(R.id.canvas_ids, canvasIds.toString());
             checkboxLayouts.add(checkboxLayout);
@@ -231,6 +231,12 @@ public class CheckBoxFactory implements FormWidgetFactory {
         }
 
         return checkboxLayouts;
+    }
+
+    @VisibleForTesting
+    protected LinearLayout getCheckboxLayout(Context context) {
+        return (LinearLayout) LayoutInflater.from(context)
+                .inflate(R.layout.native_form_item_checkbox, null);
     }
 
     private void showEditButton(JSONObject jsonObject, List<View> editableViews, ImageView editButton,
@@ -287,5 +293,14 @@ public class CheckBoxFactory implements FormWidgetFactory {
         checkBox.setTextColor(Color.parseColor(optionTextColor));
         checkBox.setTextSize(getValueFromSpOrDpOrPx(optionTextSize, context));
         checkBox.setEnabled(!readOnly);
+        checkBox.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
+    }
+
+    @Override
+    @NonNull
+    public Set<String> getCustomTranslatableWidgetFields() {
+        Set<String> customTranslatableWidgetFields = new HashSet<>();
+        customTranslatableWidgetFields.add(JsonFormConstants.OPTIONS_FIELD_NAME + "." + JsonFormConstants.TEXT);
+        return customTranslatableWidgetFields;
     }
 }

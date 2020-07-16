@@ -48,6 +48,7 @@ import com.vijay.jsonwizard.task.ExpansionPanelGenericPopupDialogTask;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ImageUtils;
 import com.vijay.jsonwizard.utils.PermissionUtils;
+import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.CustomTextView;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
@@ -89,7 +90,7 @@ public class JsonFormFragmentPresenter extends
         MvpBasePresenter<JsonFormFragmentView<JsonFormFragmentViewState>> {
 
     private static final String TAG = "FormFragmentPresenter";
-    private static final int RESULT_LOAD_IMG = 1;
+    protected static final int RESULT_LOAD_IMG = 1;
     private final JsonFormFragment formFragment;
     protected JSONObject mStepDetails;
     protected String key;
@@ -183,17 +184,17 @@ public class JsonFormFragmentPresenter extends
     }
 
     public void validateAndWriteValues() {
-        for (View childAt : formFragment.getJsonApi().getFormDataViews()) {
-            ValidationStatus validationStatus = validateView(childAt);
-            String key = (String) childAt.getTag(R.id.key);
-            String openMrsEntityParent = (String) childAt.getTag(R.id.openmrs_entity_parent);
-            String openMrsEntity = (String) childAt.getTag(R.id.openmrs_entity);
-            String openMrsEntityId = (String) childAt.getTag(R.id.openmrs_entity_id);
-            Boolean popup = (Boolean) childAt.getTag(R.id.extraPopup);
+        for (View childView : formFragment.getJsonApi().getFormDataViews()) {
+            ValidationStatus validationStatus = validateView(childView);
+            String key = (String) childView.getTag(R.id.key);
+            String openMrsEntityParent = (String) childView.getTag(R.id.openmrs_entity_parent);
+            String openMrsEntity = (String) childView.getTag(R.id.openmrs_entity);
+            String openMrsEntityId = (String) childView.getTag(R.id.openmrs_entity_id);
+            Boolean popup = (Boolean) childView.getTag(R.id.extraPopup);
             String fieldKey = mStepName + "#" + getStepTitle() + ":" + key;
 
-            if (childAt instanceof MaterialEditText) {
-                MaterialEditText editText = (MaterialEditText) childAt;
+            if (childView instanceof MaterialEditText) {
+                MaterialEditText editText = (MaterialEditText) childView;
 
                 String rawValue = (String) editText.getTag(R.id.raw_value);
                 if (rawValue == null) {
@@ -202,15 +203,13 @@ public class JsonFormFragmentPresenter extends
 
                 handleWrongFormatInputs(validationStatus, fieldKey, rawValue);
 
-                String type = (String) childAt.getTag(R.id.type);
-                rawValue = JsonFormConstants.DATE_PICKER.equals(type) || JsonFormConstants.TIME_PICKER.
-                        equals(type) ? childAt.getTag(R.id.locale_independent_value).toString() : rawValue;
+                String type = (String) childView.getTag(R.id.type);
+                rawValue = JsonFormConstants.DATE_PICKER.equals(type) || JsonFormConstants.TIME_PICKER.equals(type) ? childView.getTag(R.id.locale_independent_value).toString() : rawValue;
                 Log.d("Writing values ..", key + " " + rawValue);
 
-                getView().writeValue(mStepName, key, rawValue, openMrsEntityParent, openMrsEntity,
-                        openMrsEntityId, popup);
-            } else if (childAt instanceof NativeEditText) {
-                NativeEditText editText = (NativeEditText) childAt;
+                getView().writeValue(mStepName, key, rawValue, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
+            } else if (childView instanceof NativeEditText) {
+                NativeEditText editText = (NativeEditText) childView;
 
                 String rawValue = (String) editText.getTag(R.id.raw_value);
                 if (rawValue == null) {
@@ -219,34 +218,26 @@ public class JsonFormFragmentPresenter extends
 
                 handleWrongFormatInputs(validationStatus, fieldKey, rawValue);
 
-                getView().writeValue(mStepName, key, rawValue, openMrsEntityParent, openMrsEntity,
-                        openMrsEntityId, popup);
-            } else if (childAt instanceof ImageView) {
-                Object path = childAt.getTag(R.id.imagePath);
+                getView().writeValue(mStepName, key, rawValue, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
+            } else if (childView instanceof ImageView) {
+                Object path = childView.getTag(R.id.imagePath);
                 if (path instanceof String) {
-                    getView().writeValue(mStepName, key, (String) path, openMrsEntityParent, openMrsEntity,
-                            openMrsEntityId,
-                            popup);
+                    getView().writeValue(mStepName, key, (String) path, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
                 }
-            } else if (childAt instanceof CheckBox) {
-                String parentKey = (String) childAt.getTag(R.id.key);
-                String childKey = (String) childAt.getTag(R.id.childKey);
-                getView().writeValue(mStepName, parentKey, JsonFormConstants.OPTIONS_FIELD_NAME, childKey,
-                        String.valueOf(((CheckBox) childAt).isChecked()), openMrsEntityParent, openMrsEntity,
-                        openMrsEntityId, popup);
-            } else if (childAt instanceof RadioButton) {
-                String parentKey = (String) childAt.getTag(R.id.key);
-                String childKey = (String) childAt.getTag(R.id.childKey);
-                if (((RadioButton) childAt).isChecked()) {
-                    getView().writeValue(mStepName, parentKey, childKey, openMrsEntityParent, openMrsEntity,
-                            openMrsEntityId,
-                            popup);
+            } else if (childView instanceof CheckBox) {
+                String parentKey = (String) childView.getTag(R.id.key);
+                String childKey = (String) childView.getTag(R.id.childKey);
+                getView().writeValue(mStepName, parentKey, JsonFormConstants.OPTIONS_FIELD_NAME, childKey, String.valueOf(((CheckBox) childView).isChecked()), openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
+            } else if (childView instanceof RadioButton) {
+                String parentKey = (String) childView.getTag(R.id.key);
+                String childKey = (String) childView.getTag(R.id.childKey);
+                if (((RadioButton) childView).isChecked()) {
+                    getView().writeValue(mStepName, parentKey, childKey, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
                 }
-            } else if (childAt instanceof Button) {
-                Button button = (Button) childAt;
+            } else if (childView instanceof Button) {
+                Button button = (Button) childView;
                 String rawValue = (String) button.getTag(R.id.raw_value);
-                getView().writeValue(mStepName, key, rawValue, openMrsEntityParent, openMrsEntity,
-                        openMrsEntityId, popup);
+                getView().writeValue(mStepName, key, rawValue, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
             }
 
             if (!validationStatus.isValid()) {
@@ -258,25 +249,24 @@ public class JsonFormFragmentPresenter extends
             }
 
         }
-        formFragment.onFieldsInvalid.passInvalidFields(invalidFields);
+        formFragment.getOnFieldsInvalidCallback().passInvalidFields(invalidFields);
     }
 
+    /**
+     * Check if alarm is ringing and stop it if so
+     */
     public void checkAndStopCountdownAlarm() {
-        // Check if alarm is ringing and stop
-        JSONObject formJSONObject = null;
-        JSONObject fieldObject = null;
         try {
-            formJSONObject = new JSONObject(formFragment.getCurrentJsonState());
+            JSONObject formJSONObject = new JSONObject(formFragment.getCurrentJsonState());
             JSONArray fields = FormUtils.fields(formJSONObject, mStepName);
             for (int i = 0; i < fields.length(); i++) {
-                fieldObject = (JSONObject) fields.get(i);
+                JSONObject fieldObject = (JSONObject) fields.get(i);
                 if (fieldObject.has(JsonFormConstants.COUNTDOWN_TIME_VALUE)) {
                     CountDownTimerFactory.stopAlarm();
                 }
             }
-        } catch (Exception ex) {
-            Log.w(TAG, "Countdown alarm not stopped");
-            ex.printStackTrace();
+        } catch (Exception e) {
+            Timber.e(e, "Countdown alarm could not be stopped!");
         }
     }
 
@@ -439,6 +429,7 @@ public class JsonFormFragmentPresenter extends
         checkAndStopCountdownAlarm();
         boolean isFormValid = isFormValid();
         if (isFormValid || Boolean.valueOf(mainView.getTag(R.id.skip_validation).toString())) {
+            Utils.removeGeneratedDynamicRules(formFragment);
             Intent returnIntent = new Intent();
             getView().onFormFinish();
             returnIntent.putExtra("json", formUtils.addFormDetails(getView().getCurrentJsonState()));

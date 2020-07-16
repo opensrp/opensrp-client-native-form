@@ -3,6 +3,7 @@ package com.vijay.jsonwizard.widgets;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +22,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ImageViewFactory implements FormWidgetFactory {
 
@@ -30,7 +33,7 @@ public class ImageViewFactory implements FormWidgetFactory {
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
-        rootLayout = LayoutInflater.from(context).inflate(getLayout(), null);
+        rootLayout = getRootLayout(context);
         descriptionTextView = rootLayout.findViewById(R.id.imageViewLabel);
         setWidgetTags(jsonObject, stepName);
         setViewConfigs(jsonObject, context);
@@ -38,6 +41,11 @@ public class ImageViewFactory implements FormWidgetFactory {
         List<View> views = new ArrayList<>(1);
         views.add(rootLayout);
         return views;
+    }
+
+    @VisibleForTesting
+    protected View getRootLayout(Context context) {
+        return LayoutInflater.from(context).inflate(getLayout(), null);
     }
 
     @Override
@@ -61,7 +69,6 @@ public class ImageViewFactory implements FormWidgetFactory {
         rootLayout.setTag(R.id.address, stepName + ":" + jsonObject.optString(JsonFormConstants.KEY));
         rootLayout.setTag(R.id.extraPopup, false);
     }
-    
 
 
     private void setViewConfigs(JSONObject jsonObject, Context context) {
@@ -78,7 +85,7 @@ public class ImageViewFactory implements FormWidgetFactory {
 
         if (!TextUtils.isEmpty(imageFile)) {
             String folderName = jsonObject.optString(JsonFormConstants.IMAGE_FOLDER, "");
-            Bitmap bitmap = FormUtils.getBitmap(context, folderName, imageFile);
+            Bitmap bitmap = getBitmap(context, imageFile, folderName);
             if (bitmap != null) {
                 ImageView imageView = rootLayout.findViewById(R.id.image);
                 imageView.setImageBitmap(bitmap);
@@ -86,4 +93,13 @@ public class ImageViewFactory implements FormWidgetFactory {
         }
     }
 
+    @VisibleForTesting
+    protected Bitmap getBitmap(Context context, String imageFile, String folderName) {
+        return FormUtils.getBitmap(context, folderName, imageFile);
+    }
+
+    @Override
+    public Set<String> getCustomTranslatableWidgetFields() {
+        return new HashSet<>();
+    }
 }

@@ -8,6 +8,7 @@ import com.vijay.jsonwizard.utils.Utils;
 
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 import org.joda.time.Months;
 import org.joda.time.Weeks;
 import org.joda.time.Years;
@@ -25,7 +26,7 @@ public class RulesEngineDateUtil {
         Date date = Utils.getDateFromString(dateString);
 
         if (date != null) {
-            long msDiff = Calendar.getInstance().getTimeInMillis() - date.getTime();
+            long msDiff = getTimeInMillis() - date.getTime();
             return Math.abs(TimeUnit.MILLISECONDS.toDays(msDiff));
         } else {
             return 0;
@@ -51,6 +52,11 @@ public class RulesEngineDateUtil {
 
     public String getDateToday() {
         return (new LocalDate()).toString(FormUtils.NATIIVE_FORM_DATE_FORMAT_PATTERN);
+    }
+
+    public String getDateTimeToday() {
+        String dateTimeFormatPattern = "yyyy-MM-dd HH:mm:ss";
+        return (new LocalDateTime()).toString(dateTimeFormatPattern);
     }
 
     /**
@@ -240,6 +246,10 @@ public class RulesEngineDateUtil {
             return value;
         }
 
+    }
+
+    public long getTimeInMillis() {
+        return System.currentTimeMillis();
     }
 
 }

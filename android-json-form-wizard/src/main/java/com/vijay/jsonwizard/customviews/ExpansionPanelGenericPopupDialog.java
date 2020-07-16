@@ -33,13 +33,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import timber.log.Timber;
 
 import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 
+/**
+ * Performs the expansion panel's {@link com.vijay.jsonwizard.widgets.ExpansionPanelFactory} functionality, which includes
+ * Reading and assigning values on load
+ * Creation of the sub forms widgets
+ * Saving the new selected values to the expansion panel's widget `value` attribute
+ */
 public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
     protected Toolbar mToolbar;
     protected String container;
@@ -77,12 +82,19 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
             createSecondaryValuesMap();
             loadSubForms();
             getJsonApi().updateGenericPopupSecondaryValues(getSpecifyContent());
+            setViewList(initiateViews());
+            getJsonApi().invokeRefreshLogic(null, true, null, null);
         } catch (JSONException e) {
             Timber.e(e, "ExpansionPanelGenericPopupDialogTask --> doInBackground");
         }
         setStyle(DialogFragment.STYLE_NORMAL, R.style.FullScreenDialogStyle);
     }
 
+    /**
+     * Loads the values from the expansion panel
+     *
+     * @throws JSONException
+     */
     @Override
     public void loadPartialSecondaryValues() throws JSONException {
         if (!TextUtils.isEmpty(getWidgetType()) && getWidgetType().equals(JsonFormConstants.EXPANSION_PANEL)) {
@@ -92,6 +104,9 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
         }
     }
 
+    /**
+     * Using the secondary values extracted from {@link ExpansionPanelGenericPopupDialog#loadPartialSecondaryValues()} it creates a map of the expansion panels values
+     */
     @Override
     public void createSecondaryValuesMap() {
         if (!TextUtils.isEmpty(getWidgetType()) && getWidgetType().equals(JsonFormConstants.EXPANSION_PANEL)) {
@@ -104,6 +119,9 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
 
     }
 
+    /**
+     * Loads the sub from the sub form name declared on the expansion panel widget
+     */
     @Override
     public void loadSubForms() {
         if (!TextUtils.isEmpty(getFormIdentity())) {
@@ -121,11 +139,18 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
                 } catch (JSONException e) {
                     Timber.e(e, "FullScreenGenericPopupDialog --> loadSubForms");
                 }
-
+            } else {
+                ExpansionPanelGenericPopupDialog.this.dismiss();
             }
         }
     }
 
+    /**
+     * Adds the values from the map created by {@link ExpansionPanelGenericPopupDialog#createSecondaryValuesMap()} to the fields extracted from the sub form by {@link ExpansionPanelGenericPopupDialog#loadSubForms()}
+     *
+     * @param formValues {@link JSONArray} Form fields extracted by {@link ExpansionPanelGenericPopupDialog#loadSubForms()}
+     * @return formFields {@link JSONArray} Form fields with values added.
+     */
     @Override
     protected JSONArray addFormValues(JSONArray formValues) {
         if (!TextUtils.isEmpty(getWidgetType()) && getWidgetType().equals(JsonFormConstants.EXPANSION_PANEL)) {
@@ -140,59 +165,211 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         if (!TextUtils.isEmpty(getWidgetType()) && getWidgetType().equals(JsonFormConstants.EXPANSION_PANEL)) {
             ViewGroup dialogView = (ViewGroup) inflater.inflate(R.layout.fragment_generic_dialog, container, false);
-            mToolbar = dialogView.findViewById(R.id.generic_toolbar);
-            changeToolbarColor();
-
-            TextView toolBar = mToolbar.findViewById(R.id.txt_title_label);
-            if (!TextUtils.isEmpty(header)) {
-                toolBar.setText(header);
-            }
-
+            attachToolBar(dialogView);
             attachDialogShowListener();
-
-            List<View> viewList = initiateViews();
-            LinearLayout genericDialogContent = dialogView.findViewById(R.id.generic_dialog_content);
-            for (View view : viewList) {
-                genericDialogContent.addView(view);
-            }
-
+            addWidgetViews(dialogView);
             attachCancelDialogButton(dialogView);
             attachOkDialogButton(dialogView);
 
             if (getDialog().getWindow() != null) {
                 getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
             }
-            getJsonApi().invokeRefreshLogic(null, true, null, null);
+
+            Utils.hideProgressDialog();
             return dialogView;
         } else {
             return super.onCreateView(inflater, container, savedInstanceState);
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (!TextUtils.isEmpty(getWidgetType()) && getWidgetType().equals(JsonFormConstants.EXPANSION_PANEL)) {
-            ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
-            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            params.height = ViewGroup.LayoutParams.MATCH_PARENT;
-            getDialog().getWindow().setAttributes((WindowManager.LayoutParams) params);
+    private void addWidgetViews(ViewGroup dialogView) {
+        LinearLayout genericDialogContent = dialogView.findViewById(R.id.generic_dialog_content);
+        for (View view : getViewList()) {
+            genericDialogContent.addView(view);
         }
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        destroyVariables();
-        JsonApi ancJsonApi = (JsonApi) activity;
-        ancJsonApi.setGenericPopup(null);
+    private void attachToolBar(ViewGroup dialogView) {
+        mToolbar = dialogView.findViewById(R.id.generic_toolbar);
+        changeToolbarColor();
+
+        TextView toolBar = mToolbar.findViewById(R.id.txt_title_label);
+        if (!TextUtils.isEmpty(header)) {
+            toolBar.setText(header);
+        }
     }
 
-    private void destroyVariables() {
-        setSecondaryValuesMap(new HashMap<String, SecondaryValueModel>());
+    private void attachDialogShowListener() {
+        new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                InputMethodManager inputManager =
+                        (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputManager.hideSoftInputFromWindow(((Activity) context).getCurrentFocus().getWindowToken(),
+                        HIDE_NOT_ALWAYS);
+            }
+        };
+    }
+
+    private void attachCancelDialogButton(ViewGroup dialogView) {
+        final AppCompatImageButton cancelButton;
+        cancelButton = dialogView.findViewById(R.id.generic_dialog_cancel_button);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getJsonApi().updateGenericPopupSecondaryValues(new JSONArray());
+                setFormFragment(null);
+                setFormIdentity(null);
+                setFormLocation(null);
+                setContext(null);
+                getJsonApi().setGenericPopup(null);
+                ExpansionPanelGenericPopupDialog.this.dismissAllowingStateLoss();
+                utils.enableExpansionPanelViews(linearLayout);
+            }
+        });
+    }
+
+    private void attachOkDialogButton(ViewGroup dialogView) {
+        Button okButton;
+        okButton = dialogView.findViewById(R.id.generic_dialog_done_button);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                passData();
+                getJsonApi().setGenericPopup(null);
+                getJsonApi().updateGenericPopupSecondaryValues(new JSONArray());
+                ExpansionPanelGenericPopupDialog.this.dismissAllowingStateLoss();
+            }
+        });
+    }
+
+    private void changeToolbarColor() {
+        if (!TextUtils.isEmpty(getContainer())) {
+            switch (getContainer()) {
+                case JsonFormConstants.JsonFormConstantsUtils.ANC_TEST:
+                    mToolbar.setBackgroundColor(getResources().getColor(R.color.contact_tests_actionbar));
+                    break;
+                case JsonFormConstants.JsonFormConstantsUtils.ANC_COUNSELLING_TREATMENT:
+                    mToolbar.setBackgroundColor(getResources().getColor(R.color.contact_counselling_actionbar));
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    /**
+     * In the ANC case this is used to get the container the Expansion panel of loading to set its toolbar color.
+     *
+     * @return containerName - either C&T or Tests
+     */
+    public String getContainer() {
+        return container;
+    }
+
+    /**
+     * Receives the generic popup data from Generic Dialog fragment
+     *
+     * @param parentKey {@link String}
+     * @param childKey  {@link String}
+     */
+    public void onDataPass(String parentKey, String childKey) {
+        JSONObject mJSONObject = getJsonApi().getmJSONObject();
+        if (mJSONObject != null) {
+            try {
+                if (getMainFormFields().length() > 0) {
+                    for (int i = 0; i < getMainFormFields().length(); i++) {
+                        JSONObject item = getMainFormFields().getJSONObject(i);
+                        if (item != null && item.getString(JsonFormConstants.KEY).equals(parentKey)) {
+                            addValues(getJsonObjectToUpdate(item, childKey));
+                        }
+                    }
+                }
+                getJsonApi().setmJSONObject(mJSONObject);
+            } catch (JSONException e) {
+                Timber.e(e, "FullScreenGenericPopupDialog --> onDataPass");
+            }
+        }
+    }
+
+    /**
+     * Appends the expansion panel values formatted by {@link ExpansionPanelGenericPopupDialog#createValues()} to the widget in this case the {@link com.vijay.jsonwizard.widgets.ExpansionPanelFactory} Expansion panel
+     *
+     * @param item {@link JSONObject} the widget to update.
+     */
+    protected void addValues(JSONObject item) {
+        JSONArray secondaryValuesArray = createValues();
+        try {
+            JSONArray orderedValues = orderExpansionPanelValues(secondaryValuesArray);
+            item.remove(JsonFormConstants.VALUE);
+            item.put(JsonFormConstants.VALUE, orderedValues);
+            setNewSelectedValues(orderedValues);
+            Utils.postEvent(new RefreshExpansionPanelEvent(orderedValues, linearLayout));
+            addRequiredFields(item);
+        } catch (Exception e) {
+            Timber.e(e, "FullScreenGenericPopupDialog --> addValues");
+        }
+    }
+
+    private JSONArray orderExpansionPanelValues(JSONArray expansionPanelValues) throws JSONException {
+        JSONArray formattedArray = new JSONArray();
+        if (expansionPanelValues != null && expansionPanelValues.length() > 0) {
+            JSONArray sortedItemsWithNulls = new JSONArray();
+            for (int i = 0; i < expansionPanelValues.length(); i++) {
+                JSONObject valueItem = expansionPanelValues.getJSONObject(i);
+                if (valueItem.has(JsonFormConstants.INDEX)) {
+                    int itemIndex = valueItem.getInt(JsonFormConstants.INDEX);
+                    sortedItemsWithNulls.put(itemIndex, valueItem);
+                }
+            }
+
+            for (int k = 0; k < sortedItemsWithNulls.length(); k++) {
+                if (!sortedItemsWithNulls.isNull(k)) {
+                    formattedArray.put(sortedItemsWithNulls.getJSONObject(k));
+                }
+            }
+        }
+
+        return formattedArray;
+    }
+
+    /**
+     * Adds a new attribute field called required_fields to the accordion object that it
+     * has been passed. It does so by getting only visible that are required;
+     *
+     * @param theAccordion accordion/Expansion panel that is to be updated with the new attribute
+     * @throws JSONException Exception thrown
+     */
+    private void addRequiredFields(JSONObject theAccordion) throws JSONException {
+        //Clear the current required fields first
+        if (theAccordion.has(JsonFormConstants.REQUIRED_FIELDS)) {
+            theAccordion.remove(JsonFormConstants.REQUIRED_FIELDS);
+        }
+
+        JSONArray requiredFieldsList = new JSONArray();
+        JSONArray formFields = getSubFormsFields();
+
+        for (int index = 0; index < formFields.length(); index++) {
+            JSONObject fieldObject = formFields.getJSONObject(index);
+            boolean isFieldVisible = !fieldObject.has(JsonFormConstants.IS_VISIBLE) ||
+                    fieldObject.getBoolean(JsonFormConstants.IS_VISIBLE);
+            if (FormUtils.isFieldRequired(fieldObject)) {
+                if (!isFieldVisible) {
+                    continue;
+                }
+                requiredFieldsList.put(fieldObject.getString(JsonFormConstants.KEY));
+            }
+        }
+
+        if (requiredFieldsList.length() > 0) {
+            theAccordion.put(JsonFormConstants.REQUIRED_FIELDS, requiredFieldsList);
+        }
+    }
+
+    public void setContainer(String container) {
+        this.container = container;
     }
 
     @Override
@@ -246,6 +423,11 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
         return item;
     }
 
+    /**
+     * Formats the expansion panels popup values to a {@link JSONArray} to be attached to the main widget.
+     *
+     * @return selectedValues {@link JSONArray}
+     */
     @Override
     protected JSONArray createValues() {
         JSONArray selectedValues = new JSONArray();
@@ -261,165 +443,27 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
         return selectedValues;
     }
 
-    private void changeToolbarColor() {
-        if (!TextUtils.isEmpty(getContainer())) {
-            switch (getContainer()) {
-                case JsonFormConstants.JsonFormConstantsUtils.ANC_TEST:
-                    mToolbar.setBackgroundColor(getResources().getColor(R.color.contact_tests_actionbar));
-                    break;
-                case JsonFormConstants.JsonFormConstantsUtils.ANC_COUNSELLING_TREATMENT:
-                    mToolbar.setBackgroundColor(getResources().getColor(R.color.contact_counselling_actionbar));
-                    break;
-                default:
-                    break;
-            }
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!TextUtils.isEmpty(getWidgetType()) && getWidgetType().equals(JsonFormConstants.EXPANSION_PANEL)) {
+            ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
+            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+            getDialog().getWindow().setAttributes((WindowManager.LayoutParams) params);
         }
     }
 
-    private void attachDialogShowListener() {
-        new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
-                InputMethodManager inputManager =
-                        (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputManager.hideSoftInputFromWindow(((Activity) context).getCurrentFocus().getWindowToken(),
-                        HIDE_NOT_ALWAYS);
-            }
-        };
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        destroyVariables();
+        JsonApi ancJsonApi = (JsonApi) activity;
+        ancJsonApi.setGenericPopup(null);
     }
 
-    private void attachCancelDialogButton(ViewGroup dialogView) {
-        final AppCompatImageButton cancelButton;
-        cancelButton = dialogView.findViewById(R.id.generic_dialog_cancel_button);
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getJsonApi().updateGenericPopupSecondaryValues(new JSONArray());
-                setFormFragment(null);
-                setFormIdentity(null);
-                setFormLocation(null);
-                setContext(null);
-                getJsonApi().setGenericPopup(null);
-                ExpansionPanelGenericPopupDialog.this.dismissAllowingStateLoss();
-                utils.enableExpansionPanelViews(linearLayout);
-            }
-        });
-    }
-
-    private void attachOkDialogButton(ViewGroup dialogView) {
-        Button okButton;
-        okButton = dialogView.findViewById(R.id.generic_dialog_done_button);
-        okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                passData();
-                getJsonApi().setGenericPopup(null);
-                getJsonApi().updateGenericPopupSecondaryValues(new JSONArray());
-                ExpansionPanelGenericPopupDialog.this.dismissAllowingStateLoss();
-            }
-        });
-    }
-
-    public String getContainer() {
-        return container;
-    }
-
-    /**
-     * Receives the generic popup data from Generic Dialog fragment
-     *
-     * @param parentKey
-     * @param childKey
-     */
-    public void onDataPass(String parentKey, String childKey) {
-        JSONObject mJSONObject = getJsonApi().getmJSONObject();
-        if (mJSONObject != null) {
-            try {
-                if (getMainFormFields().length() > 0) {
-                    for (int i = 0; i < getMainFormFields().length(); i++) {
-                        JSONObject item = getMainFormFields().getJSONObject(i);
-                        if (item != null && item.getString(JsonFormConstants.KEY).equals(parentKey)) {
-                            addValues(getJsonObjectToUpdate(item, childKey));
-                        }
-                    }
-                }
-                getJsonApi().setmJSONObject(mJSONObject);
-            } catch (JSONException e) {
-                Timber.e(e, "FullScreenGenericPopupDialog --> onDataPass");
-            }
-        }
-    }
-
-    protected void addValues(JSONObject item) {
-        JSONArray secondaryValuesArray = createValues();
-        try {
-            JSONArray orderedValues = orderExpansionPanelValues(secondaryValuesArray);
-            item.remove(JsonFormConstants.VALUE);
-            item.put(JsonFormConstants.VALUE, orderedValues);
-            setNewSelectedValues(orderedValues);
-            Utils.postEvent(new RefreshExpansionPanelEvent(orderedValues, linearLayout));
-            addRequiredFields(item);
-        } catch (Exception e) {
-            Timber.e(e, "FullScreenGenericPopupDialog --> addValues");
-        }
-    }
-
-    private JSONArray orderExpansionPanelValues(JSONArray expansionPanelValues) throws JSONException {
-        JSONArray formattedArray = new JSONArray();
-        if (expansionPanelValues != null && expansionPanelValues.length() > 0) {
-            JSONArray sortedItemsWithNulls = new JSONArray();
-            for (int i = 0; i < expansionPanelValues.length(); i++) {
-                JSONObject valueItem = expansionPanelValues.getJSONObject(i);
-                if (valueItem.has(JsonFormConstants.INDEX)) {
-                    int itemIndex = valueItem.getInt(JsonFormConstants.INDEX);
-                    sortedItemsWithNulls.put(itemIndex, valueItem);
-                }
-            }
-
-            for (int k = 0; k < sortedItemsWithNulls.length(); k++) {
-                if (!sortedItemsWithNulls.isNull(k)) {
-                    formattedArray.put(sortedItemsWithNulls.getJSONObject(k));
-                }
-            }
-        }
-
-        return formattedArray;
-    }
-
-    /**
-     * This methods adds a new attribute field called required_fields to the accordion object that it
-     * has been passed. It does so by getting only visible that are required;
-     *
-     * @param theAccordion accordion/Expansion panel that is to be updated with the new attribute
-     * @throws JSONException Exception thrown
-     */
-    private void addRequiredFields(JSONObject theAccordion) throws JSONException {
-        //Clear the current required fields first
-        if (theAccordion.has(JsonFormConstants.REQUIRED_FIELDS)) {
-            theAccordion.remove(JsonFormConstants.REQUIRED_FIELDS);
-        }
-
-        JSONArray requiredFieldsList = new JSONArray();
-        JSONArray formFields = getSubFormsFields();
-
-        for (int index = 0; index < formFields.length(); index++) {
-            JSONObject fieldObject = formFields.getJSONObject(index);
-            boolean isFieldVisible = !fieldObject.has(JsonFormConstants.IS_VISIBLE) ||
-                    fieldObject.getBoolean(JsonFormConstants.IS_VISIBLE);
-            if (FormUtils.isFieldRequired(fieldObject)) {
-                if (!isFieldVisible) {
-                    continue;
-                }
-                requiredFieldsList.put(fieldObject.getString(JsonFormConstants.KEY));
-            }
-        }
-
-        if (requiredFieldsList.length() > 0) {
-            theAccordion.put(JsonFormConstants.REQUIRED_FIELDS, requiredFieldsList);
-        }
-    }
-
-    public void setContainer(String container) {
-        this.container = container;
+    private void destroyVariables() {
+        setSecondaryValuesMap(new HashMap<String, SecondaryValueModel>());
     }
 
     public void setGenericPopUpDialog() {

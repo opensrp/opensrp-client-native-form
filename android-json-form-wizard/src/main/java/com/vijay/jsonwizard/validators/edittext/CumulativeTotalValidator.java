@@ -39,11 +39,11 @@ public class CumulativeTotalValidator extends METValidator {
 
 
     public CumulativeTotalValidator(@NonNull String errorMessage, @NonNull JsonFormFragment formFragment,
-                                    String step, String totalValueField, JSONArray relatedFields, JsonApi jsonApi) {
+                                    String step, String totalValueFieldKey, JSONArray relatedFields, JsonApi jsonApi) {
         super(errorMessage);
         this.formFragment = formFragment;
         this.step = step;
-        this.totalValueFieldKey = totalValueField;
+        this.totalValueFieldKey = totalValueFieldKey;
         this.relatedFields = relatedFields;
         this.jsonApi = jsonApi;
     }
@@ -78,6 +78,7 @@ public class CumulativeTotalValidator extends METValidator {
                 Log.e(TAG, e.getMessage());
                 return false;
             }
+
             for (ReferenceValidator validator : referenceValidators) {
                 disableValidator(validator.getEditText());
             }

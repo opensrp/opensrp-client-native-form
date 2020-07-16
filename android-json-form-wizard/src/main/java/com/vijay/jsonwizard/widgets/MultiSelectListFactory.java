@@ -43,12 +43,14 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import timber.log.Timber;
 
 public class MultiSelectListFactory implements FormWidgetFactory {
-    public JSONObject jsonObject = new JSONObject();
+    public JSONObject jsonObject;
     public String currentAdapterKey;
     public Context context;
     private JsonFormFragment jsonFormFragment;
@@ -375,5 +377,10 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         });
 
         return relativeLayout;
+    }
+
+    @Override
+    public Set<String> getCustomTranslatableWidgetFields() {
+        return new HashSet<>();
     }
 }

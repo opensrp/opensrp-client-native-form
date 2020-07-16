@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.Build;
+import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.View;
@@ -24,12 +25,15 @@ import com.vijay.jsonwizard.utils.ImageUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by vijay on 24-05-2015.
@@ -77,7 +81,7 @@ public class ImagePickerFactory implements FormWidgetFactory {
 
         List<View> views = new ArrayList<>(1);
         createImageView(context, canvasIds, jsonObject, popup, stepName, listener, views);
-        Button uploadButton = new Button(context);
+        Button uploadButton = getButton(context);
         uploadButton.setText(jsonObject.getString(JsonFormConstants.UPLOAD_BUTTON_TEXT));
         uploadButton.setBackgroundColor(context.getResources().getColor(R.color.primary));
         uploadButton.setMinHeight(0);
@@ -101,6 +105,8 @@ public class ImagePickerFactory implements FormWidgetFactory {
         uploadButton.setTag(R.id.openmrs_entity, openMrsEntity);
         uploadButton.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         uploadButton.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
+        uploadButton.setTag(R.id.extraPopup, popup);
+        uploadButton.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -126,12 +132,18 @@ public class ImagePickerFactory implements FormWidgetFactory {
         return views;
     }
 
+    @NotNull
+    @VisibleForTesting
+    protected Button getButton(Context context) {
+        return new Button(context);
+    }
+
     private void createImageView(Context context, JSONArray canvasIds, JSONObject jsonObject, boolean popup, String stepName, CommonListener listener, List<View> views) throws JSONException {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
-        ImageView imageView = new ImageView(context);
+        ImageView imageView = getImageView(context);
         imageView.setId(ViewUtil.generateViewId());
         canvasIds.put(imageView.getId());
         imageView.setImageDrawable(context.getResources().getDrawable(R.mipmap.add_photo_background));
@@ -173,5 +185,18 @@ public class ImagePickerFactory implements FormWidgetFactory {
         ((JsonApi) context).addFormDataView(imageView);
         imageView.setOnClickListener(listener);
         views.add(imageView);
+    }
+
+    @NotNull
+    @VisibleForTesting
+    protected ImageView getImageView(Context context) {
+        return new ImageView(context);
+    }
+
+    @Override
+    public Set<String> getCustomTranslatableWidgetFields() {
+        Set<String> customTranslatableWidgetFields = new HashSet<>();
+        customTranslatableWidgetFields.add(JsonFormConstants.UPLOAD_BUTTON_TEXT);
+        return customTranslatableWidgetFields;
     }
 }
