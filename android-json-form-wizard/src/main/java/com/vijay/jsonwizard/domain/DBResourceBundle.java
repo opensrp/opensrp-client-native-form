@@ -16,16 +16,16 @@ public class DBResourceBundle extends ListResourceBundle {
 
     @Override
     protected Object[][] getContents() {
-        if (StringUtils.isNotBlank(this.identifier)) {
-            FormUtils formUtils = new FormUtils();
-            String propertiesString = formUtils.getPropertiesFileContentsFromDB(identifier);
+        Object[][] properties = new Object[0][];
+        FormUtils formUtils = new FormUtils();
+        String propertiesString = formUtils.getPropertiesFileContentsFromDB(identifier);
+        if (StringUtils.isNotBlank(propertiesString)) {
             String[] propertiesArray = propertiesString.split("\n");
-            Object[][] properties = new Object[propertiesArray.length][];
+            properties = new Object[propertiesArray.length][];
             for (int i = 0; i < propertiesArray.length; i++) {
                 properties[i] = propertiesArray[i].trim().split("\\s*=\\s*");
             }
-            return properties;
         }
-        return null;
+        return properties;
     }
 }
