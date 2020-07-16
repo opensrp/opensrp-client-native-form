@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.DBResourceBundle;
 import com.vijay.jsonwizard.domain.DBResourceBundleControl;
 
@@ -120,7 +121,7 @@ public class NativeFormLangUtils {
         if (dbResourceBundle == null) {
             mlsResourceBundle = getResourceBundleFromRepository(str);
         }
-        return (mlsResourceBundle == null) ? getTranslatedString(str) : translateString(str, mlsResourceBundle);
+        return (mlsResourceBundle != null && mlsResourceBundle.getKeys().hasMoreElements()) ? translateString(str, mlsResourceBundle) : getTranslatedString(str);
     }
 
     /**
@@ -173,8 +174,8 @@ public class NativeFormLangUtils {
         return matcher.find() ? matcher.group(1) : "";
     }
 
-    @Nullable
     public static ResourceBundle getResourceBundleFromRepository(String form) {
-        return ResourceBundle.getBundle(DBResourceBundle.class.getCanonicalName(), new DBResourceBundleControl(getTranslationsFileName(form)));
+        String identifier = getTranslationsFileName(form) + JsonFormConstants.PROPERTIES_FILE_EXTENSION;
+        return ResourceBundle.getBundle(DBResourceBundle.class.getCanonicalName(), new DBResourceBundleControl(identifier));
     }
 }
