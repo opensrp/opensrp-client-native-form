@@ -1841,8 +1841,9 @@ public class FormUtils {
             try {
                 if (clientForm != null) {
                     Timber.d("============%s form loaded from db============", formIdentity);
-
+                    String formVersion = clientForm.getVersion();
                     JSONObject formJson = new JSONObject(clientForm.getJson());
+                    formJson.put(JsonFormConstants.FORM_VERSION, formVersion);
                     injectFormStatus(formJson, clientForm);
 
                     if (onFormFetchedCallback != null) {
