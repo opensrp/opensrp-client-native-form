@@ -3,11 +3,14 @@ package com.vijay.jsonwizard.utils;
 import android.preference.PreferenceManager;
 
 import com.vijay.jsonwizard.BaseTest;
+import com.vijay.jsonwizard.NativeFormLibrary;
 import com.vijay.jsonwizard.TestUtils;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.robolectric.RuntimeEnvironment;
+import org.smartregister.client.utils.contract.ClientFormContract;
 
 import java.util.Locale;
 
@@ -57,11 +60,11 @@ public class NativeFormLangUtilsTest extends BaseTest {
     public void testJsonSubFormTranslationShouldTranslateJsonSubForm() throws Exception {
         Locale.setDefault(new Locale("id"));
         String expectedSubFormJson = testUtils.getResourceFileContentsAsString("test_form_translation_in");
-        String interpolatedSubFormJson = FormUtils.loadSubForm("test_form_translation_interpolated", JsonFormConstants.DEFAULT_SUB_FORM_LOCATION , RuntimeEnvironment.application, true);
+        String interpolatedSubFormJson = FormUtils.loadSubForm("test_form_translation_interpolated", JsonFormConstants.DEFAULT_SUB_FORM_LOCATION, RuntimeEnvironment.application, true);
         assertEquals(expectedSubFormJson, interpolatedSubFormJson);
 
         Locale.setDefault(new Locale("en", "US"));
-        interpolatedSubFormJson = FormUtils.loadSubForm("test_form_translation_interpolated", JsonFormConstants.DEFAULT_SUB_FORM_LOCATION , RuntimeEnvironment.application, true);
+        interpolatedSubFormJson = FormUtils.loadSubForm("test_form_translation_interpolated", JsonFormConstants.DEFAULT_SUB_FORM_LOCATION, RuntimeEnvironment.application, true);
         expectedSubFormJson = testUtils.getResourceFileContentsAsString("test_form_translation_en_US");
         assertEquals(expectedSubFormJson, interpolatedSubFormJson);
     }
@@ -78,5 +81,19 @@ public class NativeFormLangUtilsTest extends BaseTest {
         Locale.setDefault(new Locale("en", "US"));
         String translatedYamlStr = getTranslatedYamlFile("test_yaml_translation_interpolated_missing_translations", RuntimeEnvironment.application);
         assertEquals(testUtils.getResourceFileContentsAsString("test_yaml_translation_interpolated_missing_translations"), translatedYamlStr);
+    }
+
+    @Test
+    public void canGetResourceBundleWithPropertiesFromRepository() {
+        ClientFormContract.Dao clientFormRepository = Mockito.mock(ClientFormContract.Dao.class);
+        NativeFormLibrary.getInstance().setClientFormDao(clientFormRepository);
+        String properties = "step1.title = New client record\nstep1.previous_label = SAVE AND EXIT";
+        String interpolatedJsonForm = testUtils.getResourceFileContentsAsString("test_form_translation_interpolated");
+
+        ClientFormContract.Model clientForm = new TestClientForm();
+        clientForm.setJson(properties);
+        Mockito.doReturn(clientForm).when(clientFormRepository).getActiveClientFormByIdentifier(Mockito.eq("form_strings"));
+
+        assertEquals("New client record", NativeFormLangUtils.getResourceBundleFromRepository(interpolatedJsonForm).getString("step1.title"));
     }
 }
