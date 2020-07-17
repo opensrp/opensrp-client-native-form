@@ -566,4 +566,30 @@ public class FormUtilsTest extends BaseTest {
         Mockito.verify(formUtils).handleJsonFormOrRulesError(Mockito.eq(RuntimeEnvironment.application), Mockito.eq(clientFormRepository), Mockito.eq(false), Mockito.eq(formIdentity), Mockito.any(OnFormFetchedCallback.class));
 
     }
+
+    @Test
+    public void testCreateSecondaryValueObject() throws JSONException {
+        formUtils = Mockito.spy(formUtils);
+        String key = "test_key";
+        String type = "check_box";
+        JSONArray jsonArray = new JSONArray("[\n" +
+                "                  \"3:Abnormal\"\n" +
+                "                ]");
+        JSONObject openMrsEntities = new JSONObject("{\"openmrs_entity_parent\": \"test\",\n" +
+                "        \"openmrs_entity\": \"test_1\",\n" +
+                "        \"openmrs_entity_id\": \"test_2\"\n" +
+                "      }");
+        JSONArray valueOpenmrsEntities = new JSONArray("        [\n" +
+                "          {\"openmrs_entity_parent\": \"test\",\n" +
+                "            \"openmrs_entity\": \"test_1\",\n" +
+                "            \"openmrs_entity_id\": \"test_2\"\n" +
+                "          }\n" +
+                "        ]");
+
+        JSONObject jsonObject = formUtils.createSecondaryValueObject(key, type, jsonArray, openMrsEntities, valueOpenmrsEntities);
+        Assert.assertNotNull(jsonObject);
+        Assert.assertEquals("test_key", jsonObject.getString("key"));
+        Assert.assertTrue(jsonObject.has("value_openmrs_attributes"));
+        Assert.assertTrue(jsonObject.has("openmrs_attributes"));
+    }
 }
