@@ -116,10 +116,10 @@ public class NativeFormLangUtils {
         return translatedString;
     }
 
-    public static String getTranslatedStringWithDBResourceBundle(String str, ResourceBundle dbResourceBundle) {
+    public static String getTranslatedStringWithDBResourceBundle(Context context, String str, ResourceBundle dbResourceBundle) {
         ResourceBundle mlsResourceBundle = dbResourceBundle;
         if (dbResourceBundle == null) {
-            mlsResourceBundle = getResourceBundleFromRepository(str);
+            mlsResourceBundle = getResourceBundleFromRepository(context, str);
         }
         return (mlsResourceBundle != null && mlsResourceBundle.getKeys().hasMoreElements()) ? translateString(str, mlsResourceBundle) : getTranslatedString(str);
     }
@@ -174,8 +174,14 @@ public class NativeFormLangUtils {
         return matcher.find() ? matcher.group(1) : "";
     }
 
-    public static ResourceBundle getResourceBundleFromRepository(String form) {
-        String identifier = getTranslationsFileName(form) + JsonFormConstants.PROPERTIES_FILE_EXTENSION;
+    public static ResourceBundle getResourceBundleFromRepository(Context context, String form) {
+        //Check the current locale of the app to load the correct version of the properties in the desired language
+        String locale = context.getResources().getConfiguration().locale.getLanguage();
+        String identifier = getTranslationsFileName(form);
+        if (!Locale.ENGLISH.getLanguage().equals(locale)) {
+            identifier = identifier + "_" + locale;
+        }
+         identifier = identifier + JsonFormConstants.PROPERTIES_FILE_EXTENSION;
         return ResourceBundle.getBundle(DBResourceBundle.class.getCanonicalName(), new DBResourceBundleControl(identifier));
     }
 }
