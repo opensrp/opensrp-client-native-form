@@ -87,7 +87,7 @@ public class NativeFormLangUtilsTest extends BaseTest {
     }
 
     @Test
-    public void canGetResourceBundleWithPropertiesFromRepository() {
+    public void testCanGetResourceBundleWithPropertiesFromRepository() {
         ClientFormContract.Dao clientFormRepository = Mockito.mock(ClientFormContract.Dao.class);
         NativeFormLibrary.getInstance().setClientFormDao(clientFormRepository);
         String properties = "step1.title = New client record\nstep1.previous_label = SAVE AND EXIT";
@@ -97,9 +97,11 @@ public class NativeFormLangUtilsTest extends BaseTest {
         clientForm.setJson(properties);
         Mockito.doReturn(clientForm).when(clientFormRepository).getActiveClientFormByIdentifier(Mockito.eq("form_strings.properties"));
 
+        ResourceBundle.clearCache();
         ResourceBundle mlsResourceBundle = NativeFormLangUtils.getResourceBundleFromRepository(interpolatedJsonForm);
         assertTrue(mlsResourceBundle.getKeys().hasMoreElements());
         assertEquals("New client record", mlsResourceBundle.getString("step1.title"));
+        assertEquals("SAVE AND EXIT", mlsResourceBundle.getString("step1.previous_label"));
     }
 
     @Test
@@ -110,6 +112,7 @@ public class NativeFormLangUtilsTest extends BaseTest {
 
         Mockito.doReturn(null).when(clientFormRepository).getActiveClientFormByIdentifier(Mockito.eq("form_strings.properties"));
 
+        ResourceBundle.clearCache();
         ResourceBundle mlsResourceBundle = NativeFormLangUtils.getResourceBundleFromRepository(interpolatedJsonForm);
         assertFalse(mlsResourceBundle.getKeys().hasMoreElements());
     }
