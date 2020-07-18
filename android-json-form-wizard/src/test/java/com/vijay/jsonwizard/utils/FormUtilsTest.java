@@ -11,6 +11,7 @@ import com.vijay.jsonwizard.domain.ExpansionPanelValuesModel;
 import com.vijay.jsonwizard.interfaces.OnFormFetchedCallback;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jeasy.rules.api.Facts;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -591,5 +592,59 @@ public class FormUtilsTest extends BaseTest {
         Assert.assertEquals("test_key", jsonObject.getString("key"));
         Assert.assertTrue(jsonObject.has("value_openmrs_attributes"));
         Assert.assertTrue(jsonObject.has("openmrs_attributes"));
+    }
+
+    @Test
+    public void testGetSecondaryValuesWithTypeExpansionPanel() throws JSONException {
+        formUtils = Mockito.spy(formUtils);
+        String type = JsonFormConstants.EXPANSION_PANEL;
+        String expansionPanelString = "{\"key\":\"resTwo3\",\"text\":\"Abnormal\",\"type\":\"expansion_panel\",\"content_form\":\"child_enrollment_two_sub_form\",\"content_form_location\":\"\",\"value\":[{\"key\":\"respiratory_exam_radio_button\",\"type\":\"native_radio\",\"values\":[\"3:Abnormal\"]},{\"key\":\"respiratory_exam_abnormal_other\",\"type\":\"edit_text\",\"values\":[\"other:Respiratory exam answer two\"]}]}";
+        JSONObject jsonObject = new JSONObject(expansionPanelString);
+        JSONArray array = formUtils.getSecondaryValues(jsonObject, type);
+        Assert.assertNotNull(array);
+        Assert.assertTrue(array.length() > 0);
+        Assert.assertEquals(2, array.length());
+    }
+
+    @Test
+    public void testGetSecondaryValuesWithTypeRadioButton() throws JSONException {
+        formUtils = Mockito.spy(formUtils);
+        String type = JsonFormConstants.NATIVE_RADIO_BUTTON;
+        String expansionPanelString = "{\"key\":\"resTwo3\",\"text\":\"Abnormal\",\"specify_info\":\"Specify\",\"specify_info_color\":\"#b5b5b5\",\"specify_widget\":\"check_box\",\"content_form\":\"child_enrollment_two_sub_form\",\"content_form_location\":\"\",\"secondary_suffix\":\"bpm\",\"secondary_value\":[{\"key\":\"respiratory_exam_radio_button\",\"type\":\"native_radio\",\"values\":[\"3:Abnormal\"]},{\"key\":\"respiratory_exam_abnormal_other\",\"type\":\"edit_text\",\"values\":[\"other:Respiratory exam answer two\"]}]}";
+        JSONObject jsonObject = new JSONObject(expansionPanelString);
+        JSONArray array = formUtils.getSecondaryValues(jsonObject, type);
+        Assert.assertNotNull(array);
+        Assert.assertTrue(array.length() > 0);
+        Assert.assertEquals(2, array.length());
+    }
+
+    @Test
+    public void testGetCheckBoxResultsWithIsRuleCheckTrue() throws JSONException {
+        formUtils = Mockito.spy(formUtils);
+        String checkBoxString = "{\"key\":\"user_check_box\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"openmrs_data_type\":\"select one\",\"type\":\"check_box\",\"label\":\"Do want to select any checkbox?\",\"label_text_style\":\"bold\",\"options\":[{\"key\":\"None\",\"text\":\"None\",\"value\":true,\"openmrs_choice_id\":\"\"},{\"key\":\"yes\",\"text\":\"Yes\",\"value\":true,\"openmrs_choice_id\":\"\"},{\"key\":\"no\",\"text\":\"No\",\"value\":true,\"openmrs_choice_id\":\"\"},{\"key\":\"other\",\"text\":\"Other\",\"value\":true,\"openmrs_choice_id\":\"\"}],\"v_required\":{\"value\":\"false\"},\"value\":\"[yes]\",\"is-rule-check\":true}";
+        JSONObject jsonObject = new JSONObject(checkBoxString);
+        Facts facts = formUtils.getCheckBoxResults(jsonObject);
+        Assert.assertNotNull(facts);
+        Assert.assertEquals(4, facts.asMap().size());
+    }
+
+    @Test
+    public void testGetCheckBoxResultsWithIsRuleCheckFalse() throws JSONException {
+        formUtils = Mockito.spy(formUtils);
+        String checkBoxString = "{\"key\":\"user_check_box\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"openmrs_data_type\":\"select one\",\"type\":\"check_box\",\"label\":\"Do want to select any checkbox?\",\"label_text_style\":\"bold\",\"options\":[{\"key\":\"None\",\"text\":\"None\",\"value\":true,\"openmrs_choice_id\":\"\"},{\"key\":\"yes\",\"text\":\"Yes\",\"value\":true,\"openmrs_choice_id\":\"\"},{\"key\":\"no\",\"text\":\"No\",\"value\":true,\"openmrs_choice_id\":\"\"},{\"key\":\"other\",\"text\":\"Other\",\"value\":true,\"openmrs_choice_id\":\"\"}],\"v_required\":{\"value\":\"false\"},\"value\":\"[yes]\",\"is-rule-check\":false}";
+        JSONObject jsonObject = new JSONObject(checkBoxString);
+        Facts facts = formUtils.getCheckBoxResults(jsonObject);
+        Assert.assertNotNull(facts);
+        Assert.assertEquals(5, facts.asMap().size());
+    }
+
+    @Test
+    public void testGetCheckBoxResultsWithNoIsRuleCheck() throws JSONException {
+        formUtils = Mockito.spy(formUtils);
+        String checkBoxString = "{\"key\":\"user_check_box\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"openmrs_data_type\":\"select one\",\"type\":\"check_box\",\"label\":\"Do want to select any checkbox?\",\"label_text_style\":\"bold\",\"options\":[{\"key\":\"None\",\"text\":\"None\",\"value\":true,\"openmrs_choice_id\":\"\"},{\"key\":\"yes\",\"text\":\"Yes\",\"value\":true,\"openmrs_choice_id\":\"\"},{\"key\":\"no\",\"text\":\"No\",\"value\":true,\"openmrs_choice_id\":\"\"},{\"key\":\"other\",\"text\":\"Other\",\"value\":true,\"openmrs_choice_id\":\"\"}],\"v_required\":{\"value\":\"false\"},\"value\":\"[yes]\"}";
+        JSONObject jsonObject = new JSONObject(checkBoxString);
+        Facts facts = formUtils.getCheckBoxResults(jsonObject);
+        Assert.assertNotNull(facts);
+        Assert.assertEquals(4, facts.asMap().size());
     }
 }
