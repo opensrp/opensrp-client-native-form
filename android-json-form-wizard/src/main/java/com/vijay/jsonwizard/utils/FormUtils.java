@@ -2020,7 +2020,7 @@ public class FormUtils {
             String originalJson = clientForm.getJson();
 
             if (translateSubForm) {
-                originalJson = NativeFormLangUtils.getTranslatedStringWithDBResourceBundle(originalJson, null);
+                originalJson = NativeFormLangUtils.getTranslatedStringWithDBResourceBundle(context, originalJson, null);
             }
             return new JSONObject(originalJson);
         }

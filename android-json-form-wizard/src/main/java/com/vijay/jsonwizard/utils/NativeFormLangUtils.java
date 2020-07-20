@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.DBResourceBundle;
 import com.vijay.jsonwizard.domain.DBResourceBundleControl;
 
@@ -115,12 +116,12 @@ public class NativeFormLangUtils {
         return translatedString;
     }
 
-    public static String getTranslatedStringWithDBResourceBundle(String str, ResourceBundle dbResourceBundle) {
+    public static String getTranslatedStringWithDBResourceBundle(Context context, String str, ResourceBundle dbResourceBundle) {
         ResourceBundle mlsResourceBundle = dbResourceBundle;
         if (dbResourceBundle == null) {
-            mlsResourceBundle = getResourceBundleFromRepository(str);
+            mlsResourceBundle = getResourceBundleFromRepository(context, str);
         }
-        return (mlsResourceBundle == null) ? getTranslatedString(str) : translateString(str, mlsResourceBundle);
+        return (mlsResourceBundle != null && mlsResourceBundle.getKeys().hasMoreElements()) ? translateString(str, mlsResourceBundle) : getTranslatedString(str);
     }
 
     /**
@@ -173,8 +174,14 @@ public class NativeFormLangUtils {
         return matcher.find() ? matcher.group(1) : "";
     }
 
-    @Nullable
-    public static ResourceBundle getResourceBundleFromRepository(String form) {
-        return ResourceBundle.getBundle(DBResourceBundle.class.getCanonicalName(), new DBResourceBundleControl(getTranslationsFileName(form)));
+    public static ResourceBundle getResourceBundleFromRepository(Context context, String form) {
+        //Check the current locale of the app to load the correct version of the properties in the desired language
+        String locale = context.getResources().getConfiguration().locale.getLanguage();
+        String identifier = getTranslationsFileName(form);
+        if (!Locale.ENGLISH.getLanguage().equals(locale)) {
+            identifier = identifier + "_" + locale;
+        }
+         identifier = identifier + JsonFormConstants.PROPERTIES_FILE_EXTENSION;
+        return ResourceBundle.getBundle(DBResourceBundle.class.getCanonicalName(), new DBResourceBundleControl(identifier));
     }
 }
