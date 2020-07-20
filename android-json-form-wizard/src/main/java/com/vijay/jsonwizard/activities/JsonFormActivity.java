@@ -1890,7 +1890,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         return Utils.getConditionKeys(condition);
     }
 
-    private void updateUiByCalculation(@NonNull String calculation, View view) {
+    private void updateUiByCalculation(@NonNull String calculation, final View view) {
         if (view instanceof CheckBox) {
             //For now were only handling checkbox titles only
             TextView checkboxLabel = ((View) view.getParent().getParent()).findViewById(R.id.label_text);
@@ -1912,7 +1912,13 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             }
 
             if (!TextUtils.isEmpty(calculation)) {
-                ((EditText) view).setText(calculation);
+                final String finalCalculation = calculation;
+                getAppExecutors().mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((EditText) view).setText(finalCalculation);
+                    }
+                });
             }
 
         } else if (view instanceof RadioGroup) {

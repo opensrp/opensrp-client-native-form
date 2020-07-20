@@ -13,7 +13,6 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.rengwuxian.materialedittext.MaterialEditText;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.WidgetArgs;
@@ -21,6 +20,7 @@ import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.Utils;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -143,9 +143,32 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
 
         //for validation
         doneButton.setTag(R.id.is_repeating_group_generated, true);
-        LinearLayout referenceLayout = (LinearLayout) ((LinearLayout) parent).getChildAt(0);
-        MaterialEditText materialEditText = (MaterialEditText) referenceLayout.getChildAt(0);
-        materialEditText.setError(null);
+        widgetArgs.getFormFragment().getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    JSONObject step = ((JsonApi) widgetArgs.getContext()).getmJSONObject().getJSONObject(widgetArgs.getStepName());
+                    JSONArray fields = step.getJSONArray(FIELDS);
+                    String key = widgetArgs.getJsonObject().optString(KEY);
+                    for (int i = 0; i < fields.length(); i++) {
+                        JSONObject object = fields.optJSONObject(i);
+                        String fieldKey = object.optString(KEY);
+                        if (fieldKey.equals(key)) {
+                            String strNumOfRepeatedGroups = object.optString(JsonFormConstants.REPEATING_GROUPS_GENERATED_COUNT);
+                            int currentCount = numRepeatingGroups;
+                            if (StringUtils.isNotBlank(strNumOfRepeatedGroups)) {
+                                currentCount += Integer.parseInt(strNumOfRepeatedGroups);
+                            }
+                            object.put(JsonFormConstants.REPEATING_GROUPS_GENERATED_COUNT, currentCount);
+                            break;
+                        }
+                    }
+                } catch (JSONException e) {
+                    Timber.e(e);
+                }
+            }
+        });
+
     }
 
     private LinearLayout buildRepeatingGroupLayout(final ViewParent parent) throws Exception {

@@ -41,6 +41,7 @@ public class RulesEngineFactory implements RuleListener {
     private Gson gson;
     private Map<String, String> globalValues;
     private RulesEngineHelper rulesEngineHelper;
+    private Facts globalFacts;
 
     public RulesEngineFactory(Context context, Map<String, String> globalValues) {
         this.context = context;
@@ -53,6 +54,12 @@ public class RulesEngineFactory implements RuleListener {
         this.globalValues = globalValues;
         this.rulesEngineHelper = new RulesEngineHelper();
 
+        if (globalValues != null) {
+            globalFacts = new Facts();
+            for (Map.Entry<String, String> entry : globalValues.entrySet()) {
+                globalFacts.put(RuleConstant.PREFIX.GLOBAL + entry.getKey(), getValue(entry.getValue()));
+            }
+        }
     }
 
     public RulesEngineFactory() {
@@ -130,13 +137,8 @@ public class RulesEngineFactory implements RuleListener {
     }
 
     protected Facts initializeFacts(Facts facts) {
-
-        if (globalValues != null) {
-            for (Map.Entry<String, String> entry : globalValues.entrySet()) {
-                facts.put(RuleConstant.PREFIX.GLOBAL + entry.getKey(), getValue(entry.getValue()));
-            }
-
-            facts.asMap().putAll(globalValues);
+        if (globalFacts != null) {
+            facts.asMap().putAll(globalFacts.asMap());
         }
         selectedRuleName = facts.get(RuleConstant.SELECTED_RULE);
         facts.put("helper", rulesEngineHelper);
