@@ -1827,7 +1827,7 @@ public class FormUtils {
     /**
      * Fetches the JSON form from the repository or assets folder and handles the JSONException thrown
      * by providing the user with rollback capability. The rollback form chosen by the user will be
-     *      * returned in the callback
+     * * returned in the callback
      *
      * @param context
      * @param clientFormRepository
@@ -1843,8 +1843,9 @@ public class FormUtils {
             try {
                 if (clientForm != null) {
                     Timber.d("============%s form loaded from db============", formIdentity);
-
+                    String formVersion = clientForm.getVersion();
                     JSONObject formJson = new JSONObject(clientForm.getJson());
+                    formJson.put(JsonFormConstants.FORM_VERSION, formVersion);
                     injectFormStatus(formJson, clientForm);
 
                     if (onFormFetchedCallback != null) {
@@ -1971,10 +1972,16 @@ public class FormUtils {
                                     Timber.e(e);
                                 }
                             } else {
-                                JSONObject jsonObject = getFormJson(context, formIdentity);
+                                try {
+                                    JSONObject jsonObject = getFormJson(context, formIdentity);
+                                    String formVersion = clientForm.getVersion();
+                                    jsonObject.put(JsonFormConstants.FORM_VERSION, formVersion);
 
-                                if (jsonObject != null) {
-                                    clientForm.setJson(jsonObject.toString());
+                                    if (jsonObject != null) {
+                                        clientForm.setJson(jsonObject.toString());
+                                    }
+                                } catch (JSONException e) {
+                                    Timber.e(e);
                                 }
                             }
                         }
