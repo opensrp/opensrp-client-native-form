@@ -221,6 +221,7 @@ public class JsonFormConstants {
     public static final String FORM_NAME = "form_name";
     public static final String FORM_CONFIG_LOCATION = "json.form/json.form.config.json";
 
+    public static final String PROPERTIES_FILE_EXTENSION = ".properties";
     public static final String JSON_FILE_EXTENSION = ".json";
     public static final String CLIENT_FORM_ASSET_VERSION = "base version";
 
