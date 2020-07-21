@@ -444,7 +444,7 @@ public class FormUtils {
     }
 
     public static int dpToPixels(Context context, float dps) {
-        return  (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dps, context.getResources().getDisplayMetrics());
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dps, context.getResources().getDisplayMetrics());
     }
 
     public void showInfoIcon(String stepName, JSONObject jsonObject, CommonListener listener,
@@ -1494,7 +1494,9 @@ public class FormUtils {
 
     public void getSpinnerValueOpenMRSAttributes(JSONObject item, JSONArray valueOpenMRSAttributes) throws JSONException {
 
-        if (item == null || !item.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.SPINNER)) { return; }
+        if (item == null || !item.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.SPINNER)) {
+            return;
+        }
 
         String spinnerValue = item.getString(JsonFormConstants.VALUE);
         String spinnerKey = item.getString(JsonFormConstants.KEY);
@@ -1504,9 +1506,9 @@ public class FormUtils {
             while (keys.hasNext()) {
                 String key = keys.next();
                 if (spinnerValue.equals(key)) {
-                   addOpenMRSAttributes(valueOpenMRSAttributes, item, spinnerKey,
-                           openMRSChoiceIds.getString(key));
-                   break;
+                    addOpenMRSAttributes(valueOpenMRSAttributes, item, spinnerKey,
+                            openMRSChoiceIds.getString(key));
+                    break;
                 }
             }
         } else if (item.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
@@ -1825,7 +1827,7 @@ public class FormUtils {
     /**
      * Fetches the JSON form from the repository or assets folder and handles the JSONException thrown
      * by providing the user with rollback capability. The rollback form chosen by the user will be
-     *      * returned in the callback
+     * * returned in the callback
      *
      * @param context
      * @param clientFormRepository
@@ -1841,8 +1843,9 @@ public class FormUtils {
             try {
                 if (clientForm != null) {
                     Timber.d("============%s form loaded from db============", formIdentity);
-
+                    String formVersion = clientForm.getVersion();
                     JSONObject formJson = new JSONObject(clientForm.getJson());
+                    formJson.put(JsonFormConstants.FORM_VERSION, formVersion);
                     injectFormStatus(formJson, clientForm);
 
                     if (onFormFetchedCallback != null) {
@@ -1915,7 +1918,7 @@ public class FormUtils {
         }
     }
 
-    private ClientFormContract.Model  getClientFormFromRepository(@NonNull Context context, @NonNull ClientFormContract.Dao clientFormRepository, String formIdentity) {
+    private ClientFormContract.Model getClientFormFromRepository(@NonNull Context context, @NonNull ClientFormContract.Dao clientFormRepository, String formIdentity) {
         //Check the current locale of the app to load the correct version of the form in the desired language
         String locale = context.getResources().getConfiguration().locale.getLanguage();
         String localeFormIdentity = formIdentity;
@@ -1923,7 +1926,7 @@ public class FormUtils {
             localeFormIdentity = localeFormIdentity + "-" + locale;
         }
 
-        ClientFormContract.Model  clientForm = clientFormRepository.getActiveClientFormByIdentifier(localeFormIdentity);
+        ClientFormContract.Model clientForm = clientFormRepository.getActiveClientFormByIdentifier(localeFormIdentity);
 
         if (clientForm == null) {
             String revisedFormName = extractFormNameWithoutExtension(localeFormIdentity);
@@ -1946,8 +1949,8 @@ public class FormUtils {
     }
 
     public void handleJsonFormOrRulesError(@NonNull final Context context, @NonNull final ClientFormContract.Dao clientFormRepository, final boolean isRulesFile, @NonNull final String formIdentity, @NonNull final OnFormFetchedCallback<String> onFormFetchedCallback) {
-        final ClientFormContract.Model  clientForm = getClientFormFromRepository(context, clientFormRepository, formIdentity);
-        List<ClientFormContract.Model > clientForms = clientFormRepository.getClientFormByIdentifier(clientForm.getIdentifier());
+        final ClientFormContract.Model clientForm = getClientFormFromRepository(context, clientFormRepository, formIdentity);
+        List<ClientFormContract.Model> clientForms = clientFormRepository.getClientFormByIdentifier(clientForm.getIdentifier());
 
         if (clientForms.size() > 0) {
             // Show dialog asking user if they want to rollback to the previous available version X
@@ -1959,7 +1962,7 @@ public class FormUtils {
             if (!dialogIsShowing) {
                 FormRollbackDialogUtil.showAvailableRollbackFormsDialog(context, clientFormRepository, clientForms, clientForm, new RollbackDialogCallback() {
                     @Override
-                    public void onFormSelected(@NonNull ClientFormContract.Model  selectedForm) {
+                    public void onFormSelected(@NonNull ClientFormContract.Model selectedForm) {
                         if (selectedForm.getJson() == null && selectedForm.getVersion().equals(JsonFormConstants.CLIENT_FORM_ASSET_VERSION)) {
 
                             if (isRulesFile) {
@@ -1969,10 +1972,16 @@ public class FormUtils {
                                     Timber.e(e);
                                 }
                             } else {
-                                JSONObject jsonObject = getFormJson(context, formIdentity);
+                                try {
+                                    JSONObject jsonObject = getFormJson(context, formIdentity);
+                                    String formVersion = clientForm.getVersion();
+                                    jsonObject.put(JsonFormConstants.FORM_VERSION, formVersion);
 
-                                if (jsonObject != null) {
-                                    clientForm.setJson(jsonObject.toString());
+                                    if (jsonObject != null) {
+                                        clientForm.setJson(jsonObject.toString());
+                                    }
+                                } catch (JSONException e) {
+                                    Timber.e(e);
                                 }
                             }
                         }
@@ -2000,7 +2009,7 @@ public class FormUtils {
         }
 
         String dbFormName = StringUtils.isBlank(subFormsLocation) ? localeFormIdentity : subFormsLocation + "/" + localeFormIdentity;
-        ClientFormContract.Model  clientForm = clientFormDao.getActiveClientFormByIdentifier(dbFormName);
+        ClientFormContract.Model clientForm = clientFormDao.getActiveClientFormByIdentifier(dbFormName);
 
         if (clientForm == null) {
             String revisedFormName = extractFormNameWithoutExtension(dbFormName);
@@ -2010,7 +2019,6 @@ public class FormUtils {
                 String finalSubFormsLocation = getSubFormLocation(subFormsLocation);
                 dbFormName = StringUtils.isBlank(finalSubFormsLocation) ? localeFormIdentity : finalSubFormsLocation + "/" + localeFormIdentity;
                 clientForm = clientFormDao.getActiveClientFormByIdentifier(dbFormName);
-
             }
         }
 
@@ -2019,9 +2027,8 @@ public class FormUtils {
             String originalJson = clientForm.getJson();
 
             if (translateSubForm) {
-                originalJson = NativeFormLangUtils.getTranslatedString(originalJson, context);
+                originalJson = NativeFormLangUtils.getTranslatedStringWithDBResourceBundle(context, originalJson, null);
             }
-
             return new JSONObject(originalJson);
         }
 
@@ -2046,6 +2053,17 @@ public class FormUtils {
             return new BufferedReader(new StringReader(originalJson));
         }
 
+        return null;
+    }
+
+    public String getPropertiesFileContentsFromDB(String identifier) {
+        ClientFormContract.Dao clientFormRepository = NativeFormLibrary.getInstance().getClientFormDao();
+        if (clientFormRepository != null) {
+            ClientFormContract.Model clientForm = clientFormRepository.getActiveClientFormByIdentifier(identifier);
+            if (clientForm != null) {
+                return clientForm.getJson();
+            }
+        }
         return null;
     }
 
