@@ -46,6 +46,8 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -643,6 +645,18 @@ public class Utils {
     }
 
     /**
+     * Translates a yaml file specified by {@param fileName} using properties stored in the database
+     * and returns its String representation
+     *
+     * @param fileName
+     * @param context
+     * @return Translated Yaml file in its String representation
+     */
+    public static String getTranslatedYamlFileWithDBProperties(String fileName, Context context) {
+        return NativeFormLangUtils.getTranslatedStringWithDBResourceBundle(context, getAssetFileAsString(fileName, context), null);
+    }
+
+    /**
      * Gets the contents of a file specified by {@param fileName} from the assets folder as a {@link String}
      *
      * @param fileName
@@ -811,6 +825,19 @@ public class Utils {
 
     public static final boolean isRunningOnUiThread() {
         return Looper.getMainLooper().getThread() == Thread.currentThread();
+    }
+
+    public static String formatDateToPattern(String date, String inputFormat, String outputFormat) {
+        if (StringUtils.isEmpty(date)) return "";
+        SimpleDateFormat format = new SimpleDateFormat(inputFormat);
+        Date newDate = null;
+        try {
+            newDate = format.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        format = new SimpleDateFormat(outputFormat);
+        return format.format(newDate);
     }
 }
 

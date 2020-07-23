@@ -223,6 +223,10 @@ public class JsonFormConstants {
     public static final String MEDIA_LOGIC = "media_logic";
     public static final String REPEATING_GROUPS_GENERATED_COUNT = "generated_groups_count";
 
+    public static final String PROPERTIES_FILE_EXTENSION = ".properties";
+    public static final String JSON_FILE_EXTENSION = ".json";
+    public static final String CLIENT_FORM_ASSET_VERSION = "base version";
+
     public interface MultiSelectUtils {
         String IS_HEADER = "isHeader";
         String TEXT = "text";
@@ -246,6 +250,9 @@ public class JsonFormConstants {
         public static final String APP_VERSION_NAME = "appVersionName";
         public static final String APP_FORM_VERSION = "formVersion";
         public static final String DETAILS = "details";
+        public static final String IS_NEW = "is_new";
+        public static final String CLIENT_FORM_ID = "client_form_id";
+        public static final String FORM_VERSION = "form_version";
     }
 
     public static class JsonFormConstantsUtils {

@@ -278,8 +278,6 @@ public class RulesEngineFactoryTest {
         String ruleFileName = "rules/calculation_file.yml";
         JsonFormActivity jsonFormActivity = Mockito.mock(JsonFormActivity.class);
 
-        Mockito.doReturn(new BufferedReader(new StringReader("{"))).when(jsonFormActivity).getRules(jsonFormActivity, ruleFileName);
-
         rulesEngineFactory = new RulesEngineFactory(jsonFormActivity, new HashMap<String, String>());
         ReflectionHelpers.callInstanceMethod(rulesEngineFactory, "getRulesFromAsset", ReflectionHelpers.ClassParameter.from(String.class, ruleFileName));
 

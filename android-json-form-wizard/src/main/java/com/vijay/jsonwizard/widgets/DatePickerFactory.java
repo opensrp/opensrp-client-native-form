@@ -7,7 +7,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.text.TextUtils;
+import android.support.annotation.VisibleForTesting;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
@@ -21,6 +21,7 @@ import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.DatePickerDialog;
 import com.vijay.jsonwizard.customviews.GenericTextWatcher;
+import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
@@ -29,8 +30,11 @@ import com.vijay.jsonwizard.utils.DateUtil;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.NativeFormLangUtils;
 import com.vijay.jsonwizard.utils.NativeFormsProperties;
+import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
 
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,8 +49,6 @@ import java.util.Set;
 
 import timber.log.Timber;
 
-import static com.vijay.jsonwizard.widgets.TimePickerFactory.KEY.DURATION;
-
 /**
  * @author Jason Rogena - jrogena@ona.io
  * @since 25/01/2017
@@ -57,32 +59,6 @@ public class DatePickerFactory implements FormWidgetFactory {
     public static final SimpleDateFormat DATE_FORMAT_LOCALE_INDEPENDENT = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
     private static final String TAG = "DatePickerFactory";
     private FormUtils formUtils = new FormUtils();
-
-    private static void updateDateText(Context context, final MaterialEditText editText, final TextView duration, final String date) {
-        ((JsonApi) context).getAppExecutors().mainThread().execute(new Runnable() {
-            @Override
-            public void run() {
-                editText.setText(date);
-            }
-        });
-
-        String durationLabel = (String) duration.getTag(R.id.label);
-        if (!TextUtils.isEmpty(durationLabel)) {
-            Locale locale = new Locale(NativeFormLangUtils.getLanguage(context));
-            String durationText = DateUtil.getDuration(DateUtil.getDurationTimeDifference(date, null), locale.getLanguage().equals("ar") ? Locale.ENGLISH : locale, context);
-            if (!TextUtils.isEmpty(durationText)) {
-                durationText = String.format("(%s: %s)", durationLabel, durationText);
-            }
-            final String finalDurationText = durationText;
-            ((JsonApi) context).getAppExecutors().mainThread().execute(new Runnable() {
-                @Override
-                public void run() {
-                    duration.setText(finalDurationText);
-                }
-            });
-        }
-
-    }
 
 
     private static void showDatePickerDialog(Activity context, DatePickerDialog datePickerDialog, MaterialEditText editText) {
@@ -98,7 +74,9 @@ public class DatePickerFactory implements FormWidgetFactory {
             context.getFragmentManager().executePendingTransactions();
 
             String text = editText.getText().toString();
-            Calendar date = FormUtils.getDate(text);
+            Calendar date = FormUtils.getDate(StringUtils.isNoneBlank(Form.getDatePickerDisplayFormat()) ?
+                    Utils.formatDateToPattern(text, Form.getDatePickerDisplayFormat(), DATE_FORMAT.toPattern())
+                    : text);
             if (text.isEmpty()) {
                 Object defaultValue = datePickerDialog.getArguments().get(JsonFormConstants.DEFAULT);
                 if (defaultValue != null)
@@ -109,6 +87,46 @@ public class DatePickerFactory implements FormWidgetFactory {
                 datePickerDialog.setDate(date.getTime());
             }
         }
+    }
+
+
+    private void updateDateText(Context context, final MaterialEditText editText, final TextView duration, final String date) {
+        ((JsonApi) context).getAppExecutors().mainThread().execute(new Runnable() {
+            @Override
+            public void run() {
+                editText.setText(StringUtils.isNoneBlank(Form.getDatePickerDisplayFormat()) ?
+                        Utils.formatDateToPattern(date, DATE_FORMAT.toPattern(), Form.getDatePickerDisplayFormat())
+                        : date);
+            }
+        });
+
+        String durationLabel = (String) duration.getTag(R.id.label);
+        if (StringUtils.isNotBlank(durationLabel)) {
+            Locale locale = getSetLanguage(context);
+            String durationText = getDurationText(context, date, locale);
+            if (StringUtils.isNotBlank(durationText)) {
+                durationText = String.format("(%s: %s)", durationLabel, durationText);
+            }
+            final String finalDurationText = durationText;
+            ((JsonApi) context).getAppExecutors().mainThread().execute(new Runnable() {
+                @Override
+                public void run() {
+                    duration.setText(finalDurationText);
+                }
+            });
+        }
+    }
+
+    @NotNull
+    @VisibleForTesting
+    protected String getDurationText(Context context, String date, Locale locale) {
+        return DateUtil.getDuration(DateUtil.getDurationTimeDifference(date, null), locale.getLanguage().equals("ar") ? Locale.ENGLISH : locale, context);
+    }
+
+    @NotNull
+    @VisibleForTesting
+    protected Locale getSetLanguage(Context context) {
+        return new Locale(NativeFormLangUtils.getLanguage(context));
     }
 
     @Override
@@ -124,16 +142,21 @@ public class DatePickerFactory implements FormWidgetFactory {
         return attachJson(stepName, context, formFragment, jsonObject, false, listener);
     }
 
+    @Override
+    @NonNull
+    public Set<String> getCustomTranslatableWidgetFields() {
+        Set<String> customTranslatableWidgetFields = new HashSet<>();
+        customTranslatableWidgetFields.add(DatePickerFactory.KEY.DURATION + "." + JsonFormConstants.LABEL);
+        return customTranslatableWidgetFields;
+    }
+
     protected List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject,
                                     boolean popup, CommonListener listener) {
         List<View> views = new ArrayList<>(1);
         try {
 
-            RelativeLayout dateViewRelativeLayout = (RelativeLayout) LayoutInflater
-                    .from(context).inflate(getLayout(), null);
-
+            RelativeLayout dateViewRelativeLayout = getRelativeLayout(context);
             MaterialEditText editText = dateViewRelativeLayout.findViewById(R.id.edit_text);
-
             TextView duration = dateViewRelativeLayout.findViewById(R.id.duration);
 
             attachLayout(stepName, context, formFragment, jsonObject, editText, duration);
@@ -155,6 +178,11 @@ public class DatePickerFactory implements FormWidgetFactory {
         return views;
     }
 
+    @VisibleForTesting
+    protected RelativeLayout getRelativeLayout(Context context) {
+        return (RelativeLayout) LayoutInflater.from(context).inflate(getLayout(), null);
+    }
+
     protected void attachLayout(String stepName, final Context context, JsonFormFragment formFragment, JSONObject jsonObject,
                                 final MaterialEditText editText, final TextView duration) {
 
@@ -171,8 +199,8 @@ public class DatePickerFactory implements FormWidgetFactory {
             duration.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
             duration.setTag(R.id.openmrs_entity, openMrsEntity);
             duration.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-            if (jsonObject.has(KEY.DURATION)) {
-                duration.setTag(R.id.label, jsonObject.getJSONObject(KEY.DURATION).getString(JsonFormConstants.LABEL));
+            if (jsonObject.has(DatePickerFactory.KEY.DURATION) && jsonObject.getJSONObject(DatePickerFactory.KEY.DURATION) != null) {
+                duration.setTag(R.id.label, jsonObject.getJSONObject(DatePickerFactory.KEY.DURATION).getString(JsonFormConstants.LABEL));
             }
 
             updateEditText(editText, jsonObject, stepName, context, duration);
@@ -180,7 +208,7 @@ public class DatePickerFactory implements FormWidgetFactory {
 
             final DatePickerDialog datePickerDialog = createDateDialog(context, duration, editText, jsonObject);
             if (formFragment != null) {
-                NativeFormsProperties nativeFormsProperties = formFragment.getNativeFormProperties();
+                NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
                 if (nativeFormsProperties != null) {
                     datePickerDialog.setNumericDatePicker(nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_DATEPICKER_IS_NUMERIC));
                 }
@@ -216,7 +244,6 @@ public class DatePickerFactory implements FormWidgetFactory {
             });
             editText.setFocusable(false);
         } catch (Exception e) {
-
             Timber.e(e.getMessage(), TAG);
         }
 
@@ -250,17 +277,17 @@ public class DatePickerFactory implements FormWidgetFactory {
 
     private void addRefreshLogicView(Context context, MaterialEditText editText, String relevance, String constraints,
                                      String calculations) {
-        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+        if (StringUtils.isNotBlank(relevance) && context instanceof JsonApi) {
             editText.setTag(R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(editText);
         }
 
-        if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
+        if (StringUtils.isNotBlank(constraints) && context instanceof JsonApi) {
             editText.setTag(R.id.constraints, constraints);
             ((JsonApi) context).addConstrainedView(editText);
         }
 
-        if (!TextUtils.isEmpty(calculations) && context instanceof JsonApi) {
+        if (StringUtils.isNotBlank(calculations) && context instanceof JsonApi) {
             editText.setTag(R.id.calculation, calculations);
             ((JsonApi) context).addCalculationLogicView(editText);
         }
@@ -268,8 +295,8 @@ public class DatePickerFactory implements FormWidgetFactory {
 
     private void updateEditText(MaterialEditText editText, JSONObject jsonObject, String stepName, Context context, TextView duration) throws JSONException {
 
-        Locale locale = context.getResources().getConfiguration().locale.getLanguage().equals("ar") ? Locale.ENGLISH : context.getResources().getConfiguration().locale;//Arabic should render normal numbers/numeric digits
-        SimpleDateFormat DATE_FORMAT_LOCALE = new SimpleDateFormat("dd-MM-yyyy", locale);
+        Locale locale = getCurrentLocale(context);
+        final SimpleDateFormat DATE_FORMAT_LOCALE = new SimpleDateFormat("dd-MM-yyyy", locale);
 
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
@@ -285,6 +312,7 @@ public class DatePickerFactory implements FormWidgetFactory {
         editText.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         editText.setTag(R.id.address, stepName + ":" + jsonObject.getString(KEY.KEY));
         editText.setTag(R.id.locale_independent_value, jsonObject.optString(KEY.VALUE));
+
         if (jsonObject.has(JsonFormConstants.V_REQUIRED)) {
             JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
             boolean requiredValue = requiredObject.getBoolean(KEY.VALUE);
@@ -294,7 +322,7 @@ public class DatePickerFactory implements FormWidgetFactory {
             }
         }
 
-        if (!TextUtils.isEmpty(jsonObject.optString(KEY.VALUE))) {
+        if (StringUtils.isNotBlank(jsonObject.optString(KEY.VALUE))) {
             updateDateText(context, editText, duration, DATE_FORMAT_LOCALE.format(FormUtils.getDate(jsonObject.optString(KEY.VALUE)).getTime()));
         }
 
@@ -305,12 +333,18 @@ public class DatePickerFactory implements FormWidgetFactory {
         }
     }
 
+
+    @VisibleForTesting
+    protected Locale getCurrentLocale(Context context) {
+        return context.getResources().getConfiguration().locale.getLanguage().equals("ar") ? Locale.ENGLISH : context.getResources().getConfiguration().locale;//Arabic should render normal numbers/numeric digits
+    }
+
     protected DatePickerDialog createDateDialog(final Context context, final TextView duration, final MaterialEditText editText,
                                                 JSONObject jsonObject) throws JSONException {
         final DatePickerDialog datePickerDialog = new DatePickerDialog();
         datePickerDialog.setContext(context);
 
-        Locale locale = context.getResources().getConfiguration().locale.getLanguage().equals("ar") ? Locale.ENGLISH : context.getResources().getConfiguration().locale;//Arabic should render normal numbers/numeric digits
+        Locale locale = getCurrentLocale(context);
         final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy", locale);
 
         datePickerDialog.setOnDateSetListener(new android.app.DatePickerDialog.OnDateSetListener() {
@@ -355,13 +389,6 @@ public class DatePickerFactory implements FormWidgetFactory {
         return datePickerDialog;
     }
 
-    @Override
-    @NonNull
-    public Set<String> getCustomTranslatableWidgetFields() {
-        Set<String> customTranslatableWidgetFields = new HashSet<>();
-        customTranslatableWidgetFields.add(DURATION + "." + JsonFormConstants.LABEL);
-        return customTranslatableWidgetFields;
-    }
 
     protected int getLayout() {
         return R.layout.native_form_item_date_picker;
@@ -369,13 +396,9 @@ public class DatePickerFactory implements FormWidgetFactory {
 
     public static class KEY {
         public static final String DURATION = "duration";
-
         public static final String HINT = "hint";
-
         public static final String KEY = "key";
-
         public static final String VALUE = (JsonFormConstants.VALUE);
-
         public static final String DEFAULT = "default";
     }
 }

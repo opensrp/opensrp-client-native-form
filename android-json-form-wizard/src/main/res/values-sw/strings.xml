@@ -39,7 +39,7 @@
     <string name="creating_repeating_group_message">Tengeneza kundi linalojirudia</string>
     <string name="launching_rdt_capture_message">Launching RDT capture widget</string>
     <string name="repeating_group_max_value_err_msg">Namba ya makundi yanayojirudia hayawezi kuwa zaidi ya %1$d</string>
-    <string name="repeating_group_min_value_err_msg">Namba ya makundi yanayojirudia lazima iwe zaidi ya 0</string>
+    <string name="repeating_group_min_value_err_msg">Namba ya makundi yanayojirudia lazima iwe zaidi ya %1$d</string>
     <string name="repeating_group_number_format_err_msg">Number of repeating groups must be an integer value</string>
     <string name="enter_number_of_repeating_group_items">Enter # of repeating group items</string>
     <string name="repeating_group_item">Item</string>

@@ -10,6 +10,7 @@ import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -22,6 +23,7 @@ import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.MLS.PROPERTIES_FILE_NAME;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.TYPE;
+import static com.vijay.jsonwizard.utils.NativeFormLangUtils.getEscapedValue;
 import static com.vijay.jsonwizard.utils.Utils.getFileContentsAsString;
 
 /**
@@ -32,7 +34,7 @@ public class JsonFormMLSAssetGenerator {
     private static Map<String, String> placeholdersToTranslationsMap = new HashMap<>();
     private static String formName;
 
-    private static final JsonFormInteractor jsonFormInteractor = JsonFormInteractor.getInstance();
+    private static JsonFormInteractor jsonFormInteractor;
 
     /**
      *
@@ -41,7 +43,8 @@ public class JsonFormMLSAssetGenerator {
      *
      * @param formToTranslate
      */
-    public static void processForm(String formToTranslate) {
+    public static void processForm(String formToTranslate) throws Exception {
+        jsonFormInteractor = getJsonFormInteractor();
         String form = getFileContentsAsString(formToTranslate);
 
         printToSystemOut("\nForm before placeholder injection:\n\n" + form);
@@ -280,7 +283,7 @@ public class JsonFormMLSAssetGenerator {
     private static void createTranslationsPropertyFile() {
         StringBuilder stringBuilder = new StringBuilder();
         for (Map.Entry<String, String> entry : placeholdersToTranslationsMap.entrySet()) {
-            stringBuilder.append(entry.getKey() + " = " + entry.getValue().replace("\n", "\\n") + "\n"); // ensures \n is preserved in a String
+            stringBuilder.append(entry.getKey() + " = " + getEscapedValue(entry.getValue()) + "\n");
         }
         writeToFile(stringBuilder.toString(), File.separator + getMLSAssetsFolder() + File.separator + formName + ".properties");
     }
@@ -300,7 +303,16 @@ public class JsonFormMLSAssetGenerator {
         }
     }
 
-    public static void main(String[] args) {
+    private static  JsonFormInteractor getJsonFormInteractor() throws Exception {
+        String jsonFormInteractorName = System.getenv("JSON_FORM_INTERACTOR_NAME");
+        jsonFormInteractorName = jsonFormInteractorName == null
+                ? "com.vijay.jsonwizard.interactors.JsonFormInteractor" : jsonFormInteractorName;
+        Class<?> clazz = Class.forName(jsonFormInteractorName);
+        Method factoryMethod = clazz.getDeclaredMethod("getInstance");
+        return (JsonFormInteractor) factoryMethod.invoke(null, null);
+    }
+
+    public static void main(String[] args) throws Exception {
         String formToTranslate = System.getenv("FORM_TO_TRANSLATE");
         printToSystemOut("Injecting placeholders in form at path: " + formToTranslate + " ...\n");
         processForm(formToTranslate);
