@@ -39,7 +39,7 @@
     <string name="creating_repeating_group_message">Création du groupe répeté</string>
     <string name="launching_rdt_capture_message">Lancement du widget de capture RDT</string>
     <string name="repeating_group_max_value_err_msg">Le nombre de groupes répétés ne peut êtres supérieur à %1$d</string>
-    <string name="repeating_group_min_value_err_msg">Le nombre de groupes répétés doit être un nombre supérieur à 0</string>
+    <string name="repeating_group_min_value_err_msg">Le nombre de groupes répétés doit être un nombre supérieur à %1$d</string>
     <string name="repeating_group_number_format_err_msg">Le nombre de groupes répétés doit être un entier</string>
     <string name="enter_number_of_repeating_group_items">Entrer le nombre de groupes répétés</string>
     <string name="repeating_group_item">Item</string>

@@ -644,6 +644,14 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         }
     }
 
+    public OnFieldsInvalid getOnFieldsInvalidCallback() {
+        return onFieldsInvalid;
+    }
+
+    public void setOnFieldsInvalid(OnFieldsInvalid onFieldsInvalid) {
+        this.onFieldsInvalid = onFieldsInvalid;
+    }
+
     /**
      * Getter for native form properties
      */

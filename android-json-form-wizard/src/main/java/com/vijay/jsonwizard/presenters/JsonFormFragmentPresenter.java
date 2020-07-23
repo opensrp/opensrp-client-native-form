@@ -291,7 +291,7 @@ public class JsonFormFragmentPresenter extends
             }
 
         }
-        formFragment.onFieldsInvalid.passInvalidFields(invalidFields);
+        formFragment.getOnFieldsInvalidCallback().passInvalidFields(invalidFields);
     }
 
     /**

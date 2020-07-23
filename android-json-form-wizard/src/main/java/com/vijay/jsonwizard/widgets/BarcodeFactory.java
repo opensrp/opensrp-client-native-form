@@ -229,7 +229,7 @@ public class BarcodeFactory implements FormWidgetFactory {
         }
     }
 
-    private void launchBarcodeScanner(Activity activity, MaterialEditText editText, String barcodeType) {
+    protected void launchBarcodeScanner(Activity activity, MaterialEditText editText, String barcodeType) {
         InputMethodManager inputManager = (InputMethodManager) activity.getSystemService(
                 Context.INPUT_METHOD_SERVICE);
         inputManager.hideSoftInputFromWindow(editText.getWindowToken(), HIDE_NOT_ALWAYS);

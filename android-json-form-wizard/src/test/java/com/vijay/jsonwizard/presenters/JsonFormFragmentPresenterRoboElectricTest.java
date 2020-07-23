@@ -64,6 +64,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.timeout;
@@ -223,6 +224,7 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
     @Test
     public void testOnNextClickReturnsFalseIfFormIsInvalid() {
         Whitebox.setInternalState(presenter, "mStepDetails", mStepDetails);
+        doReturn(onFieldsInvalid).when(formFragment).getOnFieldsInvalidCallback();
         assertFalse(presenter.onNextClick(null));
     }
 

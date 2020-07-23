@@ -1,23 +1,33 @@
 package com.vijay.jsonwizard.utils;
 
+import android.content.Context;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+
 import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.ExpansionPanelItemModel;
 import com.vijay.jsonwizard.domain.ExpansionPanelValuesModel;
+import com.vijay.jsonwizard.interfaces.OnFormFetchedCallback;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jeasy.rules.api.Facts;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RuntimeEnvironment;
+import org.smartregister.client.utils.contract.ClientFormContract;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import static junit.framework.TestCase.assertEquals;
@@ -322,5 +332,319 @@ public class FormUtilsTest extends BaseTest {
         assertEquals(jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY), "openmrs_entity");
         assertEquals(jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID), "1107AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         assertEquals(jsonObject.getString(JsonFormConstants.KEY), "user_spinner");
+    }
+
+
+    @Test
+    public void getFormJsonFromRepositoryOrAssets() throws Exception {
+        formUtils = new FormUtils();
+
+        Resources resources = Mockito.mock(Resources.class);
+        Configuration configuration = Mockito.mock(Configuration.class);
+        ClientFormContract.Dao clientFormRepository = Mockito.mock(ClientFormContract.Dao.class);
+        ClientFormContract.Model clientForm = new TestClientForm();
+        clientForm.setJson("{\"form\":\"Sick Child Referral\",\"count\":\"1\",\"encounter_type\":\" \",\"entity_id\":\"\",\"relational_id\":\"\",\"rules_file\":\"rule/general_neat_referral_form_rules.yml\",\"metadata\":{\"start\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"start\",\"openmrs_entity_id\":\"163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"end\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"end\",\"openmrs_entity_id\":\"163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"today\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"encounter\",\"openmrs_entity_id\":\"encounter_date\"},\"deviceid\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"deviceid\",\"openmrs_entity_id\":\"163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"subscriberid\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"subscriberid\",\"openmrs_entity_id\":\"163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"simserial\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"simserial\",\"openmrs_entity_id\":\"163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"phonenumber\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"phonenumber\",\"openmrs_entity_id\":\"163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"encounter_location\":\"\",\"look_up\":{\"entity_id\":\"\",\"value\":\"\"}},\"steps\":[{\"title\":\"Sick child form\",\"fields\":[{\"name\":\"chw_referral_service\",\"type\":\"invisible\",\"properties\":{\"text\":\"Choose referral service\"},\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"09978\",\"openmrs_entity_parent\":\"\"},\"options\":[],\"required_status\":\"yes:Please specify referral service\"},{\"name\":\"problem\",\"type\":\"multi_choice_checkbox\",\"properties\":{\"text\":\"Pick condition/problem associated with the client.\"},\"meta_data\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163182AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"options\":[{\"name\":\"Fast_breathing_and_difficulty_with_breathing\",\"text\":\"Fast breathing and difficulty with breathing\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"142373AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Umbilical_cord_navel_bleeding\",\"text\":\"Umbilical cord/navel bleeding\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"123844AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Excessive_crying\",\"text\":\"Excessive crying\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"140944AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Convulsions\",\"text\":\"Convulsions\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"113054AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Unable_to_breastfeed_or_swallow\",\"text\":\"Unable to breastfeed or swallow\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"159861AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Neck_stiffness\",\"text\":\"Neck stiffness\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"112721AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Fever\",\"text\":\"Fever\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"140238AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Bloating\",\"text\":\"Bloating\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"147132AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Redness_around_the_umbilical_cord_foul_smelling_discharge_from_the_umbilical_cord\",\"text\":\"Redness around the umbilical cord, foul-smelling discharge from the umbilical cord\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"132407AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Bacterial_conjunctivitis\",\"text\":\"Bacterial conjunctivitis\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"148026AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Severe_anaemia\",\"text\":\"Severe anaemia\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"162044AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Severe_abdominal_pain\",\"text\":\"Severe abdominal pain\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165271AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Pale_or_jaundiced\",\"text\":\"Pale or jaundiced\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"136443AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Cyanosis_blueness_of_lips\",\"text\":\"Cyanosis (blueness of lips)\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"143050AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Skin_rash_pustules\",\"text\":\"Skin rash / pustules\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"512AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Diarrhea\",\"text\":\"Diarrhea\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"142412AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Vomiting\",\"text\":\"Vomiting\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"122983AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Disabilities\",\"text\":\"Disabilities\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"162558AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Premature_baby\",\"text\":\"Premature baby\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"159908AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Care_of_HIV_exposed_infant\",\"text\":\"Care of HIV-exposed infant\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"164818AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Immunisation\",\"text\":\"Immunisation\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"1914AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Other_symptom\",\"text\":\"Other symptom\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}}],\"required_status\":\"yes:Please specify client's problems\"},{\"name\":\"problem_other\",\"type\":\"text_input_edit_text\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"160632AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"163182AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"properties\":{\"hint\":\"Other symptoms\",\"type\":\"name\"},\"required_status\":\"true:Please specify other symptoms\",\"subjects\":\"problem:map\"},{\"name\":\"service_before_referral\",\"meta_data\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"164378AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"type\":\"multi_choice_checkbox\",\"properties\":{\"text\":\"Pre-referral management given.\"},\"options\":[{\"name\":\"ORS\",\"text\":\"ORS\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"351AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Panadol\",\"text\":\"Panadol\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"70116AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Other_treatment\",\"text\":\"Other treatment\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"None\",\"text\":\"None\",\"is_exclusive\":true,\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"164369AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}}],\"required_status\":\"Pre-referral management field is required\"},{\"name\":\"service_before_referral_other\",\"type\":\"text_input_edit_text\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"160632AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"164378AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"properties\":{\"hint\":\"Other Treatment\",\"type\":\"name\"},\"required_status\":\"true:Please specify other treatment given\",\"subjects\":\"service_before_referral:map\"},{\"name\":\"chw_referral_hf\",\"type\":\"spinner\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"chw_referral_hf\",\"openmrs_entity_parent\":\"\"},\"properties\":{\"text\":\"Choose referral facility\",\"searchable\":\"Choose referral facility\"},\"options\":[],\"required_status\":\"yes:Please specify referral facility\"},{\"name\":\"referral_appointment_date\",\"type\":\"datetime_picker\",\"properties\":{\"hint\":\"Please select the appointment date\",\"type\":\"date_picker\",\"display_format\":\"dd/MM/yyyy\"},\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"referral_appointment_date\",\"openmrs_entity_parent\":\"\"},\"required_status\":\"true:Please specify the appointment date\"},{\"name\":\"referral_date\",\"meta_data\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163181AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"type\":\"hidden\"},{\"name\":\"referral_time\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"referral_time\",\"type\":\"hidden\"},{\"name\":\"referral_type\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"referral_type\",\"type\":\"hidden\"},{\"name\":\"referral_status\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"referral_status\",\"type\":\"hidden\"}]}]}");
+
+        configuration.locale = new Locale("en");
+
+        Context context = Mockito.spy(RuntimeEnvironment.application);
+
+        Mockito.when(context.getResources()).thenReturn(resources);
+        Mockito.when(resources.getConfiguration()).thenReturn(configuration);
+        Mockito.when(clientFormRepository.getActiveClientFormByIdentifier("sick_child_referral_form")).thenReturn(clientForm);
+
+        JSONObject form = formUtils.getFormJsonFromRepositoryOrAssets(context, clientFormRepository, "sick_child_referral_form");
+
+        Mockito.verify(clientFormRepository).getActiveClientFormByIdentifier("sick_child_referral_form");
+        Assert.assertNotNull(form);
+    }
+
+    @Test
+    public void extractFormNameWithoutExtensionShouldReturnNameWithoutExtension() {
+        String expectedAns = "registration_form";
+
+        Assert.assertEquals(expectedAns, formUtils.extractFormNameWithoutExtension("registration_form.json"));
+    }
+
+    @Test
+    public void getRulesFromRepositoryShouldCallRepositoryQueryingClientForm() {
+        String rulesFileIdentifier = "registration_calculation.yml";
+        Context context = Mockito.spy(RuntimeEnvironment.application);
+        ClientFormContract.Model clientForm = new TestClientForm();
+
+        clientForm.setJson("");
+        ClientFormContract.Dao clientFormRepository = Mockito.mock(ClientFormContract.Dao.class);
+        Mockito.doReturn(clientForm).when(clientFormRepository).getActiveClientFormByIdentifier(Mockito.eq(rulesFileIdentifier));
+
+        Assert.assertNotNull(formUtils.getRulesFromRepository(context, clientFormRepository, rulesFileIdentifier));
+
+        Mockito.verify(clientFormRepository).getActiveClientFormByIdentifier(Mockito.eq(rulesFileIdentifier));
+    }
+
+    @Test
+    public void getSubFormFromRepository() throws JSONException {
+        Context context = Mockito.spy(RuntimeEnvironment.application);
+        String subFormIdentifier = "some_tests";
+        ClientFormContract.Model clientForm = new TestClientForm();
+        clientForm.setJson("{}");
+        ClientFormContract.Dao clientFormRepository = Mockito.mock(ClientFormContract.Dao.class);
+        Mockito.doReturn(clientForm).when(clientFormRepository).getActiveClientFormByIdentifier(Mockito.eq("json.form/sub_form/" + subFormIdentifier));
+
+        JSONObject jsonObject = formUtils.getSubFormJsonFromRepository(context, clientFormRepository, subFormIdentifier, null, false);
+
+        Mockito.verify(clientFormRepository).getActiveClientFormByIdentifier(Mockito.eq(subFormIdentifier));
+        Mockito.verify(clientFormRepository).getActiveClientFormByIdentifier(Mockito.eq(subFormIdentifier + ".json"));
+        Mockito.verify(clientFormRepository).getActiveClientFormByIdentifier(Mockito.eq("json.form/sub_form/" + subFormIdentifier));
+
+        Assert.assertEquals(0, jsonObject.length());
+    }
+
+    @Test
+    public void injectFormStatusShouldAddClientFormDetailsToJsonObject() throws JSONException {
+        //TODO: Fix the below line
+        //ClientFormContract.Model clientForm = new TestClientForm();
+        TestClientForm clientForm = new TestClientForm();
+        clientForm.setId(3);
+        clientForm.setNew(true);
+        clientForm.setVersion("0.0.1");
+        JSONObject jsonObject = new JSONObject();
+        formUtils.injectFormStatus(jsonObject, clientForm);
+
+        Assert.assertEquals(3, jsonObject.getInt(JsonFormConstants.Properties.CLIENT_FORM_ID));
+        Assert.assertTrue(jsonObject.getBoolean(JsonFormConstants.Properties.IS_NEW));
+        Assert.assertEquals("0.0.1", jsonObject.getString(JsonFormConstants.Properties.FORM_VERSION));
+    }
+
+    @Test
+    public void getClientFormIdShouldReturnClientFormIdPropertyOnJSONObject() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(JsonFormConstants.Properties.CLIENT_FORM_ID, 3);
+        Assert.assertEquals(3, FormUtils.getClientFormId(jsonObject));
+    }
+
+    @Test
+    public void getClientFormIdShouldReturn0WhenJSONObjectDoesNotHaveClientFormId() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        Assert.assertEquals(0, FormUtils.getClientFormId(jsonObject));
+    }
+
+    @Test
+    public void isFormNewShouldReturnFalseWhenJSONObjectDoesNotHaveIsNewProperty() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        Assert.assertFalse(FormUtils.isFormNew(jsonObject));
+    }
+
+    @Test
+    public void isFormNewShouldReturnTrueWhenJSONObjectIsNewPropertyIsTrue() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(JsonFormConstants.Properties.IS_NEW, true);
+        Assert.assertTrue(FormUtils.isFormNew(jsonObject));
+    }
+
+    @Test
+    public void getFormJsonShouldReturnCorrectFormWithSameLength() {
+        Assert.assertEquals(10011, formUtils.getFormJson(RuntimeEnvironment.application, "test_basic_form").toString().length());
+    }
+
+    @Test(expected = JSONException.class)
+    public void getFormJsonFromRepositoryOrAssetsShouldThrowExceptionWhenJsonIsSyntacticallyIncorrect() throws JSONException {
+        String formIdentity = "reg.json";
+        ClientFormContract.Dao clientFormRepository = Mockito.mock(ClientFormContract.Dao.class);
+
+        TestClientForm clientForm = new TestClientForm();
+        clientForm.setJson("{\"sonic");
+
+        Mockito.doReturn(clientForm).when(clientFormRepository).getActiveClientFormByIdentifier(formIdentity);
+
+        formUtils.getFormJsonFromRepositoryOrAssets(RuntimeEnvironment.application, clientFormRepository, formIdentity);
+    }
+
+    @Test
+    public void getFormJsonFromRepositoryOrAssetsShouldReturnCorrectJsonFromDb() throws JSONException {
+        String formIdentity = "reg.json";
+        String jsonText = "{\"count\":\"3\",\"encounter_type\":\"Test\",\"entity_id\":\"\",\"relational_id\":\"\",\"validate_on_submit\":true}";
+        ClientFormContract.Dao clientFormRepository = Mockito.mock(ClientFormContract.Dao.class);
+
+        TestClientForm clientForm = new TestClientForm();
+        clientForm.setJson(jsonText);
+
+        Mockito.doReturn(clientForm).when(clientFormRepository).getActiveClientFormByIdentifier(formIdentity);
+
+        JSONObject retrievedJson = formUtils.getFormJsonFromRepositoryOrAssets(RuntimeEnvironment.application, clientFormRepository, formIdentity);
+        Assert.assertEquals(jsonText, retrievedJson.toString());
+        Mockito.verify(clientFormRepository).getActiveClientFormByIdentifier(formIdentity);
+    }
+
+
+    @Test
+    public void getFormJsonFromRepositoryOrAssetsShouldCallCallbackWithCorrectClientFormFromDb() throws JSONException {
+        String formIdentity = "reg.json";
+        String jsonText = "{\"count\":\"3\",\"encounter_type\":\"Test\",\"entity_id\":\"\",\"relational_id\":\"\",\"validate_on_submit\":true}";
+        ClientFormContract.Dao clientFormRepository = Mockito.mock(ClientFormContract.Dao.class);
+
+        TestClientForm clientForm = new TestClientForm();
+        clientForm.setJson(jsonText);
+
+        OnFormFetchedCallback<JSONObject> onFormFetchedCallback = (OnFormFetchedCallback<JSONObject>) Mockito.mock(OnFormFetchedCallback.class);
+
+        Mockito.doReturn(clientForm).when(clientFormRepository).getActiveClientFormByIdentifier(formIdentity);
+
+        formUtils.getFormJsonFromRepositoryOrAssets(RuntimeEnvironment.application, clientFormRepository, formIdentity, onFormFetchedCallback);
+        Mockito.verify(clientFormRepository).getActiveClientFormByIdentifier(formIdentity);
+
+        ArgumentCaptor<JSONObject> jsonObjectArgumentCaptor = ArgumentCaptor.forClass(JSONObject.class);
+        Mockito.verify(onFormFetchedCallback).onFormFetched(jsonObjectArgumentCaptor.capture());
+
+        Assert.assertEquals(jsonText, jsonObjectArgumentCaptor.getValue().toString());
+    }
+
+    @Test
+    public void getFormJsonFromRepositoryOrAssetsShouldRetrieveFormFromAssetsWhenNotAvailableOnRepository() throws JSONException {
+        formUtils = Mockito.spy(formUtils);
+
+        String formIdentity = "reg.json";
+        String jsonText = "{\"count\":\"3\",\"encounter_type\":\"Test\",\"entity_id\":\"\",\"relational_id\":\"\",\"validate_on_submit\":true}";
+        ClientFormContract.Dao clientFormRepository = Mockito.mock(ClientFormContract.Dao.class);
+
+        TestClientForm clientForm = new TestClientForm();
+        clientForm.setJson(jsonText);
+
+        OnFormFetchedCallback<JSONObject> onFormFetchedCallback = (OnFormFetchedCallback<JSONObject>) Mockito.mock(OnFormFetchedCallback.class);
+
+        Mockito.doReturn(new JSONObject(jsonText)).when(formUtils).getFormJson(RuntimeEnvironment.application, formIdentity);
+
+        formUtils.getFormJsonFromRepositoryOrAssets(RuntimeEnvironment.application, clientFormRepository, formIdentity, onFormFetchedCallback);
+        Mockito.verify(clientFormRepository).getActiveClientFormByIdentifier(formIdentity);
+        Mockito.verify(formUtils).getFormJson(RuntimeEnvironment.application, formIdentity);
+
+        ArgumentCaptor<JSONObject> jsonObjectArgumentCaptor = ArgumentCaptor.forClass(JSONObject.class);
+        Mockito.verify(onFormFetchedCallback).onFormFetched(jsonObjectArgumentCaptor.capture());
+
+        Assert.assertEquals(jsonText, jsonObjectArgumentCaptor.getValue().toString());
+    }
+
+
+    @Test
+    public void getFormJsonFromRepositoryOrAssetsShouldRetrieveFormFromAssetsAndReturnCorrectJsonWhenNotAvailableOnRepository() throws JSONException {
+        formUtils = Mockito.spy(formUtils);
+
+        String formIdentity = "reg.json";
+        String jsonText = "{\"count\":\"3\",\"encounter_type\":\"Test\",\"entity_id\":\"\",\"relational_id\":\"\",\"validate_on_submit\":true}";
+        ClientFormContract.Dao clientFormRepository = Mockito.mock(ClientFormContract.Dao.class);
+
+        TestClientForm clientForm = new TestClientForm();
+        clientForm.setJson(jsonText);
+
+        Mockito.doReturn(new JSONObject(jsonText)).when(formUtils).getFormJson(RuntimeEnvironment.application, formIdentity);
+
+        JSONObject jsonObject = formUtils.getFormJsonFromRepositoryOrAssets(RuntimeEnvironment.application, clientFormRepository, formIdentity);
+
+        Mockito.verify(clientFormRepository).getActiveClientFormByIdentifier(formIdentity);
+        Mockito.verify(formUtils).getFormJson(RuntimeEnvironment.application, formIdentity);
+        Assert.assertEquals(jsonText, jsonObject.toString());
+    }
+
+
+    @Test
+    public void getFormJsonFromRepositoryOrAssetsShouldCallHandleJsonFormOrRulesErrorWhenCallbackIsProvidedAndJsonIsIncorrect() throws JSONException {
+        formUtils = Mockito.spy(formUtils);
+
+        String formIdentity = "reg.json";
+        String jsonText = "{\"count\":\"3\"";
+        ClientFormContract.Dao clientFormRepository = Mockito.mock(ClientFormContract.Dao.class);
+
+        TestClientForm clientForm = new TestClientForm();
+        clientForm.setJson(jsonText);
+
+        OnFormFetchedCallback<JSONObject> onFormFetchedCallback = (OnFormFetchedCallback<JSONObject>) Mockito.mock(OnFormFetchedCallback.class);
+
+        Mockito.doReturn(clientForm).when(clientFormRepository).getActiveClientFormByIdentifier(formIdentity);
+
+        formUtils.getFormJsonFromRepositoryOrAssets(RuntimeEnvironment.application, clientFormRepository, formIdentity, onFormFetchedCallback);
+
+        Mockito.verify(clientFormRepository, Mockito.times(2)).getActiveClientFormByIdentifier(formIdentity);
+        Mockito.verify(formUtils).getFormJson(RuntimeEnvironment.application, formIdentity);
+        Mockito.verify(formUtils).handleJsonFormOrRulesError(Mockito.eq(RuntimeEnvironment.application), Mockito.eq(clientFormRepository), Mockito.eq(false), Mockito.eq(formIdentity), Mockito.any(OnFormFetchedCallback.class));
+
+    }
+
+    @Test
+    public void testCreateSecondaryValueObject() throws JSONException {
+        formUtils = Mockito.spy(formUtils);
+        String key = "test_key";
+        String type = "check_box";
+        JSONArray jsonArray = new JSONArray("[\n" +
+                "                  \"3:Abnormal\"\n" +
+                "                ]");
+        JSONObject openMrsEntities = new JSONObject("{\"openmrs_entity_parent\": \"test\",\n" +
+                "        \"openmrs_entity\": \"test_1\",\n" +
+                "        \"openmrs_entity_id\": \"test_2\"\n" +
+                "      }");
+        JSONArray valueOpenmrsEntities = new JSONArray("        [\n" +
+                "          {\"openmrs_entity_parent\": \"test\",\n" +
+                "            \"openmrs_entity\": \"test_1\",\n" +
+                "            \"openmrs_entity_id\": \"test_2\"\n" +
+                "          }\n" +
+                "        ]");
+
+        JSONObject jsonObject = formUtils.createSecondaryValueObject(key, type, jsonArray, openMrsEntities, valueOpenmrsEntities);
+        Assert.assertNotNull(jsonObject);
+        Assert.assertEquals("test_key", jsonObject.getString("key"));
+        Assert.assertTrue(jsonObject.has("value_openmrs_attributes"));
+        Assert.assertTrue(jsonObject.has("openmrs_attributes"));
+    }
+
+    @Test
+    public void testGetSecondaryValuesWithTypeExpansionPanel() throws JSONException {
+        formUtils = Mockito.spy(formUtils);
+        String type = JsonFormConstants.EXPANSION_PANEL;
+        String expansionPanelString = "{\"key\":\"resTwo3\",\"text\":\"Abnormal\",\"type\":\"expansion_panel\",\"content_form\":\"child_enrollment_two_sub_form\",\"content_form_location\":\"\",\"value\":[{\"key\":\"respiratory_exam_radio_button\",\"type\":\"native_radio\",\"values\":[\"3:Abnormal\"]},{\"key\":\"respiratory_exam_abnormal_other\",\"type\":\"edit_text\",\"values\":[\"other:Respiratory exam answer two\"]}]}";
+        JSONObject jsonObject = new JSONObject(expansionPanelString);
+        JSONArray array = formUtils.getSecondaryValues(jsonObject, type);
+        Assert.assertNotNull(array);
+        Assert.assertTrue(array.length() > 0);
+        Assert.assertEquals(2, array.length());
+    }
+
+    @Test
+    public void testGetSecondaryValuesWithTypeRadioButton() throws JSONException {
+        formUtils = Mockito.spy(formUtils);
+        String type = JsonFormConstants.NATIVE_RADIO_BUTTON;
+        String expansionPanelString = "{\"key\":\"resTwo3\",\"text\":\"Abnormal\",\"specify_info\":\"Specify\",\"specify_info_color\":\"#b5b5b5\",\"specify_widget\":\"check_box\",\"content_form\":\"child_enrollment_two_sub_form\",\"content_form_location\":\"\",\"secondary_suffix\":\"bpm\",\"secondary_value\":[{\"key\":\"respiratory_exam_radio_button\",\"type\":\"native_radio\",\"values\":[\"3:Abnormal\"]},{\"key\":\"respiratory_exam_abnormal_other\",\"type\":\"edit_text\",\"values\":[\"other:Respiratory exam answer two\"]}]}";
+        JSONObject jsonObject = new JSONObject(expansionPanelString);
+        JSONArray array = formUtils.getSecondaryValues(jsonObject, type);
+        Assert.assertNotNull(array);
+        Assert.assertTrue(array.length() > 0);
+        Assert.assertEquals(2, array.length());
+    }
+
+    @Test
+    public void testGetCheckBoxResultsWithIsRuleCheckTrue() throws JSONException {
+        formUtils = Mockito.spy(formUtils);
+        String checkBoxString = "{\"key\":\"user_check_box\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"openmrs_data_type\":\"select one\",\"type\":\"check_box\",\"label\":\"Do want to select any checkbox?\",\"label_text_style\":\"bold\",\"options\":[{\"key\":\"None\",\"text\":\"None\",\"value\":true,\"openmrs_choice_id\":\"\"},{\"key\":\"yes\",\"text\":\"Yes\",\"value\":true,\"openmrs_choice_id\":\"\"},{\"key\":\"no\",\"text\":\"No\",\"value\":true,\"openmrs_choice_id\":\"\"},{\"key\":\"other\",\"text\":\"Other\",\"value\":true,\"openmrs_choice_id\":\"\"}],\"v_required\":{\"value\":\"false\"},\"value\":\"[yes]\",\"is-rule-check\":true}";
+        JSONObject jsonObject = new JSONObject(checkBoxString);
+        Facts facts = formUtils.getCheckBoxResults(jsonObject);
+        Assert.assertNotNull(facts);
+        Assert.assertEquals(4, facts.asMap().size());
+    }
+
+    @Test
+    public void testGetCheckBoxResultsWithIsRuleCheckFalse() throws JSONException {
+        formUtils = Mockito.spy(formUtils);
+        String checkBoxString = "{\"key\":\"user_check_box\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"openmrs_data_type\":\"select one\",\"type\":\"check_box\",\"label\":\"Do want to select any checkbox?\",\"label_text_style\":\"bold\",\"options\":[{\"key\":\"None\",\"text\":\"None\",\"value\":true,\"openmrs_choice_id\":\"\"},{\"key\":\"yes\",\"text\":\"Yes\",\"value\":true,\"openmrs_choice_id\":\"\"},{\"key\":\"no\",\"text\":\"No\",\"value\":true,\"openmrs_choice_id\":\"\"},{\"key\":\"other\",\"text\":\"Other\",\"value\":true,\"openmrs_choice_id\":\"\"}],\"v_required\":{\"value\":\"false\"},\"value\":\"[yes]\",\"is-rule-check\":false}";
+        JSONObject jsonObject = new JSONObject(checkBoxString);
+        Facts facts = formUtils.getCheckBoxResults(jsonObject);
+        Assert.assertNotNull(facts);
+        Assert.assertEquals(5, facts.asMap().size());
+    }
+
+    @Test
+    public void testGetCheckBoxResultsWithNoIsRuleCheck() throws JSONException {
+        formUtils = Mockito.spy(formUtils);
+        String checkBoxString = "{\"key\":\"user_check_box\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"openmrs_data_type\":\"select one\",\"type\":\"check_box\",\"label\":\"Do want to select any checkbox?\",\"label_text_style\":\"bold\",\"options\":[{\"key\":\"None\",\"text\":\"None\",\"value\":true,\"openmrs_choice_id\":\"\"},{\"key\":\"yes\",\"text\":\"Yes\",\"value\":true,\"openmrs_choice_id\":\"\"},{\"key\":\"no\",\"text\":\"No\",\"value\":true,\"openmrs_choice_id\":\"\"},{\"key\":\"other\",\"text\":\"Other\",\"value\":true,\"openmrs_choice_id\":\"\"}],\"v_required\":{\"value\":\"false\"},\"value\":\"[yes]\"}";
+        JSONObject jsonObject = new JSONObject(checkBoxString);
+        Facts facts = formUtils.getCheckBoxResults(jsonObject);
+        Assert.assertNotNull(facts);
+        Assert.assertEquals(4, facts.asMap().size());
     }
 }
