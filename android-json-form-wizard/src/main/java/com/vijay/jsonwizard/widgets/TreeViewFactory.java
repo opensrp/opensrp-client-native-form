@@ -82,8 +82,9 @@ public class TreeViewFactory implements FormWidgetFactory {
         return attachJson(stepName, context, formFragment, jsonObject, false);
     }
 
-    private List<View> attachJson(final String stepName, final Context context, final JsonFormFragment formFragment, final JSONObject
-            jsonObject, boolean popup) throws JSONException {
+    private List<View> attachJson(final String stepName, final Context context,
+                                  final JsonFormFragment formFragment, final JSONObject jsonObject,
+                                  boolean popup) throws JSONException {
         List<View> views = new ArrayList<>(1);
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
         String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);

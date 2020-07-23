@@ -1890,7 +1890,8 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         return Utils.getConditionKeys(condition);
     }
 
-    private void updateUiByCalculation(@NonNull String calculation, final View view) {
+    private void updateUiByCalculation(@NonNull String calculationValue, final View view) {
+        String calculation = calculationValue;
         if (view instanceof CheckBox) {
             //For now were only handling checkbox titles only
             TextView checkboxLabel = ((View) view.getParent().getParent()).findViewById(R.id.label_text);

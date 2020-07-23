@@ -302,12 +302,10 @@ public class JsonWizardFormFragment extends JsonFormFragment {
         if (skipBlankSteps()) {
             JSONObject formStep = getJsonApi().getmJSONObject().optJSONObject(step);
             String next = formStep.optString(JsonFormConstants.NEXT, "");
-            if (StringUtils.isNotEmpty(next)) {
-                if (!getJsonApi().isNextStepRelevant() && !nextStepHasNoSkipLogic()) {
-                    markStepAsSkipped(formStep);
-                    getJsonApi().setNextStep(next);
-                    next();
-                }
+            if (StringUtils.isNotEmpty(next) && (!getJsonApi().isNextStepRelevant() && !nextStepHasNoSkipLogic())) {
+                markStepAsSkipped(formStep);
+                getJsonApi().setNextStep(next);
+                next();
             }
         }
     }
@@ -405,9 +403,9 @@ public class JsonWizardFormFragment extends JsonFormFragment {
     }
 
 
-    ////////////////////////////////////////////////////////////////
-    // Inner classes
-    ////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+// Inner classes
+////////////////////////////////////////////////////////////////
 
     protected class BottomNavigationListener implements View.OnClickListener {
         @Override
@@ -435,6 +433,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
                 }
             }
         }
+
     }
 
     /***
