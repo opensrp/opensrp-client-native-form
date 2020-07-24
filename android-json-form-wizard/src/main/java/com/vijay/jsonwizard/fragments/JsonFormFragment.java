@@ -205,12 +205,16 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     @Override
     public void onAttach(Activity activity) {
-        setmJsonApi((JsonApi) activity);
+        if (activity instanceof JsonApi) {
+            setmJsonApi((JsonApi) activity);
+        }
+
         super.onAttach(activity);
-        try {
+
+        if (getActivity() instanceof OnFieldsInvalid) {
             onFieldsInvalid = (OnFieldsInvalid) getActivity();
-        } catch (ClassCastException ex) {
-            throw new ClassCastException("Error retrieving passed invalid fields");
+        } else {
+            Timber.e("Error retrieving passed invalid fields");
         }
     }
 
