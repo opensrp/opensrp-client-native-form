@@ -241,7 +241,7 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         shadowOf(getMainLooper()).idle();
         verify(formFragment, times(6)).writeValue(anyString(), anyString(), anyString(), anyString(), anyString(),
                 anyString(), anyBoolean());
-        verify(onFieldsInvalid).passInvalidFields(presenter.getInvalidFields());
+        verify(onFieldsInvalid, times(9)).passInvalidFields(presenter.getInvalidFields());
     }
 
     @Test
@@ -255,13 +255,13 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         setTextValue("step1:user_last_name", "Doe");
         setTextValue("step1:user_first_name", "John");
         setTextValue("step1:user_age", "21");
-        ((AppCompatSpinner) formFragment.getJsonApi().getFormDataView("step1:user_spinner")).setSelection(1,false);
+        ((AppCompatSpinner) formFragment.getJsonApi().getFormDataView("step1:user_spinner")).setSelection(1, false);
         presenter.validateAndWriteValues();
         shadowOf(getMainLooper()).idle();
         assertEquals(0, presenter.getInvalidFields().size());
         verify(formFragment, times(12)).writeValue(anyString(), anyString(), anyString(), anyString(), anyString(),
                 anyString(), anyBoolean());
-        verify(onFieldsInvalid, times(2)).passInvalidFields(presenter.getInvalidFields());
+        verify(onFieldsInvalid, times(18)).passInvalidFields(presenter.getInvalidFields());
     }
 
     private void setTextValue(String address, String value) {
@@ -299,7 +299,7 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         setTextValue("step1:user_last_name", "Doe");
         setTextValue("step1:user_first_name", "John");
         setTextValue("step1:user_age", "21");
-        ((AppCompatSpinner) formFragment.getJsonApi().getFormDataView("step1:user_spinner")).setSelection(1,false);
+        ((AppCompatSpinner) formFragment.getJsonApi().getFormDataView("step1:user_spinner")).setSelection(1, false);
         presenter.onSaveClick(formFragment.getMainView());
         shadowOf(getMainLooper()).idle();
         assertEquals(0, presenter.getInvalidFields().size());
