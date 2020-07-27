@@ -26,43 +26,39 @@ public class WidgetMetadata {
         return relevance;
     }
 
-    public WidgetMetadata setOpenMrsEntityParent(String openMrsEntityParent) {
+    public void setOpenMrsEntityParent(String openMrsEntityParent) {
         this.openMrsEntityParent = openMrsEntityParent;
-        return this;
     }
 
-    public WidgetMetadata setOpenMrsEntity(String openMrsEntity) {
+    public void setOpenMrsEntity(String openMrsEntity) {
         this.openMrsEntity = openMrsEntity;
-        return this;
     }
 
-    public WidgetMetadata setOpenMrsEntityId(String openMrsEntityId) {
+    public void setOpenMrsEntityId(String openMrsEntityId) {
         this.openMrsEntityId = openMrsEntityId;
-        return this;
     }
 
-    public WidgetMetadata setRelevance(String relevance) {
+    public void setRelevance(String relevance) {
         this.relevance = relevance;
-        return this;
     }
 
     public WidgetMetadata withOpenMrsEntityParent(String openMrsEntityParent) {
-        this.openMrsEntityParent = openMrsEntityParent;
+        setOpenMrsEntityParent(openMrsEntityParent);
         return this;
     }
 
     public WidgetMetadata withOpenMrsEntity(String openMrsEntity) {
-        this.openMrsEntity = openMrsEntity;
+        setOpenMrsEntity(openMrsEntity);
         return this;
     }
 
     public WidgetMetadata withOpenMrsEntityId(String openMrsEntityId) {
-        this.openMrsEntityId = openMrsEntityId;
+        setOpenMrsEntityId(openMrsEntityId);
         return this;
     }
 
     public WidgetMetadata withRelevance(String relevance) {
-        this.relevance = relevance;
+        setRelevance(relevance);
         return this;
     }
 }
