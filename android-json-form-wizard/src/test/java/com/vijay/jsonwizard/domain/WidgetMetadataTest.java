@@ -10,7 +10,7 @@ import static org.junit.Assert.assertEquals;
 public class WidgetMetadataTest {
 
     @Test
-    public void testWidgetMetadataConstructor_shouldCorrectlyUpdateFields() {
+    public void testWidgetMetadataConstructorShouldCorrectlyUpdateFields() {
         WidgetMetadata widgetMetadata = new WidgetMetadata();
         String openmrsEntity = "openmrs_entity";
         String openmrsEntityId = "openmrs_entity_id";

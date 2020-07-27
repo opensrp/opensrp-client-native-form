@@ -17,7 +17,7 @@ import static org.mockito.Mockito.mock;
 public class WidgetArgsTest {
 
     @Test
-    public void testWidgetArgsConstructor_shouldCorrectlySetValues() {
+    public void testWidgetArgsConstructorShouldCorrectlySetValues() {
         String stepName = "step_name";
         Context context = mock(Context.class);
         JsonFormFragment formFragment = mock(JsonFormFragment.class);
