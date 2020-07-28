@@ -1,6 +1,9 @@
 package com.vijay.jsonwizard.customviews;
 
+import android.view.LayoutInflater;
+
 import com.vijay.jsonwizard.BaseTest;
+import com.vijay.jsonwizard.R;
 
 import org.junit.Test;
 import org.robolectric.RuntimeEnvironment;
@@ -15,7 +18,8 @@ public class ToasterLinearLayoutTest extends BaseTest {
 
     @Test
     public void testLinearLayoutInitializationShouldReturnNonNullLayout() {
-        ToasterLinearLayout toasterLinearLayout = new ToasterLinearLayout(RuntimeEnvironment.application);
+        ToasterLinearLayout toasterLinearLayout = (ToasterLinearLayout) LayoutInflater.from(RuntimeEnvironment.application)
+                .inflate(R.layout.native_form_toaster_notes, null);
         assertNotNull(toasterLinearLayout);
         toasterLinearLayout.setText("test");
         assertEquals("test", toasterLinearLayout.getText());
