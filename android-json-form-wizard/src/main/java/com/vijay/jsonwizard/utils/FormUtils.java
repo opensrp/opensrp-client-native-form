@@ -77,6 +77,7 @@ import java.util.regex.Pattern;
 import timber.log.Timber;
 
 import static com.vijay.jsonwizard.utils.Utils.convertStreamToString;
+import static com.vijay.jsonwizard.utils.Utils.isEmptyJsonArray;
 
 /**
  * Created by vijay on 24-05-2015.
@@ -701,7 +702,7 @@ public class FormUtils {
     }
 
     public static JSONObject getFieldJSONObject(JSONArray jsonArray, String key) {
-        if (jsonArray == null || jsonArray.length() == 0 || key == null) {
+        if (isEmptyJsonArray(jsonArray) || key == null) {
             return null;
         }
 
@@ -716,7 +717,7 @@ public class FormUtils {
     }
 
     public static JSONObject getJSONObject(JSONArray jsonArray, int index) {
-        if (jsonArray == null || jsonArray.length() == 0) {
+        if (isEmptyJsonArray(jsonArray)) {
             return null;
         }
 
@@ -737,7 +738,6 @@ public class FormUtils {
             return jsonObject.has(field) ? jsonObject.getString(field) : null;
         } catch (JSONException e) {
             return null;
-
         }
     }
 
@@ -2098,6 +2098,4 @@ public class FormUtils {
     public static boolean isFormNew(@NonNull JSONObject jsonObject) {
         return jsonObject.optBoolean(JsonFormConstants.Properties.IS_NEW, false);
     }
-
-
 }
