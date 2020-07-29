@@ -56,7 +56,8 @@ public class NativeFormAdapter extends RecyclerView.Adapter<NativeFormAdapter.My
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvFileName, tvEventName;
+        private TextView tvFileName;
+        private TextView tvEventName;
         private View myView;
 
         private MyViewHolder(View view) {

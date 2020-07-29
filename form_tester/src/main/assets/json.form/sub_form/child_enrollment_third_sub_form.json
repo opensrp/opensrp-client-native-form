@@ -68,10 +68,6 @@
       "openmrs_entity_id": "",
       "type": "edit_text",
       "hint": "Specify",
-      "v_regex": {
-        "value": "[A-Za-z\\s\.\-]*",
-        "err": "Please enter valid content"
-      },
       "relevance": {
         "step1:respiratory_exam_abnormal": {
           "ex-checkbox": [

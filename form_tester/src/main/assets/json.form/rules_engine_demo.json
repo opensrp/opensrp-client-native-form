@@ -440,10 +440,6 @@
         "v_required": {
           "value": "true",
           "err": "Please enter the first name"
-        },
-        "v_regex": {
-          "value": "[A-Za-z\\s\.\-]*",
-          "err": "Please enter a valid name"
         }
       },
       {

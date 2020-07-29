@@ -6,7 +6,6 @@ import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.utils.ResourceType;
 import com.vijay.jsonwizard.utils.Utils;
 
-
 import java.util.Set;
 
 public class ConfigForm {
@@ -148,11 +147,9 @@ public class ConfigForm {
 
     public Form toForm(Context context) {
         Form form = new Form();
-        if (getName() != null)
-            form.setName(getName());
 
-        if (getHomeAsUpIndicator() != null)
-            form.setHomeAsUpIndicator(getHomeAsUpIndicator());
+        form.setName(getName());
+        form.setHomeAsUpIndicator(getHomeAsUpIndicator());
 
         if (getNavigationBackground() != null)
             form.setNavigationBackground(Utils.getResourceId(context, getNavigationBackground(), ResourceType.COLOR));
@@ -163,29 +160,14 @@ public class ConfigForm {
         if (getBackIcon() != null)
             form.setBackIcon(Utils.getResourceId(context, getActionBarBackground(), ResourceType.DRAWABLE));
 
-        if (getNextLabel() != null)
-            form.setNextLabel(getNextLabel());
-
-        if (getPreviousLabel() != null)
-            form.setNextLabel(getPreviousLabel());
-
-        if (getSaveLabel() != null)
-            form.setSaveLabel(getSaveLabel());
-
-        if (isWizard() != null)
-            form.setWizard(isWizard());
-
-        if (isHideSaveLabel() != null)
-            form.setHideSaveLabel(isHideSaveLabel());
-
-        if (isHideNextButton() != null)
-            form.setHideNextButton(isHideNextButton());
-
-        if (isHidePreviousButton() != null)
-            form.setHidePreviousButton(isHidePreviousButton());
-
-        if (getHiddenFields() != null)
-            form.setHiddenFields(getHiddenFields());
+        form.setNextLabel(getNextLabel());
+        form.setNextLabel(getPreviousLabel());
+        form.setSaveLabel(getSaveLabel());
+        form.setWizard(isWizard());
+        form.setHideSaveLabel(isHideSaveLabel());
+        form.setHideNextButton(isHideNextButton());
+        form.setHidePreviousButton(isHidePreviousButton());
+        form.setHiddenFields(getHiddenFields());
 
         return form;
     }
