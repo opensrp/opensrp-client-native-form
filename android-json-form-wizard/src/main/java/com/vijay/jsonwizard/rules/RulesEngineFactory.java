@@ -153,7 +153,7 @@ public class RulesEngineFactory implements RuleListener {
                         return null;
                     }
                 } else {
-                    FileSourceFactoryHelper.getFileSource(JsonFormBaseActivity.DATA_SOURCE).getRulesFromFile(context, fileName);
+                    ruleMap.put(fileName,FileSourceFactoryHelper.getFileSource(JsonFormBaseActivity.DATA_SOURCE).getRulesFromFile(context, fileName));
                 }
             }
             return ruleMap.get(fileName);
