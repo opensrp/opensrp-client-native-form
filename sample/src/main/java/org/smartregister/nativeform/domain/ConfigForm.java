@@ -3,9 +3,9 @@ package org.smartregister.nativeform.domain;
 import android.content.Context;
 
 import com.vijay.jsonwizard.domain.Form;
+import com.vijay.jsonwizard.utils.FileReaderUtil;
+import com.vijay.jsonwizard.utils.ResourceType;
 
-import org.smartregister.nativeform.util.FileReaderUtil;
-import org.smartregister.nativeform.util.ResourceType;
 
 import java.util.Set;
 

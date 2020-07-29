@@ -1,4 +1,4 @@
-package org.smartregister.nativeform.util;
+package com.vijay.jsonwizard.utils;
 
 public enum ResourceType {
     DRAWABLE("drawable") , STRING("string"), COLOR("color") ;

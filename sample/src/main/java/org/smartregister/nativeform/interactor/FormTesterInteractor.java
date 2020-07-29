@@ -10,12 +10,12 @@ import android.support.annotation.Nullable;
 import com.google.gson.Gson;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.Form;
+import com.vijay.jsonwizard.utils.FileReaderUtil;
 
 import org.jetbrains.annotations.NotNull;
 import org.smartregister.nativeform.contract.FormTesterContract;
 import org.smartregister.nativeform.domain.ConfigForm;
 import org.smartregister.nativeform.domain.JsonForm;
-import org.smartregister.nativeform.util.FileReaderUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
