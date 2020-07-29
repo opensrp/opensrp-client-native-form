@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.interfaces.FormFileSource;
-import com.vijay.jsonwizard.utils.FileReaderUtil;
+import com.vijay.jsonwizard.utils.Utils;
 
 import org.jeasy.rules.api.Rules;
 import org.jeasy.rules.mvel.MVELRuleFactory;
@@ -43,7 +43,7 @@ public class AssetsFileSource implements FormFileSource {
             InputStream inputStream = context.getAssets()
                     .open(newFileName);
 
-            return new JSONObject(FileReaderUtil.convertStreamToString(inputStream));
+            return new JSONObject(Utils.convertStreamToString(inputStream));
         } catch (IOException e) {
             Timber.e(e);
         } catch (JSONException e) {

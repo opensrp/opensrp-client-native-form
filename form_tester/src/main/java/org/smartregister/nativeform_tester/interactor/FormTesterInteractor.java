@@ -10,7 +10,7 @@ import android.support.annotation.Nullable;
 import com.google.gson.Gson;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.Form;
-import com.vijay.jsonwizard.utils.FileReaderUtil;
+import com.vijay.jsonwizard.utils.Utils;
 
 import org.jetbrains.annotations.NotNull;
 import org.smartregister.nativeform_tester.contract.FormTesterContract;
@@ -134,7 +134,6 @@ public class FormTesterInteractor implements FormTesterContract.Interactor {
             String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString();
             File myDir = new File(root + "/" + JsonFormConstants.DEFAULT_FORMS_DIRECTORY + "/" + JsonFormConstants.JSON_FORM_DIRECTORY + "/");
 
-            List<File> files = new ArrayList<>();
             if (myDir.exists()) {
                 List<FormTesterContract.NativeForm> nativeForms = new ArrayList<>();
                 for (File file : myDir.listFiles()) {
@@ -165,7 +164,7 @@ public class FormTesterInteractor implements FormTesterContract.Interactor {
                 gson = new Gson();
 
             try {
-                String content = FileReaderUtil.getStringFromFile(formFile);
+                String content = Utils.getFileContentsAsString(formFile);
                 ConfigForm configForm = gson.fromJson(content, ConfigForm.class);
                 return configForm.toForm(context);
             } catch (Exception e) {

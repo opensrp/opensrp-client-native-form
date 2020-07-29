@@ -3,8 +3,8 @@ package org.smartregister.nativeform_tester.domain;
 import android.content.Context;
 
 import com.vijay.jsonwizard.domain.Form;
-import com.vijay.jsonwizard.utils.FileReaderUtil;
 import com.vijay.jsonwizard.utils.ResourceType;
+import com.vijay.jsonwizard.utils.Utils;
 
 
 import java.util.Set;
@@ -155,13 +155,13 @@ public class ConfigForm {
             form.setHomeAsUpIndicator(getHomeAsUpIndicator());
 
         if (getNavigationBackground() != null)
-            form.setNavigationBackground(FileReaderUtil.getResourceId(context, getNavigationBackground(), ResourceType.COLOR));
+            form.setNavigationBackground(Utils.getResourceId(context, getNavigationBackground(), ResourceType.COLOR));
 
         if (getActionBarBackground() != null)
-            form.setActionBarBackground(FileReaderUtil.getResourceId(context, getActionBarBackground(), ResourceType.COLOR));
+            form.setActionBarBackground(Utils.getResourceId(context, getActionBarBackground(), ResourceType.COLOR));
 
         if (getBackIcon() != null)
-            form.setBackIcon(FileReaderUtil.getResourceId(context, getActionBarBackground(), ResourceType.DRAWABLE));
+            form.setBackIcon(Utils.getResourceId(context, getActionBarBackground(), ResourceType.DRAWABLE));
 
         if (getNextLabel() != null)
             form.setNextLabel(getNextLabel());

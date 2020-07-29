@@ -189,9 +189,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 default: {
 
 
-                    if (entityId == null) {
-                        entityId = "ABC" + Math.random();
-                    }
+                    String currentEntityID = (entityId == null) ? "ABC" + Math.random() : entityId;
 
 
                     // Inject zeir id into the form
@@ -202,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         if (jsonObject.getString(KEY)
                                 .equalsIgnoreCase(ZEIR_ID)) {
                             jsonObject.remove(VALUE);
-                            jsonObject.put(VALUE, entityId);
+                            jsonObject.put(VALUE, currentEntityID);
                             continue;
                         }
                     }

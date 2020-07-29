@@ -6,7 +6,7 @@ import android.support.annotation.WorkerThread;
 
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.Form;
-import com.vijay.jsonwizard.utils.FileReaderUtil;
+import com.vijay.jsonwizard.utils.Utils;
 
 import org.json.JSONObject;
 import org.smartregister.nativeform_tester.contract.FormTesterContract;
@@ -33,7 +33,7 @@ public class JsonForm implements FormTesterContract.NativeForm {
         fileName = sourceFile.getName();
         this.form = form;
         try {
-            jsonObject = new JSONObject(FileReaderUtil.getStringFromFile(sourceFile));
+            jsonObject = new JSONObject(Utils.getFileContentsAsString(sourceFile));
             if (jsonObject.has(JsonFormConstants.ENCOUNTER_TYPE)) {
                 formName = jsonObject.getString(JsonFormConstants.ENCOUNTER_TYPE);
                 isValid = true;

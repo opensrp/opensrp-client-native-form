@@ -13,6 +13,8 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
 public class FormTesterPresenter implements FormTesterContract.Presenter {
 
     private WeakReference<FormTesterContract.View> view;
@@ -82,7 +84,7 @@ public class FormTesterPresenter implements FormTesterContract.Presenter {
 
     @Override
     public void validateForm(Context context, String formName) {
-
+        Timber.v("validateForm");
     }
 
     @Override
@@ -135,6 +137,6 @@ public class FormTesterPresenter implements FormTesterContract.Presenter {
 
     @Override
     public void deregisterView() {
-
+        Timber.v("deregisterView");
     }
 }

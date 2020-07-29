@@ -10,7 +10,7 @@ import org.junit.Test;
 public class FileSourceFactoryHelperTest {
 
     @Test
-    public void testGetFileSource_loadsCorrectFileSource() {
+    public void testGetFileSourceLoadsCorrectFileSource() {
         // default source is asset file source
         Assert.assertTrue(FileSourceFactoryHelper.getFileSource("") instanceof AssetsFileSource);
 
