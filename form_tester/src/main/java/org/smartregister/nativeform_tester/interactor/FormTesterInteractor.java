@@ -58,8 +58,8 @@ public class FormTesterInteractor implements FormTesterContract.Interactor {
                 try {
 
                     // if the assetName is a folder extract this
-                    String[] child_assets = assetManager.list(sourceDir + "/" + assetName);
-                    if (child_assets != null && child_assets.length > 0) {
+                    String[] childAssets = assetManager.list(sourceDir + "/" + assetName);
+                    if (childAssets != null && childAssets.length > 0) {
                         String destinationRoot = root + "/" + assetName;
                         File myDir = new File(destinationRoot);
                         if (!myDir.exists())
