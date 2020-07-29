@@ -1,0 +1,29 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="org.smartregister.nativeform_tester.MainActivity">
+    <item
+        android:id="@+id/action_single"
+        android:orderInCategory="100"
+        android:title="@string/action_single"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_wizard"
+        android:orderInCategory="100"
+        android:title="@string/action_wizard"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_validation"
+        android:orderInCategory="100"
+        android:title="@string/action_validation"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="never" />
+
+
+</menu>

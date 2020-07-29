@@ -1,0 +1,119 @@
+{
+  "content_form": [
+    {
+      "key": "respiratory_exam_abnormal",
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "",
+      "openmrs_entity_id": "",
+      "type": "check_box",
+      "label": "Abnormal",
+      "label_text_style": "bold",
+      "text_color": "#000000",
+      "options": [
+        {
+          "key": "rapid_breathing",
+          "text": "Rapid breathing",
+          "openmrs_entity_parent": "",
+          "openmrs_entity": "TACHYPNEA",
+          "openmrs_entity_id": "125061",
+          "value": true
+        },
+        {
+          "key": "slow_breathing",
+          "text": "Slow breathing",
+          "openmrs_entity_parent": "",
+          "openmrs_entity": "",
+          "openmrs_entity_id": "",
+          "value": false
+        },
+        {
+          "key": "other",
+          "text": "Other (specify)",
+          "openmrs_entity_parent": "",
+          "openmrs_entity": "",
+          "openmrs_entity_id": "",
+          "value": false
+        }
+      ]
+    },
+    {
+      "key": "Place_Birth",
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_entity_id": "1572AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "openmrs_data_type": "select one",
+      "type": "spinner",
+      "hint": "Place of birth *",
+      "label_info_title": "Place of birth spinner",
+      "label_info_text": "here is some text on this dialog",
+      "values": [
+        "Health facility",
+        "Home"
+      ],
+      "openmrs_choice_ids": {
+        "Health facility": "1588AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "Home": "1536AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      },
+      "value": "Home"
+    },
+    {
+      "key": "respiratory_exam_abnormal_other",
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "",
+      "openmrs_entity_id": "",
+      "type": "edit_text",
+      "hint": "Specify",
+      "v_regex": {
+        "value": "[A-Za-z\\s\.\-]*",
+        "err": "Please enter valid content"
+      },
+      "relevance": {
+        "step1:respiratory_exam_abnormal": {
+          "ex-checkbox": [
+            {
+              "or": [
+                "other"
+              ]
+            }
+          ]
+        }
+      },"value": "Reasons"
+    },
+    {
+      "key": "respiratory_exam_radio_button",
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_entity_id": "165300AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "type": "native_radio",
+      "label": "Respiratory exam",
+      "label_text_style": "bold",
+      "text_color": "#000000",
+      "extra_rel": true,
+      "has_extra_rel": "3",
+      "options": [
+        {
+          "key": "1",
+          "text": "Not done",
+          "openmrs_entity_parent": "",
+          "openmrs_entity": "concept",
+          "openmrs_entity_id": "165269AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+          "value": true
+        },
+        {
+          "key": "2",
+          "text": "Normal",
+          "openmrs_entity_parent": "",
+          "openmrs_entity": "concept",
+          "openmrs_entity_id": "165230AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        },
+        {
+          "key": "3",
+          "text": "Abnormal",
+          "openmrs_entity_parent": "",
+          "openmrs_entity": "concept",
+          "openmrs_entity_id": "165231AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        }
+      ]
+    }
+  ]
+}

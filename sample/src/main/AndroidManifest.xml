@@ -16,6 +16,11 @@
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:theme="@style/NativeFormsAppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name="com.vijay.jsonwizard.activities.JsonFormActivity"
@@ -27,16 +32,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/NativeFormsAppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-        <activity android:name=".FormTesterActivity"
-            android:label="@string/native_app_name"
-            android:theme="@style/NativeFormsAppTheme.NoActionBar">
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
 
         <provider
             android:name="android.support.v4.content.FileProvider"

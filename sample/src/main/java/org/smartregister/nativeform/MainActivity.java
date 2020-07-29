@@ -10,16 +10,18 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.vijay.jsonwizard.activities.JsonFormActivity;
-import com.vijay.jsonwizard.activities.JsonFormBaseActivity;
 import com.vijay.jsonwizard.activities.JsonWizardFormActivity;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.Form;
-import com.vijay.jsonwizard.factory.FileSourceFactoryHelper;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import timber.log.Timber;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int REQUEST_CODE_GET_JSON = 1234;
@@ -209,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Intent intent = new Intent(this, JsonFormActivity.class);
                     intent.putExtra("json", jsonForm.toString());
                     intent.putExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, translate);
-                    Timber.d("form is " + jsonForm.toString());
+                    Log.d(getClass().getName(), "form is " + jsonForm.toString());
                     startActivityForResult(intent, jsonFormActivityRequestCode);
                     break;
                 }
@@ -221,11 +223,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     public JSONObject getFormJson(String formIdentity) {
+
         try {
-            return FileSourceFactoryHelper.getFileSource(JsonFormBaseActivity.DATA_SOURCE)
-                    .getFormFromFile(getApplicationContext(), formIdentity);
-        } catch (Exception e) {
-            e.printStackTrace();
+            InputStream inputStream = getApplicationContext().getAssets()
+                    .open("json.form/" + formIdentity + ".json");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream,
+                    "UTF-8"));
+            String jsonString;
+            StringBuilder stringBuilder = new StringBuilder();
+            while ((jsonString = reader.readLine()) != null) {
+                stringBuilder.append(jsonString);
+            }
+            inputStream.close();
+
+            return new JSONObject(stringBuilder.toString());
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage(), e);
+            ;
+        } catch (JSONException e) {
+            Log.e(TAG, e.getMessage(), e);
         }
         return null;
     }

@@ -1,0 +1,191 @@
+---
+name: step1_hepb_immun_status
+description: hepb immunization status
+priority: 1
+condition: "step1_First_Name.equalsIgnoreCase('Martin') || step1_First_Name == 'Stacy'"
+actions:
+    - "isRelevant = true"
+---
+name: step2_hoodini_label
+description: first name
+priority: 1
+condition: "step1_happiness_level == 1 "
+actions:
+    - "isRelevant = true"
+---
+name: step2_first_name_yo
+description: sibling first name
+priority: 1
+condition: "step1_firstname.equalsIgnoreCase('Martin') "
+actions:
+    - "isRelevant = true"
+---
+name: step2_last_name_yo
+description: last name
+priority: 1
+condition: "step2_first_name_yo == 'Ben' && (step2_super_heroes.contains('batman') || step2_super_heroes.contains('the_flash')) "
+actions:
+    - "isRelevant = true"
+---
+name: step1_tobacco_cessation_toaster
+description: cease tobacco toaster
+priority: 1
+condition: "step1_hepb_immun_status > 10 && step1_hepb_immun_status < 30"
+actions:
+    - "isRelevant = true"
+
+---
+name: step1_alpha_toaster
+description: cease tobacco toaster
+priority: 1
+condition: 'helper.formatDate(step1_Date_Birth,"y") > 3'
+actions:
+    - "isRelevant = true"
+---
+name: step1_beta_toaster
+description: cease tobacco toaster
+priority: 1
+condition: 'helper.formatDate(step1_Date_Birth,"y") <= 2'
+actions:
+    - "isRelevant = true"
+---
+name: step2_toaster28
+description: Fetal heart beat rate
+priority: 1
+condition: "(step2_fetal_heart_beat_rate_value > 0 && (step2_fetal_heart_beat_rate_value < 110 || step2_fetal_heart_beat_rate_value > 160))step2_fetal_heart_beat_rate_value > 0"
+actions:
+    - "isRelevant = true"
+---
+name: step2_fetal_movement
+description: Fetal movement
+priority: 1
+condition: "global_gest_age >=  20"
+actions:
+    - "isRelevant = true"
+---
+name: step2_fetal_heart_rate_repeat_label
+description: Fetal heart beat rate
+priority: 1
+condition: "(step2_fetal_heart_beat_rate_value > 0 && (step2_fetal_heart_beat_rate_value < 110 || step2_fetal_heart_beat_rate_value > 160))"
+actions:
+    - "isRelevant = true"
+---
+name: step2_fetal_heart_rate_repeat
+description: Fetal heart beat rate
+priority: 1
+condition: "(step2_fetal_heart_beat_rate_value > 0 && (step2_fetal_heart_beat_rate_value < 110 || step2_fetal_heart_beat_rate_value > 160))"
+actions:
+    - "isRelevant = true"
+---
+name: step3_toaster17
+description: Hypertension diagnosis
+priority: 1
+condition: "step3_pulse_rate > 0 && (step3_pulse_rate < 60 || step3_pulse_rate > 100)"
+actions:
+    - "isRelevant = true"
+---
+name: step3_pulse_rate_repeat
+description: Pulse rate measurement
+priority: 1
+condition: "step3_pulse_rate > 0 && (step3_pulse_rate < 60 || step3_pulse_rate > 100)"
+actions:
+    - "isRelevant = true"
+---
+name: step3_pulse_rate_repeat_label
+description: Pulse rate measurement
+priority: 1
+condition: "step3_pulse_rate > 0 && (step3_pulse_rate < 60 || step3_pulse_rate > 100) "
+actions:
+    - "isRelevant = true"
+---
+name: step3_toaster18
+description: Pulse rate measurement
+priority: 1
+condition: "step3_pulse_rate_repeat > 0 && (step3_pulse_rate_repeat < 60 || step3_pulse_rate_repeat > 100) "
+actions:
+    - "isRelevant = true"
+---
+name: step3_toaster21
+description: Oxymetry Entry
+priority: 1
+condition: "step3_oximetry > 0 && step3_oximetry < 92"
+actions:
+    - "isRelevant = true"
+---
+name: step3_toaster20
+description: toaster20
+priority: 1
+condition: "step3_respiratory_exam == 3"
+actions:
+    - "isRelevant = true"
+---
+name: step3_toaster28
+description: Fetal heart beat rate
+priority: 1
+condition: "(step3_fetal_heart_rate > 0 && (step3_fetal_heart_rate < 110 || step3_fetal_heart_rate > 160))"
+actions:
+    - "isRelevant = true"
+---
+name: step3_fetal_heart_rate_repeat_label
+description: Fetal heart beat rate
+priority: 1
+condition: "(step3_fetal_heart_rate > 0 && (step3_fetal_heart_rate < 110 || step3_fetal_heart_rate > 160))"
+actions:
+    - "isRelevant = true"
+---
+name: step3_fetal_heart_rate_repeat
+description: Fetal heart beat rate
+priority: 1
+condition: "(step3_fetal_heart_rate > 0 && (step3_fetal_heart_rate < 110 || step3_fetal_heart_rate > 160))"
+actions:
+    - "isRelevant = true"
+---
+name: step3_miscarriages_abortions_label
+description: Miscarrige abortions label
+priority: 1
+condition: "step3_previous_pregnancies > 0 "
+actions:
+    - "isRelevant = true"
+---
+name: step3_miscarriages_abortions
+description: Miscarrige abortions
+priority: 1
+condition: "step3_previous_pregnancies > 0 "
+actions:
+    - "isRelevant = true"
+---
+name: step3_live_births_label
+description: Live births label
+priority: 1
+condition: "((step3_previous_pregnancies - step3_miscarriages_abortions) > 0)"
+actions:
+    - "isRelevant = true"
+---
+name: step3_live_births
+description: Live births
+priority: 1
+condition: "((step3_previous_pregnancies - step3_miscarriages_abortions) > 0)"
+actions:
+    - "isRelevant = true"
+
+---
+name: step3_stillbirths_label
+description: Still births label
+priority: 1
+condition: "((step3_previous_pregnancies - step3_miscarriages_abortions - step3_live_births) > 0)"
+actions:
+    - "isRelevant = true"
+---
+name: step3_stillbirths
+description: Slill births
+priority: 1
+condition: "((step3_previous_pregnancies - step3_miscarriages_abortions - step3_live_births) > 0) "
+actions:
+    - "isRelevant = true"
+---
+name: step1_toaster26
+description: Slill births
+priority: 1
+condition: "step1_toaster26_hidden > 2"
+actions:
+    - "isRelevant = true"

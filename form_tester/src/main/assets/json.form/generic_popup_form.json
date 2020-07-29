@@ -1,0 +1,337 @@
+{
+  "count": "1",
+  "encounter_type": "Birth Registration",
+  "mother": {
+    "encounter_type": "New Woman Registration"
+  },
+  "validate_on_submit": true,
+  "show_errors_on_submit": true,
+  "entity_id": "",
+  "relational_id": "",
+  "metadata": {
+    "start": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "start",
+      "openmrs_entity_id": "163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "end": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "end",
+      "openmrs_entity_id": "163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "today": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "encounter",
+      "openmrs_entity_id": "encounter_date"
+    },
+    "deviceid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "deviceid",
+      "openmrs_entity_id": "163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "subscriberid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "subscriberid",
+      "openmrs_entity_id": "163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "simserial": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "simserial",
+      "openmrs_entity_id": "163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "phonenumber": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "phonenumber",
+      "openmrs_entity_id": "163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "encounter_location": "",
+    "look_up": {
+      "entity_id": "",
+      "value": ""
+    }
+  },
+  "step1": {
+    "title": "Birth Registration",
+    "fields": [
+      {
+        "v_required": {
+          "value": "true",
+          "err": "Please select first Respiratory Exam"
+        },
+        "key": "repiratory_exam",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Respiratory exam",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "extra_rel": true,
+        "has_extra_rel": "resOne3",
+        "options": [
+          {
+            "key": "resOne1",
+            "text": "Not done"
+          },
+          {
+            "key": "resOne2",
+            "text": "Normal"
+          },
+          {
+            "key": "resOne3",
+            "text": "Abnormal",
+            "specify_info": "Specify",
+            "specify_info_color": "#b5b5b5",
+            "specify_widget": "check_box",
+            "content_form": "child_enrollment_sub_form",
+            "content_form_location": "",
+            "secondary_suffix": "test",
+            "secondary_value": [
+              {
+                "key": "respiratory_exam_abnormal",
+                "type": "check_box",
+                "values": [
+                  "rapid_breathing:Rapid breathing:true"
+                ]
+              },
+              {
+                "key": "respiratory_exam_radio_button",
+                "type": "native_radio",
+                "values": [
+                  "1:Not done"
+                ]
+              },
+              {
+                "key": "respiratory_exam_abnormal_other",
+                "type": "edit_text",
+                "values": [
+                  "other:Respiratory exam answer"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "repiratory_exam_two",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Respiratory exam Two",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "extra_rel": true,
+        "has_extra_rel": "resTwo3",
+        "options": [
+          {
+            "key": "resTwo1",
+            "text": "Not done"
+          },
+          {
+            "key": "resTwo2",
+            "text": "Normal"
+          },
+          {
+            "key": "resTwo3",
+            "text": "Abnormal",
+            "specify_info": "Specify",
+            "specify_info_color": "#b5b5b5",
+            "specify_widget": "check_box",
+            "content_form": "child_enrollment_two_sub_form",
+            "content_form_location": "",
+            "secondary_suffix": "bpm",
+            "secondary_value": [
+              {
+                "key": "respiratory_exam_radio_button",
+                "type": "native_radio",
+                "values": [
+                  "3:Abnormal"
+                ]
+              },
+              {
+                "key": "respiratory_exam_abnormal_other",
+                "type": "edit_text",
+                "values": [
+                  "other:Respiratory exam answer two"
+                ]
+              }
+            ]
+          }
+        ],
+        "relevance": {
+          "step1:repiratory_exam": {
+            "type": "string",
+            "ex": "equalTo(., \"resOne1\")"
+          }
+        }
+      },
+      {
+        "key": "repiratory_exam_three",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Respiratory exam three",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "extra_rel": true,
+        "has_extra_rel": "resThree3",
+        "options": [
+          {
+            "key": "resThree1",
+            "text": "Not done"
+          },
+          {
+            "key": "resThree2",
+            "text": "Normal"
+          },
+          {
+            "key": "resThree3",
+            "text": "Abnormal",
+            "specify_info": "Specify",
+            "specify_info_color": "#b5b5b5",
+            "specify_widget": "check_box",
+            "content_form": "child_enrollment_third_sub_form",
+            "secondary_suffix": "bpm",
+            "content_form_location": ""
+          }
+        ],
+        "relevance": {
+          "step1:repiratory_exam_two": {
+            "type": "string",
+            "ex": "equalTo(., \"resTwo2\")"
+          }
+        }
+      },
+      {
+        "key": "repiratory_exam_four",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Respiratory exam four",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "extra_rel": true,
+        "has_extra_rel": "resFour3",
+        "options": [
+          {
+            "key": "resFour1",
+            "text": "Not done"
+          },
+          {
+            "key": "resFour2",
+            "text": "Normal"
+          },
+          {
+            "key": "resFour3",
+            "text": "Abnormal",
+            "specify_info": "Specify",
+            "specify_info_color": "#b5b5b5",
+            "specify_widget": "check_box",
+            "content_form": "child_enrollment_third_sub_form",
+            "secondary_suffix": "bpm",
+            "content_form_location": ""
+          }
+        ],
+        "relevance": {
+          "step1:repiratory_exam_three": {
+            "type": "string",
+            "ex": "equalTo(., \"resThree3\")"
+          }
+        }
+      },
+      {
+        "key": "cervical_exam",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "Uterine cervix examination (text) ",
+        "openmrs_entity_id": "160968",
+        "type": "native_radio",
+        "label": "Cervical exam done?",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "extra_rel": true,
+        "has_extra_rel": "1",
+        "value": "1",
+        "options": [
+          {
+            "key": "1",
+            "text": "Done",
+            "specify_info": "specify cm cervix dilated...",
+            "specify_widget": "normal_edit_text",
+            "specify_info_color": "#8C8C8C",
+            "secondary_suffix": "cm",
+            "content_form": "cervical_exam_sub_form",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "1118AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "secondary_value": [
+              {
+                "key": "dilation_cm",
+                "type": "edit_text",
+                "values": [
+                  "9"
+                ],
+                "openmrs_attributes": {
+                  "openmrs_entity_parent": "",
+                  "openmrs_entity": "Amount of cervical dilation ",
+                  "openmrs_entity_id": "162261"
+                }
+              }
+            ]
+          },
+          {
+            "key": "2",
+            "text": "Not done",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "concept",
+            "openmrs_entity_id": "1118AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          }
+        ]
+      },
+      {
+        "key": "toaster26_hidden",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-calculation-rules.yml"
+            }
+          },
+          "src": {
+            "key": "cervical_exam",
+            "option_key": "1",
+            "stepName": "step1"
+          }
+        }
+      },
+      {
+        "key": "toaster26",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Cervix is more than 2 cm dilated. Please check for other signs and symptoms of labour (if GA is 37 weeks or later) or pre-term labour and other related complications (if GA is less than 37 weeks).",
+        "text_color": "#E20000",
+        "toaster_type": "problem",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-relevance-rules.yml"
+            }
+          }
+        }
+      }
+    ]
+  }
+}
