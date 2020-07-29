@@ -34,7 +34,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import timber.log.Timber;
 
@@ -47,11 +49,19 @@ import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 
 public class BarcodeFactory implements FormWidgetFactory {
     private static final String TYPE_QR = "qrcode";
+    public static final String SCAN_BUTTON_TEXT = "scanButtonText";
 
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
         return attachJson(stepName, context, formFragment, jsonObject, true);
+    }
+
+    @Override
+    public Set<String> getCustomTranslatableWidgetFields() {
+        Set<String> customTranslatableWidgetFields = new HashSet<>();
+        customTranslatableWidgetFields.add(SCAN_BUTTON_TEXT);
+        return customTranslatableWidgetFields;
     }
 
     @Override
@@ -197,7 +207,7 @@ public class BarcodeFactory implements FormWidgetFactory {
         scanButton.setBackgroundColor(context.getResources().getColor(R.color.primary));
         scanButton.setMinHeight(0);
         scanButton.setMinimumHeight(0);
-        scanButton.setText(jsonObject.getString("scanButtonText"));
+        scanButton.setText(jsonObject.getString(SCAN_BUTTON_TEXT));
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -219,7 +229,7 @@ public class BarcodeFactory implements FormWidgetFactory {
         }
     }
 
-    private void launchBarcodeScanner(Activity activity, MaterialEditText editText, String barcodeType) {
+    protected void launchBarcodeScanner(Activity activity, MaterialEditText editText, String barcodeType) {
         InputMethodManager inputManager = (InputMethodManager) activity.getSystemService(
                 Context.INPUT_METHOD_SERVICE);
         inputManager.hideSoftInputFromWindow(editText.getWindowToken(), HIDE_NOT_ALWAYS);

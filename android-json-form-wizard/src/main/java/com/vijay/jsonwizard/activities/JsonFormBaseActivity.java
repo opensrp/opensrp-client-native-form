@@ -1,8 +1,11 @@
 package com.vijay.jsonwizard.activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -25,7 +28,11 @@ import com.vijay.jsonwizard.utils.ValidationStatus;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.smartregister.client.utils.contract.ClientFormContract;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,7 +45,7 @@ import timber.log.Timber;
 
 import static com.vijay.jsonwizard.utils.NativeFormLangUtils.getTranslatedString;
 
-public abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnFieldsInvalid {
+public abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnFieldsInvalid, ClientFormContract.View {
     protected static final String TAG = JsonFormActivity.class.getSimpleName();
     protected static final String JSON_STATE = "jsonState";
     protected static final String FORM_STATE = "formState";
@@ -61,6 +68,9 @@ public abstract class JsonFormBaseActivity extends MultiLanguageActivity impleme
     private Map<String, ValidationStatus> invalidFields = new HashMap<>();
     private boolean isPreviousPressed = false;
     private ProgressDialog progressDialog;
+    protected boolean translateForm = false;
+
+    protected boolean isVisibleFormErrorAndRollbackDialog;
 
     // specify where the form reads data from
     public static String DATA_SOURCE = JsonFormConstants.FileSource.ASSETS;
@@ -78,9 +88,10 @@ public abstract class JsonFormBaseActivity extends MultiLanguageActivity impleme
         onActivityRequestPermissionResultListeners = new HashMap<>();
         lifeCycleListeners = new ArrayList<>();
         isFormFragmentInitialized = false;
+        translateForm = getIntent().getBooleanExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, false);
         if (savedInstanceState == null) {
             this.form = extractForm(getIntent().getSerializableExtra(JsonFormConstants.JSON_FORM_KEY.FORM));
-            init(getForm());
+            init(getJsonForm());
             initializeFormFragment();
             onFormStart();
             DATA_SOURCE = readDataSource();
@@ -98,10 +109,10 @@ public abstract class JsonFormBaseActivity extends MultiLanguageActivity impleme
         return StringUtils.isBlank(source) ? JsonFormConstants.FileSource.ASSETS : source;
     }
 
-    private String getForm() {
+    protected String getJsonForm() {
         String jsonForm = getIntent().getStringExtra(JsonFormConstants.JSON_FORM_KEY.JSON);
-        if (getIntent().getBooleanExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, false)) {
-            jsonForm = getTranslatedString(jsonForm);
+        if (translateForm) {
+            jsonForm = getTranslatedString(jsonForm, this);
         }
         return jsonForm;
     }
@@ -226,4 +237,34 @@ public abstract class JsonFormBaseActivity extends MultiLanguageActivity impleme
     public void setProgressDialog(ProgressDialog progressDialog) {
         this.progressDialog = progressDialog;
     }
+
+    @Nullable
+    @Override
+    public JSONObject getSubForm(String formIdentity, String subFormsLocation,
+                                 Context context, boolean translateSubForm) throws Exception {
+        return FormUtils.getSubFormJson(formIdentity, subFormsLocation, getApplicationContext(), translateForm);
+    }
+
+    @Nullable
+    @Override
+    public BufferedReader getRules(@NonNull Context context, @NonNull String fileName) throws IOException {
+        return new BufferedReader(new InputStreamReader(context.getAssets().open(fileName)));
+    }
+
+    @Override
+    public void handleFormError(boolean isRulesFile, @NonNull String formIdentifier) {
+        // Do nothing here
+    }
+
+    @Override
+    public void setVisibleFormErrorAndRollbackDialog(boolean isVisible) {
+        isVisibleFormErrorAndRollbackDialog = isVisible;
+    }
+
+    @Override
+    public boolean isVisibleFormErrorAndRollbackDialog() {
+        return isVisibleFormErrorAndRollbackDialog;
+    }
+
+
 }

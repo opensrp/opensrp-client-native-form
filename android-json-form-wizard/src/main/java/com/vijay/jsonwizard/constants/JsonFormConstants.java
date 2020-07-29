@@ -224,6 +224,10 @@ public class JsonFormConstants {
     public static final String DEFAULT_FORMS_DIRECTORY = "opensrpNativeFormTester";
     public static final String JSON_FORM_DIRECTORY = "json.form";
 
+    public static final String PROPERTIES_FILE_EXTENSION = ".properties";
+    public static final String JSON_FILE_EXTENSION = ".json";
+    public static final String CLIENT_FORM_ASSET_VERSION = "base version";
+
     public interface MultiSelectUtils {
         String IS_HEADER = "isHeader";
         String TEXT = "text";
@@ -247,6 +251,9 @@ public class JsonFormConstants {
         public static final String APP_VERSION_NAME = "appVersionName";
         public static final String APP_FORM_VERSION = "formVersion";
         public static final String DETAILS = "details";
+        public static final String IS_NEW = "is_new";
+        public static final String CLIENT_FORM_ID = "client_form_id";
+        public static final String FORM_VERSION = "form_version";
     }
 
     public static class JsonFormConstantsUtils {
@@ -332,5 +339,9 @@ public class JsonFormConstants {
     public interface FileSource {
         String DISK = "DISK";
         String ASSETS = "ASSETS";
+    }
+
+    public interface MLS {
+        String PROPERTIES_FILE_NAME = "properties_file_name";
     }
 }

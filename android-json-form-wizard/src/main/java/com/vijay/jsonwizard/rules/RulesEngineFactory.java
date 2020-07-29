@@ -17,9 +17,12 @@ import org.jeasy.rules.api.RulesEngine;
 import org.jeasy.rules.core.DefaultRulesEngine;
 import org.jeasy.rules.core.RulesEngineParameters;
 import org.jeasy.rules.mvel.MVELRule;
+import org.jeasy.rules.mvel.MVELRuleFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.smartregister.client.utils.contract.ClientFormContract;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -81,7 +84,7 @@ public class RulesEngineFactory implements RuleListener {
         }
     }
 
-    private MVELRule getDynamicRulesFromJsonObject(JSONObject jsonObjectDynamicRule) {
+    private MVELRule getDynamicRulesFromJsonObject(@NonNull JSONObject jsonObjectDynamicRule) {
         try {
             MVELRule dynamicMvelRule = new MVELRule();
             dynamicMvelRule.setDescription(jsonObjectDynamicRule.optString(RuleConstant.DESCRIPTION));
@@ -96,7 +99,7 @@ public class RulesEngineFactory implements RuleListener {
         }
     }
 
-    public boolean getRelevance(Facts relevanceFact, String ruleFilename) {
+    public boolean getRelevance(@NonNull Facts relevanceFact, @NonNull String ruleFilename) {
 
         Facts facts = initializeFacts(relevanceFact);
 
@@ -137,11 +140,21 @@ public class RulesEngineFactory implements RuleListener {
     }
 
     private Rules getRulesFromAsset(String fileName) {
+
         try {
             if (!ruleMap.containsKey(fileName)) {
-                ruleMap.put(fileName,
-                        FileSourceFactoryHelper.getFileSource(JsonFormBaseActivity.DATA_SOURCE).getRulesFromFile(context, fileName)
-                );
+
+                if (context instanceof ClientFormContract.View) {
+                    try {
+                        BufferedReader bufferedReader = ((ClientFormContract.View) context).getRules(context, fileName);
+                        ruleMap.put(fileName, MVELRuleFactory.createRulesFrom(bufferedReader));
+                    } catch (Exception ex) {
+                        ((ClientFormContract.View) context).handleFormError(true, fileName);
+                        return null;
+                    }
+                } else {
+                    FileSourceFactoryHelper.getFileSource(JsonFormBaseActivity.DATA_SOURCE).getRulesFromFile(context, fileName);
+                }
             }
             return ruleMap.get(fileName);
         } catch (IOException e) {

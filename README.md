@@ -17,6 +17,8 @@
    * [Installation Devices](#installation-devices)
    * [How to install](#how-to-install)
    * [Customisations From Android Native JSON Form](#customisations-from-android-native-json-form)
+* [Multi Language Support (MLS)](#multi-language-support-mls)
+* [JsonForm MLS Asset Generator](#jsonform-mls-asset-generator-jmag)
 
 
 # Introduction
@@ -630,6 +632,45 @@ This form has been generated from the `JSON Form` below: [Click here to Skip](#u
           "CE": "703AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
           "MSU": "1067AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
           "CNE": "664AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        }
+      },
+      {
+        "key": "response_spinner_with_options",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "Response Spinners",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "no",
+            "text": "No",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "maybe",
+            "text": "Maybe",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Please enter response"
+        },
+        "openmrs_choice_ids": {
+          "user_one": "1107AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+          "user_two": "1713AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
         }
       },
       {
@@ -2131,3 +2172,55 @@ To achieve this one has to add a form config file called `json.form.config.json`
 ]
 ```
 These values will be parsed and processed by passing it through `Form` pojo class in their setters.
+
+# Multi Language Support (MLS) 
+
+This section explains how the library supports language localization. 
+
+An Android client application wishing to use MLS needs to take the following steps:
+
+1. Provide a single placeholder-injected JsonForm where String literals to be translated are replaced with placeholders of the form `{{string_identifier}}`, where `string_identifier` is a unique identifier for the String literal being replaced.
+2. Provide a translations property file that contains mappings of the `string_identifier`s from 1. to the actual String literals the `string_identifier`s replace in the JsonForm from 1. This property file should be stored in the `resources` folder of your Android project.
+3. Append the name of the property file from 2. to the placeholder-injected JsonForm from 1. This would take the form: `"properties_file_name": "basic_form"` where `properties_file_name` is the key of the field to append to the placeholder-injected JsonForm from 1. and `basic_form` is the name of the property file from 2. Notice that there is no need to append the locale-specific identifier or the `.properties` extension.
+4. Step 2. will be repeated for each language that the Android client wishes to support. 
+   - The `string_identifier`s would remain the same but the String literals would change - taking on their translated versions for each locale. 
+   - To distinguish between the different property files for each locale, the following [convention](https://developer.android.com/reference/java/util/ResourceBundle.html#getBundle(java.lang.String,%20java.util.Locale,%20java.lang.ClassLoader)) should be used e.g. `basic_form_en_US.properties` for US English and `basic_form_fr.properties` for French.
+5. Set the `JsonFormConstants.PERFORM_FORM_TRANSLATION` intent extra to true when launching each JsonForm to activate MLS for that form (and its sub-forms if any).
+
+The process of generating the assets in steps 1-3 may be a bit tedious and error prone. To this end, a utility is provided to ease the process. The tool (`JsonForm MLS Asset Generator`) is described below. 
+   
+# JsonForm MLS Asset Generator (JMAG)
+
+This section describes how to configure JMAG for use with Android Studio.
+
+JMAG is a pure Java class, meaning it DOES NOT and SHOULD NOT contain Android dependencies. Additionally, the elements it interacts with should not have Android dependencies as part of their instantiation process, otherwise the tool won't run.
+
+JMAG is run through Android Studio as part of an Android Studio configuration. Here is some [background](https://developer.android.com/studio/run/rundebugconfig#opening) on adding an Android Studio configuration.
+
+As part of the JMAG configuration, the following steps will need to be taken:
+
+1. On the Android Studio menu click `Run -> Edit configuration`.
+2. On the `Run/Debug Configurations` dialog, click `plus icon -> Application`.
+3. Add the following configurations:
+   - Name: `JsonForm MLS Asset Generator`
+   - Main class: `com.vijay.jsonwizard.utils.JsonFormMLSAssetGenerator`
+   - Use classpath of module: `<your-module-name>`
+   - JRE: `Android API 21 Platform` (you can use a different API level)
+4. Within the same `Run/Debug Configurations` dialog, specify the JsonForm against which assets are to be generated: 
+   - Create an environment variable named `FORM_TO_TRANSLATE` and set its value to the absolute path of the JsonForm to translate.
+   - This environment variable will need to be reset any time a different form needs to be translated.
+   - Optionally create an environment variable named `JSON_FORM_INTERACTOR_NAME` and specify the fully qualified name of a custom `JsonFormInteractor`.
+5. Press `Apply` and `OK`
+6. To run JMAG: switch to your newly created configuration and click the `Run` button.
+
+The final configuration should look something like:
+
+![image](https://user-images.githubusercontent.com/33488286/77306006-0fc5ab00-6d08-11ea-8b35-559a6ef4308c.png)
+
+Two asset files will be created under the `/tmp` folder : a translations property file and a placeholder-injected JsonForm. 
+
+Alternatively, a different folder can be specified by setting the `MLS_ASSETS_FOLDER` environment variable, just ensure the folder exists and has the correct write permissions.
+
+For a form named `example_form` the generated assets will follow the following naming convention : `example_form.json` and `example_form.properties`.
+
+The properties file can then be copied over to the `resources` folder of your Android project under `src/main`. The placeholder-injected JsonForm will typically be copied over to the `assets` folder of your Android project (although not mandatory).

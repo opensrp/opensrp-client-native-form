@@ -47,6 +47,7 @@ import com.vijay.jsonwizard.task.ExpansionPanelGenericPopupDialogTask;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ImageUtils;
 import com.vijay.jsonwizard.utils.PermissionUtils;
+import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.CustomTextView;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
@@ -247,7 +248,7 @@ public class JsonFormFragmentPresenter extends
             }
 
         }
-        formFragment.onFieldsInvalid.passInvalidFields(invalidFields);
+        formFragment.getOnFieldsInvalidCallback().passInvalidFields(invalidFields);
     }
 
     /**
@@ -427,6 +428,7 @@ public class JsonFormFragmentPresenter extends
         checkAndStopCountdownAlarm();
         boolean isFormValid = isFormValid();
         if (isFormValid || Boolean.valueOf(mainView.getTag(R.id.skip_validation).toString())) {
+            Utils.removeGeneratedDynamicRules(formFragment);
             Intent returnIntent = new Intent();
             getView().onFormFinish();
             returnIntent.putExtra("json", formUtils.addFormDetails(getView().getCurrentJsonState()));

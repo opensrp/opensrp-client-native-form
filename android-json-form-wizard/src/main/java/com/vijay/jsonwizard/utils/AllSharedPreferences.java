@@ -22,5 +22,4 @@ public class AllSharedPreferences {
     public void saveLanguagePreference(String languagePreference) {
         preferences.edit().putString(LANGUAGE_PREFERENCE_KEY, languagePreference).apply();
     }
-
 }

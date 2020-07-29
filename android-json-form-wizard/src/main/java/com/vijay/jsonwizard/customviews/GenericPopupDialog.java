@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -65,6 +66,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
     private Activity activity;
     private JSONArray specifyContent;
     private List<View> viewList;
+    private boolean translateSubForm = false;
 
     @Override
     public void onAttach(Context context) {
@@ -85,6 +87,11 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
 
         activity = (Activity) context;
         setJsonApi((JsonApi) activity);
+
+        // support translation of sub-forms
+        Intent activityIntent = getActivity().getIntent();
+        translateSubForm =  activityIntent == null ? translateSubForm
+                : activityIntent.getBooleanExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, false);
 
         try {
             setMainFormFields(formUtils.getFormFields(getStepName(), context));
@@ -174,6 +181,8 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
                 } catch (JSONException e) {
                     Timber.e(e, "GenericPopupDialog --> loadSubForms");
                 }
+            } else {
+                GenericPopupDialog.this.dismiss();
             }
         }
     }
@@ -214,7 +223,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
     protected JSONObject getSubForm() {
         JSONObject subForm = new JSONObject();
         try {
-            subForm = FormUtils.getSubFormJson(getFormIdentity(), getFormLocation(), context);
+            subForm = getJsonApi().getSubForm(getFormIdentity(), getFormLocation(), context, translateSubForm);
             Utils.updateSubFormFields(subForm, getJsonApi().form());
 
         } catch (Exception e) {
