@@ -809,6 +809,7 @@ public class Utils {
         return format.format(newDate);
     }
 
+
     public static int getResourceId(Context context, String name, ResourceType resourceType) {
         try {
             return context.getResources().getIdentifier(name, resourceType.getType(), context.getPackageName());
@@ -816,6 +817,10 @@ public class Utils {
             Timber.e(e);
             return -1;
         }
+    }
+  
+    public static boolean isEmptyJsonArray(JSONArray jsonArray) {
+        return jsonArray == null || jsonArray.length() == 0;
     }
 }
 
