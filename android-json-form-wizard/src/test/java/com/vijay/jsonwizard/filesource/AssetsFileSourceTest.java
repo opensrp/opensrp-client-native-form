@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.AssetManager;
 
 import org.jeasy.rules.api.Rules;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
@@ -16,7 +15,6 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 @RunWith(MockitoJUnitRunner.class)
