@@ -8,15 +8,11 @@ import com.vijay.jsonwizard.utils.Utils;
 
 import org.jeasy.rules.api.Rules;
 import org.jeasy.rules.mvel.MVELRuleFactory;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
-import timber.log.Timber;
 
 /***
  * used to read files stored on the APP's asset folder
@@ -36,20 +32,9 @@ public class AssetsFileSource implements FormFileSource {
     }
 
     @Override
-    public JSONObject getFormFromFile(Context context, String fileName) {
-        try {
-            String newFileName = JsonFormConstants.JSON_FORM_DIRECTORY + "/" + fileName + ".json";
-
-            InputStream inputStream = context.getAssets()
-                    .open(newFileName);
-
-            return new JSONObject(Utils.convertStreamToString(inputStream));
-        } catch (IOException e) {
-            Timber.e(e);
-        } catch (JSONException e) {
-            Timber.e(e);
-        }
-        return null;
+    public JSONObject getFormFromFile(Context context, String fileName) throws Exception {
+        String newFileName = JsonFormConstants.JSON_FORM_DIRECTORY + "/" + fileName + ".json";
+        return new JSONObject(Utils.convertStreamToString(getFileInputStream(context, newFileName)));
     }
 
     @Override

@@ -803,18 +803,17 @@ public class Utils {
         try {
             newDate = format.parse(date);
         } catch (ParseException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
         format = new SimpleDateFormat(outputFormat);
         return format.format(newDate);
     }
 
-    public static int getResourceId(Context context, String name, ResourceType resourceType)
-    {
+    public static int getResourceId(Context context, String name, ResourceType resourceType) {
         try {
             return context.getResources().getIdentifier(name, resourceType.getType(), context.getPackageName());
         } catch (Exception e) {
-            e.printStackTrace();
+            Timber.e(e);
             return -1;
         }
     }
