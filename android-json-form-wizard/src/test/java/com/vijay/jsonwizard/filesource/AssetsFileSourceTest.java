@@ -60,7 +60,7 @@ public class AssetsFileSourceTest {
     }
 
     @Test
-    public void testGetFormFromFileReadsFile() throws IOException, JSONException {
+    public void testGetFormFromFileReadsFile() throws Exception {
         String expected = "{\n" +
                 "        \"key\": \"user_image\",\n" +
                 "        \"openmrs_entity_parent\": \"\",\n" +
