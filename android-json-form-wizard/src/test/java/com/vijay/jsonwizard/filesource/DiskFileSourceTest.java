@@ -3,13 +3,7 @@ package com.vijay.jsonwizard.filesource;
 import android.content.Context;
 import android.os.Environment;
 
-import com.vijay.jsonwizard.rules.RuleConstant;
-
-import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rules;
-import org.jeasy.rules.api.RulesEngine;
-import org.jeasy.rules.core.DefaultRulesEngine;
-import org.jeasy.rules.core.RulesEngineParameters;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
@@ -68,13 +62,10 @@ public class DiskFileSourceTest {
         Rules rules = diskFileSource.getRulesFromFile(context, "test_rule");
         Assert.assertFalse(rules.isEmpty());
 
-        RulesEngineParameters parameters = new RulesEngineParameters().skipOnFirstAppliedRule(true);
-        RulesEngine defaultRulesEngine = new DefaultRulesEngine(parameters);
-        Facts facts = new Facts();
-        facts.put("step1_first_Name", "Doe");
-
-        defaultRulesEngine.fire(rules, facts);
-        Assert.assertEquals(specifiedString, (facts.get(RuleConstant.CALCULATION)).toString());
+        org.jeasy.rules.api.Rule rule = rules.iterator().next();
+        Assert.assertEquals(rule.getName(), "step1_last_name");
+        Assert.assertEquals(rule.getDescription(), "last_name");
+        Assert.assertEquals(rule.getPriority(), 1);
     }
 
 

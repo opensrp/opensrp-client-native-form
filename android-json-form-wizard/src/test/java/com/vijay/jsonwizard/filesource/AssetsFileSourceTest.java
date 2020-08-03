@@ -3,13 +3,8 @@ package com.vijay.jsonwizard.filesource;
 import android.content.Context;
 import android.content.res.AssetManager;
 
-import com.vijay.jsonwizard.rules.RuleConstant;
-
-import org.jeasy.rules.api.Facts;
+import org.jeasy.rules.api.Rule;
 import org.jeasy.rules.api.Rules;
-import org.jeasy.rules.api.RulesEngine;
-import org.jeasy.rules.core.DefaultRulesEngine;
-import org.jeasy.rules.core.RulesEngineParameters;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
@@ -61,14 +56,10 @@ public class AssetsFileSourceTest {
         Rules rules = assetsFileSource.getRulesFromFile(context, "rule/test");
         Assert.assertFalse(rules.isEmpty());
 
-
-        RulesEngineParameters parameters = new RulesEngineParameters().skipOnFirstAppliedRule(true);
-        RulesEngine defaultRulesEngine = new DefaultRulesEngine(parameters);
-        Facts facts = new Facts();
-        facts.put("step1_first_name", "Linet");
-
-        defaultRulesEngine.fire(rules, facts);
-        Assert.assertTrue((Boolean) facts.get(RuleConstant.IS_RELEVANT));
+        Rule rule = rules.iterator().next();
+        Assert.assertEquals(rule.getName(), "step1_last_name");
+        Assert.assertEquals(rule.getDescription(), "last_name");
+        Assert.assertEquals(rule.getPriority(), 1);
     }
 
     @Test
