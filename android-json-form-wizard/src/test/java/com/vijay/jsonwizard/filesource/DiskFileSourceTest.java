@@ -3,7 +3,13 @@ package com.vijay.jsonwizard.filesource;
 import android.content.Context;
 import android.os.Environment;
 
+import com.vijay.jsonwizard.rules.RuleConstant;
+
+import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rules;
+import org.jeasy.rules.api.RulesEngine;
+import org.jeasy.rules.core.DefaultRulesEngine;
+import org.jeasy.rules.core.RulesEngineParameters;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
@@ -54,13 +60,21 @@ public class DiskFileSourceTest {
                 "priority: 1\n" +
                 "condition: \"step1_first_Name.equalsIgnoreCase('Doe')\"\n" +
                 "actions:\n" +
-                "    - \"calculation = " + specifiedString + "\"";
+                "    - \" calculation = " + specifiedString + "\"";
 
         InputStream inputStream = new ByteArrayInputStream(relevance.getBytes());
         Mockito.doReturn(inputStream).when(diskFileSource).getInputStream(Mockito.any(File.class));
 
         Rules rules = diskFileSource.getRulesFromFile(context, "test_rule");
         Assert.assertFalse(rules.isEmpty());
+
+        RulesEngineParameters parameters = new RulesEngineParameters().skipOnFirstAppliedRule(true);
+        RulesEngine defaultRulesEngine = new DefaultRulesEngine(parameters);
+        Facts facts = new Facts();
+        facts.put("step1_first_Name", "Doe");
+
+        defaultRulesEngine.fire(rules, facts);
+        Assert.assertEquals(specifiedString, (facts.get(RuleConstant.CALCULATION)).toString());
     }
 
 

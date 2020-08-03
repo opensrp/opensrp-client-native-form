@@ -3,7 +3,13 @@ package com.vijay.jsonwizard.filesource;
 import android.content.Context;
 import android.content.res.AssetManager;
 
+import com.vijay.jsonwizard.rules.RuleConstant;
+
+import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rules;
+import org.jeasy.rules.api.RulesEngine;
+import org.jeasy.rules.core.DefaultRulesEngine;
+import org.jeasy.rules.core.RulesEngineParameters;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
@@ -39,22 +45,30 @@ public class AssetsFileSourceTest {
 
     @Test
     public void testGetRulesFromFileConvertsFileToRules() throws Exception {
-        String specifiedString = "1";
         String relevance = "---\n" +
                 "name: step1_last_name\n" +
                 "description: last_name\n" +
                 "priority: 1\n" +
-                "condition: \"step1_first_Name.equalsIgnoreCase('Doe')\"\n" +
+                "condition: \"step1_first_name.equalsIgnoreCase('Linet')\"\n" +
                 "actions:\n" +
-                "    - \"calculation = " + specifiedString + "\"";
-
+                "    - \"isRelevant = true\"";
 
         Mockito.when(context.getAssets()).thenReturn(assetManager);
         InputStream inputStream = new ByteArrayInputStream(relevance.getBytes());
         Mockito.when(assetManager.open("rule/test")).thenReturn(inputStream);
 
+        // rules are returned
         Rules rules = assetsFileSource.getRulesFromFile(context, "rule/test");
         Assert.assertFalse(rules.isEmpty());
+
+
+        RulesEngineParameters parameters = new RulesEngineParameters().skipOnFirstAppliedRule(true);
+        RulesEngine defaultRulesEngine = new DefaultRulesEngine(parameters);
+        Facts facts = new Facts();
+        facts.put("step1_first_name", "Linet");
+
+        defaultRulesEngine.fire(rules, facts);
+        Assert.assertTrue((Boolean) facts.get(RuleConstant.IS_RELEVANT));
     }
 
     @Test
