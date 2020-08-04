@@ -4,24 +4,27 @@ import android.view.View;
 
 import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 
 import org.json.JSONObject;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.robolectric.RuntimeEnvironment;
 
 import java.util.List;
 import java.util.Set;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.doReturn;
+
 public class BasicRDTCaptureFactoryTest extends BaseTest {
-    private BasicRDTCaptureFactory factory;
-    @Mock
-    private JsonFormActivity context;
+
+    private BasicRDTCaptureFactory basicRDTCaptureFactory;
     @Mock
     private JsonFormFragment formFragment;
     @Mock
@@ -32,31 +35,26 @@ public class BasicRDTCaptureFactoryTest extends BaseTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        factory = new BasicRDTCaptureFactory();
+        basicRDTCaptureFactory = new BasicRDTCaptureFactory();
     }
 
     @Test
-    public void testRDTCaptureFactoryInstantiatesViewsCorrectly() throws Exception {
-        String rdtCaptureString = "{\"key\":\"rdt_capture\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"type\":\"rdt_capture\",\"calculation\":{\"rules-engine\":{\"ex-rules\":{\"rules-file\":\"sample-calculation-rules.yml\"}}},\"relevance\":{\"rules-engine\":{\"ex-rules\":{\"rules-file\":\"sample-relevance-rules.yml\"}}},\"constraints\":{\"rules-engine\":{\"ex-rules\":{\"rules-file\":\"sample-constraints-rules.yml\"}}}}";
-        JSONObject rdtCapture = new JSONObject(rdtCaptureString);
-        Assert.assertNotNull(rdtCapture);
+    public void testRDTCaptureFactoryShouldCorrectlyInitializeViews() throws Exception {
+        JSONObject rdtCapture = new JSONObject();
+        rdtCapture.put(JsonFormConstants.OPENMRS_ENTITY_PARENT, "openmrs_entity_parent");
+        rdtCapture.put(JsonFormConstants.OPENMRS_ENTITY, "openmrs_entity");
+        rdtCapture.put(JsonFormConstants.OPENMRS_ENTITY_ID, "openmrs_entity_id");
+        rdtCapture.put(JsonFormConstants.KEY, "key");
 
-        BasicRDTCaptureFactory factorySpy = Mockito.spy(factory);
-        Assert.assertNotNull(factorySpy);
-
-        Mockito.doReturn(rootLayout).when(factorySpy).getRootLayout(context);
-        Mockito.doReturn(false).when(factorySpy).isPermissionGiven();
-
-        List<View> viewList = factorySpy.getViewsFromJson("RandomStepName", context, formFragment, rdtCapture, listener);
-        Assert.assertNotNull(viewList);
-        Assert.assertEquals(1, viewList.size());
+        List<View> viewList = basicRDTCaptureFactory.getViewsFromJson("RandomStepName",
+                RuntimeEnvironment.application, formFragment, rdtCapture, listener);
+        assertNotNull(viewList);
+        assertEquals(1, viewList.size());
     }
 
     @Test
-    public void testGetCustomTranslatableWidgetFields() {
-        BasicRDTCaptureFactory factorySpy = Mockito.spy(factory);
-
-        Set<String> editableProperties = factorySpy.getCustomTranslatableWidgetFields();
-        Assert.assertEquals(0, editableProperties.size());
+    public void testGetCustomTranslatableWidgetFieldsShouldReturnNonNullSet() {
+        Set<String> translatableFields = basicRDTCaptureFactory.getCustomTranslatableWidgetFields();
+        assertNotNull(translatableFields);
     }
 }

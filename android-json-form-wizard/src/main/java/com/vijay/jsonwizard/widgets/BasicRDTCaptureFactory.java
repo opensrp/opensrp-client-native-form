@@ -54,7 +54,8 @@ public class BasicRDTCaptureFactory extends RDTCaptureFactory {
 
     @VisibleForTesting
     protected boolean isPermissionGiven() {
-        return ContextCompat.checkSelfPermission(widgetArgs.getContext(), Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED;
+        return ContextCompat.checkSelfPermission(widgetArgs.getContext(),
+                Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED;
     }
 
     @Override
