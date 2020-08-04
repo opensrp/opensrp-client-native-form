@@ -25,6 +25,7 @@ import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -100,7 +101,7 @@ public class TreeViewFactory implements FormWidgetFactory {
 
         editText = createEditText(rootLayout, jsonObject, popup, stepName);
         ArrayList<String> defaultValue = new ArrayList<>();
-        if (!TextUtils.isEmpty(defaultValueString)) {
+        if (StringUtils.isNotBlank(defaultValueString)) {
             try {
                 JSONArray jsonArray = new JSONArray(defaultValueString);
                 for (int i = 0; i < jsonArray.length(); i++) {
@@ -113,7 +114,7 @@ public class TreeViewFactory implements FormWidgetFactory {
 
 
         ArrayList<String> value = new ArrayList<>();
-        if (!TextUtils.isEmpty(valueString)) {
+        if (StringUtils.isNotBlank(valueString)) {
             try {
                 JSONArray jsonArray = new JSONArray(valueString);
                 for (int i = 0; i < jsonArray.length(); i++) {
@@ -125,14 +126,12 @@ public class TreeViewFactory implements FormWidgetFactory {
         }
 
         final TreeViewDialog treeViewDialog = getTreeViewDialog(context, jsonObject, defaultValue, value);
-
         editText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showTreeDialog(treeViewDialog);
             }
         });
-
         editText.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -157,13 +156,12 @@ public class TreeViewFactory implements FormWidgetFactory {
 
         ((JsonApi) context).addFormDataView(editText);
         views.add(rootLayout);
-
-
         return views;
     }
 
     @NotNull
-    private TreeViewDialog getTreeViewDialog(final Context context, JSONObject jsonObject, ArrayList<String> defaultValue, ArrayList<String> value) throws JSONException {
+    @VisibleForTesting
+    protected TreeViewDialog getTreeViewDialog(final Context context, JSONObject jsonObject, ArrayList<String> defaultValue, ArrayList<String> value) throws JSONException {
         final TreeViewDialog treeViewDialog = new TreeViewDialog(context, jsonObject.getJSONArray(JsonFormConstants.TREE), defaultValue, value);
 
         if (!TextUtils.isEmpty(jsonObject.optString(JsonFormConstants.VALUE))) {
