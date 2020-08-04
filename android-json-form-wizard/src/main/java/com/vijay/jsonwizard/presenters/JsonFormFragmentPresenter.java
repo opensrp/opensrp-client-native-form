@@ -280,64 +280,61 @@ public class JsonFormFragmentPresenter extends
                         rawValue = JsonFormConstants.DATE_PICKER.equals(type) || JsonFormConstants.TIME_PICKER.equals(type) ? childView.getTag(R.id.locale_independent_value).toString() : rawValue;
                         getView().writeValue(mStepName, key, rawValue, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
 
-                        //for repeating grp referenceEditText
-                        if (editText.getId() == R.id.reference_edit_text) {
-
-                            if (editText.getTag(R.id.has_required_validator) != null && validationStatus.isValid()) {
-                                View doneButton = ((ViewGroup) editText.getParent()).findViewById(R.id.btn_repeating_group_done);
-                                Object o = doneButton.getTag(R.id.is_repeating_group_generated);
-                                if (o == null) {
-                                    validationStatus.setIsValid(false);
-                                    editText.setError(getFormFragment().getString(R.string.repeating_group_not_generated_error_message));
-                                    validationStatus.setErrorMessage(getFormFragment().getString(R.string.repeating_group_not_generated_error_message));
-                                }
+                        //for repeating grp referenceEditText validation
+                        if (editText.getId() == R.id.reference_edit_text && editText.getTag(R.id.has_required_validator) != null && validationStatus.isValid()) {
+                            View doneButton = ((ViewGroup) editText.getParent()).findViewById(R.id.btn_repeating_group_done);
+                            Object o = doneButton.getTag(R.id.is_repeating_group_generated);
+                            if (o == null) {
+                                validationStatus.setIsValid(false);
+                                editText.setError(getFormFragment().getString(R.string.repeating_group_not_generated_error_message));
+                                validationStatus.setErrorMessage(getFormFragment().getString(R.string.repeating_group_not_generated_error_message));
                             }
                         }
-                    } else {
-                        validationStatus.setIsValid(true);
                     }
-                } else if (childView instanceof NativeEditText) {
-                    NativeEditText editText = (NativeEditText) childView;
+                } else {
+                    validationStatus.setIsValid(true);
+                }
+            } else if (childView instanceof NativeEditText) {
+                NativeEditText editText = (NativeEditText) childView;
 
-                    String rawValue = (String) editText.getTag(R.id.raw_value);
-                    if (rawValue == null) {
-                        rawValue = editText.getText().toString();
-                    }
-
-                    handleWrongFormatInputs(validationStatus, fieldKey, rawValue);
-
-                    getView().writeValue(mStepName, key, rawValue, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
-                } else if (childView instanceof ImageView) {
-                    Object path = childView.getTag(R.id.imagePath);
-                    if (path instanceof String) {
-                        getView().writeValue(mStepName, key, (String) path, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
-                    }
-                } else if (childView instanceof CheckBox) {
-                    String parentKey = (String) childView.getTag(R.id.key);
-                    String childKey = (String) childView.getTag(R.id.childKey);
-                    getView().writeValue(mStepName, parentKey, JsonFormConstants.OPTIONS_FIELD_NAME, childKey, String.valueOf(((CheckBox) childView).isChecked()), openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
-                } else if (childView instanceof RadioButton) {
-                    String parentKey = (String) childView.getTag(R.id.key);
-                    String childKey = (String) childView.getTag(R.id.childKey);
-                    if (((RadioButton) childView).isChecked()) {
-                        getView().writeValue(mStepName, parentKey, childKey, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
-                    }
-                } else if (childView instanceof Button) {
-                    Button button = (Button) childView;
-                    String rawValue = (String) button.getTag(R.id.raw_value);
-                    getView().writeValue(mStepName, key, rawValue, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
+                String rawValue = (String) editText.getTag(R.id.raw_value);
+                if (rawValue == null) {
+                    rawValue = editText.getText().toString();
                 }
 
-                if (!validationStatus.isValid()) {
-                    invalidFields.put(fieldKey, validationStatus);
-                } else {
-                    if (invalidFields.size() > 0) {
-                        invalidFields.remove(fieldKey);
-                    }
+                handleWrongFormatInputs(validationStatus, fieldKey, rawValue);
+
+                getView().writeValue(mStepName, key, rawValue, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
+            } else if (childView instanceof ImageView) {
+                Object path = childView.getTag(R.id.imagePath);
+                if (path instanceof String) {
+                    getView().writeValue(mStepName, key, (String) path, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
+                }
+            } else if (childView instanceof CheckBox) {
+                String parentKey = (String) childView.getTag(R.id.key);
+                String childKey = (String) childView.getTag(R.id.childKey);
+                getView().writeValue(mStepName, parentKey, JsonFormConstants.OPTIONS_FIELD_NAME, childKey, String.valueOf(((CheckBox) childView).isChecked()), openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
+            } else if (childView instanceof RadioButton) {
+                String parentKey = (String) childView.getTag(R.id.key);
+                String childKey = (String) childView.getTag(R.id.childKey);
+                if (((RadioButton) childView).isChecked()) {
+                    getView().writeValue(mStepName, parentKey, childKey, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
+                }
+            } else if (childView instanceof Button) {
+                Button button = (Button) childView;
+                String rawValue = (String) button.getTag(R.id.raw_value);
+                getView().writeValue(mStepName, key, rawValue, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
+            }
+
+            if (!validationStatus.isValid()) {
+                invalidFields.put(fieldKey, validationStatus);
+            } else {
+                if (invalidFields.size() > 0) {
+                    invalidFields.remove(fieldKey);
                 }
             }
-            formFragment.getOnFieldsInvalidCallback().passInvalidFields(invalidFields);
         }
+        formFragment.getOnFieldsInvalidCallback().passInvalidFields(invalidFields);
     }
 
     /**
