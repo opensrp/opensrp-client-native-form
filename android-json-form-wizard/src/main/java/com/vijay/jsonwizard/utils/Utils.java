@@ -803,6 +803,10 @@ public class Utils {
         format = new SimpleDateFormat(outputFormat);
         return format.format(newDate);
     }
+
+    public static boolean isEmptyJsonArray(JSONArray jsonArray) {
+        return jsonArray == null || jsonArray.length() == 0;
+    }
 }
 
 

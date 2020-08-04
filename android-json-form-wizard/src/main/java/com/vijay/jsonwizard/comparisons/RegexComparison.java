@@ -18,10 +18,7 @@ public class RegexComparison extends Comparison {
             } catch (Exception e) {
                 Log.e(TAG, Log.getStackTraceString(e));
             }
-        } else {
-            return false;
         }
-
         return false;
     }
 
