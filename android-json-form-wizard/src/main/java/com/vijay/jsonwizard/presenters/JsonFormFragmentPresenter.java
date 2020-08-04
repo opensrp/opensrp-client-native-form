@@ -267,34 +267,35 @@ public class JsonFormFragmentPresenter extends
 
                 if (childView instanceof MaterialEditText) {
                     MaterialEditText editText = (MaterialEditText) childView;
+                    if (editText.getParent() != null && ((ViewGroup) editText.getParent()).isShown()) {
 
-                    String rawValue = (String) editText.getTag(R.id.raw_value);
-                    if (rawValue == null) {
-                        rawValue = editText.getText().toString();
-                    }
+                        String rawValue = (String) editText.getTag(R.id.raw_value);
+                        if (rawValue == null) {
+                            rawValue = editText.getText().toString();
+                        }
 
-                    handleWrongFormatInputs(validationStatus, fieldKey, rawValue);
+                        handleWrongFormatInputs(validationStatus, fieldKey, rawValue);
 
-                    String type = (String) childView.getTag(R.id.type);
-                    rawValue = JsonFormConstants.DATE_PICKER.equals(type) || JsonFormConstants.TIME_PICKER.equals(type) ? childView.getTag(R.id.locale_independent_value).toString() : rawValue;
-                    getView().writeValue(mStepName, key, rawValue, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
+                        String type = (String) childView.getTag(R.id.type);
+                        rawValue = JsonFormConstants.DATE_PICKER.equals(type) || JsonFormConstants.TIME_PICKER.equals(type) ? childView.getTag(R.id.locale_independent_value).toString() : rawValue;
+                        getView().writeValue(mStepName, key, rawValue, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
 
-                    //for repeating grp referenceEditText
-                    if (editText.getId() == R.id.reference_edit_text) {
+                        //for repeating grp referenceEditText
+                        if (editText.getId() == R.id.reference_edit_text) {
 
-                        if (!((ViewGroup) editText.getParent().getParent()).isShown()) {
-                            validationStatus.setIsValid(true);
-                        } else if (editText.getTag(R.id.has_required_validator) != null && validationStatus.isValid()) {
-                            View doneButton = ((ViewGroup) editText.getParent()).findViewById(R.id.btn_repeating_group_done);
-                            Object o = doneButton.getTag(R.id.is_repeating_group_generated);
-                            if (o == null) {
-                                validationStatus.setIsValid(false);
-                                editText.setError(getFormFragment().getString(R.string.repeating_group_not_generated_error_message));
-                                validationStatus.setErrorMessage(getFormFragment().getString(R.string.repeating_group_not_generated_error_message));
+                            if (editText.getTag(R.id.has_required_validator) != null && validationStatus.isValid()) {
+                                View doneButton = ((ViewGroup) editText.getParent()).findViewById(R.id.btn_repeating_group_done);
+                                Object o = doneButton.getTag(R.id.is_repeating_group_generated);
+                                if (o == null) {
+                                    validationStatus.setIsValid(false);
+                                    editText.setError(getFormFragment().getString(R.string.repeating_group_not_generated_error_message));
+                                    validationStatus.setErrorMessage(getFormFragment().getString(R.string.repeating_group_not_generated_error_message));
+                                }
                             }
                         }
+                    } else {
+                        validationStatus.setIsValid(true);
                     }
-
                 } else if (childView instanceof NativeEditText) {
                     NativeEditText editText = (NativeEditText) childView;
 

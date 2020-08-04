@@ -1153,6 +1153,7 @@ public class FormUtils {
                     CustomTextView listHeader = valuesLayout.findViewById(R.id.item_header);
                     CustomTextView listValue = valuesLayout.findViewById(R.id.item_value);
                     listValue.setTextColor(context.getResources().getColor(R.color.text_color_primary));
+
                     listHeader.setText(valueObject[0]);
                     listValue.setText(valueObject[1]);
 

@@ -435,7 +435,11 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     String[] address = addressAndValue.first;
                     List<String> widgets = null;
                     if (address.length > 2) {
-                        widgets = getRules(address[1], address[2], true);
+                        if (RuleConstant.RULES_DYNAMIC.equals(address[0])) {
+                            widgets = getDynamicRules(address);
+                        } else {
+                            widgets = getRules(address[1], address[2], true);
+                        }
                     } else if (address.length == 2) {
                         widgets = Arrays.asList(address[0] + "_" + address[1]);
                     }
@@ -483,9 +487,29 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     public JSONObject getObjectUsingAddress(String[] address, boolean popup) throws JSONException {
         if (address != null && address.length > 1) {
             if (RuleConstant.RULES_DYNAMIC.equals(address[0])) {
-                JSONArray jsonArray = new JSONArray(address[1]);
-                List<String> keysList = new ArrayList<>();
+                List<String> rulesList = getDynamicRules(address);
+                return fillFieldsWithValues(rulesList);
+            } else if (RuleConstant.RULES_ENGINE.equals(address[0])) {
+                String fieldKey = address[2];
+                List<String> rulesList = getRules(address[1], fieldKey, false);
+                if (rulesList != null) {
+                    return fillFieldsWithValues(rulesList);
+                }
+            } else {
+                return getRelevanceReferencedObject(address[0], address[1]);
+            }
+        }
 
+        return null;
+    }
+
+    private List<String> getDynamicRules(@NonNull String[] address) {
+        List<String> keysList = new ArrayList<>();
+
+        JSONArray jsonArray = null;
+        if (address.length > 1 && StringUtils.isNotBlank(address[1])) {
+            try {
+                jsonArray = new JSONArray(address[1]);
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonObject = jsonArray.optJSONObject(i);
                     if (!jsonObject.has(JsonFormConstants.KEY)) {
@@ -500,19 +524,11 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         }
                     }
                 }
-                return fillFieldsWithValues(keysList);
-            } else if (RuleConstant.RULES_ENGINE.equals(address[0])) {
-                String fieldKey = address[2];
-                List<String> rulesList = getRules(address[1], fieldKey, false);
-                if (rulesList != null) {
-                    return fillFieldsWithValues(rulesList);
-                }
-            } else {
-                return getRelevanceReferencedObject(address[0], address[1]);
+            } catch (JSONException e) {
+                Timber.e(e);
             }
         }
-
-        return null;
+        return keysList;
     }
 
     private JSONObject fillFieldsWithValues(List<String> rulesList) throws JSONException {
@@ -2342,39 +2358,68 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.NUMBER_SELECTOR);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void refreshExpansionPanel(RefreshExpansionPanelEvent refreshExpansionPanelEvent) {
         if (refreshExpansionPanelEvent != null) {
             try {
-                List<String> values = getExpansionPanelValues(refreshExpansionPanelEvent);
-                LinearLayout linearLayout = refreshExpansionPanelEvent.getLinearLayout();
-                utils.enableExpansionPanelViews(linearLayout);
+                final List<String> values = getExpansionPanelValues(refreshExpansionPanelEvent);
+                final LinearLayout linearLayout = refreshExpansionPanelEvent.getLinearLayout();
+                getAppExecutors().mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        utils.enableExpansionPanelViews(linearLayout);
+                    }
+                });
 
                 RelativeLayout layoutHeader = (RelativeLayout) linearLayout.getChildAt(0);
-                ImageView status = layoutHeader.findViewById(R.id.statusImageView);
-                formUtils.updateExpansionPanelRecyclerView(values, status, getApplicationContext());
+                final ImageView status = layoutHeader.findViewById(R.id.statusImageView);
 
-                LinearLayout contentLayout = (LinearLayout) linearLayout.getChildAt(1);
-                LinearLayout mainContentView = contentLayout.findViewById(R.id.contentView);
-                formUtils.addValuesDisplay(values, mainContentView, getApplicationContext());
+                getAppExecutors().mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            formUtils.updateExpansionPanelRecyclerView(values, status, getApplicationContext());
+                        } catch (JSONException e) {
+                            Timber.e(e);
+                        }
 
-                LinearLayout buttonLayout = contentLayout.findViewById(R.id.accordion_bottom_navigation);
-                Button undoButton = buttonLayout.findViewById(R.id.undo_button);
-                if (values.size() > 0) {
-                    undoButton.setVisibility(View.VISIBLE);
-                    contentLayout.setVisibility(View.VISIBLE);
-                    buttonLayout.setVisibility(View.VISIBLE);
-                } else {
-                    undoButton.setVisibility(View.GONE);
-                    contentLayout.setVisibility(View.GONE);
-                    buttonLayout.setVisibility(View.GONE);
-                    status.setImageDrawable(this.getResources().getDrawable(R.drawable.icon_task_256));
-                }
+                    }
+                });
+
+                final LinearLayout contentLayout = (LinearLayout) linearLayout.getChildAt(1);
+                final LinearLayout mainContentView = contentLayout.findViewById(R.id.contentView);
+
+                getAppExecutors().mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        formUtils.addValuesDisplay(values, mainContentView, getApplicationContext());
+                    }
+                });
+
+                final LinearLayout buttonLayout = contentLayout.findViewById(R.id.accordion_bottom_navigation);
+                final Button undoButton = buttonLayout.findViewById(R.id.undo_button);
+                getAppExecutors().mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (values.size() > 0) {
+                            undoButton.setVisibility(View.VISIBLE);
+                            contentLayout.setVisibility(View.VISIBLE);
+                            buttonLayout.setVisibility(View.VISIBLE);
+                        } else {
+                            undoButton.setVisibility(View.GONE);
+                            contentLayout.setVisibility(View.GONE);
+                            buttonLayout.setVisibility(View.GONE);
+                            status.setImageDrawable(JsonFormActivity.this.getResources().getDrawable(R.drawable.icon_task_256));
+                        }
+                    }
+                });
+
 
             } catch (JSONException e) {
                 Timber.e(e, "JsonFormActivity --> refreshExpansionPanel");
             }
         }
+
     }
 
     /**

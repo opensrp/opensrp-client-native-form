@@ -65,12 +65,12 @@ public class RulesEngineFactory implements RuleListener {
     public RulesEngineFactory() {
     }
 
-    private Rules getDynamicRulesFromJsonArray(JSONArray jsonArray) {
+    private Rules getDynamicRulesFromJsonArray(@NonNull JSONArray jsonArray, @NonNull String type) {
         try {
             Rules rules = new Rules();
             JSONObject keyJsonObject = Utils.getJsonObjectFromJsonArray(JsonFormConstants.KEY, jsonArray);
             if (keyJsonObject != null) {
-                String key = keyJsonObject.optString(JsonFormConstants.KEY);
+                String key = type + "/" + keyJsonObject.optString(JsonFormConstants.KEY);
                 if (!ruleMap.containsKey(key)) {
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonRuleObject = jsonArray.optJSONObject(i);
@@ -129,7 +129,7 @@ public class RulesEngineFactory implements RuleListener {
 
         facts.put(RuleConstant.IS_RELEVANT, false);
 
-        rules = getDynamicRulesFromJsonArray(rulesStrObject);
+        rules = getDynamicRulesFromJsonArray(rulesStrObject, JsonFormConstants.RELEVANCE);
 
         processDefaultRules(rules, facts);
 
@@ -231,7 +231,7 @@ public class RulesEngineFactory implements RuleListener {
 
         facts.put(RuleConstant.CALCULATION, false);
 
-        rules = getDynamicRulesFromJsonArray(rulesStrObject);
+        rules = getDynamicRulesFromJsonArray(rulesStrObject, JsonFormConstants.CALCULATION);
 
         processDefaultRules(rules, facts);
 

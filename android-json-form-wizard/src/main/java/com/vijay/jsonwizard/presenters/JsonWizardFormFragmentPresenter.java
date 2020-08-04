@@ -10,6 +10,8 @@ import com.vijay.jsonwizard.utils.Utils;
 
 import org.apache.commons.lang3.StringUtils;
 
+import timber.log.Timber;
+
 /**
  * Created by keyman on 04/12/18.
  */
@@ -25,8 +27,10 @@ public class JsonWizardFormFragmentPresenter extends JsonFormFragmentPresenter {
 
     @Override
     public boolean onNextClick(LinearLayout mainView) {
+
         validateAndWriteValues();
         checkAndStopCountdownAlarm();
+
         boolean validateOnSubmit = validateOnSubmit();
         if (validateOnSubmit && getIncorrectlyFormattedFields().isEmpty()) {
             executeRefreshLogicForNextStep();
@@ -38,6 +42,7 @@ public class JsonWizardFormFragmentPresenter extends JsonFormFragmentPresenter {
             getView().showSnackBar(getView().getContext().getResources()
                     .getString(R.string.json_form_on_next_error_msg));
         }
+
         return false;
     }
 

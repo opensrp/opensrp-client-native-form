@@ -132,7 +132,6 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
         } else {
             super.addFormValues(formValues);
         }
-
         return formValues;
     }
 
@@ -357,7 +356,6 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
         } else {
             onGenericDataPass(getParentKey(), getChildKey());
         }
-
     }
 
     /**
@@ -452,4 +450,10 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
         this.linearLayout = linearLayout;
     }
 
+    @Override
+    protected void createDialogWindow() {
+        ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
+        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+        getDialog().getWindow().setAttributes((WindowManager.LayoutParams) params);    }
 }

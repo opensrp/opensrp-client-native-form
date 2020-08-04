@@ -13,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.rengwuxian.materialedittext.MaterialEditText;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.WidgetArgs;
@@ -142,7 +143,17 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         doneButton.setImageResource(R.drawable.ic_done_green);
 
         //for validation
+        validationCleanUp();
+
+    }
+
+    private void validationCleanUp() {
         doneButton.setTag(R.id.is_repeating_group_generated, true);
+
+        LinearLayout referenceLayout = (LinearLayout) ((LinearLayout) parent).getChildAt(0);
+        MaterialEditText materialEditText = (MaterialEditText) referenceLayout.getChildAt(0);
+        materialEditText.setError(null);
+
         widgetArgs.getFormFragment().getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -168,7 +179,6 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
                 }
             }
         });
-
     }
 
     private LinearLayout buildRepeatingGroupLayout(final ViewParent parent) throws Exception {
@@ -230,8 +240,8 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         element.put(KEY, currKey);
         // modify relevance to reflect changes in unique key name
         if (widgetArgs != null && widgetArgs.getContext() != null) {
-            Utils.buildRulesWithUniqueId(element, uniqueId, RELEVANCE, widgetArgs.getContext(), rulesFileMap);
-            Utils.buildRulesWithUniqueId(element, uniqueId, CALCULATION, widgetArgs.getContext(), rulesFileMap);
+            Utils.buildRulesWithUniqueId(element, uniqueId, RELEVANCE, widgetArgs.getContext(), rulesFileMap, widgetArgs.getStepName());
+            Utils.buildRulesWithUniqueId(element, uniqueId, CALCULATION, widgetArgs.getContext(), rulesFileMap, widgetArgs.getStepName());
         }
         // modify relative max validator to reflect changes in unique key name
         JSONObject relativeMaxValidator = element.optJSONObject(V_RELATIVE_MAX);

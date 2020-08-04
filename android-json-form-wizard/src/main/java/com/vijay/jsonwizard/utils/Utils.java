@@ -310,7 +310,8 @@ public class Utils {
         return conditionString.replaceAll("  ", " ");
     }
 
-    public static void buildRulesWithUniqueId(JSONObject element, String uniqueId, String ruleType, Context context, Map<String, List<Map<String, Object>>> rulesFileMap) throws JSONException {
+    public static void buildRulesWithUniqueId(JSONObject element, String uniqueId, String ruleType,
+                                              Context context, Map<String, List<Map<String, Object>>> rulesFileMap, String stepName) throws JSONException {
         JSONObject rules = element.optJSONObject(ruleType);
         if (rules != null) {
             if (rules.has(RuleConstant.RULES_ENGINE) && context != null) {
@@ -336,7 +337,7 @@ public class Utils {
 
                 JSONArray jsonArrayRules = new JSONArray();
                 JSONObject keyJsonObject = new JSONObject();
-                keyJsonObject.put(JsonFormConstants.KEY, uniqueId);
+                keyJsonObject.put(JsonFormConstants.KEY, ruleType + "/" + uniqueId);
                 jsonArrayRules.put(keyJsonObject);
                 for (Map<String, Object> map : mapArrayList) {
                     JSONObject jsonRulesDynamicObject = new JSONObject();
@@ -344,14 +345,18 @@ public class Utils {
                     List<String> conditionKeys = getConditionKeys(strCondition);
 
                     for (String conditionKey : conditionKeys) {
-                        strCondition = strCondition.replace(conditionKey, conditionKey + "_" + uniqueId);
+                        if (conditionKey.startsWith(stepName)) {
+                            strCondition = strCondition.replace(conditionKey, conditionKey + "_" + uniqueId);
+                        }
                     }
 
                     String action = ((ArrayList<String>) map.get(RuleConstant.ACTIONS)).get(0);
                     List<String> actionKeys = getConditionKeys(action);
                     String updatedAction = action;
                     for (String actionKey : actionKeys) {
-                        updatedAction = action.replace(actionKey, actionKey + "_" + uniqueId);
+                        if (actionKey.startsWith(stepName)) {
+                            updatedAction = action.replace(actionKey, actionKey + "_" + uniqueId);
+                        }
                     }
 
                     jsonRulesDynamicObject.put(RuleConstant.NAME, String.valueOf(map.get(RuleConstant.NAME)).concat("_").concat(uniqueId));
