@@ -13,8 +13,14 @@ import org.robolectric.annotation.Implements;
 @Implements(ContextCompat.class)
 public class ShadowContextCompat {
 
+    private static int permissionStatus = 1;
+
     @Implementation
     public static int checkSelfPermission(@NonNull Context context, @NonNull String permission){
-        return 1;
+        return permissionStatus;
+    }
+
+    public static void setPermissionStatus(int permissionStatus) {
+        ShadowContextCompat.permissionStatus = permissionStatus;
     }
 }
