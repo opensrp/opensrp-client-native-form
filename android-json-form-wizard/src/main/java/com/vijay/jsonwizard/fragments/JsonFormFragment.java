@@ -691,9 +691,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
      */
     public void skipStepOnPreviousPressed() {
         if (skipBlankSteps()) {
-            JSONObject currentFormStep = getStep(getArguments().getString(JsonFormConstants.STEPNAME));
-            String next = currentFormStep.optString(JsonFormConstants.NEXT, "");
-            int currentFormStepNumber = getFormStepNumber(next);
+            int currentFormStepNumber = getFormStepNumber();
             for (int i = currentFormStepNumber; i >= 1; i--) {
                 JSONObject formStep = getJsonApi().getmJSONObject().optJSONObject(JsonFormConstants.STEP + i);
                 if (formStep != null) {
@@ -735,22 +733,12 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     }
 
     /**
-     * Returns the current form step number when given than steps next step number.
-     * This number is used to figure out which steps to pop when previous is clicked.
+     * Returns the current form step number which is used to figure out which steps to pop
+     * when previous is clicked.
      *
-     * @param nextFormNumber {@link String}
      * @return formNumber {@link Integer}
      */
-    private int getFormStepNumber(String nextFormNumber) {
-        int formNumber = 0;
-        if (StringUtils.isNotBlank(nextFormNumber)) {
-            int currentFormNumber = Integer.parseInt(nextFormNumber.substring(4, 5)) - 1;
-            if (currentFormNumber > 0) {
-                formNumber = currentFormNumber;
-            } else if (currentFormNumber == 0) {
-                formNumber = 1;
-            }
-        }
-        return formNumber;
+    private int getFormStepNumber() {
+        return Integer.parseInt(getArguments().getString(JsonFormConstants.STEPNAME).substring(4));
     }
 }
