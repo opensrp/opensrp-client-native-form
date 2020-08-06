@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.AppCompatRadioButton;
 import android.support.v7.widget.Toolbar;
@@ -229,8 +230,6 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         super.onResume();
         if (!getJsonApi().isPreviousPressed()) {
             skipStepsOnNextPressed();
-        } else {
-            skipStepOnPreviousPressed();
         }
     }
 
@@ -287,8 +286,12 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     }
 
     public boolean next() {
+        return next(true);
+    }
+
+    public boolean next(boolean addToBackStack) {
         try {
-            return presenter.onNextClick(mMainView);
+            return presenter.onNextClick(mMainView, addToBackStack);
         } catch (Exception e) {
             Timber.e(e, " --> next");
         }
@@ -378,11 +381,19 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     }
 
     @Override
-    public void transactThis(JsonFormFragment next) {
-        getActivity().getSupportFragmentManager().beginTransaction()
+    public void transactThis(JsonFormFragment nextFragment) {
+        transactThis(nextFragment, true);
+    }
+
+    @Override
+    public void transactThis(JsonFormFragment next, boolean addToBackStack) {
+        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left,
-                        R.anim.exit_to_right).replace(R.id.container, next).addToBackStack(next.getClass().getSimpleName())
-                .commitAllowingStateLoss(); // use https://stackoverflow.com/a/10261449/9782187
+                        R.anim.exit_to_right).replace(R.id.container, next);
+        if (addToBackStack) {
+            fragmentTransaction.addToBackStack(next.getClass().getSimpleName());
+        }
+        fragmentTransaction.commitAllowingStateLoss(); // use https://stackoverflow.com/a/10261449/9782187
     }
 
     @Override
@@ -680,34 +691,11 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
             if (StringUtils.isNotEmpty(next)) {
                 checkIfStepIsBlank(formStep);
                 if (shouldSkipStep()) {
-                    next();
+                    next(false);
                 }
             }
         }
     }
-
-    /**
-     * Skips blank by relevance steps when previous is clicked on the json wizard forms.
-     */
-    public void skipStepOnPreviousPressed() {
-        if (skipBlankSteps()) {
-            JSONObject currentFormStep = getStep(getArguments().getString(JsonFormConstants.STEPNAME));
-            String next = currentFormStep.optString(JsonFormConstants.NEXT, "");
-            int currentFormStepNumber = getFormStepNumber(next);
-            for (int i = currentFormStepNumber; i >= 1; i--) {
-                JSONObject formStep = getJsonApi().getmJSONObject().optJSONObject(JsonFormConstants.STEP + i);
-                if (formStep != null) {
-                    checkIfStepIsBlank(formStep);
-                    if (shouldSkipStep()) {
-                        getFragmentManager().popBackStack();
-                    } else {
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
 
     /**
      * Checks if a given step is blank due to relevance hidding all the widgets

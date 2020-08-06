@@ -168,13 +168,17 @@ public class JsonFormFragmentPresenter extends
     }
 
     public boolean onNextClick(LinearLayout mainView) {
+       return onNextClick(mainView, true);
+    }
+
+    public boolean onNextClick(LinearLayout mainView, boolean addToBackStack) {
         validateAndWriteValues();
         checkAndStopCountdownAlarm();
         boolean validateOnSubmit = validateOnSubmit();
         if (validateOnSubmit && incorrectlyFormattedFields.isEmpty()) {
-            return moveToNextStep();
+            return moveToNextStep(addToBackStack);
         } else if (isFormValid()) {
-            return moveToNextStep();
+            return moveToNextStep(addToBackStack);
         } else {
             getView().showSnackBar(
                     getView().getContext().getResources().getString(R.string.json_form_on_next_error_msg));
@@ -275,11 +279,15 @@ public class JsonFormFragmentPresenter extends
     }
 
     private boolean moveToNextStep() {
+        return moveToNextStep(true);
+    }
+
+    private boolean moveToNextStep(boolean addToBackStack) {
         if (!"".equals(mStepDetails.optString(JsonFormConstants.NEXT))) {
             JsonFormFragment next = JsonFormFragment
                     .getFormFragment(mStepDetails.optString(JsonFormConstants.NEXT));
             getView().hideKeyBoard();
-            getView().transactThis(next);
+            getView().transactThis(next, addToBackStack);
             return true;
         }
         return false;

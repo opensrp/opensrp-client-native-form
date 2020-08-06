@@ -49,6 +49,8 @@ public interface JsonFormFragmentView<V extends ViewState> extends MvpView {
 
     void transactThis(JsonFormFragment next);
 
+    void transactThis(JsonFormFragment next, boolean addToBackStack);
+
     void startActivityForResult(Intent intent, int requestCode);
 
     void updateRelevantImageView(Bitmap bitmap, String imagePath, String currentKey);

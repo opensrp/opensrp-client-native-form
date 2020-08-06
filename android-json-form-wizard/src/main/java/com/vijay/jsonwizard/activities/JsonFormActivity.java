@@ -894,6 +894,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 }).create();
 
         dialog.show();
+        setPreviousPressed(true);
     }
 
     @Override
