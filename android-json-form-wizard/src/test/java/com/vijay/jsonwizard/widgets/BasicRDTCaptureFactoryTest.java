@@ -52,7 +52,6 @@ public class BasicRDTCaptureFactoryTest extends BaseTest {
     public void setUp() throws JSONException {
         MockitoAnnotations.initMocks(this);
         basicRDTCaptureFactory = new BasicRDTCaptureFactory();
-        getJsonFormActivityIntent();
         jsonFormActivity = Robolectric.buildActivity(JsonFormActivity.class, getJsonFormActivityIntent()).create().get();
     }
 
