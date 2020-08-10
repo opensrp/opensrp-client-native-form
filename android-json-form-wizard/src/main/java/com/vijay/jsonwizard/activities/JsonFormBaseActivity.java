@@ -53,6 +53,7 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
     protected PropertyManager propertyManager;
     protected Map<String, View> skipLogicViews;
     protected Map<String, View> calculationLogicViews;
+    protected Map<String, View> constrainedViews;
     protected HashMap<Integer, OnActivityResultListener> onActivityResultListeners;
     protected HashMap<Integer, OnActivityRequestPermissionResultListener> onActivityRequestPermissionResultListeners;
     protected List<LifeCycleListener> lifeCycleListeners;
@@ -80,6 +81,7 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
         setSupportActionBar(mToolbar);
         skipLogicViews = new LinkedHashMap<>();
         calculationLogicViews = new LinkedHashMap<>();
+        constrainedViews = new LinkedHashMap<>();
         onActivityResultListeners = new HashMap<>();
         onActivityRequestPermissionResultListeners = new HashMap<>();
         lifeCycleListeners = new ArrayList<>();
