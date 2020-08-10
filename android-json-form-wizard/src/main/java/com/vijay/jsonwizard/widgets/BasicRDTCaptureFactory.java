@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
-import android.support.annotation.VisibleForTesting;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
@@ -52,9 +51,9 @@ public class BasicRDTCaptureFactory extends RDTCaptureFactory {
         }
     }
 
-    @VisibleForTesting
     protected boolean isPermissionGiven() {
-        return ContextCompat.checkSelfPermission(widgetArgs.getContext(), Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED;
+        return ContextCompat.checkSelfPermission(widgetArgs.getContext(),
+                Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED;
     }
 
     @Override
