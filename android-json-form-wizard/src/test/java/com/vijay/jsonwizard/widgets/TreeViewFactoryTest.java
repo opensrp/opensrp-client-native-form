@@ -11,7 +11,6 @@ import com.vijay.jsonwizard.activities.JsonFormActivity;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
-import com.vijay.jsonwizard.shadow.ShadowTreeViewDialog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,7 +20,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
-import org.robolectric.annotation.Config;
 
 import java.util.List;
 import java.util.Set;
@@ -41,8 +39,17 @@ public class TreeViewFactoryTest extends BaseTest {
         jsonFormActivity = Robolectric.buildActivity(JsonFormActivity.class, getJsonFormActivityIntent()).create().get();
     }
 
+    private Intent getJsonFormActivityIntent() throws JSONException {
+        JSONObject mJSONObject = new JSONObject();
+        mJSONObject.put(JsonFormConstants.STEP1, new JSONObject());
+        mJSONObject.put(JsonFormConstants.ENCOUNTER_TYPE, "encounter_type");
+
+        Intent intent = new Intent();
+        intent.putExtra(JsonFormConstants.JSON_FORM_KEY.JSON, mJSONObject.toString());
+        return intent;
+    }
+
     @Test
-    @Config(shadows = {ShadowTreeViewDialog.class})
     public void testTreeViewFactoryInstantiatesViewsCorrectly() throws Exception {
         String treeViewFactoryString = "{\"key\":\"Home_Facility\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"openmrs_data_type\":\"text\",\"type\":\"tree\",\"hint\":\"Child's home health facility\",\"tree\":[{\"name\":\"Hilton\",\"key\":\"hilton\",\"level\":\"1\",\"nodes\":[{\"name\":\"Sarova\",\"key\":\"sarova\"}]},{\"name\":\"Double tree\",\"key\":\"double_tree\"}],\"default\":[\"hilton\"],\"value\":[\"sarova\"],\"v_required\":{\"value\":true,\"err\":\"Please enter the child's home facility\"},\"read_only\":true,\"relevance\":{\"rules-engine\":{\"ex-rules\":{\"rules-file\":\"tree_relevance_rules.yml\"}}},\"constraints\":{\"rules-engine\":{\"ex-rules\":{\"rules-file\":\"tree_constraints_rules.yml\"}}}}";
         JSONObject treeViewFactoryObject = new JSONObject(treeViewFactoryString);
@@ -62,15 +69,5 @@ public class TreeViewFactoryTest extends BaseTest {
     public void testGetCustomTranslatableWidgetFields() {
         Set<String> editableProperties = factory.getCustomTranslatableWidgetFields();
         Assert.assertEquals(0, editableProperties.size());
-    }
-
-    private Intent getJsonFormActivityIntent() throws JSONException {
-        JSONObject mJSONObject = new JSONObject();
-        mJSONObject.put(JsonFormConstants.STEP1, new JSONObject());
-        mJSONObject.put(JsonFormConstants.ENCOUNTER_TYPE, "encounter_type");
-
-        Intent intent = new Intent();
-        intent.putExtra(JsonFormConstants.JSON_FORM_KEY.JSON, mJSONObject.toString());
-        return intent;
     }
 }
