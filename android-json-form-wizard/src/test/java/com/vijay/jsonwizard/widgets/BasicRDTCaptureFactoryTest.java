@@ -16,10 +16,12 @@ import com.vijay.jsonwizard.shadow.ShadowContextCompat;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
@@ -30,11 +32,17 @@ import java.util.Set;
 
 import edu.washington.cs.ubicomplab.rdt_reader.activity.RDTCaptureActivity;
 
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.RDT_CAPTURE_CODE;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP1;
+import static edu.washington.cs.ubicomplab.rdt_reader.core.Constants.SAVED_IMAGE_FILE_PATH;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
 @Config(shadows = {ShadowContextCompat.class})
@@ -52,7 +60,7 @@ public class BasicRDTCaptureFactoryTest extends BaseTest {
     public void setUp() throws JSONException {
         MockitoAnnotations.initMocks(this);
         basicRDTCaptureFactory = new BasicRDTCaptureFactory();
-        jsonFormActivity = Robolectric.buildActivity(JsonFormActivity.class, getJsonFormActivityIntent()).create().get();
+        jsonFormActivity = spy(Robolectric.buildActivity(JsonFormActivity.class, getJsonFormActivityIntent()).create().get());
     }
 
     @Test
@@ -105,6 +113,48 @@ public class BasicRDTCaptureFactoryTest extends BaseTest {
     public void testGetCustomTranslatableWidgetFieldsShouldReturnNonNullSet() {
         Set<String> translatableFields = basicRDTCaptureFactory.getCustomTranslatableWidgetFields();
         assertNotNull(translatableFields);
+    }
+
+    @Test
+    public void testCaptureActivityIsClosedOnBackPress() {
+        Whitebox.setInternalState(basicRDTCaptureFactory, "widgetArgs", getWidgetArgs());
+        basicRDTCaptureFactory.onActivityResult(1, RESULT_CANCELED, null);
+        verify(jsonFormActivity).finish();
+    }
+
+    @Test
+    public void testOnActivityResultShouldCorrectlyExtractCaptureValues() throws JSONException {
+        Whitebox.setInternalState(basicRDTCaptureFactory, "widgetArgs", getWidgetArgs());
+        Intent intent = new Intent();
+        intent.putExtra(SAVED_IMAGE_FILE_PATH, "file_path");
+
+        View view = new View(jsonFormActivity);
+        view.setTag(R.id.key, "key");
+        view.setTag(R.id.openmrs_entity_parent, "entity_parent");
+        view.setTag(R.id.openmrs_entity, "entity");
+        view.setTag(R.id.openmrs_entity_id, "entity_id");
+        Whitebox.setInternalState(basicRDTCaptureFactory, "rootLayout", view);
+
+        basicRDTCaptureFactory.onActivityResult(RDT_CAPTURE_CODE, RESULT_OK, intent);
+        verify(jsonFormActivity).writeValue(eq("step1"), eq("key"), eq("file_path"),
+                eq("entity_parent"), eq("entity"), eq("entity_id"), eq(false));
+        verify(formFragment).next();
+        verify(formFragment).save(eq(true));
+    }
+
+    @After
+    public void tearDown() {
+        jsonFormActivity.finish();
+    }
+
+    private WidgetArgs getWidgetArgs() {
+        WidgetArgs widgetArgs = new WidgetArgs();
+        widgetArgs.withFormFragment(formFragment)
+                .withContext(jsonFormActivity)
+                .withStepName("step1")
+                .withPopup(false)
+                .withJsonObject(new JSONObject());
+        return widgetArgs;
     }
 
     private Intent getJsonFormActivityIntent() throws JSONException {
