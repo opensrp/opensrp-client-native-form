@@ -1,6 +1,5 @@
 package com.vijay.jsonwizard.widgets;
 
-import android.content.Intent;
 import android.view.View;
 import android.widget.RelativeLayout;
 
@@ -8,7 +7,6 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
-import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 
@@ -37,16 +35,6 @@ public class TreeViewFactoryTest extends BaseTest {
         MockitoAnnotations.initMocks(this);
         factory = new TreeViewFactory();
         jsonFormActivity = Robolectric.buildActivity(JsonFormActivity.class, getJsonFormActivityIntent()).create().get();
-    }
-
-    private Intent getJsonFormActivityIntent() throws JSONException {
-        JSONObject mJSONObject = new JSONObject();
-        mJSONObject.put(JsonFormConstants.STEP1, new JSONObject());
-        mJSONObject.put(JsonFormConstants.ENCOUNTER_TYPE, "encounter_type");
-
-        Intent intent = new Intent();
-        intent.putExtra(JsonFormConstants.JSON_FORM_KEY.JSON, mJSONObject.toString());
-        return intent;
     }
 
     @Test
