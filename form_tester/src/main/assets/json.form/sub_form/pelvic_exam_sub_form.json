@@ -1,0 +1,137 @@
+{
+  "content_form": [
+    {
+      "key": "pelvic_exam_abnormal",
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "",
+      "openmrs_entity_id": "",
+      "type": "check_box",
+      "label": "Pelvic exam: abnormal",
+      "label_text_style": "bold",
+      "text_color": "#000000",
+      "options": [
+        {
+          "key": "phy_vaginal_discharge",
+          "text": "Physiological vaginal discharge",
+          "value": false,
+          "openmrs_entity": "",
+          "openmrs_entity_id": ""
+        },
+        {
+          "key": "abnormal_vaginal_discharge",
+          "text": "Abnormal vaginal discharge",
+          "value": false,
+          "openmrs_entity": "Vaginal Discharge Problem",
+          "openmrs_entity_id": "123395"
+        },
+        {
+          "key": "amniotic_fluid_evidence",
+          "text": "Evidence of amniotic fluid",
+          "value": false,
+          "openmrs_entity": "",
+          "openmrs_entity_id": ""
+        },
+        {
+          "key": "smelling_vaginal_discharge",
+          "text": "Foul-smelling vaginal discharge",
+          "value": false,
+          "openmrs_entity": "",
+          "openmrs_entity_id": ""
+        },
+        {
+          "key": "erythematous_papules",
+          "text": "Clusters of erythematous papules",
+          "value": false,
+          "openmrs_entity": "",
+          "openmrs_entity_id": ""
+        },
+        {
+          "key": "vesicles",
+          "text": "Vesicles",
+          "value": false,
+          "openmrs_entity": "",
+          "openmrs_entity_id": ""
+        },
+        {
+          "key": "genital_ulcer",
+          "text": "Genital ulcer",
+          "value": false,
+          "openmrs_entity": "",
+          "openmrs_entity_id": ""
+        },
+        {
+          "key": "genital_pain",
+          "text": "Genital pain",
+          "value": false,
+          "openmrs_entity": "",
+          "openmrs_entity_id": ""
+        },
+        {
+          "key": "femoral_lymphadenopathy",
+          "text": "Tender bilateral inguinal and femoral lymphadenopathy",
+          "value": false,
+          "openmrs_entity": "",
+          "openmrs_entity_id": ""
+        },
+        {
+          "key": "cervical_friability",
+          "text": "Cervical friability",
+          "value": false,
+          "openmrs_entity": "",
+          "openmrs_entity_id": ""
+        },
+        {
+          "key": "mucopurulent_ervicitis",
+          "text": "Mucopurulent cervicitis",
+          "value": false,
+          "openmrs_entity": "",
+          "openmrs_entity_id": ""
+        },
+        {
+          "key": "unilateral_lymphadenopathy",
+          "text": "Tender unilateral lymphadenopathy",
+          "value": false,
+          "openmrs_entity": "",
+          "openmrs_entity_id": ""
+        },
+        {
+          "key": "vaginal_discharge_curd_like",
+          "text": "Curd-like vaginal discharge",
+          "value": false,
+          "openmrs_entity": "",
+          "openmrs_entity_id": ""
+        },
+        {
+          "key": "other",
+          "text": "Other (specify)",
+          "value": false,
+          "openmrs_entity": "",
+          "openmrs_entity_id": ""
+        }
+      ]
+    },
+    {
+      "key": "pelvic_exam_abnormal_other",
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "",
+      "openmrs_entity_id": "",
+      "type": "edit_text",
+      "hint": "Specify",
+      "v_regex": {
+        "value": "[A-Za-z\\\\s\\\\.\\\\-]*",
+        "err": "Please enter valid content"
+      },
+      "relevance": {
+        "step3:pelvic_exam_abnormal": {
+          "ex-checkbox": [
+            {
+              "or": [
+                "other"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

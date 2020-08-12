@@ -201,8 +201,6 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         presenter.onRequestPermissionsResult(requestCode, permissions, grantResults);
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-
     }
 
     @Override

@@ -1,0 +1,88 @@
+{
+  "content_form": [
+    {
+      "key": "breast_exam_abnormal",
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "",
+      "openmrs_entity_id": "",
+      "type": "check_box",
+      "label": "Breast exam: abnormal",
+      "label_text_style": "bold",
+      "text_color": "#000000",
+      "options": [
+        {
+          "key": "nodule",
+          "text": "Nodule",
+          "value": false,
+          "openmrs_entity": "",
+          "openmrs_entity_id": ""
+        },
+        {
+          "key": "discharge",
+          "text": "Discharge",
+          "value": false,
+          "openmrs_entity": "Discharge from Nipple",
+          "openmrs_entity_id": "142248"
+        },
+        {
+          "key": "flushing",
+          "text": "Flushing",
+          "value": false,
+          "openmrs_entity": "Flushing",
+          "openmrs_entity_id": "140039"
+        },
+        {
+          "key": "local_pain",
+          "text": "Local pain",
+          "value": false,
+          "openmrs_entity": "Pain of Breast",
+          "openmrs_entity_id": "131021"
+        },
+        {
+          "key": "bleeding",
+          "text": "Bleeding",
+          "value": false,
+          "openmrs_entity": "Bleeding from Breast",
+          "openmrs_entity_id": "147236"
+        },
+        {
+          "key": "increased_temperature",
+          "text": "Increased temperature",
+          "value": false,
+          "openmrs_entity": "",
+          "openmrs_entity_id": ""
+        },
+        {
+          "key": "other",
+          "text": "Other (specify)",
+          "value": false,
+          "openmrs_entity": "",
+          "openmrs_entity_id": ""
+        }
+      ]
+    },
+    {
+      "key": "breast_exam_abnormal_other",
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "",
+      "openmrs_entity_id": "",
+      "type": "edit_text",
+      "hint": "Specify",
+      "v_regex": {
+        "value": "[A-Za-z\\\\s\\\\.\\\\-]*",
+        "err": "Please enter valid content"
+      },
+      "relevance": {
+        "step3:breast_exam_abnormal": {
+          "ex-checkbox": [
+            {
+              "or": [
+                "other"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
