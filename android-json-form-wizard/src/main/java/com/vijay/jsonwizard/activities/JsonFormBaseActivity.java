@@ -25,6 +25,7 @@ import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.PropertyManager;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.client.utils.contract.ClientFormContract;
@@ -44,7 +45,7 @@ import timber.log.Timber;
 
 import static com.vijay.jsonwizard.utils.NativeFormLangUtils.getTranslatedString;
 
-abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnFieldsInvalid, ClientFormContract.View {
+public abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnFieldsInvalid, ClientFormContract.View {
     protected static final String TAG = JsonFormActivity.class.getSimpleName();
     protected static final String JSON_STATE = "jsonState";
     protected static final String FORM_STATE = "formState";
@@ -53,6 +54,7 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
     protected PropertyManager propertyManager;
     protected Map<String, View> skipLogicViews;
     protected Map<String, View> calculationLogicViews;
+    protected Map<String, View> constrainedViews;
     protected HashMap<Integer, OnActivityResultListener> onActivityResultListeners;
     protected HashMap<Integer, OnActivityRequestPermissionResultListener> onActivityRequestPermissionResultListeners;
     protected List<LifeCycleListener> lifeCycleListeners;
@@ -71,6 +73,9 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
 
     protected boolean isVisibleFormErrorAndRollbackDialog;
 
+    // specify where the form reads data from
+    public static String DATA_SOURCE = JsonFormConstants.FileSource.ASSETS;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +85,7 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
         setSupportActionBar(mToolbar);
         skipLogicViews = new LinkedHashMap<>();
         calculationLogicViews = new LinkedHashMap<>();
+        constrainedViews = new LinkedHashMap<>();
         onActivityResultListeners = new HashMap<>();
         onActivityRequestPermissionResultListeners = new HashMap<>();
         lifeCycleListeners = new ArrayList<>();
@@ -90,6 +96,7 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
             init(getJsonForm());
             initializeFormFragment();
             onFormStart();
+            DATA_SOURCE = readDataSource();
         } else {
             this.form = extractForm(savedInstanceState.getSerializable(FORM_STATE));
             init(savedInstanceState.getString(JSON_STATE));
@@ -97,6 +104,11 @@ abstract class JsonFormBaseActivity extends MultiLanguageActivity implements OnF
         for (LifeCycleListener lifeCycleListener : lifeCycleListeners) {
             lifeCycleListener.onCreate(savedInstanceState);
         }
+    }
+
+    private String readDataSource() {
+        String source = getIntent().getStringExtra(JsonFormConstants.FROM_DATA_SOURCE);
+        return StringUtils.isBlank(source) ? JsonFormConstants.FileSource.ASSETS : source;
     }
 
     protected String getJsonForm() {

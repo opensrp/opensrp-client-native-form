@@ -1,0 +1,127 @@
+---
+name: step1_first_name
+description: Number Selectors
+priority: 1
+condition: "true"
+actions:
+    - "calculation = 'Bonita Ramafosa'"
+---
+name: step1_middle_name
+description: Number Selectors
+priority: 1
+condition: "true"
+actions:
+    - "calculation = 'Beth'"
+---
+name: step1_tobacco_cessation_toaster
+description: cease tobacco toaster
+priority: 1
+condition: "step1_hepb_immun_status < 60 || step1_hepb_immun_status > 100"
+actions:
+    - 'calculation = ["kid_count" : step1_hepb_immun_status, "grand_children" : (step1_hepb_immun_status * 2) , "heros" : global_heroes]'
+
+---
+name: step1_happiness_level
+description: Happiness level calculation
+priority: 1
+condition: "step1_First_Name == 'Martin' && global_has_cat_scan == 'true' "
+actions:
+    - 'calculation = helper.formatDate("19-12-2020","y")'
+---
+name: step2_fetal_heart_beat_rate_value
+description: fetal_heart_beat_rate_value
+priority: 1
+condition: "step2_fetal_heart_rate > 0 && (step2_fetal_heart_rate < 110 || step2_fetal_heart_rate > 160)"
+actions:
+    - "calculation = 81"
+---
+name: step3_anaemic
+description: Anaemic
+priority: 1
+condition: "(global_hb_result < 11 && (global_gest_age <= 12 || global_gest_age >= 28)) || (global_hb_result < 10.5 && (global_gest_age > 12 && global_gest_age < 28)) || (global_hb_result == 0 && step3_pallor == 'yes')"
+actions:
+    - "calculation = 1"
+---
+name: step3_oximetry
+description: oximetry
+priority: 1
+condition: "step3_respiratory_exam == 3"
+actions:
+    - "calculation = helper.getDateToday()"
+---
+name: step2_fetal_heart_rate
+description: fetal_heart_rate
+priority: 1
+condition: "true"
+actions:
+    - "calculation = 82"
+---
+name: step2_test_date
+description: test_date
+priority: 1
+condition: "true"
+actions:
+    - "calculation = helper.getDateToday()"
+---
+name: step3_previous_pregnancies
+description: Previous pregnancies
+priority: 1
+condition: "step3_gravida > 0"
+actions:
+    - "calculation = step3_gravida - 1 "
+---
+name: step3_parity
+description: Parity calculation
+priority: 1
+condition: "true"
+actions:
+    - "calculation = step3_live_births + step3_stillbirths"
+---
+name: step3_preeclampsia_risk
+description: preeclampsia_risk
+priority: 1
+condition: "(!global_no_of_fetuses.isEmpty() && global_no_of_fetuses >= 2) || step3_prev_preg_comps.contains('pre_eclampsia') || step3_prev_preg_comps.contains('eclampsia') || step3_prev_preg_comps.contains('convulsions') || step4_health_conditions.contains('autoimmune_disease') || step4_health_conditions.contains('diabetes') || step4_health_conditions.contains('hypertension') || step4_health_conditions.contains('kidney_disease')"
+actions:
+    - "calculation = 1"
+---
+name: step3_gdm_risk
+description: gdm_risk
+priority: 1
+condition: "(!global_bmi.isEmpty() && global_bmi >= 30) || step3_prev_preg_comps.contains('gestational_diabetes') || step3_prev_preg_comps.contains('macrosomia') || (!global_urine_glucose.isEmpty() && (global_urine_glucose == '++' || global_urine_glucose == '+++' || global_urine_glucose == '++++'))"
+actions:
+    - "calculation = 1"
+---
+name: step1_first_weight
+description: This is a calculated field for purposes of making weight calculations simpler. It fixes which weight to use as pre-gestational weight.
+priority: 1
+condition: "true"
+actions:
+    - "calculation = ((!step1_pregest_weight_unknown.isEmpty() && step1_pregest_weight_unknown.contains('pregest_weight_unknown')) ? step1_current_weight : step1_pregest_weight)"
+---
+name: step1_tot_weight_gain
+description: Total weight gain in pregnancy so far (in kg).
+priority: 1
+condition: "true"
+actions:
+    - "calculation = (step1_current_weight - step1_first_weight)"
+---
+name: step1_toaster2
+description: Note displaying the woman's BMI, her weight category, and how much weight she should put on during pregnancy for her weight category.
+priority: 1
+condition: "true"
+actions:
+    - "calculation = ['tot_weight_gain' : step1_tot_weight_gain]"
+---
+name: step1_next_of_kin
+description: Next of kin
+priority: 1
+condition: "true"
+actions:
+    - 'calculation = ["kid_count" : step1_hepb_immun_status, "grand_children" : (step1_hepb_immun_status * 2) , "heros" : global_heroes]'
+---
+name: step1_toaster26_hidden
+description: toaster
+priority: 1
+condition: "step1_dilation_cm > 2"
+actions:
+    - 'calculation = step1_dilation_cm'

@@ -44,7 +44,10 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.vijay.jsonwizard.utils.Utils.formatDateToPattern;
+import static com.vijay.jsonwizard.utils.Utils.isEmptyJsonArray;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class UtilsTest extends BaseTest {
 
@@ -355,5 +358,14 @@ public class UtilsTest extends BaseTest {
         String outputFormat = "dd MMM yyyy";
         String formattedDate = formatDateToPattern(date, inputFormat, outputFormat);
         assertEquals("05 May 2022", formattedDate);
+    }
+
+    @Test
+    public void testIsEmptyJsonArrayShouldReturnCorrectStatus() {
+        assertTrue(isEmptyJsonArray(null));
+        JSONArray jsonArray = new JSONArray();
+        assertTrue(isEmptyJsonArray(jsonArray));
+        jsonArray.put("value");
+        assertFalse(isEmptyJsonArray(jsonArray));
     }
 }
