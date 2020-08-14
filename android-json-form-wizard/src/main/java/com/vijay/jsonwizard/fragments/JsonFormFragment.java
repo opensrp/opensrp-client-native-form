@@ -520,7 +520,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     @Override
     public boolean skipBlankSteps() {
-        return getJsonApi().skipBlankSteps();
+        return getJsonApi() != null && getJsonApi().skipBlankSteps();
     }
 
     @Override
