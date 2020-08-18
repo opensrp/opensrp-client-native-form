@@ -225,6 +225,9 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     @Override
     public void onResume() {
         super.onResume();
+
+        if (!skipBlankSteps()) { return; }
+
         if (!getJsonApi().isPreviousPressed()) {
             skipStepsOnNextPressed();
         } else {
@@ -517,7 +520,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     @Override
     public boolean skipBlankSteps() {
-        return getJsonApi().skipBlankSteps();
+        return getJsonApi() != null && getJsonApi().skipBlankSteps();
     }
 
     @Override
@@ -672,14 +675,12 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
      * Skips blank by relevance steps when next is clicked on the json wizard forms.
      */
     public void skipStepsOnNextPressed() {
-        if (skipBlankSteps()) {
-            JSONObject formStep = getStep(getArguments().getString(JsonFormConstants.STEPNAME));
-            String next = formStep.optString(JsonFormConstants.NEXT, "");
-            if (StringUtils.isNotEmpty(next)) {
-                checkIfStepIsBlank(formStep);
-                if (shouldSkipStep()) {
-                    next();
-                }
+        JSONObject formStep = getStep(getArguments().getString(JsonFormConstants.STEPNAME));
+        String next = formStep.optString(JsonFormConstants.NEXT, "");
+        if (StringUtils.isNotEmpty(next)) {
+            checkIfStepIsBlank(formStep);
+            if (shouldSkipStep()) {
+                next();
             }
         }
     }
@@ -688,17 +689,15 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
      * Skips blank by relevance steps when previous is clicked on the json wizard forms.
      */
     public void skipStepOnPreviousPressed() {
-        if (skipBlankSteps()) {
-            int currentFormStepNumber = getFormStepNumber();
-            for (int i = currentFormStepNumber; i >= 1; i--) {
-                JSONObject formStep = getJsonApi().getmJSONObject().optJSONObject(JsonFormConstants.STEP + i);
-                if (formStep != null) {
-                    checkIfStepIsBlank(formStep);
-                    if (shouldSkipStep()) {
-                        getFragmentManager().popBackStack();
-                    } else {
-                        break;
-                    }
+        int currentFormStepNumber = getFormStepNumber();
+        for (int i = currentFormStepNumber; i >= 1; i--) {
+            JSONObject formStep = getJsonApi().getmJSONObject().optJSONObject(JsonFormConstants.STEP + i);
+            if (formStep != null) {
+                checkIfStepIsBlank(formStep);
+                if (shouldSkipStep()) {
+                    getFragmentManager().popBackStack();
+                } else {
+                    break;
                 }
             }
         }
