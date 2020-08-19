@@ -1,0 +1,42 @@
+---
+name: step1_numbers_selector_three
+description: Number Selectors
+priority: 1
+condition: "true"
+actions:
+- "constraint = (step1_numbers_selector - step1_numbers_selector_two)"
+---
+name: step1_ultrasound_done
+description: Number Selectors
+priority: 1
+condition: "true"
+actions:
+- 'constraint = ["min_date" : helper.minDate("today-2y"), "max_date" : helper.maxDate("today+2y")]'
+---
+name: step3_miscarriages_abortions
+description: miscarriage abortions number selectors
+priority: 1
+condition: "true"
+actions:
+- "constraint = step3_previous_pregnancies + 1"
+---
+name: step3_live_births
+description: live births number selectors
+priority: 1
+condition: "true"
+actions:
+- "constraint = (step3_previous_pregnancies - step3_miscarriages_abortions) + 1"
+---
+name: step3_stillbirths
+description: Still birth number selector
+priority: 1
+condition: "true"
+actions:
+- "constraint = (step3_previous_pregnancies - step3_miscarriages_abortions- step3_live_births) + 1"
+---
+name: step3_c_sections
+description: C -Sections number selector
+priority: 1
+condition: "true"
+actions:
+- "constraint = step3_parity + 1"

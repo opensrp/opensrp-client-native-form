@@ -1,2 +1,2 @@
 rootProject.name = 'opensrp-client-native-form'
-include ':android-json-form-wizard', ':sample'
+include ':android-json-form-wizard', ':sample', ':form_tester'
