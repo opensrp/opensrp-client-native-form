@@ -259,7 +259,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         final String error = (String) radioGroup.getTag(R.id.error);
         if (radioGroup.isEnabled() && error != null) {
             final LinearLayout linearLayout = (LinearLayout) radioGroup.getParent();
-            if (linearLayout != null && linearLayout.getVisibility() != View.GONE) {
+            if (linearLayout != null && linearLayout.isShown()) {
                 boolean isValid = performValidation(radioGroup);
                 final TextView errorTextView = linearLayout.findViewById(R.id.error_textView);
                 if (!isValid) {
