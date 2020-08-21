@@ -143,7 +143,7 @@ public class RulesEngineFactoryTest {
                 "    - \"isRelevant = true\"";
         InputStream inputStream = new ByteArrayInputStream(relevance.getBytes());
         Mockito.when(assetManager.open("rule/test")).thenReturn(inputStream);
-        boolean result = rulesEngineFactory.getRelevance(relevanceFacts, "test");
+        boolean result = rulesEngineFactory.getRelevance(relevanceFacts, "test","step1");
         Assert.assertFalse(result);
     }
 
@@ -162,7 +162,7 @@ public class RulesEngineFactoryTest {
         InputStream inputStream = new ByteArrayInputStream(relevance.getBytes());
         Mockito.when(assetManager.open("rule/test")).thenReturn(inputStream);
         relevanceFacts.put("step1_first_Name", "Doe");
-        boolean result = rulesEngineFactory.getRelevance(relevanceFacts, "test");
+        boolean result = rulesEngineFactory.getRelevance(relevanceFacts, "test","step1");
         Assert.assertFalse(result);
     }
 
@@ -278,11 +278,9 @@ public class RulesEngineFactoryTest {
         String ruleFileName = "rules/calculation_file.yml";
         JsonFormActivity jsonFormActivity = Mockito.mock(JsonFormActivity.class);
 
-        Mockito.doReturn(new BufferedReader(new StringReader("{"))).when(jsonFormActivity).getRules(jsonFormActivity, ruleFileName);
-
         rulesEngineFactory = new RulesEngineFactory(jsonFormActivity, new HashMap<String, String>());
         ReflectionHelpers.callInstanceMethod(rulesEngineFactory, "getRulesFromAsset", ReflectionHelpers.ClassParameter.from(String.class, ruleFileName));
 
-        Mockito.verify(jsonFormActivity).handleFormError(true, ruleFileName);
+        Mockito.verify(jsonFormActivity).handleFormError(true, rulesEngineFactory.getRulesFolderPath()+ruleFileName);
     }
 }

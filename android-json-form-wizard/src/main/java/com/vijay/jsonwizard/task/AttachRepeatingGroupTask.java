@@ -13,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.rengwuxian.materialedittext.MaterialEditText;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.WidgetArgs;
@@ -20,6 +21,7 @@ import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.Utils;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -102,20 +104,22 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
                     keysToRemove.add(repeatingGroupKey);
                     rootLayout.removeViewAt(i);
                 }
-//                remove deleted fields from form json
-                ArrayList<String> removeThisFields = new ArrayList<>();
+                //remove deleted fields from form json
+                ArrayList<String> deletedFields = new ArrayList<>();
                 int len = fields.length();
                 for (int i = len - 1; i >= 0; i--) {
                     String[] key = ((String) fields.getJSONObject(i).get(KEY)).split("_");
                     if (keysToRemove.contains(key[key.length - 1])) {
-                        removeThisFields.add((String) fields.getJSONObject(i).get(KEY));
+                        String fieldKey = fields.getJSONObject(i).optString(KEY);
+                        deletedFields.add((String) fields.getJSONObject(i).get(KEY));
+                        widgetArgs.getFormFragment().getJsonApi().getFormFieldsMap().remove(widgetArgs.getStepName() + "_" + fieldKey);
                         fields.remove(i);
                     }
                 }
-//                remove deleted views to avoid validation errors while saving the form
+                //remove deleted views to avoid validation errors while saving the form
                 Collection<View> viewCollection = widgetArgs.getFormFragment().getJsonApi().getFormDataViews();
                 if (viewCollection != null) {
-                    Utils.removeDeletedViewsFromJsonForm(viewCollection, removeThisFields);
+                    Utils.removeDeletedViewsFromJsonForm(viewCollection, deletedFields);
                 }
 
                 LinearLayout referenceLayout = (LinearLayout) ((LinearLayout) parent).getChildAt(0);
@@ -130,13 +134,51 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         }
 
         try {
-            ((JsonApi) widgetArgs.getContext()).invokeRefreshLogic(null, false, null, null);
+            ((JsonApi) widgetArgs.getContext()).invokeRefreshLogic(null, false, null, null, widgetArgs.getStepName(), false);
         } catch (Exception e) {
             Timber.e(e);
         }
 
         hideProgressDialog();
         doneButton.setImageResource(R.drawable.ic_done_green);
+
+        //for validation
+        validationCleanUp();
+
+    }
+
+    private void validationCleanUp() {
+        doneButton.setTag(R.id.is_repeating_group_generated, true);
+
+        LinearLayout referenceLayout = (LinearLayout) ((LinearLayout) parent).getChildAt(0);
+        MaterialEditText materialEditText = (MaterialEditText) referenceLayout.getChildAt(0);
+        materialEditText.setError(null);
+
+        widgetArgs.getFormFragment().getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    JSONObject step = ((JsonApi) widgetArgs.getContext()).getmJSONObject().getJSONObject(widgetArgs.getStepName());
+                    JSONArray fields = step.getJSONArray(FIELDS);
+                    String key = widgetArgs.getJsonObject().optString(KEY);
+                    for (int i = 0; i < fields.length(); i++) {
+                        JSONObject object = fields.optJSONObject(i);
+                        String fieldKey = object.optString(KEY);
+                        if (fieldKey.equals(key)) {
+                            String strNumOfRepeatedGroups = object.optString(JsonFormConstants.REPEATING_GROUPS_GENERATED_COUNT);
+                            int currentCount = numRepeatingGroups;
+                            if (StringUtils.isNotBlank(strNumOfRepeatedGroups)) {
+                                currentCount += Integer.parseInt(strNumOfRepeatedGroups);
+                            }
+                            object.put(JsonFormConstants.REPEATING_GROUPS_GENERATED_COUNT, currentCount);
+                            break;
+                        }
+                    }
+                } catch (JSONException e) {
+                    Timber.e(e);
+                }
+            }
+        });
     }
 
     private LinearLayout buildRepeatingGroupLayout(final ViewParent parent) throws Exception {
@@ -163,6 +205,7 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
             if (elementType != null) {
                 addUniqueIdentifiers(element, groupUniqueId);
                 FormWidgetFactory factory = widgetArgs.getFormFragment().getPresenter().getInteractor().map.get(elementType);
+                widgetArgs.getFormFragment().getJsonApi().getFormFieldsMap().put(widgetArgs.getStepName() + "_" + element.optString(KEY), element);
                 List<View> widgetViews = factory.getViewsFromJson(widgetArgs.getStepName(), context, widgetArgs.getFormFragment(), element, widgetArgs.getListener(), widgetArgs.isPopup());
                 for (View view : widgetViews) {
                     view.setLayoutParams(WIDTH_MATCH_PARENT_HEIGHT_WRAP_CONTENT);
@@ -197,8 +240,8 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         element.put(KEY, currKey);
         // modify relevance to reflect changes in unique key name
         if (widgetArgs != null && widgetArgs.getContext() != null) {
-            Utils.buildRulesWithUniqueId(element, uniqueId, RELEVANCE, widgetArgs.getContext(), rulesFileMap);
-            Utils.buildRulesWithUniqueId(element, uniqueId, CALCULATION, widgetArgs.getContext(), rulesFileMap);
+            Utils.buildRulesWithUniqueId(element, uniqueId, RELEVANCE, widgetArgs.getContext(), rulesFileMap, widgetArgs.getStepName());
+            Utils.buildRulesWithUniqueId(element, uniqueId, CALCULATION, widgetArgs.getContext(), rulesFileMap, widgetArgs.getStepName());
         }
         // modify relative max validator to reflect changes in unique key name
         JSONObject relativeMaxValidator = element.optJSONObject(V_RELATIVE_MAX);

@@ -21,6 +21,7 @@ import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.OnFieldsInvalid;
 import com.vijay.jsonwizard.shadow.ShadowContextCompat;
 import com.vijay.jsonwizard.shadow.ShadowPermissionUtils;
+import com.vijay.jsonwizard.utils.AppExecutors;
 import com.vijay.jsonwizard.utils.FormUtils;
 
 import org.json.JSONException;
@@ -37,6 +38,7 @@ import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.annotation.LooperMode;
 import org.robolectric.shadows.ShadowToast;
 
 import java.lang.ref.WeakReference;
@@ -47,6 +49,7 @@ import java.util.Stack;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
+import static android.os.Looper.getMainLooper;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP1;
 import static com.vijay.jsonwizard.presenters.JsonFormFragmentPresenter.RESULT_LOAD_IMG;
 import static com.vijay.jsonwizard.utils.PermissionUtils.CAMERA_PERMISSION_REQUEST_CODE;
@@ -64,14 +67,18 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.robolectric.Shadows.shadowOf;
+import static org.robolectric.annotation.LooperMode.Mode.PAUSED;
 
 /**
  * Created by samuelgithengi on 3/3/20.
  */
+@LooperMode(PAUSED)
 public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
 
     @Rule
@@ -105,6 +112,8 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
 
     private Context context = RuntimeEnvironment.application;
 
+    private AppExecutors appExecutors;
+
 
     @Before
     public void setUp() throws JSONException {
@@ -116,6 +125,25 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         JSONObject jsonForm = new JSONObject(TestConstants.PAOT_TEST_FORM);
         mStepDetails = jsonForm.getJSONObject(STEP1);
         when(jsonFormActivity.getmJSONObject()).thenReturn(jsonForm);
+        when(formFragment.getContext()).thenReturn(context);
+        AppExecutors myAppExecutors = new AppExecutors();
+        appExecutors = new AppExecutors(myAppExecutors.mainThread(), myAppExecutors.mainThread(), myAppExecutors.mainThread());
+        when(jsonFormActivity.getAppExecutors()).thenReturn(appExecutors);
+    }
+
+
+    private void initWithActualForm() throws InterruptedException {
+        Intent intent = new Intent();
+        intent.putExtra("json", TestConstants.BASIC_FORM);
+        jsonFormActivity = spy(Robolectric.buildActivity(JsonFormActivity.class, intent).create().resume().get());
+        when(jsonFormActivity.getAppExecutors()).thenReturn(appExecutors);
+        formFragment = spy(JsonFormFragment.getFormFragment("step1"));
+        jsonFormActivity.getSupportFragmentManager().beginTransaction().add(formFragment, null).commit();
+        shadowOf(getMainLooper()).idle();
+        formFragment.onFieldsInvalid = this.onFieldsInvalid;
+        presenter = formFragment.getPresenter();
+        shadowOf(getMainLooper()).idle();
+        Thread.sleep(TIMEOUT);
     }
 
     @Test
@@ -127,9 +155,10 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         List<View> views = Collections.singletonList(textView);
         when(jsonFormInteractor.fetchFormElements(anyString(), any(JsonFormFragment.class), any(JSONObject.class), isNull(CommonListener.class), anyBoolean())).thenReturn(views);
         presenter.addFormElements();
-        verify(jsonFormInteractor).fetchFormElements(eq(STEP1), eq(formFragment), jsonArgumentCaptor.capture(), isNull(CommonListener.class), eq(false));
+        shadowOf(getMainLooper()).idle();
+        verify(jsonFormInteractor, timeout(TIMEOUT)).fetchFormElements(eq(STEP1), eq(formFragment), jsonArgumentCaptor.capture(), isNull(CommonListener.class), eq(false));
         assertEquals(mStepDetails.toString(), jsonArgumentCaptor.getValue().toString());
-        verify(formFragment).addFormElements(views);
+        verify(formFragment, timeout(TIMEOUT)).addFormElements(views);
     }
 
     @Test
@@ -200,45 +229,39 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
     }
 
     @Test
-    public void testValidateAndWriteValuesWithInvalidFields() {
+    public void testValidateAndWriteValuesWithInvalidFields() throws InterruptedException {
         initWithActualForm();
         presenter.validateAndWriteValues();
+        shadowOf(getMainLooper()).idle();
         assertEquals(4, presenter.getInvalidFields().size());
         assertEquals("Please enter the last name", presenter.getInvalidFields().get("step1#Basic Form One:user_last_name").getErrorMessage());
         assertEquals("Please enter user age", presenter.getInvalidFields().get("step1#Basic Form One:user_age").getErrorMessage());
         assertEquals("Please enter the first name", presenter.getInvalidFields().get("step1#Basic Form One:user_first_name").getErrorMessage());
         assertEquals("Please enter the sex", presenter.getInvalidFields().get("step1#Basic Form One:user_spinner").getErrorMessage());
+        shadowOf(getMainLooper()).idle();
         verify(formFragment, times(6)).writeValue(anyString(), anyString(), anyString(), anyString(), anyString(),
                 anyString(), anyBoolean());
-        verify(onFieldsInvalid).passInvalidFields(presenter.getInvalidFields());
-    }
-
-    private void initWithActualForm() {
-        Intent intent = new Intent();
-        intent.putExtra("json", TestConstants.BASIC_FORM);
-        jsonFormActivity = spy(Robolectric.buildActivity(JsonFormActivity.class, intent).create().resume().get());
-        formFragment = spy(JsonFormFragment.getFormFragment("step1"));
-        jsonFormActivity.getSupportFragmentManager().beginTransaction().add(formFragment, null).commit();
-        formFragment.onFieldsInvalid = this.onFieldsInvalid;
-        presenter = formFragment.getPresenter();
+        verify(onFieldsInvalid, times(9)).passInvalidFields(presenter.getInvalidFields());
     }
 
     @Test
-    public void testValidateAndWriteValues() {
+    public void testValidateAndWriteValues() throws InterruptedException {
         initWithActualForm();
         presenter.validateAndWriteValues();
+        shadowOf(getMainLooper()).idle();
         assertEquals(4, presenter.getInvalidFields().size());
 
 
         setTextValue("step1:user_last_name", "Doe");
         setTextValue("step1:user_first_name", "John");
         setTextValue("step1:user_age", "21");
-        ((AppCompatSpinner) formFragment.getJsonApi().getFormDataView("step1:user_spinner")).setSelection(1);
+        ((AppCompatSpinner) formFragment.getJsonApi().getFormDataView("step1:user_spinner")).setSelection(1, false);
         presenter.validateAndWriteValues();
+        shadowOf(getMainLooper()).idle();
         assertEquals(0, presenter.getInvalidFields().size());
-        verify(formFragment, times(13)).writeValue(anyString(), anyString(), anyString(), anyString(), anyString(),
+        verify(formFragment, times(12)).writeValue(anyString(), anyString(), anyString(), anyString(), anyString(),
                 anyString(), anyBoolean());
-        verify(onFieldsInvalid, times(2)).passInvalidFields(presenter.getInvalidFields());
+        verify(onFieldsInvalid, times(18)).passInvalidFields(presenter.getInvalidFields());
     }
 
     private void setTextValue(String address, String value) {
@@ -250,10 +273,11 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
 
 
     @Test
-    public void testOnSaveClickDisplaysErrorFragmentAndDisplaysToast() {
+    public void testOnSaveClickDisplaysErrorFragmentAndDisplaysToast() throws InterruptedException {
         initWithActualForm();
         formFragment.getMainView().setTag(R.id.skip_validation, false);
         presenter.onSaveClick(formFragment.getMainView());
+        shadowOf(getMainLooper()).idle();
         assertEquals(4, presenter.getInvalidFields().size());
         assertEquals("Please enter the last name", presenter.getInvalidFields().get("step1#Basic Form One:user_last_name").getErrorMessage());
         assertEquals("Please enter user age", presenter.getInvalidFields().get("step1#Basic Form One:user_age").getErrorMessage());
@@ -269,16 +293,17 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
 
 
     @Test
-    public void testOnSaveClickFinishesForm() throws JSONException {
+    public void testOnSaveClickFinishesForm() throws JSONException, InterruptedException {
         initWithActualForm();
         formFragment.getMainView().setTag(R.id.skip_validation, false);
         setTextValue("step1:user_last_name", "Doe");
         setTextValue("step1:user_first_name", "John");
         setTextValue("step1:user_age", "21");
-        ((AppCompatSpinner) formFragment.getJsonApi().getFormDataView("step1:user_spinner")).setSelection(1);
+        ((AppCompatSpinner) formFragment.getJsonApi().getFormDataView("step1:user_spinner")).setSelection(1, false);
         presenter.onSaveClick(formFragment.getMainView());
+        shadowOf(getMainLooper()).idle();
         assertEquals(0, presenter.getInvalidFields().size());
-        verify(formFragment, times(7)).writeValue(anyString(), anyString(), anyString(), anyString(), anyString(),
+        verify(formFragment, times(6)).writeValue(anyString(), anyString(), anyString(), anyString(), anyString(),
                 anyString(), anyBoolean());
         assertNull(presenter.getErrorFragment());
         assertNull(ShadowToast.getLatestToast());
@@ -295,7 +320,7 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
 
 
     @Test
-    public void testOnSaveClickErrorFragmentDisabledAndDisplaysSnackbar() throws JSONException {
+    public void testOnSaveClickErrorFragmentDisabledAndDisplaysSnackbar() throws JSONException, InterruptedException {
         initWithActualForm();
         formFragment.getMainView().setTag(R.id.skip_validation, false);
         formFragment.getJsonApi().getmJSONObject().put(JsonFormConstants.SHOW_ERRORS_ON_SUBMIT, false);

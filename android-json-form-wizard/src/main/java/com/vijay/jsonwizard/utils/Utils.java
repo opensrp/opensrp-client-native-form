@@ -6,6 +6,7 @@ import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
@@ -309,7 +310,8 @@ public class Utils {
         return conditionString.replaceAll("  ", " ");
     }
 
-    public static void buildRulesWithUniqueId(JSONObject element, String uniqueId, String ruleType, Context context, Map<String, List<Map<String, Object>>> rulesFileMap) throws JSONException {
+    public static void buildRulesWithUniqueId(JSONObject element, String uniqueId, String ruleType,
+                                              Context context, Map<String, List<Map<String, Object>>> rulesFileMap, String stepName) throws JSONException {
         JSONObject rules = element.optJSONObject(ruleType);
         if (rules != null) {
             if (rules.has(RuleConstant.RULES_ENGINE) && context != null) {
@@ -335,19 +337,32 @@ public class Utils {
 
                 JSONArray jsonArrayRules = new JSONArray();
                 JSONObject keyJsonObject = new JSONObject();
-                keyJsonObject.put(JsonFormConstants.KEY, uniqueId);
+                keyJsonObject.put(JsonFormConstants.KEY, ruleType + "/" + uniqueId);
                 jsonArrayRules.put(keyJsonObject);
                 for (Map<String, Object> map : mapArrayList) {
                     JSONObject jsonRulesDynamicObject = new JSONObject();
                     String strCondition = (String) map.get(RuleConstant.CONDITION);
                     List<String> conditionKeys = getConditionKeys(strCondition);
+
                     for (String conditionKey : conditionKeys) {
-                        strCondition = strCondition.replace(conditionKey, conditionKey + "_" + uniqueId);
+                        if (conditionKey.startsWith(stepName)) {
+                            strCondition = strCondition.replace(conditionKey, conditionKey + "_" + uniqueId);
+                        }
                     }
+
+                    String action = ((ArrayList<String>) map.get(RuleConstant.ACTIONS)).get(0);
+                    List<String> actionKeys = getConditionKeys(action);
+                    String updatedAction = action;
+                    for (String actionKey : actionKeys) {
+                        if (actionKey.startsWith(stepName)) {
+                            updatedAction = action.replace(actionKey, actionKey + "_" + uniqueId);
+                        }
+                    }
+
                     jsonRulesDynamicObject.put(RuleConstant.NAME, String.valueOf(map.get(RuleConstant.NAME)).concat("_").concat(uniqueId));
                     jsonRulesDynamicObject.put(RuleConstant.DESCRIPTION, String.valueOf(map.get(RuleConstant.DESCRIPTION)).concat("_").concat(uniqueId));
                     jsonRulesDynamicObject.put(RuleConstant.PRIORITY, map.get(RuleConstant.PRIORITY));
-                    jsonRulesDynamicObject.put(RuleConstant.ACTIONS, ((ArrayList<String>) map.get(RuleConstant.ACTIONS)).get(0));
+                    jsonRulesDynamicObject.put(RuleConstant.ACTIONS, updatedAction);
                     jsonRulesDynamicObject.put(RuleConstant.CONDITION, String.valueOf(strCondition));
                     jsonArrayRules.put(jsonRulesDynamicObject);
                 }
@@ -767,6 +782,29 @@ public class Utils {
         return null;
     }
 
+    /***
+     * Checks if step has no skip logic fields and that fields do not have type hidden
+     * @param formFragment {@link JsonFormFragment}
+     */
+    public static void checkIfStepHasNoSkipLogic(JsonFormFragment formFragment) {
+        String step = formFragment.getJsonApi().nextStep();
+        if (formFragment.getJsonApi().stepSkipLogicPresenceMap().get(step) == null) {
+            boolean hasNoSkipLogic = false;
+            JSONObject jsonObject = formFragment.getJsonApi().getmJSONObject();
+            JSONObject jsonStepObject = jsonObject.optJSONObject(step);
+            JSONArray fields = jsonStepObject.optJSONArray(JsonFormConstants.FIELDS);
+            for (int i = 0; i < fields.length(); i++) {
+                JSONObject object = fields.optJSONObject(i);
+                if (object.has(JsonFormConstants.TYPE)
+                        && !object.optString(JsonFormConstants.TYPE).equals(JsonFormConstants.HIDDEN)
+                        && !object.has(JsonFormConstants.RELEVANCE)) {
+                    hasNoSkipLogic = true;
+                    break;
+                }
+            }
+            formFragment.getJsonApi().stepSkipLogicPresenceMap().put(step, hasNoSkipLogic);
+        }
+    }
 
     /***
      * removes the generated dynamic rules by repeating group
@@ -795,6 +833,9 @@ public class Utils {
         }
     }
 
+    public static final boolean isRunningOnUiThread() {
+        return Looper.getMainLooper().getThread() == Thread.currentThread();
+    }
 
     public static String formatDateToPattern(String date, String inputFormat, String outputFormat) {
         if (StringUtils.isEmpty(date)) return "";

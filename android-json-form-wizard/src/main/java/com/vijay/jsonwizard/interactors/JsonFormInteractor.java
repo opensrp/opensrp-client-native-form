@@ -1,7 +1,6 @@
 package com.vijay.jsonwizard.interactors;
 
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
 
 import com.vijay.jsonwizard.constants.JsonFormConstants;
@@ -48,6 +47,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import timber.log.Timber;
 
 /**
  * Created by vijay on 5/19/15.
@@ -159,7 +160,7 @@ public class JsonFormInteractor {
             }
 
         } catch (JSONException e) {
-            Log.e(TAG, "Json exception occurred : " + e.getMessage());
+            Timber.e(e);
         }
         return viewsFromJson;
     }
@@ -187,7 +188,7 @@ public class JsonFormInteractor {
 
             }
         } catch (JSONException e) {
-            Log.e(TAG, "Json exception occurred : " + e.getMessage());
+            Timber.e(e);
         }
     }
 
@@ -205,13 +206,12 @@ public class JsonFormInteractor {
                         listener, popup);
             }
         } catch (JSONException e) {
-            Log.e(TAG, "Json exception occurred : " + e.getMessage());
+            Timber.e(e);
         }
     }
 
     private void fetchViews(List<View> viewsFromJson, String stepName, JsonFormFragment formFragment,
                             String type, JSONObject jsonObject, CommonListener listener, Boolean popup) {
-
         try {
             List<View> views = map
                     .get(type)
@@ -219,11 +219,9 @@ public class JsonFormInteractor {
             if (views.size() > 0) {
                 viewsFromJson.addAll(views);
             }
+
         } catch (Exception e) {
-            Log.e(TAG,
-                    "Exception occurred in making view : Exception is : "
-                            + e.getMessage());
-            e.printStackTrace();
+            Timber.e(e);
         }
     }
 
@@ -234,4 +232,5 @@ public class JsonFormInteractor {
     public final Set<String> getDefaultTranslatableStepFields() {
         return defaultTranslatableStepFields;
     }
+
 }

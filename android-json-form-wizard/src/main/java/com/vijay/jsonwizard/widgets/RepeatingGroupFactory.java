@@ -51,6 +51,7 @@ import timber.log.Timber;
 
 import static com.vijay.jsonwizard.constants.JsonFormConstants.FIELDS;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.REPEATING_GROUPS_GENERATED_COUNT;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUE;
 
 /**
@@ -98,14 +99,31 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
 
         setRepeatingGroupNumLimits();
 
+        //get the generated number of groups
+        final String generatedGroupsCount = jsonObject.optString(REPEATING_GROUPS_GENERATED_COUNT);
+
+
         // Enables us to fetch this value from a previous edit_text & disable this one
-        retrieveRepeatingGroupCountFromRemoteReferenceEditText(rootLayout, (JsonApi) context, referenceEditText, remoteReferenceEditText);
+        if (StringUtils.isBlank(generatedGroupsCount)) { ///generate only once
+            retrieveRepeatingGroupCountFromRemoteReferenceEditText(rootLayout, (JsonApi) context, referenceEditText, remoteReferenceEditText);
+        }
+
         setUpReferenceEditText(referenceEditText, referenceEditTextHint, repeatingGroupLabel);
 
         // Disable the done button if the reference edit text being used is remote & has a valid value
         if (isRemoteReferenceValueUsed(referenceEditText)) {
             doneButton.setVisibility(View.GONE);
         } else {
+            if (StringUtils.isNotBlank(generatedGroupsCount)) {
+                formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        referenceEditText.setText(generatedGroupsCount);
+                    }
+                });
+                doneButton.setTag(R.id.is_repeating_group_generated, true);
+            }
+
             doneButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -300,6 +318,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
             boolean requiredValue = requiredObject.getBoolean(VALUE);
             if (Boolean.TRUE.equals(requiredValue)) {
                 editText.addValidator(new RequiredValidator(requiredObject.getString(JsonFormConstants.ERR)));
+                editText.setTag(R.id.has_required_validator, true);
                 FormUtils.setRequiredOnHint(editText);
             }
         }

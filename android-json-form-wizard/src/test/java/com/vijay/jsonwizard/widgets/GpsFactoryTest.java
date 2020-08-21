@@ -11,6 +11,7 @@ import com.vijay.jsonwizard.activities.JsonFormActivity;
 import com.vijay.jsonwizard.customviews.GpsDialog;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
+import com.vijay.jsonwizard.utils.AppExecutors;
 import com.vijay.jsonwizard.utils.FormUtils;
 
 import org.json.JSONObject;
@@ -23,6 +24,8 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.List;
+
+import static org.mockito.Mockito.when;
 
 public class GpsFactoryTest extends BaseTest {
     private GpsFactory factory;
@@ -62,6 +65,8 @@ public class GpsFactoryTest extends BaseTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+        when(formFragment.getJsonApi()).thenReturn(context);
+        when(context.getAppExecutors()).thenReturn(new AppExecutors());
         factory = new GpsFactory();
     }
 
