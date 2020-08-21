@@ -109,17 +109,13 @@ public class RulesEngineFactory implements RuleListener {
     }
 
 
-    public boolean getRelevance(@NonNull Facts relevanceFact, @NonNull String ruleFilename, String stepName) {
+    public boolean getRelevance(@NonNull Facts relevanceFact, @NonNull String ruleFilename) {
 
         Facts facts = initializeFacts(relevanceFact);
 
         facts.put(RuleConstant.IS_RELEVANT, false);
 
-        getRulesFromAsset(ruleFilename);
-
-        //rules = relevanceRules.get(ruleFilename + stepName);
-
-        rules = getRulesFromAsset(ruleFilename);
+        rules = getRulesFromAsset(RULE_FOLDER_PATH + ruleFilename);
 
         processDefaultRules(rules, facts);
 
@@ -149,8 +145,8 @@ public class RulesEngineFactory implements RuleListener {
     }
 
 
-    public Rules getRulesFromAsset(String ruleFileName) {
-        String fileName = RULE_FOLDER_PATH + ruleFileName;
+    public Rules getRulesFromAsset(String fileName) {
+
         try {
             if (!ruleMap.containsKey(fileName)) {
 
@@ -158,13 +154,6 @@ public class RulesEngineFactory implements RuleListener {
                     try {
                         BufferedReader bufferedReader = ((ClientFormContract.View) context).getRules(context, fileName);
                         ruleMap.put(fileName, MVELRuleFactory.createRulesFrom(bufferedReader));
-                        for (Rule rule : ruleMap.get(fileName)) {
-                            String step = ruleFileName + rule.getName().substring(0, rule.getName().indexOf("_"));
-                            if (!relevanceRules.containsKey(step)) {
-                                relevanceRules.put(step, new Rules());
-                            }
-                            relevanceRules.get(step).register(rule);
-                        }
                     } catch (Exception ex) {
                         ((ClientFormContract.View) context).handleFormError(true, fileName);
                         return null;

@@ -106,6 +106,7 @@ import static com.vijay.jsonwizard.utils.FormUtils.getCheckboxValueJsonArray;
 import static com.vijay.jsonwizard.utils.FormUtils.getCurrentCheckboxValues;
 
 public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
+
     private FormUtils formUtils = new FormUtils();
     private Map<String, View> formDataViews = new ConcurrentHashMap<>();
     private Map<String, JSONObject> formFields = new ConcurrentHashMap<>();
@@ -1772,7 +1773,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 if (exRulesObject.has(RuleConstant.RULES_FILE)) {
 
                     return curValueMap.asMap().size() != 0 && getRulesEngineFactory().getRelevance(curValueMap,
-                            exRulesObject.getString(RuleConstant.RULES_FILE), stepName);
+                            exRulesObject.getString(RuleConstant.RULES_FILE));
 
                 } else if (exRulesObject.has(RuleConstant.RULES_DYNAMIC)) {
 
