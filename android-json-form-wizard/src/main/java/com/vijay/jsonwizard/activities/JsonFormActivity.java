@@ -1121,7 +1121,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
                     Facts curValueMap = getValueFromAddress(address, isPopup);
                     try {
-                        comparison = isRelevant(curValueMap, curRelevance, ((String) view.getTag(R.id.address)).split(":")[0]);
+                        comparison = isRelevant(curValueMap, curRelevance);
                     } catch (Exception e) {
                         Timber.e(e, "JsonFormActivity --> addRelevance --> comparison");
                     }
@@ -1764,7 +1764,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         return form;
     }
 
-    private boolean isRelevant(Facts curValueMap, JSONObject curRelevance, String stepName) throws Exception {
+    private boolean isRelevant(Facts curValueMap, JSONObject curRelevance) throws Exception {
         if (curRelevance != null) {
             if (curRelevance.has(JsonFormConstants.JSON_FORM_KEY.EX_RULES)) {
 

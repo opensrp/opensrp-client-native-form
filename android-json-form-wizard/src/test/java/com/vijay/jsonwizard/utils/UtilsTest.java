@@ -100,7 +100,7 @@ public class UtilsTest extends BaseTest {
         String uniqueId = "33d56473a1de41e9986f952337c664ee";
         Map<String, List<Map<String, Object>>> rulesFileMap = new HashMap<>();
 
-        Utils.buildRulesWithUniqueId(formElement, uniqueId, JsonFormConstants.CALCULATION, RuntimeEnvironment.application, rulesFileMap, widgetArgs.getStepName());
+        Utils.buildRulesWithUniqueId(formElement, uniqueId, JsonFormConstants.CALCULATION, RuntimeEnvironment.application, rulesFileMap, "step1");
         Assert.assertNotNull(rulesFileMap);
         Assert.assertEquals(1, rulesFileMap.size());
         Assert.assertEquals("step2_larvae_total != ''", rulesFileMap.get("rule/repeating_groups_calculation_rules.yml").get(0).get("condition"));
@@ -114,7 +114,7 @@ public class UtilsTest extends BaseTest {
         String uniqueId = "33d56473a1de41e9986f952337c664ee";
         Map<String, List<Map<String, Object>>> rulesFileMap = new HashMap<>();
 
-        Utils.buildRulesWithUniqueId(formElement, uniqueId, JsonFormConstants.RELEVANCE, RuntimeEnvironment.application, rulesFileMap, widgetArgs.getStepName());
+        Utils.buildRulesWithUniqueId(formElement, uniqueId, JsonFormConstants.RELEVANCE, RuntimeEnvironment.application, rulesFileMap, "step1");
         Assert.assertNotNull(rulesFileMap);
         Assert.assertEquals(0, rulesFileMap.size());
     }
@@ -182,7 +182,7 @@ public class UtilsTest extends BaseTest {
         InputStream inputStream = new ByteArrayInputStream(contentOfRelevanceFile.getBytes());
         Mockito.when(assetManager.open("rule/diagnose_and_treat_relevance.yml")).thenReturn(inputStream);
         Map<String, List<Map<String, Object>>> rulesFileMap = new HashMap<>();
-        Utils.buildRulesWithUniqueId(element, unique_id, ruleType, context, rulesFileMap, widgetArgs.getStepName());
+        Utils.buildRulesWithUniqueId(element, unique_id, ruleType, context, rulesFileMap, "step1");
         JSONObject jsonExpectedObject = element.getJSONObject(ruleType);//new JSONObject(element);
         JSONArray jsonArray = jsonExpectedObject.optJSONObject(RuleConstant.RULES_ENGINE)
                 .optJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES)
@@ -194,7 +194,7 @@ public class UtilsTest extends BaseTest {
                 break;
             }
         }
-        Assert.assertEquals(unique_id, resultKeyValue);
+        Assert.assertEquals(JsonFormConstants.RELEVANCE + "/" + unique_id, resultKeyValue);
     }
 
     @Test
@@ -204,7 +204,7 @@ public class UtilsTest extends BaseTest {
         element.put(ruleType, new JSONObject("{\"step1:dob_unknown\":{\"type\":\"string\",\"ex\":\"equalTo(., \\\"false\\\")\"}}"));
         String unique_id = "c29afdf9-843e-4c90-9a79-3dafd70e045b";
         Map<String, List<Map<String, Object>>> rulesFileMap = new HashMap<>();
-        Utils.buildRulesWithUniqueId(element, unique_id, ruleType, context, rulesFileMap, widgetArgs.getStepName());
+        Utils.buildRulesWithUniqueId(element, unique_id, ruleType, context, rulesFileMap, "step1");
         String expected = "{\"relevance\":{\"step1:dob_unknown_c29afdf9-843e-4c90-9a79-3dafd70e045b\":{\"type\":\"string\",\"ex\":\"equalTo(., \\\"false\\\")\"}}}";
         Assert.assertEquals(expected, element.toString());
     }

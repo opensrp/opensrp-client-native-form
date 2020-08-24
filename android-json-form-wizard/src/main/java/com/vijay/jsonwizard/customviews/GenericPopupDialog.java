@@ -673,10 +673,6 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         this.popAssignedValue = popAssignedValue;
     }
 
-    private void preLoadRules() {
-        preLoadRules(loadSpecifyContent(), JsonFormConstants.CALCULATION, JsonFormConstants.RELEVANCE);
-    }
-
     public void preLoadRules(JSONArray fields, String calculationKey, String relevanceKey) {
         Set<String> ruleFiles = new HashSet<>();
         if (fields == null)

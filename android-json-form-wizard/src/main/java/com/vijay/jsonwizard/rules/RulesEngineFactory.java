@@ -35,7 +35,6 @@ public class RulesEngineFactory implements RuleListener {
     private Context context;
     private RulesEngine defaultRulesEngine;
     private Map<String, Rules> ruleMap;
-    private Map<String, Rules> relevanceRules;
     private String RULE_FOLDER_PATH = "rule/";
     private Rules rules;
     private String selectedRuleName;
@@ -50,7 +49,6 @@ public class RulesEngineFactory implements RuleListener {
         this.defaultRulesEngine = new DefaultRulesEngine(parameters);
         ((DefaultRulesEngine) this.defaultRulesEngine).registerRuleListener(this);
         this.ruleMap = new HashMap<>();
-        relevanceRules = new HashMap<>();
         gson = new Gson();
         this.globalValues = globalValues;
         this.rulesEngineHelper = new RulesEngineHelper();

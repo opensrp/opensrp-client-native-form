@@ -8,6 +8,7 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.widgets.BarcodeFactory;
+import com.vijay.jsonwizard.widgets.BasicRDTCaptureFactory;
 import com.vijay.jsonwizard.widgets.ButtonFactory;
 import com.vijay.jsonwizard.widgets.CheckBoxFactory;
 import com.vijay.jsonwizard.widgets.ComponentSpacerFactory;
@@ -34,7 +35,6 @@ import com.vijay.jsonwizard.widgets.SpinnerFactory;
 import com.vijay.jsonwizard.widgets.TimePickerFactory;
 import com.vijay.jsonwizard.widgets.ToasterNotesFactory;
 import com.vijay.jsonwizard.widgets.TreeViewFactory;
-import com.vijay.jsonwizard.widgets.BasicRDTCaptureFactory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,7 +55,6 @@ import timber.log.Timber;
  */
 public class JsonFormInteractor {
 
-    private static final String TAG = "JsonFormInteractor";
     protected static JsonFormInteractor INSTANCE;
     public Map<String, FormWidgetFactory> map;
     private Set<String> defaultTranslatableWidgetFields;

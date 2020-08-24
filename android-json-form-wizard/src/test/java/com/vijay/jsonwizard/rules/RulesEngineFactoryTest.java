@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.AssetManager;
 
 import com.vijay.jsonwizard.activities.JsonFormActivity;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
 
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rule;
@@ -22,11 +23,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.powermock.reflect.internal.WhiteboxImpl;
 import org.robolectric.util.ReflectionHelpers;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -67,7 +66,7 @@ public class RulesEngineFactoryTest {
             rulesEngineFactory = new RulesEngineFactory(context, new HashMap<String, String>());
             Map<String, Rules> ruleMap = new HashMap<>();
             WhiteboxImpl.setInternalState(rulesEngineFactory, "ruleMap", ruleMap);
-            Rules result = WhiteboxImpl.invokeMethod(rulesEngineFactory, "getDynamicRulesFromJsonArray", jsonArray);
+            Rules result = WhiteboxImpl.invokeMethod(rulesEngineFactory, "getDynamicRulesFromJsonArray", jsonArray, JsonFormConstants.RELEVANCE);
             Rule ruleObject = result.iterator().next();
             Assert.assertEquals("step1_diagnostic_test_result_spinner_c29afdf9843e4c909a793dafd70e045b", ruleObject.getName());
             Assert.assertEquals("diagnostic_test_result_spinner_c29afdf9843e4c909a793dafd70e045b", ruleObject.getDescription());
@@ -93,7 +92,7 @@ public class RulesEngineFactoryTest {
             rulesEngineFactory = new RulesEngineFactory();
             Map<String, Rules> ruleMap = new HashMap<>();
             WhiteboxImpl.setInternalState(rulesEngineFactory, "ruleMap", ruleMap);
-            Rules result = WhiteboxImpl.invokeMethod(rulesEngineFactory, "getDynamicRulesFromJsonArray", jsonArray);
+            Rules result = WhiteboxImpl.invokeMethod(rulesEngineFactory, "getDynamicRulesFromJsonArray", jsonArray, JsonFormConstants.RELEVANCE);
             Assert.assertNull(result);
         } catch (JSONException e) {
             Timber.e(e);
@@ -143,7 +142,7 @@ public class RulesEngineFactoryTest {
                 "    - \"isRelevant = true\"";
         InputStream inputStream = new ByteArrayInputStream(relevance.getBytes());
         Mockito.when(assetManager.open("rule/test")).thenReturn(inputStream);
-        boolean result = rulesEngineFactory.getRelevance(relevanceFacts, "test","step1");
+        boolean result = rulesEngineFactory.getRelevance(relevanceFacts, "test");
         Assert.assertFalse(result);
     }
 
@@ -162,7 +161,7 @@ public class RulesEngineFactoryTest {
         InputStream inputStream = new ByteArrayInputStream(relevance.getBytes());
         Mockito.when(assetManager.open("rule/test")).thenReturn(inputStream);
         relevanceFacts.put("step1_first_Name", "Doe");
-        boolean result = rulesEngineFactory.getRelevance(relevanceFacts, "test","step1");
+        boolean result = rulesEngineFactory.getRelevance(relevanceFacts, "test");
         Assert.assertFalse(result);
     }
 
@@ -281,6 +280,6 @@ public class RulesEngineFactoryTest {
         rulesEngineFactory = new RulesEngineFactory(jsonFormActivity, new HashMap<String, String>());
         ReflectionHelpers.callInstanceMethod(rulesEngineFactory, "getRulesFromAsset", ReflectionHelpers.ClassParameter.from(String.class, ruleFileName));
 
-        Mockito.verify(jsonFormActivity).handleFormError(true, rulesEngineFactory.getRulesFolderPath()+ruleFileName);
+        Mockito.verify(jsonFormActivity).handleFormError(true, ruleFileName);
     }
 }
