@@ -201,21 +201,6 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         }
     }
 
-    private JSONArray loadSpecifyContent() {
-        if (!TextUtils.isEmpty(getFormIdentity())) {
-            try {
-                JSONObject subForm = FormUtils.getSubFormJson(getFormIdentity(), getFormLocation(), context);
-                if (subForm != null && subForm.has(JsonFormConstants.CONTENT_FORM)) {
-                    return subForm.getJSONArray(JsonFormConstants.CONTENT_FORM);
-
-                }
-            } catch (Exception e) {
-                Timber.e(e, "GenericPopupDialog --> loadSpecifyContent");
-            }
-        }
-        return null;
-    }
-
     protected void loadSubForms() {
         if (!TextUtils.isEmpty(getFormIdentity())) {
             JSONObject subForm = getSubForm();
