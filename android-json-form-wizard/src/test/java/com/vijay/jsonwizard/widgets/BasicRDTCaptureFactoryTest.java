@@ -31,7 +31,6 @@ import java.util.Set;
 import edu.washington.cs.ubicomplab.rdt_reader.activity.RDTCaptureActivity;
 
 import static com.vijay.jsonwizard.constants.JsonFormConstants.RDT_CAPTURE_CODE;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP1;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -105,15 +104,5 @@ public class BasicRDTCaptureFactoryTest extends BaseTest {
     public void testGetCustomTranslatableWidgetFieldsShouldReturnNonNullSet() {
         Set<String> translatableFields = basicRDTCaptureFactory.getCustomTranslatableWidgetFields();
         assertNotNull(translatableFields);
-    }
-
-    private Intent getJsonFormActivityIntent() throws JSONException {
-        JSONObject mJSONObject = new JSONObject();
-        mJSONObject.put(STEP1, new JSONObject());
-        mJSONObject.put(JsonFormConstants.ENCOUNTER_TYPE, "encounter_type");
-
-        Intent intent = new Intent();
-        intent.putExtra(JsonFormConstants.JSON_FORM_KEY.JSON, mJSONObject.toString());
-        return intent;
     }
 }
