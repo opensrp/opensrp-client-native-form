@@ -289,9 +289,9 @@ public class JsonFormFragmentPresenter extends
                                 editText.setError(getFormFragment().getString(R.string.repeating_group_not_generated_error_message));
                                 validationStatus.setErrorMessage(getFormFragment().getString(R.string.repeating_group_not_generated_error_message));
                             }
-                        } else {
-                            validationStatus.setIsValid(true);
                         }
+                    } else {
+                        validationStatus.setIsValid(true);
                     }
                 } else if (childView instanceof NativeEditText) {
                     NativeEditText editText = (NativeEditText) childView;
