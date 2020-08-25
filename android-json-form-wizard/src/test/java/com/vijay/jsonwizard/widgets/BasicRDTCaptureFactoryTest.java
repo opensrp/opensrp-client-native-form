@@ -16,6 +16,7 @@ import com.vijay.jsonwizard.shadow.ShadowContextCompat;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -48,7 +49,7 @@ public class BasicRDTCaptureFactoryTest extends BaseTest {
     private CommonListener listener;
 
     @Before
-    public void setUp() throws JSONException {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         basicRDTCaptureFactory = new BasicRDTCaptureFactory();
         jsonFormActivity = Robolectric.buildActivity(JsonFormActivity.class, getJsonFormActivityIntent()).create().get();
@@ -104,5 +105,10 @@ public class BasicRDTCaptureFactoryTest extends BaseTest {
     public void testGetCustomTranslatableWidgetFieldsShouldReturnNonNullSet() {
         Set<String> translatableFields = basicRDTCaptureFactory.getCustomTranslatableWidgetFields();
         assertNotNull(translatableFields);
+    }
+
+    @After
+    public void tearDown() {
+        jsonFormActivity.finish();
     }
 }
