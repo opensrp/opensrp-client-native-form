@@ -38,10 +38,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.robolectric.Shadows.shadowOf;
 
 @Config(shadows = {ShadowContextCompat.class})
-public class BasicRDTCaptureFactoryTest extends BaseTest {
+public class BasicRDTCaptureFactoryTest extends FactoryTest {
 
     private BasicRDTCaptureFactory basicRDTCaptureFactory;
-    private JsonFormActivity jsonFormActivity;
 
     @Mock
     private JsonFormFragment formFragment;
@@ -50,9 +49,8 @@ public class BasicRDTCaptureFactoryTest extends BaseTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
-        basicRDTCaptureFactory = new BasicRDTCaptureFactory();
-        jsonFormActivity = Robolectric.buildActivity(JsonFormActivity.class, getJsonFormActivityIntent()).create().get();
+        super.setUp();
+        basicRDTCaptureFactory = new BasicRDTCaptureFactory();;
     }
 
     @Test
@@ -105,10 +103,5 @@ public class BasicRDTCaptureFactoryTest extends BaseTest {
     public void testGetCustomTranslatableWidgetFieldsShouldReturnNonNullSet() {
         Set<String> translatableFields = basicRDTCaptureFactory.getCustomTranslatableWidgetFields();
         assertNotNull(translatableFields);
-    }
-
-    @After
-    public void tearDown() {
-        jsonFormActivity.finish();
     }
 }
