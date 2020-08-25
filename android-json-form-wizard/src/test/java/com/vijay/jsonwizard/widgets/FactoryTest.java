@@ -5,6 +5,7 @@ import com.vijay.jsonwizard.activities.JsonFormActivity;
 
 import org.junit.After;
 import org.junit.Before;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 
@@ -19,6 +20,7 @@ public class FactoryTest extends BaseTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         jsonFormActivity = Robolectric.buildActivity(JsonFormActivity.class, getJsonFormActivityIntent()).create().get();
+        jsonFormActivity = Mockito.spy(jsonFormActivity);
     }
 
     @After
