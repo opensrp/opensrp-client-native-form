@@ -51,7 +51,7 @@ public class BasicRDTCaptureFactoryTest extends FactoryTest {
     @Before
     public void setUp() {
         super.setUp();
-        basicRDTCaptureFactory = new BasicRDTCaptureFactory();;
+        basicRDTCaptureFactory = new BasicRDTCaptureFactory();
     }
 
     @Test
