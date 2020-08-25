@@ -12,7 +12,7 @@ import org.robolectric.Robolectric;
 /**
  * Created by Vincent Karuri on 25/08/2020
  */
-public class FactoryTest extends BaseTest {
+public abstract class FactoryTest extends BaseTest {
 
     protected JsonFormActivity jsonFormActivity;
 
