@@ -13,15 +13,10 @@ import com.vijay.jsonwizard.activities.JsonFormActivity;
 import com.vijay.jsonwizard.activities.JsonWizardFormActivity;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.Form;
+import com.vijay.jsonwizard.factory.FileSourceFactoryHelper;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int REQUEST_CODE_GET_JSON = 1234;
@@ -107,8 +102,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         String currentLocationId = "Kenya";
 
-
-        JSONObject jsonForm = getFormJson(formName);
+        JSONObject jsonForm = FileSourceFactoryHelper.getFileSource("").getFormFromFile(getApplicationContext(), formName);
         if (jsonForm != null) {
             jsonForm.getJSONObject("metadata").put("encounter_location", currentLocationId);
 
@@ -219,31 +213,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
 
-    }
-
-
-    public JSONObject getFormJson(String formIdentity) {
-
-        try {
-            InputStream inputStream = getApplicationContext().getAssets()
-                    .open("json.form/" + formIdentity + ".json");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream,
-                    "UTF-8"));
-            String jsonString;
-            StringBuilder stringBuilder = new StringBuilder();
-            while ((jsonString = reader.readLine()) != null) {
-                stringBuilder.append(jsonString);
-            }
-            inputStream.close();
-
-            return new JSONObject(stringBuilder.toString());
-        } catch (IOException e) {
-            Log.e(TAG, e.getMessage(), e);
-            ;
-        } catch (JSONException e) {
-            Log.e(TAG, e.getMessage(), e);
-        }
-        return null;
     }
 
     @Override

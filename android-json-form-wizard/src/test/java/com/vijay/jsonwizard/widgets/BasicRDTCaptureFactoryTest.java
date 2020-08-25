@@ -35,7 +35,6 @@ import edu.washington.cs.ubicomplab.rdt_reader.activity.RDTCaptureActivity;
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.RDT_CAPTURE_CODE;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP1;
 import static edu.washington.cs.ubicomplab.rdt_reader.core.Constants.SAVED_IMAGE_FILE_PATH;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -155,15 +154,5 @@ public class BasicRDTCaptureFactoryTest extends BaseTest {
                 .withPopup(false)
                 .withJsonObject(new JSONObject());
         return widgetArgs;
-    }
-
-    private Intent getJsonFormActivityIntent() throws JSONException {
-        JSONObject mJSONObject = new JSONObject();
-        mJSONObject.put(STEP1, new JSONObject());
-        mJSONObject.put(JsonFormConstants.ENCOUNTER_TYPE, "encounter_type");
-
-        Intent intent = new Intent();
-        intent.putExtra(JsonFormConstants.JSON_FORM_KEY.JSON, mJSONObject.toString());
-        return intent;
     }
 }

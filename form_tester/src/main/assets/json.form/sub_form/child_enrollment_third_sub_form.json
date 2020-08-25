@@ -1,0 +1,110 @@
+{
+  "content_form": [
+    {
+      "key": "respiratory_exam_abnormal",
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "",
+      "openmrs_entity_id": "",
+      "type": "check_box",
+      "label": "Abnormal",
+      "label_text_style": "bold",
+      "text_color": "#000000",
+      "options": [
+        {
+          "key": "dyspnoea",
+          "text": "Dyspnoea",
+          "openmrs_entity": "",
+          "openmrs_entity_id": "",
+          "value": false
+        },
+        {
+          "key": "cough",
+          "text": "Cough",
+          "openmrs_entity": " Cough",
+          "openmrs_entity_id": "143264",
+          "value": false
+        },
+        {
+          "key": "rapid_breathing",
+          "text": "Rapid breathing",
+          "openmrs_entity": "TACHYPNEA",
+          "openmrs_entity_id": "125061",
+          "value": false
+        },
+        {
+          "key": "slow_breathing",
+          "text": "Slow breathing",
+          "openmrs_entity": "",
+          "openmrs_entity_id": "",
+          "value": false
+        },
+        {
+          "key": "wheezing",
+          "text": "Wheezing",
+          "openmrs_entity": "WHEEZE",
+          "openmrs_entity_id": "5209",
+          "value": false
+        },
+        {
+          "key": "rales",
+          "text": "Rales",
+          "openmrs_entity": "Respiratory Crackles",
+          "openmrs_entity_id": "127640",
+          "value": false
+        },
+        {
+          "key": "other",
+          "text": "Other (specify)",
+          "openmrs_entity": "",
+          "openmrs_entity_id": "",
+          "value": false
+        }
+      ]
+    },
+    {
+      "key": "respiratory_exam_abnormal_other",
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "",
+      "openmrs_entity_id": "",
+      "type": "edit_text",
+      "hint": "Specify",
+      "relevance": {
+        "step1:respiratory_exam_abnormal": {
+          "ex-checkbox": [
+            {
+              "or": [
+                "other"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "key": "respiratory_exam_radio_button",
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "",
+      "openmrs_entity_id": "",
+      "type": "native_radio",
+      "label": "Respiratory exam",
+      "label_text_style": "bold",
+      "text_color": "#000000",
+      "extra_rel": true,
+      "has_extra_rel": "3",
+      "options": [
+        {
+          "key": "1",
+          "text": "Not done"
+        },
+        {
+          "key": "2",
+          "text": "Normal"
+        },
+        {
+          "key": "3",
+          "text": "Abnormal"
+        }
+      ]
+    }
+  ]
+}

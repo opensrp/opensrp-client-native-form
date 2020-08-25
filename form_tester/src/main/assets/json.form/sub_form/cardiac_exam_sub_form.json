@@ -1,0 +1,114 @@
+{
+  "content_form": [
+    {
+      "key": "cardiac_exam_abnormal",
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "",
+      "openmrs_entity_id": "",
+      "type": "check_box",
+      "label": "Cardiac exam: abnormal",
+      "label_text_style": "bold",
+      "text_color": "#000000",
+      "options": [
+        {
+          "key": "heart_murmur",
+          "text": "Heart murmur",
+          "value": false,
+          "openmrs_entity_parent": "Cardiac examination (text)",
+          "openmrs_entity_id": ""
+        },
+        {
+          "key": "weak_pulse",
+          "text": "Weak pulse",
+          "value": false,
+          "openmrs_entity_parent": " Weak Pulse",
+          "openmrs_entity_id": "124823"
+        },
+        {
+          "key": "tachycardia",
+          "text": "Tachycardia",
+          "value": false,
+          "openmrs_entity_parent": "Tachycardia",
+          "openmrs_entity_id": "125063"
+        },
+        {
+          "key": "bradycardia",
+          "text": "Bradycardia",
+          "value": false,
+          "openmrs_entity_parent": "Bradycardia",
+          "openmrs_entity_id": "147020"
+        },
+        {
+          "key": "arrhythmia",
+          "text": "Arrhythmia",
+          "value": false,
+          "openmrs_entity_parent": "Arrhythmias (Other cardiac arrhythmias)",
+          "openmrs_entity_id": "665"
+        },
+        {
+          "key": "cyanosis",
+          "text": "Cyanosis",
+          "value": false,
+          "openmrs_entity_parent": "Cyanosis",
+          "openmrs_entity_id": "143050"
+        },
+        {
+          "key": "cold_sweats",
+          "text": "Cold sweats",
+          "value": false,
+          "openmrs_entity": "",
+          "openmrs_entity_id": ""
+        },
+        {
+          "key": "other",
+          "text": "Other (specify)",
+          "value": false,
+          "openmrs_entity": "",
+          "openmrs_entity_id": ""
+        }
+      ]
+    },
+    {
+      "key": "cardiac_exam_abnormal_other",
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "",
+      "openmrs_entity_id": "",
+      "type": "edit_text",
+      "hint": "Specify",
+      "v_regex": {
+        "value": "[A-Za-z\\\\s\\\\.\\\\-]*",
+        "err": "Please enter valid content"
+      },
+      "relevance": {
+        "step3:cardiac_exam_abnormal": {
+          "ex-checkbox": [
+            {
+              "or": [
+                "other"
+              ]
+            }
+          ]
+        }
+      },
+      "value": "Kuku"
+    },
+    {
+      "key": "test_stuff",
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "",
+      "openmrs_entity_id": "",
+      "type": "edit_text",
+      "hint": "Specify",
+      "v_regex": {
+        "value": "[A-Za-z\\\\s\\\\.\\\\-]*",
+        "err": "Please enter valid content"
+      },
+      "relevance": {
+        "step3:cardiac_exam_abnormal_other": {
+          "type": "string",
+          "ex": "equalTo(., \"Health facility\")"
+        }
+      }
+    }
+  ]
+}
