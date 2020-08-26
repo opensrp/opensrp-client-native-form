@@ -474,10 +474,12 @@ public class NumberSelectorFactory implements FormWidgetFactory {
 
                     }
                     LinearLayout rootLayout = numberSelectorFactory.rootLayoutMap.get(intent.getStringExtra(JsonFormConstants.JSON_OBJECT_KEY));
-                    rootLayout.removeAllViews();
-                    rootLayout.setTag(R.id.is_automatic, true);
-                    createTextViews(numberSelectorFactory.context, jsonObject, rootLayout, numberSelectorFactory.listener, isPopUp);
-                    rootLayout.setTag(R.id.is_automatic, null);
+                    if (rootLayout != null) {
+                        rootLayout.removeAllViews();
+                        rootLayout.setTag(R.id.is_automatic, true);
+                        createTextViews(numberSelectorFactory.context, jsonObject, rootLayout, numberSelectorFactory.listener, isPopUp);
+                        rootLayout.setTag(R.id.is_automatic, null);
+                    }
                 }
 
             } catch (JSONException e) {
