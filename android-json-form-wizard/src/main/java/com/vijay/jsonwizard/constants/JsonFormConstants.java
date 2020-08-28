@@ -74,8 +74,10 @@ public class JsonFormConstants {
     public static final String V_MIN = "v_min";
     public static final String V_MAX = "v_max";
     public static final String V_RELATIVE_MAX = "v_relative_max";
-    public static final String RELATIVE_MAX_VALIDATION_EXCEPTION = "exception";
+    public static final String V_RELATIVE_MIN = "v_relative_min";
+    public static final String RELATIVE_VALIDATION_EXCEPTION = "exception";
     public static final String DEFAULT_RELATIVE_MAX_VALIDATION_ERR = "Value cannot be higher than %s";
+    public static final String DEFAULT_RELATIVE_MIN_VALIDATION_ERR = "Value cannot be smaller than %s";
     public static final String V_CUMULATIVE_TOTAL = "v_cumulative_total";
     public static final String DEFAULT_CUMULATIVE_VALIDATION_ERR = "Sum of %s and %s should be equal to %s";
     public static final String RELATED_FIELDS = "related_fields";
