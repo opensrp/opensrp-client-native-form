@@ -1,7 +1,6 @@
 package com.vijay.jsonwizard.validators.edittext;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.rengwuxian.materialedittext.validation.METValidator;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
