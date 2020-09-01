@@ -20,6 +20,7 @@ import com.vijay.jsonwizard.fragments.JsonWizardFormFragment;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.OnFieldsInvalid;
+import com.vijay.jsonwizard.rules.RulesEngineFactory;
 import com.vijay.jsonwizard.shadow.ShadowContextCompat;
 import com.vijay.jsonwizard.shadow.ShadowPermissionUtils;
 import com.vijay.jsonwizard.utils.AppExecutors;
@@ -105,6 +106,9 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
 
     @Mock
     private OnFieldsInvalid onFieldsInvalid;
+
+    @Mock
+    private RulesEngineFactory rulesEngineFactory;
 
     private JsonFormFragmentPresenter presenter;
 
@@ -431,6 +435,15 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
     public void testGetInteractor() {
         assertNotNull(presenter.getmJsonFormInteractor());
         assertNotNull(presenter.getInteractor());
+    }
+
+    @Test
+    public void testPreLoadRulesShouldInitializeRules() throws JSONException {
+        when(jsonFormActivity.getRulesEngineFactory()).thenReturn(rulesEngineFactory);
+        presenter.preLoadRules(new JSONObject(TestConstants.BASIC_FORM_WITH_RULES), STEP1);
+        shadowOf(getMainLooper()).idle();
+        verify(rulesEngineFactory).getRulesFromAsset("sample-relevance-rules.yml");
+        verify(rulesEngineFactory).getRulesFromAsset("sample-calculation-rules.yml");
     }
 
 
