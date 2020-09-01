@@ -4,9 +4,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.view.View;
 
-import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.R;
-import com.vijay.jsonwizard.activities.JsonFormActivity;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.WidgetArgs;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
@@ -16,13 +14,10 @@ import com.vijay.jsonwizard.shadow.ShadowContextCompat;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
-import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 
@@ -40,15 +35,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
 @Config(shadows = {ShadowContextCompat.class})
-public class BasicRDTCaptureFactoryTest extends BaseTest {
+public class BasicRDTCaptureFactoryTest extends FactoryTest {
 
     private BasicRDTCaptureFactory basicRDTCaptureFactory;
-    private JsonFormActivity jsonFormActivity;
 
     @Mock
     private JsonFormFragment formFragment;
@@ -56,10 +49,9 @@ public class BasicRDTCaptureFactoryTest extends BaseTest {
     private CommonListener listener;
 
     @Before
-    public void setUp() throws JSONException {
-        MockitoAnnotations.initMocks(this);
+    public void setUp() {
+        super.setUp();
         basicRDTCaptureFactory = new BasicRDTCaptureFactory();
-        jsonFormActivity = spy(Robolectric.buildActivity(JsonFormActivity.class, getJsonFormActivityIntent()).create().get());
     }
 
     @Test
@@ -139,11 +131,6 @@ public class BasicRDTCaptureFactoryTest extends BaseTest {
                 eq("entity_parent"), eq("entity"), eq("entity_id"), eq(false));
         verify(formFragment).next();
         verify(formFragment).save(eq(true));
-    }
-
-    @After
-    public void tearDown() {
-        jsonFormActivity.finish();
     }
 
     private WidgetArgs getWidgetArgs() {
