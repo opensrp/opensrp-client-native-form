@@ -1109,7 +1109,7 @@ public class FormUtils {
 
                 }
             } catch (JSONException e) {
-                Log.i(TAG, Log.getStackTraceString(e));
+                Timber.e(e);
             }
         }
         return fields;
