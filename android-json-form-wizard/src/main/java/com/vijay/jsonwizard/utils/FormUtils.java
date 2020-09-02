@@ -1245,6 +1245,22 @@ public class FormUtils {
                     result.put(options.getJSONObject(j).getString(JsonFormConstants.KEY),
                             options.getJSONObject(j).getString(JsonFormConstants.VALUE));
                 }
+            } else {
+                if (jsonObject.has(RuleConstant.IS_RULE_CHECK) && jsonObject.getBoolean(RuleConstant.IS_RULE_CHECK)) {
+                    JSONArray values = jsonObject.optJSONArray(JsonFormConstants.VALUE);
+                    if (values != null) {
+                        JSONObject optionsObject = options.optJSONObject(j);
+                        if (optionsObject != null) {
+                            String key = optionsObject.optString(JsonFormConstants.KEY);
+                            for (int i = 0; i < values.length(); i++) {
+                                String value = values.optString(i);
+                                if (value.equals(key)) {
+                                    result.put(key, value);
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             //Backward compatibility Fix
