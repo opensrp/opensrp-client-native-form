@@ -1245,15 +1245,6 @@ public class FormUtils {
                     result.put(options.getJSONObject(j).getString(JsonFormConstants.KEY),
                             options.getJSONObject(j).getString(JsonFormConstants.VALUE));
                 }
-            }
-
-            //Backward compatibility Fix
-            if (jsonObject.has(RuleConstant.IS_RULE_CHECK) && !jsonObject.getBoolean(RuleConstant.IS_RULE_CHECK)) {
-                if (options.getJSONObject(j).has(JsonFormConstants.VALUE)) {
-                    result.put(JsonFormConstants.VALUE, options.getJSONObject(j).getString(JsonFormConstants.VALUE));
-                } else {
-                    result.put(JsonFormConstants.VALUE, JsonFormConstants.FALSE);
-                }
             } else {
                 if (jsonObject.has(RuleConstant.IS_RULE_CHECK) && jsonObject.getBoolean(RuleConstant.IS_RULE_CHECK)) {
                     JSONArray values = jsonObject.optJSONArray(JsonFormConstants.VALUE);
@@ -1269,6 +1260,15 @@ public class FormUtils {
                             }
                         }
                     }
+                }
+            }
+
+            //Backward compatibility Fix
+            if (jsonObject.has(RuleConstant.IS_RULE_CHECK) && !jsonObject.getBoolean(RuleConstant.IS_RULE_CHECK)) {
+                if (options.getJSONObject(j).has(JsonFormConstants.VALUE)) {
+                    result.put(JsonFormConstants.VALUE, options.getJSONObject(j).getString(JsonFormConstants.VALUE));
+                } else {
+                    result.put(JsonFormConstants.VALUE, JsonFormConstants.FALSE);
                 }
             }
         }
