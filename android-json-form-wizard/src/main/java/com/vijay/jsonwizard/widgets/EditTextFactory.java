@@ -30,7 +30,7 @@ import com.vijay.jsonwizard.validators.edittext.MaxNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.MinLengthValidator;
 import com.vijay.jsonwizard.validators.edittext.MinNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.ReferenceValidator;
-import com.vijay.jsonwizard.validators.edittext.RelativeMaxNumericValidator;
+import com.vijay.jsonwizard.validators.edittext.RelativeNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
@@ -47,12 +47,14 @@ import timber.log.Timber;
 
 import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_CUMULATIVE_VALIDATION_ERR;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_RELATIVE_MAX_VALIDATION_ERR;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_RELATIVE_MIN_VALIDATION_ERR;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.RELATED_FIELDS;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.RELATIVE_MAX_VALIDATION_EXCEPTION;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.RELATIVE_VALIDATION_EXCEPTION;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP1;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.V_CUMULATIVE_TOTAL;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.V_RELATIVE_MAX;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.V_RELATIVE_MIN;
 import static com.vijay.jsonwizard.utils.FormUtils.fields;
 import static com.vijay.jsonwizard.utils.FormUtils.getFieldJSONObject;
 
@@ -161,7 +163,8 @@ public class EditTextFactory implements FormWidgetFactory {
         addUrlValidator(jsonObject, editText);
         addNumericValidator(jsonObject, editText);
         addNumericIntegerValidator(jsonObject, editText);
-        addRelativeNumericIntegerValidator(jsonObject, formFragment, editText);
+        addRelativeNumericIntegerValidator(jsonObject, formFragment, editText, true);
+        addRelativeNumericIntegerValidator(jsonObject, formFragment, editText, false);
         addCumulativeTotalValidator(jsonObject, formFragment, editText, stepName, (JsonApi) context);
         // edit type check
         String editType = jsonObject.optString(JsonFormConstants.EDIT_TYPE);
@@ -315,8 +318,8 @@ public class EditTextFactory implements FormWidgetFactory {
     }
 
     private void addRelativeNumericIntegerValidator(JSONObject editTextJSONObject, JsonFormFragment formFragment,
-                                                    MaterialEditText editText) throws JSONException {
-        JSONObject relativeMaxValidationJSONObject = editTextJSONObject.optJSONObject(V_RELATIVE_MAX);
+                                                    MaterialEditText editText, boolean isMaxValidator) throws JSONException {
+        JSONObject relativeMaxValidationJSONObject = editTextJSONObject.optJSONObject(isMaxValidator ? V_RELATIVE_MAX : V_RELATIVE_MIN);
         if (relativeMaxValidationJSONObject != null) {
             // validate that the relative max field exists
             String relativeMaxValidationKey = relativeMaxValidationJSONObject.optString(JsonFormConstants.VALUE, null);
@@ -326,20 +329,21 @@ public class EditTextFactory implements FormWidgetFactory {
             if (relativeMaxFieldJSONObject != null) {
                 // RELATIVE_MAX_VALIDATION_EXCEPTION, should never be set to Integer.MIN_VALUE in the native form json
                 int relativeMaxValidationException = relativeMaxValidationJSONObject
-                        .optInt(RELATIVE_MAX_VALIDATION_EXCEPTION, 0);
+                        .optInt(RELATIVE_VALIDATION_EXCEPTION, 0);
                 if (relativeMaxValidationException != Integer.MIN_VALUE) {
                     // add validator
                     String relativeMaxValidationErrorMsg = relativeMaxValidationJSONObject
                             .optString(JsonFormConstants.ERR, null);
-                    String defaultErrMsg = String.format(DEFAULT_RELATIVE_MAX_VALIDATION_ERR, relativeMaxValidationKey);
+                    String defaultErrMsg = String.format(isMaxValidator ? DEFAULT_RELATIVE_MAX_VALIDATION_ERR : DEFAULT_RELATIVE_MIN_VALIDATION_ERR, relativeMaxValidationKey);
                     relativeMaxValidationException = relativeMaxValidationJSONObject
-                            .optInt(RELATIVE_MAX_VALIDATION_EXCEPTION, Integer.MIN_VALUE);
-                    editText.addValidator(new RelativeMaxNumericValidator(
+                            .optInt(RELATIVE_VALIDATION_EXCEPTION, Integer.MIN_VALUE);
+                    editText.addValidator(new RelativeNumericValidator(
                             relativeMaxValidationErrorMsg == null ? defaultErrMsg : relativeMaxValidationErrorMsg,
                             formFragment,
                             relativeMaxValidationKey,
                             relativeMaxValidationException,
-                            STEP1));
+                            STEP1,
+                            isMaxValidator));
                 }
             }
         }

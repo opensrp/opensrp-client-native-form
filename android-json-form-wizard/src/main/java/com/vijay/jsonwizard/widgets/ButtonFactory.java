@@ -49,7 +49,7 @@ public class ButtonFactory implements FormWidgetFactory {
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
-        return attachJson(stepName, context, formFragment, jsonObject, listener, false);
+        return getViewsFromJson(stepName, context, formFragment, jsonObject, listener, false);
     }
 
     private List<View> attachJson(String stepName, final Context context, final JsonFormFragment formFragment, JSONObject jsonObject, final CommonListener listener, boolean popup) throws JSONException {
