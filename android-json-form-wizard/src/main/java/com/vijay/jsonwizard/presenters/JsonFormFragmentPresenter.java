@@ -1061,7 +1061,10 @@ public class JsonFormFragmentPresenter extends
 
     private void preLoadRules(String stepName, JSONObject formJSONObject) {
         Set<String> ruleFiles = new HashSet<>();
-        JSONArray fields = formJSONObject.optJSONArray(stepName);
+        JSONObject step = formJSONObject.optJSONObject(stepName);
+        if (step == null)
+            return;
+        JSONArray fields = step.optJSONArray(JsonFormConstants.FIELDS);
         if (fields == null)
             return;
         for (int i = 0; i < fields.length(); i++) {

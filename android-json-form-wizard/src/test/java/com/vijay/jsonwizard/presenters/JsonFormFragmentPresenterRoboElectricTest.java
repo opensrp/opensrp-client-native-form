@@ -16,9 +16,11 @@ import com.vijay.jsonwizard.activities.JsonFormActivity;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormErrorFragment;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
+import com.vijay.jsonwizard.fragments.JsonWizardFormFragment;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.OnFieldsInvalid;
+import com.vijay.jsonwizard.rules.RulesEngineFactory;
 import com.vijay.jsonwizard.shadow.ShadowContextCompat;
 import com.vijay.jsonwizard.shadow.ShadowPermissionUtils;
 import com.vijay.jsonwizard.utils.AppExecutors;
@@ -65,6 +67,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.timeout;
@@ -104,6 +107,9 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
     @Mock
     private OnFieldsInvalid onFieldsInvalid;
 
+    @Mock
+    private RulesEngineFactory rulesEngineFactory;
+
     private JsonFormFragmentPresenter presenter;
 
     private JSONObject mStepDetails;
@@ -117,6 +123,10 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
 
     @Before
     public void setUp() throws JSONException {
+        setUp(formFragment);
+    }
+
+    public void setUp(JsonFormFragment formFragment) throws JSONException {
         when(formFragment.getJsonApi()).thenReturn(jsonFormActivity);
         formFragment.onFieldsInvalid = onFieldsInvalid;
         presenter = new JsonFormFragmentPresenter(formFragment, jsonFormInteractor);
@@ -159,6 +169,71 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         verify(jsonFormInteractor, timeout(TIMEOUT)).fetchFormElements(eq(STEP1), eq(formFragment), jsonArgumentCaptor.capture(), isNull(CommonListener.class), eq(false));
         assertEquals(mStepDetails.toString(), jsonArgumentCaptor.getValue().toString());
         verify(formFragment, timeout(TIMEOUT)).addFormElements(views);
+    }
+
+
+    @Test
+    public void testAddFormElementsWillNullStepShouldNotAddFormElements() {
+        Bundle bundle = new Bundle();
+        bundle.putString(JsonFormConstants.JSON_FORM_KEY.STEPNAME, STEP1);
+        when(formFragment.getArguments()).thenReturn(bundle);
+        when(formFragment.getStep(STEP1)).thenReturn(null);
+        presenter.addFormElements();
+        verify(formFragment, never()).addFormElements(any(List.class));
+    }
+
+
+    @Test
+    public void testAddFormElementsForWizardShouldSetNextStep() throws JSONException {
+        formFragment = mock(JsonWizardFormFragment.class);
+        setUp(formFragment);
+        Bundle bundle = new Bundle();
+        bundle.putString(JsonFormConstants.JSON_FORM_KEY.STEPNAME, STEP1);
+        when(formFragment.getArguments()).thenReturn(bundle);
+        when(formFragment.getStep(STEP1)).thenReturn(mStepDetails);
+        List<View> views = Collections.singletonList(textView);
+        when(jsonFormInteractor.fetchFormElements(anyString(), any(JsonFormFragment.class), any(JSONObject.class), isNull(CommonListener.class), anyBoolean())).thenReturn(views);
+        presenter.addFormElements();
+        shadowOf(getMainLooper()).idle();
+        verify(jsonFormInteractor, timeout(TIMEOUT)).fetchFormElements(eq(STEP1), eq(formFragment), jsonArgumentCaptor.capture(), isNull(CommonListener.class), eq(false));
+        assertEquals(mStepDetails.toString(), jsonArgumentCaptor.getValue().toString());
+        verify(formFragment, timeout(TIMEOUT)).addFormElements(views);
+        verify(jsonFormActivity).setNextStep(STEP1);
+    }
+
+
+    @Test
+    public void testAddFormElementsForWizardShouldSkipSteps() throws JSONException {
+        formFragment = mock(JsonWizardFormFragment.class);
+        setUp(formFragment);
+        when(jsonFormActivity.skipBlankSteps()).thenReturn(true);
+        when(jsonFormActivity.nextStep()).thenReturn(STEP1);
+        Bundle bundle = new Bundle();
+        bundle.putString(JsonFormConstants.JSON_FORM_KEY.STEPNAME, STEP1);
+        when(formFragment.getArguments()).thenReturn(bundle);
+        when(formFragment.getStep(STEP1)).thenReturn(mStepDetails);
+        List<View> views = Collections.singletonList(textView);
+        when(jsonFormInteractor.fetchFormElements(anyString(), any(JsonFormFragment.class), any(JSONObject.class), isNull(CommonListener.class), anyBoolean())).thenReturn(views);
+        presenter.addFormElements();
+        shadowOf(getMainLooper()).idle();
+        verify(jsonFormInteractor, timeout(TIMEOUT)).fetchFormElements(eq(STEP1), eq(formFragment), jsonArgumentCaptor.capture(), isNull(CommonListener.class), eq(false));
+        assertEquals(mStepDetails.toString(), jsonArgumentCaptor.getValue().toString());
+        verify(formFragment, timeout(TIMEOUT)).addFormElements(views);
+        verify(jsonFormActivity).setNextStep(STEP1);
+        JsonWizardFormFragment wizardFormFragment = (JsonWizardFormFragment) formFragment;
+        verify(wizardFormFragment).skipLoadedStepsOnNextPressed();
+    }
+
+
+    @Test
+    public void testAddFormElementsShouldDismissDialog() {
+        Whitebox.setInternalState(presenter, "cleanupAndExit", true);
+        Bundle bundle = new Bundle();
+        bundle.putString(JsonFormConstants.JSON_FORM_KEY.STEPNAME, STEP1);
+        when(formFragment.getArguments()).thenReturn(bundle);
+        when(formFragment.getStep(STEP1)).thenReturn(mStepDetails);
+        presenter.addFormElements();
+        verify(formFragment, never()).addFormElements(any(List.class));
     }
 
     @Test
@@ -354,6 +429,21 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         presenter.onRequestPermissionsResult(CAMERA_PERMISSION_REQUEST_CODE, new String[]{permission.CAMERA, permission.READ_EXTERNAL_STORAGE, permission.WRITE_EXTERNAL_STORAGE}, new int[5]);
         verify(formFragment).hideKeyBoard();
         assertEquals("user_image", Whitebox.getInternalState(presenter, "mCurrentKey"));
+    }
+
+    @Test
+    public void testGetInteractor() {
+        assertNotNull(presenter.getmJsonFormInteractor());
+        assertNotNull(presenter.getInteractor());
+    }
+
+    @Test
+    public void testPreLoadRulesShouldInitializeRules() throws JSONException {
+        when(jsonFormActivity.getRulesEngineFactory()).thenReturn(rulesEngineFactory);
+        presenter.preLoadRules(new JSONObject(TestConstants.BASIC_FORM_WITH_RULES), STEP1);
+        shadowOf(getMainLooper()).idle();
+        verify(rulesEngineFactory).getRulesFromAsset("sample-relevance-rules.yml");
+        verify(rulesEngineFactory).getRulesFromAsset("sample-calculation-rules.yml");
     }
 
 
