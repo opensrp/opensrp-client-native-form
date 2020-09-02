@@ -40,6 +40,13 @@ public class ButtonFactoryTest extends FactoryTest {
         JSONObject jsonObject = getJsonObject();
         Button button = (Button) buttonFactory.getViewsFromJson(STEP1, jsonFormActivity, jsonFormFragment,
                 jsonObject, commonListener).get(0);
+
+        Mockito.doReturn(jsonObject)
+                .when(jsonFormActivity)
+                .getObjectUsingAddress(
+                        Mockito.eq(button.getTag(R.id.address).toString().split(":"))
+                        , Mockito.eq(false));
+
         Assert.assertEquals(getJsonObject().get(JsonFormConstants.KEY), button.getTag(R.id.key));
         Assert.assertEquals(jsonObject.get(JsonFormConstants.OPENMRS_ENTITY_PARENT), button.getTag(R.id.openmrs_entity_parent));
         Assert.assertEquals(jsonObject.get(JsonFormConstants.OPENMRS_ENTITY), button.getTag(R.id.openmrs_entity));
