@@ -16,7 +16,7 @@ import static org.mockito.Mockito.doReturn;
 /**
  * Created by Vincent Karuri on 16/06/2020
  */
-public class RelativeMaxNumericValidatorTest {
+public class RelativeNumericValidatorTest {
 
     @Mock
     private JsonFormFragment formFragment;
@@ -95,10 +95,18 @@ public class RelativeMaxNumericValidatorTest {
     }
 
     @Test
-    public void testIsValidReturnsCorrectStatus() {
-        RelativeMaxNumericValidator relativeMaxNumericValidator
-                = new RelativeMaxNumericValidator("", formFragment, "key", 0, "step1");
-        assertTrue(relativeMaxNumericValidator.isValid("1", false));
-        assertFalse(relativeMaxNumericValidator.isValid("3", false));
+    public void testIsMaxValidReturnsCorrectStatus() {
+        RelativeNumericValidator relativeNumericValidator
+                = new RelativeNumericValidator("", formFragment, "key", 0, "step1", true);
+        assertTrue(relativeNumericValidator.isValid("1", false));
+        assertFalse(relativeNumericValidator.isValid("3", false));
+    }
+
+    @Test
+    public void testIsMinValidReturnsCorrectStatus() {
+        RelativeNumericValidator relativeNumericValidator
+                = new RelativeNumericValidator("", formFragment, "key", 0, "step1", false);
+        assertFalse(relativeNumericValidator.isValid("1", false));
+        assertTrue(relativeNumericValidator.isValid("3", false));
     }
 }
