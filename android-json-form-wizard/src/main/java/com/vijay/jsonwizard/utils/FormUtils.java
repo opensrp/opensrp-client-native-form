@@ -1109,7 +1109,7 @@ public class FormUtils {
 
                 }
             } catch (JSONException e) {
-                Log.i(TAG, Log.getStackTraceString(e));
+                Timber.e(e);
             }
         }
         return fields;
@@ -1253,6 +1253,22 @@ public class FormUtils {
                     result.put(JsonFormConstants.VALUE, options.getJSONObject(j).getString(JsonFormConstants.VALUE));
                 } else {
                     result.put(JsonFormConstants.VALUE, JsonFormConstants.FALSE);
+                }
+            } else {
+                if (jsonObject.has(RuleConstant.IS_RULE_CHECK) && jsonObject.getBoolean(RuleConstant.IS_RULE_CHECK)) {
+                    JSONArray values = jsonObject.optJSONArray(JsonFormConstants.VALUE);
+                    if (values != null) {
+                        JSONObject optionsObject = options.optJSONObject(j);
+                        if (optionsObject != null) {
+                            String key = optionsObject.optString(JsonFormConstants.KEY);
+                            for (int i = 0; i < values.length(); i++) {
+                                String value = values.optString(i);
+                                if (value.equals(key)) {
+                                    result.put(key, value);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
