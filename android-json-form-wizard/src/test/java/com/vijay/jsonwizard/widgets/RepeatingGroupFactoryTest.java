@@ -9,9 +9,11 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
@@ -60,10 +62,15 @@ public class RepeatingGroupFactoryTest extends BaseTest {
         Mockito.doReturn(new JSONObject(formString)).when(context).getmJSONObject();
         Mockito.doReturn(doneButton).when(rootLayout).findViewById(R.id.btn_repeating_group_done);
         Mockito.doReturn(referenceEditText).when(rootLayout).findViewById(R.id.reference_edit_text);
-        Mockito.doNothing().when(factorySpy).setGlobalLayoutListener(ArgumentMatchers.eq(rootLayout), ArgumentMatchers.eq(referenceEditText), ArgumentMatchers.anyInt());
+        Mockito.doNothing().when(factorySpy).setGlobalLayoutListener(ArgumentMatchers.eq(rootLayout), ArgumentMatchers.eq(referenceEditText), ArgumentMatchers.anyInt(), ArgumentMatchers.eq(doneButton));
         Mockito.doReturn(resources).when(context).getResources();
 
-        List<View> viewList = factorySpy.getViewsFromJson("RandomStepName", context, formFragment, repeatingGroupObject, listener);
+        JSONObject step = new JSONObject();
+        JSONArray fields = new JSONArray();
+        step.put(JsonFormConstants.FIELDS, fields);
+        Mockito.doReturn(step).when(context).getStep(ArgumentMatchers.anyString());
+
+        List<View> viewList = factorySpy.getViewsFromJson("step1", context, formFragment, repeatingGroupObject, listener);
         Assert.assertNotNull(viewList);
         Assert.assertEquals(1, viewList.size());
     }
