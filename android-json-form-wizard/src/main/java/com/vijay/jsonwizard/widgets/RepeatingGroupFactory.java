@@ -52,9 +52,11 @@ import timber.log.Timber;
 
 import static com.vijay.jsonwizard.constants.JsonFormConstants.FIELDS;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.LABEL;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.OPENMRS_ENTITY;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.OPENMRS_ENTITY_ID;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.OPENMRS_ENTITY_PARENT;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.TEXT;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.TYPE;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUE;
 
@@ -141,6 +143,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         repeatingGroupCount.put(OPENMRS_ENTITY, "");
         repeatingGroupCount.put(OPENMRS_ENTITY_ID, "");
         repeatingGroupCount.put(TYPE, "");
+        repeatingGroupCount.put(TEXT, widgetArgs.getJsonObject().get(REFERENCE_EDIT_TEXT_HINT));
         getStepFields(getJsonApi(widgetArgs).getStep(widgetArgs.getStepName())).put(repeatingGroupCount);
         return repeatingGroupCount;
     }
