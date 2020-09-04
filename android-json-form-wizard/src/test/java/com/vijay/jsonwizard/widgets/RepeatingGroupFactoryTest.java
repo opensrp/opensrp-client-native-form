@@ -97,6 +97,7 @@ public class RepeatingGroupFactoryTest extends FactoryTest {
         JSONObject repeatingGroupWidget =  new JSONObject();
         repeatingGroupWidget.put(JsonFormConstants.KEY, "key");
         repeatingGroupWidget.put(JsonFormConstants.VALUE, new JSONArray());
+        repeatingGroupWidget.put(RepeatingGroupFactory.REFERENCE_EDIT_TEXT_HINT, "text");
         return factory.getViewsFromJson("step1", jsonFormActivity, Mockito.mock(JsonFormFragment.class),
                repeatingGroupWidget, Mockito.mock(CommonListener.class));
     }

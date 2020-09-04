@@ -52,7 +52,6 @@ import timber.log.Timber;
 
 import static com.vijay.jsonwizard.constants.JsonFormConstants.FIELDS;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.LABEL;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.OPENMRS_ENTITY;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.OPENMRS_ENTITY_ID;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.OPENMRS_ENTITY_PARENT;
@@ -66,7 +65,7 @@ import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUE;
 public class RepeatingGroupFactory implements FormWidgetFactory {
 
     private static Map<Integer, String> repeatingGroupLayouts = new HashMap<>();
-    private final String REFERENCE_EDIT_TEXT_HINT = "reference_edit_text_hint";
+    public static final String REFERENCE_EDIT_TEXT_HINT = "reference_edit_text_hint";
     private final String REPEATING_GROUP_LABEL = "repeating_group_label";
     private final String REFERENCE_EDIT_TEXT = "reference_edit_text";
     private final String REPEATING_GROUP_MAX = "repeating_group_max";
