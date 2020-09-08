@@ -27,13 +27,10 @@ import java.util.Set;
 public class TimePickerFactoryTest extends BaseTest {
     private TimePickerFactory factory;
     private JsonFormActivity jsonFormActivity;
-
     @Mock
     private JsonFormFragment formFragment;
     @Mock
     private CommonListener listener;
-    @Mock
-    private View view;
 
     @Before
     public void setUp() {
