@@ -11,6 +11,7 @@ import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
+import com.vijay.jsonwizard.utils.AppExecutors;
 import com.vijay.jsonwizard.utils.FormUtils;
 
 import org.json.JSONObject;
@@ -25,6 +26,10 @@ import org.mockito.MockitoAnnotations;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+
+import static android.os.Looper.getMainLooper;
+import static org.mockito.Mockito.when;
+import static org.robolectric.Shadows.shadowOf;
 
 public class DatePickerFactoryTest extends BaseTest {
     private DatePickerFactory factory;
@@ -52,6 +57,8 @@ public class DatePickerFactoryTest extends BaseTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+        AppExecutors appExecutors = new AppExecutors();
+        when(context.getAppExecutors()).thenReturn(appExecutors);
         factory = new DatePickerFactory();
     }
 
@@ -82,6 +89,7 @@ public class DatePickerFactoryTest extends BaseTest {
 
         String datePicker = "{\"key\":\"First_Health_Facility_Contact\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163260AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_data_type\":\"text\",\"type\":\"date_picker\",\"hint\":\"Date first seen *\",\"expanded\":false,\"min_date\":\"today-5y\",\"max_date\":\"today\",\"v_required\":{\"value\":\"true\",\"err\":\"Enter the date that the child was first seen at a health facility for immunization services\"},\"constraints\":{\"type\":\"date\",\"ex\":\"greaterThanEqualTo(., step1:Date_Birth)\",\"err\":\"Date first seen can't occur before date of birth\"},\"relevance\":{\"rules-engine\":{\"ex-rules\":{\"rules-file\":\"sample-relevance-rules.yml\"}}},\"calculation\":{\"rules-engine\":{\"ex-rules\":{\"rules-file\":\"sample-calculation-rules.yml\"}}},\"value\":\"12-05-2020\",\"read_only\":true,\"label_info_text\":\"Just testing\",\"label_info_title\":\"Just testing\",\"duration\":{\"label\":\"AGE\"}}";
         List<View> viewList = factorySpy.getViewsFromJson("RandomStepName", context, formFragment, new JSONObject(datePicker), listener);
+        shadowOf(getMainLooper()).idle();
         Assert.assertNotNull(viewList);
         Assert.assertEquals(1, viewList.size());
     }
