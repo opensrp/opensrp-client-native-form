@@ -16,6 +16,6 @@ public class ShadowUtils extends Shadow {
 
     @Implementation
     public static void postEvent(BaseEvent event) {
-
+        // do nothing
     }
 }

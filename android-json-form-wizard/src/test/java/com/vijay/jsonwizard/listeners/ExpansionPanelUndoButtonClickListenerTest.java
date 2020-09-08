@@ -12,6 +12,7 @@ import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.widgets.FactoryTest;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
@@ -33,6 +34,14 @@ public class ExpansionPanelUndoButtonClickListenerTest extends FactoryTest {
     private ExpansionPanelUndoButtonClickListener expansionPanelUndoButtonClickListener;
     private JSONObject field;
     private JSONObject mJsonObject;
+    private JSONObject global;
+    
+    private final String KEY_1 = "key1";
+    private final String KEY_2 = "key2";
+    private final String KEY_3 = "key3";
+
+    private final String VALUE_1 = "value1";
+    private final String VALUE_3 = "value3";
 
     @Before
     public void setUp() {
@@ -49,15 +58,20 @@ public class ExpansionPanelUndoButtonClickListenerTest extends FactoryTest {
     }
 
     @Test
-    public void testExpansionPanelButtonsShouldPerformCorrectAction() {
-        callOnClick();
+    public void testExpansionPanelButtonsShouldPerformCorrectAction() throws JSONException {
+        Assert.assertEquals(VALUE_1, global.get(KEY_1));
+        Assert.assertEquals(VALUE_3, global.get(KEY_3));
 
+        callOnClick();
         AlertDialog alertDialog = (AlertDialog) Mockito.spy(ShadowAlertDialog.getShownDialogs().get(0));
         alertDialog.findViewById(R.id.undo_button).performClick();
 
         Mockito.verify(field).remove(ArgumentMatchers.eq(JsonFormConstants.VALUE));
         Mockito.verify(field).remove(ArgumentMatchers.eq(JsonFormConstants.REQUIRED_FIELDS));
         Mockito.verify(jsonFormActivity).setmJSONObject(ArgumentMatchers.eq(mJsonObject));
+
+        Assert.assertEquals("", global.get(KEY_1));
+        Assert.assertEquals(VALUE_3, global.get(KEY_3));
     }
 
     private void bootStrapPanel() {
@@ -66,9 +80,9 @@ public class ExpansionPanelUndoButtonClickListenerTest extends FactoryTest {
 
             mJsonObject = new JSONObject();
 
-            JSONObject global = new JSONObject();
-            global.put("key1", "value1");
-            global.put("key3", "value3");
+            global = new JSONObject();
+            global.put(KEY_1, VALUE_1);
+            global.put(KEY_3, VALUE_3);
             mJsonObject.put(JsonFormConstants.GLOBAL, global);
 
             Mockito.doReturn(mJsonObject).when(jsonFormActivity).getmJSONObject();
@@ -80,9 +94,22 @@ public class ExpansionPanelUndoButtonClickListenerTest extends FactoryTest {
             field.put(JsonFormConstants.VALUE, JsonFormConstants.VALUE);
             field.put(JsonFormConstants.TEXT, "header");
 
+            JSONArray valueItemJSONArray = new JSONArray();
+            valueItemJSONArray.put(new JSONObject());
+
             JSONArray selectedValues = new JSONArray();
-            selectedValues.put("key1");
-            selectedValues.put("key2");
+            JSONObject selectedValue = new JSONObject();
+            selectedValue.put(JsonFormConstants.KEY, KEY_1);
+            selectedValue.put(JsonFormConstants.VALUES, valueItemJSONArray);
+            selectedValue.put(JsonFormConstants.TYPE, "");
+            selectedValues.put(selectedValue);
+
+            selectedValue = new JSONObject();
+            selectedValue.put(JsonFormConstants.KEY, KEY_2);
+            selectedValue.put(JsonFormConstants.VALUES, valueItemJSONArray);
+            selectedValue.put(JsonFormConstants.TYPE, "");
+            selectedValues.put(selectedValue);
+
             field.put(JsonFormConstants.VALUE, selectedValues);
 
             fields.put(field);
