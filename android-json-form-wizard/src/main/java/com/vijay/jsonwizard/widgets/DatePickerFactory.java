@@ -61,7 +61,8 @@ public class DatePickerFactory implements FormWidgetFactory {
     private FormUtils formUtils = new FormUtils();
 
 
-    private static void showDatePickerDialog(Activity context, DatePickerDialog datePickerDialog, MaterialEditText editText) {
+    @VisibleForTesting
+    protected void showDatePickerDialog(Activity context, DatePickerDialog datePickerDialog, MaterialEditText editText) {
 
         FragmentTransaction ft = context.getFragmentManager().beginTransaction();
         Fragment prev = context.getFragmentManager().findFragmentByTag(TAG);
