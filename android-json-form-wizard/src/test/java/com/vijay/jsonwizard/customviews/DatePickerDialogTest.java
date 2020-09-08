@@ -93,6 +93,26 @@ public class DatePickerDialogTest extends BaseTest {
     }
 
     @Test
+    public void testOnCreateViewShouldSetTimeBasedOnInputs() {
+        long max = System.currentTimeMillis();
+        datePickerDialog.setMaxDate(max);
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.DATE, 1);
+        cal.set(Calendar.MONTH, 1);
+        Calendar calMin = Calendar.getInstance();
+        cal.set(Calendar.YEAR, -1);
+        datePickerDialog.setMinDate(calMin.getTimeInMillis());
+        datePickerDialog.setDate(cal.getTime());
+        datePickerDialog.onCreateView(LayoutInflater.from(RuntimeEnvironment.application), null, null);
+        assertNotNull(datePickerDialog.getDatePicker());
+        assertEquals(View.VISIBLE, datePickerDialog.getDatePicker().getVisibility());
+        assertEquals(calMin.getTimeInMillis(), datePickerDialog.getDatePicker().getMinDate());
+        assertEquals(1, datePickerDialog.getDatePicker().getDayOfMonth());
+        assertEquals(1, datePickerDialog.getDatePicker().getMonth());
+        assertEquals(cal.get(Calendar.YEAR), datePickerDialog.getDatePicker().getYear());
+    }
+
+    @Test
     public void testOnShowListenerShouldHideSoftInputFromWindow() {
         datePickerDialog.setContext(activity);
         when(activity.getSystemService(Context.INPUT_METHOD_SERVICE)).thenReturn(inputManager);
