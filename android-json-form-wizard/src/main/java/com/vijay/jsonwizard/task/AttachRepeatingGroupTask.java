@@ -192,7 +192,7 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
 
     protected void addUniqueIdentifiers(JSONObject element, String uniqueId) throws JSONException {
         // make repeating group element key unique
-        String currKey = widgetArgs.getJsonObject().getString(KEY) + "_" + element.getString(KEY);
+        String currKey = element.getString(KEY);
         currKey += ("_" + uniqueId);
         element.put(KEY, currKey);
         // modify relevance to reflect changes in unique key name
