@@ -138,22 +138,23 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
     private JSONObject getRepeatingGroupCountObj(WidgetArgs widgetArgs) throws JSONException {
 
         String repeatingGroupCountObjKey = widgetArgs.getJsonObject().get(KEY) + "_count";
-
-        JSONObject repeatingGroupCount = new JSONObject();
-        repeatingGroupCount.put(KEY, repeatingGroupCountObjKey);
-        repeatingGroupCount.put(OPENMRS_ENTITY_PARENT, "");
-        repeatingGroupCount.put(OPENMRS_ENTITY, "");
-        repeatingGroupCount.put(OPENMRS_ENTITY_ID, "");
-        repeatingGroupCount.put(TYPE, "");
-        repeatingGroupCount.put(TEXT, widgetArgs.getJsonObject().get(REFERENCE_EDIT_TEXT_HINT));
-
-        // prevents re-adding the count object during form traversals
         JSONArray stepFields = getStepFields(getJsonApi(widgetArgs).getStep(widgetArgs.getStepName()));
-        if (FormUtils.getFieldJSONObject(stepFields, repeatingGroupCountObjKey) == null) {
-            stepFields.put(repeatingGroupCount);
+        JSONObject repeatingGroupCountObj = FormUtils.getFieldJSONObject(stepFields, repeatingGroupCountObjKey);
+        // prevents re-adding the count object during form traversals
+        if (repeatingGroupCountObj != null) {
+            return repeatingGroupCountObj;
         }
 
-        return repeatingGroupCount;
+        repeatingGroupCountObj = new JSONObject();
+        repeatingGroupCountObj.put(KEY, repeatingGroupCountObjKey);
+        repeatingGroupCountObj.put(OPENMRS_ENTITY_PARENT, "");
+        repeatingGroupCountObj.put(OPENMRS_ENTITY, "");
+        repeatingGroupCountObj.put(OPENMRS_ENTITY_ID, "");
+        repeatingGroupCountObj.put(TYPE, "");
+        repeatingGroupCountObj.put(TEXT, widgetArgs.getJsonObject().get(REFERENCE_EDIT_TEXT_HINT));
+        stepFields.put(repeatingGroupCountObj);
+
+        return repeatingGroupCountObj;
     }
 
     @Override
