@@ -1,0 +1,10 @@
+{
+  "name": "Rules engine demo",
+  "wizard": false,
+  "nextLabel": "Endelea",
+  "previousLabel": "Rudi",
+  "saveLabel": "Tuma",
+  "actionBarBackground": "customAppThemeBlue",
+  "navigationBackground": "button_navy_blue",
+  "hideSaveLabel": true
+}

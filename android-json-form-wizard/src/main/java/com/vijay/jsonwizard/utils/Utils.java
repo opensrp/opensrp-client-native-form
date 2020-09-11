@@ -637,6 +637,18 @@ public class Utils {
     }
 
     /**
+     * Translates a yaml file specified by {@param fileName} using properties stored in the database
+     * and returns its String representation
+     *
+     * @param fileName
+     * @param context
+     * @return Translated Yaml file in its String representation
+     */
+    public static String getTranslatedYamlFileWithDBProperties(String fileName, Context context) {
+        return NativeFormLangUtils.getTranslatedStringWithDBResourceBundle(context, getAssetFileAsString(fileName, context), null);
+    }
+
+    /**
      * Gets the contents of a file specified by {@param fileName} from the assets folder as a {@link String}
      *
      * @param fileName
@@ -682,10 +694,14 @@ public class Utils {
      * @return
      */
     public static String getFileContentsAsString(String filePath) {
+        return getFileContentsAsString(new File(filePath));
+    }
+
+    public static String getFileContentsAsString(File file) {
         Scanner scanner = null;
         String fileContents = "";
         try {
-            scanner = new Scanner(new File(filePath));
+            scanner = new Scanner(file);
             fileContents = scanner.useDelimiter("\\A").next();
         } catch (IOException e) {
             Timber.e(e);
@@ -694,6 +710,7 @@ public class Utils {
         }
         return fileContents;
     }
+
 
     /**
      * Converts an {@link InputStream} into a {@link String}
@@ -788,10 +805,24 @@ public class Utils {
         try {
             newDate = format.parse(date);
         } catch (ParseException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
         format = new SimpleDateFormat(outputFormat);
         return format.format(newDate);
+    }
+
+
+    public static int getResourceId(Context context, String name, ResourceType resourceType) {
+        try {
+            return context.getResources().getIdentifier(name, resourceType.getType(), context.getPackageName());
+        } catch (Exception e) {
+            Timber.e(e);
+            return -1;
+        }
+    }
+  
+    public static boolean isEmptyJsonArray(JSONArray jsonArray) {
+        return jsonArray == null || jsonArray.length() == 0;
     }
 }
 

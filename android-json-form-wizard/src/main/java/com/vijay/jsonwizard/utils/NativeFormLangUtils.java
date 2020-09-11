@@ -5,7 +5,12 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.util.Log;
+
+import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.domain.DBResourceBundle;
+import com.vijay.jsonwizard.domain.DBResourceBundleControl;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -71,7 +76,7 @@ public class NativeFormLangUtils {
      * Performs translation on an interpolated {@param str}
      * i.e. a String containing tokens in the format {{string_name}},
      * replacing these tokens with their corresponding values for the current Locale.
-     *
+     * <p>
      * It attempts to fetch the default Locale from shared preferences.
      *
      * @param str
@@ -91,7 +96,7 @@ public class NativeFormLangUtils {
      * Performs translation on an interpolated {@param str}
      * i.e. a String containing tokens in the format {{string_name}},
      * replacing these tokens with their corresponding values for the current Locale.
-     *
+     * <p>
      * It attempts to fetch the default Locale from shared preferences and allows specifying an
      * alternative file path to the translation property files at {@param propertyFilesFolderPath}.
      *
@@ -109,6 +114,14 @@ public class NativeFormLangUtils {
             Timber.e(e);
         }
         return translatedString;
+    }
+
+    public static String getTranslatedStringWithDBResourceBundle(Context context, String str, ResourceBundle dbResourceBundle) {
+        ResourceBundle mlsResourceBundle = dbResourceBundle;
+        if (dbResourceBundle == null) {
+            mlsResourceBundle = getResourceBundleFromRepository(context, str);
+        }
+        return (mlsResourceBundle != null && mlsResourceBundle.getKeys().hasMoreElements()) ? translateString(str, mlsResourceBundle) : getTranslatedString(str);
     }
 
     /**
@@ -133,7 +146,7 @@ public class NativeFormLangUtils {
 
     public static String getEscapedValue(String value) {
         return value.replace("\n", "\\n") // ensure \n is preserved in a String
-        .replace("\"", "\\\""); // ensure "" is preserved in a String
+                .replace("\"", "\\\""); // ensure "" is preserved in a String
     }
 
     /**
@@ -159,5 +172,16 @@ public class NativeFormLangUtils {
         Pattern propertiesFileNamePattern = Pattern.compile("\"?" + PROPERTIES_FILE_NAME + "\"?: ?\"([a-zA-Z_0-9\\.\\-]+)\"");
         Matcher matcher = propertiesFileNamePattern.matcher(str);
         return matcher.find() ? matcher.group(1) : "";
+    }
+
+    public static ResourceBundle getResourceBundleFromRepository(Context context, String form) {
+        //Check the current locale of the app to load the correct version of the properties in the desired language
+        String locale = context.getResources().getConfiguration().locale.getLanguage();
+        String identifier = getTranslationsFileName(form);
+        if (!Locale.ENGLISH.getLanguage().equals(locale)) {
+            identifier = identifier + "_" + locale;
+        }
+         identifier = identifier + JsonFormConstants.PROPERTIES_FILE_EXTENSION;
+        return ResourceBundle.getBundle(DBResourceBundle.class.getCanonicalName(), new DBResourceBundleControl(identifier));
     }
 }

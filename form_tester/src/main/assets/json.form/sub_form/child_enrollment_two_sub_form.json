@@ -1,0 +1,62 @@
+{
+  "content_form": [
+    {
+      "key": "respiratory_exam_radio_button",
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "",
+      "openmrs_entity_id": "",
+      "type": "native_radio",
+      "label": "Respiratory exam",
+      "label_text_style": "bold",
+      "text_color": "#000000",
+      "extra_rel": true,
+      "has_extra_rel": "3",
+      "options": [
+        {
+          "key": "1",
+          "text": "Not done"
+        },
+        {
+          "key": "2",
+          "text": "Normal"
+        },
+        {
+          "key": "3",
+          "text": "Abnormal"
+        }
+      ]
+    },
+    {
+      "key": "respiratory_exam_abnormal_other",
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "",
+      "openmrs_entity_id": "",
+      "type": "normal_edit_text",
+      "edit_text_style": "bordered",
+      "hint": "Specify",
+      "edit_type": "number",
+      "v_numeric_integer": {
+        "value": "true",
+        "err": "Enter valid cervical dilation in cm"
+      },
+      "v_min": {
+        "value": "0",
+        "err": "Cervical dilation must be greater than or equal to 0"
+      },
+      "v_max": {
+        "value": "10",
+        "err": "Cervical dilation must be equal to or less than 10"
+      },
+      "v_required": {
+        "value": true,
+        "err": "Field cervical dilation is required"
+      },
+      "relevance": {
+        "step1:respiratory_exam_radio_button": {
+          "type": "string",
+          "ex": "equalTo(., \"3\")"
+        }
+      }
+    }
+  ]
+}

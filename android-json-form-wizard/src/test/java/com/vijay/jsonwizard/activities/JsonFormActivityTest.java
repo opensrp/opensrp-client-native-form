@@ -39,12 +39,13 @@ public class JsonFormActivityTest extends BaseActivityTest {
     private ActivityController<JsonFormActivity> controller;
 
     @Before
-    public void setUp() {
+    public void setUp() throws JSONException {
         MockitoAnnotations.initMocks(this);
         Intent intent = new Intent();
         intent.putExtra(JsonFormConstants.JSON_FORM_KEY.JSON, DUMMY_JSON_FORM_STRING);
         controller = Robolectric.buildActivity(JsonFormActivity.class, intent).create().start();
         activity = controller.get();
+        activity.getmJSONObject().put(JsonFormConstants.SKIP_BLANK_STEPS, true);
 
         Assert.assertNotNull(activity);
     }

@@ -1,0 +1,15 @@
+---
+name: step2_larvae_3_total
+description: larvae 3 total
+priority: 1
+condition: "step2_larvae_total == 1 && step2_larvae_1_total == 1"
+actions:
+  - "isRelevant = true"
+---
+name: step2_larvae_3_total
+description: larvae 3 total
+priority: 1
+condition: "step2_larvae_total == 1 && step2_larvae_1_total == 1"
+actions:
+  - "isRelevant = true"
+---

@@ -45,10 +45,6 @@
     <string name="repeating_group_label">repeating_group_label</string>
 
     <string-array name="spinnerItems">
-        <item>item1</item>
-        <item>item2</item>
-        <item>item3</item>
-        <item>item4</item>
     </string-array>
 
     <string name="scan_qr_code_title">Scan QR Code</string>

@@ -88,7 +88,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -101,9 +100,7 @@ import static com.vijay.jsonwizard.utils.FormUtils.getCheckboxValueJsonArray;
 import static com.vijay.jsonwizard.utils.FormUtils.getCurrentCheckboxValues;
 
 public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
-
     private FormUtils formUtils = new FormUtils();
-    private Map<String, View> constrainedViews;
     private Map<String, View> formDataViews = new HashMap<>();
     private String functionRegex;
     private HashMap<String, Comparison> comparisons;
@@ -238,7 +235,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     @Override
     public void clearConstrainedViews() {
-        constrainedViews = new LinkedHashMap<>();
+        constrainedViews.clear();
     }
 
     @Override

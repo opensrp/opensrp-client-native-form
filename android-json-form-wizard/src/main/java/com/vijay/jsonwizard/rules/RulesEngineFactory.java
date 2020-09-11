@@ -5,7 +5,9 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
+import com.vijay.jsonwizard.activities.JsonFormBaseActivity;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.factory.FileSourceFactoryHelper;
 import com.vijay.jsonwizard.utils.Utils;
 
 import org.jeasy.rules.api.Facts;
@@ -23,7 +25,6 @@ import org.smartregister.client.utils.contract.ClientFormContract;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -142,26 +143,17 @@ public class RulesEngineFactory implements RuleListener {
 
         try {
             if (!ruleMap.containsKey(fileName)) {
-                BufferedReader bufferedReader;
-                boolean loadedFromDb = false;
+
                 if (context instanceof ClientFormContract.View) {
-                    bufferedReader = ((ClientFormContract.View) context).getRules(context, fileName);
-                    loadedFromDb = true;
-                } else {
-                    bufferedReader = new BufferedReader(new InputStreamReader(context.getAssets().open(fileName)));
-                }
-
-                try {
-                    // This catches the yaml syntax violation error thrown by org.jeasy.rules.support.RuleDefinitionReader.read
-                    ruleMap.put(fileName, MVELRuleFactory.createRulesFrom(bufferedReader));
-                } catch (Exception ex) {
-                    Timber.e(ex);
-
-                    if (loadedFromDb) {
+                    try {
+                        BufferedReader bufferedReader = ((ClientFormContract.View) context).getRules(context, fileName);
+                        ruleMap.put(fileName, MVELRuleFactory.createRulesFrom(bufferedReader));
+                    } catch (Exception ex) {
                         ((ClientFormContract.View) context).handleFormError(true, fileName);
+                        return null;
                     }
-
-                    return null;
+                } else {
+                    ruleMap.put(fileName,FileSourceFactoryHelper.getFileSource(JsonFormBaseActivity.DATA_SOURCE).getRulesFromFile(context, fileName));
                 }
             }
             return ruleMap.get(fileName);

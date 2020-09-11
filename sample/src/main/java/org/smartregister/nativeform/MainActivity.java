@@ -13,6 +13,7 @@ import com.vijay.jsonwizard.activities.JsonFormActivity;
 import com.vijay.jsonwizard.activities.JsonWizardFormActivity;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.Form;
+import com.vijay.jsonwizard.factory.FileSourceFactoryHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -110,8 +111,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         String currentLocationId = "Kenya";
 
-
-        JSONObject jsonForm = getFormJson(formName);
+        JSONObject jsonForm = FileSourceFactoryHelper.getFileSource("").getFormFromFile(getApplicationContext(), formName);
         if (jsonForm != null) {
             jsonForm.getJSONObject("metadata").put("encounter_location", currentLocationId);
 
@@ -223,9 +223,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-
     public JSONObject getFormJson(String formIdentity) {
-
         try {
             InputStream inputStream = getApplicationContext().getAssets()
                     .open("json.form/" + formIdentity + ".json");
@@ -241,7 +239,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return new JSONObject(stringBuilder.toString());
         } catch (IOException e) {
             Timber.e(e);
-            ;
         } catch (JSONException e) {
             Timber.e(e);
         }

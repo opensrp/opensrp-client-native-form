@@ -74,8 +74,10 @@ public class JsonFormConstants {
     public static final String V_MIN = "v_min";
     public static final String V_MAX = "v_max";
     public static final String V_RELATIVE_MAX = "v_relative_max";
-    public static final String RELATIVE_MAX_VALIDATION_EXCEPTION = "exception";
+    public static final String V_RELATIVE_MIN = "v_relative_min";
+    public static final String RELATIVE_VALIDATION_EXCEPTION = "exception";
     public static final String DEFAULT_RELATIVE_MAX_VALIDATION_ERR = "Value cannot be higher than %s";
+    public static final String DEFAULT_RELATIVE_MIN_VALIDATION_ERR = "Value cannot be less than %s";
     public static final String V_CUMULATIVE_TOTAL = "v_cumulative_total";
     public static final String DEFAULT_CUMULATIVE_VALIDATION_ERR = "Sum of %s and %s should be equal to %s";
     public static final String RELATED_FIELDS = "related_fields";
@@ -220,7 +222,11 @@ public class JsonFormConstants {
     public static final String ENCOUNTER_TYPE = "encounter_type";
     public static final String FORM_NAME = "form_name";
     public static final String FORM_CONFIG_LOCATION = "json.form/json.form.config.json";
+    public static final String FROM_DATA_SOURCE = "form_data_source";
+    public static final String DEFAULT_FORMS_DIRECTORY = "opensrpNativeFormTester";
+    public static final String JSON_FORM_DIRECTORY = "json.form";
 
+    public static final String PROPERTIES_FILE_EXTENSION = ".properties";
     public static final String JSON_FILE_EXTENSION = ".json";
     public static final String CLIENT_FORM_ASSET_VERSION = "base version";
 
@@ -330,6 +336,11 @@ public class JsonFormConstants {
 
     public interface RepeatingGroupFactory {
         String SHOW_GROUP_LABEL = "showGroupLabel";
+    }
+
+    public interface FileSource {
+        String DISK = "DISK";
+        String ASSETS = "ASSETS";
     }
 
     public interface MLS {
