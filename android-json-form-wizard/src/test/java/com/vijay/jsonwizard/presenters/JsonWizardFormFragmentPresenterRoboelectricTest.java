@@ -1,6 +1,10 @@
 package com.vijay.jsonwizard.presenters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.view.View;
 
 import com.vijay.jsonwizard.BaseTest;
@@ -11,16 +15,27 @@ import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonWizardFormFragment;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 import com.vijay.jsonwizard.interfaces.OnFieldsInvalid;
+import com.vijay.jsonwizard.shadow.ShadowFileProvider;
+import com.vijay.jsonwizard.shadow.ShadowIntent;
+import com.vijay.jsonwizard.shadow.ShadowPermissionUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
 
+import java.io.File;
 import java.util.UUID;
 
+import static com.vijay.jsonwizard.presenters.JsonFormFragmentPresenter.RESULT_LOAD_IMG;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -40,6 +55,12 @@ public class JsonWizardFormFragmentPresenterRoboelectricTest extends BaseTest {
 
     @Mock
     private OnFieldsInvalid onFieldsInvalid;
+
+    @Mock
+    private PackageManager packageManager;
+
+    @Captor
+    private ArgumentCaptor<Intent> intentArgumentCaptor;
 
     private JsonWizardFormFragmentPresenter formFragmentPresenter;
 
@@ -89,5 +110,20 @@ public class JsonWizardFormFragmentPresenterRoboelectricTest extends BaseTest {
         view.setTag(R.id.guid, guid);
         formFragmentPresenter.onClick(view);
         verify(formFragment).startSimprintsVerification("test", "jdoe", "nf", guid);
+    }
+
+    @Test
+    @Config(shadows = {ShadowPermissionUtils.class, ShadowIntent.class, ShadowFileProvider.class})
+    public void testOnClickShouldSOpenPictureTakingActivity() {
+        context = spy(context);
+        when(context.getPackageManager()).thenReturn(packageManager);
+        when(formFragment.getContext()).thenReturn(context);
+        View view = new View(context);
+        view.setTag(R.id.type, JsonFormConstants.CHOOSE_IMAGE);
+        view.setTag(R.id.key, "profile_picture");
+        formFragmentPresenter.onClick(view);
+        verify(formFragment).startActivityForResult(intentArgumentCaptor.capture(), eq(RESULT_LOAD_IMG));
+        assertEquals(MediaStore.ACTION_IMAGE_CAPTURE, intentArgumentCaptor.getValue().getAction());
+        assertEquals(Uri.fromFile(new File("profile.jpg")), intentArgumentCaptor.getValue().getParcelableExtra(MediaStore.EXTRA_OUTPUT));
     }
 }
