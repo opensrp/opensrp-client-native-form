@@ -78,7 +78,7 @@ public class RulesEngineDateUtil {
     }
 
     public String formatDate(String dateString, String duration) {
-        LocalDate date = new LocalDate(Utils.reverseDateString(dateString, "-"));
+        LocalDate date = new LocalDate(Utils.reverseDateString(Utils.getDateFormattedForCalculation(dateString), "-"));
         int result = 0;
         String cleanDuration = duration.trim().toLowerCase();
 
@@ -128,7 +128,7 @@ public class RulesEngineDateUtil {
      * @return String with date
      */
     public String addDuration(String dateString, String durationString) {
-        LocalDate date = new LocalDate(Utils.reverseDateString(dateString, "-"));
+        LocalDate date = new LocalDate(Utils.reverseDateString(Utils.getDateFormattedForCalculation(dateString), "-"));
         String[] durationArr = getDurationArray(durationString);
 
         for (String duration : durationArr) {
@@ -181,7 +181,7 @@ public class RulesEngineDateUtil {
      */
     public String subtractDuration(String dateString, String durationString) {
 
-        LocalDate date = new LocalDate(Utils.reverseDateString(dateString, "-"));
+        LocalDate date = new LocalDate(Utils.reverseDateString(Utils.getDateFormattedForCalculation(dateString), "-"));
 
         String[] durationArr = getDurationArray(durationString);
 
