@@ -96,4 +96,5 @@ public class DatePickerFactoryTest extends BaseTest {
         Assert.assertEquals(1, editableProperties.size());
         Assert.assertEquals("duration.label", editableProperties.iterator().next());
     }
+
 }

@@ -2,31 +2,37 @@ package com.vijay.jsonwizard.listeners;
 
 import android.app.AlertDialog;
 import android.app.Application;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 
 import com.vijay.jsonwizard.R;
-import com.vijay.jsonwizard.activities.BaseActivityTest;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.views.CustomTextView;
+import com.vijay.jsonwizard.widgets.FactoryTest;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.shadows.ShadowAlertDialog;
+import org.robolectric.util.ReflectionHelpers;
 
-public class ExpansionPanelUndoButtonClickListenerTest extends BaseActivityTest {
+import static org.mockito.Mockito.when;
+
+public class ExpansionPanelUndoButtonClickListenerTest extends FactoryTest {
 
     private ExpansionPanelUndoButtonClickListener expansionPanelUndoButtonClickListener;
 
@@ -37,6 +43,7 @@ public class ExpansionPanelUndoButtonClickListenerTest extends BaseActivityTest 
 
     @Before
     public void setUp() {
+        super.setUp();
         expansionPanelUndoButtonClickListener = new ExpansionPanelUndoButtonClickListener();
         MockitoAnnotations.initMocks(this);
     }
@@ -57,8 +64,6 @@ public class ExpansionPanelUndoButtonClickListenerTest extends BaseActivityTest 
                 .getJsonApi();
 
         Application application = RuntimeEnvironment.application;
-
-        JsonFormActivity jsonFormActivity = Robolectric.buildActivity(JsonFormActivity.class).get();
 
         View view = jsonFormActivity.getLayoutInflater().inflate(R.layout.expasion_panel_undo_dialog, null);
 
@@ -101,5 +106,34 @@ public class ExpansionPanelUndoButtonClickListenerTest extends BaseActivityTest 
         //check for value attribute after
         JSONObject jsonObjectResult = FormUtils.getFieldJSONObject(FormUtils.getMultiStepFormFields(formResult), "accordion_panel_demo");
         Assert.assertFalse(jsonObjectResult.has(JsonFormConstants.VALUE));
+
+    }
+
+
+    @Test
+    public void onClickShouldSetUpExpansionPanel() throws JSONException {
+        final String KEY = "key";
+        final String VALUE = "value";
+
+        View view = new View(RuntimeEnvironment.application);
+        view.setTag(R.id.key, KEY);
+        view.setTag(R.id.specify_context, jsonFormActivity);
+        view.setTag(R.id.specify_step_name, "step1");
+
+        FormUtils formUtils = Mockito.mock(FormUtils.class);
+        JSONArray fields = new JSONArray();
+        JSONObject field = new JSONObject();
+        field.put(JsonFormConstants.KEY, KEY);
+        field.put(JsonFormConstants.VALUE, VALUE);
+        field.put(JsonFormConstants.TEXT, "header");
+        fields.put(field);
+        Mockito.doReturn(fields).when(formUtils).getFormFields(ArgumentMatchers.anyString(),
+                ArgumentMatchers.any(Context.class));
+
+        ReflectionHelpers.setField(expansionPanelUndoButtonClickListener, "formUtils", formUtils);
+        when(jsonFormActivity.getmJSONObject()).thenReturn(new JSONObject(strForm));
+        expansionPanelUndoButtonClickListener.onClick(view);
+
+        Assert.assertNotNull(ShadowAlertDialog.getLatestAlertDialog());
     }
 }
