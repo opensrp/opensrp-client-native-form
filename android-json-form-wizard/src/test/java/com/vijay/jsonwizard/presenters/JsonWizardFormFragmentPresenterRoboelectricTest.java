@@ -1,23 +1,31 @@
 package com.vijay.jsonwizard.presenters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
 
 import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.TestConstants;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.customviews.DatePickerDialog;
 import com.vijay.jsonwizard.fragments.JsonWizardFormFragment;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 import com.vijay.jsonwizard.interfaces.OnFieldsInvalid;
 import com.vijay.jsonwizard.shadow.ShadowFileProvider;
 import com.vijay.jsonwizard.shadow.ShadowIntent;
 import com.vijay.jsonwizard.shadow.ShadowPermissionUtils;
+import com.vijay.jsonwizard.views.CustomTextView;
+import com.vijay.jsonwizard.widgets.NativeRadioButtonFactory;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,6 +34,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
@@ -34,6 +43,7 @@ import java.util.UUID;
 
 import static com.vijay.jsonwizard.presenters.JsonFormFragmentPresenter.RESULT_LOAD_IMG;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -126,4 +136,27 @@ public class JsonWizardFormFragmentPresenterRoboelectricTest extends BaseTest {
         assertEquals(MediaStore.ACTION_IMAGE_CAPTURE, intentArgumentCaptor.getValue().getAction());
         assertEquals(Uri.fromFile(new File("profile.jpg")), intentArgumentCaptor.getValue().getParcelableExtra(MediaStore.EXTRA_OUTPUT));
     }
+
+    @Test
+    public void testOnClickShouldDisplayDatePickerDialog() {
+        LinearLayout view = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.native_form_compound_button_parent, null);
+        CustomTextView customTextView = new CustomTextView(context);
+        Activity activity = Robolectric.buildActivity(AppCompatActivity.class).create().get();
+        RadioButton radioButton = new RadioButton(context);
+        view.setTag(R.id.specify_textview, customTextView);
+        view.setTag(R.id.native_radio_button, radioButton);
+        view.setTag(R.id.specify_context, activity);
+
+
+        view.setTag(R.id.type, JsonFormConstants.NATIVE_RADIO_BUTTON);
+        view.setTag(R.id.key, "date");
+        view.setTag(R.id.specify_type, JsonFormConstants.CONTENT_INFO);
+        view.setTag(R.id.specify_widget, JsonFormConstants.DATE_PICKER);
+        view.setTag(R.id.option_json_object, new JSONObject());
+        formFragmentPresenter.onClick(view);
+        DatePickerDialog dialogFragment = (DatePickerDialog) activity.getFragmentManager()
+                .findFragmentByTag(NativeRadioButtonFactory.class.getCanonicalName());
+        assertNotNull(dialogFragment);
+    }
+
 }
