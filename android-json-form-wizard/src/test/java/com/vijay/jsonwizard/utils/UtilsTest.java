@@ -13,6 +13,7 @@ import android.widget.RadioGroup;
 import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.rules.RuleConstant;
@@ -328,6 +329,16 @@ public class UtilsTest extends BaseTest {
     public void testReverseDateStringShouldReturnReverseDateString() {
         String date = "20-12-1997";
         Assert.assertEquals("1997-12-20", Utils.reverseDateString(date, "-"));
+    }
+
+    @Test
+    public void getDateForCalculationShouldReturnCorrectDateString() {
+        String date = "20-12-2021";
+        Assert.assertEquals("20-12-2021", Utils.getDateFormattedForCalculation(date));
+        Form form = new Form();
+        form.setDatePickerDisplayFormat("dd MMM yyyy");
+        date = "20 DEC 2021";
+        Assert.assertEquals("20-12-2021", Utils.getDateFormattedForCalculation(date));
     }
 
     @Test
