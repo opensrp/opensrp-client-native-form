@@ -19,12 +19,7 @@ public class JsonWizardFormFragmentPresenter extends JsonFormFragmentPresenter {
     }
 
     @Override
-    public void setUpToolBar() {
-        super.setUpToolBar();
-    }
-
-    @Override
-    public boolean onNextClick(LinearLayout mainView) {
+    public boolean onNextClick(LinearLayout mainViews) {
 
         validateAndWriteValues();
         checkAndStopCountdownAlarm();
