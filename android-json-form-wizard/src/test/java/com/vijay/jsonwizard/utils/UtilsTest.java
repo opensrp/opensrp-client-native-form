@@ -334,11 +334,16 @@ public class UtilsTest extends BaseTest {
     @Test
     public void getDateForCalculationShouldReturnCorrectDateString() {
         String date = "20-12-2021";
-        Assert.assertEquals("20-12-2021", Utils.getDateFormattedForCalculation(date));
+        Assert.assertEquals("20-12-2021", Utils.getDateFormattedForCalculation(date, null));
+    }
+
+    @Test
+    public void getDateForCalculationReturnsDateStringWhenDisplayFormatIsSet() {
         Form form = new Form();
         form.setDatePickerDisplayFormat("dd MMM yyyy");
-        date = "20 DEC 2021";
-        Assert.assertEquals("20-12-2021", Utils.getDateFormattedForCalculation(date));
+        String date = "20 DEC 2021";
+        Assert.assertEquals("20-12-2021", Utils.getDateFormattedForCalculation(date, Form.getDatePickerDisplayFormat()));
+        form.setDatePickerDisplayFormat(null); // To not pollute other tests
     }
 
     @Test
