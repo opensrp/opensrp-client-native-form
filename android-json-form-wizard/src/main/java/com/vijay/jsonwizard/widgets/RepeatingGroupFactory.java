@@ -297,6 +297,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         if (isRemoteReferenceValueUsed(referenceEditText)) {
             referenceEditText.setVisibility(View.GONE);
         } else {
+            // generate repeating groups on when keyboard done button is pressed
             referenceEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
                 public boolean onEditorAction(TextView focusTextView, int actionId, KeyEvent event) {
@@ -305,6 +306,15 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                         return true;
                     }
                     return false;
+                }
+            });
+            // generate repeating groups on focus change
+            referenceEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View view, boolean hasFocus) {
+                    if (!hasFocus) {
+                        addOnDoneAction((TextView) view, doneButton, widgetArgs);
+                    }
                 }
             });
         }
