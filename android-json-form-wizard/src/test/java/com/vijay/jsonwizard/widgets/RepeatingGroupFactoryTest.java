@@ -64,7 +64,7 @@ public class RepeatingGroupFactoryTest extends FactoryTest {
         RepeatingGroupFactory factorySpy = Mockito.spy(factory);
 
         Set<String> editableProperties = factorySpy.getCustomTranslatableWidgetFields();
-        Assert.assertEquals(0, editableProperties.size());
+        Assert.assertEquals(1, editableProperties.size());
     }
 
     @Test
