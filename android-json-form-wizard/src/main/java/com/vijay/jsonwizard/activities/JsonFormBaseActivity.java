@@ -60,7 +60,7 @@ public abstract class JsonFormBaseActivity extends MultiLanguageActivity impleme
     protected List<LifeCycleListener> lifeCycleListeners;
     protected String confirmCloseTitle;
     protected String confirmCloseMessage;
-    protected Form form;
+    protected org.smartregister.client.utils.domain.Form form;
     protected Map<String, String> globalValues = null;
     protected RulesEngineFactory rulesEngineFactory = null;
     protected LocalBroadcastManager localBroadcastManager;
