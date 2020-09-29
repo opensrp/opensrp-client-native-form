@@ -147,6 +147,7 @@ public class LabelFactory implements FormWidgetFactory {
                 .dimen.default_label_text_size))));
         String textStyle = jsonObject.optString(JsonFormConstants.TEXT_STYLE, JsonFormConstants.NORMAL);
         FormUtils.setTextStyle(textStyle, labelText);
+        labelText.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
         labelText.setTextSize(labelTextSize);
         labelText.setEnabled(!jsonObject
                 .optBoolean(JsonFormConstants.READ_ONLY, false));//Gotcha: Should be set before createLabelText is used
