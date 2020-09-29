@@ -26,8 +26,6 @@ import org.robolectric.Robolectric;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-
 /**
  * Created by Vincent Karuri on 03/04/2020
  */
@@ -83,8 +81,8 @@ public class SpinnerFactoryTest extends BaseTest {
         expectedVals.put("No");
         expectedVals.put("Maybe");
         for (int i = 0; i < actualKeys.length(); i++) {
-            assertEquals(actualKeys.getString(i), expectedKeys.getString(i));
-            assertEquals(actualVals.getString(i), expectedVals.getString(i));
+            Assert.assertEquals(actualKeys.getString(i), expectedKeys.getString(i));
+            Assert.assertEquals(actualVals.getString(i), expectedVals.getString(i));
         }
     }
 
