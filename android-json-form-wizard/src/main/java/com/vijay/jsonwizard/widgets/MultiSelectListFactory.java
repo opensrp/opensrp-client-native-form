@@ -23,6 +23,7 @@ import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.adapter.MultiSelectListAdapter;
 import com.vijay.jsonwizard.adapter.MultiSelectListSelectedAdapter;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.customviews.NativeEditText;
 import com.vijay.jsonwizard.domain.MultiSelectItem;
 import com.vijay.jsonwizard.domain.MultiSelectListAccessory;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
@@ -31,8 +32,10 @@ import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.interfaces.MultiSelectListRepository;
 import com.vijay.jsonwizard.task.MultiSelectListLoadTask;
+import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.MultiSelectListUtils;
 import com.vijay.jsonwizard.utils.Utils;
+import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -89,6 +92,17 @@ public class MultiSelectListFactory implements FormWidgetFactory {
 
         prepareViewChecks(actionView, context);
         return views;
+    }
+
+    private static void addRequiredValidator(JSONObject jsonObject, NativeEditText editText) throws JSONException {
+        JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
+        if (requiredObject != null) {
+            boolean requiredValue = requiredObject.getBoolean(JsonFormConstants.VALUE);
+            if (Boolean.TRUE.equals(requiredValue)) {
+                editText.addValidator(new RequiredValidator(requiredObject.getString(JsonFormConstants.ERR)));
+                FormUtils.setRequiredOnHint(editText);
+            }
+        }
     }
 
     private void prepareViewChecks(@NonNull RelativeLayout view, @NonNull Context context) {
