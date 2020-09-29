@@ -107,6 +107,13 @@ public class Utils {
         return strr[2] + "-" + strr[1] + "-" + strr[0];
     }
 
+    public static String getDateFormattedForCalculation(String date, String datePickerDisplayFormat) {
+        if (StringUtils.isNotBlank(datePickerDisplayFormat)) {
+            return formatDateToPattern(date, datePickerDisplayFormat, DatePickerFactory.DATE_FORMAT.toPattern());
+        } else
+            return date;
+    }
+
     public static String getDuration(String date) {
         return getDuration(date, null);
     }
@@ -818,7 +825,7 @@ public class Utils {
             return -1;
         }
     }
-  
+
     public static boolean isEmptyJsonArray(JSONArray jsonArray) {
         return jsonArray == null || jsonArray.length() == 0;
     }

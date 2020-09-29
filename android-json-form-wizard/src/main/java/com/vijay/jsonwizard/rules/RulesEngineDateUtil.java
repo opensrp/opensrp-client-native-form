@@ -3,6 +3,7 @@ package com.vijay.jsonwizard.rules;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
+import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.Utils;
 
@@ -78,7 +79,7 @@ public class RulesEngineDateUtil {
     }
 
     public String formatDate(String dateString, String duration) {
-        LocalDate date = new LocalDate(Utils.reverseDateString(dateString, "-"));
+        LocalDate date = new LocalDate(Utils.reverseDateString(Utils.getDateFormattedForCalculation(dateString,  Form.getDatePickerDisplayFormat()), "-"));
         int result = 0;
         String cleanDuration = duration.trim().toLowerCase();
 
@@ -128,7 +129,7 @@ public class RulesEngineDateUtil {
      * @return String with date
      */
     public String addDuration(String dateString, String durationString) {
-        LocalDate date = new LocalDate(Utils.reverseDateString(dateString, "-"));
+        LocalDate date = new LocalDate(Utils.reverseDateString(Utils.getDateFormattedForCalculation(dateString,  Form.getDatePickerDisplayFormat()), "-"));
         String[] durationArr = getDurationArray(durationString);
 
         for (String duration : durationArr) {
@@ -181,7 +182,7 @@ public class RulesEngineDateUtil {
      */
     public String subtractDuration(String dateString, String durationString) {
 
-        LocalDate date = new LocalDate(Utils.reverseDateString(dateString, "-"));
+        LocalDate date = new LocalDate(Utils.reverseDateString(Utils.getDateFormattedForCalculation(dateString, Form.getDatePickerDisplayFormat()), "-"));
 
         String[] durationArr = getDurationArray(durationString);
 
