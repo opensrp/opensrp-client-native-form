@@ -19,7 +19,6 @@ import org.robolectric.util.ReflectionHelpers;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
 
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 01-10-2020.
@@ -41,7 +40,7 @@ public class MultiSelectListAccessoryTest {
     private AlertDialog alertDialog;
 
     private List<MultiSelectItem> itemList;
-    List<MultiSelectItem> selectedItemList;
+    private List<MultiSelectItem> selectedItemList;
 
     @Before
     public void setUp() throws Exception {
@@ -88,7 +87,7 @@ public class MultiSelectListAccessoryTest {
         AlertDialog alertDialog = Mockito.mock(AlertDialog.class);
 
         multiSelectListAccessory.setAlertDialog(alertDialog);
-        assertEquals(alertDialog, ReflectionHelpers.getField(multiSelectListAccessory, "alertDialog"));
+        Assert.assertEquals(alertDialog, ReflectionHelpers.getField(multiSelectListAccessory, "alertDialog"));
     }
 
     @Test
@@ -118,7 +117,7 @@ public class MultiSelectListAccessoryTest {
 
         multiSelectListAccessory.setItemList(itemList);
 
-        assertTrue(itemList == ReflectionHelpers.getField(multiSelectListAccessory, "itemList"));
+        Assert.assertTrue(itemList == ReflectionHelpers.getField(multiSelectListAccessory, "itemList"));
     }
 
     @Test
