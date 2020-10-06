@@ -37,7 +37,6 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
@@ -462,7 +461,7 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
 
         presenter.onCheckedChanged(checkBox, true);
 
-        Mockito.verify(formFragment, Mockito.times(1))
+        verify(formFragment, times(1))
                 .writeValue(eq("step1"), eq("user_check_box"),
                         eq(JsonFormConstants.OPTIONS_FIELD_NAME), eq("no"), eq(String.valueOf(true)),
                         nullable(String.class), nullable(String.class), nullable(String.class), eq(false));
@@ -483,10 +482,10 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
 
         presenter.onCheckedChanged(checkBox, true);
 
-        Mockito.verify(formFragment, Mockito.times(1))
+        verify(formFragment, times(1))
                 .unCheckAllExcept(eq("user_check_box"), eq("none"), eq(checkBox));
 
-        Mockito.verify(formFragment, Mockito.times(1))
+        verify(formFragment, times(1))
                 .writeValue(eq("step1"), eq("user_check_box"),
                         eq(JsonFormConstants.OPTIONS_FIELD_NAME), eq("none"), eq(String.valueOf(true)),
                         nullable(String.class), nullable(String.class), nullable(String.class), eq(false));
@@ -508,10 +507,10 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
 
         presenter.onCheckedChanged(checkBox, true);
 
-        Mockito.verify(formFragment, Mockito.times(1))
+        verify(formFragment, times(1))
                 .unCheck(eq("user_check_box"), eq("dont_know"), eq(checkBox));
 
-        Mockito.verify(formFragment, Mockito.times(1))
+        verify(formFragment, times(1))
                 .writeValue(eq("step1"), eq("user_check_box"),
                         eq(JsonFormConstants.OPTIONS_FIELD_NAME), eq("none"), eq(String.valueOf(true)),
                         nullable(String.class), nullable(String.class), nullable(String.class), eq(false));
@@ -519,19 +518,19 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
 
     @Test
     public void testOnItemSelectedShouldWriteSelectedValueToForm() throws JSONException {
-        Spinner adapterView = Mockito.mock(Spinner.class);
-        Mockito.doReturn("user_location").when(adapterView).getTag(R.id.key);
+        Spinner adapterView = mock(Spinner.class);
+        doReturn("user_location").when(adapterView).getTag(R.id.key);
         JSONArray jsonArray = new JSONArray("[\"user_option_one\",\"user_option_two\"]");
-        Mockito.doReturn(jsonArray).when(adapterView).getTag(R.id.keys);
-        Mockito.doReturn("user_option_one").when(adapterView).getItemAtPosition(0);
+        doReturn(jsonArray).when(adapterView).getTag(R.id.keys);
+        doReturn("user_option_one").when(adapterView).getItemAtPosition(0);
 
-        JsonFormFragmentPresenter spyPresenter = Mockito.spy(presenter);
+        JsonFormFragmentPresenter spyPresenter = spy(presenter);
 
         ReflectionHelpers.setField(spyPresenter, "mStepName", "step1");
 
-        spyPresenter.onItemSelected(adapterView, Mockito.mock(View.class), 0, 0);
+        spyPresenter.onItemSelected(adapterView, mock(View.class), 0, 0);
 
-        Mockito.verify(formFragment, Mockito.times(1))
+        verify(formFragment, times(1))
                 .writeValue(eq("step1"), eq("user_location"),
                         eq(jsonArray.getString(0)),
                         nullable(String.class), nullable(String.class), nullable(String.class), eq(false));
