@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatSpinner;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +28,7 @@ import com.vijay.jsonwizard.shadow.ShadowPermissionUtils;
 import com.vijay.jsonwizard.utils.AppExecutors;
 import com.vijay.jsonwizard.utils.FormUtils;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -34,6 +37,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
@@ -42,6 +46,7 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.annotation.LooperMode;
 import org.robolectric.shadows.ShadowToast;
+import org.robolectric.util.ReflectionHelpers;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -65,6 +70,7 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -446,5 +452,89 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         verify(rulesEngineFactory).getRulesFromAsset("sample-calculation-rules.yml");
     }
 
+    @Test
+    public void testOnCheckedChangedShouldWriteValueToForm() throws InterruptedException {
+        initWithActualForm();
+        CheckBox checkBox = new CheckBox(RuntimeEnvironment.application);
+        checkBox.setTag(R.id.key, "user_check_box");
+        checkBox.setTag(R.id.childKey, "no");
+        checkBox.setChecked(true);
+
+        presenter.onCheckedChanged(checkBox, true);
+
+        Mockito.verify(formFragment, Mockito.times(1))
+                .writeValue(eq("step1"), eq("user_check_box"),
+                        eq(JsonFormConstants.OPTIONS_FIELD_NAME), eq("no"), eq(String.valueOf(true)),
+                        nullable(String.class), nullable(String.class), nullable(String.class), eq(false));
+    }
+
+    @Test
+    public void testOnCheckedChangedWithExclusiveShouldUncheckAllExceptChildKeyThenWriteValueToForm() throws InterruptedException, JSONException {
+        initWithActualForm();
+        CheckBox checkBox = new CheckBox(RuntimeEnvironment.application);
+        checkBox.setTag(R.id.key, "user_check_box");
+        checkBox.setTag(R.id.childKey, "none");
+        checkBox.setChecked(true);
+
+        JSONObject form = jsonFormActivity.getmJSONObject();
+
+        JSONObject jsonObjectField = FormUtils.getFieldFromForm(form, "user_check_box");
+        jsonObjectField.put("exclusive", new JSONArray("[\"none\"]"));
+
+        presenter.onCheckedChanged(checkBox, true);
+
+        Mockito.verify(formFragment, Mockito.times(1))
+                .unCheckAllExcept(eq("user_check_box"), eq("none"), eq(checkBox));
+
+        Mockito.verify(formFragment, Mockito.times(1))
+                .writeValue(eq("step1"), eq("user_check_box"),
+                        eq(JsonFormConstants.OPTIONS_FIELD_NAME), eq("none"), eq(String.valueOf(true)),
+                        nullable(String.class), nullable(String.class), nullable(String.class), eq(false));
+    }
+
+
+    @Test
+    public void testOnCheckedChangedWithExclusiveShouldUncheckThenWriteValueToForm() throws InterruptedException, JSONException {
+        initWithActualForm();
+        CheckBox checkBox = new CheckBox(RuntimeEnvironment.application);
+        checkBox.setTag(R.id.key, "user_check_box");
+        checkBox.setTag(R.id.childKey, "none");
+        checkBox.setChecked(true);
+
+        JSONObject form = jsonFormActivity.getmJSONObject();
+
+        JSONObject jsonObjectField = FormUtils.getFieldFromForm(form, "user_check_box");
+        jsonObjectField.put("exclusive", new JSONArray("[\"dont_know\"]"));
+
+        presenter.onCheckedChanged(checkBox, true);
+
+        Mockito.verify(formFragment, Mockito.times(1))
+                .unCheck(eq("user_check_box"), eq("dont_know"), eq(checkBox));
+
+        Mockito.verify(formFragment, Mockito.times(1))
+                .writeValue(eq("step1"), eq("user_check_box"),
+                        eq(JsonFormConstants.OPTIONS_FIELD_NAME), eq("none"), eq(String.valueOf(true)),
+                        nullable(String.class), nullable(String.class), nullable(String.class), eq(false));
+    }
+
+    @Test
+    public void testOnItemSelectedShouldWriteSelectedValueToForm() throws JSONException {
+        Spinner adapterView = Mockito.mock(Spinner.class);
+        Mockito.doReturn("user_location").when(adapterView).getTag(R.id.key);
+        JSONArray jsonArray = new JSONArray("[\"user_option_one\",\"user_option_two\"]");
+        Mockito.doReturn(jsonArray).when(adapterView).getTag(R.id.keys);
+        Mockito.doReturn("user_option_one").when(adapterView).getItemAtPosition(0);
+
+        JsonFormFragmentPresenter spyPresenter = Mockito.spy(presenter);
+
+        ReflectionHelpers.setField(spyPresenter, "mStepName", "step1");
+
+        spyPresenter.onItemSelected(adapterView, Mockito.mock(View.class), 0, 0);
+
+        Mockito.verify(formFragment, Mockito.times(1))
+                .writeValue(eq("step1"), eq("user_location"),
+                        eq(jsonArray.getString(0)),
+                        nullable(String.class), nullable(String.class), nullable(String.class), eq(false));
+    }
 
 }
