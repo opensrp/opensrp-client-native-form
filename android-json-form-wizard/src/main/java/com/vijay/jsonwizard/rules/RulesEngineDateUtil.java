@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.Utils;
+import com.vijay.jsonwizard.widgets.DatePickerFactory;
 
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
@@ -68,7 +69,8 @@ public class RulesEngineDateUtil {
      * @return String
      */
     public String getDuration(String date, String endDate) {
-        return Utils.getDuration(date, endDate);
+        return Utils.getDuration(Utils.getDateFormattedForCalculation(date,  Form.getDatePickerDisplayFormat()),
+                endDate);
     }
 
     public String getWeeksAndDaysFromDays(Integer days) {
