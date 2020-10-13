@@ -366,11 +366,20 @@ public class UtilsTest extends BaseTest {
 
     @Test
     public void testFormatDateToPattern() {
-        String date = "5/29/2020";
+        String date = "05/10/2020";
         String inputFormat = "dd/MM/yyyy";
         String outputFormat = "dd MMM yyyy";
         String formattedDate = formatDateToPattern(date, inputFormat, outputFormat);
-        Assert.assertEquals("05 May 2022", formattedDate);
+        Assert.assertEquals("05 Oct 2020", formattedDate);
+    }
+
+    @Test
+    public void testFormatDateToPatternShouldReturnSameDateOnInvalidInputFormat() {
+        String date = "05/10/2020";
+        String inputFormat = "dd-MM-yyyy";
+        String outputFormat = "dd MMM yyyy";
+        String formattedDate = formatDateToPattern(date, inputFormat, outputFormat);
+        Assert.assertEquals("05/10/2020", formattedDate);
     }
 
     @Test

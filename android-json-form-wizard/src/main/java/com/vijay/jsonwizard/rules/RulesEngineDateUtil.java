@@ -68,7 +68,8 @@ public class RulesEngineDateUtil {
      * @return String
      */
     public String getDuration(String date, String endDate) {
-        return Utils.getDuration(date, endDate);
+        return Utils.getDuration(Utils.getDateFormattedForCalculation(date,  Form.getDatePickerDisplayFormat()),
+                endDate);
     }
 
     public String getWeeksAndDaysFromDays(Integer days) {
