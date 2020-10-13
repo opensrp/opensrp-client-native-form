@@ -158,21 +158,14 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
             @Override
             public void run() {
                 try {
-                    JSONObject step = ((JsonApi) widgetArgs.getContext()).getmJSONObject().getJSONObject(widgetArgs.getStepName());
-                    JSONArray fields = step.getJSONArray(FIELDS);
-                    String key = widgetArgs.getJsonObject().optString(KEY);
-                    for (int i = 0; i < fields.length(); i++) {
-                        JSONObject object = fields.optJSONObject(i);
-                        String fieldKey = object.optString(KEY);
-                        if (fieldKey.equals(key)) {
-                            String strNumOfRepeatedGroups = object.optString(JsonFormConstants.REPEATING_GROUPS_GENERATED_COUNT);
-                            int currentCount = numRepeatingGroups;
-                            if (StringUtils.isNotBlank(strNumOfRepeatedGroups)) {
-                                currentCount += Integer.parseInt(strNumOfRepeatedGroups);
-                            }
-                            object.put(JsonFormConstants.REPEATING_GROUPS_GENERATED_COUNT, currentCount);
-                            break;
+                    JSONObject countFieldObject = Utils.getRepeatingGroupCountObj(widgetArgs);
+                    if (countFieldObject != null) {
+                        int currentCount = numRepeatingGroups;
+                        String strNumOfRepeatedGroups = countFieldObject.optString(JsonFormConstants.VALUE);
+                        if (StringUtils.isNotBlank(strNumOfRepeatedGroups)) {
+                            currentCount += Integer.parseInt(strNumOfRepeatedGroups);
                         }
+                        countFieldObject.put(VALUE, currentCount);
                     }
                 } catch (JSONException e) {
                     Timber.e(e);
