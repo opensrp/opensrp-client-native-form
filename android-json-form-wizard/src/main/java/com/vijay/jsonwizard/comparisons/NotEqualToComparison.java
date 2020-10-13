@@ -2,10 +2,12 @@ package com.vijay.jsonwizard.comparisons;
 
 import android.util.Log;
 
+import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.widgets.DatePickerFactory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.smartregister.client.utils.domain.Form;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,7 +39,7 @@ public class NotEqualToComparison extends Comparison {
                     if (b == null) {
                         b = DEFAULT_DATE;
                     }
-                    Date dateA = DatePickerFactory.DATE_FORMAT.parse(a);
+                    Date dateA = DatePickerFactory.DATE_FORMAT.parse(Utils.getDateFormattedForCalculation(a,  Form.getDatePickerDisplayFormat()));
                     Date dateB = DatePickerFactory.DATE_FORMAT.parse(b);
                     return dateA.getTime() != dateB.getTime();
                 case TYPE_ARRAY:
