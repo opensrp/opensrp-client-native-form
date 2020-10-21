@@ -290,8 +290,7 @@ public class UtilsTest extends BaseTest {
 
     @Test
     public void testShowProgressDialogShouldCreateProgressDialog() {
-        Assert.assertNull(ReflectionHelpers.getStaticField(Utils.class, "progressDialog"));
-
+        ReflectionHelpers.setStaticField(Utils.class, "progressDialog", null);
         Utils.showProgressDialog(R.string.hello_world, R.string.hello_world, RuntimeEnvironment.application);
         ProgressDialog progressDialog = ReflectionHelpers.getStaticField(Utils.class, "progressDialog");
         Assert.assertTrue(progressDialog.isShowing());
