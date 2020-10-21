@@ -854,15 +854,19 @@ public class Utils {
 
     public static String formatDateToPattern(String date, String inputFormat, String outputFormat) {
         if (StringUtils.isEmpty(date)) return "";
-        SimpleDateFormat format = new SimpleDateFormat(inputFormat);
+        SimpleDateFormat sdf = new SimpleDateFormat(inputFormat);
+        sdf.setLenient(false);
         Date newDate = null;
         try {
-            newDate = format.parse(date);
+            newDate = sdf.parse(date);
         } catch (ParseException e) {
             Timber.e(e);
         }
-        format = new SimpleDateFormat(outputFormat);
-        return format.format(newDate);
+        if (newDate == null) {
+            return date;
+        }
+        sdf = new SimpleDateFormat(outputFormat);
+        return sdf.format(newDate);
     }
 
 

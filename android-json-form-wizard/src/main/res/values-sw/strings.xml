@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">jsonwizard</string>
-
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Mipangilio</string>
     <string name="badly_formed_date">Badly formed date</string>
@@ -10,13 +9,13 @@
     <string name="ic_keyboard_arrow_left">&#xe0c6;</string>
     <string name="ic_keyboard_arrow_right">&#xe0c7;</string>
     <string name="ic_keyboard_arrow_up">&#xe0c8;</string>
-    <string name="confirm_form_close">Thibitisha kufunga fomu</string>
+    <string name="confirm_form_close">Hakiki kufunga fomu</string>
     <string name="confirm_form_close_explanation">Una uhakika unataka kurudi nyuma? Takwimu zote ulizoingiza kwenye fomu hii zitafutika na kupotea.</string>
     <string name="yes">Ndiyo</string>
     <string name="no">Hapana</string>
     <string name="cancel">Ghairi</string>
     <string name="ok">OK</string>
-    <string name="record_location">Rekodi eneo</string>
+    <string name="record_location">Rekodi Eneo</string>
     <string name="latitude">Latitudo: %s</string>
     <string name="longitude">Longitudo: %s</string>
     <string name="altitude">Urefu toka usawa wa bahari: %s</string>
@@ -31,16 +30,16 @@
     <string name="the_toaster_icon">The toaster icon</string>
     <string name="asterisks">*</string>
     <string name="save">Hifadhi</string>
-    <string name="radio_button_tap_to_change">gusa ili kubadilisha</string>
+    <string name="radio_button_tap_to_change">Gusa kubadili</string>
     <string name="select_one">Chagua namba</string>
     <string name="done">Imefanyika</string>
-    <string name="please_wait_title">Tafadhali subiri</string>
-    <string name="creating_repeating_group_title">Tafadhali subiri</string>
+    <string name="please_wait_title">Tafadhali Subiri</string>
+    <string name="creating_repeating_group_title">Tafadhali Subiri</string>
     <string name="creating_repeating_group_message">Tengeneza kundi linalojirudia</string>
     <string name="launching_rdt_capture_message">Launching RDT capture widget</string>
     <string name="repeating_group_max_value_err_msg">Namba ya makundi yanayojirudia hayawezi kuwa zaidi ya %1$d</string>
     <string name="repeating_group_min_value_err_msg">Namba ya makundi yanayojirudia lazima iwe zaidi ya %1$d</string>
-    <string name="repeating_group_number_format_err_msg">Number of repeating groups must be an integer value</string>
+    <string name="repeating_group_number_format_err_msg">The number of repeating groups must be an integer value</string>
     <string name="enter_number_of_repeating_group_items">Enter # of repeating group items</string>
     <string name="repeating_group_item">Item</string>
     <string name="repeating_group_label">lebo_kundi_linalojirudia</string>
@@ -51,7 +50,7 @@
     <string name="scan_qr_code_title">Scan msimbo wa QR</string>
 
     <!--The barcode strings-->
-    <string name="permission_camera_rationale">Kamera inahitajika ili kuchukua picha</string>
+    <string name="permission_camera_rationale">Ruhusa ya kuingia kwenye kamera inahitajika kwenye huu mfumo</string>
     <string name="no_camera_permission">Mfumo hauwezi kuendelea sababu hauruhusu upatikanaji wa kamera. Mfumo utafunga sasa.</string>
     <string name="low_storage_error">Face detector dependencies cannot be downloaded due to low device storage</string>
     <string name="title_activity_main">Barcode Reader Sample</string>
@@ -71,19 +70,44 @@
     <string name="edit_button_label">Kitufe cha kuhariri</string>
     <string name="info_icon">Info Icon</string>
     <string name="attention">Attention</string>
-    <string name="json_form_error_msg" >%d kosa (makosa) limepatikana kwenye fomu. Tafadhali sahihisha halafu tuma.</string>
-    <string name="json_form_on_next_error_msg" >Tafadhali rekebisha kosa (makosa) kwenye fomu ili kuendelea</string>
+    <string name="json_form_error_msg">%d kosa (makosa) limepatikana kwenye fomu. Tafadhali sahihisha halafu tuma.</string>
+    <string name="json_form_on_next_error_msg">Tafadhali rekebisha kosa (makosa) kwenye fomu ili kuendelea</string>
     <string name="go_to_step">Nenda kwenye hatua</string>
-    <string name="shows_image_on_dialog">onesha picha kwenye majadiliano</string>
+    <string name="shows_image_on_dialog">Onesha picha kwenye majadiliano</string>
     <string name="undo_test_result">Rudisho mwanza kwa matokeo ya %1$s?</string>
     <string name="record">Rekodi</string>
     <string name="undo">Rudisha mwanzo</string>
-    <string name="info_icon_display">onyesho la icon ya taarifa zaidi</string>
-    <string name="status_icon_display">kuonyesha icon ya hali</string>
+    <string name="info_icon_display">Onyesho la icon ya taarifa zaidi</string>
+    <string name="status_icon_display">Kuonyesha icon ya hali</string>
     <string name="simprints_guid">GUID haipatikani</string>
     <string name="simprints_init_fail">Kitambulisho cha mradi au kitambulisho cha mtumiaji au kitambulisho cha moduli hakijapatikana. Inaweza kutumia SimprintsLibrary.init</string>
     <string name="permission_denied_title">Ruhusa imekataliwa</string>
     <string name="permission_messege">App inahitaji ruhusa hiyo ya kukamata habari ya kifaa kinachohitajika wakati wa kuwasilisha fomu. Bila ruhusa hiyo, appK haitafanya kazi vizuri. Je, una uhakika unataka kukataa ruhusa hiyo? </string>
     <string name="multiselect_msg_on_item_added">Ongezwa</string>
     <string name="loading_multi_select_list">Inapakia</string>
+    <string name="loading">Inapakia</string>
+    <string name="loading_form_message">Tafadhari subiri wakati tunaleta fomu yako</string>
+    <string name="opening_forms">Pakia fomu...</string>
+    <string name="multiselect_already_added_msg">%s Imeshawekwa</string>
+    <string name="multi_select_list_msg_data_source_invalid">Chanzo cha njee cha data hakijapatikana</string>
+    <string name="next_step_loading">Tafadhali subiri wakati tunaandaa hatua zinazofuatia</string>
+    <!-- Duration -->
+    <string name="x_seconds">%1$ds</string>
+    <string name="x_minutes">%1$dm</string>
+    <string name="x_hours">%1$dh</string>
+    <string name="x_days">%1$dd</string>
+    <string name="x_weeks">%1$dw</string>
+    <string name="x_weeks_days">%1$dw%2$dd</string>
+    <string name="x_months">%1$dm</string>
+    <string name="x_months_weeks">%1$dm%2$dw</string>
+    <string name="x_years">%1$dy</string>
+    <string name="x_years_months">%1$dy%2$dm</string>
+
+    <string name="form_update_title">Huisha fomu</string>
+    <string name="form_update_message">Hii fomu imehuishwa</string>
+    <string name="form_changed_reopen_to_take_effect">Fomu imechaguliwa kikamilifu! Fungua tena ili mabadiriko yaweze kutokea</string>
+    <string name="rollback_dialog_title">Chagua fomu iliyopita</string>
+    <string name="current_corrupted_form">(Current Corrupted Form)</string>
+    <string name="cannot_select_corrupted_form_rollback">Huwezi kuchagua fomu hii kwa sababu imeharibika!</string>
+
 </resources>
