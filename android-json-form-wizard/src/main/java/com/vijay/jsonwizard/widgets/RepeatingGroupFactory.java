@@ -28,11 +28,9 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
-import com.vijay.jsonwizard.presenters.JsonFormFragmentPresenter;
 import com.vijay.jsonwizard.task.AttachRepeatingGroupTask;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.Utils;
-import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.validators.edittext.MaxNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.MinNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
@@ -338,23 +336,8 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
             @Override
             public void afterTextChanged(Editable s) {
                 doneButton.setImageResource(R.drawable.ic_done_grey);
-                ValidationStatus validationStatus = JsonFormFragmentPresenter
-                        .validate(widgetArgs.getFormFragment(), referenceEditText, false);
-                if (validationStatus.isValid()) {
-                    writeJsonObjectValue(repeatingGroupCount, s.toString());
-                }
             }
         });
-    }
-
-    private void writeJsonObjectValue(JSONObject jsonObject, String value) {
-        try {
-            if (jsonObject != null) {
-                jsonObject.put(VALUE, value);
-            }
-        } catch (JSONException e) {
-            Timber.e(e);
-        }
     }
 
     private void addRequiredValidator(JSONObject jsonObject, MaterialEditText editText) throws JSONException {

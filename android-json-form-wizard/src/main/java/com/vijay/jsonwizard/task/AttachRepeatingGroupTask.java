@@ -164,7 +164,7 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
                     JSONObject countFieldObject = Utils.getRepeatingGroupCountObj(widgetArgs);
                     if (countFieldObject != null) {
                         int currentCount = numRepeatingGroups;
-                        String strNumOfRepeatedGroups = countFieldObject.optString(JsonFormConstants.VALUE);
+                        String strNumOfRepeatedGroups = countFieldObject.optString(VALUE);
                         if (StringUtils.isNotBlank(strNumOfRepeatedGroups)) {
                             currentCount += Integer.parseInt(strNumOfRepeatedGroups);
                         }
