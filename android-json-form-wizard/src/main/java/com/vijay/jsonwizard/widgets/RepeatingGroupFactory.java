@@ -61,8 +61,8 @@ import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUE;
  */
 public class RepeatingGroupFactory implements FormWidgetFactory {
 
-    private static Map<Integer, String> repeatingGroupLayouts = new HashMap<>();
     public static final String REFERENCE_EDIT_TEXT_HINT = "reference_edit_text_hint";
+    private static Map<Integer, String> repeatingGroupLayouts = new HashMap<>();
     private final String REPEATING_GROUP_LABEL = "repeating_group_label";
     private final String REFERENCE_EDIT_TEXT = "reference_edit_text";
     private final String REPEATING_GROUP_MAX = "repeating_group_max";
@@ -295,15 +295,6 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                         return true;
                     }
                     return false;
-                }
-            });
-            // generate repeating groups on focus change
-            referenceEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View view, boolean hasFocus) {
-                    if (!hasFocus) {
-                        addOnDoneAction((TextView) view, doneButton, widgetArgs);
-                    }
                 }
             });
         }

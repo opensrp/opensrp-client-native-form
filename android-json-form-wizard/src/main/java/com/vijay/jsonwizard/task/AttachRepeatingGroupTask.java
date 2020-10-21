@@ -49,15 +49,15 @@ import static com.vijay.jsonwizard.utils.Utils.showProgressDialog;
 
 public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> {
 
-    private LinearLayout rootLayout;
+    protected final int REPEATING_GROUP_LABEL_TEXT_COLOR = R.color.black;
     private final ViewParent parent;
+    private final ViewGroup.LayoutParams WIDTH_MATCH_PARENT_HEIGHT_WRAP_CONTENT = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+    private LinearLayout rootLayout;
     private List<View> repeatingGroups = new ArrayList<>();
     private int diff = 0;
     private ImageButton doneButton;
     private WidgetArgs widgetArgs;
     private int numRepeatingGroups;
-    private final ViewGroup.LayoutParams WIDTH_MATCH_PARENT_HEIGHT_WRAP_CONTENT = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-    protected final int REPEATING_GROUP_LABEL_TEXT_COLOR = R.color.black;
     private Map<String, List<Map<String, Object>>> rulesFileMap = new HashMap<>();
     private Map<Integer, String> repeatingGroupLayouts;
     private int currNumRepeatingGroups;
@@ -153,6 +153,9 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         LinearLayout referenceLayout = (LinearLayout) ((LinearLayout) parent).getChildAt(0);
         MaterialEditText materialEditText = (MaterialEditText) referenceLayout.getChildAt(0);
         materialEditText.setError(null);
+
+        String fieldKey = widgetArgs.getStepName() + "#" + widgetArgs.getFormFragment().getPresenter().getStepTitle() + ":" + JsonFormConstants.REFERENCE_EDIT_TEXT;
+        widgetArgs.getFormFragment().getJsonApi().getInvalidFields().remove(fieldKey);
 
         widgetArgs.getFormFragment().getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
             @Override
