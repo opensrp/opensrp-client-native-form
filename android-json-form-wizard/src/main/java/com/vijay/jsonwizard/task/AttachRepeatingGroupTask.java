@@ -82,12 +82,33 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         diff = numRepeatingGroups - currNumRepeatingGroups;
         for (int i = 0; i < diff; i++) {
             try {
+
                 repeatingGroups.add(buildRepeatingGroupLayout(parent));
+
             } catch (Exception e) {
                 Timber.e(e);
             }
         }
+
+        updateRepeatingGrpCountObject();
+
         return repeatingGroups;
+    }
+
+    private void updateRepeatingGrpCountObject() {
+        try {
+            JSONObject countFieldObject = Utils.getRepeatingGroupCountObj(widgetArgs);
+            if (countFieldObject != null) {
+                int currentCount = numRepeatingGroups;
+                String strNumOfRepeatedGroups = countFieldObject.optString(VALUE);
+                if (StringUtils.isNotBlank(strNumOfRepeatedGroups)) {
+                    currentCount += Integer.parseInt(strNumOfRepeatedGroups);
+                }
+                countFieldObject.put(VALUE, currentCount);
+            }
+        } catch (JSONException e) {
+            Timber.e(e);
+        }
     }
 
     @Override
@@ -144,7 +165,6 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
 
         //for validation
         validationCleanUp();
-
     }
 
     private void validationCleanUp() {
@@ -156,25 +176,6 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
 
         String fieldKey = widgetArgs.getStepName() + "#" + widgetArgs.getFormFragment().getPresenter().getStepTitle() + ":" + JsonFormConstants.REFERENCE_EDIT_TEXT;
         widgetArgs.getFormFragment().getJsonApi().getInvalidFields().remove(fieldKey);
-
-        widgetArgs.getFormFragment().getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    JSONObject countFieldObject = Utils.getRepeatingGroupCountObj(widgetArgs);
-                    if (countFieldObject != null) {
-                        int currentCount = numRepeatingGroups;
-                        String strNumOfRepeatedGroups = countFieldObject.optString(VALUE);
-                        if (StringUtils.isNotBlank(strNumOfRepeatedGroups)) {
-                            currentCount += Integer.parseInt(strNumOfRepeatedGroups);
-                        }
-                        countFieldObject.put(VALUE, currentCount);
-                    }
-                } catch (JSONException e) {
-                    Timber.e(e);
-                }
-            }
-        });
     }
 
     private LinearLayout buildRepeatingGroupLayout(final ViewParent parent) throws Exception {
