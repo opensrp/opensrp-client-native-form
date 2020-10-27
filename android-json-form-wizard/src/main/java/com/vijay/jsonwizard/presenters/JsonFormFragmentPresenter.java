@@ -13,6 +13,8 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
@@ -92,8 +94,8 @@ import static com.vijay.jsonwizard.utils.FormUtils.dpToPixels;
 public class JsonFormFragmentPresenter extends
         MvpBasePresenter<JsonFormFragmentView<JsonFormFragmentViewState>> {
 
-    private static final String TAG = "FormFragmentPresenter";
     protected static final int RESULT_LOAD_IMG = 1;
+    private static final String TAG = "FormFragmentPresenter";
     private final JsonFormFragment formFragment;
     protected JSONObject mStepDetails;
     protected String key;
@@ -119,6 +121,109 @@ public class JsonFormFragmentPresenter extends
         mJsonFormInteractor = JsonFormInteractor.getInstance();
         invalidFields = this.formFragment.getJsonApi().getInvalidFields();
         incorrectlyFormattedFields = new Stack<>();
+    }
+
+    public static ValidationStatus validate(JsonFormFragmentView formFragmentView, View childAt,
+                                            boolean requestFocus) {
+        if (childAt instanceof RadioGroup) {
+            RadioGroup radioGroup = (RadioGroup) childAt;
+            ValidationStatus validationStatus = NativeRadioButtonFactory
+                    .validate(formFragmentView, radioGroup);
+            if (!validationStatus.isValid()) {
+                if (requestFocus) {
+                    validationStatus.requestAttention();
+                }
+                return validationStatus;
+            }
+        } else if (childAt instanceof NativeEditText) {
+            NativeEditText editText = (NativeEditText) childAt;
+            ValidationStatus validationStatus = NativeEditTextFactory
+                    .validate(formFragmentView, editText);
+            if (!validationStatus.isValid()) {
+                if (requestFocus) {
+                    validationStatus.requestAttention();
+                }
+                return validationStatus;
+            }
+        } else if (childAt instanceof MaterialEditText) {
+            MaterialEditText editText = (MaterialEditText) childAt;
+            ValidationStatus validationStatus = EditTextFactory.validate(formFragmentView, editText);
+            if (!validationStatus.isValid()) {
+                if (requestFocus) {
+                    validationStatus.requestAttention();
+                }
+                return validationStatus;
+            }
+        } else if (childAt instanceof ImageView) {
+            ValidationStatus validationStatus = ImagePickerFactory
+                    .validate(formFragmentView, (ImageView) childAt);
+            if (!validationStatus.isValid()) {
+                if (requestFocus) {
+                    validationStatus.requestAttention();
+                }
+                return validationStatus;
+            }
+        } else if (childAt instanceof Button) {
+            String type = (String) childAt.getTag(R.id.type);
+            if (!TextUtils.isEmpty(type) && type.equals(JsonFormConstants.GPS)) {
+                ValidationStatus validationStatus = GpsFactory.validate(formFragmentView, (Button) childAt);
+                if (!validationStatus.isValid()) {
+                    if (requestFocus) {
+                        validationStatus.requestAttention();
+                    }
+                    return validationStatus;
+                }
+            }
+        } else if (childAt instanceof MaterialSpinner) {
+            final MaterialSpinner spinner = (MaterialSpinner) childAt;
+            final ValidationStatus validationStatus = SpinnerFactory.validate(formFragmentView, spinner);
+            if (!validationStatus.isValid()) {
+                if (requestFocus) {
+                    validationStatus.requestAttention();
+                }
+                ((JsonFormActivity) formFragmentView.getContext()).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setSpinnerError(spinner, validationStatus.getErrorMessage());
+                    }
+                });
+                return validationStatus;
+            }
+        } else if (childAt instanceof ViewGroup
+                && childAt.getTag(R.id.is_checkbox_linear_layout) != null &&
+                Boolean.TRUE.equals(childAt.getTag(R.id.is_checkbox_linear_layout))) {
+            LinearLayout checkboxLinearLayout = (LinearLayout) childAt;
+            ValidationStatus validationStatus = CheckBoxFactory
+                    .validate(formFragmentView, checkboxLinearLayout);
+            if (!validationStatus.isValid()) {
+                if (requestFocus) {
+                    validationStatus.requestAttention();
+                }
+                return validationStatus;
+            }
+
+        } else if (childAt instanceof ViewGroup
+                && childAt.getTag(R.id.is_number_selector_linear_layout) != null &&
+                Boolean.TRUE.equals(childAt.getTag(R.id.is_number_selector_linear_layout))) {
+            ValidationStatus validationStatus = NumberSelectorFactory
+                    .validate(formFragmentView, (ViewGroup) childAt);
+            if (!validationStatus.isValid()) {
+                if (requestFocus) {
+                    validationStatus.requestAttention();
+                }
+                return validationStatus;
+            }
+        }
+
+        return new ValidationStatus(true, null, null, null);
+    }
+
+    private static void setSpinnerError(MaterialSpinner spinner, String spinnerError) {
+        try {
+            spinner.setError(spinnerError);
+        } catch (IllegalArgumentException e) {
+            Log.e(TAG, e.getMessage(), e);
+        }
     }
 
     public JsonFormFragment getFormFragment() {
@@ -411,109 +516,6 @@ public class JsonFormFragmentPresenter extends
         return invalidFields;
     }
 
-    public static ValidationStatus validate(JsonFormFragmentView formFragmentView, View childAt,
-                                            boolean requestFocus) {
-        if (childAt instanceof RadioGroup) {
-            RadioGroup radioGroup = (RadioGroup) childAt;
-            ValidationStatus validationStatus = NativeRadioButtonFactory
-                    .validate(formFragmentView, radioGroup);
-            if (!validationStatus.isValid()) {
-                if (requestFocus) {
-                    validationStatus.requestAttention();
-                }
-                return validationStatus;
-            }
-        } else if (childAt instanceof NativeEditText) {
-            NativeEditText editText = (NativeEditText) childAt;
-            ValidationStatus validationStatus = NativeEditTextFactory
-                    .validate(formFragmentView, editText);
-            if (!validationStatus.isValid()) {
-                if (requestFocus) {
-                    validationStatus.requestAttention();
-                }
-                return validationStatus;
-            }
-        } else if (childAt instanceof MaterialEditText) {
-            MaterialEditText editText = (MaterialEditText) childAt;
-            ValidationStatus validationStatus = EditTextFactory.validate(formFragmentView, editText);
-            if (!validationStatus.isValid()) {
-                if (requestFocus) {
-                    validationStatus.requestAttention();
-                }
-                return validationStatus;
-            }
-        } else if (childAt instanceof ImageView) {
-            ValidationStatus validationStatus = ImagePickerFactory
-                    .validate(formFragmentView, (ImageView) childAt);
-            if (!validationStatus.isValid()) {
-                if (requestFocus) {
-                    validationStatus.requestAttention();
-                }
-                return validationStatus;
-            }
-        } else if (childAt instanceof Button) {
-            String type = (String) childAt.getTag(R.id.type);
-            if (!TextUtils.isEmpty(type) && type.equals(JsonFormConstants.GPS)) {
-                ValidationStatus validationStatus = GpsFactory.validate(formFragmentView, (Button) childAt);
-                if (!validationStatus.isValid()) {
-                    if (requestFocus) {
-                        validationStatus.requestAttention();
-                    }
-                    return validationStatus;
-                }
-            }
-        } else if (childAt instanceof MaterialSpinner) {
-            final MaterialSpinner spinner = (MaterialSpinner) childAt;
-            final ValidationStatus validationStatus = SpinnerFactory.validate(formFragmentView, spinner);
-            if (!validationStatus.isValid()) {
-                if (requestFocus) {
-                    validationStatus.requestAttention();
-                }
-                ((JsonFormActivity) formFragmentView.getContext()).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        setSpinnerError(spinner, validationStatus.getErrorMessage());
-                    }
-                });
-                return validationStatus;
-            }
-        } else if (childAt instanceof ViewGroup
-                && childAt.getTag(R.id.is_checkbox_linear_layout) != null &&
-                Boolean.TRUE.equals(childAt.getTag(R.id.is_checkbox_linear_layout))) {
-            LinearLayout checkboxLinearLayout = (LinearLayout) childAt;
-            ValidationStatus validationStatus = CheckBoxFactory
-                    .validate(formFragmentView, checkboxLinearLayout);
-            if (!validationStatus.isValid()) {
-                if (requestFocus) {
-                    validationStatus.requestAttention();
-                }
-                return validationStatus;
-            }
-
-        } else if (childAt instanceof ViewGroup
-                && childAt.getTag(R.id.is_number_selector_linear_layout) != null &&
-                Boolean.TRUE.equals(childAt.getTag(R.id.is_number_selector_linear_layout))) {
-            ValidationStatus validationStatus = NumberSelectorFactory
-                    .validate(formFragmentView, (ViewGroup) childAt);
-            if (!validationStatus.isValid()) {
-                if (requestFocus) {
-                    validationStatus.requestAttention();
-                }
-                return validationStatus;
-            }
-        }
-
-        return new ValidationStatus(true, null, null, null);
-    }
-
-    private static void setSpinnerError(MaterialSpinner spinner, String spinnerError) {
-        try {
-            spinner.setError(spinnerError);
-        } catch (IllegalArgumentException e) {
-            Log.e(TAG, e.getMessage(), e);
-        }
-    }
-
     public void onSaveClick(LinearLayout mainView) {
         validateAndWriteValues();
         checkAndStopCountdownAlarm();
@@ -792,18 +794,21 @@ public class JsonFormFragmentPresenter extends
     }
 
     protected void showInformationDialog(View view) {
-
         if (view.getTag(R.id.label_dialog_image_src) != null) {
             showCustomDialog(view);
         } else {
             showAlertDialog(view);
         }
+    }
 
+    @VisibleForTesting
+    protected AlertDialog.Builder getAlertDialogBuilder() {
+        return new AlertDialog.Builder(getView().getContext(),
+                R.style.AppThemeAlertDialog);
     }
 
     private void showAlertDialog(View view) {
-        AlertDialog.Builder builderSingle = new AlertDialog.Builder(getView().getContext(),
-                R.style.AppThemeAlertDialog);
+        AlertDialog.Builder builderSingle = getAlertDialogBuilder();
         builderSingle.setTitle((String) view.getTag(R.id.label_dialog_title));
         builderSingle.setMessage((String) view.getTag(R.id.label_dialog_info));
         builderSingle.setIcon(R.drawable.dialog_info_filled);
@@ -819,8 +824,13 @@ public class JsonFormFragmentPresenter extends
         builderSingle.show();
     }
 
-    private void showCustomDialog(View view) {
-        final Dialog dialog = new Dialog(view.getContext());
+    @VisibleForTesting
+    protected Dialog getCustomDialog(View view) {
+        return new Dialog(view.getContext());
+    }
+
+    private void showCustomDialog(@NonNull View view) {
+        final Dialog dialog = getCustomDialog(view);
         dialog.setContentView(R.layout.native_form_custom_dialog);
         if (dialog.getWindow() != null) {
             WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
@@ -855,7 +865,7 @@ public class JsonFormFragmentPresenter extends
         try {
             dialogImage.setImageDrawable(FormUtils.readImageFromAsset(view.getContext(), imagePath));
         } catch (IOException e) {
-            Log.e(TAG, "Encountered an error reading image from assets" + e);
+            Timber.e(e);
         }
         dialogButton.setOnClickListener(new View.OnClickListener() {
             @Override
