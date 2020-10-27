@@ -76,8 +76,6 @@ public class DatePickerFactoryTest extends BaseTest {
     @Captor
     private ArgumentCaptor<DatePickerDialog> datePickerDialogArgumentCaptor;
 
-    private AppCompatActivity appCompatActivity;
-
     @Before
     public void setUp() {
         AppExecutors appExecutors = new AppExecutors();
@@ -121,7 +119,7 @@ public class DatePickerFactoryTest extends BaseTest {
     @Test
     public void testShowDatePickerDialog() throws Exception {
         when(formActivity.getFragmentManager()).thenReturn(fragmentManager);
-        appCompatActivity = Robolectric.buildActivity(AppCompatActivity.class).create().get();
+        AppCompatActivity appCompatActivity = Robolectric.buildActivity(AppCompatActivity.class).create().get();
         RelativeLayout view = (RelativeLayout) appCompatActivity.getLayoutInflater().inflate(factory.getLayout(), null);
         Mockito.doReturn(view).when(factory).getRelativeLayout(formActivity);
         String datePicker = "{\"key\":\"First_Health_Facility_Contact\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163260AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_data_type\":\"text\",\"type\":\"date_picker\",\"hint\":\"Date first seen *\",\"expanded\":false,\"min_date\":\"today-5y\",\"max_date\":\"today\",\"v_required\":{\"value\":\"true\",\"err\":\"Enter the date that the child was first seen at a health facility for immunization services\"},\"constraints\":{\"type\":\"date\",\"ex\":\"greaterThanEqualTo(., step1:Date_Birth)\",\"err\":\"Date first seen can't occur before date of birth\"},\"relevance\":{\"rules-engine\":{\"ex-rules\":{\"rules-file\":\"sample-relevance-rules.yml\"}}},\"calculation\":{\"rules-engine\":{\"ex-rules\":{\"rules-file\":\"sample-calculation-rules.yml\"}}},\"value\":\"12-05-2020\",\"read_only\":true,\"label_info_text\":\"Just testing\",\"label_info_title\":\"Just testing\",\"duration\":{\"label\":\"AGE\"}}";

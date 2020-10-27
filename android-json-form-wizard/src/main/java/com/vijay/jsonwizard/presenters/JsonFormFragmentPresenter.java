@@ -954,7 +954,7 @@ public class JsonFormFragmentPresenter extends
             try {
                 value = jsonArray.getString(position);
             } catch (JSONException e) {
-                Log.e(TAG, e.toString());
+                Timber.e(e);
             }
         }
         if (getView() != null) {

@@ -43,6 +43,11 @@ public class RepeatingGroupFactoryTest extends FactoryTest {
         List<View> viewList = invokeGetViewsFromJson();
         Assert.assertNotNull(viewList);
         Assert.assertEquals(1, viewList.size());
+
+        // invoke repeating group generation when reference edit text loses focus
+        MaterialEditText referenceEditText = viewList.get(0).findViewById(R.id.reference_edit_text);
+        referenceEditText.requestFocus();
+        referenceEditText.clearFocus();
     }
 
     @Test
@@ -59,7 +64,7 @@ public class RepeatingGroupFactoryTest extends FactoryTest {
         RepeatingGroupFactory factorySpy = Mockito.spy(factory);
 
         Set<String> editableProperties = factorySpy.getCustomTranslatableWidgetFields();
-        Assert.assertEquals(0, editableProperties.size());
+        Assert.assertEquals(1, editableProperties.size());
     }
 
     @Test

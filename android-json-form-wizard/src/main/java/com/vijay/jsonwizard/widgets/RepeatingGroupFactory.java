@@ -42,6 +42,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -182,7 +183,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
 
     @Override
     public Set<String> getCustomTranslatableWidgetFields() {
-        return new HashSet<>();
+        return new HashSet<>(Arrays.asList("reference_edit_text_hint"));
     }
 
     @VisibleForTesting
@@ -315,6 +316,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         if (isRemoteReferenceValueUsed(referenceEditText)) {
             referenceEditText.setVisibility(View.GONE);
         } else {
+            // generate repeating groups on when keyboard done button is pressed
             referenceEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
                 public boolean onEditorAction(TextView focusTextView, int actionId, KeyEvent event) {
@@ -323,6 +325,15 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                         return true;
                     }
                     return false;
+                }
+            });
+            // generate repeating groups on focus change
+            referenceEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View view, boolean hasFocus) {
+                    if (!hasFocus) {
+                        addOnDoneAction((TextView) view, doneButton, widgetArgs);
+                    }
                 }
             });
         }
