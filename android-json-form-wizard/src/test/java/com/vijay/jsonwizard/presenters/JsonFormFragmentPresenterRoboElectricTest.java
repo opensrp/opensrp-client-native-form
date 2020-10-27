@@ -39,7 +39,6 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
@@ -547,12 +546,12 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         view.setTag(R.id.label_dialog_title, "title");
         view.setTag(R.id.label_dialog_info, "info");
 
-        JsonFormFragmentPresenter spyPresenter = Mockito.spy(presenter);
-        Dialog dialogSpy = Mockito.spy(new Dialog(view.getContext()));
-        Mockito.doReturn(dialogSpy).when(spyPresenter).getCustomDialog(view);
+        JsonFormFragmentPresenter spyPresenter = spy(presenter);
+        Dialog dialogSpy = spy(new Dialog(view.getContext()));
+        doReturn(dialogSpy).when(spyPresenter).getCustomDialog(view);
         spyPresenter.showInformationDialog(view);
 
-        verify(dialogSpy, Mockito.times(1)).show();
+        verify(dialogSpy, times(1)).show();
 
         assertTrue(dialogSpy.findViewById(R.id.dialogText).isShown());
 
@@ -562,7 +561,7 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
 
         dialogSpy.findViewById(R.id.dialogButton).performClick();
 
-        verify(dialogSpy, Mockito.times(1)).dismiss();
+        verify(dialogSpy, times(1)).dismiss();
     }
 
     @Test
@@ -571,15 +570,15 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         view.setTag(R.id.label_dialog_title, "title");
         view.setTag(R.id.label_dialog_info, "info");
 
-        JsonFormFragmentPresenter spyPresenter = Mockito.spy(presenter);
+        JsonFormFragmentPresenter spyPresenter = spy(presenter);
 
-        AlertDialog.Builder spyBuilder = Mockito.spy(new AlertDialog.Builder(view.getContext(),
+        AlertDialog.Builder spyBuilder = spy(new AlertDialog.Builder(view.getContext(),
                 R.style.AppThemeAlertDialog));
 
-        Mockito.doReturn(spyBuilder).when(spyPresenter).getAlertDialogBuilder();
+        doReturn(spyBuilder).when(spyPresenter).getAlertDialogBuilder();
 
         spyPresenter.showInformationDialog(view);
 
-        verify(spyBuilder, Mockito.times(1)).show();
+        verify(spyBuilder, times(1)).show();
     }
 }
