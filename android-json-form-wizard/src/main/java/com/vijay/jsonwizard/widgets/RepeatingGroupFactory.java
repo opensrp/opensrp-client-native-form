@@ -28,6 +28,7 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.presenters.JsonFormFragmentPresenter;
 import com.vijay.jsonwizard.task.AttachRepeatingGroupTask;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.Utils;
@@ -298,7 +299,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         }
 
         referenceEditText.setTag(R.id.address, widgetArgs.getStepName() + ":" + widgetArgs.getJsonObject().getString(KEY));
-        attachTextChangedListener(referenceEditText, doneButton, repeatingGroupCount, widgetArgs);
+        attachTextChangedListener(referenceEditText, doneButton, widgetArgs);
         referenceEditText.setHint(referenceEditTextHint);
         referenceEditText.setTag(R.id.repeating_group_label, repeatingGroupLabel);
         referenceEditText.setTag(R.id.extraPopup, false);
@@ -319,7 +320,6 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
 
     private void attachTextChangedListener(final MaterialEditText referenceEditText,
                                            final ImageButton doneButton,
-                                           final JSONObject repeatingGroupCount,
                                            final WidgetArgs widgetArgs) {
 
         referenceEditText.addTextChangedListener(new TextWatcher() {
@@ -336,6 +336,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
             @Override
             public void afterTextChanged(Editable s) {
                 doneButton.setImageResource(R.drawable.ic_done_grey);
+                JsonFormFragmentPresenter.validate(widgetArgs.getFormFragment(), referenceEditText, false);
             }
         });
     }

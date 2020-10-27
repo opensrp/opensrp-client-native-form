@@ -21,7 +21,6 @@ import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.Utils;
 
-import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -99,12 +98,7 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         try {
             JSONObject countFieldObject = Utils.getRepeatingGroupCountObj(widgetArgs);
             if (countFieldObject != null) {
-                int currentCount = numRepeatingGroups;
-                String strNumOfRepeatedGroups = countFieldObject.optString(VALUE);
-                if (StringUtils.isNotBlank(strNumOfRepeatedGroups)) {
-                    currentCount += Integer.parseInt(strNumOfRepeatedGroups);
-                }
-                countFieldObject.put(VALUE, currentCount);
+                countFieldObject.put(VALUE, numRepeatingGroups);
             }
         } catch (JSONException e) {
             Timber.e(e);
