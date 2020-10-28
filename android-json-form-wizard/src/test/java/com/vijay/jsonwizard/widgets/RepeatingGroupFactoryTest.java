@@ -26,6 +26,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import static org.hamcrest.Matchers.is;
+
 public class RepeatingGroupFactoryTest extends FactoryTest {
 
     private RepeatingGroupFactory factory;
@@ -57,6 +59,22 @@ public class RepeatingGroupFactoryTest extends FactoryTest {
 
         JSONObject repeatingGroupCountObj = step.getJSONArray(JsonFormConstants.FIELDS).getJSONObject(0);
         Assert.assertEquals("2", repeatingGroupCountObj.getString(JsonFormConstants.VALUE));
+    }
+
+    @Test
+    public void testParseIntWithDefaultIntegerInput() {
+        final String integerString = "1";
+        final int integerFromString = 1;
+
+        Assert.assertThat(RepeatingGroupFactory.parseIntWithDefault(integerString), is(integerFromString));
+    }
+
+    @Test
+    public void testParseIntWithDefaultNullInput() {
+        final String emptyString = "";
+        final int defaultInteger = 0;
+
+        Assert.assertThat(RepeatingGroupFactory.parseIntWithDefault(emptyString), is(defaultInteger));
     }
 
     @Test
