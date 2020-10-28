@@ -1,6 +1,8 @@
 package com.vijay.jsonwizard.presenters;
 
 import android.Manifest.permission;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -536,4 +538,47 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
                         nullable(String.class), nullable(String.class), nullable(String.class), eq(false));
     }
 
+
+    @Test
+    public void testShowInformationDialogShouldShowCustomDialog() {
+        View view = new View(RuntimeEnvironment.application);
+        view.setTag(R.id.label_dialog_image_src, "label");
+        view.setTag(R.id.label_dialog_title, "title");
+        view.setTag(R.id.label_dialog_info, "info");
+
+        JsonFormFragmentPresenter spyPresenter = spy(presenter);
+        Dialog dialogSpy = spy(new Dialog(view.getContext()));
+        doReturn(dialogSpy).when(spyPresenter).getCustomDialog(view);
+        spyPresenter.showInformationDialog(view);
+
+        verify(dialogSpy, times(1)).show();
+
+        assertTrue(dialogSpy.findViewById(R.id.dialogText).isShown());
+
+        assertTrue(dialogSpy.findViewById(R.id.dialogTitle).isShown());
+
+        assertTrue(dialogSpy.findViewById(R.id.dialogImage).isShown());
+
+        dialogSpy.findViewById(R.id.dialogButton).performClick();
+
+        verify(dialogSpy, times(1)).dismiss();
+    }
+
+    @Test
+    public void testShowInformationDialogShouldShowAlertDialog() {
+        View view = new View(RuntimeEnvironment.application);
+        view.setTag(R.id.label_dialog_title, "title");
+        view.setTag(R.id.label_dialog_info, "info");
+
+        JsonFormFragmentPresenter spyPresenter = spy(presenter);
+
+        AlertDialog.Builder spyBuilder = spy(new AlertDialog.Builder(view.getContext(),
+                R.style.AppThemeAlertDialog));
+
+        doReturn(spyBuilder).when(spyPresenter).getAlertDialogBuilder();
+
+        spyPresenter.showInformationDialog(view);
+
+        verify(spyBuilder, times(1)).show();
+    }
 }
