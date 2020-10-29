@@ -21,7 +21,6 @@ import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.Utils;
 
-import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,15 +48,15 @@ import static com.vijay.jsonwizard.utils.Utils.showProgressDialog;
 
 public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> {
 
-    private LinearLayout rootLayout;
+    protected final int REPEATING_GROUP_LABEL_TEXT_COLOR = R.color.black;
     private final ViewParent parent;
+    private final ViewGroup.LayoutParams WIDTH_MATCH_PARENT_HEIGHT_WRAP_CONTENT = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+    private LinearLayout rootLayout;
     private List<View> repeatingGroups = new ArrayList<>();
     private int diff = 0;
     private ImageButton doneButton;
     private WidgetArgs widgetArgs;
     private int numRepeatingGroups;
-    private final ViewGroup.LayoutParams WIDTH_MATCH_PARENT_HEIGHT_WRAP_CONTENT = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-    protected final int REPEATING_GROUP_LABEL_TEXT_COLOR = R.color.black;
     private Map<String, List<Map<String, Object>>> rulesFileMap = new HashMap<>();
     private Map<Integer, String> repeatingGroupLayouts;
     private int currNumRepeatingGroups;
@@ -82,12 +81,28 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         diff = numRepeatingGroups - currNumRepeatingGroups;
         for (int i = 0; i < diff; i++) {
             try {
+
                 repeatingGroups.add(buildRepeatingGroupLayout(parent));
+
             } catch (Exception e) {
                 Timber.e(e);
             }
         }
+
+        updateRepeatingGrpCountObject();
+
         return repeatingGroups;
+    }
+
+    private void updateRepeatingGrpCountObject() {
+        try {
+            JSONObject countFieldObject = Utils.getRepeatingGroupCountObj(widgetArgs);
+            if (countFieldObject != null) {
+                countFieldObject.put(VALUE, numRepeatingGroups);
+            }
+        } catch (JSONException e) {
+            Timber.e(e);
+        }
     }
 
     @Override
@@ -144,7 +159,6 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
 
         //for validation
         validationCleanUp();
-
     }
 
     private void validationCleanUp() {
@@ -154,31 +168,8 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         MaterialEditText materialEditText = (MaterialEditText) referenceLayout.getChildAt(0);
         materialEditText.setError(null);
 
-        widgetArgs.getFormFragment().getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    JSONObject step = ((JsonApi) widgetArgs.getContext()).getmJSONObject().getJSONObject(widgetArgs.getStepName());
-                    JSONArray fields = step.getJSONArray(FIELDS);
-                    String key = widgetArgs.getJsonObject().optString(KEY);
-                    for (int i = 0; i < fields.length(); i++) {
-                        JSONObject object = fields.optJSONObject(i);
-                        String fieldKey = object.optString(KEY);
-                        if (fieldKey.equals(key)) {
-                            String strNumOfRepeatedGroups = object.optString(JsonFormConstants.REPEATING_GROUPS_GENERATED_COUNT);
-                            int currentCount = numRepeatingGroups;
-                            if (StringUtils.isNotBlank(strNumOfRepeatedGroups)) {
-                                currentCount += Integer.parseInt(strNumOfRepeatedGroups);
-                            }
-                            object.put(JsonFormConstants.REPEATING_GROUPS_GENERATED_COUNT, currentCount);
-                            break;
-                        }
-                    }
-                } catch (JSONException e) {
-                    Timber.e(e);
-                }
-            }
-        });
+        String fieldKey = widgetArgs.getStepName() + "#" + widgetArgs.getFormFragment().getPresenter().getStepTitle() + ":" + JsonFormConstants.REFERENCE_EDIT_TEXT;
+        widgetArgs.getFormFragment().getJsonApi().getInvalidFields().remove(fieldKey);
     }
 
     private LinearLayout buildRepeatingGroupLayout(final ViewParent parent) throws Exception {

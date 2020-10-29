@@ -495,7 +495,7 @@ public class JsonFormFragmentPresenter extends
         return validate(getView(), childAt, true);
     }
 
-    private String getStepTitle() {
+    public String getStepTitle() {
         return mStepDetails.optString(JsonFormConstants.STEP_TITLE);
     }
 

@@ -26,6 +26,7 @@ import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.CompoundButton;
 import com.vijay.jsonwizard.customviews.ExpansionPanelGenericPopupDialog;
 import com.vijay.jsonwizard.domain.Form;
+import com.vijay.jsonwizard.domain.WidgetArgs;
 import com.vijay.jsonwizard.event.BaseEvent;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.rules.RuleConstant;
@@ -64,7 +65,14 @@ import java.util.concurrent.TimeUnit;
 
 import timber.log.Timber;
 
+import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.OPENMRS_ENTITY;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.OPENMRS_ENTITY_ID;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.OPENMRS_ENTITY_PARENT;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.TEXT;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.TYPE;
 import static com.vijay.jsonwizard.utils.NativeFormLangUtils.getTranslatedString;
+import static com.vijay.jsonwizard.widgets.RepeatingGroupFactory.REFERENCE_EDIT_TEXT_HINT;
 
 public class Utils {
     public final static List<String> PREFICES_OF_INTEREST = Arrays.asList(RuleConstant.PREFIX.GLOBAL, RuleConstant.STEP);
@@ -873,6 +881,37 @@ public class Utils {
 
     public static boolean isEmptyJsonArray(JSONArray jsonArray) {
         return jsonArray == null || jsonArray.length() == 0;
+    }
+
+    /**
+     * Returns the object that holds the repeating group count
+     *
+     * @return
+     * @throws JSONException
+     */
+    @Nullable
+    public static JSONObject getRepeatingGroupCountObj(@NotNull WidgetArgs widgetArgs) throws JSONException {
+        String repeatingGroupCountObjKey = widgetArgs.getJsonObject().get(KEY) + "_count";
+        JSONObject stepJsonObject = widgetArgs.getFormFragment().getStep(widgetArgs.getStepName());
+        if (stepJsonObject == null) {
+            return null;
+        }
+        JSONArray stepFields = stepJsonObject.optJSONArray(JsonFormConstants.FIELDS);
+        JSONObject repeatingGroupCountObj = FormUtils.getFieldJSONObject(stepFields, repeatingGroupCountObjKey);
+        // prevents re-adding the count object during form traversals
+        if (repeatingGroupCountObj != null) {
+            return repeatingGroupCountObj;
+        }
+
+        repeatingGroupCountObj = new JSONObject();
+        repeatingGroupCountObj.put(KEY, repeatingGroupCountObjKey);
+        repeatingGroupCountObj.put(OPENMRS_ENTITY_PARENT, "");
+        repeatingGroupCountObj.put(OPENMRS_ENTITY, "");
+        repeatingGroupCountObj.put(OPENMRS_ENTITY_ID, "");
+        repeatingGroupCountObj.put(TYPE, "");
+        repeatingGroupCountObj.put(TEXT, widgetArgs.getJsonObject().get(REFERENCE_EDIT_TEXT_HINT));
+        stepFields.put(repeatingGroupCountObj);
+        return repeatingGroupCountObj;
     }
 }
 

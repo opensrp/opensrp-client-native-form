@@ -295,14 +295,16 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     public void refreshHiddenViews(boolean popup) {
         for (View curView : getFormDataViews()) {
             String addressString = (String) curView.getTag(R.id.address);
-            String[] address = addressString.split(":");
-            try {
-                JSONObject viewData = getObjectUsingAddress(address, popup);
-                if (viewData.has(JsonFormConstants.HIDDEN) && viewData.getBoolean(JsonFormConstants.HIDDEN)) {
-                    toggleViewVisibility(curView, false, popup);
+            if (StringUtils.isNotBlank(addressString)) {
+                String[] address = addressString.split(":");
+                try {
+                    JSONObject viewData = getObjectUsingAddress(address, popup);
+                    if (viewData.has(JsonFormConstants.HIDDEN) && viewData.getBoolean(JsonFormConstants.HIDDEN)) {
+                        toggleViewVisibility(curView, false, popup);
+                    }
+                } catch (JSONException e) {
+                    Timber.e(e);
                 }
-            } catch (JSONException e) {
-                Timber.e(e);
             }
         }
     }

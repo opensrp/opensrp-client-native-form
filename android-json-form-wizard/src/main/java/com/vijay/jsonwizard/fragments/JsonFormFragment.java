@@ -43,7 +43,6 @@ import com.vijay.jsonwizard.views.JsonFormFragmentView;
 import com.vijay.jsonwizard.viewstates.JsonFormFragmentViewState;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.simprint.SimPrintsLibrary;
@@ -376,6 +375,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     @Override
     public void transactThis(JsonFormFragment next) {
+        //This fixes an edge case whereby one fragment is loaded twice on the stack, brings form traversal issues
         if (getFragmentManager().getBackStackEntryCount() > 0) { //Note: first step is not usually added to backStackEntry
             FragmentManager.BackStackEntry stackEntry = getFragmentManager().getBackStackEntryAt(getFragmentManager().getBackStackEntryCount() - 1);
             if (StringUtils.isNotBlank(stackEntry.getName()) &&

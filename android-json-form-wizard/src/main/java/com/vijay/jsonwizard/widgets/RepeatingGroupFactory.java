@@ -31,7 +31,7 @@ import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.presenters.JsonFormFragmentPresenter;
 import com.vijay.jsonwizard.task.AttachRepeatingGroupTask;
 import com.vijay.jsonwizard.utils.FormUtils;
-import com.vijay.jsonwizard.utils.ValidationStatus;
+import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.validators.edittext.MaxNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.MinNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
@@ -53,12 +53,6 @@ import timber.log.Timber;
 
 import static com.vijay.jsonwizard.constants.JsonFormConstants.FIELDS;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.OPENMRS_ENTITY;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.OPENMRS_ENTITY_ID;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.OPENMRS_ENTITY_PARENT;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.REPEATING_GROUPS_GENERATED_COUNT;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.TEXT;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.TYPE;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUE;
 
 /**
@@ -66,8 +60,8 @@ import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUE;
  */
 public class RepeatingGroupFactory implements FormWidgetFactory {
 
-    private static Map<Integer, String> repeatingGroupLayouts = new HashMap<>();
     public static final String REFERENCE_EDIT_TEXT_HINT = "reference_edit_text_hint";
+    private static Map<Integer, String> repeatingGroupLayouts = new HashMap<>();
     private final String REPEATING_GROUP_LABEL = "repeating_group_label";
     private final String REFERENCE_EDIT_TEXT = "reference_edit_text";
     private final String REPEATING_GROUP_MAX = "repeating_group_max";
@@ -106,23 +100,25 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
 
         setRepeatingGroupNumLimits(widgetArgs);
 
+        JSONObject countFieldObject = Utils.getRepeatingGroupCountObj(widgetArgs);
+
         //get the generated number of groups
-        final String generatedGroupsCount = jsonObject.optString(REPEATING_GROUPS_GENERATED_COUNT);
+        final String generatedGroupsCount = countFieldObject != null ? countFieldObject.optString(VALUE) : "";
 
 
         // Enables us to fetch this value from a previous edit_text & disable this one
-        if (StringUtils.isBlank(generatedGroupsCount)) { ///generate only once
-            retrieveRepeatingGroupCountFromRemoteReferenceEditText(rootLayout, getJsonApi(widgetArgs),
-                    referenceEditText, remoteReferenceEditText, doneButton, widgetArgs);
-            setUpReferenceEditText(doneButton, referenceEditText, referenceEditTextHint,
-                    repeatingGroupLabel, getRepeatingGroupCountObj(widgetArgs), widgetArgs);
-        }
+        retrieveRepeatingGroupCountFromRemoteReferenceEditText(rootLayout, getJsonApi(widgetArgs),
+                referenceEditText, remoteReferenceEditText, doneButton, widgetArgs);
+
+        setUpReferenceEditText(doneButton, referenceEditText, referenceEditTextHint,
+                repeatingGroupLabel, widgetArgs);
 
 
         // Disable the done button if the reference edit text being used is remote & has a valid value
         if (isRemoteReferenceValueUsed(referenceEditText)) {
             doneButton.setVisibility(View.GONE);
         } else {
+            //updates referenceEditText with previous count of the repeating grp if it exists
             if (StringUtils.isNotBlank(generatedGroupsCount)) {
                 formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
                     @Override
@@ -130,6 +126,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                         referenceEditText.setText(generatedGroupsCount);
                     }
                 });
+                //needed to ensure that repeating grp generated status is maintained after form traversals
                 doneButton.setTag(R.id.is_repeating_group_generated, true);
             }
 
@@ -146,34 +143,6 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         prepareViewChecks(rootLayout, context, widgetArgs);
 
         return views;
-    }
-
-    /**
-     * Returns the object that holds the repeating group count
-     *
-     * @return
-     * @throws JSONException
-     */
-    private JSONObject getRepeatingGroupCountObj(WidgetArgs widgetArgs) throws JSONException {
-
-        String repeatingGroupCountObjKey = widgetArgs.getJsonObject().get(KEY) + "_count";
-        JSONArray stepFields = getStepFields(getJsonApi(widgetArgs).getStep(widgetArgs.getStepName()));
-        JSONObject repeatingGroupCountObj = FormUtils.getFieldJSONObject(stepFields, repeatingGroupCountObjKey);
-        // prevents re-adding the count object during form traversals
-        if (repeatingGroupCountObj != null) {
-            return repeatingGroupCountObj;
-        }
-
-        repeatingGroupCountObj = new JSONObject();
-        repeatingGroupCountObj.put(KEY, repeatingGroupCountObjKey);
-        repeatingGroupCountObj.put(OPENMRS_ENTITY_PARENT, "");
-        repeatingGroupCountObj.put(OPENMRS_ENTITY, "");
-        repeatingGroupCountObj.put(OPENMRS_ENTITY_ID, "");
-        repeatingGroupCountObj.put(TYPE, "");
-        repeatingGroupCountObj.put(TEXT, widgetArgs.getJsonObject().get(REFERENCE_EDIT_TEXT_HINT));
-        stepFields.put(repeatingGroupCountObj);
-
-        return repeatingGroupCountObj;
     }
 
     @Override
@@ -309,7 +278,6 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                                         final MaterialEditText referenceEditText,
                                         final String referenceEditTextHint,
                                         final String repeatingGroupLabel,
-                                        final JSONObject repeatingGroupCount,
                                         final WidgetArgs widgetArgs) throws JSONException {
         // We should disable this edit_text if another referenced edit text is being used
         Context context = widgetArgs.getContext();
@@ -327,19 +295,10 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                     return false;
                 }
             });
-            // generate repeating groups on focus change
-            referenceEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View view, boolean hasFocus) {
-                    if (!hasFocus) {
-                        addOnDoneAction((TextView) view, doneButton, widgetArgs);
-                    }
-                }
-            });
         }
 
         referenceEditText.setTag(R.id.address, widgetArgs.getStepName() + ":" + widgetArgs.getJsonObject().getString(KEY));
-        attachTextChangedListener(referenceEditText, doneButton, repeatingGroupCount, widgetArgs);
+        attachTextChangedListener(referenceEditText, doneButton, widgetArgs);
         referenceEditText.setHint(referenceEditTextHint);
         referenceEditText.setTag(R.id.repeating_group_label, repeatingGroupLabel);
         referenceEditText.setTag(R.id.extraPopup, false);
@@ -360,7 +319,6 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
 
     private void attachTextChangedListener(final MaterialEditText referenceEditText,
                                            final ImageButton doneButton,
-                                           final JSONObject repeatingGroupCount,
                                            final WidgetArgs widgetArgs) {
 
         referenceEditText.addTextChangedListener(new TextWatcher() {
@@ -377,21 +335,9 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
             @Override
             public void afterTextChanged(Editable s) {
                 doneButton.setImageResource(R.drawable.ic_done_grey);
-                ValidationStatus validationStatus = JsonFormFragmentPresenter
-                        .validate(widgetArgs.getFormFragment(), referenceEditText, false);
-                if (validationStatus.isValid()) {
-                    writeJsonObjectValue(repeatingGroupCount, s.toString());
-                }
+                JsonFormFragmentPresenter.validate(widgetArgs.getFormFragment(), referenceEditText, false);
             }
         });
-    }
-
-    private void writeJsonObjectValue(JSONObject jsonObject, String value) {
-        try {
-            jsonObject.put(VALUE, value);
-        } catch (JSONException e) {
-            Timber.e(e);
-        }
     }
 
     private void addRequiredValidator(JSONObject jsonObject, MaterialEditText editText) throws JSONException {
@@ -447,7 +393,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         return context instanceof JsonApi ? (JsonApi) context : null;
     }
 
-    private JSONArray getStepFields (JSONObject step) {
+    private JSONArray getStepFields(JSONObject step) {
         return step.optJSONArray(FIELDS);
     }
 }

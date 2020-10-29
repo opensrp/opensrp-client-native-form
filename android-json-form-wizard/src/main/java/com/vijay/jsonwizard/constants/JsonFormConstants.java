@@ -226,7 +226,6 @@ public class JsonFormConstants {
     public static final String DEFAULT_FORMS_DIRECTORY = "opensrpNativeFormTester";
     public static final String JSON_FORM_DIRECTORY = "json.form";
     public static final String MEDIA_LOGIC = "media_logic";
-    public static final String REPEATING_GROUPS_GENERATED_COUNT = "generated_groups_count";
 
     public static final String PROPERTIES_FILE_EXTENSION = ".properties";
     public static final String JSON_FILE_EXTENSION = ".json";
