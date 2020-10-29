@@ -176,7 +176,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
     /**
      * Sets min and max number of repeating groups
      */
-    private void setRepeatingGroupNumLimits(WidgetArgs widgetArgs) {
+    public void setRepeatingGroupNumLimits(WidgetArgs widgetArgs) {
         try {
             MIN_NUM_REPEATING_GROUPS = widgetArgs.getJsonObject().optInt(REPEATING_GROUP_MIN, MIN_NUM_REPEATING_GROUPS);
             MAX_NUM_REPEATING_GROUPS = widgetArgs.getJsonObject().optInt(REPEATING_GROUP_MAX, MAX_NUM_REPEATING_GROUPS);
@@ -297,27 +297,6 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         Context context = widgetArgs.getContext();
         if (isRemoteReferenceValueUsed(referenceEditText)) {
             referenceEditText.setVisibility(View.GONE);
-        } else {
-            // generate repeating groups on when keyboard done button is pressed
-            referenceEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                @Override
-                public boolean onEditorAction(TextView focusTextView, int actionId, KeyEvent event) {
-                    if (actionId == EditorInfo.IME_ACTION_DONE) {
-                        addOnDoneAction(focusTextView, doneButton, widgetArgs);
-                        return true;
-                    }
-                    return false;
-                }
-            });
-            // generate repeating groups on focus change
-            referenceEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View view, boolean hasFocus) {
-                    if (!hasFocus) {
-                        addOnDoneAction((TextView) view, doneButton, widgetArgs);
-                    }
-                }
-            });
         }
 
         referenceEditText.setTag(R.id.address, widgetArgs.getStepName() + ":" + widgetArgs.getJsonObject().getString(KEY));
