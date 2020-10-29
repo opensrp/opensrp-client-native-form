@@ -176,7 +176,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
     /**
      * Sets min and max number of repeating groups
      */
-    private void setRepeatingGroupNumLimits(WidgetArgs widgetArgs) {
+    public void setRepeatingGroupNumLimits(WidgetArgs widgetArgs) {
         try {
             MIN_NUM_REPEATING_GROUPS = widgetArgs.getJsonObject().optInt(REPEATING_GROUP_MIN, MIN_NUM_REPEATING_GROUPS);
             MAX_NUM_REPEATING_GROUPS = widgetArgs.getJsonObject().optInt(REPEATING_GROUP_MAX, MAX_NUM_REPEATING_GROUPS);
@@ -297,27 +297,6 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         Context context = widgetArgs.getContext();
         if (isRemoteReferenceValueUsed(referenceEditText)) {
             referenceEditText.setVisibility(View.GONE);
-        } else {
-            // generate repeating groups on when keyboard done button is pressed
-            referenceEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                @Override
-                public boolean onEditorAction(TextView focusTextView, int actionId, KeyEvent event) {
-                    if (actionId == EditorInfo.IME_ACTION_DONE) {
-                        addOnDoneAction(focusTextView, doneButton, widgetArgs);
-                        return true;
-                    }
-                    return false;
-                }
-            });
-            // generate repeating groups on focus change
-            referenceEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View view, boolean hasFocus) {
-                    if (!hasFocus) {
-                        addOnDoneAction((TextView) view, doneButton, widgetArgs);
-                    }
-                }
-            });
         }
 
         referenceEditText.setTag(R.id.address, widgetArgs.getStepName() + ":" + widgetArgs.getJsonObject().getString(KEY));
@@ -359,6 +338,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
             @Override
             public void afterTextChanged(Editable s) {
                 doneButton.setImageResource(R.drawable.ic_done_grey);
+                addOnDoneAction(referenceEditText, doneButton, widgetArgs);
                 ValidationStatus validationStatus = JsonFormFragmentPresenter
                         .validate(widgetArgs.getFormFragment(), referenceEditText, false);
                 if (validationStatus.isValid()) {
@@ -392,10 +372,19 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
             InputMethodManager inputMethodManager = (InputMethodManager) widgetArgs.getFormFragment().getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0);
             textView.clearFocus();
+            int numberOfGroups = parseIntWithDefault(textView.getText().toString());
             attachRepeatingGroup(textView.getParent().getParent(),
-                    Integer.parseInt(textView.getText().toString()), doneButton, widgetArgs);
+                    numberOfGroups, doneButton, widgetArgs);
         } catch (Exception e) {
             Timber.e(e);
+        }
+    }
+
+    public static int parseIntWithDefault(String s) {
+        try {
+            return Integer.parseInt(s);
+        } catch(NumberFormatException e) {
+            return 0;
         }
     }
 
