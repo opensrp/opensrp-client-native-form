@@ -297,18 +297,6 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         Context context = widgetArgs.getContext();
         if (isRemoteReferenceValueUsed(referenceEditText)) {
             referenceEditText.setVisibility(View.GONE);
-        } else {
-            // generate repeating groups on when keyboard done button is pressed
-            referenceEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                @Override
-                public boolean onEditorAction(TextView focusTextView, int actionId, KeyEvent event) {
-                    if (actionId == EditorInfo.IME_ACTION_DONE) {
-                        addOnDoneAction(focusTextView, doneButton, widgetArgs);
-                        return true;
-                    }
-                    return false;
-                }
-            });
         }
 
         referenceEditText.setTag(R.id.address, widgetArgs.getStepName() + ":" + widgetArgs.getJsonObject().getString(KEY));
