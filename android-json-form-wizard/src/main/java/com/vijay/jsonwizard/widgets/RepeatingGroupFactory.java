@@ -111,7 +111,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                 referenceEditText, remoteReferenceEditText, doneButton, widgetArgs);
 
         setUpReferenceEditText(doneButton, referenceEditText, referenceEditTextHint,
-                repeatingGroupLabel, countFieldObject, widgetArgs);
+                repeatingGroupLabel, widgetArgs);
 
 
         // Disable the done button if the reference edit text being used is remote & has a valid value
@@ -278,7 +278,6 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                                         final MaterialEditText referenceEditText,
                                         final String referenceEditTextHint,
                                         final String repeatingGroupLabel,
-                                        final JSONObject repeatingGroupCount,
                                         final WidgetArgs widgetArgs) throws JSONException {
         // We should disable this edit_text if another referenced edit text is being used
         Context context = widgetArgs.getContext();

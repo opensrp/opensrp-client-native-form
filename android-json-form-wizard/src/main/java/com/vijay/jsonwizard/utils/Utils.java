@@ -893,26 +893,25 @@ public class Utils {
     public static JSONObject getRepeatingGroupCountObj(@NotNull WidgetArgs widgetArgs) throws JSONException {
         String repeatingGroupCountObjKey = widgetArgs.getJsonObject().get(KEY) + "_count";
         JSONObject stepJsonObject = widgetArgs.getFormFragment().getStep(widgetArgs.getStepName());
-        if (stepJsonObject != null) {
-            JSONArray stepFields = stepJsonObject.optJSONArray(JsonFormConstants.FIELDS);
-            JSONObject repeatingGroupCountObj = FormUtils.getFieldJSONObject(stepFields, repeatingGroupCountObjKey);
-            // prevents re-adding the count object during form traversals
-            if (repeatingGroupCountObj != null) {
-                return repeatingGroupCountObj;
-            }
-
-            repeatingGroupCountObj = new JSONObject();
-            repeatingGroupCountObj.put(KEY, repeatingGroupCountObjKey);
-            repeatingGroupCountObj.put(OPENMRS_ENTITY_PARENT, "");
-            repeatingGroupCountObj.put(OPENMRS_ENTITY, "");
-            repeatingGroupCountObj.put(OPENMRS_ENTITY_ID, "");
-            repeatingGroupCountObj.put(TYPE, "");
-            repeatingGroupCountObj.put(TEXT, widgetArgs.getJsonObject().get(REFERENCE_EDIT_TEXT_HINT));
-            stepFields.put(repeatingGroupCountObj);
-            return repeatingGroupCountObj;
-        } else {
+        if (stepJsonObject == null) {
             return null;
         }
+        JSONArray stepFields = stepJsonObject.optJSONArray(JsonFormConstants.FIELDS);
+        JSONObject repeatingGroupCountObj = FormUtils.getFieldJSONObject(stepFields, repeatingGroupCountObjKey);
+        // prevents re-adding the count object during form traversals
+        if (repeatingGroupCountObj != null) {
+            return repeatingGroupCountObj;
+        }
+
+        repeatingGroupCountObj = new JSONObject();
+        repeatingGroupCountObj.put(KEY, repeatingGroupCountObjKey);
+        repeatingGroupCountObj.put(OPENMRS_ENTITY_PARENT, "");
+        repeatingGroupCountObj.put(OPENMRS_ENTITY, "");
+        repeatingGroupCountObj.put(OPENMRS_ENTITY_ID, "");
+        repeatingGroupCountObj.put(TYPE, "");
+        repeatingGroupCountObj.put(TEXT, widgetArgs.getJsonObject().get(REFERENCE_EDIT_TEXT_HINT));
+        stepFields.put(repeatingGroupCountObj);
+        return repeatingGroupCountObj;
     }
 }
 
