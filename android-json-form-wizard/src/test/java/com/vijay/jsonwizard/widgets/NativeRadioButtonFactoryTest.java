@@ -1,10 +1,6 @@
 package com.vijay.jsonwizard.widgets;
 
-import android.content.res.Resources;
-
 import android.view.View;
-
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
@@ -25,8 +21,6 @@ import org.robolectric.Robolectric;
 
 import java.util.List;
 import java.util.Set;
-
-//import androidx.constraintlayout.widget.ConstraintLayout;
 
 public class NativeRadioButtonFactoryTest extends BaseTest {
     private NativeRadioButtonFactory factory;

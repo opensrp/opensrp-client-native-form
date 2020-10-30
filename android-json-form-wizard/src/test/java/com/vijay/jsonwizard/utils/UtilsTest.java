@@ -13,6 +13,7 @@ import android.widget.RadioGroup;
 import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.rules.RuleConstant;
@@ -45,9 +46,6 @@ import java.util.Set;
 
 import static com.vijay.jsonwizard.utils.Utils.formatDateToPattern;
 import static com.vijay.jsonwizard.utils.Utils.isEmptyJsonArray;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class UtilsTest extends BaseTest {
 
@@ -331,6 +329,21 @@ public class UtilsTest extends BaseTest {
     }
 
     @Test
+    public void getDateForCalculationShouldReturnCorrectDateString() {
+        String date = "20-12-2021";
+        Assert.assertEquals("20-12-2021", Utils.getDateFormattedForCalculation(date, null));
+    }
+
+    @Test
+    public void getDateForCalculationReturnsDateStringWhenDisplayFormatIsSet() {
+        Form form = new Form();
+        form.setDatePickerDisplayFormat("dd MMM yyyy");
+        String date = "20 DEC 2021";
+        Assert.assertEquals("20-12-2021", Utils.getDateFormattedForCalculation(date, Form.getDatePickerDisplayFormat()));
+        form.setDatePickerDisplayFormat(null); // To not pollute other tests
+    }
+
+    @Test
     public void testGetStringValueShouldReturnStringValue() throws Exception {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put(JsonFormConstants.VALUES, new JSONArray().put("yes").put("no").put("don't know"));
@@ -353,19 +366,28 @@ public class UtilsTest extends BaseTest {
 
     @Test
     public void testFormatDateToPattern() {
-        String date = "5/29/2020";
+        String date = "05/10/2020";
         String inputFormat = "dd/MM/yyyy";
         String outputFormat = "dd MMM yyyy";
         String formattedDate = formatDateToPattern(date, inputFormat, outputFormat);
-        assertEquals("05 May 2022", formattedDate);
+        Assert.assertEquals("05 Oct 2020", formattedDate);
+    }
+
+    @Test
+    public void testFormatDateToPatternShouldReturnSameDateOnInvalidInputFormat() {
+        String date = "05/10/2020";
+        String inputFormat = "dd-MM-yyyy";
+        String outputFormat = "dd MMM yyyy";
+        String formattedDate = formatDateToPattern(date, inputFormat, outputFormat);
+        Assert.assertEquals("05/10/2020", formattedDate);
     }
 
     @Test
     public void testIsEmptyJsonArrayShouldReturnCorrectStatus() {
-        assertTrue(isEmptyJsonArray(null));
+        Assert.assertTrue(isEmptyJsonArray(null));
         JSONArray jsonArray = new JSONArray();
-        assertTrue(isEmptyJsonArray(jsonArray));
+        Assert.assertTrue(isEmptyJsonArray(jsonArray));
         jsonArray.put("value");
-        assertFalse(isEmptyJsonArray(jsonArray));
+        Assert.assertFalse(isEmptyJsonArray(jsonArray));
     }
 }

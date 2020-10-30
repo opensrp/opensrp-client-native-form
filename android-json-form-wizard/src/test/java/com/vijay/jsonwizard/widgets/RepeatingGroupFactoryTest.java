@@ -1,5 +1,6 @@
 package com.vijay.jsonwizard.widgets;
 
+import android.content.Context;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -26,6 +27,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.mock;
+
 public class RepeatingGroupFactoryTest extends FactoryTest {
 
     private RepeatingGroupFactory factory;
@@ -43,6 +47,11 @@ public class RepeatingGroupFactoryTest extends FactoryTest {
         List<View> viewList = invokeGetViewsFromJson();
         Assert.assertNotNull(viewList);
         Assert.assertEquals(1, viewList.size());
+
+        // invoke repeating group generation when reference edit text loses focus
+        MaterialEditText referenceEditText = viewList.get(0).findViewById(R.id.reference_edit_text);
+        referenceEditText.requestFocus();
+        referenceEditText.clearFocus();
     }
 
     @Test
@@ -55,11 +64,50 @@ public class RepeatingGroupFactoryTest extends FactoryTest {
     }
 
     @Test
+    public void testParseIntWithDefaultIntegerInput() {
+        final String integerString = "1";
+        final int integerFromString = 1;
+
+        Assert.assertThat(RepeatingGroupFactory.parseIntWithDefault(integerString), is(integerFromString));
+    }
+
+    @Test
+    public void testParseIntWithDefaultNullInput() {
+        final String emptyString = "";
+        final int defaultInteger = 0;
+
+        Assert.assertThat(RepeatingGroupFactory.parseIntWithDefault(emptyString), is(defaultInteger));
+    }
+
+    @Test
+    public void testSetRepeatingGroupNumLimits() {
+        RepeatingGroupFactory factorySpy = Mockito.spy(factory);
+        String stepName = "step_name";
+        Context context = mock(Context.class);
+        JsonFormFragment formFragment = mock(JsonFormFragment.class);
+        JSONObject jsonObject = new JSONObject();
+        CommonListener listener = mock(CommonListener.class);
+        boolean popup = false;
+
+        WidgetArgs widgetArgs = new WidgetArgs();
+        widgetArgs.withContext(context)
+                .withFormFragment(formFragment)
+                .withJsonObject(jsonObject)
+                .withListener(listener)
+                .withPopup(popup)
+                .withStepName(stepName);
+
+        factorySpy.setRepeatingGroupNumLimits(widgetArgs);
+        Assert.assertEquals(widgetArgs.getJsonObject().optInt("repeating_group_min", 0), factorySpy.MIN_NUM_REPEATING_GROUPS);
+        Assert.assertEquals(widgetArgs.getJsonObject().optInt("repeating_group_max", 35), factorySpy.MAX_NUM_REPEATING_GROUPS);
+    }
+
+    @Test
     public void testGetCustomTranslatableWidgetFields() {
         RepeatingGroupFactory factorySpy = Mockito.spy(factory);
 
         Set<String> editableProperties = factorySpy.getCustomTranslatableWidgetFields();
-        Assert.assertEquals(0, editableProperties.size());
+        Assert.assertEquals(1, editableProperties.size());
     }
 
     @Test
