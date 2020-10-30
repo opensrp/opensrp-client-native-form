@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Set;
 
 import static android.os.Looper.getMainLooper;
+import static org.hamcrest.Matchers.is;
 import static org.robolectric.Shadows.shadowOf;
 import static org.robolectric.annotation.LooperMode.Mode.PAUSED;
 
@@ -117,6 +118,22 @@ public class RepeatingGroupFactoryTest extends FactoryTest {
 
         String[] uniqueIdComponents = childElement.getString(JsonFormConstants.KEY).split("_");
         Assert.assertEquals(childElementKey, uniqueIdComponents[0]);
+    }
+
+    @Test
+    public void testParseIntWithDefaultIntegerInput() {
+        final String integerString = "1";
+        final int integerFromString = 1;
+
+        Assert.assertThat(RepeatingGroupFactory.parseIntWithDefault(integerString), is(integerFromString));
+    }
+
+    @Test
+    public void testParseIntWithDefaultNullInput() {
+        final String emptyString = "";
+        final int defaultInteger = 0;
+
+        Assert.assertThat(RepeatingGroupFactory.parseIntWithDefault(emptyString), is(defaultInteger));
     }
 
     private List<View> invokeGetViewsFromJson() throws Exception {

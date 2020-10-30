@@ -358,9 +358,17 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
             inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0);
             textView.clearFocus();
             attachRepeatingGroup(textView.getParent().getParent(),
-                    Integer.parseInt(textView.getText().toString()), doneButton, widgetArgs);
+                    parseIntWithDefault(textView.getText().toString()), doneButton, widgetArgs);
         } catch (Exception e) {
             Timber.e(e);
+        }
+    }
+
+    public static int parseIntWithDefault(String s) {
+        try {
+            return Integer.parseInt(s);
+        } catch (NumberFormatException e) {
+            return 0;
         }
     }
 
