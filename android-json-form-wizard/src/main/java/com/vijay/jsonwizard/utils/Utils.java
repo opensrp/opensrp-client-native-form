@@ -291,7 +291,7 @@ public class Utils {
         CustomTextView reasonsText = (CustomTextView) button.getTag(R.id.specify_reasons_textview);
         CustomTextView extraInfoTextView = (CustomTextView) button.getTag(R.id.specify_extra_info_textview);
         JSONObject optionsJson = (JSONObject) button.getTag(R.id.option_json_object);
-        String radioButtonText = optionsJson.optString(JsonFormConstants.TEXT);
+        String radioButtonText = optionsJson.optString(TEXT);
         button.setText(radioButtonText);
 
         if (specifyText != null && optionsJson.has(JsonFormConstants.CONTENT_INFO)) {
@@ -352,7 +352,7 @@ public class Utils {
 
                 JSONArray jsonArrayRules = new JSONArray();
                 JSONObject keyJsonObject = new JSONObject();
-                keyJsonObject.put(JsonFormConstants.KEY, ruleType + "/" + uniqueId);
+                keyJsonObject.put(KEY, ruleType + "/" + uniqueId);
                 jsonArrayRules.put(keyJsonObject);
                 for (Map<String, Object> map : mapArrayList) {
                     JSONObject jsonRulesDynamicObject = new JSONObject();
@@ -427,7 +427,7 @@ public class Utils {
     }
 
     public static void handleFieldBehaviour(JSONObject fieldObject, Form form) {
-        String key = fieldObject.optString(JsonFormConstants.KEY);
+        String key = fieldObject.optString(KEY);
 
         if (form != null && form.getHiddenFields() != null && form.getHiddenFields().contains(key)) {
             makeFieldHidden(fieldObject);
@@ -460,7 +460,7 @@ public class Utils {
      */
     public static void makeFieldHidden(JSONObject fieldObject) {
         try {
-            fieldObject.put(JsonFormConstants.TYPE, JsonFormConstants.HIDDEN);
+            fieldObject.put(TYPE, JsonFormConstants.HIDDEN);
         } catch (JSONException e) {
             Timber.e(e);
         }
@@ -505,7 +505,7 @@ public class Utils {
 
     protected String getKey(JSONObject object) throws JSONException {
         return object.has(RuleConstant.IS_RULE_CHECK) && object.getBoolean(RuleConstant.IS_RULE_CHECK) ?
-                object.get(RuleConstant.STEP) + "_" + object.get(JsonFormConstants.KEY) : JsonFormConstants.VALUE;
+                object.get(RuleConstant.STEP) + "_" + object.get(KEY) : JsonFormConstants.VALUE;
     }
 
     protected Object getValue(JSONObject object) throws JSONException {
@@ -533,7 +533,7 @@ public class Utils {
     protected boolean isNumberWidget(JSONObject object) throws JSONException {
         return object.has(JsonFormConstants.EDIT_TYPE) &&
                 object.getString(JsonFormConstants.EDIT_TYPE).equals(JsonFormConstants.EDIT_TEXT_TYPE.NUMBER) ||
-                object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.NUMBER_SELECTOR);
+                object.getString(TYPE).equals(JsonFormConstants.NUMBER_SELECTOR);
     }
 
     protected Object processNumberValues(Object object) {
@@ -551,8 +551,8 @@ public class Utils {
     }
 
     protected boolean canHaveNumber(JSONObject object) throws JSONException {
-        return isNumberWidget(object) || object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.HIDDEN) ||
-                object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.SPINNER);
+        return isNumberWidget(object) || object.getString(TYPE).equals(JsonFormConstants.HIDDEN) ||
+                object.getString(TYPE).equals(JsonFormConstants.SPINNER);
     }
 
     public void setChildKey(View view, String type, ExpansionPanelGenericPopupDialog genericPopupDialog) {
@@ -810,8 +810,8 @@ public class Utils {
             JSONArray fields = jsonStepObject.optJSONArray(JsonFormConstants.FIELDS);
             for (int i = 0; i < fields.length(); i++) {
                 JSONObject object = fields.optJSONObject(i);
-                if (object.has(JsonFormConstants.TYPE)
-                        && !object.optString(JsonFormConstants.TYPE).equals(JsonFormConstants.HIDDEN)
+                if (object.has(TYPE)
+                        && !object.optString(TYPE).equals(JsonFormConstants.HIDDEN)
                         && !object.has(JsonFormConstants.RELEVANCE)) {
                     hasNoSkipLogic = true;
                     break;
