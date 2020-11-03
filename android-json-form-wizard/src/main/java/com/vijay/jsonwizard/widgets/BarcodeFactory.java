@@ -56,7 +56,7 @@ public class BarcodeFactory implements FormWidgetFactory {
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
-        return attachJson(stepName, context, formFragment, jsonObject, true);
+        return getViewsFromJson(stepName, context, formFragment, jsonObject, listener, false);
     }
 
     @Override
@@ -67,74 +67,72 @@ public class BarcodeFactory implements FormWidgetFactory {
     }
 
     @Override
-    public List<View> getViewsFromJson(String stepName, final Context context,
-                                       JsonFormFragment formFragment, final JSONObject jsonObject,
-                                       CommonListener listener, boolean popup) {
-        return attachJson(stepName, context, formFragment, jsonObject, popup);
+    public List<View> getViewsFromJson(final String stepName, final Context context,
+                                       final JsonFormFragment formFragment, final JSONObject jsonObject,
+                                       CommonListener listener, final boolean popup) throws Exception {
+
+        List<View> views = new ArrayList<>(1);
+        final RelativeLayout rootLayout = getRootLayout(context);
+        final int canvasId = ViewUtil.generateViewId();
+        formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
+            @Override
+            public void run() {
+                rootLayout.setId(canvasId);
+                final MaterialEditText editText = createEditText(rootLayout, jsonObject, canvasId, stepName, popup);
+                attachJson(rootLayout, stepName, context, formFragment, jsonObject, editText);
+                ((JsonApi) context).addFormDataView(editText);
+            }
+        });
+        views.add(rootLayout);
+        return views;
     }
 
-    private List<View> attachJson(final String stepName, final Context context, final JsonFormFragment formFragment,
-                                  final JSONObject jsonObject, final boolean popup) {
-        List<View> views = new ArrayList<>(1);
+    private void attachJson(final RelativeLayout rootLayout, final String stepName, final Context context, final JsonFormFragment formFragment,
+                                  final JSONObject jsonObject, final MaterialEditText editText) {
         try {
             final String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
             final String calculation = jsonObject.optString(JsonFormConstants.CALCULATION);
             final String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
             final String value = jsonObject.optString(JsonFormConstants.VALUE, null);
 
-            final RelativeLayout rootLayout = getRootLayout(context);
-            final int canvasId = ViewUtil.generateViewId();
-            rootLayout.setId(canvasId);
-            final MaterialEditText editText = createEditText(rootLayout, jsonObject, canvasId, stepName, popup);
 
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
+
+            if (value != null && !checkValue(value)) {
+                editText.setText(value);
+            }
+
+            editText.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void run() {
-
-                    if (value != null && !checkValue(value)) {
-                        editText.setText(value);
-                    }
-
-                    editText.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            addOnClickActions(context, editText, jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
-                        }
-                    });
-
-                    editText.setOnLongClickListener(new View.OnLongClickListener() {
-                        @Override
-                        public boolean onLongClick(View v) {
-                            editText.setText("");
-                            return true;
-                        }
-                    });
-
-                    GenericTextWatcher textWatcher = new GenericTextWatcher(stepName, formFragment, editText);
-                    textWatcher.addOnFocusChangeListener(new View.OnFocusChangeListener() {
-                        @Override
-                        public void onFocusChange(View v, boolean hasFocus) {
-                            if (hasFocus) {
-                                addOnClickActions(context, editText, jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
-                            }
-                        }
-                    });
-
-                    addScanButton(context, jsonObject, editText, rootLayout);
-
-                    editText.addTextChangedListener(textWatcher);
-                    attachRefreshLogic(context, relevance, calculation, constraints, editText);
+                public void onClick(View v) {
+                    addOnClickActions(context, editText, jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
                 }
             });
 
-            ((JsonApi) context).addFormDataView(editText);
+            editText.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    editText.setText("");
+                    return true;
+                }
+            });
 
-            views.add(rootLayout);
+            GenericTextWatcher textWatcher = new GenericTextWatcher(stepName, formFragment, editText);
+            textWatcher.addOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (hasFocus) {
+                        addOnClickActions(context, editText, jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
+                    }
+                }
+            });
+
+            addScanButton(context, jsonObject, editText, rootLayout);
+
+            editText.addTextChangedListener(textWatcher);
+            attachRefreshLogic(context, relevance, calculation, constraints, editText);
         } catch (Exception e) {
             Timber.e(e);
         }
-
-        return views;
     }
 
     private void attachRefreshLogic(Context context, String relevance, String calculation, String constraints, MaterialEditText editText) {
@@ -182,33 +180,36 @@ public class BarcodeFactory implements FormWidgetFactory {
         }
     }
 
-    private MaterialEditText createEditText(RelativeLayout rootLayout, JSONObject jsonObject, int canvasId, String stepName, boolean popup) throws JSONException {
-        String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
-        String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
-        String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
+    private MaterialEditText createEditText(RelativeLayout rootLayout, JSONObject jsonObject, int canvasId, String stepName, boolean popup) {
         final MaterialEditText editText = rootLayout.findViewById(R.id.edit_text);
-        editText.setHint(jsonObject.getString(JsonFormConstants.HINT));
-        JSONArray canvasIdsArray = new JSONArray();
-        canvasIdsArray.put(canvasId);
-        editText.setTag(R.id.canvas_ids, canvasIdsArray.toString());
-        editText.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
-        editText.setFloatingLabelText(jsonObject.getString(JsonFormConstants.HINT));
-        editText.setId(ViewUtil.generateViewId());
-        editText.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
-        editText.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
-        editText.setTag(R.id.extraPopup, popup);
-        editText.setTag(R.id.openmrs_entity, openMrsEntity);
-        editText.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-        if (jsonObject.has(JsonFormConstants.V_REQUIRED)) {
-            JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
-            boolean requiredValue = requiredObject.getBoolean(JsonFormConstants.VALUE);
-            if (Boolean.TRUE.equals(requiredValue)) {
-                editText.addValidator(
-                        new RequiredValidator(requiredObject.getString(JsonFormConstants.ERR)));
-                FormUtils.setRequiredOnHint(editText);
+        try {
+            String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
+            String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
+            String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
+            editText.setHint(jsonObject.getString(JsonFormConstants.HINT));
+            JSONArray canvasIdsArray = new JSONArray();
+            canvasIdsArray.put(canvasId);
+            editText.setTag(R.id.canvas_ids, canvasIdsArray.toString());
+            editText.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+            editText.setFloatingLabelText(jsonObject.getString(JsonFormConstants.HINT));
+            editText.setId(ViewUtil.generateViewId());
+            editText.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+            editText.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
+            editText.setTag(R.id.extraPopup, popup);
+            editText.setTag(R.id.openmrs_entity, openMrsEntity);
+            editText.setTag(R.id.openmrs_entity_id, openMrsEntityId);
+            if (jsonObject.has(JsonFormConstants.V_REQUIRED)) {
+                JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
+                boolean requiredValue = requiredObject.getBoolean(JsonFormConstants.VALUE);
+                if (Boolean.TRUE.equals(requiredValue)) {
+                    editText.addValidator(
+                            new RequiredValidator(requiredObject.getString(JsonFormConstants.ERR)));
+                    FormUtils.setRequiredOnHint(editText);
+                }
             }
+        } catch (JSONException e) {
+            Timber.e(e);
         }
-
         return editText;
     }
 
