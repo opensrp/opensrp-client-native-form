@@ -5,8 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -77,10 +75,14 @@ public class BarcodeFactory implements FormWidgetFactory {
         formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
             @Override
             public void run() {
-                rootLayout.setId(canvasId);
-                final MaterialEditText editText = createEditText(rootLayout, jsonObject, canvasId, stepName, popup);
-                attachJson(rootLayout, stepName, context, formFragment, jsonObject, editText);
-                ((JsonApi) context).addFormDataView(editText);
+                try {
+                    rootLayout.setId(canvasId);
+                    final MaterialEditText editText = createEditText(rootLayout, jsonObject, canvasId, stepName, popup);
+                    attachJson(rootLayout, stepName, context, formFragment, jsonObject, editText);
+                    ((JsonApi) context).addFormDataView(editText);
+                } catch (JSONException e) {
+                    Timber.e(e);
+                }
             }
         });
         views.add(rootLayout);
@@ -88,51 +90,46 @@ public class BarcodeFactory implements FormWidgetFactory {
     }
 
     private void attachJson(final RelativeLayout rootLayout, final String stepName, final Context context, final JsonFormFragment formFragment,
-                                  final JSONObject jsonObject, final MaterialEditText editText) {
-        try {
-            final String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
-            final String calculation = jsonObject.optString(JsonFormConstants.CALCULATION);
-            final String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
-            final String value = jsonObject.optString(JsonFormConstants.VALUE, null);
+                            final JSONObject jsonObject, final MaterialEditText editText) throws JSONException {
+        final String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
+        final String calculation = jsonObject.optString(JsonFormConstants.CALCULATION);
+        final String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
+        final String value = jsonObject.optString(JsonFormConstants.VALUE, null);
 
 
+        if (value != null && !checkValue(value)) {
+            editText.setText(value);
+        }
 
-            if (value != null && !checkValue(value)) {
-                editText.setText(value);
+        editText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addOnClickActions(context, editText, jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
             }
+        });
 
-            editText.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+        editText.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                editText.setText("");
+                return true;
+            }
+        });
+
+        GenericTextWatcher textWatcher = new GenericTextWatcher(stepName, formFragment, editText);
+        textWatcher.addOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
                     addOnClickActions(context, editText, jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
                 }
-            });
+            }
+        });
 
-            editText.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    editText.setText("");
-                    return true;
-                }
-            });
+        addScanButton(context, jsonObject, editText, rootLayout);
 
-            GenericTextWatcher textWatcher = new GenericTextWatcher(stepName, formFragment, editText);
-            textWatcher.addOnFocusChangeListener(new View.OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if (hasFocus) {
-                        addOnClickActions(context, editText, jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
-                    }
-                }
-            });
-
-            addScanButton(context, jsonObject, editText, rootLayout);
-
-            editText.addTextChangedListener(textWatcher);
-            attachRefreshLogic(context, relevance, calculation, constraints, editText);
-        } catch (Exception e) {
-            Timber.e(e);
-        }
+        editText.addTextChangedListener(textWatcher);
+        attachRefreshLogic(context, relevance, calculation, constraints, editText);
     }
 
     private void attachRefreshLogic(Context context, String relevance, String calculation, String constraints, MaterialEditText editText) {
@@ -180,67 +177,59 @@ public class BarcodeFactory implements FormWidgetFactory {
         }
     }
 
-    private MaterialEditText createEditText(RelativeLayout rootLayout, JSONObject jsonObject, int canvasId, String stepName, boolean popup) {
+    private MaterialEditText createEditText(RelativeLayout rootLayout, JSONObject jsonObject, int canvasId, String stepName, boolean popup) throws JSONException {
         final MaterialEditText editText = rootLayout.findViewById(R.id.edit_text);
-        try {
-            String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
-            String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
-            String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
-            editText.setHint(jsonObject.getString(JsonFormConstants.HINT));
-            JSONArray canvasIdsArray = new JSONArray();
-            canvasIdsArray.put(canvasId);
-            editText.setTag(R.id.canvas_ids, canvasIdsArray.toString());
-            editText.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
-            editText.setFloatingLabelText(jsonObject.getString(JsonFormConstants.HINT));
-            editText.setId(ViewUtil.generateViewId());
-            editText.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
-            editText.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
-            editText.setTag(R.id.extraPopup, popup);
-            editText.setTag(R.id.openmrs_entity, openMrsEntity);
-            editText.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-            if (jsonObject.has(JsonFormConstants.V_REQUIRED)) {
-                JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
-                boolean requiredValue = requiredObject.getBoolean(JsonFormConstants.VALUE);
-                if (Boolean.TRUE.equals(requiredValue)) {
-                    editText.addValidator(
-                            new RequiredValidator(requiredObject.getString(JsonFormConstants.ERR)));
-                    FormUtils.setRequiredOnHint(editText);
-                }
+        String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
+        String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
+        String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
+        editText.setHint(jsonObject.getString(JsonFormConstants.HINT));
+        JSONArray canvasIdsArray = new JSONArray();
+        canvasIdsArray.put(canvasId);
+        editText.setTag(R.id.canvas_ids, canvasIdsArray.toString());
+        editText.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+        editText.setFloatingLabelText(jsonObject.getString(JsonFormConstants.HINT));
+        editText.setId(ViewUtil.generateViewId());
+        editText.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+        editText.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
+        editText.setTag(R.id.extraPopup, popup);
+        editText.setTag(R.id.openmrs_entity, openMrsEntity);
+        editText.setTag(R.id.openmrs_entity_id, openMrsEntityId);
+        if (jsonObject.has(JsonFormConstants.V_REQUIRED)) {
+            JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
+            boolean requiredValue = requiredObject.getBoolean(JsonFormConstants.VALUE);
+            if (Boolean.TRUE.equals(requiredValue)) {
+                editText.addValidator(
+                        new RequiredValidator(requiredObject.getString(JsonFormConstants.ERR)));
+                FormUtils.setRequiredOnHint(editText);
             }
-        } catch (JSONException e) {
-            Timber.e(e);
         }
         return editText;
     }
 
-    private void addScanButton(final Context context, final JSONObject jsonObject, final MaterialEditText editText, RelativeLayout rootLayout) {
-        try {
-            Button scanButton = rootLayout.findViewById(R.id.scan_button);
-            scanButton.setBackgroundColor(context.getResources().getColor(R.color.primary));
-            scanButton.setMinHeight(0);
-            scanButton.setMinimumHeight(0);
-            scanButton.setText(jsonObject.getString(SCAN_BUTTON_TEXT));
-            scanButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    addOnClickActions(context, editText, jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
-                }
-            });
-
-            if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
-                boolean readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
-                editText.setEnabled(!readOnly);
-                editText.setFocusable(!readOnly);
-                if (readOnly) {
-                    scanButton.setBackgroundDrawable(new ColorDrawable(context.getResources()
-                            .getColor(android.R.color.darker_gray)));
-                    scanButton.setClickable(false);
-                    scanButton.setEnabled(false);
-                    scanButton.setFocusable(false);
-                }
+    private void addScanButton(final Context context, final JSONObject jsonObject, final MaterialEditText editText, RelativeLayout rootLayout) throws JSONException {
+        Button scanButton = rootLayout.findViewById(R.id.scan_button);
+        scanButton.setBackgroundColor(context.getResources().getColor(R.color.primary));
+        scanButton.setMinHeight(0);
+        scanButton.setMinimumHeight(0);
+        scanButton.setText(jsonObject.getString(SCAN_BUTTON_TEXT));
+        scanButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addOnClickActions(context, editText, jsonObject.optString(JsonFormConstants.BARCODE_TYPE));
             }
-        } catch (JSONException e) {
-            Timber.e(e);
+        });
+
+        if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
+            boolean readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
+            editText.setEnabled(!readOnly);
+            editText.setFocusable(!readOnly);
+            if (readOnly) {
+                scanButton.setBackgroundDrawable(new ColorDrawable(context.getResources()
+                        .getColor(android.R.color.darker_gray)));
+                scanButton.setClickable(false);
+                scanButton.setEnabled(false);
+                scanButton.setFocusable(false);
+            }
         }
     }
 
