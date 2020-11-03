@@ -39,6 +39,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import timber.log.Timber;
+
 /**
  * Captures GPS locations
  * <p>
@@ -83,23 +85,21 @@ public class GpsFactory implements FormWidgetFactory {
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
-        return attachJson(stepName, context, formFragment, jsonObject, false);
+        return getViewsFromJson(stepName, context, formFragment, jsonObject, listener, false);
     }
 
-    private List<View> attachJson(String stepName, final Context context, JsonFormFragment formFragment, JSONObject jsonObject,
+    private List<View> attachJson(String stepName, final Context context, final JsonFormFragment formFragment, JSONObject jsonObject,
                                   boolean popup) throws JSONException {
 
         List<View> views = new ArrayList<>();
-        View rootLayout = getRootLayout(context);
+        final View rootLayout = getRootLayout(context);
         final int canvasId = ViewUtil.generateViewId();
         rootLayout.setId(canvasId);
-
 
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
-
 
         final Button recordButton = rootLayout.findViewById(R.id.record_button);
 
@@ -115,7 +115,17 @@ public class GpsFactory implements FormWidgetFactory {
                 .withJsonObject(jsonObject)
                 .withPopup(popup);
 
-        setUpViews(recordButton, widgetArgs, rootLayout, metadata, formFragment);
+
+        formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    setUpViews(recordButton, widgetArgs, rootLayout, metadata, formFragment);
+                } catch (JSONException e) {
+                    Timber.e(e);
+                }
+            }
+        });
 
         ((JsonApi) context).addFormDataView(recordButton);
         views.add(rootLayout);
@@ -127,7 +137,8 @@ public class GpsFactory implements FormWidgetFactory {
         return LayoutInflater.from(context).inflate(R.layout.item_gps, null);
     }
 
-    protected void setUpViews(final Button recordButton, WidgetArgs widgetArgs, View rootLayout, WidgetMetadata metadata, JsonFormFragment formFragment) throws JSONException {
+    protected void setUpViews(final Button recordButton, WidgetArgs widgetArgs, View rootLayout,
+                              WidgetMetadata metadata, JsonFormFragment formFragment) throws JSONException {
 
         final Context context = widgetArgs.getContext();
         final JSONObject jsonObject = widgetArgs.getJsonObject();
@@ -166,12 +177,7 @@ public class GpsFactory implements FormWidgetFactory {
 
         attachLayout(context, jsonObject, recordButton, latitudeTV, longitudeTV, altitudeTV, accuracyTV);
 
-        formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
-            @Override
-            public void run() {
-                gpsDialog = getGpsDialog(recordButton, context, latitudeTV, longitudeTV, altitudeTV, accuracyTV);
-            }
-        });
+        gpsDialog = getGpsDialog(recordButton, context, latitudeTV, longitudeTV, altitudeTV, accuracyTV);
 
         customizeViews(recordButton, context);
 
