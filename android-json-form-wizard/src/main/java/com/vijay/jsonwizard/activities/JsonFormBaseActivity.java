@@ -40,6 +40,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import timber.log.Timber;
 
@@ -83,8 +84,8 @@ public abstract class JsonFormBaseActivity extends MultiLanguageActivity impleme
         findViewById(R.id.native_form_activity).setFilterTouchesWhenObscured(true);
         mToolbar = findViewById(R.id.tb_top);
         setSupportActionBar(mToolbar);
-        skipLogicViews = new LinkedHashMap<>();
-        calculationLogicViews = new LinkedHashMap<>();
+        skipLogicViews = new ConcurrentHashMap<>();
+        calculationLogicViews = new ConcurrentHashMap<>();
         constrainedViews = new LinkedHashMap<>();
         onActivityResultListeners = new HashMap<>();
         onActivityRequestPermissionResultListeners = new HashMap<>();
@@ -152,8 +153,9 @@ public abstract class JsonFormBaseActivity extends MultiLanguageActivity impleme
 
     public synchronized void initializeFormFragment() {
         isFormFragmentInitialized = true;
+        JsonFormFragment formFragment = JsonFormFragment.getFormFragment(JsonFormConstants.FIRST_STEP_NAME);
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.container, JsonFormFragment.getFormFragment(JsonFormConstants.FIRST_STEP_NAME)).commitAllowingStateLoss();
+                .add(R.id.container, formFragment).commitAllowingStateLoss();
     }
 
     public void onFormStart() {

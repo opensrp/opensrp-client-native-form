@@ -52,7 +52,7 @@ public class ButtonFactory implements FormWidgetFactory {
         return getViewsFromJson(stepName, context, formFragment, jsonObject, listener, false);
     }
 
-    private List<View> attachJson(String stepName, final Context context, final JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws JSONException {
+    private List<View> attachJson(String stepName, final Context context, final JsonFormFragment formFragment, JSONObject jsonObject, final CommonListener listener, boolean popup) throws JSONException {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
@@ -148,6 +148,8 @@ public class ButtonFactory implements FormWidgetFactory {
                     }
                 }
             });
+        } else {
+            button.setOnClickListener(listener);
         }
 
         ((JsonApi) context).addFormDataView(button);

@@ -6,6 +6,7 @@ import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
@@ -25,6 +26,7 @@ import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.CompoundButton;
 import com.vijay.jsonwizard.customviews.ExpansionPanelGenericPopupDialog;
 import com.vijay.jsonwizard.domain.Form;
+import com.vijay.jsonwizard.domain.WidgetArgs;
 import com.vijay.jsonwizard.event.BaseEvent;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.rules.RuleConstant;
@@ -63,7 +65,14 @@ import java.util.concurrent.TimeUnit;
 
 import timber.log.Timber;
 
+import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.OPENMRS_ENTITY;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.OPENMRS_ENTITY_ID;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.OPENMRS_ENTITY_PARENT;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.TEXT;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.TYPE;
 import static com.vijay.jsonwizard.utils.NativeFormLangUtils.getTranslatedString;
+import static com.vijay.jsonwizard.widgets.RepeatingGroupFactory.REFERENCE_EDIT_TEXT_HINT;
 
 public class Utils {
     public final static List<String> PREFICES_OF_INTEREST = Arrays.asList(RuleConstant.PREFIX.GLOBAL, RuleConstant.STEP);
@@ -282,7 +291,7 @@ public class Utils {
         CustomTextView reasonsText = (CustomTextView) button.getTag(R.id.specify_reasons_textview);
         CustomTextView extraInfoTextView = (CustomTextView) button.getTag(R.id.specify_extra_info_textview);
         JSONObject optionsJson = (JSONObject) button.getTag(R.id.option_json_object);
-        String radioButtonText = optionsJson.optString(JsonFormConstants.TEXT);
+        String radioButtonText = optionsJson.optString(TEXT);
         button.setText(radioButtonText);
 
         if (specifyText != null && optionsJson.has(JsonFormConstants.CONTENT_INFO)) {
@@ -316,7 +325,8 @@ public class Utils {
         return conditionString.replaceAll("  ", " ");
     }
 
-    public static void buildRulesWithUniqueId(JSONObject element, String uniqueId, String ruleType, Context context, Map<String, List<Map<String, Object>>> rulesFileMap) throws JSONException {
+    public static void buildRulesWithUniqueId(JSONObject element, String uniqueId, String ruleType,
+                                              Context context, Map<String, List<Map<String, Object>>> rulesFileMap, String stepName) throws JSONException {
         JSONObject rules = element.optJSONObject(ruleType);
         if (rules != null) {
             if (rules.has(RuleConstant.RULES_ENGINE) && context != null) {
@@ -342,19 +352,32 @@ public class Utils {
 
                 JSONArray jsonArrayRules = new JSONArray();
                 JSONObject keyJsonObject = new JSONObject();
-                keyJsonObject.put(JsonFormConstants.KEY, uniqueId);
+                keyJsonObject.put(KEY, ruleType + "/" + uniqueId);
                 jsonArrayRules.put(keyJsonObject);
                 for (Map<String, Object> map : mapArrayList) {
                     JSONObject jsonRulesDynamicObject = new JSONObject();
                     String strCondition = (String) map.get(RuleConstant.CONDITION);
                     List<String> conditionKeys = getConditionKeys(strCondition);
+
                     for (String conditionKey : conditionKeys) {
-                        strCondition = strCondition.replace(conditionKey, conditionKey + "_" + uniqueId);
+                        if (conditionKey.startsWith(stepName)) {
+                            strCondition = strCondition.replace(conditionKey, conditionKey + "_" + uniqueId);
+                        }
                     }
+
+                    String action = ((ArrayList<String>) map.get(RuleConstant.ACTIONS)).get(0);
+                    List<String> actionKeys = getConditionKeys(action);
+                    String updatedAction = action;
+                    for (String actionKey : actionKeys) {
+                        if (actionKey.startsWith(stepName)) {
+                            updatedAction = action.replace(actionKey, actionKey + "_" + uniqueId);
+                        }
+                    }
+
                     jsonRulesDynamicObject.put(RuleConstant.NAME, String.valueOf(map.get(RuleConstant.NAME)).concat("_").concat(uniqueId));
                     jsonRulesDynamicObject.put(RuleConstant.DESCRIPTION, String.valueOf(map.get(RuleConstant.DESCRIPTION)).concat("_").concat(uniqueId));
                     jsonRulesDynamicObject.put(RuleConstant.PRIORITY, map.get(RuleConstant.PRIORITY));
-                    jsonRulesDynamicObject.put(RuleConstant.ACTIONS, ((ArrayList<String>) map.get(RuleConstant.ACTIONS)).get(0));
+                    jsonRulesDynamicObject.put(RuleConstant.ACTIONS, updatedAction);
                     jsonRulesDynamicObject.put(RuleConstant.CONDITION, String.valueOf(strCondition));
                     jsonArrayRules.put(jsonRulesDynamicObject);
                 }
@@ -404,7 +427,7 @@ public class Utils {
     }
 
     public static void handleFieldBehaviour(JSONObject fieldObject, Form form) {
-        String key = fieldObject.optString(JsonFormConstants.KEY);
+        String key = fieldObject.optString(KEY);
 
         if (form != null && form.getHiddenFields() != null && form.getHiddenFields().contains(key)) {
             makeFieldHidden(fieldObject);
@@ -437,7 +460,7 @@ public class Utils {
      */
     public static void makeFieldHidden(JSONObject fieldObject) {
         try {
-            fieldObject.put(JsonFormConstants.TYPE, JsonFormConstants.HIDDEN);
+            fieldObject.put(TYPE, JsonFormConstants.HIDDEN);
         } catch (JSONException e) {
             Timber.e(e);
         }
@@ -482,7 +505,7 @@ public class Utils {
 
     protected String getKey(JSONObject object) throws JSONException {
         return object.has(RuleConstant.IS_RULE_CHECK) && object.getBoolean(RuleConstant.IS_RULE_CHECK) ?
-                object.get(RuleConstant.STEP) + "_" + object.get(JsonFormConstants.KEY) : JsonFormConstants.VALUE;
+                object.get(RuleConstant.STEP) + "_" + object.get(KEY) : JsonFormConstants.VALUE;
     }
 
     protected Object getValue(JSONObject object) throws JSONException {
@@ -510,7 +533,7 @@ public class Utils {
     protected boolean isNumberWidget(JSONObject object) throws JSONException {
         return object.has(JsonFormConstants.EDIT_TYPE) &&
                 object.getString(JsonFormConstants.EDIT_TYPE).equals(JsonFormConstants.EDIT_TEXT_TYPE.NUMBER) ||
-                object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.NUMBER_SELECTOR);
+                object.getString(TYPE).equals(JsonFormConstants.NUMBER_SELECTOR);
     }
 
     protected Object processNumberValues(Object object) {
@@ -528,8 +551,8 @@ public class Utils {
     }
 
     protected boolean canHaveNumber(JSONObject object) throws JSONException {
-        return isNumberWidget(object) || object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.HIDDEN) ||
-                object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.SPINNER);
+        return isNumberWidget(object) || object.getString(TYPE).equals(JsonFormConstants.HIDDEN) ||
+                object.getString(TYPE).equals(JsonFormConstants.SPINNER);
     }
 
     public void setChildKey(View view, String type, ExpansionPanelGenericPopupDialog genericPopupDialog) {
@@ -774,6 +797,29 @@ public class Utils {
         return null;
     }
 
+    /***
+     * Checks if step has no skip logic fields and that fields do not have type hidden
+     * @param formFragment {@link JsonFormFragment}
+     */
+    public static void checkIfStepHasNoSkipLogic(JsonFormFragment formFragment) {
+        String step = formFragment.getJsonApi().nextStep();
+        if (formFragment.getJsonApi().stepSkipLogicPresenceMap().get(step) == null) {
+            boolean hasNoSkipLogic = false;
+            JSONObject jsonObject = formFragment.getJsonApi().getmJSONObject();
+            JSONObject jsonStepObject = jsonObject.optJSONObject(step);
+            JSONArray fields = jsonStepObject.optJSONArray(JsonFormConstants.FIELDS);
+            for (int i = 0; i < fields.length(); i++) {
+                JSONObject object = fields.optJSONObject(i);
+                if (object.has(TYPE)
+                        && !object.optString(TYPE).equals(JsonFormConstants.HIDDEN)
+                        && !object.has(JsonFormConstants.RELEVANCE)) {
+                    hasNoSkipLogic = true;
+                    break;
+                }
+            }
+            formFragment.getJsonApi().stepSkipLogicPresenceMap().put(step, hasNoSkipLogic);
+        }
+    }
 
     /***
      * removes the generated dynamic rules by repeating group
@@ -802,6 +848,9 @@ public class Utils {
         }
     }
 
+    public static final boolean isRunningOnUiThread() {
+        return Looper.getMainLooper().getThread() == Thread.currentThread();
+    }
 
     public static String formatDateToPattern(String date, String inputFormat, String outputFormat) {
         if (StringUtils.isEmpty(date)) return "";
@@ -832,6 +881,37 @@ public class Utils {
 
     public static boolean isEmptyJsonArray(JSONArray jsonArray) {
         return jsonArray == null || jsonArray.length() == 0;
+    }
+
+    /**
+     * Returns the object that holds the repeating group count
+     *
+     * @return
+     * @throws JSONException
+     */
+    @Nullable
+    public static JSONObject getRepeatingGroupCountObj(@NotNull WidgetArgs widgetArgs) throws JSONException {
+        String repeatingGroupCountObjKey = widgetArgs.getJsonObject().get(KEY) + "_count";
+        JSONObject stepJsonObject = widgetArgs.getFormFragment().getStep(widgetArgs.getStepName());
+        if (stepJsonObject == null) {
+            return null;
+        }
+        JSONArray stepFields = stepJsonObject.optJSONArray(JsonFormConstants.FIELDS);
+        JSONObject repeatingGroupCountObj = FormUtils.getFieldJSONObject(stepFields, repeatingGroupCountObjKey);
+        // prevents re-adding the count object during form traversals
+        if (repeatingGroupCountObj != null) {
+            return repeatingGroupCountObj;
+        }
+
+        repeatingGroupCountObj = new JSONObject();
+        repeatingGroupCountObj.put(KEY, repeatingGroupCountObjKey);
+        repeatingGroupCountObj.put(OPENMRS_ENTITY_PARENT, "");
+        repeatingGroupCountObj.put(OPENMRS_ENTITY, "");
+        repeatingGroupCountObj.put(OPENMRS_ENTITY_ID, "");
+        repeatingGroupCountObj.put(TYPE, "");
+        repeatingGroupCountObj.put(TEXT, widgetArgs.getJsonObject().get(REFERENCE_EDIT_TEXT_HINT));
+        stepFields.put(repeatingGroupCountObj);
+        return repeatingGroupCountObj;
     }
 }
 

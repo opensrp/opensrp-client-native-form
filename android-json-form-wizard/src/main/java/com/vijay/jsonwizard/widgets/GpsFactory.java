@@ -78,15 +78,15 @@ public class GpsFactory implements FormWidgetFactory {
     public List<View> getViewsFromJson(String stepName, final Context context,
                                        JsonFormFragment formFragment, JSONObject jsonObject,
                                        CommonListener listener, boolean popup) throws Exception {
-        return attachJson(stepName, context, jsonObject, popup);
+        return attachJson(stepName, context, formFragment, jsonObject, popup);
     }
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
-        return attachJson(stepName, context, jsonObject, false);
+        return attachJson(stepName, context, formFragment, jsonObject, false);
     }
 
-    private List<View> attachJson(String stepName, final Context context, JSONObject jsonObject,
+    private List<View> attachJson(String stepName, final Context context, JsonFormFragment formFragment, JSONObject jsonObject,
                                   boolean popup) throws JSONException {
 
         List<View> views = new ArrayList<>();
@@ -115,7 +115,7 @@ public class GpsFactory implements FormWidgetFactory {
                 .withJsonObject(jsonObject)
                 .withPopup(popup);
 
-        setUpViews(recordButton, widgetArgs, rootLayout, metadata);
+        setUpViews(recordButton, widgetArgs, rootLayout, metadata, formFragment);
 
         ((JsonApi) context).addFormDataView(recordButton);
         views.add(rootLayout);
@@ -127,7 +127,7 @@ public class GpsFactory implements FormWidgetFactory {
         return LayoutInflater.from(context).inflate(R.layout.item_gps, null);
     }
 
-    protected void setUpViews(Button recordButton, WidgetArgs widgetArgs, View rootLayout, WidgetMetadata metadata) throws JSONException {
+    protected void setUpViews(final Button recordButton, WidgetArgs widgetArgs, View rootLayout, WidgetMetadata metadata, JsonFormFragment formFragment) throws JSONException {
 
         final Context context = widgetArgs.getContext();
         final JSONObject jsonObject = widgetArgs.getJsonObject();
@@ -159,14 +159,19 @@ public class GpsFactory implements FormWidgetFactory {
             recordButton.setFocusable(!readOnly);
         }
 
-        TextView latitudeTV = rootLayout.findViewById(R.id.latitude);
-        TextView longitudeTV = rootLayout.findViewById(R.id.longitude);
-        TextView altitudeTV = rootLayout.findViewById(R.id.altitude);
-        TextView accuracyTV = rootLayout.findViewById(R.id.accuracy);
+        final TextView latitudeTV = rootLayout.findViewById(R.id.latitude);
+        final TextView longitudeTV = rootLayout.findViewById(R.id.longitude);
+        final TextView altitudeTV = rootLayout.findViewById(R.id.altitude);
+        final TextView accuracyTV = rootLayout.findViewById(R.id.accuracy);
 
         attachLayout(context, jsonObject, recordButton, latitudeTV, longitudeTV, altitudeTV, accuracyTV);
 
-        gpsDialog = getGpsDialog(recordButton, context, latitudeTV, longitudeTV, altitudeTV, accuracyTV);
+        formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
+            @Override
+            public void run() {
+                gpsDialog = getGpsDialog(recordButton, context, latitudeTV, longitudeTV, altitudeTV, accuracyTV);
+            }
+        });
 
         customizeViews(recordButton, context);
 
