@@ -15,13 +15,14 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
+import java.util.Set;
+
 import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP1;
 
 /**
  * Created by Vincent Karuri on 25/08/2020
  */
 public class ButtonFactoryTest extends FactoryTest {
-
     @Mock
     private JsonFormFragment jsonFormFragment;
     @Mock
@@ -95,5 +96,15 @@ public class ButtonFactoryTest extends FactoryTest {
         JSONObject action = new JSONObject();
         jsonObject.put(JsonFormConstants.ACTION, action);
         return jsonObject;
+    }
+
+    @Test
+    public void testGetCustomTranslatableWidgetFields() {
+        Assert.assertNotNull(buttonFactory);
+        ButtonFactory factorySpy = Mockito.spy(buttonFactory);
+        Assert.assertNotNull(factorySpy);
+
+        Set<String> editableProperties = factorySpy.getCustomTranslatableWidgetFields();
+        Assert.assertEquals(0, editableProperties.size());
     }
 }
