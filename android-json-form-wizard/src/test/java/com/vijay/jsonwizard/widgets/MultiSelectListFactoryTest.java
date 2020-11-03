@@ -174,7 +174,7 @@ public class MultiSelectListFactoryTest extends FactoryTest {
     }
 
     @Test
-    public void prepareListData() throws JSONException, InterruptedException {
+    public void testPrepareListDataShouldPopulateTheFactoryListItems() throws JSONException, InterruptedException {
         String strJsonObject = "{\"key\":\"user_dummy\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"buttonText\":\"+ Add disease code\",\"sort\":true,\"groupings\":\"[A,B]\",\"dialogTitle\":\"Add disease code\",\"value\":[{\"key\":\"abortion\",\"text\":\"Abortion\",\"property\":{\"presumed-id\":\"er\",\"confirmed-id\":\"er\"}}],\"searchHint\":\"Type Disease Name\",\"options\":[{\"key\":\"Bbcess\",\"text\":\"BAbcess\",\"property\":{\"presumed-id\":\"er\",\"confirmed-id\":\"er\"}},{\"key\":\"bacterial_meningitis\",\"text\":\"Bacterial Meningitis\",\"property\":{\"presumed-id\":\"er\",\"confirmed-id\":\"er\"}},{\"key\":\"abortion\",\"text\":\"Abortion\",\"property\":{\"presumed-id\":\"er\",\"confirmed-id\":\"er\"}},{\"key\":\"bronchitis\",\"text\":\"Bronchitis\",\"property\":{\"presumed-id\":\"er\",\"confirmed-id\":\"er\"}},{\"key\":\"arucellosis\",\"text\":\"arucellosis\",\"property\":{\"presumed-id\":\"er\",\"confirmed-id\":\"er\"}}],\"type\":\"multi_select_list\"}";
         JSONObject jsonObject = new JSONObject(strJsonObject);
         JsonFormFragment jsonFormFragment = Mockito.spy(new JsonFormFragment());
@@ -182,7 +182,7 @@ public class MultiSelectListFactoryTest extends FactoryTest {
         Mockito.doReturn(jsonFormFragment).when(multiSelectListFactory).getJsonFormFragment();
         Mockito.doReturn(RuntimeEnvironment.application).when(multiSelectListFactory).getContext();
         multiSelectListFactory.jsonObject = jsonObject;
-        multiSelectListFactory.currentAdapterKey = "disease_codes";
+        multiSelectListFactory.currentAdapterKey = "user_dummy";
 
         MultiSelectListAdapter multiSelectListAdapterSpy = Mockito.spy(new MultiSelectListAdapter(new ArrayList<MultiSelectItem>()));
 
