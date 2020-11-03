@@ -1,12 +1,14 @@
 package com.vijay.jsonwizard.widgets;
 
+import android.support.v7.app.AlertDialog;
+
 import com.rey.material.util.ViewUtil;
-import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.adapter.MultiSelectListAdapter;
 import com.vijay.jsonwizard.adapter.MultiSelectListSelectedAdapter;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.MultiSelectItem;
 import com.vijay.jsonwizard.domain.MultiSelectListAccessory;
+import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.repository.TestMultiSelectListRepository;
 
 import org.json.JSONArray;
@@ -15,21 +17,30 @@ import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.reflect.Whitebox;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.LooperMode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static android.os.Looper.getMainLooper;
+import static org.robolectric.Shadows.shadowOf;
+import static org.robolectric.annotation.LooperMode.Mode.PAUSED;
+
+@LooperMode(PAUSED)
 @PrepareForTest({ViewUtil.class})
-public class MultiSelectListFactoryTest extends BaseTest {
+public class MultiSelectListFactoryTest extends FactoryTest {
 
     private MultiSelectListFactory multiSelectListFactory;
 
     @Before
     public void setUp() {
-        multiSelectListFactory = new MultiSelectListFactory();
+        super.setUp();
+        multiSelectListFactory = Mockito.spy(new MultiSelectListFactory());
     }
 
     @Test
@@ -160,5 +171,39 @@ public class MultiSelectListFactoryTest extends BaseTest {
         Assert.assertEquals("{\"presumed-id\":\"er\",\"confirmed-id\":\"er\"}", selectItems.get(0).getValue());
         Assert.assertEquals("{\"presumed-id\":\"er\",\"confirmed-id\":\"er\"}", selectItems.get(1).getValue());
 
+    }
+
+    @Test
+    public void prepareListData() throws JSONException, InterruptedException {
+        String strJsonObject = "{\"key\":\"user_dummy\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"buttonText\":\"+ Add disease code\",\"sort\":true,\"groupings\":\"[A,B]\",\"dialogTitle\":\"Add disease code\",\"value\":[{\"key\":\"abortion\",\"text\":\"Abortion\",\"property\":{\"presumed-id\":\"er\",\"confirmed-id\":\"er\"}}],\"searchHint\":\"Type Disease Name\",\"options\":[{\"key\":\"Bbcess\",\"text\":\"BAbcess\",\"property\":{\"presumed-id\":\"er\",\"confirmed-id\":\"er\"}},{\"key\":\"bacterial_meningitis\",\"text\":\"Bacterial Meningitis\",\"property\":{\"presumed-id\":\"er\",\"confirmed-id\":\"er\"}},{\"key\":\"abortion\",\"text\":\"Abortion\",\"property\":{\"presumed-id\":\"er\",\"confirmed-id\":\"er\"}},{\"key\":\"bronchitis\",\"text\":\"Bronchitis\",\"property\":{\"presumed-id\":\"er\",\"confirmed-id\":\"er\"}},{\"key\":\"arucellosis\",\"text\":\"arucellosis\",\"property\":{\"presumed-id\":\"er\",\"confirmed-id\":\"er\"}}],\"type\":\"multi_select_list\"}";
+        JSONObject jsonObject = new JSONObject(strJsonObject);
+        JsonFormFragment jsonFormFragment = Mockito.spy(new JsonFormFragment());
+        Mockito.doReturn(jsonFormActivity).when(jsonFormFragment).getJsonApi();
+        Mockito.doReturn(jsonFormFragment).when(multiSelectListFactory).getJsonFormFragment();
+        Mockito.doReturn(RuntimeEnvironment.application).when(multiSelectListFactory).getContext();
+        multiSelectListFactory.jsonObject = jsonObject;
+        multiSelectListFactory.currentAdapterKey = "disease_codes";
+
+        MultiSelectListAdapter multiSelectListAdapterSpy = Mockito.spy(new MultiSelectListAdapter(new ArrayList<MultiSelectItem>()));
+
+        HashMap<String, MultiSelectListAccessory> listAccessoryHashMap = new HashMap<>();
+        listAccessoryHashMap.put(multiSelectListFactory.currentAdapterKey,
+                new MultiSelectListAccessory(Mockito.mock(MultiSelectListSelectedAdapter.class), multiSelectListAdapterSpy, Mockito.mock(AlertDialog.class), new ArrayList<MultiSelectItem>(), new ArrayList<MultiSelectItem>()));
+
+        Mockito.doReturn(listAccessoryHashMap).when(multiSelectListFactory).getMultiSelectListAccessoryHashMap();
+
+        List<MultiSelectItem> multiSelectItems = multiSelectListFactory.prepareListData();
+        shadowOf(getMainLooper()).idle();
+        Thread.sleep(TIMEOUT);
+
+        Assert.assertTrue(multiSelectItems.isEmpty());
+
+        Assert.assertFalse(listAccessoryHashMap.get(multiSelectListFactory.currentAdapterKey).getItemList().isEmpty());
+
+        Assert.assertFalse(multiSelectListAdapterSpy.getData().isEmpty());
+
+        Assert.assertEquals(7, multiSelectListAdapterSpy.getData().size());
+
+        Mockito.verify(multiSelectListFactory, Mockito.timeout(2)).updateListData(Mockito.eq(true));
     }
 }

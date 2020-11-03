@@ -6,6 +6,7 @@ import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.MultiSelectItem;
 import com.vijay.jsonwizard.domain.MultiSelectListAccessory;
+import com.vijay.jsonwizard.utils.AppExecutors;
 import com.vijay.jsonwizard.utils.MultiSelectListUtils;
 import com.vijay.jsonwizard.widgets.MultiSelectListFactory;
 
@@ -26,12 +27,15 @@ public class MultiSelectListLoadTask {
     private JSONObject jsonObject;
     private String currentAdapterKey;
     private ProgressDialog progressBar;
+    private AppExecutors appExecutors;
 
     public MultiSelectListLoadTask(final MultiSelectListFactory multiSelectListFactory) {
         this.multiSelectListFactory = multiSelectListFactory;
         this.jsonObject = multiSelectListFactory.jsonObject;
         this.currentAdapterKey = multiSelectListFactory.currentAdapterKey;
-        multiSelectListFactory.getJsonFormFragment().getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
+        appExecutors = multiSelectListFactory.getJsonFormFragment().getJsonApi().getAppExecutors();
+
+        appExecutors.mainThread().execute(new Runnable() {
             @Override
             public void run() {
                 progressBar = new ProgressDialog(multiSelectListFactory.getContext());
@@ -43,7 +47,7 @@ public class MultiSelectListLoadTask {
     }
 
     private void init() {
-        multiSelectListFactory.getJsonFormFragment().getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
+        appExecutors.diskIO().execute(new Runnable() {
             @Override
             public void run() {
                 String source = jsonObject.optString(JsonFormConstants.MultiSelectUtils.SOURCE);
@@ -79,7 +83,8 @@ public class MultiSelectListLoadTask {
                         Timber.e(e);
                     }
                 }
-                multiSelectListFactory.getJsonFormFragment().getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
+
+                appExecutors.mainThread().execute(new Runnable() {
                     @Override
                     public void run() {
                         onPostExecute(multiSelectItems);
