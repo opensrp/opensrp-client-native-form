@@ -247,9 +247,7 @@ public class JsonFormFragmentPresenter extends
         }
         try {
             mStepDetails = new JSONObject(step.toString());
-            if (formFragment instanceof JsonWizardFormFragment) {
-                formFragment.getJsonApi().setNextStep(mStepName);
-            }
+            formFragment.getJsonApi().setNextStep(mStepName);
         } catch (JSONException e) {
             Timber.e(e);
         }
@@ -277,21 +275,19 @@ public class JsonFormFragmentPresenter extends
                         if (getView() != null && !cleanupAndExit) {
                             getView().addFormElements(views);
                             formFragment.getJsonApi().invokeRefreshLogic(null, false, null, null, mStepName, false);
-                            if (formFragment instanceof JsonWizardFormFragment) {
-                                if (formFragment.getJsonApi().skipBlankSteps()) {
-                                    Utils.checkIfStepHasNoSkipLogic(formFragment);
-                                    if (mStepName.equals(JsonFormConstants.STEP1) && !formFragment.getJsonApi().isPreviousPressed()) {
-                                        formFragment.getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                ((JsonWizardFormFragment) formFragment).skipLoadedStepsOnNextPressed();
-                                            }
-                                        });
-                                    }
+                            if (formFragment.getJsonApi().skipBlankSteps()) {
+                                Utils.checkIfStepHasNoSkipLogic(formFragment);
+                                if (mStepName.equals(JsonFormConstants.STEP1) && !formFragment.getJsonApi().isPreviousPressed()) {
+                                    formFragment.getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            formFragment.skipLoadedStepsOnNextPressed();
+                                        }
+                                    });
                                 }
-                                String next = mStepDetails.optString(JsonFormConstants.NEXT);
-                                formFragment.getJsonApi().setNextStep(next);
                             }
+                            String next = mStepDetails.optString(JsonFormConstants.NEXT);
+                            formFragment.getJsonApi().setNextStep(next);
                         }
                     }
                 });
