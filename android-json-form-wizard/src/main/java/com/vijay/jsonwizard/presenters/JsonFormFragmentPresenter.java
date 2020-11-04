@@ -347,14 +347,34 @@ public class JsonFormFragmentPresenter extends
         checkAndStopCountdownAlarm();
         boolean validateOnSubmit = validateOnSubmit();
         if (validateOnSubmit && incorrectlyFormattedFields.isEmpty()) {
+            executeRefreshLogicForNextStep();
             return moveToNextStep();
         } else if (isFormValid()) {
+            executeRefreshLogicForNextStep();
             return moveToNextStep();
         } else {
             getView().showSnackBar(
                     getView().getContext().getResources().getString(R.string.json_form_on_next_error_msg));
         }
         return false;
+    }
+
+    public void executeRefreshLogicForNextStep() {
+        final String nextStep = getFormFragment().getJsonApi().nextStep();
+        if (StringUtils.isNotBlank(nextStep)) {
+            getmJsonFormInteractor().fetchFormElements(nextStep, getFormFragment(), getFormFragment().getJsonApi().getmJSONObject().optJSONObject(nextStep), getView().getCommonListener(), false);
+            getFormFragment().getJsonApi().initializeDependencyMaps();
+            cleanDataForNextStep();
+            getFormFragment().getJsonApi().invokeRefreshLogic(null, false, null, null, nextStep, true);
+            if (!getFormFragment().getJsonApi().isNextStepRelevant()) {
+                Utils.checkIfStepHasNoSkipLogic(getFormFragment());
+            }
+            ((JsonWizardFormFragment) getFormFragment()).skipStepsOnNextPressed(nextStep);
+        }
+    }
+
+    private void cleanDataForNextStep() {
+        getFormFragment().getJsonApi().setNextStepRelevant(false);
     }
 
     public void validateAndWriteValues() {

@@ -39,25 +39,6 @@ public class JsonWizardFormFragmentPresenter extends JsonFormFragmentPresenter {
         return false;
     }
 
-
-    public void executeRefreshLogicForNextStep() {
-        final String nextStep = getFormFragment().getJsonApi().nextStep();
-        if (StringUtils.isNotBlank(nextStep)) {
-            getmJsonFormInteractor().fetchFormElements(nextStep, getFormFragment(), getFormFragment().getJsonApi().getmJSONObject().optJSONObject(nextStep), getView().getCommonListener(), false);
-            getFormFragment().getJsonApi().initializeDependencyMaps();
-            cleanDataForNextStep();
-            getFormFragment().getJsonApi().invokeRefreshLogic(null, false, null, null, nextStep, true);
-            if (!getFormFragment().getJsonApi().isNextStepRelevant()) {
-                Utils.checkIfStepHasNoSkipLogic(getFormFragment());
-            }
-            ((JsonWizardFormFragment) getFormFragment()).skipStepsOnNextPressed(nextStep);
-        }
-    }
-
-    private void cleanDataForNextStep() {
-        getFormFragment().getJsonApi().setNextStepRelevant(false);
-    }
-
     protected boolean moveToNextWizardStep() {
         final String nextStep = getFormFragment().getJsonApi().nextStep();
         if (!"".equals(nextStep)) {
