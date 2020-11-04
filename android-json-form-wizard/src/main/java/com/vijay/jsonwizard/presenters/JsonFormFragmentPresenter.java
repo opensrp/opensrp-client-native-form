@@ -30,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
@@ -57,6 +58,7 @@ import com.vijay.jsonwizard.widgets.CountDownTimerFactory;
 import com.vijay.jsonwizard.widgets.EditTextFactory;
 import com.vijay.jsonwizard.widgets.GpsFactory;
 import com.vijay.jsonwizard.widgets.ImagePickerFactory;
+import com.vijay.jsonwizard.widgets.MultiSelectListFactory;
 import com.vijay.jsonwizard.widgets.NativeEditTextFactory;
 import com.vijay.jsonwizard.widgets.NativeRadioButtonFactory;
 import com.vijay.jsonwizard.widgets.NumberSelectorFactory;
@@ -404,6 +406,17 @@ public class JsonFormFragmentPresenter extends
                 Boolean.TRUE.equals(childAt.getTag(R.id.is_number_selector_linear_layout))) {
             ValidationStatus validationStatus = NumberSelectorFactory
                     .validate(formFragmentView, (ViewGroup) childAt);
+            if (!validationStatus.isValid()) {
+                if (requestFocus) {
+                    validationStatus.requestAttention();
+                }
+                return validationStatus;
+            }
+        } else if(childAt instanceof RelativeLayout
+                && childAt.getTag(R.id.is_multiselect_relative_layout) != null &&
+                Boolean.TRUE.equals(childAt.getTag(R.id.is_multiselect_relative_layout))) {
+            ValidationStatus validationStatus = MultiSelectListFactory
+                    .validate(formFragmentView, (RelativeLayout) childAt);
             if (!validationStatus.isValid()) {
                 if (requestFocus) {
                     validationStatus.requestAttention();
