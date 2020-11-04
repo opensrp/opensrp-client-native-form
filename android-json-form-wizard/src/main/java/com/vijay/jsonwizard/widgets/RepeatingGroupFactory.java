@@ -8,10 +8,12 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewParent;
 import android.view.ViewTreeObserver;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -294,6 +296,18 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         Context context = widgetArgs.getContext();
         if (isRemoteReferenceValueUsed(referenceEditText)) {
             referenceEditText.setVisibility(View.GONE);
+        } else {
+            // generate repeating groups on when keyboard done button is pressed
+            referenceEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView focusTextView, int actionId, KeyEvent event) {
+                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+                        addOnDoneAction(focusTextView, doneButton, widgetArgs);
+                        return true;
+                    }
+                    return false;
+                }
+            });
         }
 
         referenceEditText.setTag(R.id.address, widgetArgs.getStepName() + ":" + widgetArgs.getJsonObject().getString(KEY));
@@ -335,7 +349,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
             @Override
             public void afterTextChanged(Editable s) {
                 doneButton.setImageResource(R.drawable.ic_done_grey);
-                if (widgetArgs.getJsonObject().optBoolean(JsonFormConstants.EXPAND_ON_TEXT_CHANGE, false))
+                if (widgetArgs.getJsonObject().optBoolean(JsonFormConstants.EXPAND_ON_TEXT_CHANGE))
                     addOnDoneAction(referenceEditText, doneButton, widgetArgs);
                 ValidationStatus validationStatus = JsonFormFragmentPresenter
                         .validate(widgetArgs.getFormFragment(), referenceEditText, false);
