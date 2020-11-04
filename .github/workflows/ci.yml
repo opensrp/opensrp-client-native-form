@@ -28,7 +28,7 @@ jobs:
       run: ./gradlew :android-json-form-wizard:clean :android-json-form-wizard:jacocoTestReport  --stacktrace
     - name: Upload coverage to Coveralls with Gradle
       run: ./gradlew coveralls --stacktrace
-    - name: Generate Javadoc with Gradle
-      run: ./gradlew javadoc
       env:
         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
+    - name: Generate Javadoc with Gradle
+       run: ./gradlew javadoc
