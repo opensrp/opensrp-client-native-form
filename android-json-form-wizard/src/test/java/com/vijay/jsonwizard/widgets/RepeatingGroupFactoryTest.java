@@ -1,5 +1,6 @@
 package com.vijay.jsonwizard.widgets;
 
+import android.content.Context;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -25,6 +26,9 @@ import org.robolectric.util.ReflectionHelpers;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.mock;
 
 public class RepeatingGroupFactoryTest extends FactoryTest {
 
@@ -57,6 +61,45 @@ public class RepeatingGroupFactoryTest extends FactoryTest {
 
         JSONObject repeatingGroupCountObj = step.getJSONArray(JsonFormConstants.FIELDS).getJSONObject(0);
         Assert.assertEquals("2", repeatingGroupCountObj.getString(JsonFormConstants.VALUE));
+    }
+
+    @Test
+    public void testParseIntWithDefaultIntegerInput() {
+        final String integerString = "1";
+        final int integerFromString = 1;
+
+        Assert.assertThat(RepeatingGroupFactory.parseIntWithDefault(integerString), is(integerFromString));
+    }
+
+    @Test
+    public void testParseIntWithDefaultNullInput() {
+        final String emptyString = "";
+        final int defaultInteger = 0;
+
+        Assert.assertThat(RepeatingGroupFactory.parseIntWithDefault(emptyString), is(defaultInteger));
+    }
+
+    @Test
+    public void testSetRepeatingGroupNumLimits() {
+        RepeatingGroupFactory factorySpy = Mockito.spy(factory);
+        String stepName = "step_name";
+        Context context = mock(Context.class);
+        JsonFormFragment formFragment = mock(JsonFormFragment.class);
+        JSONObject jsonObject = new JSONObject();
+        CommonListener listener = mock(CommonListener.class);
+        boolean popup = false;
+
+        WidgetArgs widgetArgs = new WidgetArgs();
+        widgetArgs.withContext(context)
+                .withFormFragment(formFragment)
+                .withJsonObject(jsonObject)
+                .withListener(listener)
+                .withPopup(popup)
+                .withStepName(stepName);
+
+        factorySpy.setRepeatingGroupNumLimits(widgetArgs);
+        Assert.assertEquals(widgetArgs.getJsonObject().optInt("repeating_group_min", 0), factorySpy.MIN_NUM_REPEATING_GROUPS);
+        Assert.assertEquals(widgetArgs.getJsonObject().optInt("repeating_group_max", 35), factorySpy.MAX_NUM_REPEATING_GROUPS);
     }
 
     @Test

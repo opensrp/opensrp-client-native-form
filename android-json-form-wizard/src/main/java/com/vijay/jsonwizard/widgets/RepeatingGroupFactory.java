@@ -102,7 +102,6 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         final String referenceEditTextHint = jsonObject.optString(REFERENCE_EDIT_TEXT_HINT, context.getString(R.string.enter_number_of_repeating_group_items));
         final String repeatingGroupLabel = jsonObject.optString(REPEATING_GROUP_LABEL, context.getString(R.string.repeating_group_item));
         String remoteReferenceEditText = jsonObject.optString(REFERENCE_EDIT_TEXT);
-
         setRepeatingGroupNumLimits(widgetArgs);
 
         // Enables us to fetch this value from a previous edit_text & disable this one
@@ -176,7 +175,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
     /**
      * Sets min and max number of repeating groups
      */
-    private void setRepeatingGroupNumLimits(WidgetArgs widgetArgs) {
+    public void setRepeatingGroupNumLimits(WidgetArgs widgetArgs) {
         try {
             MIN_NUM_REPEATING_GROUPS = widgetArgs.getJsonObject().optInt(REPEATING_GROUP_MIN, MIN_NUM_REPEATING_GROUPS);
             MAX_NUM_REPEATING_GROUPS = widgetArgs.getJsonObject().optInt(REPEATING_GROUP_MAX, MAX_NUM_REPEATING_GROUPS);
@@ -309,15 +308,6 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                     return false;
                 }
             });
-            // generate repeating groups on focus change
-            referenceEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View view, boolean hasFocus) {
-                    if (!hasFocus) {
-                        addOnDoneAction((TextView) view, doneButton, widgetArgs);
-                    }
-                }
-            });
         }
 
         referenceEditText.setTag(R.id.address, widgetArgs.getStepName() + ":" + widgetArgs.getJsonObject().getString(KEY));
@@ -363,6 +353,9 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
                         .validate(widgetArgs.getFormFragment(), referenceEditText, false);
                 if (validationStatus.isValid()) {
                     writeJsonObjectValue(repeatingGroupCount, s.toString());
+                    if (widgetArgs.getJsonObject().optBoolean(JsonFormConstants.EXPAND_ON_TEXT_CHANGE)) {
+                        addOnDoneAction(referenceEditText, doneButton, widgetArgs);
+                    }
                 }
             }
         });
@@ -392,10 +385,19 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
             InputMethodManager inputMethodManager = (InputMethodManager) widgetArgs.getFormFragment().getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0);
             textView.clearFocus();
+            int numberOfGroups = parseIntWithDefault(textView.getText().toString());
             attachRepeatingGroup(textView.getParent().getParent(),
-                    Integer.parseInt(textView.getText().toString()), doneButton, widgetArgs);
+                    numberOfGroups, doneButton, widgetArgs);
         } catch (Exception e) {
             Timber.e(e);
+        }
+    }
+
+    public static int parseIntWithDefault(String s) {
+        try {
+            return Integer.parseInt(s);
+        } catch (NumberFormatException e) {
+            return 0;
         }
     }
 
@@ -428,7 +430,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         return context instanceof JsonApi ? (JsonApi) context : null;
     }
 
-    private JSONArray getStepFields (JSONObject step) {
+    private JSONArray getStepFields(JSONObject step) {
         return step.optJSONArray(FIELDS);
     }
 }
