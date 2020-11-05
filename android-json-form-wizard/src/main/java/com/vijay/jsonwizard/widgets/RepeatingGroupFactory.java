@@ -349,10 +349,10 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
             @Override
             public void afterTextChanged(Editable s) {
                 doneButton.setImageResource(R.drawable.ic_done_grey);
-                if (widgetArgs.getJsonObject().optBoolean(JsonFormConstants.EXPAND_ON_TEXT_CHANGE))
-                    addOnDoneAction(referenceEditText, doneButton, widgetArgs);
                 ValidationStatus validationStatus = JsonFormFragmentPresenter
                         .validate(widgetArgs.getFormFragment(), referenceEditText, false);
+                if (widgetArgs.getJsonObject().optBoolean(JsonFormConstants.EXPAND_ON_TEXT_CHANGE) && validationStatus.isValid())
+                    addOnDoneAction(referenceEditText, doneButton, widgetArgs);
                 if (validationStatus.isValid()) {
                     writeJsonObjectValue(repeatingGroupCount, s.toString());
                 }
