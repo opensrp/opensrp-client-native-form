@@ -31,4 +31,4 @@ jobs:
       env:
         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
     - name: Generate Javadoc with Gradle
-       run: ./gradlew javadoc
+      run: ./gradlew javadoc
