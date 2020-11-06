@@ -184,7 +184,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         }
     }
 
-    private void setViewTags(@NonNull LinearLayout rootLayout, WidgetArgs widgetArgs) {
+    public void setViewTags(@NonNull LinearLayout rootLayout, WidgetArgs widgetArgs) {
         JSONArray canvasIds = new JSONArray();
         canvasIds.put(rootLayout.getId());
         rootLayout.setTag(R.id.canvas_ids, canvasIds.toString());
