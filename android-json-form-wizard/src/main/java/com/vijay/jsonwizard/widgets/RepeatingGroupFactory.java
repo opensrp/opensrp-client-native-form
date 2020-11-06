@@ -286,7 +286,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         });
     }
 
-    private void setUpReferenceEditText(final ImageButton doneButton,
+    public void setUpReferenceEditText(final ImageButton doneButton,
                                         final MaterialEditText referenceEditText,
                                         final String referenceEditTextHint,
                                         final String repeatingGroupLabel,

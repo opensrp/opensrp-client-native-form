@@ -2,8 +2,11 @@ package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.vijay.jsonwizard.R;
@@ -29,6 +32,8 @@ import java.util.Set;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 public class RepeatingGroupFactoryTest extends FactoryTest {
 
@@ -111,6 +116,38 @@ public class RepeatingGroupFactoryTest extends FactoryTest {
     }
 
     @Test
+    public void testSetOnEditorActionListener() throws Exception {
+        RepeatingGroupFactory repeatingGroupFactory = mock(RepeatingGroupFactory.class);
+        MaterialEditText referenceEditText = Mockito.mock(MaterialEditText.class);
+        TextView.OnEditorActionListener mockOnEditorActionListener =
+                mock(EditText.OnEditorActionListener.class);
+
+        String stepName = "step_name";
+        Context context = mock(Context.class);
+        JsonFormFragment formFragment = mock(JsonFormFragment.class);
+        JSONObject jsonObject = new JSONObject();
+        CommonListener listener = mock(CommonListener.class);
+        boolean popup = false;
+
+        WidgetArgs widgetArgs = new WidgetArgs();
+        widgetArgs.withContext(context)
+                .withFormFragment(formFragment)
+                .withJsonObject(jsonObject)
+                .withListener(listener)
+                .withPopup(popup)
+                .withStepName(stepName);
+
+        repeatingGroupFactory.setUpReferenceEditText(Mockito.mock(ImageButton.class), referenceEditText, "Hint", "Label",
+                jsonObject, widgetArgs);
+        referenceEditText.setOnEditorActionListener(mockOnEditorActionListener);
+        referenceEditText.onEditorAction(EditorInfo.IME_ACTION_DONE);
+        mockOnEditorActionListener.onEditorAction(referenceEditText, EditorInfo.IME_ACTION_DONE, null);
+
+        verify(mockOnEditorActionListener, times(1)).onEditorAction(referenceEditText,
+                EditorInfo.IME_ACTION_DONE, null);
+    }
+
+    @Test
     public void testUniqueChildElementKeyGenerationShouldContainChildKeyAsComponent() throws JSONException {
         final String parentRepeatingGroupWidgetKey = "parent";
         final String childElementKey = "child";
@@ -141,11 +178,11 @@ public class RepeatingGroupFactoryTest extends FactoryTest {
         step.put(JsonFormConstants.FIELDS, fields);
         Mockito.doReturn(step).when(jsonFormActivity).getStep(ArgumentMatchers.anyString());
 
-        JSONObject repeatingGroupWidget =  new JSONObject();
+        JSONObject repeatingGroupWidget = new JSONObject();
         repeatingGroupWidget.put(JsonFormConstants.KEY, "key");
         repeatingGroupWidget.put(JsonFormConstants.VALUE, new JSONArray());
         repeatingGroupWidget.put(RepeatingGroupFactory.REFERENCE_EDIT_TEXT_HINT, "text");
         return factory.getViewsFromJson("step1", jsonFormActivity, Mockito.mock(JsonFormFragment.class),
-               repeatingGroupWidget, Mockito.mock(CommonListener.class));
+                repeatingGroupWidget, Mockito.mock(CommonListener.class));
     }
 }
