@@ -21,7 +21,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
-import org.robolectric.RuntimeEnvironment;
 import org.robolectric.util.ReflectionHelpers;
 
 import java.util.HashMap;
@@ -78,28 +77,6 @@ public class RepeatingGroupFactoryTest extends FactoryTest {
         final int defaultInteger = 0;
 
         Assert.assertThat(RepeatingGroupFactory.parseIntWithDefault(emptyString), is(defaultInteger));
-    }
-
-    @Test
-    public void testSetViewTags() {
-        RepeatingGroupFactory factorySpy = Mockito.spy(factory);
-        String stepName = "step_name";
-        Context context = mock(Context.class);
-        JsonFormFragment formFragment = mock(JsonFormFragment.class);
-        JSONObject jsonObject = new JSONObject();
-        CommonListener listener = mock(CommonListener.class);
-        boolean popup = false;
-
-        WidgetArgs widgetArgs = new WidgetArgs();
-        widgetArgs.withContext(context)
-                .withFormFragment(formFragment)
-                .withJsonObject(jsonObject)
-                .withListener(listener)
-                .withPopup(popup)
-                .withStepName(stepName);
-
-        LinearLayout rootLayoutTest = factorySpy.getRootLayout(RuntimeEnvironment.application);
-        Mockito.doNothing().when(factorySpy).setViewTags(rootLayoutTest, widgetArgs);
     }
 
     @Test
