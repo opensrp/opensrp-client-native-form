@@ -287,6 +287,12 @@ public class DatePickerFactory implements FormWidgetFactory {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
+        String dateValue = "";
+        if (StringUtils.isNotBlank(jsonObject.optString(KEY.VALUE))) {
+            dateValue = StringUtils.isNoneBlank(Form.getDatePickerDisplayFormat())
+                    ? Utils.formatDateToPattern(jsonObject.optString(KEY.VALUE), Form.getDatePickerDisplayFormat(), FormUtils.NATIIVE_FORM_DATE_FORMAT_PATTERN)
+                    : jsonObject.optString(KEY.VALUE);
+        }
 
         editText.setHint(jsonObject.getString(KEY.HINT));
         editText.setFloatingLabelText(jsonObject.getString(KEY.HINT));
@@ -297,7 +303,7 @@ public class DatePickerFactory implements FormWidgetFactory {
         editText.setTag(R.id.openmrs_entity, openMrsEntity);
         editText.setTag(R.id.openmrs_entity_id, openMrsEntityId);
         editText.setTag(R.id.address, stepName + ":" + jsonObject.getString(KEY.KEY));
-        editText.setTag(R.id.locale_independent_value, jsonObject.optString(KEY.VALUE));
+        editText.setTag(R.id.locale_independent_value, dateValue);
 
         if (jsonObject.has(JsonFormConstants.V_REQUIRED)) {
             JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
@@ -308,8 +314,8 @@ public class DatePickerFactory implements FormWidgetFactory {
             }
         }
 
-        if (StringUtils.isNotBlank(jsonObject.optString(KEY.VALUE))) {
-            updateDateText(context, editText, duration, DATE_FORMAT_LOCALE.format(FormUtils.getDate(jsonObject.optString(KEY.VALUE)).getTime()));
+        if (StringUtils.isNotBlank(dateValue)) {
+            updateDateText(context, editText, duration, DATE_FORMAT_LOCALE.format(FormUtils.getDate(dateValue).getTime()));
         }
 
         if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
