@@ -118,7 +118,7 @@ public class RepeatingGroupFactoryTest extends FactoryTest {
     @Test
     public void testSetOnEditorActionListener() throws Exception {
         RepeatingGroupFactory repeatingGroupFactory = mock(RepeatingGroupFactory.class);
-        MaterialEditText referenceEditText = Mockito.mock(MaterialEditText.class);
+        MaterialEditText referenceEditText = mock(MaterialEditText.class);
         TextView.OnEditorActionListener mockOnEditorActionListener =
                 mock(EditText.OnEditorActionListener.class);
 
@@ -137,7 +137,7 @@ public class RepeatingGroupFactoryTest extends FactoryTest {
                 .withPopup(popup)
                 .withStepName(stepName);
 
-        repeatingGroupFactory.setUpReferenceEditText(Mockito.mock(ImageButton.class), referenceEditText, "Hint", "Label",
+        repeatingGroupFactory.setUpReferenceEditText(mock(ImageButton.class), referenceEditText, "Hint", "Label",
                 jsonObject, widgetArgs);
         referenceEditText.setOnEditorActionListener(mockOnEditorActionListener);
         referenceEditText.onEditorAction(EditorInfo.IME_ACTION_DONE);
