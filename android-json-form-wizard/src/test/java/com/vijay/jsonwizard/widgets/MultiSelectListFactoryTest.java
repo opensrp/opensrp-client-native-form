@@ -45,7 +45,6 @@ public class MultiSelectListFactoryTest extends FactoryTest {
 
     private String strJsonObject = "{\"key\":\"user_dummy\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"buttonText\":\"+ Add disease code\",\"sort\":true,\"groupings\":\"[A,B]\",\"dialogTitle\":\"Add disease code\",\"value\":[{\"key\":\"abortion\",\"text\":\"Abortion\",\"property\":{\"presumed-id\":\"er\",\"confirmed-id\":\"er\"}}],\"searchHint\":\"Type Disease Name\",\"options\":[{\"key\":\"Bbcess\",\"text\":\"BAbcess\",\"property\":{\"presumed-id\":\"er\",\"confirmed-id\":\"er\"}},{\"key\":\"bacterial_meningitis\",\"text\":\"Bacterial Meningitis\",\"property\":{\"presumed-id\":\"er\",\"confirmed-id\":\"er\"}},{\"key\":\"abortion\",\"text\":\"Abortion\",\"property\":{\"presumed-id\":\"er\",\"confirmed-id\":\"er\"}},{\"key\":\"bronchitis\",\"text\":\"Bronchitis\",\"property\":{\"presumed-id\":\"er\",\"confirmed-id\":\"er\"}},{\"key\":\"arucellosis\",\"text\":\"arucellosis\",\"property\":{\"presumed-id\":\"er\",\"confirmed-id\":\"er\"}}],\"type\":\"multi_select_list\"}";
 
-
     @Before
     public void setUp() {
         super.setUp();
@@ -56,8 +55,7 @@ public class MultiSelectListFactoryTest extends FactoryTest {
     public void testShouldInitializeFactoryCorrectly() throws Exception {
         JSONObject jsonObject = new JSONObject(strJsonObject);
         Mockito.doReturn(jsonFormActivity).when(jsonFormFragment).getJsonApi();
-        shadowOf(getMainLooper()).idle();
-        Thread.sleep(TIMEOUT);
+
         List<View> views = multiSelectListFactory.getViewsFromJson("step1", jsonFormActivity, jsonFormFragment,
                 jsonObject, null);
         Mockito.verify(multiSelectListFactory, Mockito.times(1))
