@@ -1,6 +1,7 @@
 package com.vijay.jsonwizard.widgets;
 
 import android.support.v7.app.AlertDialog;
+import android.view.LayoutInflater;
 import android.view.View;
 
 import com.rey.material.util.ViewUtil;
@@ -53,11 +54,19 @@ public class MultiSelectListFactoryTest extends FactoryTest {
 
     @Test
     public void testShouldInitializeFactoryCorrectly() throws Exception {
+        String key = "user_dummy";
         JSONObject jsonObject = new JSONObject(strJsonObject);
         Mockito.doReturn(jsonFormActivity).when(jsonFormFragment).getJsonApi();
+        Mockito.doReturn(LayoutInflater.from(jsonFormActivity)).when(jsonFormFragment).getLayoutInflater();
+        Assert.assertNull(multiSelectListFactory.
+                getMultiSelectListAccessoryHashMap().get(key));
 
         List<View> views = multiSelectListFactory.getViewsFromJson("step1", jsonFormActivity, jsonFormFragment,
                 jsonObject, null);
+
+        shadowOf(getMainLooper()).idle();
+        Thread.sleep(TIMEOUT);
+
         Mockito.verify(multiSelectListFactory, Mockito.times(1))
                 .createActionView(Mockito.eq(jsonFormActivity));
 
@@ -73,7 +82,10 @@ public class MultiSelectListFactoryTest extends FactoryTest {
         Mockito.verify(multiSelectListFactory, Mockito.times(1))
                 .prepareSelectedData();
 
-        Assert.assertEquals("user_dummy", views.get(1).getTag(R.id.key));
+        Assert.assertNotNull(multiSelectListFactory.
+                getMultiSelectListAccessoryHashMap().get(key).getAlertDialog());
+
+        Assert.assertEquals(key, views.get(1).getTag(R.id.key));
 
         Assert.assertEquals(2, views.size());
     }
