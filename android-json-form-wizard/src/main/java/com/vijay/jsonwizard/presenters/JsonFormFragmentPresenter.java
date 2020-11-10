@@ -368,7 +368,7 @@ public class JsonFormFragmentPresenter extends
             Boolean popup = (Boolean) childView.getTag(R.id.extraPopup);
             String fieldKey = mStepName + "#" + getStepTitle() + ":" + key;
 
-            if (mStepName.equals(address.split(":")[0])) {
+            if (StringUtils.isNotBlank(address) && mStepName.equals(address.split(":")[0])) {
 
                 if (childView instanceof MaterialEditText) {
                     MaterialEditText editText = (MaterialEditText) childView;
