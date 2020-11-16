@@ -175,7 +175,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
     /**
      * Sets min and max number of repeating groups
      */
-    public void setRepeatingGroupNumLimits(WidgetArgs widgetArgs) {
+    private void setRepeatingGroupNumLimits(WidgetArgs widgetArgs) {
         try {
             MIN_NUM_REPEATING_GROUPS = widgetArgs.getJsonObject().optInt(REPEATING_GROUP_MIN, MIN_NUM_REPEATING_GROUPS);
             MAX_NUM_REPEATING_GROUPS = widgetArgs.getJsonObject().optInt(REPEATING_GROUP_MAX, MAX_NUM_REPEATING_GROUPS);
@@ -184,7 +184,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         }
     }
 
-    public void setViewTags(@NonNull LinearLayout rootLayout, WidgetArgs widgetArgs) {
+    private void setViewTags(@NonNull LinearLayout rootLayout, WidgetArgs widgetArgs) {
         JSONArray canvasIds = new JSONArray();
         canvasIds.put(rootLayout.getId());
         rootLayout.setTag(R.id.canvas_ids, canvasIds.toString());
@@ -286,7 +286,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         });
     }
 
-    public void setUpReferenceEditText(final ImageButton doneButton,
+    private void setUpReferenceEditText(final ImageButton doneButton,
                                         final MaterialEditText referenceEditText,
                                         final String referenceEditTextHint,
                                         final String repeatingGroupLabel,

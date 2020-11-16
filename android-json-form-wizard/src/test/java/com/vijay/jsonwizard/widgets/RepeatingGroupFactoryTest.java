@@ -102,7 +102,8 @@ public class RepeatingGroupFactoryTest extends FactoryTest {
                 .withPopup(popup)
                 .withStepName(stepName);
 
-        factorySpy.setRepeatingGroupNumLimits(widgetArgs);
+        ReflectionHelpers.callInstanceMethod(factorySpy, "setRepeatingGroupNumLimits",
+                ReflectionHelpers.ClassParameter.from(WidgetArgs.class, widgetArgs));
         Assert.assertEquals(widgetArgs.getJsonObject().optInt("repeating_group_min", 0), factorySpy.MIN_NUM_REPEATING_GROUPS);
         Assert.assertEquals(widgetArgs.getJsonObject().optInt("repeating_group_max", 35), factorySpy.MAX_NUM_REPEATING_GROUPS);
     }
@@ -126,6 +127,7 @@ public class RepeatingGroupFactoryTest extends FactoryTest {
         Context context = mock(Context.class);
         JsonFormFragment formFragment = mock(JsonFormFragment.class);
         JSONObject jsonObject = new JSONObject();
+        jsonObject.put(JsonFormConstants.KEY, JsonFormConstants.KEY);
         CommonListener listener = mock(CommonListener.class);
         boolean popup = false;
 
@@ -137,8 +139,14 @@ public class RepeatingGroupFactoryTest extends FactoryTest {
                 .withPopup(popup)
                 .withStepName(stepName);
 
-        repeatingGroupFactory.setUpReferenceEditText(mock(ImageButton.class), referenceEditText, "Hint", "Label",
-                jsonObject, widgetArgs);
+        ReflectionHelpers.callInstanceMethod(repeatingGroupFactory, "setUpReferenceEditText",
+                ReflectionHelpers.ClassParameter.from(ImageButton.class, mock(ImageButton.class)),
+                ReflectionHelpers.ClassParameter.from(MaterialEditText.class, referenceEditText),
+                ReflectionHelpers.ClassParameter.from(String.class, "Hint"),
+                ReflectionHelpers.ClassParameter.from(String.class, "Label"),
+                ReflectionHelpers.ClassParameter.from(JSONObject.class, jsonObject),
+                ReflectionHelpers.ClassParameter.from(WidgetArgs.class, widgetArgs));
+
         referenceEditText.setOnEditorActionListener(mockOnEditorActionListener);
         referenceEditText.onEditorAction(EditorInfo.IME_ACTION_DONE);
         mockOnEditorActionListener.onEditorAction(referenceEditText, EditorInfo.IME_ACTION_DONE, null);
