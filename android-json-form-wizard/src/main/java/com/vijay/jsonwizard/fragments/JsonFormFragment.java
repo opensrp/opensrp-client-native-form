@@ -299,12 +299,8 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     private int getFormStepNumber(String nextFormNumber) {
         int formNumber = 0;
         if (StringUtils.isNotBlank(nextFormNumber)) {
-            int currentFormNumber = Integer.parseInt(nextFormNumber.substring(4, 5)) - 1;
-            if (currentFormNumber > 0) {
-                formNumber = currentFormNumber;
-            } else if (currentFormNumber == 0) {
-                formNumber = 1;
-            }
+            int currentFormNumber = Integer.parseInt(nextFormNumber.substring(4)) - 1;
+            formNumber = currentFormNumber > 0 ? currentFormNumber : 1;
         }
         return formNumber;
     }
