@@ -4,7 +4,6 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
-import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
@@ -16,14 +15,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 
 import java.util.List;
 import java.util.Set;
 
-public class BarcodeFactorTest extends BaseTest {
+public class BarcodeFactorTest extends FactoryTest {
+
     private BarcodeFactory factory;
+
     @Mock
     private JsonFormActivity jsonFormActivity;
 
@@ -35,7 +35,7 @@ public class BarcodeFactorTest extends BaseTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        super.setUp();
         factory = new BarcodeFactory();
         jsonFormActivity = Robolectric.buildActivity(JsonFormActivity.class, getJsonFormActivityIntent()).create().get();
     }
@@ -64,7 +64,6 @@ public class BarcodeFactorTest extends BaseTest {
         Assert.assertNotNull(factory);
         BarcodeFactory factorySpy = Mockito.spy(factory);
         Assert.assertNotNull(factorySpy);
-
         Set<String> editableProperties = factorySpy.getCustomTranslatableWidgetFields();
         Assert.assertEquals(1, editableProperties.size());
         Assert.assertEquals("scanButtonText", editableProperties.iterator().next());
