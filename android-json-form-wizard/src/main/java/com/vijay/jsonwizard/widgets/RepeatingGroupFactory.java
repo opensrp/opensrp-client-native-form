@@ -175,7 +175,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
     /**
      * Sets min and max number of repeating groups
      */
-    public void setRepeatingGroupNumLimits(WidgetArgs widgetArgs) {
+    private void setRepeatingGroupNumLimits(WidgetArgs widgetArgs) {
         try {
             MIN_NUM_REPEATING_GROUPS = widgetArgs.getJsonObject().optInt(REPEATING_GROUP_MIN, MIN_NUM_REPEATING_GROUPS);
             MAX_NUM_REPEATING_GROUPS = widgetArgs.getJsonObject().optInt(REPEATING_GROUP_MAX, MAX_NUM_REPEATING_GROUPS);
