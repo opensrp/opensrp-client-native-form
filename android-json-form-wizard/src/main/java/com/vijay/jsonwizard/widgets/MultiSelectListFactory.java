@@ -64,7 +64,7 @@ public class MultiSelectListFactory implements FormWidgetFactory {
     @Override
     public List<View> getViewsFromJson(@NonNull String stepName, @NonNull Context context, @NonNull JsonFormFragment formFragment, @NonNull JSONObject jsonObject,
                                        @NonNull CommonListener listener) throws Exception {
-        return attachJson(stepName, context, formFragment, jsonObject, listener, false);
+        return getViewsFromJson(stepName, context, formFragment, jsonObject, listener, false);
     }
 
     private List<View> attachJson(@NonNull final String stepName, @NonNull final Context context, @NonNull JsonFormFragment formFragment, @NonNull JSONObject jsonObject,

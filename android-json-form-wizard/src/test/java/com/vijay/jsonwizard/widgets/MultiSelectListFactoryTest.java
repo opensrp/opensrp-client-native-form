@@ -1,8 +1,11 @@
 package com.vijay.jsonwizard.widgets;
 
 import android.support.v7.app.AlertDialog;
+import android.view.LayoutInflater;
+import android.view.View;
 
 import com.rey.material.util.ViewUtil;
+import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.adapter.MultiSelectListAdapter;
 import com.vijay.jsonwizard.adapter.MultiSelectListSelectedAdapter;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
@@ -17,6 +20,7 @@ import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.reflect.Whitebox;
@@ -37,10 +41,53 @@ public class MultiSelectListFactoryTest extends FactoryTest {
 
     private MultiSelectListFactory multiSelectListFactory;
 
+    @Mock
+    private JsonFormFragment jsonFormFragment;
+
+    private String strJsonObject = "{\"key\":\"user_dummy\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"buttonText\":\"+ Add disease code\",\"sort\":true,\"groupings\":\"[A,B]\",\"dialogTitle\":\"Add disease code\",\"value\":[{\"key\":\"abortion\",\"text\":\"Abortion\",\"property\":{\"presumed-id\":\"er\",\"confirmed-id\":\"er\"}}],\"searchHint\":\"Type Disease Name\",\"options\":[{\"key\":\"Bbcess\",\"text\":\"BAbcess\",\"property\":{\"presumed-id\":\"er\",\"confirmed-id\":\"er\"}},{\"key\":\"bacterial_meningitis\",\"text\":\"Bacterial Meningitis\",\"property\":{\"presumed-id\":\"er\",\"confirmed-id\":\"er\"}},{\"key\":\"abortion\",\"text\":\"Abortion\",\"property\":{\"presumed-id\":\"er\",\"confirmed-id\":\"er\"}},{\"key\":\"bronchitis\",\"text\":\"Bronchitis\",\"property\":{\"presumed-id\":\"er\",\"confirmed-id\":\"er\"}},{\"key\":\"arucellosis\",\"text\":\"arucellosis\",\"property\":{\"presumed-id\":\"er\",\"confirmed-id\":\"er\"}}],\"type\":\"multi_select_list\"}";
+
     @Before
     public void setUp() {
         super.setUp();
         multiSelectListFactory = Mockito.spy(new MultiSelectListFactory());
+    }
+
+    @Test
+    public void testShouldInitializeFactoryCorrectly() throws Exception {
+        String key = "user_dummy";
+        JSONObject jsonObject = new JSONObject(strJsonObject);
+        Mockito.doReturn(jsonFormActivity).when(jsonFormFragment).getJsonApi();
+        Mockito.doReturn(LayoutInflater.from(jsonFormActivity)).when(jsonFormFragment).getLayoutInflater();
+        Assert.assertNull(multiSelectListFactory.
+                getMultiSelectListAccessoryHashMap().get(key));
+
+        List<View> views = multiSelectListFactory.getViewsFromJson("step1", jsonFormActivity, jsonFormFragment,
+                jsonObject, null);
+
+        shadowOf(getMainLooper()).idle();
+        Thread.sleep(TIMEOUT);
+
+        Mockito.verify(multiSelectListFactory, Mockito.times(1))
+                .createActionView(Mockito.eq(jsonFormActivity));
+
+        Mockito.verify(multiSelectListFactory, Mockito.times(1))
+                .createSelectedRecyclerView(Mockito.eq(jsonFormActivity));
+
+        Mockito.verify(multiSelectListFactory, Mockito.times(1))
+                .createSelectedRecyclerView(Mockito.eq(jsonFormActivity));
+
+        Mockito.verify(multiSelectListFactory, Mockito.times(1))
+                .prepareListData();
+
+        Mockito.verify(multiSelectListFactory, Mockito.times(1))
+                .prepareSelectedData();
+
+        Assert.assertNotNull(multiSelectListFactory.
+                getMultiSelectListAccessoryHashMap().get(key).getAlertDialog());
+
+        Assert.assertEquals(key, views.get(1).getTag(R.id.key));
+
+        Assert.assertEquals(2, views.size());
     }
 
     @Test
@@ -175,7 +222,6 @@ public class MultiSelectListFactoryTest extends FactoryTest {
 
     @Test
     public void testPrepareListDataShouldPopulateTheFactoryListItems() throws JSONException, InterruptedException {
-        String strJsonObject = "{\"key\":\"user_dummy\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"buttonText\":\"+ Add disease code\",\"sort\":true,\"groupings\":\"[A,B]\",\"dialogTitle\":\"Add disease code\",\"value\":[{\"key\":\"abortion\",\"text\":\"Abortion\",\"property\":{\"presumed-id\":\"er\",\"confirmed-id\":\"er\"}}],\"searchHint\":\"Type Disease Name\",\"options\":[{\"key\":\"Bbcess\",\"text\":\"BAbcess\",\"property\":{\"presumed-id\":\"er\",\"confirmed-id\":\"er\"}},{\"key\":\"bacterial_meningitis\",\"text\":\"Bacterial Meningitis\",\"property\":{\"presumed-id\":\"er\",\"confirmed-id\":\"er\"}},{\"key\":\"abortion\",\"text\":\"Abortion\",\"property\":{\"presumed-id\":\"er\",\"confirmed-id\":\"er\"}},{\"key\":\"bronchitis\",\"text\":\"Bronchitis\",\"property\":{\"presumed-id\":\"er\",\"confirmed-id\":\"er\"}},{\"key\":\"arucellosis\",\"text\":\"arucellosis\",\"property\":{\"presumed-id\":\"er\",\"confirmed-id\":\"er\"}}],\"type\":\"multi_select_list\"}";
         JSONObject jsonObject = new JSONObject(strJsonObject);
         JsonFormFragment jsonFormFragment = Mockito.spy(new JsonFormFragment());
         Mockito.doReturn(jsonFormActivity).when(jsonFormFragment).getJsonApi();
