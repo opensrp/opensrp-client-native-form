@@ -71,6 +71,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -182,7 +183,33 @@ public class JsonFormFragmentPresenter extends
         return false;
     }
 
+    private String getFieldKey(String key) {
+        return mStepName + "#" + getStepTitle() + ":" + key;
+    }
+
+    private void clearDeletedInvalidFields() {
+        Map<String, ValidationStatus> invalidFields = getInvalidFields();
+        if (invalidFields != null && !invalidFields.isEmpty()) {
+            Collection<View> dataViews = formFragment.getJsonApi().getFormDataViews();
+            for (String invalidKey : invalidFields.keySet()) {
+                for (View v : dataViews) {
+                    String fieldKey = getFieldKey(v.getTag(R.id.key).toString());
+                    String partialFieldKey = fieldKey.substring(0, fieldKey.lastIndexOf("_"));
+                    String partialInvalidKey = invalidKey.substring(0, partialFieldKey.lastIndexOf("_"));
+
+                    if (partialInvalidKey.equals(partialFieldKey)) {
+                        continue;
+                    }
+                    invalidFields.remove(invalidKey);
+                    break;
+                }
+            }
+        }
+
+    }
+
     public void validateAndWriteValues() {
+        clearDeletedInvalidFields();
         for (View childView : formFragment.getJsonApi().getFormDataViews()) {
             ValidationStatus validationStatus = validateView(childView);
             String key = (String) childView.getTag(R.id.key);
@@ -190,7 +217,7 @@ public class JsonFormFragmentPresenter extends
             String openMrsEntity = (String) childView.getTag(R.id.openmrs_entity);
             String openMrsEntityId = (String) childView.getTag(R.id.openmrs_entity_id);
             Boolean popup = (Boolean) childView.getTag(R.id.extraPopup);
-            String fieldKey = mStepName + "#" + getStepTitle() + ":" + key;
+            String fieldKey = getFieldKey(key);
 
             if (childView instanceof MaterialEditText) {
                 MaterialEditText editText = (MaterialEditText) childView;
