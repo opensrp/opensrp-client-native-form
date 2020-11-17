@@ -74,9 +74,6 @@ public class MultiSelectListFactoryTest extends FactoryTest {
                 .createSelectedRecyclerView(Mockito.eq(jsonFormActivity));
 
         Mockito.verify(multiSelectListFactory, Mockito.times(1))
-                .createSelectedRecyclerView(Mockito.eq(jsonFormActivity));
-
-        Mockito.verify(multiSelectListFactory, Mockito.times(1))
                 .prepareListData();
 
         Mockito.verify(multiSelectListFactory, Mockito.times(1))

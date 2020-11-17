@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v7.widget.AppCompatSpinner;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +30,8 @@ import com.vijay.jsonwizard.shadow.ShadowContextCompat;
 import com.vijay.jsonwizard.shadow.ShadowPermissionUtils;
 import com.vijay.jsonwizard.utils.AppExecutors;
 import com.vijay.jsonwizard.utils.FormUtils;
+import com.vijay.jsonwizard.views.CustomTextView;
+import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,6 +54,7 @@ import org.robolectric.util.ReflectionHelpers;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
@@ -76,6 +80,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.times;
@@ -580,5 +585,67 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         spyPresenter.showInformationDialog(view);
 
         verify(spyBuilder, times(1)).show();
+    }
+
+    @Test
+    public void testOnClickOnExpandNumberSelectorViewShouldSaveClickedViewText() {
+        LinearLayout view = new LinearLayout(RuntimeEnvironment.application);
+        view.setTag(R.id.key, "test");
+
+        CustomTextView customTextView = new CustomTextView(RuntimeEnvironment.application);
+        customTextView.setText("+2");
+        customTextView.setTag(R.id.type, JsonFormConstants.NUMBER_SELECTOR);
+        customTextView.setTag(R.id.is_number_selector_dialog_textview, true);
+        customTextView.setTag(R.id.number_selector_dialog_numbers, Arrays.asList("1", "2", "3"));
+        customTextView.setTag(R.id.number_selector_item, 1);
+        customTextView.setTag(R.id.number_selector_number_of_selectors, 4);
+        customTextView.setTag(R.id.number_selector_default_text_color, "#ffffff");
+        customTextView.setTag(R.id.number_selector_selected_text_color, "#000000");
+        customTextView.setTag(R.id.openmrs_entity_parent, "");
+        customTextView.setTag(R.id.openmrs_entity, "");
+        customTextView.setTag(R.id.openmrs_entity_id, "");
+
+        view.addView(customTextView);
+
+        JsonFormFragmentPresenter spyPresenter = spy(presenter);
+        ReflectionHelpers.setField(spyPresenter, "mStepName", "step1");
+        JsonFormFragmentView jsonFormFragmentView = mock(JsonFormFragmentView.class);
+        spyPresenter.attachView(jsonFormFragmentView);
+        spyPresenter.onClick(customTextView);
+
+        verify(jsonFormFragmentView, only())
+                .writeValue(eq(STEP1), anyString(), eq("2"), anyString(),
+                        anyString(), anyString(), eq(false));
+    }
+
+    @Test
+    public void testOnClickOnNormalNumberSelectorViewShouldSaveClickedViewText() {
+        LinearLayout view = new LinearLayout(RuntimeEnvironment.application);
+        view.setTag(R.id.key, "test");
+
+        CustomTextView customTextView = new CustomTextView(RuntimeEnvironment.application);
+        customTextView.setText("1");
+        customTextView.setTag(R.id.type, JsonFormConstants.NUMBER_SELECTOR);
+        customTextView.setTag(R.id.is_number_selector_dialog_textview, false);
+        customTextView.setTag(R.id.number_selector_dialog_numbers, Arrays.asList("1", "2", "3"));
+        customTextView.setTag(R.id.number_selector_item, 1);
+        customTextView.setTag(R.id.number_selector_number_of_selectors, 4);
+        customTextView.setTag(R.id.number_selector_default_text_color, "#ffffff");
+        customTextView.setTag(R.id.number_selector_selected_text_color, "#000000");
+        customTextView.setTag(R.id.openmrs_entity_parent, "");
+        customTextView.setTag(R.id.openmrs_entity, "");
+        customTextView.setTag(R.id.openmrs_entity_id, "");
+
+        view.addView(customTextView);
+
+        JsonFormFragmentPresenter spyPresenter = spy(presenter);
+        ReflectionHelpers.setField(spyPresenter, "mStepName", "step1");
+        JsonFormFragmentView jsonFormFragmentView = mock(JsonFormFragmentView.class);
+        spyPresenter.attachView(jsonFormFragmentView);
+        spyPresenter.onClick(customTextView);
+
+        verify(jsonFormFragmentView, only())
+                .writeValue(eq(STEP1), anyString(), eq("1"), anyString(),
+                        anyString(), anyString(), eq(false));
     }
 }
