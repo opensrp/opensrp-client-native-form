@@ -486,6 +486,7 @@ public class JsonFormFragmentPresenter extends
             JsonFormFragment next = JsonFormFragment.getFormFragment(nextStep);
             getView().hideKeyBoard();
             getView().transactThis(next);
+            return true;
         }
         return false;
     }
