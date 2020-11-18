@@ -342,11 +342,11 @@ public class JsonFormFragmentPresenter extends
         checkAndStopCountdownAlarm();
         boolean validateOnSubmit = validateOnSubmit();
         if (validateOnSubmit && getIncorrectlyFormattedFields().isEmpty()) {
-            executeRefreshLogicForNextStep();
-            return moveToNextStep();
+            boolean isSkipped = executeRefreshLogicForNextStep();
+            return !isSkipped && moveToNextStep();
         } else if (isFormValid()) {
-            executeRefreshLogicForNextStep();
-            return moveToNextStep();
+            boolean isSkipped = executeRefreshLogicForNextStep();
+            return !isSkipped && moveToNextStep();
         } else {
             getView().showSnackBar(
                     getView().getContext().getResources().getString(R.string.json_form_on_next_error_msg));
@@ -462,7 +462,8 @@ public class JsonFormFragmentPresenter extends
         return entireJsonForm.optBoolean(JsonFormConstants.VALIDATE_ON_SUBMIT, false);
     }
 
-    public void executeRefreshLogicForNextStep() {
+    public boolean executeRefreshLogicForNextStep() {
+        boolean isSkipped = false;
         final String nextStep = getFormFragment().getJsonApi().nextStep();
         if (StringUtils.isNotBlank(nextStep)) {
             getmJsonFormInteractor().fetchFormElements(nextStep, getFormFragment(), getFormFragment().getJsonApi().getmJSONObject().optJSONObject(nextStep), getView().getCommonListener(), false);
@@ -472,8 +473,9 @@ public class JsonFormFragmentPresenter extends
             if (!getFormFragment().getJsonApi().isNextStepRelevant()) {
                 Utils.checkIfStepHasNoSkipLogic(getFormFragment());
             }
-            getFormFragment().skipStepsOnNextPressed(nextStep);
+            isSkipped = getFormFragment().skipStepsOnNextPressed(nextStep);
         }
+        return isSkipped;
     }
 
     private void cleanDataForNextStep() {

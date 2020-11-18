@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.AppCompatRadioButton;
 import android.support.v7.widget.Toolbar;
@@ -316,16 +315,19 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
      * @param step {@link JSONObject}
      */
 
-    public void skipStepsOnNextPressed(String step) {
+    public boolean skipStepsOnNextPressed(String step) {
+        boolean isSkipped = false;
         if (skipBlankSteps()) {
             JSONObject formStep = getJsonApi().getmJSONObject().optJSONObject(step);
             String next = formStep.optString(JsonFormConstants.NEXT, "");
             if (StringUtils.isNotEmpty(next) && (!getJsonApi().isNextStepRelevant() && !nextStepHasNoSkipLogic())) {
                 markStepAsSkipped(formStep);
                 getJsonApi().setNextStep(next);
+                isSkipped = true;
                 next();
             }
         }
+        return isSkipped;
     }
 
     /**
@@ -507,19 +509,9 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     @Override
     public void transactThis(JsonFormFragment next) {
-        //This fixes an edge case whereby one fragment is loaded twice on the stack, brings form traversal issues
-        if (getFragmentManager().getBackStackEntryCount() > 0) { //Note: first step is not usually added to backStackEntry
-            FragmentManager.BackStackEntry stackEntry = getFragmentManager().getBackStackEntryAt(getFragmentManager().getBackStackEntryCount() - 1);
-            if (StringUtils.isNotBlank(stackEntry.getName()) &&
-                    stackEntry.getName().equalsIgnoreCase(next.getArguments().getString(JsonFormConstants.STEPNAME))) {
-                return;
-            }
-        }
-
         getActivity().getSupportFragmentManager().beginTransaction()
                 .replace(R.id.container, next).addToBackStack(next.getArguments().getString(JsonFormConstants.STEPNAME))
                 .commitAllowingStateLoss(); // use https://stackoverflow.com/a/10261449/9782187
-
     }
 
     @Override

@@ -23,11 +23,11 @@ public class JsonWizardFormFragmentPresenter extends JsonFormFragmentPresenter {
 
         boolean validateOnSubmit = validateOnSubmit();
         if (validateOnSubmit && getIncorrectlyFormattedFields().isEmpty()) {
-            executeRefreshLogicForNextStep();
-            return moveToNextWizardStep();
+            boolean isSkipped = executeRefreshLogicForNextStep();
+            return !isSkipped && moveToNextWizardStep();
         } else if (isFormValid()) {
-            executeRefreshLogicForNextStep();
-            return moveToNextWizardStep();
+            boolean isSkipped = executeRefreshLogicForNextStep();
+            return !isSkipped && moveToNextWizardStep();
         } else {
             getView().showSnackBar(getView().getContext().getResources()
                     .getString(R.string.json_form_on_next_error_msg));
