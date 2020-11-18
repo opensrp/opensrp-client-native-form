@@ -485,12 +485,16 @@ public class JsonFormFragmentPresenter extends
     protected boolean moveToNextStep() {
         final String nextStep = getFormFragment().getJsonApi().nextStep();
         if (!"".equals(nextStep)) {
-            JsonFormFragment next = JsonFormFragment.getFormFragment(nextStep);
+            JsonFormFragment next = getNextJsonFormFragment(nextStep);
             getView().hideKeyBoard();
             getView().transactThis(next);
             return true;
         }
         return false;
+    }
+
+    protected JsonFormFragment getNextJsonFormFragment(String nextStep) {
+        return JsonFormFragment.getFormFragment(nextStep);
     }
 
     /**
