@@ -27,7 +27,7 @@ public class FormRollbackDialogUtilTest extends BaseTest {
     public void selectFormShouldReturnFalseWhenCurrentCorruptedFormIsChosen() {
         ClientFormContract.Model clientForm = new TestClientForm();
 
-        assertFalse(FormRollbackDialogUtil.selectForm(Mockito.mock(ClientFormContract.Dao.class) , 0, "0.0.3" + RuntimeEnvironment.application.getString(R.string.current_corrupted_form)
+        assertFalse(FormRollbackDialogUtil.selectForm(Mockito.mock(ClientFormContract.Dao.class), 0, "0.0.3" + RuntimeEnvironment.application.getString(R.string.current_corrupted_form)
                 , RuntimeEnvironment.application, new ArrayList<ClientFormContract.Model>(), clientForm, Mockito.mock(RollbackDialogCallback.class)));
     }
 
@@ -90,7 +90,7 @@ public class FormRollbackDialogUtilTest extends BaseTest {
         Mockito.doReturn(new TestClientForm()).when(clientFormRepository).createNewClientFormModel();
 
         RollbackDialogCallback rollbackDialogCallback = Mockito.mock(RollbackDialogCallback.class);
-        assertTrue(FormRollbackDialogUtil.selectForm(clientFormRepository,0, "base version"
+        assertTrue(FormRollbackDialogUtil.selectForm(clientFormRepository, 0, "base version"
                 , RuntimeEnvironment.application, clientFormsList, highClientFormVersion, rollbackDialogCallback));
 
         ArgumentCaptor<ClientFormContract.Model> clientFormArgumentCaptor = ArgumentCaptor.forClass(ClientFormContract.Model.class);

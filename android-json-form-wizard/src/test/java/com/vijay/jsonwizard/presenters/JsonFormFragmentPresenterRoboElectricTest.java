@@ -4,10 +4,11 @@ import android.Manifest.permission;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.AppCompatSpinner;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.widget.AppCompatSpinner;
 
 import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.R;

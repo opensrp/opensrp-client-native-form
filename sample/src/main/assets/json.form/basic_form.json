@@ -47,6 +47,12 @@
       "openmrs_data_type": "phonenumber",
       "openmrs_entity_id": "163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
     },
+    "firebaseinstanceid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "firebaseinstanceid",
+      "openmrs_entity_id": ""
+    },
     "encounter_location": "",
     "look_up": {
       "entity_id": "",

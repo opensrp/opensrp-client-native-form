@@ -16,6 +16,7 @@ repositories {
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 
 android {
 
@@ -51,12 +52,13 @@ dependencies {
     implementation project(':android-json-form-wizard')
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation 'junit:junit:4.12'
-    implementation('com.android.support:design:28.0.0') {
+    implementation('com.google.android.material:material:1.1.0') {
         exclude group: 'com.android.support', module: 'recyclerview-v7'
     }
-    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'com.jakewharton.timber:timber:4.7.1'
     implementation 'org.greenrobot:eventbus:3.1.1'
-
+    implementation 'com.google.firebase:firebase-messaging:20.2.4'
+    implementation 'com.google.firebase:firebase-analytics:17.5.0'
     implementation 'org.smartregister:opensrp-client-utils:0.0.4-SNAPSHOT'
 }

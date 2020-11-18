@@ -2,12 +2,12 @@ package org.smartregister.nativeform;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.vijay.jsonwizard.activities.JsonFormActivity;
 import com.vijay.jsonwizard.activities.JsonWizardFormActivity;
@@ -16,7 +16,16 @@ import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.factory.FileSourceFactoryHelper;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+
+import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int REQUEST_CODE_GET_JSON = 1234;
@@ -62,19 +71,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             try {
                 startForm(REQUEST_CODE_GET_JSON, "single_form", null, false);
             } catch (Exception e) {
-                Log.e(TAG, e.getMessage(), e);
+                Timber.e(e);
             }
         } else if (id == R.id.action_wizard) {
             try {
                 startForm(REQUEST_CODE_GET_JSON, "wizard_form", null, false);
             } catch (Exception e) {
-                Log.e(TAG, e.getMessage(), e);
+                Timber.e(e);
             }
         } else if (id == R.id.action_validation) {
             try {
                 startForm(REQUEST_CODE_GET_JSON, "validation_form", null, false);
             } catch (Exception e) {
-                Log.e(TAG, e.getMessage(), e);
+                Timber.e(e);
             }
         }
 
@@ -86,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             String jsonString = data.getStringExtra("json");
-            Log.i(getClass().getName(), "Result json String !!!! " + jsonString);
+            Timber.i("Result json String !!!! %s", jsonString);
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -110,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 case "rules_engine_demo": {
                     Intent intent = new Intent(this, JsonWizardFormActivity.class);
                     intent.putExtra("json", jsonForm.toString());
-                    Log.d(getClass().getName(), "form is " + jsonForm.toString());
+                    Timber.d("form is %s", jsonForm.toString());
 
                     Form form = new Form();
                     form.setName("Rules engine demo");
@@ -128,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 case "wizard_form": {
                     Intent intent = new Intent(this, JsonWizardFormActivity.class);
                     intent.putExtra("json", jsonForm.toString());
-                    Log.d(getClass().getName(), "form is " + jsonForm.toString());
+                    Timber.d("form is %s", jsonForm.toString());
 
                     Form form = new Form();
                     form.setName(getString(R.string.profile));
@@ -148,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 case "basic_form": {
                     Intent intent = new Intent(this, JsonWizardFormActivity.class);
                     intent.putExtra("json", jsonForm.toString());
-                    Log.d(getClass().getName(), "form is " + jsonForm.toString());
+                    Timber.d("form is %s", jsonForm.toString());
 
                     Form form = new Form();
                     form.setName(getString(R.string.basic_form));
@@ -168,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 case "validation_form": {
                     Intent intent = new Intent(this, JsonWizardFormActivity.class);
                     intent.putExtra("json", jsonForm.toString());
-                    Log.d(getClass().getName(), "form is " + jsonForm.toString());
+                    Timber.d("form is %s", jsonForm.toString());
 
                     Form form = new Form();
                     form.setName(getString(R.string.validation_test));
@@ -198,14 +207,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 .equalsIgnoreCase(ZEIR_ID)) {
                             jsonObject.remove(VALUE);
                             jsonObject.put(VALUE, entityId);
-                            continue;
                         }
                     }
 
                     Intent intent = new Intent(this, JsonFormActivity.class);
                     intent.putExtra("json", jsonForm.toString());
                     intent.putExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, translate);
-                    Log.d(getClass().getName(), "form is " + jsonForm.toString());
+                    Timber.d("form is %s", jsonForm.toString());
                     startActivityForResult(intent, jsonFormActivityRequestCode);
                     break;
                 }
@@ -213,6 +221,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
 
+    }
+
+    public JSONObject getFormJson(String formIdentity) {
+        try {
+            InputStream inputStream = getApplicationContext().getAssets()
+                    .open("json.form/" + formIdentity + ".json");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream,
+                    StandardCharsets.UTF_8));
+            String jsonString;
+            StringBuilder stringBuilder = new StringBuilder();
+            while ((jsonString = reader.readLine()) != null) {
+                stringBuilder.append(jsonString);
+            }
+            inputStream.close();
+
+            return new JSONObject(stringBuilder.toString());
+        } catch (IOException e) {
+            Timber.e(e);
+        } catch (JSONException e) {
+            Timber.e(e);
+        }
+        return null;
     }
 
     @Override
@@ -254,7 +284,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e);
         }
 
     }

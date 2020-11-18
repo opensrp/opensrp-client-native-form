@@ -1,7 +1,8 @@
 package com.vijay.jsonwizard.rules;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.vijay.jsonwizard.activities.JsonFormBaseActivity;
@@ -51,7 +52,6 @@ public class RulesEngineFactory implements RuleListener {
         gson = new Gson();
         this.globalValues = globalValues;
         this.rulesEngineHelper = new RulesEngineHelper();
-
     }
 
     public RulesEngineFactory() {

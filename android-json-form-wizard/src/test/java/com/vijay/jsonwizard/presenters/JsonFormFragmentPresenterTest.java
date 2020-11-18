@@ -49,13 +49,21 @@ public class JsonFormFragmentPresenterTest {
         jsonFormFragmentPresenter = new JsonFormFragmentPresenter(jsonFormFragment);
     }
 
+    private void setUpJsonFormFragment(boolean validationStatus) throws JSONException {
+        // bootstrap jsonApi
+        JsonApi jsonApi = mock(JsonApi.class);
+        JSONObject mJsonObject = new JSONObject();
+        mJsonObject.put(JsonFormConstants.VALIDATE_ON_SUBMIT, validationStatus);
+        doReturn(jsonApi).when(jsonFormFragment).getJsonApi();
+        doReturn(mJsonObject).when(jsonApi).getmJSONObject();
+    }
+
     @Test
     public void testValidateOnSubmitShouldReturnCorrectValidationStatus() throws JSONException {
         assertTrue(jsonFormFragmentPresenter.validateOnSubmit());
         setUpJsonFormFragment(false);
         assertFalse(jsonFormFragmentPresenter.validateOnSubmit());
     }
-
 
     @Test
     public void testMoveToNextStepShouldMoveToNextStepIfExists() throws Exception {
@@ -74,13 +82,10 @@ public class JsonFormFragmentPresenterTest {
         assertFalse(movedToNext);
     }
 
-    @Test
-    public void testCheckAndStopCountdownAlarmShouldStopAlarm() throws JSONException {
-        bootStrapCurrentJsonState();
-        mockStatic(CountDownTimerFactory.class);
-        jsonFormFragmentPresenter.checkAndStopCountdownAlarm();
-        verifyStatic(CountDownTimerFactory.class);
-        CountDownTimerFactory.stopAlarm();
+    private void addMockStepDetails(String stepName) throws JSONException {
+        JSONObject mStepDetails = new JSONObject();
+        mStepDetails.put("next", stepName);
+        Whitebox.setInternalState(jsonFormFragmentPresenter, "mStepDetails", mStepDetails);
     }
 
     private void mockStaticClasses() {
@@ -88,19 +93,13 @@ public class JsonFormFragmentPresenterTest {
         when(JsonFormFragment.getFormFragment(anyString())).thenReturn(jsonFormFragment);
     }
 
-    private void addMockStepDetails(String stepName) throws JSONException {
-        JSONObject mStepDetails = new JSONObject();
-        mStepDetails.put("next", stepName);
-        Whitebox.setInternalState(jsonFormFragmentPresenter, "mStepDetails", mStepDetails);
-    }
-
-    private void setUpJsonFormFragment(boolean validationStatus) throws JSONException {
-        // bootstrap jsonApi
-        JsonApi jsonApi = mock(JsonApi.class);
-        JSONObject mJsonObject = new JSONObject();
-        mJsonObject.put(JsonFormConstants.VALIDATE_ON_SUBMIT, validationStatus);
-        doReturn(jsonApi).when(jsonFormFragment).getJsonApi();
-        doReturn(mJsonObject).when(jsonApi).getmJSONObject();
+    @Test
+    public void testCheckAndStopCountdownAlarmShouldStopAlarm() throws JSONException {
+        bootStrapCurrentJsonState();
+        mockStatic(CountDownTimerFactory.class);
+        jsonFormFragmentPresenter.checkAndStopCountdownAlarm();
+        verifyStatic(CountDownTimerFactory.class);
+        CountDownTimerFactory.stopAlarm();
     }
 
     private void bootStrapCurrentJsonState() throws JSONException {
