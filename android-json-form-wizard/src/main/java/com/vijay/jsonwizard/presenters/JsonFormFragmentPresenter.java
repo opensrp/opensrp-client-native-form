@@ -169,6 +169,7 @@ public class JsonFormFragmentPresenter extends
     }
 
     public boolean onNextClick(LinearLayout mainView) {
+        clearDeletedInvalidFields();
         validateAndWriteValues();
         checkAndStopCountdownAlarm();
         boolean validateOnSubmit = validateOnSubmit();
@@ -187,7 +188,7 @@ public class JsonFormFragmentPresenter extends
         return mStepName + "#" + getStepTitle() + ":" + key;
     }
 
-    private void clearDeletedInvalidFields() {
+    protected void clearDeletedInvalidFields() {
         Map<String, ValidationStatus> invalidFields = getInvalidFields();
         if (invalidFields != null && !invalidFields.isEmpty()) {
             Collection<View> dataViews = formFragment.getJsonApi().getFormDataViews();
@@ -209,7 +210,6 @@ public class JsonFormFragmentPresenter extends
     }
 
     public void validateAndWriteValues() {
-        clearDeletedInvalidFields();
         for (View childView : formFragment.getJsonApi().getFormDataViews()) {
             ValidationStatus validationStatus = validateView(childView);
             String key = (String) childView.getTag(R.id.key);
@@ -451,6 +451,7 @@ public class JsonFormFragmentPresenter extends
     }
 
     public void onSaveClick(LinearLayout mainView) {
+        clearDeletedInvalidFields();
         validateAndWriteValues();
         checkAndStopCountdownAlarm();
         boolean isFormValid = isFormValid();

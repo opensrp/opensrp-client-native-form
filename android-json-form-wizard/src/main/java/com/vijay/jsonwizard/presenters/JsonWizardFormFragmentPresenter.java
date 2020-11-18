@@ -23,6 +23,7 @@ public class JsonWizardFormFragmentPresenter extends JsonFormFragmentPresenter {
 
     @Override
     public boolean onNextClick(LinearLayout mainView) {
+        clearDeletedInvalidFields();
         validateAndWriteValues();
         checkAndStopCountdownAlarm();
         boolean validateOnSubmit = validateOnSubmit();
