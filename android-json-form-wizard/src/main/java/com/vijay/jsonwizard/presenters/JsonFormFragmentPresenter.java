@@ -45,7 +45,6 @@ import com.vijay.jsonwizard.customviews.NativeEditText;
 import com.vijay.jsonwizard.customviews.RadioButton;
 import com.vijay.jsonwizard.fragments.JsonFormErrorFragment;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
-import com.vijay.jsonwizard.fragments.JsonWizardFormFragment;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 import com.vijay.jsonwizard.mvp.MvpBasePresenter;
 import com.vijay.jsonwizard.rules.RuleConstant;
@@ -247,9 +246,7 @@ public class JsonFormFragmentPresenter extends
         }
         try {
             mStepDetails = new JSONObject(step.toString());
-            if (formFragment instanceof JsonWizardFormFragment) {
-                formFragment.getJsonApi().setNextStep(mStepName);
-            }
+            formFragment.getJsonApi().setNextStep(mStepName);
         } catch (JSONException e) {
             Timber.e(e);
         }
@@ -277,21 +274,19 @@ public class JsonFormFragmentPresenter extends
                         if (getView() != null && !cleanupAndExit) {
                             getView().addFormElements(views);
                             formFragment.getJsonApi().invokeRefreshLogic(null, false, null, null, mStepName, false);
-                            if (formFragment instanceof JsonWizardFormFragment) {
-                                if (formFragment.getJsonApi().skipBlankSteps()) {
-                                    Utils.checkIfStepHasNoSkipLogic(formFragment);
-                                    if (mStepName.equals(JsonFormConstants.STEP1) && !formFragment.getJsonApi().isPreviousPressed()) {
-                                        formFragment.getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                ((JsonWizardFormFragment) formFragment).skipLoadedStepsOnNextPressed();
-                                            }
-                                        });
-                                    }
+                            if (formFragment.getJsonApi().skipBlankSteps()) {
+                                Utils.checkIfStepHasNoSkipLogic(formFragment);
+                                if (mStepName.equals(JsonFormConstants.STEP1) && !formFragment.getJsonApi().isPreviousPressed()) {
+                                    formFragment.getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            formFragment.skipLoadedStepsOnNextPressed();
+                                        }
+                                    });
                                 }
-                                String next = mStepDetails.optString(JsonFormConstants.NEXT);
-                                formFragment.getJsonApi().setNextStep(next);
                             }
+                            String next = mStepDetails.optString(JsonFormConstants.NEXT);
+                            formFragment.getJsonApi().setNextStep(next);
                         }
                     }
                 });
@@ -346,10 +341,12 @@ public class JsonFormFragmentPresenter extends
         validateAndWriteValues();
         checkAndStopCountdownAlarm();
         boolean validateOnSubmit = validateOnSubmit();
-        if (validateOnSubmit && incorrectlyFormattedFields.isEmpty()) {
-            return moveToNextStep();
+        if (validateOnSubmit && getIncorrectlyFormattedFields().isEmpty()) {
+            boolean isSkipped = executeRefreshLogicForNextStep();
+            return !isSkipped && moveToNextStep();
         } else if (isFormValid()) {
-            return moveToNextStep();
+            boolean isSkipped = executeRefreshLogicForNextStep();
+            return !isSkipped && moveToNextStep();
         } else {
             getView().showSnackBar(
                     getView().getContext().getResources().getString(R.string.json_form_on_next_error_msg));
@@ -465,15 +462,39 @@ public class JsonFormFragmentPresenter extends
         return entireJsonForm.optBoolean(JsonFormConstants.VALIDATE_ON_SUBMIT, false);
     }
 
-    private boolean moveToNextStep() {
-        if (!"".equals(mStepDetails.optString(JsonFormConstants.NEXT))) {
-            JsonFormFragment next = JsonFormFragment
-                    .getFormFragment(mStepDetails.optString(JsonFormConstants.NEXT));
+    public boolean executeRefreshLogicForNextStep() {
+        boolean isSkipped = false;
+        final String nextStep = getFormFragment().getJsonApi().nextStep();
+        if (StringUtils.isNotBlank(nextStep)) {
+            getmJsonFormInteractor().fetchFormElements(nextStep, getFormFragment(), getFormFragment().getJsonApi().getmJSONObject().optJSONObject(nextStep), getView().getCommonListener(), false);
+            getFormFragment().getJsonApi().initializeDependencyMaps();
+            cleanDataForNextStep();
+            getFormFragment().getJsonApi().invokeRefreshLogic(null, false, null, null, nextStep, true);
+            if (!getFormFragment().getJsonApi().isNextStepRelevant()) {
+                Utils.checkIfStepHasNoSkipLogic(getFormFragment());
+            }
+            isSkipped = getFormFragment().skipStepsOnNextPressed(nextStep);
+        }
+        return isSkipped;
+    }
+
+    private void cleanDataForNextStep() {
+        getFormFragment().getJsonApi().setNextStepRelevant(false);
+    }
+
+    protected boolean moveToNextStep() {
+        final String nextStep = getFormFragment().getJsonApi().nextStep();
+        if (!"".equals(nextStep)) {
+            JsonFormFragment next = getNextJsonFormFragment(nextStep);
             getView().hideKeyBoard();
             getView().transactThis(next);
             return true;
         }
         return false;
+    }
+
+    protected JsonFormFragment getNextJsonFormFragment(String nextStep) {
+        return JsonFormFragment.getFormFragment(nextStep);
     }
 
     /**

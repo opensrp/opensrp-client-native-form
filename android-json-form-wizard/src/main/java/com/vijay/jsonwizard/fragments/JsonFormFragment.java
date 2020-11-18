@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.AppCompatRadioButton;
 import android.support.v7.widget.Toolbar;
@@ -293,20 +292,10 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
      * Returns the current form step number when given than steps next step number.
      * This number is used to figure out which steps to pop when previous is clicked.
      *
-     * @param nextFormNumber {@link String}
      * @return formNumber {@link Integer}
      */
-    private int getFormStepNumber(String nextFormNumber) {
-        int formNumber = 0;
-        if (StringUtils.isNotBlank(nextFormNumber)) {
-            int currentFormNumber = Integer.parseInt(nextFormNumber.substring(4, 5)) - 1;
-            if (currentFormNumber > 0) {
-                formNumber = currentFormNumber;
-            } else if (currentFormNumber == 0) {
-                formNumber = 1;
-            }
-        }
-        return formNumber;
+    private int getFormStepNumber() {
+        return Integer.parseInt(getArguments().getString(JsonFormConstants.STEPNAME).substring(4));
     }
 
     /***
@@ -326,16 +315,19 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
      * @param step {@link JSONObject}
      */
 
-    public void skipStepsOnNextPressed(String step) {
+    public boolean skipStepsOnNextPressed(String step) {
+        boolean isSkipped = false;
         if (skipBlankSteps()) {
             JSONObject formStep = getJsonApi().getmJSONObject().optJSONObject(step);
             String next = formStep.optString(JsonFormConstants.NEXT, "");
             if (StringUtils.isNotEmpty(next) && (!getJsonApi().isNextStepRelevant() && !nextStepHasNoSkipLogic())) {
                 markStepAsSkipped(formStep);
                 getJsonApi().setNextStep(next);
+                isSkipped = true;
                 next();
             }
         }
+        return isSkipped;
     }
 
     /**
@@ -343,9 +335,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
      */
     public void skipStepOnPreviousPressed() {
         if (skipBlankSteps()) {
-            JSONObject currentFormStep = getStep(getArguments().getString(JsonFormConstants.STEPNAME));
-            String next = currentFormStep.optString(JsonFormConstants.NEXT, "");
-            int currentFormStepNumber = getFormStepNumber(next);
+            int currentFormStepNumber = getFormStepNumber();
             for (int i = currentFormStepNumber; i >= 1; i--) {
                 JSONObject formStep = getJsonApi().getmJSONObject().optJSONObject(JsonFormConstants.STEP + i);
                 if (formStep != null) {
@@ -519,19 +509,9 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     @Override
     public void transactThis(JsonFormFragment next) {
-        //This fixes an edge case whereby one fragment is loaded twice on the stack, brings form traversal issues
-        if (getFragmentManager().getBackStackEntryCount() > 0) { //Note: first step is not usually added to backStackEntry
-            FragmentManager.BackStackEntry stackEntry = getFragmentManager().getBackStackEntryAt(getFragmentManager().getBackStackEntryCount() - 1);
-            if (StringUtils.isNotBlank(stackEntry.getName()) &&
-                    stackEntry.getName().equalsIgnoreCase(next.getArguments().getString(JsonFormConstants.STEPNAME))) {
-                return;
-            }
-        }
-
         getActivity().getSupportFragmentManager().beginTransaction()
                 .replace(R.id.container, next).addToBackStack(next.getArguments().getString(JsonFormConstants.STEPNAME))
                 .commitAllowingStateLoss(); // use https://stackoverflow.com/a/10261449/9782187
-
     }
 
     @Override

@@ -6,9 +6,6 @@ import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.fragments.JsonWizardFormFragment;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
-import com.vijay.jsonwizard.utils.Utils;
-
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Created by keyman on 04/12/18.
@@ -26,36 +23,17 @@ public class JsonWizardFormFragmentPresenter extends JsonFormFragmentPresenter {
 
         boolean validateOnSubmit = validateOnSubmit();
         if (validateOnSubmit && getIncorrectlyFormattedFields().isEmpty()) {
-            executeRefreshLogicForNextStep();
-            return moveToNextWizardStep();
+            boolean isSkipped = executeRefreshLogicForNextStep();
+            return !isSkipped && moveToNextWizardStep();
         } else if (isFormValid()) {
-            executeRefreshLogicForNextStep();
-            return moveToNextWizardStep();
+            boolean isSkipped = executeRefreshLogicForNextStep();
+            return !isSkipped && moveToNextWizardStep();
         } else {
             getView().showSnackBar(getView().getContext().getResources()
                     .getString(R.string.json_form_on_next_error_msg));
         }
 
         return false;
-    }
-
-
-    public void executeRefreshLogicForNextStep() {
-        final String nextStep = getFormFragment().getJsonApi().nextStep();
-        if (StringUtils.isNotBlank(nextStep)) {
-            getmJsonFormInteractor().fetchFormElements(nextStep, getFormFragment(), getFormFragment().getJsonApi().getmJSONObject().optJSONObject(nextStep), getView().getCommonListener(), false);
-            getFormFragment().getJsonApi().initializeDependencyMaps();
-            cleanDataForNextStep();
-            getFormFragment().getJsonApi().invokeRefreshLogic(null, false, null, null, nextStep, true);
-            if (!getFormFragment().getJsonApi().isNextStepRelevant()) {
-                Utils.checkIfStepHasNoSkipLogic(getFormFragment());
-            }
-            ((JsonWizardFormFragment) getFormFragment()).skipStepsOnNextPressed(nextStep);
-        }
-    }
-
-    private void cleanDataForNextStep() {
-        getFormFragment().getJsonApi().setNextStepRelevant(false);
     }
 
     protected boolean moveToNextWizardStep() {

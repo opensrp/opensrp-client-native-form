@@ -806,18 +806,20 @@ public class Utils {
         if (formFragment.getJsonApi().stepSkipLogicPresenceMap().get(step) == null) {
             boolean hasNoSkipLogic = false;
             JSONObject jsonObject = formFragment.getJsonApi().getmJSONObject();
-            JSONObject jsonStepObject = jsonObject.optJSONObject(step);
-            JSONArray fields = jsonStepObject.optJSONArray(JsonFormConstants.FIELDS);
-            for (int i = 0; i < fields.length(); i++) {
-                JSONObject object = fields.optJSONObject(i);
-                if (object.has(TYPE)
-                        && !object.optString(TYPE).equals(JsonFormConstants.HIDDEN)
-                        && !object.has(JsonFormConstants.RELEVANCE)) {
-                    hasNoSkipLogic = true;
-                    break;
+            if (StringUtils.isNotBlank(step)) {
+                JSONObject jsonStepObject = jsonObject.optJSONObject(step);
+                JSONArray fields = jsonStepObject.optJSONArray(JsonFormConstants.FIELDS);
+                for (int i = 0; i < fields.length(); i++) {
+                    JSONObject object = fields.optJSONObject(i);
+                    if (object.has(TYPE)
+                            && !object.optString(TYPE).equals(JsonFormConstants.HIDDEN)
+                            && !object.has(JsonFormConstants.RELEVANCE)) {
+                        hasNoSkipLogic = true;
+                        break;
+                    }
                 }
+                formFragment.getJsonApi().stepSkipLogicPresenceMap().put(step, hasNoSkipLogic);
             }
-            formFragment.getJsonApi().stepSkipLogicPresenceMap().put(step, hasNoSkipLogic);
         }
     }
 
