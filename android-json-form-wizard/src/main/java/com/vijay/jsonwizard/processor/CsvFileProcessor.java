@@ -1,6 +1,6 @@
 package com.vijay.jsonwizard.processor;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /***
  * @deprecated should now use MultiSelectListRepository

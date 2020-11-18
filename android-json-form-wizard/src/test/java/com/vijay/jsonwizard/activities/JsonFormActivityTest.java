@@ -1,12 +1,13 @@
 package com.vijay.jsonwizard.activities;
 
 import android.content.Intent;
-import android.support.v7.widget.AppCompatRadioButton;
 import android.text.Html;
 import android.text.Spanned;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+
+import androidx.appcompat.widget.AppCompatRadioButton;
 
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
@@ -166,7 +167,7 @@ public class JsonFormActivityTest extends BaseActivityTest {
         RadioGroup radioGroup = new RadioGroup(activity.getBaseContext());
         radioGroup.addView(radioGroupChildLayout);
 
-        Whitebox.invokeMethod(activity, "setReadOnlyRadioButtonOptions",radioGroup, false);
+        Whitebox.invokeMethod(activity, "setReadOnlyRadioButtonOptions", radioGroup, false);
         Assert.assertFalse(appCompatRadioButton.isEnabled());
     }
 
@@ -185,7 +186,7 @@ public class JsonFormActivityTest extends BaseActivityTest {
         RadioGroup radioGroup = new RadioGroup(activity.getBaseContext());
         radioGroup.addView(radioGroupChildLayout);
 
-        Whitebox.invokeMethod(activity, "setReadOnlyRadioButtonOptions",radioGroup, true);
+        Whitebox.invokeMethod(activity, "setReadOnlyRadioButtonOptions", radioGroup, true);
         Assert.assertTrue(appCompatRadioButton.isEnabled());
     }
 
@@ -204,7 +205,7 @@ public class JsonFormActivityTest extends BaseActivityTest {
         RelativeLayout radioGroup = new RelativeLayout(activity.getBaseContext());
         radioGroup.addView(radioGroupChildLayout);
 
-        Whitebox.invokeMethod(activity, "setReadOnlyRadioButtonOptions",radioGroup, true);
+        Whitebox.invokeMethod(activity, "setReadOnlyRadioButtonOptions", radioGroup, true);
         Assert.assertFalse(appCompatRadioButton.isEnabled());
     }
 }

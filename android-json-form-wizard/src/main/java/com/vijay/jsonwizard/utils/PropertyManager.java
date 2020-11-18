@@ -23,11 +23,19 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
 import android.telephony.TelephonyManager;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.interfaces.OnActivityRequestPermissionResultListener;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -46,6 +54,7 @@ public class PropertyManager {
     private Context mContext;
 
     public final static String DEVICE_ID_PROPERTY = "deviceid"; // imei
+    public final static String FIREBASE_INSTANCE_ID = "firebaseinstanceid";
     public final static String SUBSCRIBER_ID_PROPERTY = "subscriberid"; // imsi
     public final static String SIM_SERIAL_PROPERTY = "simserial";
     public final static String PHONE_NUMBER_PROPERTY = "phonenumber";
@@ -55,11 +64,15 @@ public class PropertyManager {
     public PropertyManager(Context context) {
         mContext = context;
         mProperties = new HashMap<>();
-        grantPhoneStatePermission();
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            grantPhoneStatePermission();
+        }
         handleOnRequestPermissionResults();
-        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.READ_PHONE_STATE)
-                == PackageManager.PERMISSION_GRANTED) {
-           addPhoneProperties();
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+            addPhoneProperties();
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            addFirebaseInstanceId();
         }
     }
 
@@ -152,4 +165,23 @@ public class PropertyManager {
         }
     }
 
+
+    private void addFirebaseInstanceId() {
+        final String[] token = {""};
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            return;
+                        }
+                        // Get new Instance ID token
+                        token[0] = task.getResult().getToken();
+                    }
+                });
+
+        if (StringUtils.isNotBlank(token[0])) {
+            mProperties.put(FIREBASE_INSTANCE_ID, token[0]);
+        }
+    }
 }
