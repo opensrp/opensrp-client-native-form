@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/native_form_text_and_image"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -15,7 +16,7 @@
         android:paddingStart="5dp"
         android:paddingEnd="5dp"
         android:paddingBottom="20dp"
-        android:text="Sample text Add 60 ㎕ assay buffer solution (3 drops for vial type or 2 drops for bottle type) into the A well. Start a timer. Long text aye?"
+        tools:text="Sample text Add 60 ㎕ assay buffer solution (3 drops for vial type or 2 drops for bottle type) into the A well. Start a timer. Long text aye?"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

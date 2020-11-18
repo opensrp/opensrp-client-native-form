@@ -71,7 +71,7 @@ public abstract class RDTCaptureFactory implements FormWidgetFactory, OnActivity
         rootLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
     }
 
-    protected abstract void launchRDTCaptureActivity();
+    protected abstract void launchRDTCaptureActivity() throws Exception;
 
     protected int getLayout() {
         return R.layout.native_form_rdt_capture;
