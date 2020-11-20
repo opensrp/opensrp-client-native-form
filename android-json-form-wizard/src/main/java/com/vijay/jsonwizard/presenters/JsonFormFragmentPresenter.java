@@ -169,7 +169,6 @@ public class JsonFormFragmentPresenter extends
     }
 
     public boolean onNextClick(LinearLayout mainView) {
-        clearDeletedInvalidFields();
         validateAndWriteValues();
         checkAndStopCountdownAlarm();
         boolean validateOnSubmit = validateOnSubmit();
@@ -184,31 +183,6 @@ public class JsonFormFragmentPresenter extends
         return false;
     }
 
-    private String getFieldKey(String key) {
-        return mStepName + "#" + getStepTitle() + ":" + key;
-    }
-
-    protected void clearDeletedInvalidFields() {
-        Map<String, ValidationStatus> invalidFields = getInvalidFields();
-        if (invalidFields != null && !invalidFields.isEmpty()) {
-            Collection<View> dataViews = formFragment.getJsonApi().getFormDataViews();
-            for (String invalidKey : invalidFields.keySet()) {
-                for (View v : dataViews) {
-                    String fieldKey = getFieldKey(v.getTag(R.id.key).toString());
-                    String partialFieldKey = fieldKey.substring(0, fieldKey.lastIndexOf("_"));
-                    String partialInvalidKey = invalidKey.substring(0, partialFieldKey.lastIndexOf("_"));
-
-                    if (partialInvalidKey.equals(partialFieldKey)) {
-                        continue;
-                    }
-                    invalidFields.remove(invalidKey);
-                    break;
-                }
-            }
-        }
-
-    }
-
     public void validateAndWriteValues() {
         for (View childView : formFragment.getJsonApi().getFormDataViews()) {
             ValidationStatus validationStatus = validateView(childView);
@@ -217,7 +191,7 @@ public class JsonFormFragmentPresenter extends
             String openMrsEntity = (String) childView.getTag(R.id.openmrs_entity);
             String openMrsEntityId = (String) childView.getTag(R.id.openmrs_entity_id);
             Boolean popup = (Boolean) childView.getTag(R.id.extraPopup);
-            String fieldKey = getFieldKey(key);
+            String fieldKey = Utils.getFieldKeyPrefix(mStepName, getStepTitle()) + key;
 
             if (childView instanceof MaterialEditText) {
                 MaterialEditText editText = (MaterialEditText) childView;
@@ -451,7 +425,6 @@ public class JsonFormFragmentPresenter extends
     }
 
     public void onSaveClick(LinearLayout mainView) {
-        clearDeletedInvalidFields();
         validateAndWriteValues();
         checkAndStopCountdownAlarm();
         boolean isFormValid = isFormValid();

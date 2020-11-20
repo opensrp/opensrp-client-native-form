@@ -443,6 +443,16 @@ public class Utils {
         }
     }
 
+    public static void removeDeletedInvalidFields(String fieldKeyPrefix, Map<String, ValidationStatus> invalidFields, ArrayList<String> removeThisFields) {
+        for (String removeField : removeThisFields) {
+            invalidFields.remove(fieldKeyPrefix + removeField);
+        }
+    }
+
+    public static String getFieldKeyPrefix(String stepName, String stepTitle) {
+        return stepName + "#" + stepTitle + ":";
+    }
+
     public List<String> createExpansionPanelChildren(JSONArray jsonArray) throws JSONException {
         List<String> stringList = new ArrayList<>();
         String label;
