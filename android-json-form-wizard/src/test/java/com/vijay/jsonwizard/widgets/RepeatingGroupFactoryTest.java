@@ -170,7 +170,6 @@ public class RepeatingGroupFactoryTest extends FactoryTest {
                 ReflectionHelpers.ClassParameter.from(MaterialEditText.class, referenceEditText),
                 ReflectionHelpers.ClassParameter.from(String.class, "Hint"),
                 ReflectionHelpers.ClassParameter.from(String.class, "Label"),
-                ReflectionHelpers.ClassParameter.from(JSONObject.class, jsonObject),
                 ReflectionHelpers.ClassParameter.from(WidgetArgs.class, widgetArgs));
 
         referenceEditText.setOnEditorActionListener(mockOnEditorActionListener);

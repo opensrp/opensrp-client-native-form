@@ -59,7 +59,8 @@ public class JsonFormFragmentPresenterTest {
 
     @Test
     public void testMoveToNextStepShouldMoveToNextStepIfExists() throws Exception {
-        addMockStepDetails("step1");
+        JsonApi jsonApi = jsonFormFragment.getJsonApi();
+        doReturn("step1").when(jsonApi).nextStep();
         mockStaticClasses();
         JsonFormFragmentView view = mock(JsonFormFragmentView.class);
         jsonFormFragmentPresenter.attachView(view);
@@ -69,7 +70,7 @@ public class JsonFormFragmentPresenterTest {
         verify(view).hideKeyBoard();
         verify(view).transactThis(eq(jsonFormFragment));
 
-        addMockStepDetails("");
+        doReturn("").when(jsonApi).nextStep();
         movedToNext = Whitebox.invokeMethod(jsonFormFragmentPresenter, "moveToNextStep");
         assertFalse(movedToNext);
     }
