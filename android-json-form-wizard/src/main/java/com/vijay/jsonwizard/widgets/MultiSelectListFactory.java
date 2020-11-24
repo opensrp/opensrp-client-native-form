@@ -33,6 +33,8 @@ import com.vijay.jsonwizard.interfaces.MultiSelectListRepository;
 import com.vijay.jsonwizard.task.MultiSelectListLoadTask;
 import com.vijay.jsonwizard.utils.MultiSelectListUtils;
 import com.vijay.jsonwizard.utils.Utils;
+import com.vijay.jsonwizard.utils.ValidationStatus;
+import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -53,7 +55,7 @@ public class MultiSelectListFactory implements FormWidgetFactory {
     public String currentAdapterKey;
     public Context context;
     private JsonFormFragment jsonFormFragment;
-    private HashMap<String, MultiSelectListAccessory> multiSelectListAccessoryHashMap = new HashMap<>();
+    private static HashMap<String, MultiSelectListAccessory> multiSelectListAccessoryHashMap = new HashMap<>();
 
     @Override
     public List<View> getViewsFromJson(@NonNull String stepName, @NonNull Context context, @NonNull JsonFormFragment formFragment, @NonNull JSONObject jsonObject,
@@ -68,7 +70,7 @@ public class MultiSelectListFactory implements FormWidgetFactory {
     }
 
     private List<View> attachJson(@NonNull String stepName, @NonNull Context context, @NonNull JsonFormFragment formFragment, @NonNull JSONObject jsonObject,
-                                  @NonNull CommonListener listener, boolean popup) {
+                                  @NonNull CommonListener listener, boolean popup) throws JSONException {
         Timber.i("stepName %s popup %s listener %s", stepName, popup, listener);
         this.jsonFormFragment = formFragment;
         this.jsonObject = jsonObject;
@@ -88,8 +90,48 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         populateTags(actionView, stepName, popup, openMrsEntity, openMrsEntityParent, openMrsEntityId);
 
         prepareViewChecks(actionView, context);
+        addRequiredValidator(actionView, jsonObject);
+        ((JsonApi) context).addFormDataView(actionView);
         return views;
     }
+
+    private void addRequiredValidator(RelativeLayout relativeLayout, JSONObject jsonObject) throws JSONException {
+        JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
+        if (requiredObject != null) {
+            boolean requiredValue = requiredObject.getBoolean(JsonFormConstants.VALUE);
+            if (Boolean.TRUE.equals(requiredValue)) {
+                relativeLayout.setTag(R.id.error, requiredObject.optString(JsonFormConstants.ERR, null));
+            }
+        }
+    }
+
+    public static ValidationStatus validate(JsonFormFragmentView fragmentView, RelativeLayout multiselectLayout) {
+        String error = (String)  multiselectLayout.getTag(R.id.error);
+        if (multiselectLayout.isEnabled() && error != null) {
+            boolean isValid = performValidation(multiselectLayout);
+            if (!isValid) {
+                return new ValidationStatus(false, error, fragmentView, multiselectLayout);
+            }
+        }
+
+        return new ValidationStatus(true, error, fragmentView, multiselectLayout);
+    }
+
+    private static boolean performValidation(RelativeLayout relativeLayout) {
+
+        boolean isSelected = false;
+        String currentAdapterKey = (String) relativeLayout.getTag(R.id.key);
+        MultiSelectListAccessory multiSelectListAccessory = getMultiSelectListAccessoryHashMap().get(currentAdapterKey);
+        if (multiSelectListAccessory != null) {
+            List<MultiSelectItem> multiSelectItems = multiSelectListAccessory.getSelectedAdapter().getData();
+
+            if (!multiSelectItems.isEmpty()) {
+                isSelected = true;
+            }
+        }
+        return isSelected;
+    }
+
 
     private void prepareViewChecks(@NonNull RelativeLayout view, @NonNull Context context) {
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
@@ -124,6 +166,7 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         view.setTag(R.id.type, jsonObject.optString(JsonFormConstants.TYPE));
         view.setTag(R.id.extraPopup, popUp);
         view.setTag(R.id.address, stepName + ":" + jsonObject.optString(JsonFormConstants.KEY));
+        view.setTag(R.id.is_multiselect_relative_layout, true);
     }
 
     private void prepareMultiSelectHashMap(@NonNull String stepName, boolean popup, String openmrsEntity, String openmrsEntityParent, String openmrsEntityId) {
@@ -286,7 +329,7 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         updateMultiSelectListAccessoryHashMap(multiSelectListAccessory);
     }
 
-    public HashMap<String, MultiSelectListAccessory> getMultiSelectListAccessoryHashMap() {
+    public static HashMap<String, MultiSelectListAccessory> getMultiSelectListAccessoryHashMap() {
         return multiSelectListAccessoryHashMap;
     }
 
