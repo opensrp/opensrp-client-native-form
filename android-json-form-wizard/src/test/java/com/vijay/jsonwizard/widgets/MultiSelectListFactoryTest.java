@@ -11,6 +11,8 @@ import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.MultiSelectItem;
 import com.vijay.jsonwizard.domain.MultiSelectListAccessory;
 import com.vijay.jsonwizard.repository.TestMultiSelectListRepository;
+import com.vijay.jsonwizard.utils.ValidationStatus;
+import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -184,5 +186,57 @@ public class MultiSelectListFactoryTest extends BaseTest {
         Mockito.verify(jsonObject).optJSONObject(JsonFormConstants.V_REQUIRED);
         Mockito.verify(jsonObject).getBoolean(JsonFormConstants.VALUE);
         Mockito.verify(relativeLayout).setTag(R.id.error, "kassim");
+    }
+
+    @Test
+    public void testValidateWhenNoError(){
+
+        JsonFormFragmentView jsonFormFragmentView = Mockito.mock(JsonFormFragmentView.class);
+        RelativeLayout relativeLayout = Mockito.mock(RelativeLayout.class);
+
+        ValidationStatus validationStatus = MultiSelectListFactory.validate(jsonFormFragmentView, relativeLayout);
+
+        Mockito.verify(relativeLayout).getTag(R.id.error);
+        Mockito.verify(relativeLayout).isEnabled();
+
+        Assert.assertEquals(true, validationStatus.isValid());
+    }
+
+    @Test
+    public void testValidateWhenError() throws Exception{
+
+        JsonFormFragmentView jsonFormFragmentView = Mockito.mock(JsonFormFragmentView.class);
+        RelativeLayout relativeLayout = Mockito.mock(RelativeLayout.class);
+
+        Mockito.doReturn("Error").when(relativeLayout).getTag(R.id.error);
+        Mockito.doReturn(true).when(relativeLayout).isEnabled();
+
+        HashMap<String, MultiSelectListAccessory> accessoryHashMap = new HashMap<>();
+        Whitebox.setInternalState(MultiSelectListFactory.class, "multiSelectListAccessoryHashMap", accessoryHashMap);
+        MultiSelectListSelectedAdapter multiSelectListAdapter = new MultiSelectListSelectedAdapter(new ArrayList<MultiSelectItem>(), multiSelectListFactory);
+
+        MultiSelectListAccessory multiSelectListAccessory = new MultiSelectListAccessory(
+                multiSelectListAdapter,
+                new MultiSelectListAdapter(new ArrayList<MultiSelectItem>()),
+                null,
+                new ArrayList<MultiSelectItem>(),
+                new ArrayList<MultiSelectItem>());
+        multiSelectListFactory.currentAdapterKey = "test";
+
+        Whitebox.invokeMethod(multiSelectListFactory, "updateMultiSelectListAccessoryHashMap", multiSelectListAccessory);
+        try {
+            multiSelectListFactory.updateSelectedData(new MultiSelectItem(), true);
+        } catch (NullPointerException e) {
+            //this exception catches call on notifyDataSetChanged since no recylclerview has been attached to the adapter;
+        }
+
+        Mockito.doReturn("test").when(relativeLayout).getTag(R.id.key);
+        ValidationStatus validationStatus = MultiSelectListFactory.validate(jsonFormFragmentView, relativeLayout);
+
+        Mockito.verify(relativeLayout).getTag(R.id.error);
+        Mockito.verify(relativeLayout).getTag(R.id.key);
+        Mockito.verify(relativeLayout).isEnabled();
+
+        Assert.assertEquals(true, validationStatus.isValid());
     }
 }
