@@ -192,7 +192,7 @@ public class JsonFormFragmentPresenter extends
             String openMrsEntity = (String) childView.getTag(R.id.openmrs_entity);
             String openMrsEntityId = (String) childView.getTag(R.id.openmrs_entity_id);
             Boolean popup = (Boolean) childView.getTag(R.id.extraPopup);
-            String fieldKey = mStepName + "#" + getStepTitle() + ":" + key;
+            String fieldKey = Utils.getFieldKeyPrefix(mStepName, getStepTitle()) + key;
 
             if (childView instanceof MaterialEditText) {
                 MaterialEditText editText = (MaterialEditText) childView;
