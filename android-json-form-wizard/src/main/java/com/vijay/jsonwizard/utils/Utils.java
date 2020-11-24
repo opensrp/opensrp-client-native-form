@@ -443,9 +443,9 @@ public class Utils {
         }
     }
 
-    public static void removeDeletedInvalidFields(String fieldKeyPrefix, Map<String, ValidationStatus> invalidFields, ArrayList<String> removeThisFields) {
-        for (String removeField : removeThisFields) {
-            invalidFields.remove(fieldKeyPrefix + removeField);
+    public static void removeDeletedInvalidFields(String fieldKeyPrefix, Map<String, ValidationStatus> invalidFields, ArrayList<String> fieldsToRemove) {
+        for (String fieldToRemove : fieldsToRemove) {
+            invalidFields.remove(fieldKeyPrefix + fieldToRemove);
         }
     }
 
