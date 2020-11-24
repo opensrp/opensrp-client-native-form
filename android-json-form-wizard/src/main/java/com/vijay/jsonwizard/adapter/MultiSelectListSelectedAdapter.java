@@ -78,7 +78,7 @@ public class MultiSelectListSelectedAdapter extends RecyclerView.Adapter<MultiSe
         private TextView multiSelectListTextViewAdditionalInfo;
         private ImageView imgDelete;
 
-        public MyViewHolder(View view) {
+        private MyViewHolder(View view) {
             super(view);
             multiSelectListTextView = view.findViewById(R.id.multiSelectListTextView);
             multiSelectListTextViewAdditionalInfo = view.findViewById(R.id.multiSelectListTextViewAdditionalInfo);

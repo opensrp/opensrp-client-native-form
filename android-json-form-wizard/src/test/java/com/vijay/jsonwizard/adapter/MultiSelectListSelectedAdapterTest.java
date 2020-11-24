@@ -11,7 +11,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.robolectric.RuntimeEnvironment;
 
 import java.util.ArrayList;
@@ -20,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 public class MultiSelectListSelectedAdapterTest extends BaseTest {
@@ -30,8 +30,8 @@ public class MultiSelectListSelectedAdapterTest extends BaseTest {
 
     @Before
     public void setUp() {
-        multiSelectListFactory = Mockito.spy(new MultiSelectListFactory());
-        multiSelectListSelectedAdapter = Mockito.spy(new MultiSelectListSelectedAdapter(new ArrayList<MultiSelectItem>(),
+        multiSelectListFactory = spy(new MultiSelectListFactory());
+        multiSelectListSelectedAdapter = spy(new MultiSelectListSelectedAdapter(new ArrayList<MultiSelectItem>(),
                 multiSelectListFactory));
     }
 
@@ -59,7 +59,7 @@ public class MultiSelectListSelectedAdapterTest extends BaseTest {
         multiSelectListSelectedAdapter.getData().add(multiSelectItem);
 
         doNothing().when(multiSelectListFactory).writeToForm();
-        MultiSelectListSelectedAdapter.MyViewHolder myViewHolder = Mockito.spy(multiSelectListSelectedAdapter.onCreateViewHolder(linearLayout, 0));
+        MultiSelectListSelectedAdapter.MyViewHolder myViewHolder = spy(multiSelectListSelectedAdapter.onCreateViewHolder(linearLayout, 0));
         multiSelectListSelectedAdapter.onBindViewHolder(myViewHolder, 0);
 
         assertEquals(multiSelectItem.getText(), myViewHolder.itemTextView().getText());

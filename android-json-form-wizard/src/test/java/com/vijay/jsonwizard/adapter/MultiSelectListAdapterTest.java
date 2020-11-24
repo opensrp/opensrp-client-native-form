@@ -8,7 +8,6 @@ import com.vijay.jsonwizard.domain.MultiSelectItem;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.robolectric.RuntimeEnvironment;
 
 import java.util.ArrayList;
@@ -16,6 +15,7 @@ import java.util.ArrayList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.spy;
 
 public class MultiSelectListAdapterTest extends BaseTest {
 
@@ -23,7 +23,7 @@ public class MultiSelectListAdapterTest extends BaseTest {
 
     @Before
     public void setUp() {
-        multiSelectListAdapter = Mockito.spy(new MultiSelectListAdapter(new ArrayList<MultiSelectItem>()));
+        multiSelectListAdapter = spy(new MultiSelectListAdapter(new ArrayList<MultiSelectItem>()));
     }
 
     @Test
@@ -54,13 +54,13 @@ public class MultiSelectListAdapterTest extends BaseTest {
         multiSelectListAdapter.getData().add(viewSelectItem);
         multiSelectListAdapter.getData().add(headerSelectItem);
 
-        MultiSelectListAdapter.SectionViewHolder viewItemView = (MultiSelectListAdapter.SectionViewHolder) Mockito.spy(multiSelectListAdapter.onCreateViewHolder(linearLayout, 0));
+        MultiSelectListAdapter.SectionViewHolder viewItemView = (MultiSelectListAdapter.SectionViewHolder) spy(multiSelectListAdapter.onCreateViewHolder(linearLayout, 0));
 
         multiSelectListAdapter.onBindViewHolder(viewItemView, 0);
 
         assertEquals(viewSelectItem.getText(), viewItemView.itemTextView().getText());
 
-        MultiSelectListAdapter.SectionTitleViewHolder viewHeaderItemView = (MultiSelectListAdapter.SectionTitleViewHolder) Mockito.spy(multiSelectListAdapter.onCreateViewHolder(linearLayout, 1));
+        MultiSelectListAdapter.SectionTitleViewHolder viewHeaderItemView = (MultiSelectListAdapter.SectionTitleViewHolder) spy(multiSelectListAdapter.onCreateViewHolder(linearLayout, 1));
 
         multiSelectListAdapter.onBindViewHolder(viewHeaderItemView, 1);
 
