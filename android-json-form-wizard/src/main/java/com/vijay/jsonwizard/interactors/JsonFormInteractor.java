@@ -49,6 +49,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import timber.log.Timber;
+
 /**
  * Created by vijay on 5/19/15.
  */
@@ -219,11 +221,10 @@ public class JsonFormInteractor {
             if (views.size() > 0) {
                 viewsFromJson.addAll(views);
             }
-        } catch (Exception e) {
-            Log.e(TAG,
-                    "Exception occurred in making view : Exception is : "
-                            + e.getMessage());
-            e.printStackTrace();
+        } catch (RuntimeException e) {
+            throw e;
+        } catch(Exception e) {
+            Timber.e(e, "Exception encountered while creating form widget!");
         }
     }
 
