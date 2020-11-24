@@ -32,6 +32,7 @@ import com.vijay.jsonwizard.presenters.JsonFormFragmentPresenter;
 import com.vijay.jsonwizard.task.AttachRepeatingGroupTask;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.Utils;
+import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.validators.edittext.MaxNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.MinNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
@@ -97,7 +98,6 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         final String referenceEditTextHint = jsonObject.optString(REFERENCE_EDIT_TEXT_HINT, context.getString(R.string.enter_number_of_repeating_group_items));
         final String repeatingGroupLabel = jsonObject.optString(REPEATING_GROUP_LABEL, context.getString(R.string.repeating_group_item));
         String remoteReferenceEditText = jsonObject.optString(REFERENCE_EDIT_TEXT);
-
         setRepeatingGroupNumLimits(widgetArgs);
 
         JSONObject countFieldObject = Utils.getRepeatingGroupCountObj(widgetArgs);
@@ -335,7 +335,13 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
             @Override
             public void afterTextChanged(Editable s) {
                 doneButton.setImageResource(R.drawable.ic_done_grey);
-                JsonFormFragmentPresenter.validate(widgetArgs.getFormFragment(), referenceEditText, false);
+                ValidationStatus validationStatus = JsonFormFragmentPresenter
+                        .validate(widgetArgs.getFormFragment(), referenceEditText, false);
+                if (validationStatus.isValid()) {
+                    if (widgetArgs.getJsonObject().optBoolean(JsonFormConstants.EXPAND_ON_TEXT_CHANGE)) {
+                        addOnDoneAction(referenceEditText, doneButton, widgetArgs);
+                    }
+                }
             }
         });
     }

@@ -1,8 +1,12 @@
 package com.vijay.jsonwizard.widgets;
 
+import android.content.Context;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.vijay.jsonwizard.R;
@@ -31,6 +35,9 @@ import java.util.Set;
 
 import static android.os.Looper.getMainLooper;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 import static org.robolectric.annotation.LooperMode.Mode.PAUSED;
 
@@ -88,39 +95,6 @@ public class RepeatingGroupFactoryTest extends FactoryTest {
     }
 
     @Test
-    public void testGetCustomTranslatableWidgetFields() {
-        RepeatingGroupFactory factorySpy = Mockito.spy(factory);
-
-        Set<String> editableProperties = factorySpy.getCustomTranslatableWidgetFields();
-        Assert.assertEquals(1, editableProperties.size());
-    }
-
-    @Test
-    public void testUniqueChildElementKeyGenerationShouldContainChildKeyAsComponent() throws JSONException {
-        final String parentRepeatingGroupWidgetKey = "parent";
-        final String childElementKey = "child";
-        final String uniqueId = "unique";
-
-        JSONObject parentRepeatingGroupWidget = new JSONObject();
-        parentRepeatingGroupWidget.put(JsonFormConstants.KEY, parentRepeatingGroupWidgetKey);
-        WidgetArgs widgetArgs = new WidgetArgs().withJsonObject(parentRepeatingGroupWidget);
-
-        JSONObject childElement = new JSONObject();
-        childElement.put(JsonFormConstants.KEY, childElementKey);
-
-        AttachRepeatingGroupTask attachRepeatingGroupTask = new AttachRepeatingGroupTask(Mockito.mock(LinearLayout.class),
-                0, new HashMap<Integer, String>(), widgetArgs, Mockito.mock(ImageButton.class));
-
-        ReflectionHelpers.callInstanceMethod(attachRepeatingGroupTask,
-                "addUniqueIdentifiers",
-                ReflectionHelpers.ClassParameter.from(JSONObject.class, childElement),
-                ReflectionHelpers.ClassParameter.from(String.class, uniqueId));
-
-        String[] uniqueIdComponents = childElement.getString(JsonFormConstants.KEY).split("_");
-        Assert.assertEquals(childElementKey, uniqueIdComponents[0]);
-    }
-
-    @Test
     public void testParseIntWithDefaultIntegerInput() {
         final String integerString = "1";
         final int integerFromString = 1;
@@ -136,6 +110,102 @@ public class RepeatingGroupFactoryTest extends FactoryTest {
         Assert.assertThat(RepeatingGroupFactory.parseIntWithDefault(emptyString), is(defaultInteger));
     }
 
+    @Test
+    public void testSetRepeatingGroupNumLimits() {
+        RepeatingGroupFactory factorySpy = Mockito.spy(factory);
+        String stepName = "step_name";
+        Context context = mock(Context.class);
+        JsonFormFragment formFragment = mock(JsonFormFragment.class);
+        JSONObject jsonObject = new JSONObject();
+        CommonListener listener = mock(CommonListener.class);
+        boolean popup = false;
+
+        WidgetArgs widgetArgs = new WidgetArgs();
+        widgetArgs.withContext(context)
+                .withFormFragment(formFragment)
+                .withJsonObject(jsonObject)
+                .withListener(listener)
+                .withPopup(popup)
+                .withStepName(stepName);
+
+        ReflectionHelpers.callInstanceMethod(factorySpy, "setRepeatingGroupNumLimits",
+                ReflectionHelpers.ClassParameter.from(WidgetArgs.class, widgetArgs));
+        Assert.assertEquals(widgetArgs.getJsonObject().optInt("repeating_group_min", 0), factorySpy.MIN_NUM_REPEATING_GROUPS);
+        Assert.assertEquals(widgetArgs.getJsonObject().optInt("repeating_group_max", 35), factorySpy.MAX_NUM_REPEATING_GROUPS);
+    }
+
+    @Test
+    public void testGetCustomTranslatableWidgetFields() {
+        RepeatingGroupFactory factorySpy = Mockito.spy(factory);
+
+        Set<String> editableProperties = factorySpy.getCustomTranslatableWidgetFields();
+        Assert.assertEquals(1, editableProperties.size());
+    }
+
+    @Test
+    public void testSetOnEditorActionListener() throws Exception {
+        RepeatingGroupFactory repeatingGroupFactory = mock(RepeatingGroupFactory.class);
+        MaterialEditText referenceEditText = mock(MaterialEditText.class);
+        TextView.OnEditorActionListener mockOnEditorActionListener =
+                mock(EditText.OnEditorActionListener.class);
+
+        String stepName = "step_name";
+        Context context = mock(Context.class);
+        JsonFormFragment formFragment = mock(JsonFormFragment.class);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(JsonFormConstants.KEY, JsonFormConstants.KEY);
+        CommonListener listener = mock(CommonListener.class);
+        boolean popup = false;
+
+        WidgetArgs widgetArgs = new WidgetArgs();
+        widgetArgs.withContext(context)
+                .withFormFragment(formFragment)
+                .withJsonObject(jsonObject)
+                .withListener(listener)
+                .withPopup(popup)
+                .withStepName(stepName);
+
+        ReflectionHelpers.callInstanceMethod(repeatingGroupFactory, "setUpReferenceEditText",
+                ReflectionHelpers.ClassParameter.from(ImageButton.class, mock(ImageButton.class)),
+                ReflectionHelpers.ClassParameter.from(MaterialEditText.class, referenceEditText),
+                ReflectionHelpers.ClassParameter.from(String.class, "Hint"),
+                ReflectionHelpers.ClassParameter.from(String.class, "Label"),
+                ReflectionHelpers.ClassParameter.from(JSONObject.class, jsonObject),
+                ReflectionHelpers.ClassParameter.from(WidgetArgs.class, widgetArgs));
+
+        referenceEditText.setOnEditorActionListener(mockOnEditorActionListener);
+        referenceEditText.onEditorAction(EditorInfo.IME_ACTION_DONE);
+        mockOnEditorActionListener.onEditorAction(referenceEditText, EditorInfo.IME_ACTION_DONE, null);
+
+        verify(mockOnEditorActionListener, times(1)).onEditorAction(referenceEditText,
+                EditorInfo.IME_ACTION_DONE, null);
+    }
+
+    @Test
+    public void testUniqueChildElementKeyGenerationShouldContainChildKeyAsComponent() throws JSONException {
+        final String parentRepeatingGroupWidgetKey = "parent";
+        final String childElementKey = "child";
+        final String uniqueId = "unique";
+
+        JSONObject parentRepeatingGroupWidget = new JSONObject();
+        parentRepeatingGroupWidget.put(JsonFormConstants.KEY, parentRepeatingGroupWidgetKey);
+        WidgetArgs widgetArgs = new WidgetArgs().withJsonObject(parentRepeatingGroupWidget);
+
+        JSONObject childElement = new JSONObject();
+        childElement.put(JsonFormConstants.KEY, childElementKey);
+
+        AttachRepeatingGroupTask attachRepeatingGroupTask = new AttachRepeatingGroupTask(mock(LinearLayout.class),
+                0, new HashMap<Integer, String>(), widgetArgs, mock(ImageButton.class));
+
+        ReflectionHelpers.callInstanceMethod(attachRepeatingGroupTask,
+                "addUniqueIdentifiers",
+                ReflectionHelpers.ClassParameter.from(JSONObject.class, childElement),
+                ReflectionHelpers.ClassParameter.from(String.class, uniqueId));
+
+        String[] uniqueIdComponents = childElement.getString(JsonFormConstants.KEY).split("_");
+        Assert.assertEquals(childElementKey, uniqueIdComponents[0]);
+    }
+
     private List<View> invokeGetViewsFromJson() throws Exception {
         step = new JSONObject();
         JSONArray fields = new JSONArray();
@@ -147,6 +217,6 @@ public class RepeatingGroupFactoryTest extends FactoryTest {
         repeatingGroupWidget.put(JsonFormConstants.VALUE, new JSONArray());
         repeatingGroupWidget.put(RepeatingGroupFactory.REFERENCE_EDIT_TEXT_HINT, "text");
         return factory.getViewsFromJson("step1", jsonFormActivity, jsonFormFragment,
-                repeatingGroupWidget, Mockito.mock(CommonListener.class));
+                repeatingGroupWidget, mock(CommonListener.class));
     }
 }
