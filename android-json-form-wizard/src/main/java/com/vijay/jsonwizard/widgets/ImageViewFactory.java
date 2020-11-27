@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.support.annotation.VisibleForTesting;
+import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -90,7 +91,7 @@ public class ImageViewFactory implements FormWidgetFactory {
         String descriptionText = jsonObject.optString(JsonFormConstants.TEXT, "");
 
         if (!TextUtils.isEmpty(descriptionText)) {
-            descriptionTextView.setText(descriptionText);
+            descriptionTextView.setText(Html.fromHtml(descriptionText));
             String textColor = jsonObject.optString(JsonFormConstants.TEXT_COLOR, "#000000");
             descriptionTextView.setTextColor(Color.parseColor(textColor));
             String textSize = jsonObject.optString(JsonFormConstants.TEXT_SIZE, String.valueOf(context.getResources().getDimension(R.dimen.label_text_size)));
