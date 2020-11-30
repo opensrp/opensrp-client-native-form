@@ -89,12 +89,6 @@ public class JsonFormFragmentPresenterTest {
         when(JsonFormFragment.getFormFragment(anyString())).thenReturn(jsonFormFragment);
     }
 
-    private void addMockStepDetails(String stepName) throws JSONException {
-        JSONObject mStepDetails = new JSONObject();
-        mStepDetails.put("next", stepName);
-        Whitebox.setInternalState(jsonFormFragmentPresenter, "mStepDetails", mStepDetails);
-    }
-
     private void setUpJsonFormFragment(boolean validationStatus) throws JSONException {
         // bootstrap jsonApi
         JsonApi jsonApi = mock(JsonApi.class);

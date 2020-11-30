@@ -39,7 +39,6 @@ public class RulesEngineFactory implements RuleListener {
     private Rules rules;
     private String selectedRuleName;
     private Gson gson;
-    private Map<String, String> globalValues;
     private RulesEngineHelper rulesEngineHelper;
     private Facts globalFacts;
 
@@ -50,7 +49,6 @@ public class RulesEngineFactory implements RuleListener {
         ((DefaultRulesEngine) this.defaultRulesEngine).registerRuleListener(this);
         this.ruleMap = new HashMap<>();
         gson = new Gson();
-        this.globalValues = globalValues;
         this.rulesEngineHelper = new RulesEngineHelper();
 
         if (globalValues != null) {

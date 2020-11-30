@@ -67,7 +67,6 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
     private Map<String, SecondaryValueModel> popAssignedValue = new HashMap<>();
     private Map<String, SecondaryValueModel> secondaryValuesMap = new HashMap<>();
     private String suffix = "";
-    private Activity activity;
     private JSONArray specifyContent;
     private List<View> viewList;
     private boolean translateSubForm = false;
@@ -76,7 +75,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
-        activity = (Activity) context;
+        Activity activity = (Activity) context;
         jsonApi = (JsonApi) activity;
         jsonApi.setGenericPopup(this);
     }

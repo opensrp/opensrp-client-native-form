@@ -63,6 +63,22 @@ public class ButtonFactory implements FormWidgetFactory {
 
         final Button button = createButton(context);
 
+        prepareButtonProperties(stepName, jsonObject, popup, openMrsEntityParent, openMrsEntity, openMrsEntityId, canvasIds, button);
+
+        setUpButtonActions((JsonApi) context, formFragment, jsonObject, listener, button);
+
+        ((JsonApi) context).addFormDataView(button);
+        views.add(button);
+        button.setTag(R.id.canvas_ids, canvasIds.toString());
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+            button.setTag(R.id.relevance, relevance);
+            ((JsonApi) context).addSkipLogicView(button);
+        }
+
+        return views;
+    }
+
+    private void prepareButtonProperties(String stepName, JSONObject jsonObject, boolean popup, String openMrsEntityParent, String openMrsEntity, String openMrsEntityId, JSONArray canvasIds, Button button) throws JSONException {
         // set text properties
         String hint = jsonObject.optString(JsonFormConstants.HINT);
         if (!TextUtils.isEmpty(hint)) {
@@ -97,20 +113,15 @@ public class ButtonFactory implements FormWidgetFactory {
         button.setId(ViewUtil.generateViewId());
         canvasIds.put(button.getId());
 
-        button.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
-        button.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
-        button.setTag(R.id.openmrs_entity, openMrsEntity);
-        button.setTag(R.id.openmrs_entity_id, openMrsEntityId);
-        button.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
-        button.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
-        button.setTag(R.id.extraPopup, popup);
-        button.setTag(R.id.raw_value, jsonObject.optString(JsonFormConstants.VALUE));
+        addViewTags(stepName, jsonObject, popup, openMrsEntityParent, openMrsEntity, openMrsEntityId, button);
 
         if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
             button.setEnabled(!jsonObject.getBoolean(JsonFormConstants.READ_ONLY));
             button.setFocusable(!jsonObject.getBoolean(JsonFormConstants.READ_ONLY));
         }
+    }
 
+    private void setUpButtonActions(final JsonApi context, final JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, final Button button) throws JSONException {
         JSONObject action = jsonObject.optJSONObject(JsonFormConstants.ACTION);
         final Boolean confirmationBtnSkipValidation = !jsonObject.isNull(JsonFormConstants.SKIP_VALIDATION) ? jsonObject.getBoolean(JsonFormConstants.SKIP_VALIDATION) : false;
         if (action != null) {
@@ -124,7 +135,7 @@ public class ButtonFactory implements FormWidgetFactory {
                         String addressString = (String) v.getTag(R.id.address);
                         if (!TextUtils.isEmpty(addressString)) {
                             String[] address = addressString.split(":");
-                            JSONObject jsonObject = ((JsonApi) context)
+                            JSONObject jsonObject = context
                                     .getObjectUsingAddress(address, false);
                             jsonObject.put(JsonFormConstants.VALUE, Boolean.TRUE.toString());
 
@@ -151,16 +162,17 @@ public class ButtonFactory implements FormWidgetFactory {
         } else {
             button.setOnClickListener(listener);
         }
+    }
 
-        ((JsonApi) context).addFormDataView(button);
-        views.add(button);
-        button.setTag(R.id.canvas_ids, canvasIds.toString());
-        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
-            button.setTag(R.id.relevance, relevance);
-            ((JsonApi) context).addSkipLogicView(button);
-        }
-
-        return views;
+    private void addViewTags(String stepName, JSONObject jsonObject, boolean popup, String openMrsEntityParent, String openMrsEntity, String openMrsEntityId, Button button) throws JSONException {
+        button.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+        button.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
+        button.setTag(R.id.openmrs_entity, openMrsEntity);
+        button.setTag(R.id.openmrs_entity_id, openMrsEntityId);
+        button.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
+        button.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+        button.setTag(R.id.extraPopup, popup);
+        button.setTag(R.id.raw_value, jsonObject.optString(JsonFormConstants.VALUE));
     }
 
     protected Button createButton(Context context) {
