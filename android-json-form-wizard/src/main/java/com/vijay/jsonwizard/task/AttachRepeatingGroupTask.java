@@ -21,6 +21,7 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.Utils;
+import com.vijay.jsonwizard.utils.ValidationStatus;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -175,6 +176,12 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         LinearLayout referenceLayout = (LinearLayout) ((LinearLayout) parent).getChildAt(0);
         MaterialEditText materialEditText = (MaterialEditText) referenceLayout.getChildAt(0);
         materialEditText.setError(null);
+
+        Map<String, ValidationStatus> validationStatusMap = widgetArgs.getFormFragment().getJsonApi().getInvalidFields();
+        if (validationStatusMap != null) {
+            String fieldKey = Utils.getFieldKeyPrefix(widgetArgs.getStepName(), widgetArgs.getFormFragment().getPresenter().getStepTitle()) + JsonFormConstants.REFERENCE_EDIT_TEXT;
+            validationStatusMap.remove(fieldKey);
+        }
     }
 
     private LinearLayout buildRepeatingGroupLayout(final ViewParent parent) throws Exception {
