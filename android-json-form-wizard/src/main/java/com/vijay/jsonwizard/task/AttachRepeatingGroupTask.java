@@ -17,6 +17,7 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.WidgetArgs;
+import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.Utils;
@@ -40,6 +41,8 @@ import static com.vijay.jsonwizard.constants.JsonFormConstants.CALCULATION;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.FIELDS;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.RELEVANCE;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.STEPNAME;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP_TITLE;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.TYPE;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUE;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.V_RELATIVE_MAX;
@@ -135,6 +138,11 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
                 Collection<View> viewCollection = widgetArgs.getFormFragment().getJsonApi().getFormDataViews();
                 if (viewCollection != null) {
                     Utils.removeDeletedViewsFromJsonForm(viewCollection, deletedFields);
+
+                    JsonFormFragment formFragment = widgetArgs.getFormFragment();
+                    String stepName = formFragment.getArguments().getString(STEPNAME);
+                    String stepTitle = formFragment.getStep(stepName).optString(STEP_TITLE);
+                    Utils.removeDeletedInvalidFields(Utils.getFieldKeyPrefix(stepName, stepTitle), formFragment.getJsonApi().getInvalidFields(), deletedFields);
                 }
 
                 LinearLayout referenceLayout = (LinearLayout) ((LinearLayout) parent).getChildAt(0);
@@ -167,9 +175,6 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         LinearLayout referenceLayout = (LinearLayout) ((LinearLayout) parent).getChildAt(0);
         MaterialEditText materialEditText = (MaterialEditText) referenceLayout.getChildAt(0);
         materialEditText.setError(null);
-
-        String fieldKey = widgetArgs.getStepName() + "#" + widgetArgs.getFormFragment().getPresenter().getStepTitle() + ":" + JsonFormConstants.REFERENCE_EDIT_TEXT;
-        widgetArgs.getFormFragment().getJsonApi().getInvalidFields().remove(fieldKey);
     }
 
     private LinearLayout buildRepeatingGroupLayout(final ViewParent parent) throws Exception {
