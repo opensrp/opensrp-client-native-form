@@ -66,14 +66,15 @@ public class GpsFactory implements FormWidgetFactory {
 
     public static String constructString(Location location) {
         if (location != null) {
-            return constructString(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()));
+            return constructString(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()),
+                    String.valueOf(location.getAltitude()), String.valueOf(location.getAccuracy()));
         }
 
         return null;
     }
 
-    public static String constructString(String latitude, String longitude) {
-        return latitude + " " + longitude;
+    public static String constructString(String latitude, String longitude, String altitude, String accuracy) {
+        return latitude + " " + longitude + " " + altitude + " " + accuracy;
     }
 
     @Override
@@ -236,6 +237,10 @@ public class GpsFactory implements FormWidgetFactory {
             if (coordinateElements.length > 1) {
                 latitude = coordinateElements[0];
                 longitude = coordinateElements[1];
+                if (coordinateElements.length >= 4) {
+                    altitude = coordinateElements[2];
+                    accuracy = coordinateElements[3];
+                }
             }
         }
 
@@ -244,7 +249,7 @@ public class GpsFactory implements FormWidgetFactory {
         altitudeTv.setText(getText(context, altitude, R.string.altitude));
         accuracyTv.setText(getText(context, accuracy, R.string.accuracy));
 
-        dataView.setTag(R.id.raw_value, constructString(latitude, longitude));
+        dataView.setTag(R.id.raw_value, constructString(latitude, longitude, altitude, accuracy));
     }
 
     @NotNull
