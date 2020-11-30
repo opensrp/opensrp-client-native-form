@@ -38,6 +38,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -388,5 +389,22 @@ public class UtilsTest extends BaseTest {
         Assert.assertTrue(isEmptyJsonArray(jsonArray));
         jsonArray.put("value");
         Assert.assertFalse(isEmptyJsonArray(jsonArray));
+    }
+
+    @Test
+    public void testRemoveDeletedInvalidFieldsShouldDeleteRespectiveInvalidFields() {
+        String prefix = "test-prefix:";
+        Map<String, ValidationStatus> invalidFields = new HashMap<>();
+        invalidFields.put(prefix + "field1", new ValidationStatus(false, "", null, null));
+        invalidFields.put(prefix + "field2", new ValidationStatus(false, "", null, null));
+        invalidFields.put(prefix + "field3", new ValidationStatus(true, "", null, null));
+        ArrayList<String> fieldsToBeRemoved = new ArrayList<>();
+        fieldsToBeRemoved.add("field1");
+        fieldsToBeRemoved.add("field2");
+
+        Utils.removeDeletedInvalidFields(prefix, invalidFields, fieldsToBeRemoved);
+
+        Assert.assertEquals(1, invalidFields.size());
+        Assert.assertEquals(prefix + "field3", invalidFields.keySet().iterator().next());
     }
 }

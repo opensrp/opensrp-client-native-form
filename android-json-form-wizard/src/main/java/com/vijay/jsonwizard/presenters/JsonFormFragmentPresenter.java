@@ -33,6 +33,7 @@ import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
@@ -62,6 +63,7 @@ import com.vijay.jsonwizard.widgets.CountDownTimerFactory;
 import com.vijay.jsonwizard.widgets.EditTextFactory;
 import com.vijay.jsonwizard.widgets.GpsFactory;
 import com.vijay.jsonwizard.widgets.ImagePickerFactory;
+import com.vijay.jsonwizard.widgets.MultiSelectListFactory;
 import com.vijay.jsonwizard.widgets.NativeEditTextFactory;
 import com.vijay.jsonwizard.widgets.NativeRadioButtonFactory;
 import com.vijay.jsonwizard.widgets.NumberSelectorFactory;
@@ -212,6 +214,17 @@ public class JsonFormFragmentPresenter extends
                 }
                 return validationStatus;
             }
+        } else if (childAt instanceof RelativeLayout
+                && childAt.getTag(R.id.is_multiselect_relative_layout) != null &&
+                Boolean.TRUE.equals(childAt.getTag(R.id.is_multiselect_relative_layout))) {
+            ValidationStatus validationStatus = MultiSelectListFactory
+                    .validate(formFragmentView, (RelativeLayout) childAt);
+            if (!validationStatus.isValid()) {
+                if (requestFocus) {
+                    validationStatus.requestAttention();
+                }
+                return validationStatus;
+            }
         }
 
         return new ValidationStatus(true, null, null, null);
@@ -221,7 +234,7 @@ public class JsonFormFragmentPresenter extends
         try {
             spinner.setError(spinnerError);
         } catch (IllegalArgumentException e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e);
         }
     }
 
@@ -363,7 +376,7 @@ public class JsonFormFragmentPresenter extends
             String openMrsEntity = (String) childView.getTag(R.id.openmrs_entity);
             String openMrsEntityId = (String) childView.getTag(R.id.openmrs_entity_id);
             Boolean popup = (Boolean) childView.getTag(R.id.extraPopup);
-            String fieldKey = mStepName + "#" + getStepTitle() + ":" + key;
+            String fieldKey = Utils.getFieldKeyPrefix(mStepName, getStepTitle()) + key;
 
             if (StringUtils.isNotBlank(address) && mStepName.equals(address.split(":")[0])) {
 
@@ -484,7 +497,7 @@ public class JsonFormFragmentPresenter extends
 
     protected boolean moveToNextStep() {
         final String nextStep = getFormFragment().getJsonApi().nextStep();
-        if (!"".equals(nextStep)) {
+        if (StringUtils.isNotBlank(nextStep)) {
             JsonFormFragment next = getNextJsonFormFragment(nextStep);
             getView().hideKeyBoard();
             getView().transactThis(next);
