@@ -135,7 +135,7 @@ public class GpsFactoryTest extends BaseTest {
                     .setText(Mockito.eq(factorySpy.getText(context, values[i], stringIds[i])));
         }
 
-        Mockito.verify(recordButton, Mockito.times(1))
+        Mockito.verify(recordButton, Mockito.only())
                 .setTag(Mockito.eq(R.id.raw_value), Mockito.eq(jsonObject.optString(JsonFormConstants.VALUE).trim()));
     }
 
@@ -156,17 +156,16 @@ public class GpsFactoryTest extends BaseTest {
                     .setText(Mockito.eq(factorySpy.getText(context, values[i], stringIds[i])));
         }
 
-        Mockito.verify(recordButton, Mockito.times(1))
+        Mockito.verify(recordButton, Mockito.only())
                 .setTag(Mockito.eq(R.id.raw_value), Mockito.eq(jsonObject.optString(JsonFormConstants.VALUE)));
     }
 
     @Test
-    public void testAttachLayoutShouldPopulateTextViewsEmptyString() throws JSONException {
+    public void testAttachLayoutShouldPopulateTextViewsEmptyString() {
         GpsFactory factorySpy = Mockito.spy(factory);
         String[] values = new String[]{"", "", "", ""};
         Context context = RuntimeEnvironment.application;
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put(JsonFormConstants.VALUE, StringUtils.join(values, " "));
         factorySpy.attachLayout(context, jsonObject, recordButton,
                 latitudeTV, longitudeTV, altitudeTV, accuracyTV);
 
@@ -177,7 +176,7 @@ public class GpsFactoryTest extends BaseTest {
                     .setText(Mockito.eq(factorySpy.getText(context, values[i], stringIds[i])));
         }
 
-        Mockito.verify(recordButton, Mockito.times(1))
+        Mockito.verify(recordButton, Mockito.only())
                 .setTag(Mockito.eq(R.id.raw_value), Mockito.eq(""));
     }
 }
