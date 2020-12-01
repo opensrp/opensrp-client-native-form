@@ -16,6 +16,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 public class MultiSelectListAdapterTest extends BaseTest {
 
@@ -65,5 +67,32 @@ public class MultiSelectListAdapterTest extends BaseTest {
         multiSelectListAdapter.onBindViewHolder(viewHeaderItemView, 1);
 
         assertEquals(headerSelectItem.getText(), viewHeaderItemView.itemHeaderView().getText());
+    }
+
+    @Test
+    public void testGetFilterShouldFilterList() {
+        MultiSelectItem viewSelectItem = new MultiSelectItem();
+        viewSelectItem.setKey("key1");
+        viewSelectItem.setText("text1");
+        viewSelectItem.setValue("");
+
+        MultiSelectItem viewSelectItem2 = new MultiSelectItem();
+        viewSelectItem2.setKey("key2");
+        viewSelectItem2.setText("chosen");
+        viewSelectItem2.setValue("");
+
+        MultiSelectItem headerSelectItem = new MultiSelectItem();
+        headerSelectItem.setKey("A");
+        headerSelectItem.setText("text2");
+
+        multiSelectListAdapter.getData().add(viewSelectItem);
+        multiSelectListAdapter.getData().add(headerSelectItem);
+        multiSelectListAdapter.getData().add(viewSelectItem2);
+
+        assertEquals(3, multiSelectListAdapter.getData().size());
+        multiSelectListAdapter.getFilter().filter("cho");
+        assertEquals(1, multiSelectListAdapter.getData().size());
+        verify(multiSelectListAdapter, times(1))
+                .notifyDataSetChanged();
     }
 }
