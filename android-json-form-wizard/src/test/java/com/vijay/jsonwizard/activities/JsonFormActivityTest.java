@@ -4,11 +4,15 @@ import android.content.Intent;
 import android.support.v7.widget.AppCompatRadioButton;
 import android.text.Html;
 import android.text.Spanned;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 
+import com.rengwuxian.materialedittext.MaterialEditText;
+import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
+import com.vijay.jsonwizard.TestConstants;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.utils.FormUtils;
@@ -20,6 +24,7 @@ import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
@@ -42,8 +47,7 @@ public class JsonFormActivityTest extends BaseActivityTest {
         MockitoAnnotations.initMocks(this);
         Intent intent = new Intent();
         intent.putExtra(JsonFormConstants.JSON_FORM_KEY.JSON, DUMMY_JSON_FORM_STRING);
-        controller = Robolectric.buildActivity(JsonFormActivity.class, intent).create().start();
-        activity = controller.get();
+        activity = getActivityWithIntent(intent);
         activity.getmJSONObject().put(JsonFormConstants.SKIP_BLANK_STEPS, true);
 
         Assert.assertNotNull(activity);
@@ -166,7 +170,7 @@ public class JsonFormActivityTest extends BaseActivityTest {
         RadioGroup radioGroup = new RadioGroup(activity.getBaseContext());
         radioGroup.addView(radioGroupChildLayout);
 
-        Whitebox.invokeMethod(activity, "setReadOnlyRadioButtonOptions",radioGroup, false);
+        Whitebox.invokeMethod(activity, "setReadOnlyRadioButtonOptions", radioGroup, false);
         Assert.assertFalse(appCompatRadioButton.isEnabled());
     }
 
@@ -185,7 +189,7 @@ public class JsonFormActivityTest extends BaseActivityTest {
         RadioGroup radioGroup = new RadioGroup(activity.getBaseContext());
         radioGroup.addView(radioGroupChildLayout);
 
-        Whitebox.invokeMethod(activity, "setReadOnlyRadioButtonOptions",radioGroup, true);
+        Whitebox.invokeMethod(activity, "setReadOnlyRadioButtonOptions", radioGroup, true);
         Assert.assertTrue(appCompatRadioButton.isEnabled());
     }
 
@@ -204,7 +208,60 @@ public class JsonFormActivityTest extends BaseActivityTest {
         RelativeLayout radioGroup = new RelativeLayout(activity.getBaseContext());
         radioGroup.addView(radioGroupChildLayout);
 
-        Whitebox.invokeMethod(activity, "setReadOnlyRadioButtonOptions",radioGroup, true);
+        Whitebox.invokeMethod(activity, "setReadOnlyRadioButtonOptions", radioGroup, true);
         Assert.assertFalse(appCompatRadioButton.isEnabled());
+    }
+
+    @Test
+    public void testToggleViewVisibilityShouldMakeViewVisible() {
+        Intent intent = new Intent();
+        intent.putExtra(JsonFormConstants.JSON_FORM_KEY.JSON, TestConstants.BASIC_FORM);
+        activity = getActivityWithIntent(intent);
+        int id = ViewUtil.generateViewId();
+        LinearLayout rootLayout = new LinearLayout(activity.getApplicationContext());
+        MaterialEditText view = Mockito.spy(new MaterialEditText(activity.getApplicationContext()));
+        view.setId(id);
+        rootLayout.addView(view);
+        JSONArray jsonArray = new JSONArray();
+        jsonArray.put(id);
+        view.setTag(R.id.canvas_ids, jsonArray.toString());
+        view.setTag(R.id.address, "step1:user_last_name");
+        activity.toggleViewVisibility(view, true, false);
+        Mockito.verify(view, Mockito.times(1)).setVisibility(Mockito.eq(View.VISIBLE));
+        Mockito.verify(view, Mockito.times(3)).setFocusable(Mockito.eq(true));
+        Mockito.verify(view, Mockito.times(2)).setFocusableInTouchMode(Mockito.eq(true));
+        Mockito.verify(view, Mockito.times(3)).setEnabled(Mockito.eq(true));
+        Mockito.verify(view, Mockito.times(1)).invalidate();
+        Mockito.verify(view, Mockito.times(1))
+                .setTag(Mockito.eq(R.id.relevance_decided), Mockito.eq(true));
+    }
+
+    @Test
+    public void testToggleViewVisibilityShouldMakeViewInVisible() {
+        Intent intent = new Intent();
+        intent.putExtra(JsonFormConstants.JSON_FORM_KEY.JSON, TestConstants.BASIC_FORM);
+        activity = getActivityWithIntent(intent);
+        int id = ViewUtil.generateViewId();
+        LinearLayout rootLayout = new LinearLayout(activity.getApplicationContext());
+        MaterialEditText view = Mockito.spy(new MaterialEditText(activity.getApplicationContext()));
+        view.setId(id);
+        rootLayout.addView(view);
+        JSONArray jsonArray = new JSONArray();
+        jsonArray.put(id);
+        view.setTag(R.id.canvas_ids, jsonArray.toString());
+        view.setTag(R.id.address, "step1:user_last_name");
+        activity.toggleViewVisibility(view, false, false);
+        Mockito.verify(view, Mockito.times(1)).setVisibility(Mockito.eq(View.GONE));
+        Mockito.verify(view, Mockito.times(2)).setFocusable(Mockito.eq(false));
+        Mockito.verify(view, Mockito.times(2)).setFocusableInTouchMode(Mockito.eq(false));
+        Mockito.verify(view, Mockito.times(3)).setEnabled(Mockito.eq(false));
+        Mockito.verify(view, Mockito.times(1)).invalidate();
+        Mockito.verify(view, Mockito.times(1))
+                .setTag(Mockito.eq(R.id.relevance_decided), Mockito.eq(false));
+    }
+
+    private JsonFormActivity getActivityWithIntent(Intent intent) {
+        controller = Robolectric.buildActivity(JsonFormActivity.class, intent).create().start();
+        return controller.get();
     }
 }
