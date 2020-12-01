@@ -230,6 +230,11 @@ public class GpsFactory implements FormWidgetFactory {
 
         int[] stringIds = new int[]{R.string.latitude, R.string.longitude, R.string.altitude, R.string.accuracy};
 
+        //loops to fill all textViews with empty string
+        for (int i = 0; i < stringIds.length; i++) {
+            views[i].setText(getText(context, "", stringIds[i]));
+        }
+
         if (jsonObject.has(JsonFormConstants.VALUE)) {
             String coordinateData = jsonObject.optString(JsonFormConstants.VALUE);
 
@@ -240,17 +245,8 @@ public class GpsFactory implements FormWidgetFactory {
                 views[i].setText(getText(context, coordinateElements[i], stringIds[i]));
             }
 
-            //loops to fill empty textViews with empty string since the values is not available
-            for (int i = coordinateElements.length; i < stringIds.length; i++) {
-                views[i].setText(getText(context, "", stringIds[i]));
-            }
-
             dataView.setTag(R.id.raw_value, constructString(coordinateElements));
         } else {
-            //loops to fill all textViews with empty string
-            for (int i = 0; i < stringIds.length; i++) {
-                views[i].setText(getText(context, "", stringIds[i]));
-            }
             dataView.setTag(R.id.raw_value, "");
         }
     }
