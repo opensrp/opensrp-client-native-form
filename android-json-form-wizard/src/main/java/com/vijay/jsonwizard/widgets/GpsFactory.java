@@ -66,15 +66,13 @@ public class GpsFactory implements FormWidgetFactory {
 
     public static String constructString(Location location) {
         if (location != null) {
-            return constructString(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()),
-                    String.valueOf(location.getAltitude()), String.valueOf(location.getAccuracy()));
+            return constructString(new Object[]{location.getLatitude(), location.getLongitude(), location.getAltitude(), location.getAccuracy()});
         }
-
         return null;
     }
 
-    public static String constructString(String latitude, String longitude, String altitude, String accuracy) {
-        return latitude + " " + longitude + " " + altitude + " " + accuracy;
+    public static String constructString(String latitude, String longitude) {
+        return constructString(new Object[]{latitude, longitude});
     }
 
     @Override
@@ -225,31 +223,44 @@ public class GpsFactory implements FormWidgetFactory {
         recordButton.setTag(R.id.extraPopup, widgetArgs.isPopup());
     }
 
-    public void attachLayout(Context context, @NonNull JSONObject jsonObject, @NonNull View dataView, @NonNull TextView latitudeTv, @NonNull TextView longitudeTv, @NonNull TextView altitudeTv, @NonNull TextView accuracyTv) {
-        String latitude = "";
-        String longitude = "";
-        String accuracy = "";
-        String altitude = "";
+    public void attachLayout(Context context, @NonNull JSONObject jsonObject, @NonNull View dataView,
+                             @NonNull TextView latitudeTv, @NonNull TextView longitudeTv,
+                             @NonNull TextView altitudeTv, @NonNull TextView accuracyTv) {
+        TextView[] views = new TextView[]{latitudeTv, longitudeTv, altitudeTv, accuracyTv};
+
+        int[] stringIds = new int[]{R.string.latitude, R.string.longitude, R.string.altitude, R.string.accuracy};
+
         if (jsonObject.has(JsonFormConstants.VALUE)) {
             String coordinateData = jsonObject.optString(JsonFormConstants.VALUE);
 
             String[] coordinateElements = coordinateData.split(" ");
-            if (coordinateElements.length > 1) {
-                latitude = coordinateElements[0];
-                longitude = coordinateElements[1];
-                if (coordinateElements.length >= 4) {
-                    altitude = coordinateElements[2];
-                    accuracy = coordinateElements[3];
-                }
+
+            //loops to fill textViews with values supplied
+            for (int i = 0; i < coordinateElements.length; i++) {
+                views[i].setText(getText(context, coordinateElements[i], stringIds[i]));
             }
+
+            //loops to fill empty textViews with empty string since the values is not available
+            for (int i = coordinateElements.length; i < stringIds.length; i++) {
+                views[i].setText(getText(context, "", stringIds[i]));
+            }
+
+            dataView.setTag(R.id.raw_value, constructString(coordinateElements));
+        } else {
+            //loops to fill all textViews with empty string
+            for (int i = 0; i < stringIds.length; i++) {
+                views[i].setText(getText(context, "", stringIds[i]));
+            }
+            dataView.setTag(R.id.raw_value, "");
         }
+    }
 
-        latitudeTv.setText(getText(context, latitude, R.string.latitude));
-        longitudeTv.setText(getText(context, longitude, R.string.longitude));
-        altitudeTv.setText(getText(context, altitude, R.string.altitude));
-        accuracyTv.setText(getText(context, accuracy, R.string.accuracy));
-
-        dataView.setTag(R.id.raw_value, constructString(latitude, longitude, altitude, accuracy));
+    private static String constructString(Object[] coordinateElements) {
+        StringBuilder s = new StringBuilder();
+        for (int i = 0; i < coordinateElements.length; i++) {
+            s.append(i != coordinateElements.length - 1 ? coordinateElements[i] + " " : coordinateElements[i]);
+        }
+        return s.toString();
     }
 
     @NotNull
