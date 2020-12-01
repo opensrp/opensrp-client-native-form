@@ -135,7 +135,7 @@ public class GpsFactoryTest extends BaseTest {
                     .setText(Mockito.eq(factorySpy.getText(context, values[i], stringIds[i])));
         }
 
-        Mockito.verify(recordButton, Mockito.only())
+        Mockito.verify(recordButton, Mockito.atLeastOnce())
                 .setTag(Mockito.eq(R.id.raw_value), Mockito.eq(jsonObject.optString(JsonFormConstants.VALUE).trim()));
     }
 
@@ -156,7 +156,7 @@ public class GpsFactoryTest extends BaseTest {
                     .setText(Mockito.eq(factorySpy.getText(context, values[i], stringIds[i])));
         }
 
-        Mockito.verify(recordButton, Mockito.only())
+        Mockito.verify(recordButton, Mockito.atLeastOnce())
                 .setTag(Mockito.eq(R.id.raw_value), Mockito.eq(jsonObject.optString(JsonFormConstants.VALUE)));
     }
 
@@ -176,7 +176,7 @@ public class GpsFactoryTest extends BaseTest {
                     .setText(Mockito.eq(factorySpy.getText(context, values[i], stringIds[i])));
         }
 
-        Mockito.verify(recordButton, Mockito.only())
+        Mockito.verify(recordButton, Mockito.atLeastOnce())
                 .setTag(Mockito.eq(R.id.raw_value), Mockito.eq(""));
     }
 }

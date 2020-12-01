@@ -29,6 +29,7 @@ import com.vijay.jsonwizard.utils.PermissionUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -252,11 +253,7 @@ public class GpsFactory implements FormWidgetFactory {
     }
 
     private static String constructString(Object[] coordinateElements) {
-        StringBuilder s = new StringBuilder();
-        for (int i = 0; i < coordinateElements.length; i++) {
-            s.append(i != coordinateElements.length - 1 ? coordinateElements[i] + " " : coordinateElements[i]);
-        }
-        return s.toString();
+        return StringUtils.join(coordinateElements, " ");
     }
 
     @NotNull
