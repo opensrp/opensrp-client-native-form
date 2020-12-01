@@ -235,6 +235,8 @@ public class GpsFactory implements FormWidgetFactory {
             views[i].setText(getText(context, "", stringIds[i]));
         }
 
+        dataView.setTag(R.id.raw_value, "");
+
         if (jsonObject.has(JsonFormConstants.VALUE)) {
             String coordinateData = jsonObject.optString(JsonFormConstants.VALUE);
 
@@ -246,8 +248,6 @@ public class GpsFactory implements FormWidgetFactory {
             }
 
             dataView.setTag(R.id.raw_value, constructString(coordinateElements));
-        } else {
-            dataView.setTag(R.id.raw_value, "");
         }
     }
 
