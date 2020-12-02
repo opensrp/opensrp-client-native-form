@@ -1325,11 +1325,14 @@ public class FormUtils {
             if (StringUtils.isNoneBlank(formString)) {
                 JSONObject jsonForm = new JSONObject(formString);
                 String formVersion = jsonForm.optString(JsonFormConstants.FORM_VERSION, "");
-                JSONObject formData = new JSONObject();
-                formData.put(JsonFormConstants.Properties.APP_VERSION_NAME, BuildConfig.VERSION_NAME);
-                formData.put(JsonFormConstants.Properties.APP_FORM_VERSION, formVersion);
-                jsonForm.put(JsonFormConstants.Properties.DETAILS, formData);
+                JSONObject detailsJsonObject = jsonForm.optJSONObject(JsonFormConstants.Properties.DETAILS);
 
+                if (detailsJsonObject == null)
+                    detailsJsonObject = new JSONObject();
+
+                detailsJsonObject.put(JsonFormConstants.Properties.APP_VERSION_NAME, BuildConfig.VERSION_NAME);
+                detailsJsonObject.put(JsonFormConstants.Properties.APP_FORM_VERSION, formVersion);
+                jsonForm.put(JsonFormConstants.Properties.DETAILS, detailsJsonObject);
                 form = String.valueOf(jsonForm);
             }
         } catch (JSONException e) {
