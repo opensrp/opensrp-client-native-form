@@ -29,6 +29,7 @@ import com.vijay.jsonwizard.utils.PermissionUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -66,14 +67,13 @@ public class GpsFactory implements FormWidgetFactory {
 
     public static String constructString(Location location) {
         if (location != null) {
-            return constructString(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()));
+            return constructString(new Object[]{location.getLatitude(), location.getLongitude(), location.getAltitude(), location.getAccuracy()});
         }
-
         return null;
     }
 
     public static String constructString(String latitude, String longitude) {
-        return latitude + " " + longitude;
+        return constructString(new Object[]{latitude, longitude});
     }
 
     @Override
@@ -224,27 +224,36 @@ public class GpsFactory implements FormWidgetFactory {
         recordButton.setTag(R.id.extraPopup, widgetArgs.isPopup());
     }
 
-    public void attachLayout(Context context, @NonNull JSONObject jsonObject, @NonNull View dataView, @NonNull TextView latitudeTv, @NonNull TextView longitudeTv, @NonNull TextView altitudeTv, @NonNull TextView accuracyTv) {
-        String latitude = "";
-        String longitude = "";
-        String accuracy = "";
-        String altitude = "";
+    public void attachLayout(Context context, @NonNull JSONObject jsonObject, @NonNull View dataView,
+                             @NonNull TextView latitudeTv, @NonNull TextView longitudeTv,
+                             @NonNull TextView altitudeTv, @NonNull TextView accuracyTv) {
+        TextView[] views = new TextView[]{latitudeTv, longitudeTv, altitudeTv, accuracyTv};
+
+        int[] stringIds = new int[]{R.string.latitude, R.string.longitude, R.string.altitude, R.string.accuracy};
+
+        //loops to fill all textViews with empty string
+        for (int i = 0; i < stringIds.length; i++) {
+            views[i].setText(getText(context, "", stringIds[i]));
+        }
+
+        dataView.setTag(R.id.raw_value, "");
+
         if (jsonObject.has(JsonFormConstants.VALUE)) {
             String coordinateData = jsonObject.optString(JsonFormConstants.VALUE);
 
             String[] coordinateElements = coordinateData.split(" ");
-            if (coordinateElements.length > 1) {
-                latitude = coordinateElements[0];
-                longitude = coordinateElements[1];
+
+            //loops to fill textViews with values supplied
+            for (int i = 0; i < coordinateElements.length; i++) {
+                views[i].setText(getText(context, coordinateElements[i], stringIds[i]));
             }
+
+            dataView.setTag(R.id.raw_value, constructString(coordinateElements));
         }
+    }
 
-        latitudeTv.setText(getText(context, latitude, R.string.latitude));
-        longitudeTv.setText(getText(context, longitude, R.string.longitude));
-        altitudeTv.setText(getText(context, altitude, R.string.altitude));
-        accuracyTv.setText(getText(context, accuracy, R.string.accuracy));
-
-        dataView.setTag(R.id.raw_value, constructString(latitude, longitude));
+    private static String constructString(Object[] coordinateElements) {
+        return StringUtils.join(coordinateElements, " ");
     }
 
     @NotNull
