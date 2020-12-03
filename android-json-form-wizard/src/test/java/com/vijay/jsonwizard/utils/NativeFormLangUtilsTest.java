@@ -19,6 +19,7 @@ import java.util.ResourceBundle;
 import static com.vijay.jsonwizard.utils.Utils.getTranslatedYamlFile;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Vincent Karuri on 20/02/2020
@@ -117,5 +118,13 @@ public class NativeFormLangUtilsTest extends BaseTest {
 
         ResourceBundle mlsResourceBundle = NativeFormLangUtils.getResourceBundleFromRepository(RuntimeEnvironment.application, interpolatedJsonForm);
         assertFalse(mlsResourceBundle.getKeys().hasMoreElements());
+    }
+
+    @Test
+    public void testPerformFormsTranslationShouldReturnCorrectValue() {
+        NativeFormLibrary.getInstance().setPerformFormsTranslation(true);
+        assertTrue(NativeFormLibrary.getInstance().isPerformFormsTranslation());
+        NativeFormLibrary.getInstance().setPerformFormsTranslation(false);
+        assertFalse(NativeFormLibrary.getInstance().isPerformFormsTranslation());
     }
 }
