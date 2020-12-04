@@ -6,6 +6,7 @@ import android.preference.PreferenceManager;
 import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.NativeFormLibrary;
 import com.vijay.jsonwizard.TestUtils;
+import com.vijay.jsonwizard.activities.JsonFormBaseActivity;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 
 import org.junit.Test;
@@ -122,9 +123,9 @@ public class NativeFormLangUtilsTest extends BaseTest {
 
     @Test
     public void testPerformFormsTranslationShouldReturnCorrectValue() {
-        NativeFormLibrary.getInstance().setPerformFormsTranslation(true);
-        assertTrue(NativeFormLibrary.getInstance().isPerformFormsTranslation());
-        NativeFormLibrary.getInstance().setPerformFormsTranslation(false);
-        assertFalse(NativeFormLibrary.getInstance().isPerformFormsTranslation());
+        NativeFormLibrary.getInstance().setPerformFormTranslation(true);
+        assertTrue(NativeFormLibrary.getInstance().isPerformFormTranslation());
+        NativeFormLibrary.getInstance().setPerformFormTranslation(false);
+        assertFalse(NativeFormLibrary.getInstance().isPerformFormTranslation());
     }
 }

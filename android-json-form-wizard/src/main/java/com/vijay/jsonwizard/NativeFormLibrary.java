@@ -12,7 +12,7 @@ public class NativeFormLibrary {
 
     private ClientFormContract.Dao clientFormDao;
     private static NativeFormLibrary instance;
-    private static boolean performFormsTranslation = false;
+    private boolean performFormTranslation = false;
 
     @NonNull
     public static NativeFormLibrary getInstance() {
@@ -32,11 +32,11 @@ public class NativeFormLibrary {
         this.clientFormDao = clientFormDao;
     }
 
-    public boolean isPerformFormsTranslation() {
-        return performFormsTranslation;
+    public boolean isPerformFormTranslation() {
+        return performFormTranslation;
     }
 
-    public void setPerformFormsTranslation(boolean performFormsTranslation) {
-        this.performFormsTranslation = performFormsTranslation;
+    public void setPerformFormTranslation(boolean performFormTranslation) {
+        this.performFormTranslation = performFormTranslation;
     }
 }

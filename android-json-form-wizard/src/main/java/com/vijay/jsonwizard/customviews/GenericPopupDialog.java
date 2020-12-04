@@ -91,9 +91,9 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
 
         // support translation of sub-forms
         Intent activityIntent = getActivity().getIntent();
-        translateSubForm = activityIntent.hasExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION) ?
+        translateSubForm = activityIntent != null && activityIntent.hasExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION) ?
                 activityIntent.getBooleanExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, false) :
-                NativeFormLibrary.getInstance().isPerformFormsTranslation();
+                NativeFormLibrary.getInstance().isPerformFormTranslation();
 
         try {
             setMainFormFields(formUtils.getFormFields(getStepName(), context));

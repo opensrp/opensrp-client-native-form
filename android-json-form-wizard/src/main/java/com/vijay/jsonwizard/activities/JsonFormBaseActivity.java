@@ -93,7 +93,7 @@ public abstract class JsonFormBaseActivity extends MultiLanguageActivity impleme
         isFormFragmentInitialized = false;
         translateForm = getIntent().hasExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION) ?
                 getIntent().getBooleanExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, false) :
-                NativeFormLibrary.getInstance().isPerformFormsTranslation();
+                NativeFormLibrary.getInstance().isPerformFormTranslation();
 
         if (savedInstanceState == null) {
             this.form = extractForm(getIntent().getSerializableExtra(JsonFormConstants.JSON_FORM_KEY.FORM));
