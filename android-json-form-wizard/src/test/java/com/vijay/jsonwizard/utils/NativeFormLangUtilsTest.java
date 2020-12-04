@@ -6,7 +6,6 @@ import android.preference.PreferenceManager;
 import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.NativeFormLibrary;
 import com.vijay.jsonwizard.TestUtils;
-import com.vijay.jsonwizard.activities.JsonFormBaseActivity;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 
 import org.junit.Test;
@@ -20,7 +19,6 @@ import java.util.ResourceBundle;
 import static com.vijay.jsonwizard.utils.Utils.getTranslatedYamlFile;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Vincent Karuri on 20/02/2020
