@@ -14,7 +14,6 @@ import com.vijay.jsonwizard.TestUtils;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.utils.FormUtils;
-import com.vijay.jsonwizard.utils.NativeFormLangUtils;
 
 import org.jeasy.rules.api.Facts;
 import org.json.JSONArray;
