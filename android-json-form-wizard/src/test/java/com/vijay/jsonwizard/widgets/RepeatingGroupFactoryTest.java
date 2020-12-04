@@ -180,6 +180,17 @@ public class RepeatingGroupFactoryTest extends FactoryTest {
         Assert.assertEquals(childElementKey, uniqueIdComponents[0]);
     }
 
+    @Test
+    public void testRepeatingGroupDefaultCount() throws Exception {
+        View rootLayout = invokeGetViewsFromJson().get(0);
+
+        JSONObject repeatingGroupCountObj = step.getJSONArray(JsonFormConstants.FIELDS).getJSONObject(0);
+        Assert.assertEquals("0", repeatingGroupCountObj.getString(JsonFormConstants.VALUE));
+
+        ((MaterialEditText) rootLayout.findViewById(R.id.reference_edit_text)).setText("");
+        Assert.assertEquals("0", repeatingGroupCountObj.getString(JsonFormConstants.VALUE));
+    }
+
     private List<View> invokeGetViewsFromJson() throws Exception {
         step = new JSONObject();
         JSONArray fields = new JSONArray();
