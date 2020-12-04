@@ -120,12 +120,4 @@ public class NativeFormLangUtilsTest extends BaseTest {
         ResourceBundle mlsResourceBundle = NativeFormLangUtils.getResourceBundleFromRepository(RuntimeEnvironment.application, interpolatedJsonForm);
         assertFalse(mlsResourceBundle.getKeys().hasMoreElements());
     }
-
-    @Test
-    public void testPerformFormsTranslationShouldReturnCorrectValue() {
-        NativeFormLibrary.getInstance().setPerformFormTranslation(true);
-        assertTrue(NativeFormLibrary.getInstance().isPerformFormTranslation());
-        NativeFormLibrary.getInstance().setPerformFormTranslation(false);
-        assertFalse(NativeFormLibrary.getInstance().isPerformFormTranslation());
-    }
 }
