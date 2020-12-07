@@ -1417,7 +1417,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     protected JSONArray fetchFields(JSONObject parentJson, boolean popup) {
         JSONArray fields = new JSONArray();
-        if (parentJson == null) {
+        if (Utils.isEmptyJsonObject(parentJson)) {
             return fields;
         }
         try {

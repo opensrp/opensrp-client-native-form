@@ -47,6 +47,7 @@ import java.util.Set;
 
 import static com.vijay.jsonwizard.utils.Utils.formatDateToPattern;
 import static com.vijay.jsonwizard.utils.Utils.isEmptyJsonArray;
+import static com.vijay.jsonwizard.utils.Utils.isEmptyJsonObject;
 
 public class UtilsTest extends BaseTest {
 
@@ -390,6 +391,15 @@ public class UtilsTest extends BaseTest {
         Assert.assertTrue(isEmptyJsonArray(jsonArray));
         jsonArray.put("value");
         Assert.assertFalse(isEmptyJsonArray(jsonArray));
+    }
+
+    @Test
+    public void testIsEmptyJsonObjectShouldReturnCorrectStatus() throws JSONException {
+        Assert.assertTrue(isEmptyJsonObject(null));
+        JSONObject jsonObject = new JSONObject();
+        Assert.assertTrue(isEmptyJsonObject(jsonObject));
+        jsonObject.put("key", "value");
+        Assert.assertFalse(isEmptyJsonObject(jsonObject));
     }
 
     @Test
