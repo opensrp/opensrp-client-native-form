@@ -152,6 +152,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         repeatingGroupCountObj.put(OPENMRS_ENTITY_ID, "");
         repeatingGroupCountObj.put(TYPE, "");
         repeatingGroupCountObj.put(TEXT, widgetArgs.getJsonObject().get(REFERENCE_EDIT_TEXT_HINT));
+        repeatingGroupCountObj.put(VALUE, "0");
         stepFields.put(repeatingGroupCountObj);
 
         return repeatingGroupCountObj;
@@ -363,7 +364,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
 
     private void writeJsonObjectValue(JSONObject jsonObject, String value) {
         try {
-            jsonObject.put(VALUE, value);
+            jsonObject.put(VALUE, StringUtils.isNotBlank(value) ? value : "0");
         } catch (JSONException e) {
             Timber.e(e);
         }
