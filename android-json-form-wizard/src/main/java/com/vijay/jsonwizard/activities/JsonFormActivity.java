@@ -397,7 +397,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         JSONArray rulesArray = new JSONArray();
 
         for (int h = 1; h < getmJSONObject().getInt(JsonFormConstants.COUNT) + 1; h++) {
-            JSONArray fields = fetchFields(getmJSONObject().getJSONObject(RuleConstant.STEP + h), popup);
+            JSONArray fields = fetchFields(getmJSONObject().optJSONObject(RuleConstant.STEP + h), popup);
             for (int i = 0; i < fields.length(); i++) {
                 if (rulesList.contains(RuleConstant.STEP + h + "_" +
                         fields.getJSONObject(i).getString(JsonFormConstants.KEY))) {
@@ -1417,6 +1417,9 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     protected JSONArray fetchFields(JSONObject parentJson, boolean popup) {
         JSONArray fields = new JSONArray();
+        if (parentJson == null) {
+            return fields;
+        }
         try {
             if (parentJson.has(JsonFormConstants.SECTIONS) &&
                     parentJson.get(JsonFormConstants.SECTIONS) instanceof JSONArray) {
