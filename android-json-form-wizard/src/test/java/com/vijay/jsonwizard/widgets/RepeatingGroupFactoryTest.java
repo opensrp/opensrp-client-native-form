@@ -187,6 +187,9 @@ public class RepeatingGroupFactoryTest extends FactoryTest {
         JSONObject repeatingGroupCountObj = step.getJSONArray(JsonFormConstants.FIELDS).getJSONObject(0);
         Assert.assertEquals("0", repeatingGroupCountObj.getString(JsonFormConstants.VALUE));
 
+        ((MaterialEditText) rootLayout.findViewById(R.id.reference_edit_text)).setText("3");
+        Assert.assertEquals("3", repeatingGroupCountObj.getString(JsonFormConstants.VALUE));
+
         ((MaterialEditText) rootLayout.findViewById(R.id.reference_edit_text)).setText("");
         Assert.assertEquals("0", repeatingGroupCountObj.getString(JsonFormConstants.VALUE));
     }
