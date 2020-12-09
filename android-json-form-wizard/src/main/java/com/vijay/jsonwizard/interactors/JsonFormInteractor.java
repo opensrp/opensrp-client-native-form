@@ -1,5 +1,6 @@
 package com.vijay.jsonwizard.interactors;
 
+import android.app.Activity;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
@@ -222,7 +223,9 @@ public class JsonFormInteractor {
                 viewsFromJson.addAll(views);
             }
         } catch (RuntimeException e) {
-            throw e;
+            Activity activity = formFragment.getActivity();
+            activity.setResult(JsonFormConstants.RESULT_CODE.RUNTIME_EXCEPTION_OCCURRED);
+            activity.finish();
         } catch(Exception e) {
             Timber.e(e, "Exception encountered while creating form widget!");
         }
