@@ -223,6 +223,7 @@ public class JsonFormInteractor {
                 viewsFromJson.addAll(views);
             }
         } catch (RuntimeException e) {
+            Timber.e(e);
             Activity activity = formFragment.getActivity();
             activity.setResult(JsonFormConstants.RESULT_CODE.RUNTIME_EXCEPTION_OCCURRED);
             activity.finish();
