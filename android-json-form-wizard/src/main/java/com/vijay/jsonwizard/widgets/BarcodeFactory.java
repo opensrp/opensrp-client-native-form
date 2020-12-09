@@ -54,7 +54,7 @@ public class BarcodeFactory implements FormWidgetFactory {
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
-        return getViewsFromJson(stepName, context, formFragment, jsonObject, listener);
+        return getViewsFromJson(stepName, context, formFragment, jsonObject, listener, false);
     }
 
     @Override

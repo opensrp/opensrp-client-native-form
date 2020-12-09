@@ -23,7 +23,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 
-public class BarcodeFactorTest extends BaseTest {
+public class BarcodeFactoryTest extends BaseTest {
     private BarcodeFactory factory;
     @Mock
     private JsonFormActivity context;
