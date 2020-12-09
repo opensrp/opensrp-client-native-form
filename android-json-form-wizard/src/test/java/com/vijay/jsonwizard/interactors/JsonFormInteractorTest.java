@@ -9,6 +9,7 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 
 import org.json.JSONObject;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -29,6 +30,11 @@ public class JsonFormInteractorTest extends BaseTest {
     public void setUp() {
         jsonFormInteractor = JsonFormInteractor.getInstance();
         MockitoAnnotations.initMocks(this);
+    }
+
+    @After
+    public void tearDown() {
+        ReflectionHelpers.setField(jsonFormInteractor, "INSTANCE", null);
     }
 
     @Test
