@@ -843,6 +843,10 @@ public class Utils {
     public static boolean isEmptyJsonArray(JSONArray jsonArray) {
         return jsonArray == null || jsonArray.length() == 0;
     }
+
+    public static boolean isEmptyJsonObject(JSONObject jsonObject) {
+        return jsonObject == null || jsonObject.length() == 0;
+    }
 }
 
 
