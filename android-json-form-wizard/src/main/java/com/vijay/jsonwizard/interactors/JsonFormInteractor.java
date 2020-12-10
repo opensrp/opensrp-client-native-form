@@ -244,8 +244,7 @@ public class JsonFormInteractor {
             }
         };
 
-        Utils.showAlertDialog(activity, activity.getString(R.string.error_title), activity.getString(R.string.form_load_error),
-                "", activity.getString(R.string.ok), null, positiveBtnListener);
+        Utils.showToast(activity, activity.getString(R.string.form_load_error));
 
         Bundle bundle = new Bundle();
         bundle.putSerializable(JsonFormConstants.RESULT_INTENT.RUNTIME_EXCEPTION, e);
