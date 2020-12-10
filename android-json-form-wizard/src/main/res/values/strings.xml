@@ -110,4 +110,7 @@
     <string name="current_corrupted_form">(Current Corrupted Form)</string>
     <string name="cannot_select_corrupted_form_rollback">You cannot select this form because it\'s corrupted!</string>
 
+    <string name="error_title">Error</string>
+    <string name="form_load_error">Sorry, a fatal error occurred when loading the form. Please contact a developer for further assistance.</string>
+
 </resources>
