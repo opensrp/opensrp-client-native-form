@@ -63,5 +63,7 @@ public class JsonFormInteractorTest extends BaseTest {
 
         Intent intent = intentArgumentCaptor.getValue();
         Assert.assertTrue(intent.getExtras().getSerializable(JsonFormConstants.RESULT_INTENT.RUNTIME_EXCEPTION) instanceof RuntimeException);
+
+        activity.finish();
     }
 }
