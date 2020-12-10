@@ -1,9 +1,12 @@
 package com.vijay.jsonwizard.utils;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.AssetManager;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -27,11 +30,13 @@ import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.internal.WhiteboxImpl;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.util.ReflectionHelpers;
 
 import java.io.ByteArrayInputStream;
@@ -417,5 +422,23 @@ public class UtilsTest extends BaseTest {
 
         Assert.assertEquals(1, invalidFields.size());
         Assert.assertEquals(prefix + "field3", invalidFields.keySet().iterator().next());
+    }
+
+
+    @Test
+    public void testShowAlertDialogShouldDisplayAlertDialogCorrectly() {
+        DialogInterface.OnClickListener onClickListener = Mockito.mock(DialogInterface.OnClickListener.class);
+
+        Utils.showAlertDialog(RuntimeEnvironment.application, "title", "message", "no", "yes", onClickListener, onClickListener);
+
+        AlertDialog dialog = (AlertDialog) ShadowDialog.getLatestDialog();
+        Assert.assertNotNull(dialog);
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick();
+        Mockito.verify(onClickListener).onClick(ArgumentMatchers.any(DialogInterface.class), ArgumentMatchers.anyInt());
+
+        Mockito.reset(onClickListener);
+        dialog.getButton(DialogInterface.BUTTON_NEGATIVE).performClick();
+        Mockito.verify(onClickListener).onClick(ArgumentMatchers.any(DialogInterface.class), ArgumentMatchers.anyInt());
     }
 }
