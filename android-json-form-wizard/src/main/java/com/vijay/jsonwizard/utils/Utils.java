@@ -864,6 +864,10 @@ public class Utils {
 
         alertDialogBuilder.create().show();
     }
+
+    public static boolean isEmptyJsonObject(JSONObject jsonObject) {
+        return jsonObject == null || jsonObject.length() == 0;
+    }
 }
 
 
