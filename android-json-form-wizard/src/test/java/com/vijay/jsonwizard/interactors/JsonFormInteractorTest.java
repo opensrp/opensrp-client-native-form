@@ -1,8 +1,10 @@
 package com.vijay.jsonwizard.interactors;
 
+import android.content.Intent;
 import android.view.View;
 
 import com.vijay.jsonwizard.BaseTest;
+import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
@@ -10,11 +12,15 @@ import com.vijay.jsonwizard.interfaces.CommonListener;
 
 import org.json.JSONObject;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
+import org.robolectric.Robolectric;
 import org.robolectric.util.ReflectionHelpers;
 
 import java.util.ArrayList;
@@ -26,10 +32,13 @@ public class JsonFormInteractorTest extends BaseTest {
 
     private JsonFormInteractor jsonFormInteractor;
 
+    @Captor
+    private ArgumentCaptor<Intent> intentArgumentCaptor;
+
     @Before
     public void setUp() {
-        jsonFormInteractor = JsonFormInteractor.getInstance();
         MockitoAnnotations.initMocks(this);
+        jsonFormInteractor = JsonFormInteractor.getInstance();
     }
 
     @After
@@ -41,14 +50,18 @@ public class JsonFormInteractorTest extends BaseTest {
     public void testFetchViewsShouldSetCorrectResultForRTE() throws Exception {
         ReflectionHelpers.setField(jsonFormInteractor, "map", null);
 
-        JsonFormActivity activity = Mockito.mock(JsonFormActivity.class);
+        JsonFormActivity activity = Mockito.spy(Robolectric.buildActivity(JsonFormActivity.class, getJsonFormActivityIntent()).create().start().get());
         JsonFormFragment jsonFormFragment = Mockito.mock(JsonFormFragment.class);
         Mockito.doReturn(activity).when(jsonFormFragment).getActivity();
 
         Whitebox.invokeMethod(jsonFormInteractor, "fetchViews", new ArrayList<View>(), "",
                 jsonFormFragment, "", new JSONObject(), Mockito.mock(CommonListener.class), false);
 
-        Mockito.verify(activity).setResult(JsonFormConstants.RESULT_CODE.RUNTIME_EXCEPTION_OCCURRED);
+        Mockito.verify(activity).getString(R.string.form_load_error);
+        Mockito.verify(activity).setResult(Mockito.eq(JsonFormConstants.RESULT_CODE.RUNTIME_EXCEPTION_OCCURRED), intentArgumentCaptor.capture());
         Mockito.verify(activity).finish();
+
+        Intent intent = intentArgumentCaptor.getValue();
+        Assert.assertTrue(intent.getExtras().getSerializable(JsonFormConstants.RESULT_INTENT.RUNTIME_EXCEPTION) instanceof RuntimeException);
     }
 }

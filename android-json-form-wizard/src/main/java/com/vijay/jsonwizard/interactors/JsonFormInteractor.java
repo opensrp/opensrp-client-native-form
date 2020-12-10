@@ -1,7 +1,6 @@
 package com.vijay.jsonwizard.interactors;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -228,21 +227,14 @@ public class JsonFormInteractor {
                 viewsFromJson.addAll(views);
             }
         } catch (RuntimeException e) {
-            closeActivityAfterRTE(formFragment.getActivity(), e);
+            closeActivityAfterRuntimeException(formFragment.getActivity(), e);
         } catch(Exception e) {
             Timber.e(e, "Exception encountered while creating form widget!");
         }
     }
 
-    private void closeActivityAfterRTE(Activity activity, RuntimeException e) {
+    private void closeActivityAfterRuntimeException(Activity activity, RuntimeException e) {
         Timber.e(e);
-
-        DialogInterface.OnClickListener positiveBtnListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        };
 
         Utils.showToast(activity, activity.getString(R.string.form_load_error));
 
