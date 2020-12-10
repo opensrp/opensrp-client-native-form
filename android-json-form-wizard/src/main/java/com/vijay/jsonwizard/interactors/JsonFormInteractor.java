@@ -1,14 +1,19 @@
 package com.vijay.jsonwizard.interactors;
 
 import android.app.Activity;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 
+import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
+import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.widgets.BarcodeFactory;
 import com.vijay.jsonwizard.widgets.ButtonFactory;
 import com.vijay.jsonwizard.widgets.CheckBoxFactory;
@@ -223,13 +228,33 @@ public class JsonFormInteractor {
                 viewsFromJson.addAll(views);
             }
         } catch (RuntimeException e) {
-            Timber.e(e);
-            Activity activity = formFragment.getActivity();
-            activity.setResult(JsonFormConstants.RESULT_CODE.RUNTIME_EXCEPTION_OCCURRED);
-            activity.finish();
+            closeActivityAfterRTE(formFragment.getActivity(), e);
         } catch(Exception e) {
             Timber.e(e, "Exception encountered while creating form widget!");
         }
+    }
+
+    private void closeActivityAfterRTE(Activity activity, RuntimeException e) {
+        Timber.e(e);
+
+        DialogInterface.OnClickListener positiveBtnListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        };
+
+        Utils.showAlertDialog(activity, activity.getString(R.string.error_title), activity.getString(R.string.form_load_error),
+                "", activity.getString(R.string.ok), null, positiveBtnListener);
+
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(JsonFormConstants.RESULT_INTENT.RUNTIME_EXCEPTION, e);
+
+        Intent intent = new Intent();
+        intent.putExtras(bundle);
+
+        activity.setResult(JsonFormConstants.RESULT_CODE.RUNTIME_EXCEPTION_OCCURRED, intent);
+        activity.finish();
     }
 
     public final Set<String> getDefaultTranslatableWidgetFields() {

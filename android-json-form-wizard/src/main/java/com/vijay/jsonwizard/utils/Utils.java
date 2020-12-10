@@ -1,10 +1,12 @@
 package com.vijay.jsonwizard.utils;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.AssetManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
@@ -842,6 +844,25 @@ public class Utils {
 
     public static boolean isEmptyJsonArray(JSONArray jsonArray) {
         return jsonArray == null || jsonArray.length() == 0;
+    }
+
+    public static void showAlertDialog(Context context, String title, String message,
+                                       String negativeBtnTxt, String positiveBtnTxt,
+                                       DialogInterface.OnClickListener negativeBtnListener,
+                                       DialogInterface.OnClickListener positiveBtnListener) {
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context, R.style.AppThemeAlertDialog).setTitle(title)
+                .setMessage(message);
+
+        if (negativeBtnListener != null) {
+            alertDialogBuilder.setNegativeButton(negativeBtnTxt, negativeBtnListener);
+        }
+
+        if (positiveBtnListener != null) {
+            alertDialogBuilder.setPositiveButton(positiveBtnTxt, positiveBtnListener);
+        }
+
+        alertDialogBuilder.create().show();
     }
 }
 

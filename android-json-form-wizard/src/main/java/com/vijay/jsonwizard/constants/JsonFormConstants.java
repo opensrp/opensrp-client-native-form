@@ -330,6 +330,10 @@ public class JsonFormConstants {
         int RUNTIME_EXCEPTION_OCCURRED = 8037;
     }
 
+    public interface RESULT_INTENT {
+        String RUNTIME_EXCEPTION = "runtime_exception";
+    }
+
     public static class MESSAGE_TYPE {
         public static final String GLOBAL_VALUES = "global_values";
     }
