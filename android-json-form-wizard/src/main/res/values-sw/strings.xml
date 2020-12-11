@@ -110,4 +110,7 @@
     <string name="current_corrupted_form">(Current Corrupted Form)</string>
     <string name="cannot_select_corrupted_form_rollback">Huwezi kuchagua fomu hii kwa sababu imeharibika!</string>
 
+    <string name="error_title">Kosa</string>
+    <string name="form_load_error">Samahani, kosa mbaya ilitokea wakati wa kupakia fomu. Tafadhali wasiliana na msanidi programu kwa usaidizi zaidi.</string>
+
 </resources>
