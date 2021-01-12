@@ -518,20 +518,20 @@ public class Utils {
 
     protected String getKey(JSONObject object) throws JSONException {
         return object.has(RuleConstant.IS_RULE_CHECK) && object.getBoolean(RuleConstant.IS_RULE_CHECK) ?
-                object.get(RuleConstant.STEP) + "_" + object.get(KEY) : JsonFormConstants.VALUE;
+                object.get(RuleConstant.STEP) + "_" + object.get(KEY) : VALUE;
     }
 
     protected Object getValue(JSONObject object) throws JSONException {
         Object value;
 
-        if (object.has(JsonFormConstants.VALUE)) {
+        if (object.has(VALUE)) {
 
-            value = object.opt(JsonFormConstants.VALUE);
+            value = object.opt(VALUE);
 
             if (isNumberWidget(object)) {
-                value = TextUtils.isEmpty(object.optString(JsonFormConstants.VALUE)) ? 0 :
-                        processNumberValues(object.optString(JsonFormConstants.VALUE));
-            } else if (value != null && !TextUtils.isEmpty(object.getString(JsonFormConstants.VALUE)) &&
+                value = TextUtils.isEmpty(object.optString(VALUE)) ? 0 :
+                        processNumberValues(object.optString(VALUE));
+            } else if (value != null && !TextUtils.isEmpty(object.getString(VALUE)) &&
                     canHaveNumber(object)) {
                 value = processNumberValues(value);
             }
@@ -546,7 +546,7 @@ public class Utils {
     protected boolean isNumberWidget(JSONObject object) throws JSONException {
         return object.has(JsonFormConstants.EDIT_TYPE) &&
                 object.getString(JsonFormConstants.EDIT_TYPE).equals(JsonFormConstants.EDIT_TEXT_TYPE.NUMBER) ||
-                object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.NUMBER_SELECTOR);
+                object.getString(TYPE).equals(JsonFormConstants.NUMBER_SELECTOR);
     }
 
     protected Object processNumberValues(Object object) {
@@ -564,8 +564,8 @@ public class Utils {
     }
 
     protected boolean canHaveNumber(JSONObject object) throws JSONException {
-        return isNumberWidget(object) || object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.HIDDEN) ||
-                object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.SPINNER);
+        return isNumberWidget(object) || object.getString(TYPE).equals(JsonFormConstants.HIDDEN) ||
+                object.getString(TYPE).equals(JsonFormConstants.SPINNER);
     }
 
     public void setChildKey(View view, String type, ExpansionPanelGenericPopupDialog genericPopupDialog) {

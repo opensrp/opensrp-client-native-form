@@ -50,8 +50,6 @@ public class RepeatingGroupFactoryTest extends FactoryTest {
 
     private RepeatingGroupFactory factory;
 
-    private JSONObject step;
-
     @Mock
     private JsonFormFragment jsonFormFragment;
 
@@ -226,7 +224,7 @@ public class RepeatingGroupFactoryTest extends FactoryTest {
     }
 
     private List<View> invokeGetViewsFromJson() throws Exception {
-        step = new JSONObject();
+        JSONObject step = new JSONObject();
         JSONArray fields = new JSONArray();
         step.put(JsonFormConstants.FIELDS, fields);
         doReturn(step).when(jsonFormActivity).getStep(anyString());
