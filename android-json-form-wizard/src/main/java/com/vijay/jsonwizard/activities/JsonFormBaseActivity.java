@@ -12,6 +12,7 @@ import android.view.View;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.vijay.jsonwizard.NativeFormLibrary;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.Form;
@@ -91,7 +92,10 @@ public abstract class JsonFormBaseActivity extends MultiLanguageActivity impleme
         onActivityRequestPermissionResultListeners = new HashMap<>();
         lifeCycleListeners = new ArrayList<>();
         isFormFragmentInitialized = false;
-        translateForm = getIntent().getBooleanExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, false);
+        translateForm = getIntent().hasExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION) ?
+                getIntent().getBooleanExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, false) :
+                NativeFormLibrary.getInstance().isPerformFormTranslation();
+
         if (savedInstanceState == null) {
             this.form = extractForm(getIntent().getSerializableExtra(JsonFormConstants.JSON_FORM_KEY.FORM));
             init(getJsonForm());

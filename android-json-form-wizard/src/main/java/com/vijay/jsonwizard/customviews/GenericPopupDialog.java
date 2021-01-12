@@ -16,6 +16,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import com.vijay.jsonwizard.NativeFormLibrary;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
@@ -96,9 +97,11 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
                     return;
                 }
                 // support translation of sub-forms
+                // support translation of sub-forms
                 Intent activityIntent = getActivity().getIntent();
-                translateSubForm = activityIntent == null ? translateSubForm
-                        : activityIntent.getBooleanExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, false);
+                translateSubForm = activityIntent != null && activityIntent.hasExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION) ?
+                        activityIntent.getBooleanExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, false) :
+                        NativeFormLibrary.getInstance().isPerformFormTranslation();
 
                 try {
                     setMainFormFields(formUtils.getFormFields(getStepName(), context));

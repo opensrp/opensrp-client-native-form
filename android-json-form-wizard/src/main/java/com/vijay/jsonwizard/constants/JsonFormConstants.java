@@ -327,6 +327,14 @@ public class JsonFormConstants {
         public static final String MESSAGE_TYPE = "message_type";
     }
 
+    public interface RESULT_CODE {
+        int RUNTIME_EXCEPTION_OCCURRED = 8037;
+    }
+
+    public interface RESULT_INTENT {
+        String RUNTIME_EXCEPTION = "runtime_exception";
+    }
+
     public static class MESSAGE_TYPE {
         public static final String GLOBAL_VALUES = "global_values";
     }

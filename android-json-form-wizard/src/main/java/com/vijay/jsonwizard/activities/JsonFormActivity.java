@@ -535,16 +535,17 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private JSONObject fillFieldsWithValues(List<String> rulesList) throws JSONException {
         JSONObject result = new JSONObject();
         JSONArray rulesArray = new JSONArray();
-        for (String rule : rulesList) {
-            if (!rule.startsWith(JsonFormConstants.STEP))
-                continue;
-            JSONObject fieldObject = formFields.get(rule);
-            if (fieldObject == null) {
-                Timber.w("Missing field for rule %s", rule);
-                continue;
+        for (int h = 1; h < getmJSONObject().getInt(JsonFormConstants.COUNT) + 1; h++) {
+            JSONArray fields = fetchFields(getmJSONObject().optJSONObject(RuleConstant.STEP + h), popup);
+            for (int i = 0; i < fields.length(); i++) {
+                if (rulesList.contains(RuleConstant.STEP + h + "_" +
+                        fields.getJSONObject(i).getString(JsonFormConstants.KEY))) {
+
+                    JSONObject fieldObject = fields.getJSONObject(i);
+                    fieldObject.put(RuleConstant.STEP, RuleConstant.STEP + h);
+                    rulesArray.put(fieldObject);
+                }
             }
-            fieldObject.put(RuleConstant.STEP, rule.substring(0, rule.indexOf("_")));
-            rulesArray.put(fieldObject);
         }
         result.put(RuleConstant.RESULT, rulesArray);
         return result;
@@ -1609,6 +1610,9 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     protected JSONArray fetchFields(JSONObject parentJson, boolean popup) {
         JSONArray fields = new JSONArray();
+        if (Utils.isEmptyJsonObject(parentJson)) {
+            return fields;
+        }
         try {
             if (parentJson.has(JsonFormConstants.SECTIONS) &&
                     parentJson.get(JsonFormConstants.SECTIONS) instanceof JSONArray) {

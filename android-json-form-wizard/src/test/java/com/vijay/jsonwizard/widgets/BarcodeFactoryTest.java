@@ -21,8 +21,7 @@ import org.mockito.Mockito;
 
 import java.util.List;
 
-public class BarcodeFactorTest extends FactoryTest {
-
+public class BarcodeFactoryTest extends FactoryTest {
     private BarcodeFactory factory;
 
     @Mock

@@ -1,10 +1,12 @@
 package com.vijay.jsonwizard.utils;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.AssetManager;
 import android.os.Looper;
 import android.support.annotation.NonNull;
@@ -543,7 +545,7 @@ public class Utils {
     protected boolean isNumberWidget(JSONObject object) throws JSONException {
         return object.has(JsonFormConstants.EDIT_TYPE) &&
                 object.getString(JsonFormConstants.EDIT_TYPE).equals(JsonFormConstants.EDIT_TEXT_TYPE.NUMBER) ||
-                object.getString(TYPE).equals(JsonFormConstants.NUMBER_SELECTOR);
+                object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.NUMBER_SELECTOR);
     }
 
     protected Object processNumberValues(Object object) {
@@ -561,8 +563,8 @@ public class Utils {
     }
 
     protected boolean canHaveNumber(JSONObject object) throws JSONException {
-        return isNumberWidget(object) || object.getString(TYPE).equals(JsonFormConstants.HIDDEN) ||
-                object.getString(TYPE).equals(JsonFormConstants.SPINNER);
+        return isNumberWidget(object) || object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.HIDDEN) ||
+                object.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.SPINNER);
     }
 
     public void setChildKey(View view, String type, ExpansionPanelGenericPopupDialog genericPopupDialog) {
@@ -894,6 +896,30 @@ public class Utils {
     public static boolean isEmptyJsonArray(JSONArray jsonArray) {
         return jsonArray == null || jsonArray.length() == 0;
     }
+
+    public static void showAlertDialog(Context context, String title, String message,
+                                       String negativeBtnTxt, String positiveBtnTxt,
+                                       DialogInterface.OnClickListener negativeBtnListener,
+                                       DialogInterface.OnClickListener positiveBtnListener) {
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context, R.style.AppThemeAlertDialog).setTitle(title)
+                .setMessage(message);
+
+        if (negativeBtnListener != null) {
+            alertDialogBuilder.setNegativeButton(negativeBtnTxt, negativeBtnListener);
+        }
+
+        if (positiveBtnListener != null) {
+            alertDialogBuilder.setPositiveButton(positiveBtnTxt, positiveBtnListener);
+        }
+
+        alertDialogBuilder.create().show();
+    }
+
+    public static boolean isEmptyJsonObject(JSONObject jsonObject) {
+        return jsonObject == null || jsonObject.length() == 0;
+    }
+
 
     /**
      * Returns the object that holds the repeating group count

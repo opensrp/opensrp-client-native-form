@@ -1,12 +1,17 @@
 package com.vijay.jsonwizard.interactors;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
+import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
+import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.widgets.BarcodeFactory;
 import com.vijay.jsonwizard.widgets.BasicRDTCaptureFactory;
 import com.vijay.jsonwizard.widgets.ButtonFactory;
@@ -219,9 +224,26 @@ public class JsonFormInteractor {
                 viewsFromJson.addAll(views);
             }
 
-        } catch (Exception e) {
-            Timber.e(e);
+        } catch (RuntimeException e) {
+            closeActivityAfterRuntimeException(formFragment.getActivity(), e);
+        } catch(Exception e) {
+            Timber.e(e, "Exception encountered while creating form widget!");
         }
+    }
+
+    private void closeActivityAfterRuntimeException(Activity activity, RuntimeException e) {
+        Timber.e(e);
+
+        Utils.showToast(activity, activity.getString(R.string.form_load_error));
+
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(JsonFormConstants.RESULT_INTENT.RUNTIME_EXCEPTION, e);
+
+        Intent intent = new Intent();
+        intent.putExtras(bundle);
+
+        activity.setResult(JsonFormConstants.RESULT_CODE.RUNTIME_EXCEPTION_OCCURRED, intent);
+        activity.finish();
     }
 
     public final Set<String> getDefaultTranslatableWidgetFields() {

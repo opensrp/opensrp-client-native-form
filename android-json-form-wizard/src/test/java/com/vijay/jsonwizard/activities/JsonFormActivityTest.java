@@ -11,8 +11,10 @@ import android.widget.RelativeLayout;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rey.material.util.ViewUtil;
+import com.vijay.jsonwizard.NativeFormLibrary;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.TestConstants;
+import com.vijay.jsonwizard.TestUtils;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.utils.FormUtils;
@@ -35,12 +37,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
 
 public class JsonFormActivityTest extends BaseActivityTest {
     private JsonFormActivity activity;
     private ActivityController<JsonFormActivity> controller;
+    private final TestUtils testUtils = new TestUtils();
 
     @Before
     public void setUp() throws JSONException {
@@ -61,6 +67,78 @@ public class JsonFormActivityTest extends BaseActivityTest {
         Assert.assertEquals(RuntimeEnvironment.application.getString(R.string.confirm_form_close), activity.getConfirmCloseTitle());
         activity.setConfirmCloseTitle(DUMMY_TEST_STRING);
         Assert.assertEquals(DUMMY_TEST_STRING, activity.getConfirmCloseTitle());
+    }
+
+    @Test
+    public void testJsonFormShouldTranslationWhenGlobalConfigIsTrue() {
+        String interpolatedJsonForm = testUtils.getResourceFileContentsAsString("test_form_translation_interpolated");
+
+        Intent intent = new Intent();
+        intent.putExtra(JsonFormConstants.JSON_FORM_KEY.JSON, interpolatedJsonForm);
+        NativeFormLibrary.getInstance().setPerformFormTranslation(true);
+        Locale.setDefault(new Locale("en", "US"));
+        controller = Robolectric.buildActivity(JsonFormActivity.class, intent).create().start();
+        activity = controller.get();
+        Assert.assertNotNull(activity);
+
+        String jsonForm = activity.getJsonForm();
+
+        String expectedJsonForm = testUtils.getResourceFileContentsAsString("test_form_translation_en_US");
+        assertEquals(expectedJsonForm, jsonForm);
+    }
+
+    @Test
+    public void testJsonFormShouldNotTranslationWhenGlobalConfigValueIsFalse() {
+        String inputJsonForm = testUtils.getResourceFileContentsAsString("test_form_translation_en_US");
+
+        Intent intent = new Intent();
+        intent.putExtra(JsonFormConstants.JSON_FORM_KEY.JSON, inputJsonForm);
+        NativeFormLibrary.getInstance().setPerformFormTranslation(false);
+        Locale.setDefault(new Locale("en", "US"));
+        controller = Robolectric.buildActivity(JsonFormActivity.class, intent).create().start();
+        activity = controller.get();
+        Assert.assertNotNull(activity);
+
+        String jsonForm = activity.getJsonForm();
+
+        assertEquals(inputJsonForm, jsonForm);
+    }
+
+    @Test
+    public void testJsonFormShouldNotTranslateWhenIntentValueIsFalse() {
+        String inputJsonForm = testUtils.getResourceFileContentsAsString("test_form_translation_en_US");
+
+        Intent intent = new Intent();
+        intent.putExtra(JsonFormConstants.JSON_FORM_KEY.JSON, inputJsonForm);
+        intent.putExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, false);
+        NativeFormLibrary.getInstance().setPerformFormTranslation(true);
+        Locale.setDefault(new Locale("en", "US"));
+        controller = Robolectric.buildActivity(JsonFormActivity.class, intent).create().start();
+        activity = controller.get();
+        Assert.assertNotNull(activity);
+
+        String jsonForm = activity.getJsonForm();
+
+        assertEquals(inputJsonForm, jsonForm);
+    }
+
+    @Test
+    public void testJsonFormShouldTranslateWhenIntentValueIsTrue() {
+        String interpolatedJsonForm = testUtils.getResourceFileContentsAsString("test_form_translation_interpolated");
+
+        Intent intent = new Intent();
+        intent.putExtra(JsonFormConstants.JSON_FORM_KEY.JSON, interpolatedJsonForm);
+        intent.putExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, true);
+        NativeFormLibrary.getInstance().setPerformFormTranslation(false);
+        Locale.setDefault(new Locale("en", "US"));
+        controller = Robolectric.buildActivity(JsonFormActivity.class, intent).create().start();
+        activity = controller.get();
+        Assert.assertNotNull(activity);
+
+        String jsonForm = activity.getJsonForm();
+
+        String expectedJsonForm = testUtils.getResourceFileContentsAsString("test_form_translation_en_US");
+        assertEquals(expectedJsonForm, jsonForm);
     }
 
     @Test
