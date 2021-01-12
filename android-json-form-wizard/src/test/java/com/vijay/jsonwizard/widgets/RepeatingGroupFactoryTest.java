@@ -14,8 +14,10 @@ import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.WidgetArgs;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
+import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.presenters.JsonFormFragmentPresenter;
 import com.vijay.jsonwizard.task.AttachRepeatingGroupTask;
+import com.vijay.jsonwizard.utils.AppExecutors;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,9 +25,7 @@ import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.robolectric.annotation.LooperMode;
 import org.robolectric.util.ReflectionHelpers;
 
@@ -35,7 +35,11 @@ import java.util.Set;
 
 import static android.os.Looper.getMainLooper;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
@@ -45,6 +49,8 @@ import static org.robolectric.annotation.LooperMode.Mode.PAUSED;
 public class RepeatingGroupFactoryTest extends FactoryTest {
 
     private RepeatingGroupFactory factory;
+
+    private JSONObject step;
 
     @Mock
     private JsonFormFragment jsonFormFragment;
@@ -70,15 +76,15 @@ public class RepeatingGroupFactoryTest extends FactoryTest {
 
     @Test
     public void testRepeatingGroupCountIsSaved() throws Exception {
-        Mockito.doReturn(jsonFormActivity).when(jsonFormFragment).getContext();
-        Mockito.doReturn(jsonFormActivity).when(jsonFormFragment).getJsonApi();
-        JsonFormFragmentPresenter jsonFormFragmentPresenter = Mockito.spy(new JsonFormFragmentPresenter(jsonFormFragment));
-        Mockito.doReturn("Step title").when(jsonFormFragmentPresenter).getStepTitle();
+        doReturn(jsonFormActivity).when(jsonFormFragment).getContext();
+        doReturn(jsonFormActivity).when(jsonFormFragment).getJsonApi();
+        JsonFormFragmentPresenter jsonFormFragmentPresenter = spy(new JsonFormFragmentPresenter(jsonFormFragment));
+        doReturn("Step title").when(jsonFormFragmentPresenter).getStepTitle();
 
         JSONObject stepJsonObject = new JSONObject();
         stepJsonObject.put(JsonFormConstants.FIELDS, new JSONArray());
-        Mockito.doReturn(stepJsonObject).when(jsonFormFragment).getStep(JsonFormConstants.STEP1);
-        Mockito.doReturn(jsonFormFragmentPresenter).when(jsonFormFragment).getPresenter();
+        doReturn(stepJsonObject).when(jsonFormFragment).getStep(JsonFormConstants.STEP1);
+        doReturn(jsonFormFragmentPresenter).when(jsonFormFragment).getPresenter();
 
         View rootLayout = invokeGetViewsFromJson().get(0);
         ((MaterialEditText) rootLayout.findViewById(R.id.reference_edit_text)).setText("2");
@@ -110,7 +116,7 @@ public class RepeatingGroupFactoryTest extends FactoryTest {
 
     @Test
     public void testSetRepeatingGroupNumLimits() {
-        RepeatingGroupFactory factorySpy = Mockito.spy(factory);
+        RepeatingGroupFactory factorySpy = spy(factory);
         String stepName = "step_name";
         Context context = mock(Context.class);
         JsonFormFragment formFragment = mock(JsonFormFragment.class);
@@ -134,7 +140,7 @@ public class RepeatingGroupFactoryTest extends FactoryTest {
 
     @Test
     public void testGetCustomTranslatableWidgetFields() {
-        RepeatingGroupFactory factorySpy = Mockito.spy(factory);
+        RepeatingGroupFactory factorySpy = spy(factory);
 
         Set<String> editableProperties = factorySpy.getCustomTranslatableWidgetFields();
         Assert.assertEquals(1, editableProperties.size());
@@ -205,23 +211,25 @@ public class RepeatingGroupFactoryTest extends FactoryTest {
 
     @Test
     public void testRepeatingGroupDefaultCount() throws Exception {
-        View rootLayout = invokeGetViewsFromJson().get(0);
+        JsonApi jsonApi = mock(JsonApi.class);
+        doReturn(jsonApi).when(jsonFormFragment).getJsonApi();
+        doReturn(new AppExecutors()).when(jsonApi).getAppExecutors();
 
-        JSONObject repeatingGroupCountObj = step.getJSONArray(JsonFormConstants.FIELDS).getJSONObject(0);
-        Assert.assertEquals("0", repeatingGroupCountObj.getString(JsonFormConstants.VALUE));
+        JSONObject stepJsonObject = new JSONObject();
+        stepJsonObject.put(JsonFormConstants.FIELDS, new JSONArray());
+        doReturn(stepJsonObject).when(jsonFormFragment).getStep(eq(JsonFormConstants.STEP1));
 
-        ((MaterialEditText) rootLayout.findViewById(R.id.reference_edit_text)).setText("3");
-        Assert.assertEquals("3", repeatingGroupCountObj.getString(JsonFormConstants.VALUE));
+        invokeGetViewsFromJson().get(0);
 
-        ((MaterialEditText) rootLayout.findViewById(R.id.reference_edit_text)).setText("");
+        JSONObject repeatingGroupCountObj = stepJsonObject.getJSONArray(JsonFormConstants.FIELDS).getJSONObject(0);
         Assert.assertEquals("0", repeatingGroupCountObj.getString(JsonFormConstants.VALUE));
     }
 
     private List<View> invokeGetViewsFromJson() throws Exception {
-        JSONObject step = new JSONObject();
+        step = new JSONObject();
         JSONArray fields = new JSONArray();
         step.put(JsonFormConstants.FIELDS, fields);
-        Mockito.doReturn(step).when(jsonFormActivity).getStep(ArgumentMatchers.anyString());
+        doReturn(step).when(jsonFormActivity).getStep(anyString());
 
         JSONObject repeatingGroupWidget = new JSONObject();
         repeatingGroupWidget.put(JsonFormConstants.KEY, "key");
