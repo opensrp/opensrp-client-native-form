@@ -73,6 +73,7 @@ import static com.vijay.jsonwizard.constants.JsonFormConstants.OPENMRS_ENTITY_ID
 import static com.vijay.jsonwizard.constants.JsonFormConstants.OPENMRS_ENTITY_PARENT;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.TEXT;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.TYPE;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUE;
 import static com.vijay.jsonwizard.utils.NativeFormLangUtils.getTranslatedString;
 import static com.vijay.jsonwizard.widgets.RepeatingGroupFactory.REFERENCE_EDIT_TEXT_HINT;
 
@@ -947,6 +948,7 @@ public class Utils {
         repeatingGroupCountObj.put(OPENMRS_ENTITY, "");
         repeatingGroupCountObj.put(OPENMRS_ENTITY_ID, "");
         repeatingGroupCountObj.put(TYPE, "");
+        repeatingGroupCountObj.put(VALUE, "0");
         repeatingGroupCountObj.put(TEXT, widgetArgs.getJsonObject().get(REFERENCE_EDIT_TEXT_HINT));
         stepFields.put(repeatingGroupCountObj);
         return repeatingGroupCountObj;

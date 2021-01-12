@@ -489,12 +489,12 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         if (address != null && address.length > 1) {
             if (RuleConstant.RULES_DYNAMIC.equals(address[0])) {
                 List<String> rulesList = getDynamicRules(address);
-                return fillFieldsWithValues(rulesList);
+                return fillFieldsWithValues(rulesList, popup);
             } else if (RuleConstant.RULES_ENGINE.equals(address[0])) {
                 String fieldKey = address[2];
                 List<String> rulesList = getRules(address[1], fieldKey, false);
                 if (rulesList != null) {
-                    return fillFieldsWithValues(rulesList);
+                    return fillFieldsWithValues(rulesList, popup);
                 }
             } else {
                 return getRelevanceReferencedObject(address[0], address[1]);
@@ -532,7 +532,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         return keysList;
     }
 
-    private JSONObject fillFieldsWithValues(List<String> rulesList) throws JSONException {
+    private JSONObject fillFieldsWithValues(List<String> rulesList, boolean popup) throws JSONException {
         JSONObject result = new JSONObject();
         JSONArray rulesArray = new JSONArray();
         for (int h = 1; h < getmJSONObject().getInt(JsonFormConstants.COUNT) + 1; h++) {
