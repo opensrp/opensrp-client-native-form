@@ -96,10 +96,12 @@ public class JsonWizardFormFragmentPresenterTest {
         presenter.onNextClick(mock(LinearLayout.class));
         verifyMovesToNextStep(2);
 
+
         // when form has errors
         Map<String, ValidationStatus> invalidFields = new HashMap<>();
-        invalidFields.put("key", mock(ValidationStatus.class));
+        invalidFields.put("step1#key", mock(ValidationStatus.class));
         Whitebox.setInternalState(presenter, "invalidFields", invalidFields);
+        Whitebox.setInternalState(presenter, "mStepName", JsonFormConstants.STEP1);
         presenter.onNextClick(mock(LinearLayout.class));
         verify(formFragment).showSnackBar(eq("string"));
     }
