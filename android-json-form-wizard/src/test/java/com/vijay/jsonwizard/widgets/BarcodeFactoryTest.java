@@ -6,7 +6,6 @@ import android.widget.RelativeLayout;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rey.material.widget.Button;
-import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
@@ -19,12 +18,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 
-public class BarcodeFactoryTest extends BaseTest {
+public class BarcodeFactoryTest extends FactoryTest {
     private BarcodeFactory factory;
+
     @Mock
     private JsonFormActivity context;
 
@@ -48,7 +47,7 @@ public class BarcodeFactoryTest extends BaseTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        super.setUp();
         factory = new BarcodeFactory();
     }
 
@@ -74,6 +73,8 @@ public class BarcodeFactoryTest extends BaseTest {
 
         Mockito.doReturn(scanButton).when(rootLayout).findViewById(R.id.scan_button);
         Assert.assertNotNull(scanButton);
+
+        Mockito.doReturn(jsonFormActivity).when(formFragment).getJsonApi();
 
         String gpsString = "{\"key\":\"user_qr_code\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"type\":\"barcode\",\"barcode_type\":\"qrcode\",\"hint\":\"User ID\",\"read_only\":true,\"scanButtonText\":\"Scan QR Code\",\"v_numeric\":{\"value\":\"true\",\"err\":\"Please enter a valid ID\"},\"value\":\"123455646\",\"v_required\":{\"value\":true,\"err\":\"Please enter the user ID\"},\"relevance\":{\"rules-engine\":{\"ex-rules\":{\"rules-file\":\"sample-relevance-rules.yml\"}}},\"calculation\":{\"rules-engine\":{\"ex-rules\":{\"rules-file\":\"sample-calculation-rules.yml\"}}},\"constraints\":{\"rules-engine\":{\"ex-rules\":{\"rules-file\":\"sample-constraints-rules.yml\"}}}}";
         List<View> viewList = factorySpy.getViewsFromJson("RandomStepName", context, formFragment, new JSONObject(gpsString), listener);

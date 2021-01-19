@@ -4,6 +4,8 @@ import android.view.View;
 
 import com.vijay.jsonwizard.customviews.GenericPopupDialog;
 import com.vijay.jsonwizard.domain.Form;
+import com.vijay.jsonwizard.rules.RulesEngineFactory;
+import com.vijay.jsonwizard.utils.AppExecutors;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 
 import org.json.JSONArray;
@@ -64,11 +66,13 @@ public interface JsonApi extends ClientFormContract.View {
 
     void refreshHiddenViews(boolean popup);
 
-    void refreshSkipLogic(String parentKey, String childKey, boolean popup);
+    void refreshSkipLogic(String parentKey, String childKey, boolean popup, String stepName, boolean isForNextStep);
 
-    void refreshCalculationLogic(String parentKey, String childKey, boolean popup);
+    void refreshCalculationLogic(String parentKey, String childKey, boolean popup, String stepName, boolean isForNextStep);
 
-    void invokeRefreshLogic(String value, boolean popup, String parentKey, String childKey);
+    void initializeDependencyMaps();
+
+    void invokeRefreshLogic(String value, boolean popup, String parentKey, String childKey, String stepName, boolean isForNextStep);
 
     void addFormDataView(View view);
 
@@ -95,7 +99,7 @@ public interface JsonApi extends ClientFormContract.View {
 
     void setmJSONObject(JSONObject jsonObject);
 
-    void updateGenericPopupSecondaryValues(JSONArray jsonArray);
+    void updateGenericPopupSecondaryValues(JSONArray jsonArray, String stepName);
 
     void registerLifecycleListener(LifeCycleListener lifeCycleListener);
 
@@ -125,4 +129,19 @@ public interface JsonApi extends ClientFormContract.View {
 
     Form form();
 
+    AppExecutors getAppExecutors();
+
+    RulesEngineFactory getRulesEngineFactory();
+
+    Map<String, JSONObject> getFormFieldsMap();
+
+    Map<String, Boolean> stepSkipLogicPresenceMap();
+
+    boolean isNextStepRelevant();
+
+    void setNextStepRelevant(boolean is);
+
+    String nextStep();
+
+    void setNextStep(String nextStep);
 }

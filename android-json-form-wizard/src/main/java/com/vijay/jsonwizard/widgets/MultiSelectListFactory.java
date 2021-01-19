@@ -53,7 +53,7 @@ import timber.log.Timber;
 public class MultiSelectListFactory implements FormWidgetFactory {
     public JSONObject jsonObject;
     public String currentAdapterKey;
-    public Context context;
+    private Context context;
     private JsonFormFragment jsonFormFragment;
     private static HashMap<String, MultiSelectListAccessory> multiSelectListAccessoryHashMap = new HashMap<>();
 
@@ -66,11 +66,11 @@ public class MultiSelectListFactory implements FormWidgetFactory {
     @Override
     public List<View> getViewsFromJson(@NonNull String stepName, @NonNull Context context, @NonNull JsonFormFragment formFragment, @NonNull JSONObject jsonObject,
                                        @NonNull CommonListener listener) throws Exception {
-        return attachJson(stepName, context, formFragment, jsonObject, listener, false);
+        return getViewsFromJson(stepName, context, formFragment, jsonObject, listener, false);
     }
 
-    private List<View> attachJson(@NonNull String stepName, @NonNull Context context, @NonNull JsonFormFragment formFragment, @NonNull JSONObject jsonObject,
-                                  @NonNull CommonListener listener, boolean popup) throws JSONException {
+    private List<View> attachJson(@NonNull final String stepName, @NonNull final Context context, @NonNull JsonFormFragment formFragment, @NonNull JSONObject jsonObject,
+                                  @NonNull CommonListener listener, final boolean popup) throws JSONException {
         Timber.i("stepName %s popup %s listener %s", stepName, popup, listener);
         this.jsonFormFragment = formFragment;
         this.jsonObject = jsonObject;
@@ -79,9 +79,15 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         String openMrsEntityParent = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_ID);
+
         prepareMultiSelectHashMap(stepName, popup, openMrsEntity, openMrsEntityParent, openMrsEntityId);
 
-        setUpDialog(context);
+        formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
+            @Override
+            public void run() {
+                setUpDialog(context);
+            }
+        });
 
         RelativeLayout actionView = createActionView(context);
         RecyclerView recyclerView = createSelectedRecyclerView(context);
@@ -170,6 +176,7 @@ public class MultiSelectListFactory implements FormWidgetFactory {
     }
 
     private void prepareMultiSelectHashMap(@NonNull String stepName, boolean popup, String openmrsEntity, String openmrsEntityParent, String openmrsEntityId) {
+
         MultiSelectListAccessory multiSelectListAccessory = new MultiSelectListAccessory(
                 new MultiSelectListSelectedAdapter(new ArrayList<MultiSelectItem>(), this),
                 new MultiSelectListAdapter(prepareListData()),
@@ -210,7 +217,7 @@ public class MultiSelectListFactory implements FormWidgetFactory {
     }
 
     protected List<MultiSelectItem> prepareListData() {
-        new MultiSelectListLoadTask(this).execute();
+        new MultiSelectListLoadTask(this);
         return new ArrayList<>();
     }
 
@@ -226,10 +233,11 @@ public class MultiSelectListFactory implements FormWidgetFactory {
                 if (fetchedMultiSelectItems == null || fetchedMultiSelectItems.isEmpty()) {
                     Activity activity = jsonFormFragment.getActivity();
                     if (activity != null) {
-                        jsonFormFragment.getActivity().runOnUiThread(new Runnable() {
+                        jsonFormFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
                             @Override
                             public void run() {
                                 Utils.showToast(context, context.getString(R.string.multi_select_list_msg_data_source_invalid));
+
                             }
                         });
                     }
@@ -419,6 +427,15 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         });
 
         return relativeLayout;
+    }
+
+
+    public Context getContext() {
+        return context;
+    }
+
+    public JsonFormFragment getJsonFormFragment() {
+        return jsonFormFragment;
     }
 
     @Override

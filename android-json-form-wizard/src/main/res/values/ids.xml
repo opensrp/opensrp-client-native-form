@@ -85,5 +85,7 @@
     <item name="is_multiselect_relative_layout" type="id" />
 
     <item name="simprints_guid" type="id" />
+    <item name="is_repeating_group_generated" type="id" />
+    <item name="has_required_validator" type="id" />
 
 </resources>
