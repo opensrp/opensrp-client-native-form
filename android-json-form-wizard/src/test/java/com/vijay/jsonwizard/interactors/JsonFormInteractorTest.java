@@ -10,7 +10,6 @@ import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 
-import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -21,13 +20,19 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
+import org.robolectric.annotation.LooperMode;
 import org.robolectric.util.ReflectionHelpers;
 
 import java.util.ArrayList;
 
+import static android.os.Looper.getMainLooper;
+import static org.robolectric.Shadows.shadowOf;
+import static org.robolectric.annotation.LooperMode.Mode.PAUSED;
+
 /**
  * Created by Vincent Karuri on 09/12/2020
  */
+@LooperMode(PAUSED)
 public class JsonFormInteractorTest extends BaseTest {
 
     private JsonFormInteractor jsonFormInteractor;
@@ -53,9 +58,12 @@ public class JsonFormInteractorTest extends BaseTest {
         JsonFormActivity activity = Mockito.spy(Robolectric.buildActivity(JsonFormActivity.class, getJsonFormActivityIntent()).create().start().get());
         JsonFormFragment jsonFormFragment = Mockito.mock(JsonFormFragment.class);
         Mockito.doReturn(activity).when(jsonFormFragment).getActivity();
+        Mockito.doReturn(activity).when(jsonFormFragment).getJsonApi();
 
         Whitebox.invokeMethod(jsonFormInteractor, "fetchViews", new ArrayList<View>(), "",
-                jsonFormFragment, "", new JSONObject(), Mockito.mock(CommonListener.class), false);
+                jsonFormFragment, "", null, Mockito.mock(CommonListener.class), false);
+
+        shadowOf(getMainLooper()).idle();
 
         Mockito.verify(activity).getString(R.string.form_load_error);
         Mockito.verify(activity).setResult(Mockito.eq(JsonFormConstants.RESULT_CODE.RUNTIME_EXCEPTION_OCCURRED), intentArgumentCaptor.capture());

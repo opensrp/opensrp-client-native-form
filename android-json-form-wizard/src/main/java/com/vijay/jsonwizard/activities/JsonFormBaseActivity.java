@@ -68,7 +68,7 @@ public abstract class JsonFormBaseActivity extends MultiLanguageActivity impleme
     protected LocalBroadcastManager localBroadcastManager;
     protected boolean isFormFragmentInitialized;
     private Toolbar mToolbar;
-    private Map<String, ValidationStatus> invalidFields = new HashMap<>();
+    private Map<String, ValidationStatus> invalidFields = new ConcurrentHashMap<>();
     private boolean isPreviousPressed = false;
     private ProgressDialog progressDialog;
     protected boolean translateForm = false;

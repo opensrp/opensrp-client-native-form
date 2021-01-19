@@ -217,33 +217,42 @@ public class JsonFormInteractor {
     private void fetchViews(List<View> viewsFromJson, String stepName, JsonFormFragment formFragment,
                             String type, JSONObject jsonObject, CommonListener listener, Boolean popup) {
         try {
-            List<View> views = map
-                    .get(type)
-                    .getViewsFromJson(stepName, formFragment.getActivity(), formFragment, jsonObject, listener, popup);
-            if (views.size() > 0) {
-                viewsFromJson.addAll(views);
+            FormWidgetFactory formWidgetFactory = map.get(type);
+            if (formWidgetFactory != null) {
+                List<View> views = formWidgetFactory
+                        .getViewsFromJson(stepName, formFragment.getActivity(), formFragment, jsonObject, listener, popup);
+                if (views.size() > 0) {
+                    viewsFromJson.addAll(views);
+                }
             }
-
         } catch (RuntimeException e) {
-            closeActivityAfterRuntimeException(formFragment.getActivity(), e);
-        } catch(Exception e) {
+            closeActivityAfterRuntimeException(formFragment, e);
+        } catch (Exception e) {
             Timber.e(e, "Exception encountered while creating form widget!");
         }
     }
 
-    private void closeActivityAfterRuntimeException(Activity activity, RuntimeException e) {
+    private void closeActivityAfterRuntimeException(JsonFormFragment jsonFormFragment, final RuntimeException e) {
         Timber.e(e);
 
-        Utils.showToast(activity, activity.getString(R.string.form_load_error));
+        final Activity activity = jsonFormFragment.getActivity();
 
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(JsonFormConstants.RESULT_INTENT.RUNTIME_EXCEPTION, e);
+        jsonFormFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
+            @Override
+            public void run() {
+                Utils.showToast(activity, activity.getString(R.string.form_load_error));
 
-        Intent intent = new Intent();
-        intent.putExtras(bundle);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(JsonFormConstants.RESULT_INTENT.RUNTIME_EXCEPTION, e);
 
-        activity.setResult(JsonFormConstants.RESULT_CODE.RUNTIME_EXCEPTION_OCCURRED, intent);
-        activity.finish();
+                Intent intent = new Intent();
+                intent.putExtras(bundle);
+
+                activity.setResult(JsonFormConstants.RESULT_CODE.RUNTIME_EXCEPTION_OCCURRED, intent);
+                activity.finish();
+            }
+        });
+
     }
 
     public final Set<String> getDefaultTranslatableWidgetFields() {

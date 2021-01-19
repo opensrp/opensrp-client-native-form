@@ -449,6 +449,16 @@ public class JsonFormFragmentPresenter extends
                 }
             }
         }
+
+        //remove invalid fields not belonging to current step since formdata view are cleared when view is created
+        if (invalidFields != null && !invalidFields.isEmpty()) {
+            for (Map.Entry<String, ValidationStatus> entry : invalidFields.entrySet()) {
+                String key = entry.getKey();
+                if (StringUtils.isNotBlank(key) && !key.startsWith(mStepName)) {
+                    invalidFields.remove(key);
+                }
+            }
+        }
         formFragment.getOnFieldsInvalidCallback().passInvalidFields(invalidFields);
     }
 

@@ -44,6 +44,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -119,7 +120,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
             doneButton.setVisibility(View.GONE);
         } else {
             //updates referenceEditText with previous count of the repeating grp if it exists
-            if (StringUtils.isNotBlank(generatedGroupsCount)) {
+            if (StringUtils.isNotBlank(generatedGroupsCount) && !"0".equals(generatedGroupsCount)) {
                 formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
                     @Override
                     public void run() {
@@ -152,7 +153,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
 
     @Override
     public Set<String> getCustomTranslatableWidgetFields() {
-        return new HashSet<>(Arrays.asList("reference_edit_text_hint"));
+        return new HashSet<>(Collections.singletonList("reference_edit_text_hint"));
     }
 
     @VisibleForTesting
