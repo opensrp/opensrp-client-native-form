@@ -26,12 +26,14 @@ import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.android.controller.ActivityController;
+import org.robolectric.shadows.ShadowLooper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,7 +43,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import static android.os.Looper.getMainLooper;
 import static org.junit.Assert.assertEquals;
+import static org.robolectric.Shadows.shadowOf;
 
 public class JsonFormActivityTest extends BaseActivityTest {
     private JsonFormActivity activity;
@@ -57,6 +61,20 @@ public class JsonFormActivityTest extends BaseActivityTest {
         activity.getmJSONObject().put(JsonFormConstants.SKIP_BLANK_STEPS, true);
 
         Assert.assertNotNull(activity);
+    }
+
+    @Test
+    public void setmJsonObjectShouldSkipMissingStep() throws JSONException {
+        activity = Mockito.spy(activity);
+        activity.getFormFieldsMap().clear();
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(JsonFormConstants.COUNT, 1);
+
+        activity.setmJSONObject(jsonObject);
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks();
+
+        Assert.assertTrue(activity.getFormFieldsMap().isEmpty());
     }
 
     @Test
@@ -339,7 +357,7 @@ public class JsonFormActivityTest extends BaseActivityTest {
     }
 
     private JsonFormActivity getActivityWithIntent(Intent intent) {
-        controller = Robolectric.buildActivity(JsonFormActivity.class, intent).create().start();
+        controller = Robolectric.buildActivity(JsonFormActivity.class, intent).create();
         return controller.get();
     }
 }
