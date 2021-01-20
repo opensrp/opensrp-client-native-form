@@ -17,6 +17,7 @@ import com.vijay.jsonwizard.TestConstants;
 import com.vijay.jsonwizard.TestUtils;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.Form;
+import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.utils.FormUtils;
 
 import org.jeasy.rules.api.Facts;
@@ -26,6 +27,7 @@ import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
@@ -63,7 +65,9 @@ public class JsonFormActivityTest extends BaseActivityTest {
     @Test
     public void setmJsonObjectShouldSkipMissingStep() throws JSONException {
         activity = Mockito.spy(activity);
+        Mockito.doNothing().when(activity).refreshHiddenViews(ArgumentMatchers.anyBoolean());
         activity.getFormFieldsMap().clear();
+        ((JsonFormFragment) activity.getSupportFragmentManager().findFragmentById(R.id.container)).setmJsonApi(activity);
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put(JsonFormConstants.COUNT, 1);
@@ -354,7 +358,7 @@ public class JsonFormActivityTest extends BaseActivityTest {
     }
 
     private JsonFormActivity getActivityWithIntent(Intent intent) {
-        controller = Robolectric.buildActivity(JsonFormActivity.class, intent).create();
+        controller = Robolectric.buildActivity(JsonFormActivity.class, intent).create().start();
         return controller.get();
     }
 }
