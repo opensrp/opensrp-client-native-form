@@ -691,6 +691,10 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 try {
                     for (int i = 1; i <= count; i++) {
                         String step = JsonFormConstants.STEP + i;
+                        if (!formJsonObject.has(step)) {
+                            Timber.w("Missing step %s", step);
+                            continue;
+                        }
                         JSONArray fields = fetchFields(formJsonObject.getJSONObject(step), false);
                         for (int j = 0; j < fields.length(); j++) {
                             JSONObject field = fields.getJSONObject(j);
