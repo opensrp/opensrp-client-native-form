@@ -26,7 +26,6 @@ import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
@@ -43,9 +42,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import static android.os.Looper.getMainLooper;
 import static org.junit.Assert.assertEquals;
-import static org.robolectric.Shadows.shadowOf;
 
 public class JsonFormActivityTest extends BaseActivityTest {
     private JsonFormActivity activity;
