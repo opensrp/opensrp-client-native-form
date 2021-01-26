@@ -40,6 +40,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
@@ -361,6 +362,7 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
     public void testOnSaveClickDisplaysErrorFragmentAndDisplaysToast() throws InterruptedException {
         initWithActualForm();
         formFragment.getMainView().setTag(R.id.skip_validation, false);
+        doNothing().when(formFragment).addFormElements(ArgumentMatchers.<View>anyList());
         presenter.onSaveClick(formFragment.getMainView());
         shadowOf(getMainLooper()).idle();
         assertEquals(2, presenter.getInvalidFields().size());

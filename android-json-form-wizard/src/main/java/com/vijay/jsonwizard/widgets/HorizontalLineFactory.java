@@ -38,7 +38,7 @@ public class HorizontalLineFactory implements FormWidgetFactory {
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
-        return attachJson(context, jsonObject, false);
+        return getViewsFromJson(stepName, context, formFragment, jsonObject, listener, false);
     }
 
     private List<View> attachJson(Context context, JSONObject jsonObject, boolean popup) throws JSONException {
