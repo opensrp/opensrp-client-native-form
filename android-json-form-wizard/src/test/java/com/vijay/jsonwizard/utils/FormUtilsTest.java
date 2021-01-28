@@ -626,6 +626,16 @@ public class FormUtilsTest extends BaseTest {
     }
 
     @Test
+    public void testGetCheckBoxResultsWithNoValueInOptionsIsRuleCheckTrue() throws JSONException {
+        formUtils = Mockito.spy(formUtils);
+        String checkBoxString = "{\"key\":\"user_check_box\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"openmrs_data_type\":\"select one\",\"type\":\"check_box\",\"label\":\"Do want to select any checkbox?\",\"label_text_style\":\"bold\",\"options\":[{\"key\":\"None\",\"text\":\"None\",\"openmrs_choice_id\":\"\"},{\"key\":\"yes\",\"text\":\"Yes\",\"value\":true,\"openmrs_choice_id\":\"\"},{\"key\":\"no\",\"text\":\"No\",\"openmrs_choice_id\":\"\"},{\"key\":\"other\",\"text\":\"Other\",\"openmrs_choice_id\":\"\"}],\"v_required\":{\"value\":\"false\"},\"value\":\"[yes]\",\"is-rule-check\":true}";
+        JSONObject jsonObject = new JSONObject(checkBoxString);
+        Facts facts = formUtils.getCheckBoxResults(jsonObject);
+        Assert.assertNotNull(facts);
+        Assert.assertEquals(1, facts.asMap().size());
+    }
+
+    @Test
     public void testGetCheckBoxResultsWithIsRuleCheckFalse() throws JSONException {
         formUtils = Mockito.spy(formUtils);
         String checkBoxString = "{\"key\":\"user_check_box\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"openmrs_data_type\":\"select one\",\"type\":\"check_box\",\"label\":\"Do want to select any checkbox?\",\"label_text_style\":\"bold\",\"options\":[{\"key\":\"None\",\"text\":\"None\",\"value\":true,\"openmrs_choice_id\":\"\"},{\"key\":\"yes\",\"text\":\"Yes\",\"value\":true,\"openmrs_choice_id\":\"\"},{\"key\":\"no\",\"text\":\"No\",\"value\":true,\"openmrs_choice_id\":\"\"},{\"key\":\"other\",\"text\":\"Other\",\"value\":true,\"openmrs_choice_id\":\"\"}],\"v_required\":{\"value\":\"false\"},\"value\":\"[yes]\",\"is-rule-check\":false}";

@@ -12,6 +12,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.view.View;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.vijay.jsonwizard.NativeFormLibrary;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.Form;
@@ -40,6 +41,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import timber.log.Timber;
 
@@ -66,7 +68,7 @@ public abstract class JsonFormBaseActivity extends MultiLanguageActivity impleme
     protected LocalBroadcastManager localBroadcastManager;
     protected boolean isFormFragmentInitialized;
     private Toolbar mToolbar;
-    private Map<String, ValidationStatus> invalidFields = new HashMap<>();
+    private Map<String, ValidationStatus> invalidFields = new ConcurrentHashMap<>();
     private boolean isPreviousPressed = false;
     private ProgressDialog progressDialog;
     protected boolean translateForm = false;
@@ -83,14 +85,17 @@ public abstract class JsonFormBaseActivity extends MultiLanguageActivity impleme
         findViewById(R.id.native_form_activity).setFilterTouchesWhenObscured(true);
         mToolbar = findViewById(R.id.tb_top);
         setSupportActionBar(mToolbar);
-        skipLogicViews = new LinkedHashMap<>();
-        calculationLogicViews = new LinkedHashMap<>();
+        skipLogicViews = new ConcurrentHashMap<>();
+        calculationLogicViews = new ConcurrentHashMap<>();
         constrainedViews = new LinkedHashMap<>();
         onActivityResultListeners = new HashMap<>();
         onActivityRequestPermissionResultListeners = new HashMap<>();
         lifeCycleListeners = new ArrayList<>();
         isFormFragmentInitialized = false;
-        translateForm = getIntent().getBooleanExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, false);
+        translateForm = getIntent().hasExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION) ?
+                getIntent().getBooleanExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, false) :
+                NativeFormLibrary.getInstance().isPerformFormTranslation();
+
         if (savedInstanceState == null) {
             this.form = extractForm(getIntent().getSerializableExtra(JsonFormConstants.JSON_FORM_KEY.FORM));
             init(getJsonForm());
@@ -152,8 +157,9 @@ public abstract class JsonFormBaseActivity extends MultiLanguageActivity impleme
 
     public synchronized void initializeFormFragment() {
         isFormFragmentInitialized = true;
+        JsonFormFragment formFragment = JsonFormFragment.getFormFragment(JsonFormConstants.FIRST_STEP_NAME);
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.container, JsonFormFragment.getFormFragment(JsonFormConstants.FIRST_STEP_NAME)).commitAllowingStateLoss();
+                .add(R.id.container, formFragment).commitAllowingStateLoss();
     }
 
     public void onFormStart() {

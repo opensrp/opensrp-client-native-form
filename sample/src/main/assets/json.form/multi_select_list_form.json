@@ -55,7 +55,6 @@
   },
   "step1": {
     "title": "Basic Form One",
-    "next": "step2",
     "fields": [
       {
         "key": "user_dummy",

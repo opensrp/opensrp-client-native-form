@@ -73,6 +73,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     private LinearLayout bottomNavigation;
     private BottomNavigationListener navigationListener;
     private boolean shouldSkipStep = true;
+
     private static NativeFormsProperties nativeFormProperties;
 
     public static JsonFormFragment getFormFragment(String stepName) {
@@ -113,6 +114,8 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         if (step.optBoolean(JsonFormConstants.BOTTOM_NAVIGATION)) {
             initializeBottomNavigation(step, rootView);
         }
+
+        presenter.preLoadRules(getJsonApi().getmJSONObject(), stepName);
         return rootView;
     }
 
@@ -225,12 +228,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     @Override
     public void onResume() {
         super.onResume();
-
-        if (!skipBlankSteps()) { return; }
-
-        if (!getJsonApi().isPreviousPressed()) {
-            skipStepsOnNextPressed();
-        } else {
+        if (getJsonApi().isPreviousPressed()) {
             skipStepOnPreviousPressed();
         }
     }
@@ -238,6 +236,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     @Override
     public void onDetach() {
         setmJsonApi(null);
+        presenter.cleanUp();
         super.onDetach();
     }
 
@@ -269,6 +268,137 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Skips blank by relevance steps when next is clicked on the json wizard forms.
+     */
+    public void skipLoadedStepsOnNextPressed() {
+        if (skipBlankSteps()) {
+            JSONObject formStep = getStep(getArguments().getString(JsonFormConstants.STEPNAME));
+            String next = formStep.optString(JsonFormConstants.NEXT, "");
+            if (StringUtils.isNotEmpty(next)) {
+                checkIfStepIsBlank(formStep);
+                if (shouldSkipStep() && !stepHasNoSkipLogic(JsonFormConstants.STEP1)) {
+                    getJsonApi().setNextStep(next);
+                    markStepAsSkipped(formStep);
+                    next();
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns the current form step number when given than steps next step number.
+     * This number is used to figure out which steps to pop when previous is clicked.
+     *
+     * @return formNumber {@link Integer}
+     */
+    private int getFormStepNumber() {
+        return Integer.parseInt(getArguments().getString(JsonFormConstants.STEPNAME).substring(4));
+    }
+
+    /***
+     * Adds a property 'skipped=true' to a step object if the step is skipped
+     * @param formStep {@link JSONObject}
+     */
+    private void markStepAsSkipped(JSONObject formStep) {
+        try {
+            formStep.put("skipped", true);
+        } catch (JSONException e) {
+            Timber.e(e);
+        }
+    }
+
+    /***
+     * Skips blank steps when next is clicked on the json wizard forms.
+     * @param step {@link JSONObject}
+     */
+
+    public boolean skipStepsOnNextPressed(String step) {
+        boolean isSkipped = false;
+        if (skipBlankSteps()) {
+            JSONObject formStep = getJsonApi().getmJSONObject().optJSONObject(step);
+            String next = formStep.optString(JsonFormConstants.NEXT, "");
+            if (StringUtils.isNotEmpty(next) && (!getJsonApi().isNextStepRelevant() && !nextStepHasNoSkipLogic())) {
+                markStepAsSkipped(formStep);
+                getJsonApi().setNextStep(next);
+                isSkipped = true;
+                next();
+            }
+        }
+        return isSkipped;
+    }
+
+    /**
+     * Skips blank by relevance steps when previous is clicked on the json wizard forms.
+     */
+    public void skipStepOnPreviousPressed() {
+        if (skipBlankSteps()) {
+            int currentFormStepNumber = getFormStepNumber();
+            for (int i = currentFormStepNumber; i >= 1; i--) {
+                JSONObject formStep = getJsonApi().getmJSONObject().optJSONObject(JsonFormConstants.STEP + i);
+                if (formStep != null) {
+                    checkIfStepIsBlank(formStep);
+                    if (shouldSkipStep()) {
+                        getFragmentManager().popBackStack();
+                    } else {
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * should not be used alone, use with {@link #nextStepHasNoSkipLogic()}
+     * Checks if a given step is blank due to relevance hiding all the widgets
+     *
+     * @param formStep {@link JSONObject}
+     */
+    private void checkIfStepIsBlank(JSONObject formStep) {
+        try {
+            if (formStep.has(JsonFormConstants.FIELDS)) {
+                JSONArray fields = formStep.getJSONArray(JsonFormConstants.FIELDS);
+                for (int i = 0; i < fields.length(); i++) {
+                    JSONObject field = fields.getJSONObject(i);
+                    if (field.has(JsonFormConstants.TYPE) && !JsonFormConstants.HIDDEN.equals(field.getString(JsonFormConstants.TYPE))) {
+                        boolean isVisible = field.optBoolean(JsonFormConstants.IS_VISIBLE, true);
+                        if (isVisible) {
+                            setShouldSkipStep(false);
+                            break;
+                        }
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            Timber.e(e, "%s --> checkIfStepIsBlank", this.getClass().getCanonicalName());
+        }
+    }
+
+    /***
+     * check @link{{@link #stepHasNoSkipLogic(String)}}
+     * @return boolean
+     */
+    private boolean nextStepHasNoSkipLogic() {
+        return stepHasNoSkipLogic(getJsonApi().nextStep());
+    }
+
+    /***
+     * It returns true if the step has no relevance fields
+     * @param step
+     * @return boolean
+     */
+    public boolean stepHasNoSkipLogic(@Nullable String step) {
+        if (StringUtils.isNotBlank(step)) {
+            Boolean nextStepHasNoRelevance = getJsonApi().stepSkipLogicPresenceMap().get(step);
+            if (nextStepHasNoRelevance != null) {
+                return nextStepHasNoRelevance;
+            }
+            return false;
+        } else {
+            return nextStepHasNoSkipLogic();
+        }
     }
 
     public boolean save(boolean skipValidation) {
@@ -315,7 +445,6 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         super.onViewCreated(view, savedInstanceState);
         mJsonApi.clearFormDataViews();
         presenter.addFormElements();
-        mJsonApi.invokeRefreshLogic(null, false, null, null);
     }
 
     @Override
@@ -381,8 +510,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     @Override
     public void transactThis(JsonFormFragment next) {
         getActivity().getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left,
-                        R.anim.exit_to_right).replace(R.id.container, next).addToBackStack(next.getClass().getSimpleName())
+                .replace(R.id.container, next).addToBackStack(next.getArguments().getString(JsonFormConstants.STEPNAME))
                 .commitAllowingStateLoss(); // use https://stackoverflow.com/a/10261449/9782187
     }
 
@@ -536,7 +664,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     @Override
     public void scrollToView(final View view) {
         if (getActivity() != null) {
-            getActivity().runOnUiThread(new Runnable() {
+            getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
                 @Override
                 public void run() {
                     view.requestFocus();
@@ -642,14 +770,12 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
             if (view != null) {
                 if (view.getId() == R.id.next_button) {
                     Object isSubmit = view.getTag(R.id.submit);
-                    getJsonApi().setPreviousPressed(false);
                     if (isSubmit != null && Boolean.valueOf(isSubmit.toString())) {
                         save(false);
                     } else {
                         next();
                     }
                 } else if (view.getId() == R.id.previous_button) {
-                    getJsonApi().setPreviousPressed(true);
                     getFragmentManager().popBackStack();
                 }
             }
@@ -669,73 +795,5 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
      */
     public static NativeFormsProperties getNativeFormProperties() {
         return nativeFormProperties;
-    }
-
-    /**
-     * Skips blank by relevance steps when next is clicked on the json wizard forms.
-     */
-    public void skipStepsOnNextPressed() {
-        JSONObject formStep = getStep(getArguments().getString(JsonFormConstants.STEPNAME));
-        String next = formStep.optString(JsonFormConstants.NEXT, "");
-        if (StringUtils.isNotEmpty(next)) {
-            checkIfStepIsBlank(formStep);
-            if (shouldSkipStep()) {
-                next();
-            }
-        }
-    }
-
-    /**
-     * Skips blank by relevance steps when previous is clicked on the json wizard forms.
-     */
-    public void skipStepOnPreviousPressed() {
-        int currentFormStepNumber = getFormStepNumber();
-        for (int i = currentFormStepNumber; i >= 1; i--) {
-            JSONObject formStep = getJsonApi().getmJSONObject().optJSONObject(JsonFormConstants.STEP + i);
-            if (formStep != null) {
-                checkIfStepIsBlank(formStep);
-                if (shouldSkipStep()) {
-                    getFragmentManager().popBackStack();
-                } else {
-                    break;
-                }
-            }
-        }
-    }
-
-
-    /**
-     * Checks if a given step is blank due to relevance hidding all the widgets
-     *
-     * @param formStep {@link JSONObject}
-     */
-    private void checkIfStepIsBlank(JSONObject formStep) {
-        try {
-            if (formStep.has(JsonFormConstants.FIELDS)) {
-                JSONArray fields = formStep.getJSONArray(JsonFormConstants.FIELDS);
-                for (int i = 0; i < fields.length(); i++) {
-                    JSONObject field = fields.getJSONObject(i);
-                    if (field.has(JsonFormConstants.TYPE) && !JsonFormConstants.HIDDEN.equals(field.getString(JsonFormConstants.TYPE))) {
-                        boolean isVisible = field.optBoolean(JsonFormConstants.IS_VISIBLE, true);
-                        if (isVisible) {
-                            setShouldSkipStep(false);
-                            break;
-                        }
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            Timber.e(e, "%s --> checkIfStepIsBlank", this.getClass().getCanonicalName());
-        }
-    }
-
-    /**
-     * Returns the current form step number which is used to figure out which steps to pop
-     * when previous is clicked.
-     *
-     * @return formNumber {@link Integer}
-     */
-    private int getFormStepNumber() {
-        return Integer.parseInt(getArguments().getString(JsonFormConstants.STEPNAME).substring(4));
     }
 }

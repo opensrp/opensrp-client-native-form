@@ -16,6 +16,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import com.vijay.jsonwizard.NativeFormLibrary;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
@@ -23,6 +24,7 @@ import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.GenericDialogInterface;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.rules.RuleConstant;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.SecondaryValueModel;
 import com.vijay.jsonwizard.utils.Utils;
@@ -34,14 +36,17 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import timber.log.Timber;
 
 import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 
 public class GenericPopupDialog extends DialogFragment implements GenericDialogInterface {
+    private ViewGroup dialogView;
     private JsonFormInteractor jsonFormInteractor = JsonFormInteractor.getInstance();
     private FormUtils formUtils = new FormUtils();
     private JsonApi jsonApi;
@@ -63,7 +68,6 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
     private Map<String, SecondaryValueModel> popAssignedValue = new HashMap<>();
     private Map<String, SecondaryValueModel> secondaryValuesMap = new HashMap<>();
     private String suffix = "";
-    private Activity activity;
     private JSONArray specifyContent;
     private List<View> viewList;
     private boolean translateSubForm = false;
@@ -72,39 +76,73 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
-        activity = (Activity) context;
+        Activity activity = (Activity) context;
         jsonApi = (JsonApi) activity;
         jsonApi.setGenericPopup(this);
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         if (context == null) {
             throw new IllegalStateException(
                     "The Context is not set. Did you forget to set context with Generic Dialog setContext method?");
         }
 
-        activity = (Activity) context;
-        setJsonApi((JsonApi) activity);
+        getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
 
-        // support translation of sub-forms
-        Intent activityIntent = getActivity().getIntent();
-        translateSubForm =  activityIntent == null ? translateSubForm
-                : activityIntent.getBooleanExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, false);
+                if (isDetached()) {
+                    return;
+                }
+                // support translation of sub-forms
+                // support translation of sub-forms
+                Intent activityIntent = getActivity().getIntent();
+                translateSubForm = activityIntent != null && activityIntent.hasExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION) ?
+                        activityIntent.getBooleanExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, false) :
+                        NativeFormLibrary.getInstance().isPerformFormTranslation();
 
-        try {
-            setMainFormFields(formUtils.getFormFields(getStepName(), context));
-            loadPartialSecondaryValues();
-            createSecondaryValuesMap();
-            loadSubForms();
-            getJsonApi().updateGenericPopupSecondaryValues(specifyContent);
-            setViewList(initiateViews());
-        } catch (JSONException e) {
-            Timber.e(e, " --> onCreate");
-        }
+                try {
+                    setMainFormFields(formUtils.getFormFields(getStepName(), context));
+                    loadPartialSecondaryValues();
+                    createSecondaryValuesMap();
 
+                    loadSubForms();
+
+                    getJsonApi().updateGenericPopupSecondaryValues(specifyContent, stepName);
+                } catch (JSONException e) {
+                    Timber.e(e, " --> onCreate");
+                }
+
+                final List<View> views = initiateViews();
+                if (isDetached()) {
+                    return;
+                }
+                getJsonApi().initializeDependencyMaps();
+                getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isDetached()) {
+                            return;
+                        }
+                        setViewList(views);
+                        getJsonApi().invokeRefreshLogic(null, true, null, null, getStepName(), false);
+                        if (getDialogView() != null) {
+                            addWidgetViews(getDialogView());
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    public void setStyle() {
         setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Light_Dialog);
+    }
+
+    public ViewGroup getDialogView() {
+        return dialogView;
     }
 
     public List<View> getViewList() {
@@ -225,7 +263,6 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         try {
             subForm = getJsonApi().getSubForm(getFormIdentity(), getFormLocation(), context, translateSubForm);
             Utils.updateSubFormFields(subForm, getJsonApi().form());
-
         } catch (Exception e) {
             Timber.e(e, "GenericPopupDialog --> getSubForm");
         }
@@ -293,25 +330,36 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         this.widgetType = widgetType;
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setStyle();
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        ViewGroup dialogView = (ViewGroup) inflater.inflate(R.layout.native_form_generic_dialog, container, false);
-
+        dialogView = (ViewGroup) inflater.inflate(R.layout.native_form_generic_dialog, container, false);
+        setDialogView(dialogView);
         attachOnShowListener();
-        LinearLayout genericDialogContent = dialogView.findViewById(R.id.generic_dialog_content);
-        for (View view : getViewList()) {
-            genericDialogContent.addView(view);
-        }
-
         attachDialogCancelButton(dialogView);
         attachDialogOkButton(dialogView);
 
         if (getDialog().getWindow() != null) {
             getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         }
-        getJsonApi().invokeRefreshLogic(null, true, null, null);
         return dialogView;
+    }
+
+    public void setDialogView(ViewGroup dialogView) {
+        this.dialogView = dialogView;
+    }
+
+    private void addWidgetViews(ViewGroup dialogView) {
+        LinearLayout genericDialogContent = dialogView.findViewById(R.id.generic_dialog_content);
+        for (View view : getViewList()) {
+            genericDialogContent.addView(view);
+        }
     }
 
     private void attachOnShowListener() {
@@ -343,7 +391,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
                 setFormLocation(null);
                 setContext(null);
                 getJsonApi().setGenericPopup(null);
-                getJsonApi().updateGenericPopupSecondaryValues(null);
+                getJsonApi().updateGenericPopupSecondaryValues(null, getStepName());
                 GenericPopupDialog.this.dismiss();
             }
         });
@@ -357,7 +405,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
             public void onClick(View v) {
                 passData();
                 getJsonApi().setGenericPopup(null);
-                getJsonApi().updateGenericPopupSecondaryValues(null);
+                getJsonApi().updateGenericPopupSecondaryValues(null, getStepName());
                 GenericPopupDialog.this.dismiss();
             }
         });
@@ -415,7 +463,6 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
                                     .getSpecifyText(getNewSelectedValues()) + " " + suffix);
                 }
                 getJsonApi().setmJSONObject(mJSONObject);
-
             } catch (JSONException e) {
                 Timber.e(e, "GenericPopupDialog --> onGenericDataPass");
             }
@@ -548,11 +595,14 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
     @Override
     public void onResume() {
         super.onResume();
+        createDialogWindow();
+    }
+
+    protected void createDialogWindow() {
         WindowManager.LayoutParams params = getDialog().getWindow().getAttributes();
         params.width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.90);
         params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
         getDialog().getWindow().setAttributes(params);
-
     }
 
     @Override
@@ -608,5 +658,44 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
 
     public void setPopAssignedValue(Map<String, SecondaryValueModel> popAssignedValue) {
         this.popAssignedValue = popAssignedValue;
+    }
+
+    public void preLoadRules(JSONArray fields, String calculationKey, String relevanceKey) {
+        Set<String> ruleFiles = new HashSet<>();
+        if (fields == null)
+            return;
+        for (int i = 0; i < fields.length(); i++) {
+            if (isDetached()) {
+                return;
+            }
+            JSONObject relevance = fields.optJSONObject(i).optJSONObject(relevanceKey);
+            JSONObject calculation = fields.optJSONObject(i).optJSONObject(calculationKey);
+
+            addRules(calculation, ruleFiles);
+            addRules(relevance, ruleFiles);
+
+        }
+
+        for (String fileName : ruleFiles) {
+            if (isDetached()) {
+                return;
+            }
+            getJsonApi().getRulesEngineFactory().getRulesFromAsset(fileName);
+        }
+
+    }
+
+    private void addRules(JSONObject jsonObject, Set<String> ruleFiles) {
+        if (jsonObject != null) {
+            JSONObject ruleEngine = jsonObject.optJSONObject(RuleConstant.RULES_ENGINE);
+            if (ruleEngine != null) {
+                JSONObject exRules = ruleEngine.optJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES);
+                String file = exRules.optString(RuleConstant.RULES_FILE, null);
+                if (file != null) {
+                    ruleFiles.add(exRules.optString(RuleConstant.RULES_FILE));
+                }
+            }
+        }
+
     }
 }

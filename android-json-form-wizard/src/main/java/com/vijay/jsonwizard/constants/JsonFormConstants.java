@@ -226,6 +226,7 @@ public class JsonFormConstants {
     public static final String FROM_DATA_SOURCE = "form_data_source";
     public static final String DEFAULT_FORMS_DIRECTORY = "opensrpNativeFormTester";
     public static final String JSON_FORM_DIRECTORY = "json.form";
+    public static final String MEDIA_LOGIC = "media_logic";
 
     public static final String PROPERTIES_FILE_EXTENSION = ".properties";
     public static final String JSON_FILE_EXTENSION = ".json";
@@ -324,6 +325,14 @@ public class JsonFormConstants {
     public static class INTENT_KEY {
         public static final String MESSAGE = "message";
         public static final String MESSAGE_TYPE = "message_type";
+    }
+
+    public interface RESULT_CODE {
+        int RUNTIME_EXCEPTION_OCCURRED = 8037;
+    }
+
+    public interface RESULT_INTENT {
+        String RUNTIME_EXCEPTION = "runtime_exception";
     }
 
     public static class MESSAGE_TYPE {

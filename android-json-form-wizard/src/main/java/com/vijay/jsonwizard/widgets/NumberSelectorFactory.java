@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import androidx.annotation.VisibleForTesting;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -39,6 +38,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import timber.log.Timber;
+
 public class NumberSelectorFactory implements FormWidgetFactory {
     public static final String TAG = NumberSelectorFactory.class.getCanonicalName();
     public static NumberSelectorFactoryReceiver receiver;
@@ -48,6 +49,19 @@ public class NumberSelectorFactory implements FormWidgetFactory {
     private Map<String, JSONObject> jsonObjectMap = new HashMap<>();
     private Map<String, LinearLayout> rootLayoutMap = new HashMap<>();
 
+    private static NumberSelectorFactory numberSelectorFactory;
+
+    public static NumberSelectorFactory getNumberSelectorFactory() {
+        if (numberSelectorFactory == null) {
+            numberSelectorFactory = new NumberSelectorFactory();
+        }
+        return numberSelectorFactory;
+    }
+
+
+    public static void setNumberSelectorFactory(NumberSelectorFactory numberSelectorFactory) {
+        NumberSelectorFactory.numberSelectorFactory = numberSelectorFactory;
+    }
 
     @SuppressLint("NewApi")
     private static void setSelectedColor(Context context, CustomTextView customTextView, int item, int numberOfSelectors,
@@ -225,7 +239,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         this.context = context;
         this.listener = listener;
         jsonObjectMap.put(jsonObject.getString(JsonFormConstants.KEY), jsonObject);
-
+        setNumberSelectorFactory(this);
         List<View> views = new ArrayList<>(1);
         JSONArray canvasIds = new JSONArray();
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
@@ -440,9 +454,11 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         @Override
         public void onReceive(Context contextInner, Intent intent) {
             try {
+                NumberSelectorFactory numberSelectorFactory = getNumberSelectorFactory();
+
                 int maxValue = intent.getIntExtra(JsonFormConstants.MAX_SELECTION_VALUE, 0);
 
-                JSONObject jsonObject = jsonObjectMap.get(intent.getStringExtra(JsonFormConstants.JSON_OBJECT_KEY));
+                JSONObject jsonObject = numberSelectorFactory.jsonObjectMap.get(intent.getStringExtra(JsonFormConstants.JSON_OBJECT_KEY));
                 boolean isPopUp = intent.getBooleanExtra(JsonFormConstants.IS_POPUP, false);
 
                 if (jsonObject != null) {
@@ -457,15 +473,17 @@ public class NumberSelectorFactory implements FormWidgetFactory {
                                 .NUMBER_OF_SELECTORS) ? maxValue : jsonObject.getInt(JsonFormConstants.NUMBER_OF_SELECTORS));
 
                     }
-                    LinearLayout rootLayout = rootLayoutMap.get(intent.getStringExtra(JsonFormConstants.JSON_OBJECT_KEY));
-                    rootLayout.removeAllViews();
-                    rootLayout.setTag(R.id.is_automatic, true);
-                    createTextViews(context, jsonObject, rootLayout, listener, isPopUp);
-                    rootLayout.setTag(R.id.is_automatic, null);
+                    LinearLayout rootLayout = numberSelectorFactory.rootLayoutMap.get(intent.getStringExtra(JsonFormConstants.JSON_OBJECT_KEY));
+                    if (rootLayout != null) {
+                        rootLayout.removeAllViews();
+                        rootLayout.setTag(R.id.is_automatic, true);
+                        createTextViews(numberSelectorFactory.context, jsonObject, rootLayout, numberSelectorFactory.listener, isPopUp);
+                        rootLayout.setTag(R.id.is_automatic, null);
+                    }
                 }
 
             } catch (JSONException e) {
-                Log.e(TAG, e.getMessage(), e);
+                Timber.e(e);
             }
         }
     }

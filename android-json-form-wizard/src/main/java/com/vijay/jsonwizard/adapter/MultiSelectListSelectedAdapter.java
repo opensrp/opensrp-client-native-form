@@ -46,8 +46,8 @@ public class MultiSelectListSelectedAdapter extends RecyclerView.Adapter<MultiSe
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
         MultiSelectItem multiSelectItem = data.get(position);
-        holder.multiSelectListTextView.setText(multiSelectItem.getText());
-        holder.imgDelete.setOnClickListener(new View.OnClickListener() {
+        holder.itemTextView().setText(multiSelectItem.getText());
+        holder.deleteImageView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 data.remove(position);
@@ -58,11 +58,11 @@ public class MultiSelectListSelectedAdapter extends RecyclerView.Adapter<MultiSe
         });
         String value = multiSelectItem.getValue();
         try {
-            JSONObject jsonObject = new JSONObject(value);
-            if (jsonObject.has(JsonFormConstants.MultiSelectUtils.META)) {
-                holder.multiSelectListTextViewAdditionalInfo.setVisibility(View.VISIBLE);
-                holder.multiSelectListTextViewAdditionalInfo.setTypeface(Typeface.DEFAULT);
-                holder.multiSelectListTextViewAdditionalInfo.setText(jsonObject.optJSONObject(JsonFormConstants.MultiSelectUtils.META).getString(JsonFormConstants.MultiSelectUtils.INFO));
+            JSONObject valueJsonObject = new JSONObject(value);
+            if (valueJsonObject.has(JsonFormConstants.MultiSelectUtils.META)) {
+                holder.additionalInfoView().setVisibility(View.VISIBLE);
+                holder.additionalInfoView().setTypeface(Typeface.DEFAULT);
+                holder.additionalInfoView().setText(valueJsonObject.optJSONObject(JsonFormConstants.MultiSelectUtils.META).optString(JsonFormConstants.MultiSelectUtils.INFO));
             }
         } catch (JSONException e) {
             Timber.e(e);
@@ -85,6 +85,18 @@ public class MultiSelectListSelectedAdapter extends RecyclerView.Adapter<MultiSe
             multiSelectListTextViewAdditionalInfo = view.findViewById(R.id.multiSelectListTextViewAdditionalInfo);
             imgDelete = view.findViewById(R.id.multiSelectListDelete);
             view.setOnClickListener(this);
+        }
+
+        public TextView itemTextView() {
+            return multiSelectListTextView;
+        }
+
+        public ImageView deleteImageView() {
+            return imgDelete;
+        }
+
+        public TextView additionalInfoView() {
+            return multiSelectListTextViewAdditionalInfo;
         }
 
         @Override

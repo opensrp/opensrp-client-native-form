@@ -64,32 +64,6 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
         setGenericPopUpDialog();
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (context == null) {
-            throw new IllegalStateException(
-                    "The Context is not set. Did you forget to set context with Anc Generic Dialog setContext method?");
-        }
-
-        this.activity = (Activity) context;
-        try {
-            setJsonApi((JsonApi) activity);
-            setMainFormFields(formUtils.getFormFields(getStepName(), context));
-            getJsonApi().setGenericPopup(this);
-            setGenericPopUpDialog();
-            loadPartialSecondaryValues();
-            createSecondaryValuesMap();
-            loadSubForms();
-            getJsonApi().updateGenericPopupSecondaryValues(getSpecifyContent());
-            setViewList(initiateViews());
-            getJsonApi().invokeRefreshLogic(null, true, null, null);
-        } catch (JSONException e) {
-            Timber.e(e, "ExpansionPanelGenericPopupDialogTask --> doInBackground");
-        }
-        setStyle(DialogFragment.STYLE_NORMAL, R.style.FullScreenDialogStyle);
-    }
-
     /**
      * Loads the values from the expansion panel
      *
@@ -158,7 +132,6 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
         } else {
             super.addFormValues(formValues);
         }
-
         return formValues;
     }
 
@@ -167,9 +140,9 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (!TextUtils.isEmpty(getWidgetType()) && getWidgetType().equals(JsonFormConstants.EXPANSION_PANEL)) {
             ViewGroup dialogView = (ViewGroup) inflater.inflate(R.layout.fragment_generic_dialog, container, false);
+            setDialogView(dialogView);
             attachToolBar(dialogView);
             attachDialogShowListener();
-            addWidgetViews(dialogView);
             attachCancelDialogButton(dialogView);
             attachOkDialogButton(dialogView);
 
@@ -184,11 +157,9 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
         }
     }
 
-    private void addWidgetViews(ViewGroup dialogView) {
-        LinearLayout genericDialogContent = dialogView.findViewById(R.id.generic_dialog_content);
-        for (View view : getViewList()) {
-            genericDialogContent.addView(view);
-        }
+    @Override
+    public void setStyle() {
+        setStyle(DialogFragment.STYLE_NORMAL, R.style.FullScreenDialogStyle);
     }
 
     private void attachToolBar(ViewGroup dialogView) {
@@ -219,7 +190,7 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getJsonApi().updateGenericPopupSecondaryValues(new JSONArray());
+                getJsonApi().updateGenericPopupSecondaryValues(new JSONArray(), getStepName());
                 setFormFragment(null);
                 setFormIdentity(null);
                 setFormLocation(null);
@@ -239,7 +210,7 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
             public void onClick(View v) {
                 passData();
                 getJsonApi().setGenericPopup(null);
-                getJsonApi().updateGenericPopupSecondaryValues(new JSONArray());
+                getJsonApi().updateGenericPopupSecondaryValues(new JSONArray(), getStepName());
                 ExpansionPanelGenericPopupDialog.this.dismissAllowingStateLoss();
             }
         });
@@ -267,6 +238,10 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
      */
     public String getContainer() {
         return container;
+    }
+
+    public void setContainer(String container) {
+        this.container = container;
     }
 
     /**
@@ -368,10 +343,6 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
         }
     }
 
-    public void setContainer(String container) {
-        this.container = container;
-    }
-
     @Override
     public void setContext(Context context) throws IllegalStateException {
         super.setContext(context);
@@ -385,7 +356,6 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
         } else {
             onGenericDataPass(getParentKey(), getChildKey());
         }
-
     }
 
     /**
@@ -444,17 +414,6 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        if (!TextUtils.isEmpty(getWidgetType()) && getWidgetType().equals(JsonFormConstants.EXPANSION_PANEL)) {
-            ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
-            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            params.height = ViewGroup.LayoutParams.MATCH_PARENT;
-            getDialog().getWindow().setAttributes((WindowManager.LayoutParams) params);
-        }
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
         destroyVariables();
@@ -491,4 +450,10 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
         this.linearLayout = linearLayout;
     }
 
+    @Override
+    protected void createDialogWindow() {
+        ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
+        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+        getDialog().getWindow().setAttributes((WindowManager.LayoutParams) params);    }
 }

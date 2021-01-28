@@ -1,5 +1,6 @@
 package com.vijay.jsonwizard.customviews;
 
+import android.app.Activity;
 import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -158,18 +159,27 @@ public class NativeEditText extends AppCompatEditText {
         boolean isEmpty = text.length() == 0;
 
         boolean isValid = true;
-        for (METValidator validator : validators) {
+        for (final METValidator validator : validators) {
             //noinspection ConstantConditions
             isValid = isValid && validator.isValid(text, isEmpty);
             if (!isValid) {
-                setError(validator.getErrorMessage());
+                ((Activity) this.getContext()).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setError(validator.getErrorMessage());
+                    }
+                });
                 break;
             }
         }
         if (isValid) {
-            setError(null);
+            ((Activity) this.getContext()).runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    setError(null);
+                }
+            });
         }
-
         postInvalidate();
         return isValid;
     }

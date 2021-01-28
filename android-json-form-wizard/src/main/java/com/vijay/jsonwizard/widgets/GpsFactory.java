@@ -29,6 +29,7 @@ import com.vijay.jsonwizard.utils.PermissionUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,6 +39,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import timber.log.Timber;
 
 /**
  * Captures GPS locations
@@ -64,42 +67,39 @@ public class GpsFactory implements FormWidgetFactory {
 
     public static String constructString(Location location) {
         if (location != null) {
-            return constructString(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()));
+            return constructString(new Object[]{location.getLatitude(), location.getLongitude(), location.getAltitude(), location.getAccuracy()});
         }
-
         return null;
     }
 
     public static String constructString(String latitude, String longitude) {
-        return latitude + " " + longitude;
+        return constructString(new Object[]{latitude, longitude});
     }
 
     @Override
     public List<View> getViewsFromJson(String stepName, final Context context,
                                        JsonFormFragment formFragment, JSONObject jsonObject,
                                        CommonListener listener, boolean popup) throws Exception {
-        return attachJson(stepName, context, jsonObject, popup);
+        return attachJson(stepName, context, formFragment, jsonObject, popup);
     }
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
-        return attachJson(stepName, context, jsonObject, false);
+        return getViewsFromJson(stepName, context, formFragment, jsonObject, listener, false);
     }
 
-    private List<View> attachJson(String stepName, final Context context, JSONObject jsonObject,
+    private List<View> attachJson(String stepName, final Context context, final JsonFormFragment formFragment, JSONObject jsonObject,
                                   boolean popup) throws JSONException {
 
         List<View> views = new ArrayList<>();
-        View rootLayout = getRootLayout(context);
+        final View rootLayout = getRootLayout(context);
         final int canvasId = ViewUtil.generateViewId();
         rootLayout.setId(canvasId);
-
 
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
-
 
         final Button recordButton = rootLayout.findViewById(R.id.record_button);
 
@@ -115,7 +115,17 @@ public class GpsFactory implements FormWidgetFactory {
                 .withJsonObject(jsonObject)
                 .withPopup(popup);
 
-        setUpViews(recordButton, widgetArgs, rootLayout, metadata);
+
+        formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    setUpViews(recordButton, widgetArgs, rootLayout, metadata, formFragment);
+                } catch (JSONException e) {
+                    Timber.e(e);
+                }
+            }
+        });
 
         ((JsonApi) context).addFormDataView(recordButton);
         views.add(rootLayout);
@@ -127,7 +137,8 @@ public class GpsFactory implements FormWidgetFactory {
         return LayoutInflater.from(context).inflate(R.layout.item_gps, null);
     }
 
-    protected void setUpViews(Button recordButton, WidgetArgs widgetArgs, View rootLayout, WidgetMetadata metadata) throws JSONException {
+    protected void setUpViews(final Button recordButton, WidgetArgs widgetArgs, View rootLayout,
+                              WidgetMetadata metadata, JsonFormFragment formFragment) throws JSONException {
 
         final Context context = widgetArgs.getContext();
         final JSONObject jsonObject = widgetArgs.getJsonObject();
@@ -159,10 +170,10 @@ public class GpsFactory implements FormWidgetFactory {
             recordButton.setFocusable(!readOnly);
         }
 
-        TextView latitudeTV = rootLayout.findViewById(R.id.latitude);
-        TextView longitudeTV = rootLayout.findViewById(R.id.longitude);
-        TextView altitudeTV = rootLayout.findViewById(R.id.altitude);
-        TextView accuracyTV = rootLayout.findViewById(R.id.accuracy);
+        final TextView latitudeTV = rootLayout.findViewById(R.id.latitude);
+        final TextView longitudeTV = rootLayout.findViewById(R.id.longitude);
+        final TextView altitudeTV = rootLayout.findViewById(R.id.altitude);
+        final TextView accuracyTV = rootLayout.findViewById(R.id.accuracy);
 
         attachLayout(context, jsonObject, recordButton, latitudeTV, longitudeTV, altitudeTV, accuracyTV);
 
@@ -213,27 +224,36 @@ public class GpsFactory implements FormWidgetFactory {
         recordButton.setTag(R.id.extraPopup, widgetArgs.isPopup());
     }
 
-    public void attachLayout(Context context, @NonNull JSONObject jsonObject, @NonNull View dataView, @NonNull TextView latitudeTv, @NonNull TextView longitudeTv, @NonNull TextView altitudeTv, @NonNull TextView accuracyTv) {
-        String latitude = "";
-        String longitude = "";
-        String accuracy = "";
-        String altitude = "";
+    public void attachLayout(Context context, @NonNull JSONObject jsonObject, @NonNull View dataView,
+                             @NonNull TextView latitudeTv, @NonNull TextView longitudeTv,
+                             @NonNull TextView altitudeTv, @NonNull TextView accuracyTv) {
+        TextView[] views = new TextView[]{latitudeTv, longitudeTv, altitudeTv, accuracyTv};
+
+        int[] stringIds = new int[]{R.string.latitude, R.string.longitude, R.string.altitude, R.string.accuracy};
+
+        //loops to fill all textViews with empty string
+        for (int i = 0; i < stringIds.length; i++) {
+            views[i].setText(getText(context, "", stringIds[i]));
+        }
+
+        dataView.setTag(R.id.raw_value, "");
+
         if (jsonObject.has(JsonFormConstants.VALUE)) {
             String coordinateData = jsonObject.optString(JsonFormConstants.VALUE);
 
             String[] coordinateElements = coordinateData.split(" ");
-            if (coordinateElements.length > 1) {
-                latitude = coordinateElements[0];
-                longitude = coordinateElements[1];
+
+            //loops to fill textViews with values supplied
+            for (int i = 0; i < coordinateElements.length; i++) {
+                views[i].setText(getText(context, coordinateElements[i], stringIds[i]));
             }
+
+            dataView.setTag(R.id.raw_value, constructString(coordinateElements));
         }
+    }
 
-        latitudeTv.setText(getText(context, latitude, R.string.latitude));
-        longitudeTv.setText(getText(context, longitude, R.string.longitude));
-        altitudeTv.setText(getText(context, altitude, R.string.altitude));
-        accuracyTv.setText(getText(context, accuracy, R.string.accuracy));
-
-        dataView.setTag(R.id.raw_value, constructString(latitude, longitude));
+    private static String constructString(Object[] coordinateElements) {
+        return StringUtils.join(coordinateElements, " ");
     }
 
     @NotNull

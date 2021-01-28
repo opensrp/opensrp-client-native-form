@@ -22,6 +22,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.rey.material.util.ViewUtil;
@@ -141,6 +142,8 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
                         Intent intent = new Intent(JsonFormConstants.INTENT_ACTION.JSON_FORM_ACTIVITY);
                         intent.putExtra(JsonFormConstants.INTENT_KEY.MESSAGE, map);
+                        intent.putExtra(JsonFormConstants.STEPNAME, ((String) customTextView.getTag(R.id.specify_step_name)));
+
                         intent.putExtra(JsonFormConstants.INTENT_KEY.MESSAGE_TYPE,
                                 JsonFormConstants.MESSAGE_TYPE.GLOBAL_VALUES);
 
@@ -257,36 +260,49 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         final String error = (String) radioGroup.getTag(R.id.error);
         if (radioGroup.isEnabled() && error != null) {
             final LinearLayout linearLayout = (LinearLayout) radioGroup.getParent();
-            boolean isValid = performValidation(radioGroup);
-            final TextView[] errorTextView = {linearLayout.findViewById(R.id.error_textView)};
-            if (!isValid) {
-                ((JsonFormActivity) formFragmentView.getContext()).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (linearLayout.getChildAt(0) instanceof ConstraintLayout) {
-                            ConstraintLayout constraintLayout = (ConstraintLayout) linearLayout.getChildAt(0);
-                            if (errorTextView[0] == null) {
-                                errorTextView[0] = new TextView(formFragmentView.getContext());
-                                errorTextView[0].setId(R.id.error_textView);
-                                errorTextView[0].setTextColor(formFragmentView.getContext().getResources().getColor(R.color.toaster_note_red_icon));
-                                errorTextView[0].setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-                                ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(constraintLayout.getLayoutParams());
-                                layoutParams.topToBottom = R.id.label_text;
-                                layoutParams.leftMargin = FormUtils.dpToPixels(formFragmentView.getContext(), 8);
-                                constraintLayout.addView(errorTextView[0], new ConstraintLayout.LayoutParams(layoutParams));
-                            }
-                            errorTextView[0].setVisibility(View.VISIBLE);
-                            errorTextView[0].setText(error);
+            if (linearLayout != null && linearLayout.isShown()) {
+                boolean isValid = performValidation(radioGroup);
+                final TextView errorTextView = linearLayout.findViewById(R.id.error_textView);
+                if (!isValid) {
+                    updateRadioButtonGroupWithError(formFragmentView, error, linearLayout);
+                    return new ValidationStatus(false, error, formFragmentView, radioGroup);
+                } else if (errorTextView != null) {
+                    ((JsonFormActivity) formFragmentView.getContext()).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            errorTextView.setVisibility(View.GONE);
                         }
-                    }
-                });
-
-                return new ValidationStatus(false, error, formFragmentView, radioGroup);
-            } else if (errorTextView[0] != null) {
-                errorTextView[0].setVisibility(View.GONE);
+                    });
+                }
             }
         }
         return new ValidationStatus(true, null, formFragmentView, radioGroup);
+    }
+
+    private static void updateRadioButtonGroupWithError(final JsonFormFragmentView formFragmentView, final String error, final LinearLayout linearLayout) {
+        ((JsonFormActivity) formFragmentView.getContext()).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (linearLayout.getChildAt(0) instanceof ConstraintLayout) {
+                    ConstraintLayout constraintLayout = (ConstraintLayout) linearLayout.getChildAt(0);
+                    TextView errorTextView = linearLayout.findViewById(R.id.error_textView);
+                    if (errorTextView == null) {
+                        errorTextView = new TextView(formFragmentView.getContext());
+                        errorTextView.setId(R.id.error_textView);
+                        errorTextView.setTextColor(formFragmentView.getContext().getResources().getColor(R.color.toaster_note_red_icon));
+                        errorTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                        ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(constraintLayout.getLayoutParams());
+                        layoutParams.topToBottom = R.id.label_text;
+                        layoutParams.leftMargin = FormUtils.dpToPixels(formFragmentView.getContext(), 8);
+                        constraintLayout.addView(errorTextView, new ConstraintLayout.LayoutParams(layoutParams));
+                    }
+                    errorTextView.setVisibility(View.VISIBLE);
+                    errorTextView.setText(error);
+
+                }
+            }
+        });
+
     }
 
     private static boolean performValidation(RadioGroup radioGroup) {
@@ -369,9 +385,39 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
                 }
             }
         }
+
+        populateTags(rootLayout, stepName, popup, "", "", "", jsonObject);
+
+        String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
+        attachRelevance(rootLayout, context, relevance);
+
         rootLayout.setTag(R.id.extraPopup, popup);
         views.add(rootLayout);
         return views;
+    }
+
+    private void attachRelevance(@NonNull View view, @NonNull Context context, @Nullable String relevance) {
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+            view.setTag(R.id.relevance, relevance);
+            ((JsonApi) context).addSkipLogicView(view);
+        }
+    }
+
+    private void populateTags(@NonNull View view, @NonNull String stepName,
+                              boolean popUp,
+                              String openmrsEntity, String openmrsEntityParent,
+                              String openmrsEntityId, JSONObject jsonObject) {
+        JSONArray canvasIds = new JSONArray();
+        view.setId(ViewUtil.generateViewId());
+        canvasIds.put(view.getId());
+        view.setTag(R.id.canvas_ids, canvasIds.toString());
+        view.setTag(R.id.key, jsonObject.optString(JsonFormConstants.KEY));
+        view.setTag(R.id.openmrs_entity_parent, openmrsEntityParent);
+        view.setTag(R.id.openmrs_entity, openmrsEntity);
+        view.setTag(R.id.openmrs_entity_id, openmrsEntityId);
+        view.setTag(R.id.type, jsonObject.optString(JsonFormConstants.TYPE));
+        view.setTag(R.id.extraPopup, popUp);
+        view.setTag(R.id.address, stepName + ":" + jsonObject.optString(JsonFormConstants.KEY));
     }
 
     public LinearLayout getLinearRootLayout(Context context) {
@@ -424,7 +470,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             ((JsonApi) context).addFormDataView(radioGroup);
         }
 
-        attachRelevance(context, relevance, constraints, calculation, radioGroup);
+        prepareViewChecks(context, relevance, constraints, calculation, radioGroup);
 
         FormUtils.setRadioExclusiveClick(radioGroup);
         radioGroup.setLayoutParams(FormUtils.getLinearLayoutParams(FormUtils.MATCH_PARENT, FormUtils.WRAP_CONTENT, 0, 0, 0,
@@ -463,9 +509,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         radioGroupLayout.setTag(R.id.childKey, item.getString(JsonFormConstants.KEY));
         radioGroupLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
         radioGroupLayout.setTag(R.id.extraPopup, popup);
-        canvasIds.put(radioGroupLayout.getId());
         radioGroupLayout.setTag(R.id.native_radio_button_layout_view_id, radioGroupLayout.getId());
-        radioGroupLayout.setTag(R.id.canvas_ids, canvasIds.toString());
         return radioGroupLayout;
     }
 
@@ -473,11 +517,9 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         return (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.native_item_radio_button, null);
     }
 
-    private void attachRelevance(Context context, String relevance, String constraints, String calculation, RadioGroup radioGroup) {
-        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
-            radioGroup.setTag(R.id.relevance, relevance);
-            ((JsonApi) context).addSkipLogicView(radioGroup);
-        }
+    private void prepareViewChecks(Context context, String relevance, String constraints, String calculation, RadioGroup radioGroup) {
+
+        attachRelevance(radioGroup, context, relevance);
 
         if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
             radioGroup.setTag(R.id.constraints, constraints);
@@ -552,9 +594,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             radioButton.setTextSize(FormUtils.getValueFromSpOrDpOrPx(optionTextSize, this.context));
             radioButton.setText(optionText);
             radioButton.setEnabled(!readOnly);
-            this.canvasIds.put(radioButton.getId());
             radioButton.setOnCheckedChangeListener(listener);
-            radioButton.setTag(R.id.canvas_ids, canvasIds.toString());
         }
     }
 

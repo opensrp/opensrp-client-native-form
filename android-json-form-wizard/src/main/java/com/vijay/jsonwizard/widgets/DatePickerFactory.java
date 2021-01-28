@@ -61,7 +61,9 @@ public class DatePickerFactory implements FormWidgetFactory {
     private static final String TAG = "DatePickerFactory";
     private FormUtils formUtils = new FormUtils();
 
-    private static void showDatePickerDialog(Activity context, DatePickerDialog datePickerDialog, MaterialEditText editText) {
+
+    @VisibleForTesting
+    protected void showDatePickerDialog(Activity context, DatePickerDialog datePickerDialog, MaterialEditText editText) {
 
         FragmentTransaction ft = context.getFragmentManager().beginTransaction();
         Fragment prev = context.getFragmentManager().findFragmentByTag(TAG);
@@ -89,10 +91,17 @@ public class DatePickerFactory implements FormWidgetFactory {
         }
     }
 
-    private void updateDateText(Context context, MaterialEditText editText, TextView duration, String date) {
-        editText.setText(StringUtils.isNoneBlank(Form.getDatePickerDisplayFormat()) ?
-                Utils.formatDateToPattern(date, DATE_FORMAT.toPattern(), Form.getDatePickerDisplayFormat())
-                : date);
+
+    private void updateDateText(Context context, final MaterialEditText editText, final TextView duration, final String date) {
+        ((JsonApi) context).getAppExecutors().mainThread().execute(new Runnable() {
+            @Override
+            public void run() {
+                editText.setText(StringUtils.isNoneBlank(Form.getDatePickerDisplayFormat()) ?
+                        Utils.formatDateToPattern(date, DATE_FORMAT.toPattern(), Form.getDatePickerDisplayFormat())
+                        : date);
+            }
+        });
+
         String durationLabel = (String) duration.getTag(R.id.label);
         if (StringUtils.isNotBlank(durationLabel)) {
             Locale locale = getSetLanguage(context);
@@ -100,7 +109,13 @@ public class DatePickerFactory implements FormWidgetFactory {
             if (StringUtils.isNotBlank(durationText)) {
                 durationText = String.format("(%s: %s)", durationLabel, durationText);
             }
-            duration.setText(durationText);
+            final String finalDurationText = durationText;
+            ((JsonApi) context).getAppExecutors().mainThread().execute(new Runnable() {
+                @Override
+                public void run() {
+                    duration.setText(finalDurationText);
+                }
+            });
         }
     }
 

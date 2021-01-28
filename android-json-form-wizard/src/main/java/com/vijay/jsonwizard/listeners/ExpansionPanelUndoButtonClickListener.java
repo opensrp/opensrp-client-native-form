@@ -11,6 +11,8 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
+
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.ExpansionPanelItemModel;
@@ -76,10 +78,7 @@ public class ExpansionPanelUndoButtonClickListener implements View.OnClickListen
             throws JSONException {
         Activity activity = (Activity) context;
         LayoutInflater inflater = activity.getLayoutInflater();
-        View dialogLayout = inflater.inflate(R.layout.expasion_panel_undo_dialog, null);
-
-        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setView(dialogLayout);
+        View dialogLayout = getUndoDialogLayout(inflater);
 
         Button undo = dialogLayout.findViewById(R.id.undo_button);
         final Button cancel = dialogLayout.findViewById(R.id.cancel_button);
@@ -88,7 +87,7 @@ public class ExpansionPanelUndoButtonClickListener implements View.OnClickListen
         headerTextView.setText(
                 String.format(context.getResources().getString(R.string.undo_test_result), testHeader.toLowerCase()));
 
-        final AlertDialog dialog = builder.create();
+        final AlertDialog dialog = getUndoAlertDialog(activity, dialogLayout);
 
         Window window = dialog.getWindow();
         if (window != null) {
@@ -126,6 +125,15 @@ public class ExpansionPanelUndoButtonClickListener implements View.OnClickListen
         });
 
         dialog.show();
+    }
+
+    protected AlertDialog getUndoAlertDialog(@NonNull Activity activity, @NonNull View dialogLayout) {
+        return new AlertDialog.Builder(activity)
+                .setView(dialogLayout).create();
+    }
+
+    protected View getUndoDialogLayout(@NonNull LayoutInflater inflater) {
+        return inflater.inflate(R.layout.expasion_panel_undo_dialog, null);
     }
 
     /**

@@ -35,8 +35,7 @@ public class JsonWizardFormActivity extends JsonFormActivity {
 
     protected void initializeFormFragmentCore() {
         JsonWizardFormFragment jsonWizardFormFragment = JsonWizardFormFragment.getFormFragment(JsonFormConstants.FIRST_STEP_NAME);
-        getSupportFragmentManager().beginTransaction()
-                .add(com.vijay.jsonwizard.R.id.container, jsonWizardFormFragment).commit();
+        getSupportFragmentManager().beginTransaction().add(com.vijay.jsonwizard.R.id.container, jsonWizardFormFragment).commit();
     }
 }
 

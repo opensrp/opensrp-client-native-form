@@ -23,6 +23,14 @@ public abstract class MvpFragment<P extends MvpPresenter, V extends ViewState> e
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (presenter == null) {
+            presenter = createPresenter();
+        }
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 

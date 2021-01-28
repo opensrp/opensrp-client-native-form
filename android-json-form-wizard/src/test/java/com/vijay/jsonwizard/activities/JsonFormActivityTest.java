@@ -3,15 +3,21 @@ package com.vijay.jsonwizard.activities;
 import android.content.Intent;
 import android.text.Html;
 import android.text.Spanned;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 
 import androidx.appcompat.widget.AppCompatRadioButton;
-
+import com.rengwuxian.materialedittext.MaterialEditText;
+import com.rey.material.util.ViewUtil;
+import com.vijay.jsonwizard.NativeFormLibrary;
 import com.vijay.jsonwizard.R;
+import com.vijay.jsonwizard.TestConstants;
+import com.vijay.jsonwizard.TestUtils;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.Form;
+import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.utils.FormUtils;
 
 import org.jeasy.rules.api.Facts;
@@ -21,33 +27,55 @@ import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.android.controller.ActivityController;
+import org.robolectric.shadows.ShadowLooper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
 
 public class JsonFormActivityTest extends BaseActivityTest {
     private JsonFormActivity activity;
     private ActivityController<JsonFormActivity> controller;
+    private final TestUtils testUtils = new TestUtils();
 
     @Before
     public void setUp() throws JSONException {
         MockitoAnnotations.initMocks(this);
         Intent intent = new Intent();
         intent.putExtra(JsonFormConstants.JSON_FORM_KEY.JSON, DUMMY_JSON_FORM_STRING);
-        controller = Robolectric.buildActivity(JsonFormActivity.class, intent).create().start();
-        activity = controller.get();
+        activity = getActivityWithIntent(intent);
         activity.getmJSONObject().put(JsonFormConstants.SKIP_BLANK_STEPS, true);
 
         Assert.assertNotNull(activity);
+    }
+
+    @Test
+    public void setmJsonObjectShouldSkipMissingStep() throws JSONException {
+        activity = Mockito.spy(activity);
+        Mockito.doNothing().when(activity).refreshHiddenViews(ArgumentMatchers.anyBoolean());
+        activity.getFormFieldsMap().clear();
+        ((JsonFormFragment) activity.getSupportFragmentManager().findFragmentById(R.id.container)).setmJsonApi(activity);
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(JsonFormConstants.COUNT, 1);
+
+        activity.setmJSONObject(jsonObject);
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks();
+
+        Assert.assertTrue(activity.getFormFieldsMap().isEmpty());
     }
 
     @Test
@@ -58,6 +86,78 @@ public class JsonFormActivityTest extends BaseActivityTest {
         Assert.assertEquals(RuntimeEnvironment.application.getString(R.string.confirm_form_close), activity.getConfirmCloseTitle());
         activity.setConfirmCloseTitle(DUMMY_TEST_STRING);
         Assert.assertEquals(DUMMY_TEST_STRING, activity.getConfirmCloseTitle());
+    }
+
+    @Test
+    public void testJsonFormShouldTranslationWhenGlobalConfigIsTrue() {
+        String interpolatedJsonForm = testUtils.getResourceFileContentsAsString("test_form_translation_interpolated");
+
+        Intent intent = new Intent();
+        intent.putExtra(JsonFormConstants.JSON_FORM_KEY.JSON, interpolatedJsonForm);
+        NativeFormLibrary.getInstance().setPerformFormTranslation(true);
+        Locale.setDefault(new Locale("en", "US"));
+        controller = Robolectric.buildActivity(JsonFormActivity.class, intent).create().start();
+        activity = controller.get();
+        Assert.assertNotNull(activity);
+
+        String jsonForm = activity.getJsonForm();
+
+        String expectedJsonForm = testUtils.getResourceFileContentsAsString("test_form_translation_en_US");
+        assertEquals(expectedJsonForm, jsonForm);
+    }
+
+    @Test
+    public void testJsonFormShouldNotTranslationWhenGlobalConfigValueIsFalse() {
+        String inputJsonForm = testUtils.getResourceFileContentsAsString("test_form_translation_en_US");
+
+        Intent intent = new Intent();
+        intent.putExtra(JsonFormConstants.JSON_FORM_KEY.JSON, inputJsonForm);
+        NativeFormLibrary.getInstance().setPerformFormTranslation(false);
+        Locale.setDefault(new Locale("en", "US"));
+        controller = Robolectric.buildActivity(JsonFormActivity.class, intent).create().start();
+        activity = controller.get();
+        Assert.assertNotNull(activity);
+
+        String jsonForm = activity.getJsonForm();
+
+        assertEquals(inputJsonForm, jsonForm);
+    }
+
+    @Test
+    public void testJsonFormShouldNotTranslateWhenIntentValueIsFalse() {
+        String inputJsonForm = testUtils.getResourceFileContentsAsString("test_form_translation_en_US");
+
+        Intent intent = new Intent();
+        intent.putExtra(JsonFormConstants.JSON_FORM_KEY.JSON, inputJsonForm);
+        intent.putExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, false);
+        NativeFormLibrary.getInstance().setPerformFormTranslation(true);
+        Locale.setDefault(new Locale("en", "US"));
+        controller = Robolectric.buildActivity(JsonFormActivity.class, intent).create().start();
+        activity = controller.get();
+        Assert.assertNotNull(activity);
+
+        String jsonForm = activity.getJsonForm();
+
+        assertEquals(inputJsonForm, jsonForm);
+    }
+
+    @Test
+    public void testJsonFormShouldTranslateWhenIntentValueIsTrue() {
+        String interpolatedJsonForm = testUtils.getResourceFileContentsAsString("test_form_translation_interpolated");
+
+        Intent intent = new Intent();
+        intent.putExtra(JsonFormConstants.JSON_FORM_KEY.JSON, interpolatedJsonForm);
+        intent.putExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, true);
+        NativeFormLibrary.getInstance().setPerformFormTranslation(false);
+        Locale.setDefault(new Locale("en", "US"));
+        controller = Robolectric.buildActivity(JsonFormActivity.class, intent).create().start();
+        activity = controller.get();
+        Assert.assertNotNull(activity);
+
+        String jsonForm = activity.getJsonForm();
+
+        String expectedJsonForm = testUtils.getResourceFileContentsAsString("test_form_translation_en_US");
+        assertEquals(expectedJsonForm, jsonForm);
     }
 
     @Test
@@ -207,5 +307,58 @@ public class JsonFormActivityTest extends BaseActivityTest {
 
         Whitebox.invokeMethod(activity, "setReadOnlyRadioButtonOptions", radioGroup, true);
         Assert.assertFalse(appCompatRadioButton.isEnabled());
+    }
+
+    @Test
+    public void testToggleViewVisibilityShouldMakeViewVisible() {
+        Intent intent = new Intent();
+        intent.putExtra(JsonFormConstants.JSON_FORM_KEY.JSON, TestConstants.BASIC_FORM);
+        activity = getActivityWithIntent(intent);
+        int id = ViewUtil.generateViewId();
+        LinearLayout rootLayout = new LinearLayout(activity.getApplicationContext());
+        MaterialEditText view = Mockito.spy(new MaterialEditText(activity.getApplicationContext()));
+        view.setId(id);
+        rootLayout.addView(view);
+        JSONArray jsonArray = new JSONArray();
+        jsonArray.put(id);
+        view.setTag(R.id.canvas_ids, jsonArray.toString());
+        view.setTag(R.id.address, "step1:user_last_name");
+        activity.toggleViewVisibility(view, true, false);
+        Mockito.verify(view, Mockito.times(1)).setVisibility(Mockito.eq(View.VISIBLE));
+        Mockito.verify(view, Mockito.times(3)).setFocusable(Mockito.eq(true));
+        Mockito.verify(view, Mockito.times(2)).setFocusableInTouchMode(Mockito.eq(true));
+        Mockito.verify(view, Mockito.times(3)).setEnabled(Mockito.eq(true));
+        Mockito.verify(view, Mockito.times(1)).invalidate();
+        Mockito.verify(view, Mockito.times(1))
+                .setTag(Mockito.eq(R.id.relevance_decided), Mockito.eq(true));
+    }
+
+    @Test
+    public void testToggleViewVisibilityShouldMakeViewInVisible() {
+        Intent intent = new Intent();
+        intent.putExtra(JsonFormConstants.JSON_FORM_KEY.JSON, TestConstants.BASIC_FORM);
+        activity = getActivityWithIntent(intent);
+        int id = ViewUtil.generateViewId();
+        LinearLayout rootLayout = new LinearLayout(activity.getApplicationContext());
+        MaterialEditText view = Mockito.spy(new MaterialEditText(activity.getApplicationContext()));
+        view.setId(id);
+        rootLayout.addView(view);
+        JSONArray jsonArray = new JSONArray();
+        jsonArray.put(id);
+        view.setTag(R.id.canvas_ids, jsonArray.toString());
+        view.setTag(R.id.address, "step1:user_last_name");
+        activity.toggleViewVisibility(view, false, false);
+        Mockito.verify(view, Mockito.times(1)).setVisibility(Mockito.eq(View.GONE));
+        Mockito.verify(view, Mockito.times(2)).setFocusable(Mockito.eq(false));
+        Mockito.verify(view, Mockito.times(2)).setFocusableInTouchMode(Mockito.eq(false));
+        Mockito.verify(view, Mockito.times(3)).setEnabled(Mockito.eq(false));
+        Mockito.verify(view, Mockito.times(1)).invalidate();
+        Mockito.verify(view, Mockito.times(1))
+                .setTag(Mockito.eq(R.id.relevance_decided), Mockito.eq(false));
+    }
+
+    private JsonFormActivity getActivityWithIntent(Intent intent) {
+        controller = Robolectric.buildActivity(JsonFormActivity.class, intent).create().start();
+        return controller.get();
     }
 }
