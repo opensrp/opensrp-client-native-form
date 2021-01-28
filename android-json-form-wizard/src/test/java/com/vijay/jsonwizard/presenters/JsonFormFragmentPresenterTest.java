@@ -83,11 +83,11 @@ public class JsonFormFragmentPresenterTest {
         assertFalse(movedToNext);
     }
 
-    private void addMockStepDetails(String stepName) throws JSONException {
+/*    private void addMockStepDetails(String stepName) throws JSONException {
         JSONObject mStepDetails = new JSONObject();
         mStepDetails.put("next", stepName);
         Whitebox.setInternalState(jsonFormFragmentPresenter, "mStepDetails", mStepDetails);
-    }
+    }*/
 
     private void mockStaticClasses() {
         mockStatic(JsonFormFragment.class);

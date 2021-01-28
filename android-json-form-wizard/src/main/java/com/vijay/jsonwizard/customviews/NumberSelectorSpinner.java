@@ -1,8 +1,9 @@
 package com.vijay.jsonwizard.customviews;
 
 import android.content.Context;
-import androidx.appcompat.widget.AppCompatSpinner;
 import android.util.AttributeSet;
+
+import androidx.appcompat.widget.AppCompatSpinner;
 
 /**
  * NumberSelectorSpinner class {@link NumberSelectorSpinner} is a custom class for the spinner used in the number selector

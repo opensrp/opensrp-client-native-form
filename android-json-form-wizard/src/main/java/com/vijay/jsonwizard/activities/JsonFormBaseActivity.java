@@ -4,12 +4,13 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import android.view.View;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.vijay.jsonwizard.NativeFormLibrary;

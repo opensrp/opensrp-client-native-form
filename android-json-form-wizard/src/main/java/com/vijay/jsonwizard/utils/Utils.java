@@ -6,10 +6,6 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
-import androidx.core.util.TimeUtils;
-
 import android.content.DialogInterface;
 import android.content.res.AssetManager;
 import android.os.Looper;
@@ -22,6 +18,10 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
+import androidx.core.util.TimeUtils;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.vijay.jsonwizard.R;

@@ -1,9 +1,10 @@
 package com.vijay.jsonwizard.mvp;
 
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * Created by vijay on 4/21/15.
