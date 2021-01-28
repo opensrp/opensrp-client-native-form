@@ -1,9 +1,11 @@
 package com.vijay.jsonwizard.utils;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.AssetManager;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -27,17 +29,20 @@ import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.internal.WhiteboxImpl;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.util.ReflectionHelpers;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +51,7 @@ import java.util.Set;
 
 import static com.vijay.jsonwizard.utils.Utils.formatDateToPattern;
 import static com.vijay.jsonwizard.utils.Utils.isEmptyJsonArray;
+import static com.vijay.jsonwizard.utils.Utils.isEmptyJsonObject;
 
 public class UtilsTest extends BaseTest {
 
@@ -98,7 +104,7 @@ public class UtilsTest extends BaseTest {
         String uniqueId = "33d56473a1de41e9986f952337c664ee";
         Map<String, List<Map<String, Object>>> rulesFileMap = new HashMap<>();
 
-        Utils.buildRulesWithUniqueId(formElement, uniqueId, JsonFormConstants.CALCULATION, RuntimeEnvironment.application, rulesFileMap);
+        Utils.buildRulesWithUniqueId(formElement, uniqueId, JsonFormConstants.CALCULATION, RuntimeEnvironment.application, rulesFileMap, "step1");
         Assert.assertNotNull(rulesFileMap);
         Assert.assertEquals(1, rulesFileMap.size());
         Assert.assertEquals("step2_larvae_total != ''", rulesFileMap.get("rule/repeating_groups_calculation_rules.yml").get(0).get("condition"));
@@ -112,7 +118,7 @@ public class UtilsTest extends BaseTest {
         String uniqueId = "33d56473a1de41e9986f952337c664ee";
         Map<String, List<Map<String, Object>>> rulesFileMap = new HashMap<>();
 
-        Utils.buildRulesWithUniqueId(formElement, uniqueId, JsonFormConstants.RELEVANCE, RuntimeEnvironment.application, rulesFileMap);
+        Utils.buildRulesWithUniqueId(formElement, uniqueId, JsonFormConstants.RELEVANCE, RuntimeEnvironment.application, rulesFileMap, "step1");
         Assert.assertNotNull(rulesFileMap);
         Assert.assertEquals(0, rulesFileMap.size());
     }
@@ -180,7 +186,7 @@ public class UtilsTest extends BaseTest {
         InputStream inputStream = new ByteArrayInputStream(contentOfRelevanceFile.getBytes());
         Mockito.when(assetManager.open("rule/diagnose_and_treat_relevance.yml")).thenReturn(inputStream);
         Map<String, List<Map<String, Object>>> rulesFileMap = new HashMap<>();
-        Utils.buildRulesWithUniqueId(element, unique_id, ruleType, context, rulesFileMap);
+        Utils.buildRulesWithUniqueId(element, unique_id, ruleType, context, rulesFileMap, "step1");
         JSONObject jsonExpectedObject = element.getJSONObject(ruleType);//new JSONObject(element);
         JSONArray jsonArray = jsonExpectedObject.optJSONObject(RuleConstant.RULES_ENGINE)
                 .optJSONObject(JsonFormConstants.JSON_FORM_KEY.EX_RULES)
@@ -192,7 +198,7 @@ public class UtilsTest extends BaseTest {
                 break;
             }
         }
-        Assert.assertEquals(unique_id, resultKeyValue);
+        Assert.assertEquals(JsonFormConstants.RELEVANCE + "/" + unique_id, resultKeyValue);
     }
 
     @Test
@@ -202,7 +208,7 @@ public class UtilsTest extends BaseTest {
         element.put(ruleType, new JSONObject("{\"step1:dob_unknown\":{\"type\":\"string\",\"ex\":\"equalTo(., \\\"false\\\")\"}}"));
         String unique_id = "c29afdf9-843e-4c90-9a79-3dafd70e045b";
         Map<String, List<Map<String, Object>>> rulesFileMap = new HashMap<>();
-        Utils.buildRulesWithUniqueId(element, unique_id, ruleType, context, rulesFileMap);
+        Utils.buildRulesWithUniqueId(element, unique_id, ruleType, context, rulesFileMap, "step1");
         String expected = "{\"relevance\":{\"step1:dob_unknown_c29afdf9-843e-4c90-9a79-3dafd70e045b\":{\"type\":\"string\",\"ex\":\"equalTo(., \\\"false\\\")\"}}}";
         Assert.assertEquals(expected, element.toString());
     }
@@ -290,8 +296,7 @@ public class UtilsTest extends BaseTest {
 
     @Test
     public void testShowProgressDialogShouldCreateProgressDialog() {
-        Assert.assertNull(ReflectionHelpers.getStaticField(Utils.class, "progressDialog"));
-
+        ReflectionHelpers.setStaticField(Utils.class, "progressDialog", null);
         Utils.showProgressDialog(R.string.hello_world, R.string.hello_world, RuntimeEnvironment.application);
         ProgressDialog progressDialog = ReflectionHelpers.getStaticField(Utils.class, "progressDialog");
         Assert.assertTrue(progressDialog.isShowing());
@@ -389,5 +394,49 @@ public class UtilsTest extends BaseTest {
         Assert.assertTrue(isEmptyJsonArray(jsonArray));
         jsonArray.put("value");
         Assert.assertFalse(isEmptyJsonArray(jsonArray));
+    }
+
+    @Test
+    public void testIsEmptyJsonObjectShouldReturnCorrectStatus() throws JSONException {
+        Assert.assertTrue(isEmptyJsonObject(null));
+        JSONObject jsonObject = new JSONObject();
+        Assert.assertTrue(isEmptyJsonObject(jsonObject));
+        jsonObject.put("key", "value");
+        Assert.assertFalse(isEmptyJsonObject(jsonObject));
+    }
+
+    @Test
+    public void testRemoveDeletedInvalidFieldsShouldDeleteRespectiveInvalidFields() {
+        String prefix = "test-prefix:";
+        Map<String, ValidationStatus> invalidFields = new HashMap<>();
+        invalidFields.put(prefix + "field1", new ValidationStatus(false, "", null, null));
+        invalidFields.put(prefix + "field2", new ValidationStatus(false, "", null, null));
+        invalidFields.put(prefix + "field3", new ValidationStatus(true, "", null, null));
+        ArrayList<String> fieldsToBeRemoved = new ArrayList<>();
+        fieldsToBeRemoved.add("field1");
+        fieldsToBeRemoved.add("field2");
+
+        Utils.removeDeletedInvalidFields(prefix, invalidFields, fieldsToBeRemoved);
+
+        Assert.assertEquals(1, invalidFields.size());
+        Assert.assertEquals(prefix + "field3", invalidFields.keySet().iterator().next());
+    }
+
+
+    @Test
+    public void testShowAlertDialogShouldDisplayAlertDialogCorrectly() {
+        DialogInterface.OnClickListener onClickListener = Mockito.mock(DialogInterface.OnClickListener.class);
+
+        Utils.showAlertDialog(RuntimeEnvironment.application, "title", "message", "no", "yes", onClickListener, onClickListener);
+
+        AlertDialog dialog = (AlertDialog) ShadowDialog.getLatestDialog();
+        Assert.assertNotNull(dialog);
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick();
+        Mockito.verify(onClickListener).onClick(ArgumentMatchers.any(DialogInterface.class), ArgumentMatchers.anyInt());
+
+        Mockito.reset(onClickListener);
+        dialog.getButton(DialogInterface.BUTTON_NEGATIVE).performClick();
+        Mockito.verify(onClickListener).onClick(ArgumentMatchers.any(DialogInterface.class), ArgumentMatchers.anyInt());
     }
 }

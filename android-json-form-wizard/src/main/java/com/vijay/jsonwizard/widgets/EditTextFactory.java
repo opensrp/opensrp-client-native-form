@@ -43,6 +43,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import timber.log.Timber;
+
 import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_CUMULATIVE_VALIDATION_ERR;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_RELATIVE_MAX_VALIDATION_ERR;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_RELATIVE_MIN_VALIDATION_ERR;
@@ -119,7 +121,7 @@ public class EditTextFactory implements FormWidgetFactory {
     }
 
     protected void attachLayout(String stepName, Context context, JsonFormFragment formFragment,
-                                JSONObject jsonObject, MaterialEditText editText, ImageView editButton)
+                                final JSONObject jsonObject, final MaterialEditText editText, ImageView editButton)
             throws Exception {
 
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
@@ -135,8 +137,17 @@ public class EditTextFactory implements FormWidgetFactory {
         editText.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
 
         if (!TextUtils.isEmpty(jsonObject.optString(JsonFormConstants.VALUE))) {
-            editText.setText(jsonObject.optString(JsonFormConstants.VALUE));
-            editText.setSelection(editText.getText().length());
+            formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        editText.setText(jsonObject.optString(JsonFormConstants.VALUE));
+                        editText.setSelection(editText.getText().length());
+                    } catch (Exception e) {
+                        Timber.e(e, "Catching an error throw on spannable, when loading report form");
+                    }
+                }
+            });
         }
         if (jsonObject.has(JsonFormConstants.HINT)) {
             editText.setHint(jsonObject.getString(JsonFormConstants.HINT));

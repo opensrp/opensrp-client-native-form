@@ -278,9 +278,9 @@ public class JsonWizardFormFragment extends JsonFormFragment {
     }
 
 
-    ////////////////////////////////////////////////////////////////
-    // Inner classes
-    ////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+// Inner classes
+////////////////////////////////////////////////////////////////
 
     protected class BottomNavigationListener implements View.OnClickListener {
         @Override
@@ -308,8 +308,8 @@ public class JsonWizardFormFragment extends JsonFormFragment {
                 }
             }
         }
-    }
 
+    }
 }
 
 

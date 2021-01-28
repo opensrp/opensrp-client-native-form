@@ -1,19 +1,16 @@
 package com.vijay.jsonwizard.utils;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.MultiSelectItem;
 import com.vijay.jsonwizard.domain.MultiSelectListAccessory;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
-import com.vijay.jsonwizard.reader.MultiSelectListFileReaderAndProcessor;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,15 +18,6 @@ import java.util.List;
 import timber.log.Timber;
 
 public class MultiSelectListUtils {
-
-    public static void saveMultiSelectListOptions(@NonNull Context context, @NonNull MultiSelectListFileReaderAndProcessor multiSelectListFileReaderAndProcessor) throws IOException {
-        String[] files = context.getAssets().list(JsonFormConstants.MultiSelectUtils.FILES_LOCATION);
-        if (files != null) {
-            for (String file : files) {
-                multiSelectListFileReaderAndProcessor.initMultiSelectFileReader(file);
-            }
-        }
-    }
 
     public static List<MultiSelectItem> loadOptionsFromJsonForm(@NonNull JSONObject jsonObject) {
         try {
