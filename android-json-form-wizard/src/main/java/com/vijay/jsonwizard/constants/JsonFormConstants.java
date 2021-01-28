@@ -143,6 +143,7 @@ public class JsonFormConstants {
     public static final String MIN_DATE = "min_date";
     public static final String MAX_DATE = "max_date";
     public static final String EXPANDED = "expanded";
+    public static final String EXPAND_ON_TEXT_CHANGE = "expand_on_text_change";
     public static final String NUMBER = "number";
     public static final String TOP_MARGIN = "top_margin";
     public static final String BOTTOM_MARGIN = "bottom_margin";
@@ -225,6 +226,7 @@ public class JsonFormConstants {
     public static final String FROM_DATA_SOURCE = "form_data_source";
     public static final String DEFAULT_FORMS_DIRECTORY = "opensrpNativeFormTester";
     public static final String JSON_FORM_DIRECTORY = "json.form";
+    public static final String MEDIA_LOGIC = "media_logic";
 
     public static final String PROPERTIES_FILE_EXTENSION = ".properties";
     public static final String JSON_FILE_EXTENSION = ".json";
@@ -323,6 +325,14 @@ public class JsonFormConstants {
     public static class INTENT_KEY {
         public static final String MESSAGE = "message";
         public static final String MESSAGE_TYPE = "message_type";
+    }
+
+    public interface RESULT_CODE {
+        int RUNTIME_EXCEPTION_OCCURRED = 8037;
+    }
+
+    public interface RESULT_INTENT {
+        String RUNTIME_EXCEPTION = "runtime_exception";
     }
 
     public static class MESSAGE_TYPE {

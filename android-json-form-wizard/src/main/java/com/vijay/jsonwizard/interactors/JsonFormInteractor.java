@@ -1,14 +1,19 @@
 package com.vijay.jsonwizard.interactors;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
 
+import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
+import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.widgets.BarcodeFactory;
+import com.vijay.jsonwizard.widgets.BasicRDTCaptureFactory;
 import com.vijay.jsonwizard.widgets.ButtonFactory;
 import com.vijay.jsonwizard.widgets.CheckBoxFactory;
 import com.vijay.jsonwizard.widgets.ComponentSpacerFactory;
@@ -35,7 +40,6 @@ import com.vijay.jsonwizard.widgets.SpinnerFactory;
 import com.vijay.jsonwizard.widgets.TimePickerFactory;
 import com.vijay.jsonwizard.widgets.ToasterNotesFactory;
 import com.vijay.jsonwizard.widgets.TreeViewFactory;
-import com.vijay.jsonwizard.widgets.BasicRDTCaptureFactory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,12 +53,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import timber.log.Timber;
+
 /**
  * Created by vijay on 5/19/15.
  */
 public class JsonFormInteractor {
 
-    private static final String TAG = "JsonFormInteractor";
     protected static JsonFormInteractor INSTANCE;
     public Map<String, FormWidgetFactory> map;
     private Set<String> defaultTranslatableWidgetFields;
@@ -159,7 +164,7 @@ public class JsonFormInteractor {
             }
 
         } catch (JSONException e) {
-            Log.e(TAG, "Json exception occurred : " + e.getMessage());
+            Timber.e(e);
         }
         return viewsFromJson;
     }
@@ -187,7 +192,7 @@ public class JsonFormInteractor {
 
             }
         } catch (JSONException e) {
-            Log.e(TAG, "Json exception occurred : " + e.getMessage());
+            Timber.e(e);
         }
     }
 
@@ -205,26 +210,49 @@ public class JsonFormInteractor {
                         listener, popup);
             }
         } catch (JSONException e) {
-            Log.e(TAG, "Json exception occurred : " + e.getMessage());
+            Timber.e(e);
         }
     }
 
     private void fetchViews(List<View> viewsFromJson, String stepName, JsonFormFragment formFragment,
                             String type, JSONObject jsonObject, CommonListener listener, Boolean popup) {
-
         try {
-            List<View> views = map
-                    .get(type)
-                    .getViewsFromJson(stepName, formFragment.getActivity(), formFragment, jsonObject, listener, popup);
-            if (views.size() > 0) {
-                viewsFromJson.addAll(views);
+            FormWidgetFactory formWidgetFactory = map.get(type);
+            if (formWidgetFactory != null) {
+                List<View> views = formWidgetFactory
+                        .getViewsFromJson(stepName, formFragment.getActivity(), formFragment, jsonObject, listener, popup);
+                if (views.size() > 0) {
+                    viewsFromJson.addAll(views);
+                }
             }
+        } catch (RuntimeException e) {
+            closeActivityAfterRuntimeException(formFragment, e);
         } catch (Exception e) {
-            Log.e(TAG,
-                    "Exception occurred in making view : Exception is : "
-                            + e.getMessage());
-            e.printStackTrace();
+            Timber.e(e, "Exception encountered while creating form widget!");
         }
+    }
+
+    private void closeActivityAfterRuntimeException(JsonFormFragment jsonFormFragment, final RuntimeException e) {
+        Timber.e(e);
+
+        final Activity activity = jsonFormFragment.getActivity();
+
+        jsonFormFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
+            @Override
+            public void run() {
+                Utils.showToast(activity, activity.getString(R.string.form_load_error));
+
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(JsonFormConstants.RESULT_INTENT.RUNTIME_EXCEPTION, e);
+
+                Intent intent = new Intent();
+                intent.putExtras(bundle);
+
+                activity.setResult(JsonFormConstants.RESULT_CODE.RUNTIME_EXCEPTION_OCCURRED, intent);
+                activity.finish();
+            }
+        });
+
     }
 
     public final Set<String> getDefaultTranslatableWidgetFields() {
@@ -234,4 +262,5 @@ public class JsonFormInteractor {
     public final Set<String> getDefaultTranslatableStepFields() {
         return defaultTranslatableStepFields;
     }
+
 }

@@ -39,6 +39,10 @@ public class ExpansionPanelRecordButtonClickListener implements View.OnClickList
             view.setTag(R.id.secondaryValues, formUtils.getSecondaryValues(realTimeJsonObject, type));
         }
 
+        initiateTask(view);
+    }
+
+    protected void initiateTask(View view) {
         new ExpansionPanelGenericPopupDialogTask(view).execute();
     }
 

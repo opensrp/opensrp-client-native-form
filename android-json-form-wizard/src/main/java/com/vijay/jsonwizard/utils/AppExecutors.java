@@ -65,7 +65,7 @@ public class AppExecutors {
         private final Executor mDiskIO;
 
         public DiskIOThreadExecutor() {
-            mDiskIO = Executors.newSingleThreadExecutor();
+            mDiskIO = Executors.newFixedThreadPool(THREAD_COUNT);
         }
 
         @Override

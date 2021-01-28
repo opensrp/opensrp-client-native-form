@@ -97,7 +97,7 @@ public class GenericTextWatcher implements TextWatcher, View.OnFocusChangeListen
     }
 
     private boolean isRedundantRepetition(String text) {
-        View currentFocus = ((Activity) formFragment.getContext()).getCurrentFocus();
+        View currentFocus = formFragment.getContext() != null ? ((Activity) formFragment.getContext()).getCurrentFocus() : null;
 
         String prev = mView.getTag(R.id.previous) != null ? mView.getTag(R.id.previous).toString() : null;
 
