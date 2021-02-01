@@ -113,5 +113,6 @@
 
     <string name="error_title">Error</string>
     <string name="form_load_error">Sorry, a fatal error occurred when loading the form. Please contact a developer for further assistance.</string>
+    <string name="select_one_option">Please select one option</string>
 
 </resources>
