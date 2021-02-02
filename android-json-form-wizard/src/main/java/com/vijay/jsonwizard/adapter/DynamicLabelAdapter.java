@@ -53,9 +53,9 @@ public class DynamicLabelAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public static class RecyclerViewHolder extends RecyclerView.ViewHolder {
-        TextView descriptionTextView;
-        TextView tileTextView;
-        ImageView imageViewLabel;
+        private final TextView descriptionTextView;
+        private final TextView tileTextView;
+        private final ImageView imageViewLabel;
 
         private RecyclerViewHolder(View view) {
             super(view);
