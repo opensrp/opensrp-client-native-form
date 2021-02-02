@@ -32,8 +32,8 @@
     <item name="constraints" type="id" />
     <item name="skip_validation" type="id" />
     <item name="label_dialog_info" type="id" />
-    <item name="label_dialog_info_list" type="id" />
-    <item name="label_info_title_list" type="id" />
+    <item name="dynamic_label_text_list" type="id" />
+    <item name="dynamic_label_title_list" type="id" />
     <item name="label_dialog_title" type="id" />
     <item name="original_text" type="id" />
     <item name="specify_textview" type="id" />
@@ -82,7 +82,7 @@
     <item name="number_selector_main_textview" type="id" />
     <item name="submit" type="id" />
     <item name="label_dialog_image_src" type="id"/>
-    <item name="label_dialog_image_src_list" type="id"/>
+    <item name="dynamic_label_image_src_list" type="id"/>
     <item name="error_textView" type="id" />
     <item name="maxSelectable" type="id"/>
     <item name="is_multiselect_relative_layout" type="id" />

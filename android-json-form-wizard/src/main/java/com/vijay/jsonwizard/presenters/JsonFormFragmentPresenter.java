@@ -844,7 +844,7 @@ public class JsonFormFragmentPresenter extends
     protected void showInformationDialog(View view) {
         if (view.getTag(R.id.label_dialog_image_src) != null) {
             showCustomDialog(view);
-        } else if (view.getTag(R.id.label_dialog_image_src_list) != null) {
+        } else if (view.getTag(R.id.dynamic_label_text_list) != null) {
             showDynamicDialog(view);
         } else {
             showAlertDialog(view);
@@ -944,9 +944,9 @@ public class JsonFormFragmentPresenter extends
         }
 
         RecyclerView dialogRecyclerView = dialog.findViewById(R.id.dialogRecyclerView);
-        JSONArray labelInfoList = (JSONArray) view.getTag(R.id.label_dialog_info_list);
-        JSONArray labelInfoTitleList = (JSONArray) view.getTag(R.id.label_info_title_list);
-        JSONArray imageSrcList = (JSONArray) view.getTag(R.id.label_dialog_image_src_list);
+        JSONArray labelInfoList = (JSONArray) view.getTag(R.id.dynamic_label_text_list);
+        JSONArray labelInfoTitleList = (JSONArray) view.getTag(R.id.dynamic_label_title_list);
+        JSONArray imageSrcList = (JSONArray) view.getTag(R.id.dynamic_label_image_src_list);
         ArrayList<String> descriptionsList = getStringArrayList(labelInfoList);
         ArrayList<String> titlesList = getStringArrayList(labelInfoTitleList);
         ArrayList<String> imagesList = getStringArrayList(imageSrcList);

@@ -482,9 +482,9 @@ public class FormUtils {
 
             if (imageAttributes.get(JsonFormConstants.LABEL_IS_DYNAMIC) != null) {
 
-                imageView.setTag(R.id.label_dialog_info_list, jsonObject.getJSONArray(JsonFormConstants.DYNAMIC_LABEL_TEXT_LIST));
-                imageView.setTag(R.id.label_dialog_image_src_list, jsonObject.getJSONArray(JsonFormConstants.DYNAMIC_LABEL_IMAGE_SRC_LIST));
-                imageView.setTag(R.id.label_info_title_list, jsonObject.getJSONArray(JsonFormConstants.DYNAMIC_LABEL_TITLE_LIST));
+                imageView.setTag(R.id.dynamic_label_text_list, jsonObject.getJSONArray(JsonFormConstants.DYNAMIC_LABEL_TEXT_LIST));
+                imageView.setTag(R.id.dynamic_label_image_src_list, jsonObject.getJSONArray(JsonFormConstants.DYNAMIC_LABEL_IMAGE_SRC_LIST));
+                imageView.setTag(R.id.dynamic_label_title_list, jsonObject.getJSONArray(JsonFormConstants.DYNAMIC_LABEL_TITLE_LIST));
                 imageView.setTag(R.id.label_dialog_title, imageAttributes.get(JsonFormConstants.LABEL_INFO_TITLE));
                 imageView.setVisibility(View.VISIBLE);
 
