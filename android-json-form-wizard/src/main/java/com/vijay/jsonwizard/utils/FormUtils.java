@@ -30,6 +30,8 @@ import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.BuildConfig;
 import com.vijay.jsonwizard.NativeFormLibrary;
@@ -64,6 +66,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -477,6 +480,16 @@ public class FormUtils {
 
             }
 
+            if (imageAttributes.get(JsonFormConstants.LABEL_IS_DYNAMIC) != null) {
+
+                imageView.setTag(R.id.label_dialog_info_list, jsonObject.getJSONArray(JsonFormConstants.DYNAMIC_LABEL_TEXT_LIST));
+                imageView.setTag(R.id.label_dialog_image_src_list, jsonObject.getJSONArray(JsonFormConstants.DYNAMIC_LABEL_IMAGE_SRC_LIST));
+                imageView.setTag(R.id.label_info_title_list, jsonObject.getJSONArray(JsonFormConstants.DYNAMIC_LABEL_TITLE_LIST));
+                imageView.setTag(R.id.label_dialog_title, imageAttributes.get(JsonFormConstants.LABEL_INFO_TITLE));
+                imageView.setVisibility(View.VISIBLE);
+
+            }
+
             imageView.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
             imageView.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
             imageView.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
@@ -495,11 +508,18 @@ public class FormUtils {
                 jsonObject.optString(JsonFormConstants.LABEL_INFO_HAS_IMAGE, null));
         imageAttributes.put(JsonFormConstants.LABEL_INFO_IMAGE_SRC,
                 jsonObject.optString(JsonFormConstants.LABEL_INFO_IMAGE_SRC, null));
+        imageAttributes.put(JsonFormConstants.LABEL_IS_DYNAMIC,
+                jsonObject.optString(JsonFormConstants.LABEL_IS_DYNAMIC, null));
         return imageAttributes;
     }
 
     public static Drawable readImageFromAsset(Context context, String fileName) throws IOException {
         return Drawable.createFromStream(context.getAssets().open(fileName), null);
+    }
+
+    public static ArrayList<String> getStringArrayList(JSONArray jsonArray) {
+        return new Gson().fromJson(jsonArray.toString(), new TypeToken<List<String>>() {
+        }.getType());
     }
 
     public static void setEditButtonAttributes(JSONObject jsonObject, View editableView,

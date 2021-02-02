@@ -24,7 +24,9 @@ public class JsonFormConstants {
     public static final String LABEL_TEXT_SIZE = "label_text_size";
     public static final String LABEL_TEXT_COLOR = "label_text_color";
     public static final String LABEL_INFO_TEXT = "label_info_text";
+    public static final String DYNAMIC_LABEL_TEXT_LIST = "dynamic_label_text_list";
     public static final String LABEL_INFO_TITLE = "label_info_title";
+    public static final String DYNAMIC_LABEL_TITLE_LIST = "dynamic_label_title_list";
     public static final String LABEL_NUMBER = "label_number";
     public static final String CHOOSE_IMAGE = "choose_image";
     public static final String FINGER_PRINT = "finger_print";
@@ -198,6 +200,8 @@ public class JsonFormConstants {
     public static final String INVISIBLE_REQUIRED_FIELDS = "invisible_required_fields";
     public static final String LABEL_INFO_HAS_IMAGE = "label_info_has_image";
     public static final String LABEL_INFO_IMAGE_SRC = "label_info_image_src";
+    public static final String DYNAMIC_LABEL_IMAGE_SRC_LIST = "dynamic_label_image_src_list";
+    public static final String LABEL_IS_DYNAMIC = "label_is_dynamic";
     public static final String ACCORDION_INFO_TEXT = "accordion_info_text";
     public static final String ACCORDION_INFO_TITLE = "accordion_info_title";
     public static final String DISPLAY_BOTTOM_SECTION = "display_bottom_section";

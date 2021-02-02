@@ -20,6 +20,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatRadioButton;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
@@ -36,10 +38,13 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rey.material.widget.Button;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
+import com.vijay.jsonwizard.adapter.DynamicLabelAdapter;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.MaterialSpinner;
 import com.vijay.jsonwizard.customviews.NativeEditText;
@@ -88,6 +93,7 @@ import java.util.Stack;
 import timber.log.Timber;
 
 import static com.vijay.jsonwizard.utils.FormUtils.dpToPixels;
+import static com.vijay.jsonwizard.utils.FormUtils.getStringArrayList;
 
 /**
  * Created by vijay on 5/14/15.
@@ -840,6 +846,8 @@ public class JsonFormFragmentPresenter extends
     protected void showInformationDialog(View view) {
         if (view.getTag(R.id.label_dialog_image_src) != null) {
             showCustomDialog(view);
+        } else if (view.getTag(R.id.label_dialog_image_src_list) != null) {
+            showDynamicDialog(view);
         } else {
             showAlertDialog(view);
         }
@@ -917,6 +925,50 @@ public class JsonFormFragmentPresenter extends
                 dialog.dismiss();
             }
         });
+        dialog.show();
+    }
+
+    private void showDynamicDialog(@NonNull View view) {
+        final Dialog dialog = getCustomDialog(view);
+        dialog.setContentView(R.layout.native_form_dynamic_dialog);
+        if (dialog.getWindow() != null) {
+            WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+            params.width = (int) (view.getContext().getResources().getDisplayMetrics().widthPixels
+                    * 0.90);
+            params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        }
+
+        String titleString = (String) view.getTag(R.id.label_dialog_title);
+        if (StringUtils.isNotBlank(titleString)) {
+            TextView dialogTitle = dialog.findViewById(R.id.dialogTitle);
+            dialogTitle.setText(titleString);
+            dialogTitle.setVisibility(View.VISIBLE);
+        }
+
+        RecyclerView dialogRecyclerView = dialog.findViewById(R.id.dialogRecyclerView);
+        JSONArray labelInfoList = (JSONArray) view.getTag(R.id.label_dialog_info_list);
+        JSONArray labelInfoTitleList = (JSONArray) view.getTag(R.id.label_info_title_list);
+        JSONArray imageSrcList = (JSONArray) view.getTag(R.id.label_dialog_image_src_list);
+        ArrayList<String> descriptionsList = getStringArrayList(labelInfoList);
+        ArrayList<String> titlesList = getStringArrayList(labelInfoTitleList);
+        ArrayList<String> imagesList = getStringArrayList(imageSrcList);
+
+        if (descriptionsList.size() > 0) {
+            DynamicLabelAdapter dynamicLabelAdapter = new DynamicLabelAdapter(view.getContext(), titlesList, descriptionsList, imagesList);
+            dialogRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+            dialogRecyclerView.setAdapter(dynamicLabelAdapter);
+            dialogRecyclerView.setVisibility(View.VISIBLE);
+        }
+
+        AppCompatButton dialogButton = dialog.findViewById(R.id.dialogButton);
+        dialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialogButton.setVisibility(View.VISIBLE);
+
         dialog.show();
     }
 
