@@ -1,14 +1,21 @@
 package com.vijay.jsonwizard.utils;
 
+import android.app.Activity;
+import android.app.DialogFragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.widget.Button;
+import android.widget.LinearLayout;
 
 import com.vijay.jsonwizard.BaseTest;
+import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.ExpansionPanelItemModel;
 import com.vijay.jsonwizard.domain.ExpansionPanelValuesModel;
 import com.vijay.jsonwizard.interfaces.OnFormFetchedCallback;
+import com.vijay.jsonwizard.views.CustomTextView;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jeasy.rules.api.Facts;
@@ -19,9 +26,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.client.utils.contract.ClientFormContract;
 
 import java.text.SimpleDateFormat;
@@ -656,5 +665,32 @@ public class FormUtilsTest extends BaseTest {
         Facts facts = formUtils.getCheckBoxResults(jsonObject);
         Assert.assertNotNull(facts);
         Assert.assertEquals(4, facts.asMap().size());
+    }
+
+    @Test
+    public void testShowGenericDialogShouldInvokeExpectedMethods() {
+        formUtils = Mockito.spy(formUtils);
+
+        FragmentTransaction mockFragmentTransaction = Mockito.mock(FragmentTransaction.class);
+        Utils utils = Mockito.spy(new Utils());
+        ReflectionHelpers.setField(formUtils, "utils", utils);
+        Mockito.doReturn(mockFragmentTransaction).when(utils).getFragmentTransaction(ArgumentMatchers.any(Activity.class));
+
+        Activity mockActivity = Mockito.mock(Activity.class);
+        LinearLayout mainLayout = Mockito.spy(new LinearLayout(RuntimeEnvironment.application));
+        Mockito.doReturn(mainLayout).when(mockActivity).findViewById(R.id.main_layout);
+
+        Button button = new Button(RuntimeEnvironment.application);
+        button.setTag(R.id.specify_context, mockActivity);
+        button.setTag(R.id.type, JsonFormConstants.EXPANSION_PANEL);
+        button.setTag(R.id.specify_content, "user_native_sub_form");
+        button.setTag(R.id.specify_content_form, "");
+        button.setTag(R.id.specify_textview, new CustomTextView(button.getContext()));
+        button.setTag(R.id.specify_reasons_textview, new CustomTextView(button.getContext()));
+
+        formUtils.showGenericDialog(button);
+
+        Mockito.verify(mainLayout, Mockito.only()).clearFocus();
+        Mockito.verify(mockFragmentTransaction).add(ArgumentMatchers.any(DialogFragment.class), ArgumentMatchers.eq("GenericPopup"));
     }
 }
