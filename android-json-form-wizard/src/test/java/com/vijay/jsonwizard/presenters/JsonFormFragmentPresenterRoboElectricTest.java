@@ -573,9 +573,7 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
     public void testShowInformationDialogShouldShowDynamicDialog() {
         View view = new View(RuntimeEnvironment.application);
         try {
-            view.setTag(R.id.dynamic_label_text_list, new JSONArray("[\"1- Label Text\",\"2- Label Test\"]"));
-            view.setTag(R.id.dynamic_label_title_list, new JSONArray("[\"1- Label Title\",\"2- Label Title\"]"));
-            view.setTag(R.id.dynamic_label_image_src_list, new JSONArray("[\"img/src.png\",\"img/src.png\"]"));
+            view.setTag(R.id.dynamic_label_info, new JSONArray("[{\"dynamic_label_title\": \"1\",\"dynamic_label_text\": \"1- A maximum of up to 3 weekly doses may be required.\",\"dynamic_label_image_src\":\"img/first_img.png\"}]"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
