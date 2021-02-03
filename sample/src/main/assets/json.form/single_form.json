@@ -100,10 +100,35 @@
         "label": "Does the woman have any of the danger signs in the image?",
         "label_text_style": "bold",
         "text_color": "#000000",
-        "label_info_text": "A maximum of up to 3 weekly doses may be required.",
-        "label_info_title": "Syphilis Compliance",
-        "label_info_image_src": "img/chw.png",
-        "label_info_has_image": true,
+        "label_info_title": "Main Title",
+        "dynamic_label_info": [
+          {
+            "dynamic_label_title": "1",
+            "dynamic_label_text": "1- A maximum of up to 3 weekly doses may be required.",
+            "dynamic_label_image_src": "img/first_img.png"
+          },
+          {
+            "dynamic_label_title": "2",
+            "dynamic_label_text": "",
+            "dynamic_label_image_src": ""
+          },
+          {
+            "dynamic_label_title": "",
+            "dynamic_label_text": "Third description text",
+            "dynamic_label_image_src": ""
+          },
+          {
+            "dynamic_label_title": "",
+            "dynamic_label_text": "",
+            "dynamic_label_image_src": "img/first_img.png"
+          },
+          {
+            "dynamic_label_title": "",
+            "dynamic_label_text": "",
+            "dynamic_label_image_src": "img/first_img.png"
+          }
+        ],
+        "label_is_dynamic": true,
         "options": [
           {
             "key": "1",

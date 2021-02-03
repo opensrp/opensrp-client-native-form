@@ -20,7 +20,7 @@
             android:textColor="@color/black"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:visibility="visible"
+            android:visibility="gone"
             tools:text="Here goes the Title!" />
 
         <TextView
@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="6dp"
             android:textSize="18sp"
-            android:visibility="visible"
+            android:visibility="gone"
             tools:text="This is where the description must go!" />
 
         <ImageView
@@ -39,6 +39,6 @@
             android:adjustViewBounds="true"
             android:contentDescription="@string/shows_image_on_dialog"
             android:scaleType="fitXY"
-            android:visibility="visible" />
+            android:visibility="gone" />
     </LinearLayout>
 </LinearLayout>

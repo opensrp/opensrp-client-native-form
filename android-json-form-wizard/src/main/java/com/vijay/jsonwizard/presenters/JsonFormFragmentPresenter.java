@@ -50,6 +50,7 @@ import com.vijay.jsonwizard.customviews.RadioButton;
 import com.vijay.jsonwizard.fragments.JsonFormErrorFragment;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
+import com.vijay.jsonwizard.model.DynamicLabelInfo;
 import com.vijay.jsonwizard.mvp.MvpBasePresenter;
 import com.vijay.jsonwizard.rules.RuleConstant;
 import com.vijay.jsonwizard.task.ExpansionPanelGenericPopupDialogTask;
@@ -91,7 +92,7 @@ import java.util.Stack;
 import timber.log.Timber;
 
 import static com.vijay.jsonwizard.utils.FormUtils.dpToPixels;
-import static com.vijay.jsonwizard.utils.FormUtils.getStringArrayList;
+import static com.vijay.jsonwizard.utils.FormUtils.getDynamicLabelInfoList;
 
 /**
  * Created by vijay on 5/14/15.
@@ -844,7 +845,7 @@ public class JsonFormFragmentPresenter extends
     protected void showInformationDialog(View view) {
         if (view.getTag(R.id.label_dialog_image_src) != null) {
             showCustomDialog(view);
-        } else if (view.getTag(R.id.dynamic_label_text_list) != null) {
+        } else if (view.getTag(R.id.dynamic_label_info) != null) {
             showDynamicDialog(view);
         } else {
             showAlertDialog(view);
@@ -944,15 +945,11 @@ public class JsonFormFragmentPresenter extends
         }
 
         RecyclerView dialogRecyclerView = dialog.findViewById(R.id.dialogRecyclerView);
-        JSONArray labelInfoList = (JSONArray) view.getTag(R.id.dynamic_label_text_list);
-        JSONArray labelInfoTitleList = (JSONArray) view.getTag(R.id.dynamic_label_title_list);
-        JSONArray imageSrcList = (JSONArray) view.getTag(R.id.dynamic_label_image_src_list);
-        ArrayList<String> descriptionsList = getStringArrayList(labelInfoList);
-        ArrayList<String> titlesList = getStringArrayList(labelInfoTitleList);
-        ArrayList<String> imagesList = getStringArrayList(imageSrcList);
+        JSONArray dynamicLabelInfoArray = (JSONArray) view.getTag(R.id.dynamic_label_info);
+        ArrayList<DynamicLabelInfo> dynamicLabelInfoList = getDynamicLabelInfoList(dynamicLabelInfoArray);
 
-        if (descriptionsList.size() > 0) {
-            DynamicLabelAdapter dynamicLabelAdapter = new DynamicLabelAdapter(view.getContext(), titlesList, descriptionsList, imagesList);
+        if (dynamicLabelInfoList.size() > 0) {
+            DynamicLabelAdapter dynamicLabelAdapter = new DynamicLabelAdapter(view.getContext(), dynamicLabelInfoList);
             dialogRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
             dialogRecyclerView.setAdapter(dynamicLabelAdapter);
             dialogRecyclerView.setVisibility(View.VISIBLE);

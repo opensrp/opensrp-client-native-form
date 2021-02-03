@@ -10,22 +10,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.vijay.jsonwizard.R;
+import com.vijay.jsonwizard.model.DynamicLabelInfo;
 import com.vijay.jsonwizard.utils.FormUtils;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class DynamicLabelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final Context context;
-    private final ArrayList<String> imagePaths;
-    private final ArrayList<String> labelDescriptions;
-    private final ArrayList<String> labelTitles;
+    private final ArrayList<DynamicLabelInfo> dynamicLabelInfoList;
 
-    public DynamicLabelAdapter(Context context, ArrayList<String> labelTitles, ArrayList<String> labelDescriptions, ArrayList<String> imagePaths) {
+    public DynamicLabelAdapter(Context context, ArrayList<DynamicLabelInfo> dynamicLabelInfoList) {
         this.context = context;
-        this.labelDescriptions = labelDescriptions;
-        this.imagePaths = imagePaths;
-        this.labelTitles = labelTitles;
+        this.dynamicLabelInfoList = dynamicLabelInfoList;
     }
 
     @NonNull
@@ -38,18 +37,32 @@ public class DynamicLabelAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         final RecyclerViewHolder recyclerViewHolder = (RecyclerViewHolder) holder;
-        recyclerViewHolder.descriptionTextView.setText(labelDescriptions.get(position));
-        recyclerViewHolder.tileTextView.setText(labelTitles.get(position));
-        try {
-            recyclerViewHolder.imageViewLabel.setImageDrawable(FormUtils.readImageFromAsset(context, imagePaths.get(position)));
-        } catch (IOException e) {
-            e.printStackTrace();
+        String dynamicLabelTitle = dynamicLabelInfoList.get(position).getDynamicLabelTitle();
+        if (StringUtils.isNotBlank(dynamicLabelTitle)) {
+            recyclerViewHolder.tileTextView.setText(dynamicLabelTitle);
+            recyclerViewHolder.tileTextView.setVisibility(View.VISIBLE);
+        }
+
+        String dynamicLabelText = dynamicLabelInfoList.get(position).getDynamicLabelText();
+        if (StringUtils.isNotBlank(dynamicLabelText)) {
+            recyclerViewHolder.descriptionTextView.setText(dynamicLabelText);
+            recyclerViewHolder.descriptionTextView.setVisibility(View.VISIBLE);
+        }
+
+        String dynamicLabelImageSrc = dynamicLabelInfoList.get(position).getDynamicLabelImageSrc();
+        if (StringUtils.isNotBlank(dynamicLabelImageSrc)) {
+            try {
+                recyclerViewHolder.imageViewLabel.setImageDrawable(FormUtils.readImageFromAsset(context, dynamicLabelImageSrc));
+                recyclerViewHolder.imageViewLabel.setVisibility(View.VISIBLE);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     @Override
     public int getItemCount() {
-        return labelDescriptions.size();
+        return dynamicLabelInfoList.size();
     }
 
     public static class RecyclerViewHolder extends RecyclerView.ViewHolder {

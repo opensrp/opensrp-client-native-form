@@ -30,8 +30,6 @@ import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.BuildConfig;
 import com.vijay.jsonwizard.NativeFormLibrary;
@@ -46,6 +44,7 @@ import com.vijay.jsonwizard.interfaces.GenericDialogInterface;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.interfaces.OnFormFetchedCallback;
 import com.vijay.jsonwizard.interfaces.RollbackDialogCallback;
+import com.vijay.jsonwizard.model.DynamicLabelInfo;
 import com.vijay.jsonwizard.rules.RuleConstant;
 import com.vijay.jsonwizard.views.CustomTextView;
 
@@ -481,13 +480,9 @@ public class FormUtils {
             }
 
             if (imageAttributes.get(JsonFormConstants.LABEL_IS_DYNAMIC) != null) {
-
-                imageView.setTag(R.id.dynamic_label_text_list, jsonObject.getJSONArray(JsonFormConstants.DYNAMIC_LABEL_TEXT_LIST));
-                imageView.setTag(R.id.dynamic_label_image_src_list, jsonObject.getJSONArray(JsonFormConstants.DYNAMIC_LABEL_IMAGE_SRC_LIST));
-                imageView.setTag(R.id.dynamic_label_title_list, jsonObject.getJSONArray(JsonFormConstants.DYNAMIC_LABEL_TITLE_LIST));
+                imageView.setTag(R.id.dynamic_label_info, jsonObject.getJSONArray(JsonFormConstants.DYNAMIC_LABEL_INFO));
                 imageView.setTag(R.id.label_dialog_title, imageAttributes.get(JsonFormConstants.LABEL_INFO_TITLE));
                 imageView.setVisibility(View.VISIBLE);
-
             }
 
             imageView.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
@@ -517,9 +512,18 @@ public class FormUtils {
         return Drawable.createFromStream(context.getAssets().open(fileName), null);
     }
 
-    public static ArrayList<String> getStringArrayList(JSONArray jsonArray) {
-        return new Gson().fromJson(jsonArray.toString(), new TypeToken<List<String>>() {
-        }.getType());
+    public static ArrayList<DynamicLabelInfo> getDynamicLabelInfoList(JSONArray jsonArray) {
+        ArrayList<DynamicLabelInfo> dynamicLabelInfos = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            try {
+                JSONObject dynamicLabelJsonObject = jsonArray.getJSONObject(i);
+                dynamicLabelInfos.add(new DynamicLabelInfo(dynamicLabelJsonObject.getString(JsonFormConstants.DYNAMIC_LABEL_TITLE),
+                        dynamicLabelJsonObject.getString(JsonFormConstants.DYNAMIC_LABEL_TEXT), dynamicLabelJsonObject.getString(JsonFormConstants.DYNAMIC_LABEL_IMAGE_SRC)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return dynamicLabelInfos;
     }
 
     public static void setEditButtonAttributes(JSONObject jsonObject, View editableView,
