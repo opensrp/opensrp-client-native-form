@@ -570,6 +570,35 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
     }
 
     @Test
+    public void testShowInformationDialogShouldShowDynamicDialog() {
+        View view = new View(RuntimeEnvironment.application);
+        try {
+            view.setTag(R.id.dynamic_label_text_list, new JSONArray("[\"1- Label Text\",\"2- Label Test\"]"));
+            view.setTag(R.id.dynamic_label_title_list, new JSONArray("[\"1- Label Title\",\"2- Label Title\"]"));
+            view.setTag(R.id.dynamic_label_image_src_list, new JSONArray("[\"img/src.png\",\"img/src.png\"]"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        view.setTag(R.id.label_dialog_title, "title");
+        view.setTag(R.id.label_dialog_info, "info");
+
+        JsonFormFragmentPresenter spyPresenter = spy(presenter);
+        Dialog dialogSpy = spy(new Dialog(view.getContext()));
+        doReturn(dialogSpy).when(spyPresenter).getCustomDialog(view);
+        spyPresenter.showInformationDialog(view);
+
+        verify(dialogSpy, times(1)).show();
+
+        assertTrue(dialogSpy.findViewById(R.id.dialogRecyclerView).isShown());
+
+        assertTrue(dialogSpy.findViewById(R.id.dialogTitle).isShown());
+
+        dialogSpy.findViewById(R.id.dialogButton).performClick();
+
+        verify(dialogSpy, times(1)).dismiss();
+    }
+
+    @Test
     public void testShowInformationDialogShouldShowAlertDialog() {
         View view = new View(RuntimeEnvironment.application);
         view.setTag(R.id.label_dialog_title, "title");
