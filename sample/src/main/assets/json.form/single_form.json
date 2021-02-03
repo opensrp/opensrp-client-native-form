@@ -113,13 +113,8 @@
             "dynamic_label_image_src": ""
           },
           {
-            "dynamic_label_title": "",
+            "dynamic_label_title": "3rd Title",
             "dynamic_label_text": "Third description text",
-            "dynamic_label_image_src": ""
-          },
-          {
-            "dynamic_label_title": "",
-            "dynamic_label_text": "",
             "dynamic_label_image_src": "img/first_img.png"
           },
           {
