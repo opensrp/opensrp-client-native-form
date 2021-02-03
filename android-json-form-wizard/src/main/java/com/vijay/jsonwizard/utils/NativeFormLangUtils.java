@@ -132,7 +132,7 @@ public class NativeFormLangUtils {
      */
     private static String translateString(String str, ResourceBundle mlsResourceBundle) {
         StringBuffer stringBuffer = new StringBuffer();
-        Pattern interpolatedStringPattern = Pattern.compile("\\{\\{([a-zA-Z_0-9\\.\\-]+)\\}\\}");
+        Pattern interpolatedStringPattern = Pattern.compile("\\{\\{([a-zA-Z_0-9\\.\\-\\[\\]]+)\\}\\}");
         Matcher matcher = interpolatedStringPattern.matcher(str);
         while (matcher.find()) {
             String replacement = Matcher.quoteReplacement(getEscapedValue(mlsResourceBundle.getString(matcher.group(1))));
