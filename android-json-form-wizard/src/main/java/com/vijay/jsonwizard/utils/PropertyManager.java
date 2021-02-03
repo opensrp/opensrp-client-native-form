@@ -55,11 +55,13 @@ public class PropertyManager {
     public PropertyManager(Context context) {
         mContext = context;
         mProperties = new HashMap<>();
-        grantPhoneStatePermission();
-        handleOnRequestPermissionResults();
-        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.READ_PHONE_STATE)
-                == PackageManager.PERMISSION_GRANTED) {
-           addPhoneProperties();
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            grantPhoneStatePermission();
+            handleOnRequestPermissionResults();
+            if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.READ_PHONE_STATE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                addPhoneProperties();
+            }
         }
     }
 
