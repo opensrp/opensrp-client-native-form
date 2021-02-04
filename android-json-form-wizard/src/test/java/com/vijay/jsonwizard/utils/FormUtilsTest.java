@@ -9,6 +9,7 @@ import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.ExpansionPanelItemModel;
 import com.vijay.jsonwizard.domain.ExpansionPanelValuesModel;
 import com.vijay.jsonwizard.interfaces.OnFormFetchedCallback;
+import com.vijay.jsonwizard.model.DynamicLabelInfo;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jeasy.rules.api.Facts;
@@ -25,6 +26,7 @@ import org.robolectric.RuntimeEnvironment;
 import org.smartregister.client.utils.contract.ClientFormContract;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
@@ -656,5 +658,16 @@ public class FormUtilsTest extends BaseTest {
         Facts facts = formUtils.getCheckBoxResults(jsonObject);
         Assert.assertNotNull(facts);
         Assert.assertEquals(4, facts.asMap().size());
+    }
+
+    @Test
+    public void testGetDynamicLabelInfoList() throws JSONException {
+        JSONArray jsonArray = new JSONArray("[{\"dynamic_label_title\": \"sample title\",\"dynamic_label_text\": \"sample text\",\"dynamic_label_image_src\": \"img/img.png\"}]");
+        ArrayList<DynamicLabelInfo> expectedList = new ArrayList<>();
+        expectedList.add(new DynamicLabelInfo("sample title", "sample text", "img/img.png"));
+        ArrayList<DynamicLabelInfo> actualList =  FormUtils.getDynamicLabelInfoList(jsonArray);
+        Assert.assertEquals(expectedList.get(0).getDynamicLabelText(), actualList.get(0).getDynamicLabelText());
+        Assert.assertEquals(expectedList.get(0).getDynamicLabelTitle(), actualList.get(0).getDynamicLabelTitle());
+        Assert.assertEquals(expectedList.get(0).getDynamicLabelImageSrc(), actualList.get(0).getDynamicLabelImageSrc());
     }
 }
