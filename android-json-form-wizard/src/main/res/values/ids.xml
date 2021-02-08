@@ -33,6 +33,7 @@
     <item name="skip_validation" type="id" />
     <item name="label_dialog_info" type="id" />
     <item name="label_dialog_title" type="id" />
+    <item name="dynamic_label_info" type="id" />
     <item name="original_text" type="id" />
     <item name="specify_textview" type="id" />
     <item name="specify_reasons_textview" type="id" />
