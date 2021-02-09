@@ -1,10 +1,13 @@
 package com.vijay.jsonwizard.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.AppCompatRadioButton;
 import android.text.Html;
 import android.text.Spanned;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -17,8 +20,10 @@ import com.vijay.jsonwizard.TestConstants;
 import com.vijay.jsonwizard.TestUtils;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.Form;
+import com.vijay.jsonwizard.event.RefreshExpansionPanelEvent;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.utils.FormUtils;
+import com.vijay.jsonwizard.utils.Utils;
 
 import org.jeasy.rules.api.Facts;
 import org.json.JSONArray;
@@ -35,8 +40,10 @@ import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.shadows.ShadowLooper;
+import org.robolectric.util.ReflectionHelpers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -360,5 +367,59 @@ public class JsonFormActivityTest extends BaseActivityTest {
     private JsonFormActivity getActivityWithIntent(Intent intent) {
         controller = Robolectric.buildActivity(JsonFormActivity.class, intent).create().start();
         return controller.get();
+    }
+
+    @Test
+    public void testRefreshExpansionPanelShouldInvokeExpectedMethods() throws JSONException {
+        activity = Mockito.spy(activity);
+
+        Utils mockUtils = Mockito.mock(Utils.class);
+        FormUtils mockFormUtils = Mockito.mock(FormUtils.class);
+
+        ReflectionHelpers.setField(activity, "formUtils", mockFormUtils);
+        ReflectionHelpers.setField(activity, "utils", mockUtils);
+
+        JSONArray jsonArray = new JSONArray();
+        LinearLayout linearLayout = new LinearLayout(RuntimeEnvironment.application);
+        RefreshExpansionPanelEvent event = new RefreshExpansionPanelEvent(jsonArray, linearLayout);
+
+        //Layout
+        RelativeLayout layoutHeader = new RelativeLayout(activity);
+        ImageView status = new ImageView(activity);
+        status.setId(R.id.statusImageView);
+        layoutHeader.addView(status, 0);
+        linearLayout.addView(layoutHeader);
+
+        LinearLayout contentLayout = (new LinearLayout(activity));
+        linearLayout.addView(contentLayout, 1);
+        LinearLayout mainContentView = new LinearLayout(activity);
+        mainContentView.setId(R.id.contentView);
+        contentLayout.addView(mainContentView);
+
+        LinearLayout buttonLayout = (new LinearLayout(activity));
+        buttonLayout.setId(R.id.accordion_bottom_navigation);
+        contentLayout.addView(buttonLayout);
+
+        Button undoButton = new Button(activity);
+        undoButton.setId(R.id.undo_button);
+        buttonLayout.addView(undoButton);
+        //
+
+        List<String> values = Arrays.asList("Done", "Not Done");
+        Mockito.doReturn(values)
+                .when(mockUtils)
+                .createExpansionPanelChildren(ArgumentMatchers.any(JSONArray.class));
+
+        activity.refreshExpansionPanel(event);
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks();
+
+        Mockito.verify(mockFormUtils)
+                .updateExpansionPanelRecyclerView(ArgumentMatchers.eq(values), ArgumentMatchers.eq(status), ArgumentMatchers.any(Context.class));
+
+        Mockito.verify(mockFormUtils)
+                .addValuesDisplay(ArgumentMatchers.eq(values), ArgumentMatchers.eq(mainContentView), ArgumentMatchers.any(Context.class));
+
+        Mockito.verify(mockUtils)
+                .enableExpansionPanelViews(ArgumentMatchers.eq(linearLayout));
     }
 }
