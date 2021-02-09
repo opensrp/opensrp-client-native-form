@@ -68,6 +68,9 @@ public class EditTextFactoryTest extends BaseTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         factory = new EditTextFactory();
+
+        RelativeLayout.LayoutParams layoutParams = Mockito.mock(RelativeLayout.LayoutParams.class);
+        Mockito.when(editText.getLayoutParams()).thenReturn(layoutParams);
     }
 
     @Test
