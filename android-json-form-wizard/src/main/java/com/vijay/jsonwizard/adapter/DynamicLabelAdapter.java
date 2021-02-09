@@ -41,12 +41,16 @@ public class DynamicLabelAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if (StringUtils.isNotBlank(dynamicLabelTitle)) {
             recyclerViewHolder.tileTextView.setText(dynamicLabelTitle);
             recyclerViewHolder.tileTextView.setVisibility(View.VISIBLE);
+        } else {
+            recyclerViewHolder.tileTextView.setVisibility(View.GONE);
         }
 
         String dynamicLabelText = dynamicLabelInfoList.get(position).getDynamicLabelText();
         if (StringUtils.isNotBlank(dynamicLabelText)) {
             recyclerViewHolder.descriptionTextView.setText(dynamicLabelText);
             recyclerViewHolder.descriptionTextView.setVisibility(View.VISIBLE);
+        } else {
+            recyclerViewHolder.descriptionTextView.setVisibility(View.GONE);
         }
 
         String dynamicLabelImageSrc = dynamicLabelInfoList.get(position).getDynamicLabelImageSrc();
@@ -56,7 +60,10 @@ public class DynamicLabelAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 recyclerViewHolder.imageViewLabel.setVisibility(View.VISIBLE);
             } catch (IOException e) {
                 e.printStackTrace();
+                recyclerViewHolder.imageViewLabel.setVisibility(View.GONE);
             }
+        } else {
+            recyclerViewHolder.imageViewLabel.setVisibility(View.GONE);
         }
     }
 
