@@ -151,6 +151,7 @@ public class JsonFormConstants {
     public static final String TOP_MARGIN = "top_margin";
     public static final String BOTTOM_MARGIN = "bottom_margin";
     public static final String LEFT_MARGIN = "left_margin";
+    public static final String RIGHT_MARGIN = "right_margin";
     public static final String UPLOAD_BUTTON_TEXT = "uploadButtonText";
     public static final String EXPANSION_PANEL = "expansion_panel";
     public static final String JSON_OBJECT_KEY = "json_object_key";

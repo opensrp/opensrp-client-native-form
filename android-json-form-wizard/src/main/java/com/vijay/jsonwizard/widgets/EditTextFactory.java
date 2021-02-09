@@ -108,6 +108,8 @@ public class EditTextFactory implements FormWidgetFactory {
         attachInfoIcon(stepName, jsonObject, rootLayout, canvasIds, listener);
 
         ((JsonApi) context).addFormDataView(editText);
+        updateMargin(editText, jsonObject, context);
+        updateTopPadding(editText, jsonObject, context);
         views.add(rootLayout);
         return views;
     }
@@ -152,6 +154,9 @@ public class EditTextFactory implements FormWidgetFactory {
         if (jsonObject.has(JsonFormConstants.HINT)) {
             editText.setHint(jsonObject.getString(JsonFormConstants.HINT));
             editText.setFloatingLabelText(jsonObject.getString(JsonFormConstants.HINT));
+        }
+        else {
+            editText.setFloatingLabel(MaterialEditText.FLOATING_LABEL_NONE);
         }
         FormUtils.setEditMode(jsonObject, editText, editButton);
         FormUtils.toggleEditTextVisibility(jsonObject, editText);
@@ -442,5 +447,30 @@ public class EditTextFactory implements FormWidgetFactory {
     @Override
     public Set<String> getCustomTranslatableWidgetFields() {
         return new HashSet<>();
+    }
+
+    protected void updateTopPadding(MaterialEditText editText, JSONObject jsonObject, Context context) {
+        final int topPadding =  jsonObject.has(JsonFormConstants.TOP_PADDING) ? getValueFromSpOrDpOrPx(context, jsonObject.optString(JsonFormConstants.TOP_PADDING, "0dp")) : editText.getFloatingLabelPadding();
+        editText.setFloatingLabelPadding(topPadding);
+    }
+
+    protected void updateMargin(MaterialEditText editText, JSONObject jsonObject, Context context) {
+        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) editText.getLayoutParams();
+
+        int leftMargin = normalizeValue(context, jsonObject, JsonFormConstants.LEFT_MARGIN, layoutParams.leftMargin);
+        int topMargin = normalizeValue(context, jsonObject, JsonFormConstants.TOP_MARGIN, layoutParams.topMargin);
+        int rightMargin = normalizeValue(context, jsonObject, JsonFormConstants.RIGHT_MARGIN, layoutParams.rightMargin);
+        int bottomMargin = normalizeValue(context, jsonObject, JsonFormConstants.BOTTOM_MARGIN, layoutParams.bottomMargin);
+
+        layoutParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
+        editText.setLayoutParams(layoutParams);
+    }
+
+    protected int getValueFromSpOrDpOrPx(Context context, String value) {
+        return FormUtils.getValueFromSpOrDpOrPx(value, context);
+    }
+
+    private int normalizeValue(Context context, JSONObject jsonObject, String key, int defaultValue) {
+        return jsonObject.has(key) ? getValueFromSpOrDpOrPx(context, jsonObject.optString(key, "0dp")) : defaultValue;
     }
 }
