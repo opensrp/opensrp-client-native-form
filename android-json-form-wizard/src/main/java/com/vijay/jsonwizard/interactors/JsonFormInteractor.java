@@ -111,6 +111,7 @@ public class JsonFormInteractor {
         defaultTranslatableWidgetFields.add(JsonFormConstants.V_NUMERIC_INTEGER + "." + JsonFormConstants.ERR);
         defaultTranslatableWidgetFields.add(JsonFormConstants.V_MIN + "." + JsonFormConstants.ERR);
         defaultTranslatableWidgetFields.add(JsonFormConstants.V_MAX + "." + JsonFormConstants.ERR);
+        defaultTranslatableWidgetFields.add(JsonFormConstants.LABEL_INFO_IMAGE_SRC);
         defaultTranslatableWidgetFields = Collections.unmodifiableSet(defaultTranslatableWidgetFields);
     }
 
