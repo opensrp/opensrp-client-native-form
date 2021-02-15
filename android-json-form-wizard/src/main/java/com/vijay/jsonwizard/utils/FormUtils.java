@@ -44,6 +44,7 @@ import com.vijay.jsonwizard.interfaces.GenericDialogInterface;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.interfaces.OnFormFetchedCallback;
 import com.vijay.jsonwizard.interfaces.RollbackDialogCallback;
+import com.vijay.jsonwizard.model.DynamicLabelInfo;
 import com.vijay.jsonwizard.rules.RuleConstant;
 import com.vijay.jsonwizard.views.CustomTextView;
 
@@ -64,6 +65,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -477,6 +479,12 @@ public class FormUtils {
 
             }
 
+            if (imageAttributes.get(JsonFormConstants.LABEL_IS_DYNAMIC) != null) {
+                imageView.setTag(R.id.dynamic_label_info, jsonObject.getJSONArray(JsonFormConstants.DYNAMIC_LABEL_INFO));
+                imageView.setTag(R.id.label_dialog_title, imageAttributes.get(JsonFormConstants.LABEL_INFO_TITLE));
+                imageView.setVisibility(View.VISIBLE);
+            }
+
             imageView.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
             imageView.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
             imageView.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
@@ -495,11 +503,27 @@ public class FormUtils {
                 jsonObject.optString(JsonFormConstants.LABEL_INFO_HAS_IMAGE, null));
         imageAttributes.put(JsonFormConstants.LABEL_INFO_IMAGE_SRC,
                 jsonObject.optString(JsonFormConstants.LABEL_INFO_IMAGE_SRC, null));
+        imageAttributes.put(JsonFormConstants.LABEL_IS_DYNAMIC,
+                jsonObject.optString(JsonFormConstants.LABEL_IS_DYNAMIC, null));
         return imageAttributes;
     }
 
     public static Drawable readImageFromAsset(Context context, String fileName) throws IOException {
         return Drawable.createFromStream(context.getAssets().open(fileName), null);
+    }
+
+    public static ArrayList<DynamicLabelInfo> getDynamicLabelInfoList(JSONArray jsonArray) {
+        ArrayList<DynamicLabelInfo> dynamicLabelInfos = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            try {
+                JSONObject dynamicLabelJsonObject = jsonArray.getJSONObject(i);
+                dynamicLabelInfos.add(new DynamicLabelInfo(dynamicLabelJsonObject.getString(JsonFormConstants.DYNAMIC_LABEL_TITLE),
+                        dynamicLabelJsonObject.getString(JsonFormConstants.DYNAMIC_LABEL_TEXT), dynamicLabelJsonObject.getString(JsonFormConstants.DYNAMIC_LABEL_IMAGE_SRC)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return dynamicLabelInfos;
     }
 
     public static void setEditButtonAttributes(JSONObject jsonObject, View editableView,

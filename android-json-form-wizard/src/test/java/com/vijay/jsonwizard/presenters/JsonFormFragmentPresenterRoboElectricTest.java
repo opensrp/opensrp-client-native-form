@@ -40,6 +40,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
@@ -361,6 +362,7 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
     public void testOnSaveClickDisplaysErrorFragmentAndDisplaysToast() throws InterruptedException {
         initWithActualForm();
         formFragment.getMainView().setTag(R.id.skip_validation, false);
+        doNothing().when(formFragment).addFormElements(ArgumentMatchers.<View>anyList());
         presenter.onSaveClick(formFragment.getMainView());
         shadowOf(getMainLooper()).idle();
         assertEquals(2, presenter.getInvalidFields().size());
@@ -563,6 +565,33 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         assertTrue(dialogSpy.findViewById(R.id.dialogTitle).isShown());
 
         assertTrue(dialogSpy.findViewById(R.id.dialogImage).isShown());
+
+        dialogSpy.findViewById(R.id.dialogButton).performClick();
+
+        verify(dialogSpy, times(1)).dismiss();
+    }
+
+    @Test
+    public void testShowInformationDialogShouldShowDynamicDialog() {
+        View view = new View(RuntimeEnvironment.application);
+        try {
+            view.setTag(R.id.dynamic_label_info, new JSONArray("[{\"dynamic_label_title\": \"1\",\"dynamic_label_text\": \"1- A maximum of up to 3 weekly doses may be required.\",\"dynamic_label_image_src\":\"img/first_img.png\"}]"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        view.setTag(R.id.label_dialog_title, "title");
+        view.setTag(R.id.label_dialog_info, "info");
+
+        JsonFormFragmentPresenter spyPresenter = spy(presenter);
+        Dialog dialogSpy = spy(new Dialog(view.getContext()));
+        doReturn(dialogSpy).when(spyPresenter).getCustomDialog(view);
+        spyPresenter.showInformationDialog(view);
+
+        verify(dialogSpy, times(1)).show();
+
+        assertTrue(dialogSpy.findViewById(R.id.dialogRecyclerView).isShown());
+
+        assertTrue(dialogSpy.findViewById(R.id.dialogTitle).isShown());
 
         dialogSpy.findViewById(R.id.dialogButton).performClick();
 
