@@ -33,6 +33,7 @@
     <item name="skip_validation" type="id" />
     <item name="label_dialog_info" type="id" />
     <item name="label_dialog_title" type="id" />
+    <item name="dynamic_label_info" type="id" />
     <item name="original_text" type="id" />
     <item name="specify_textview" type="id" />
     <item name="specify_reasons_textview" type="id" />
@@ -82,7 +83,10 @@
     <item name="label_dialog_image_src" type="id"/>
     <item name="error_textView" type="id" />
     <item name="maxSelectable" type="id"/>
+    <item name="is_multiselect_relative_layout" type="id" />
 
     <item name="simprints_guid" type="id" />
+    <item name="is_repeating_group_generated" type="id" />
+    <item name="has_required_validator" type="id" />
 
 </resources>

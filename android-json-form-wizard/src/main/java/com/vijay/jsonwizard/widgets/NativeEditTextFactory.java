@@ -13,7 +13,6 @@ import android.widget.RelativeLayout;
 import com.rengwuxian.materialedittext.validation.RegexpValidator;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
-import com.vijay.jsonwizard.activities.JsonFormActivity;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.GenericTextWatcher;
 import com.vijay.jsonwizard.customviews.NativeEditText;
@@ -43,19 +42,16 @@ import java.util.Set;
 public class NativeEditTextFactory implements FormWidgetFactory {
     public static ValidationStatus validate(final JsonFormFragmentView formFragmentView,
                                             final NativeEditText editText) {
-        final ValidationStatus[] validationStatus = {new ValidationStatus(true, null, formFragmentView, editText)};
-        ((JsonFormActivity) formFragmentView.getContext()).runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (editText.isEnabled()) {
-                    boolean validate = editText.validate();
-                    if (!validate) {
-                        validationStatus[0] = new ValidationStatus(false, editText.getError().toString(), formFragmentView, editText);
-                    }
-                }
+        ValidationStatus validationStatus = new ValidationStatus(true, null, formFragmentView, editText);
+
+        if (editText.isEnabled()) {
+            boolean validate = editText.validate();
+            if (!validate) {
+                validationStatus = new ValidationStatus(false, editText.getError().toString(), formFragmentView, editText);
             }
-        });
-        return validationStatus[0];
+        }
+
+        return validationStatus;
     }
 
     @Override

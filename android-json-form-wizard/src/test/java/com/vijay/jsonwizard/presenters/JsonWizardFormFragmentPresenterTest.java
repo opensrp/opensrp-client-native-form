@@ -17,6 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -35,7 +36,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(JsonWizardFormFragment.class)
@@ -85,6 +85,7 @@ public class JsonWizardFormFragmentPresenterTest {
         mockStatic(JsonWizardFormFragment.class);
         PowerMockito.when(JsonWizardFormFragment.getFormFragment(anyString())).thenReturn(formFragment);
 
+        presenter = Mockito.spy(presenter);
         // when no incorrectly formatted fields
         mJsonObject.put(JsonFormConstants.VALIDATE_ON_SUBMIT, true);
         presenter.onNextClick(mock(LinearLayout.class));
@@ -95,18 +96,17 @@ public class JsonWizardFormFragmentPresenterTest {
         presenter.onNextClick(mock(LinearLayout.class));
         verifyMovesToNextStep(2);
 
+
         // when form has errors
         Map<String, ValidationStatus> invalidFields = new HashMap<>();
-        invalidFields.put("key", mock(ValidationStatus.class));
+        invalidFields.put("step1#key", mock(ValidationStatus.class));
         Whitebox.setInternalState(presenter, "invalidFields", invalidFields);
+        Whitebox.setInternalState(presenter, "mStepName", JsonFormConstants.STEP1);
         presenter.onNextClick(mock(LinearLayout.class));
         verify(formFragment).showSnackBar(eq("string"));
     }
 
     private void verifyMovesToNextStep(int times) {
-        verifyStatic(JsonWizardFormFragment.class, times(times));
-        JsonWizardFormFragment.getFormFragment("step1");
-        verify(formFragment, times(times)).hideKeyBoard();
-        verify(formFragment, times(times)).transactThis(eq(formFragment));
+        verify(presenter, times(times)).executeRefreshLogicForNextStep();
     }
 }

@@ -51,10 +51,10 @@ public class MultiSelectListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         MultiSelectItem multiSelectItem = data.get(position);
         if (multiSelectItem.getValue() != null) {
             SectionViewHolder sectionViewHolder = (SectionViewHolder) holder;
-            sectionViewHolder.txtMultiSelectItem.setText(multiSelectItem.getText());
+            sectionViewHolder.itemTextView().setText(multiSelectItem.getText());
         } else {
             SectionTitleViewHolder sectionViewHolder = (SectionTitleViewHolder) holder;
-            sectionViewHolder.txtMultiSelectHeader.setText(multiSelectItem.getText());
+            sectionViewHolder.itemHeaderView().setText(multiSelectItem.getText());
         }
     }
 
@@ -107,6 +107,10 @@ public class MultiSelectListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             view.setOnClickListener(this);
         }
 
+        public TextView itemTextView() {
+            return txtMultiSelectItem;
+        }
+
         @Override
         public void onClick(View view) {
             if (clickListener != null) {
@@ -121,6 +125,10 @@ public class MultiSelectListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         private SectionTitleViewHolder(View view) {
             super(view);
             txtMultiSelectHeader = view.findViewById(R.id.txtMultiSelectHeader);
+        }
+
+        public TextView itemHeaderView() {
+            return txtMultiSelectHeader;
         }
     }
 

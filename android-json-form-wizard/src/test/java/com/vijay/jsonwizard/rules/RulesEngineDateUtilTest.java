@@ -1,8 +1,14 @@
 package com.vijay.jsonwizard.rules;
 
 import com.vijay.jsonwizard.BaseTest;
+import com.vijay.jsonwizard.domain.Form;
+import com.vijay.jsonwizard.utils.Utils;
 
+import org.joda.time.Days;
 import org.joda.time.LocalDate;
+import org.joda.time.Months;
+import org.joda.time.Weeks;
+import org.joda.time.Years;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -64,5 +70,15 @@ public class RulesEngineDateUtilTest extends BaseTest {
         Assert.assertEquals("30-03-2020", rulesEngineDateUtil.subtractDuration("06-04-2020", "1w"));//should minus one week
         Assert.assertEquals("06-03-2020", rulesEngineDateUtil.subtractDuration("06-04-2020", "1m"));//should minus one month
         Assert.assertEquals("06-04-2019", rulesEngineDateUtil.subtractDuration("06-04-2020", "1y"));//should minus one yr
+    }
+
+    @Test
+    public void testFormatDate() {
+        String dateStringTest = "05-04-2020";
+        LocalDate date = new LocalDate(Utils.reverseDateString(Utils.getDateFormattedForCalculation(dateStringTest,  Form.getDatePickerDisplayFormat()), "-"));
+        Assert.assertEquals(Days.daysBetween(date, LocalDate.now()).getDays(), Integer.parseInt(rulesEngineDateUtil.formatDate(dateStringTest, "d")));
+        Assert.assertEquals(Weeks.weeksBetween(date, LocalDate.now()).getWeeks(), Integer.parseInt(rulesEngineDateUtil.formatDate(dateStringTest, "w")));
+        Assert.assertEquals(Months.monthsBetween(date, LocalDate.now()).getMonths(), Integer.parseInt(rulesEngineDateUtil.formatDate(dateStringTest, "m")));
+        Assert.assertEquals(Years.yearsBetween(date, LocalDate.now()).getYears(), Integer.parseInt(rulesEngineDateUtil.formatDate(dateStringTest, "y")));
     }
 }

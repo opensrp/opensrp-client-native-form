@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.Build;
+import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.View;
@@ -170,7 +171,8 @@ public class FingerPrintFactory implements FormWidgetFactory {
         return views;
     }
 
-    private void setViewTags(JSONObject jsonObject, String stepName, View view, boolean popup) throws JSONException {
+    @VisibleForTesting
+    protected void setViewTags(JSONObject jsonObject, String stepName, View view, boolean popup) throws JSONException {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);

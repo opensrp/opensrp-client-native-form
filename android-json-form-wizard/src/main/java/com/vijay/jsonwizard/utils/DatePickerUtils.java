@@ -48,23 +48,25 @@ public class DatePickerUtils {
         final NumberPicker spinnerDay = datePicker.findViewById(idDay);
         final LinearLayout layout = datePicker.findViewById(idLayout);
 
-        layout.removeAllViews();
-        for (int i = 0; i < SPINNER_COUNT; i++) {
-            switch (ymdOrder[i]) {
-                case 'y':
-                    layout.addView(spinnerYear);
-                    setImeOptions(spinnerYear, i);
-                    break;
-                case 'm':
-                    layout.addView(spinnerMonth);
-                    setImeOptions(spinnerMonth, i);
-                    break;
-                case 'd':
-                    layout.addView(spinnerDay);
-                    setImeOptions(spinnerDay, i);
-                    break;
-                default:
-                    throw new IllegalArgumentException("Invalid char[] ymdOrder");
+        if (layout != null) {
+            layout.removeAllViews();
+            for (int i = 0; i < SPINNER_COUNT; i++) {
+                switch (ymdOrder[i]) {
+                    case 'y':
+                        layout.addView(spinnerYear);
+                        setImeOptions(spinnerYear, i);
+                        break;
+                    case 'm':
+                        layout.addView(spinnerMonth);
+                        setImeOptions(spinnerMonth, i);
+                        break;
+                    case 'd':
+                        layout.addView(spinnerDay);
+                        setImeOptions(spinnerDay, i);
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Invalid char[] ymdOrder");
+                }
             }
         }
     }

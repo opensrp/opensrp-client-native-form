@@ -4,6 +4,7 @@
   "entity_id": "",
   "relational_id": "",
   "validate_on_submit": true,
+  "skip_blank_steps": true,
   "show_errors_on_submit": true,
   "metadata": {
     "start": {
@@ -57,6 +58,59 @@
     "title": "Test",
     "next": "step2",
     "fields": [
+      {
+        "key": "village",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "tree",
+        "tree": [
+          {
+            "key": "Kenya",
+            "level": "",
+            "name": "Kenya",
+            "nodes": [
+              {
+                "key": "Rift Valley",
+                "level": "",
+                "name": "Rift Valley",
+                "nodes": [
+                  {
+                    "key": "Nakuru",
+                    "level": "",
+                    "name": "Nakuru",
+                    "nodes": [
+                      {
+                        "key": "Narok HF",
+                        "level": "",
+                        "name": "Narok HF",
+                        "nodes": [
+                          {
+                            "key": "Iminuet",
+                            "level": "",
+                            "name": "Iminuet"
+                          },
+                          {
+                            "key": "Lemek",
+                            "level": "",
+                            "name": "Lemek"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "hint": "Village",
+        "v_required": {
+          "value": false,
+          "err": "Please enter the Woman's Village"
+        },
+        "default": "[\"Kenya\",\"Rift Valley\",\"Nakuru\",\"Narok HF\"]"
+      },
       {
         "key": "delivery_complications",
         "openmrs_entity_parent": "",
@@ -129,6 +183,12 @@
         ],
         "v_required": {
           "value": "false"
+        },
+        "relevance": {
+          "step1:last_name": {
+            "type": "string",
+            "ex": "equalTo(., \"Health facility\")"
+          }
         }
       },
       {
@@ -154,6 +214,12 @@
               "rules-file": "sample-calculation-rules.yml"
             }
           }
+        },
+        "relevance": {
+          "step1:last_name": {
+            "type": "string",
+            "ex": "equalTo(., \"Health facility\")"
+          }
         }
       },
       {
@@ -165,11 +231,10 @@
         "hidden": true,
         "edit_text_style": "bordered",
         "edit_type": "number",
-        "calculation": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "sample-calculation-rules.yml"
-            }
+        "relevance": {
+          "step1:last_name": {
+            "type": "string",
+            "ex": "equalTo(., \"Health facility\")"
           }
         }
       },
@@ -189,21 +254,9 @@
           "value": "[A-Za-z\\s\\.\\-]*",
           "err": "Please enter a valid name"
         },
-        "value": "Kuku"
-      },
-      {
-        "key": "test_stuff",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "hint": "Specify",
-        "v_regex": {
-          "value": "[A-Za-z\\\\s\\\\.\\\\-]*",
-          "err": "Please enter valid content"
-        },
+        "value": "Kuku",
         "relevance": {
-          "step1:last_name": {
+          "step1:first_name": {
             "type": "string",
             "ex": "equalTo(., \"Health facility\")"
           }
@@ -249,7 +302,6 @@
             "specify_widget": "check_box",
             "specify_info_color": "#8C8C8C",
             "content_form": "fetal_heartbeat_sub_form"
-
           }
         ],
         "v_required": {
@@ -621,20 +673,27 @@
     "next": "step5",
     "fields": [
       {
-        "key": "countdown_timer",
+        "key": "c_sections",
         "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "timer",
-        "type": "countdown_timer",
-        "label": "Read results in 10 seconds.",
-        "label_text_size": "8sp",
-        "label_text_color": "#535F67",
-        "countdown_time_unit": "seconds",
-        "countdown_time_value": "10",
-        "countdown_interval": "1",
-        "progressbar_background_color": "#e7b330",
-        "progressbar_color": "#e76130",
-        "progressbar_text_color": "#f9916b"
+        "openmrs_entity": "Number of live deliveries",
+        "openmrs_entity_id": "160601 ",
+        "type": "numbers_selector",
+        "number_of_selectors": "5",
+        "start_number": "0",
+        "max_value": "15",
+        "text_size": "16px",
+        "text_color": "#000000",
+        "selected_text_color": "#ffffff",
+        "v_required": {
+          "value": true
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sample-relevance-rules.yml"
+            }
+          }
+        }
       }
     ]
   },

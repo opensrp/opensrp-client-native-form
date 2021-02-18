@@ -1,5 +1,6 @@
 package com.vijay.jsonwizard.widgets;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.view.View;
 
@@ -8,11 +9,15 @@ import com.rey.material.widget.TextView;
 import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.GpsDialog;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
+import com.vijay.jsonwizard.utils.AppExecutors;
 import com.vijay.jsonwizard.utils.FormUtils;
 
+import org.apache.commons.lang3.StringUtils;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
@@ -21,8 +26,11 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.robolectric.RuntimeEnvironment;
 
 import java.util.List;
+
+import static org.mockito.Mockito.when;
 
 public class GpsFactoryTest extends BaseTest {
     private GpsFactory factory;
@@ -62,6 +70,8 @@ public class GpsFactoryTest extends BaseTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+        when(formFragment.getJsonApi()).thenReturn(context);
+        when(context.getAppExecutors()).thenReturn(new AppExecutors());
         factory = new GpsFactory();
     }
 
@@ -106,5 +116,67 @@ public class GpsFactoryTest extends BaseTest {
         List<View> viewList = factorySpy.getViewsFromJson("RandomStepName", context, formFragment, new JSONObject(gpsString), listener);
         Assert.assertNotNull(viewList);
         Assert.assertTrue(viewList.size() > 0);
+    }
+
+    @Test
+    public void testAttachLayoutShouldPopulateTextViewsCorrectlyWithLatitudeAndLongitude() throws JSONException {
+        GpsFactory factorySpy = Mockito.spy(factory);
+        String[] values = new String[]{"-1.2334", "35", "", ""};
+        Context context = RuntimeEnvironment.application;
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(JsonFormConstants.VALUE, StringUtils.join(values, " "));
+        factorySpy.attachLayout(context, jsonObject, recordButton,
+                latitudeTV, longitudeTV, altitudeTV, accuracyTV);
+
+        TextView[] views = new TextView[]{latitudeTV, longitudeTV, altitudeTV, accuracyTV};
+        int[] stringIds = new int[]{R.string.latitude, R.string.longitude, R.string.altitude, R.string.accuracy};
+        for (int i = 0; i < values.length; i++) {
+            Mockito.verify(views[i], Mockito.times(1))
+                    .setText(Mockito.eq(factorySpy.getText(context, values[i], stringIds[i])));
+        }
+
+        Mockito.verify(recordButton, Mockito.atLeastOnce())
+                .setTag(Mockito.eq(R.id.raw_value), Mockito.eq(jsonObject.optString(JsonFormConstants.VALUE).trim()));
+    }
+
+    @Test
+    public void testAttachLayoutShouldPopulateTextViewsCorrectlyWithAllElements() throws JSONException {
+        GpsFactory factorySpy = Mockito.spy(factory);
+        String[] values = new String[]{"-1.2334", "35", "0.0", "7.8"};
+        Context context = RuntimeEnvironment.application;
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(JsonFormConstants.VALUE, StringUtils.join(values, " "));
+        factorySpy.attachLayout(context, jsonObject, recordButton,
+                latitudeTV, longitudeTV, altitudeTV, accuracyTV);
+
+        TextView[] views = new TextView[]{latitudeTV, longitudeTV, altitudeTV, accuracyTV};
+        int[] stringIds = new int[]{R.string.latitude, R.string.longitude, R.string.altitude, R.string.accuracy};
+        for (int i = 0; i < values.length; i++) {
+            Mockito.verify(views[i], Mockito.times(1))
+                    .setText(Mockito.eq(factorySpy.getText(context, values[i], stringIds[i])));
+        }
+
+        Mockito.verify(recordButton, Mockito.atLeastOnce())
+                .setTag(Mockito.eq(R.id.raw_value), Mockito.eq(jsonObject.optString(JsonFormConstants.VALUE)));
+    }
+
+    @Test
+    public void testAttachLayoutShouldPopulateTextViewsEmptyString() {
+        GpsFactory factorySpy = Mockito.spy(factory);
+        String[] values = new String[]{"", "", "", ""};
+        Context context = RuntimeEnvironment.application;
+        JSONObject jsonObject = new JSONObject();
+        factorySpy.attachLayout(context, jsonObject, recordButton,
+                latitudeTV, longitudeTV, altitudeTV, accuracyTV);
+
+        TextView[] views = new TextView[]{latitudeTV, longitudeTV, altitudeTV, accuracyTV};
+        int[] stringIds = new int[]{R.string.latitude, R.string.longitude, R.string.altitude, R.string.accuracy};
+        for (int i = 0; i < values.length; i++) {
+            Mockito.verify(views[i], Mockito.times(1))
+                    .setText(Mockito.eq(factorySpy.getText(context, values[i], stringIds[i])));
+        }
+
+        Mockito.verify(recordButton, Mockito.atLeastOnce())
+                .setTag(Mockito.eq(R.id.raw_value), Mockito.eq(""));
     }
 }
