@@ -14,13 +14,17 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import timber.log.Timber;
 
+import static com.vijay.jsonwizard.constants.JsonFormConstants.DYNAMIC_LABEL_IMAGE_SRC;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.DYNAMIC_LABEL_TEXT;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.DYNAMIC_LABEL_TITLE;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.MLS.PROPERTIES_FILE_NAME;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP;
@@ -228,18 +232,67 @@ public class JsonFormMLSAssetGenerator {
                 parentElement.addProperty(fieldToReplace, placeholderStr);
             } else if (fieldValueToReplace instanceof JsonArray) {
 
-                JsonArray elements = fieldValueToReplace.getAsJsonArray();
-                for (int j = 0; j < elements.size(); j++) {
+                if (fieldToReplace.equals(JsonFormConstants.VALUES)) {
+                    JsonArray elements = fieldValueToReplace.getAsJsonArray();
+                    for (int j = 0; j < elements.size(); j++) {
 
-                    StringBuilder propertyNameArray = new StringBuilder(propertyName);
-                    propertyNameArray.append("[").append(j).append("]");
-                    String placeholderStr = "{{" + propertyNameArray.toString() + "}}";
-                    placeholdersToTranslationsMap.put(propertyNameArray.toString(), elements.get(j).getAsString());
-                    placeholderArray.add(placeholderStr);
-                    if (j == elements.size() - 1) {
-                        parentElement.add(fieldToReplace, placeholderArray);
-                        placeholderArray = new JsonArray();
+                        StringBuilder propertyNameArray = new StringBuilder(propertyName);
+                        propertyNameArray.append("[").append(j).append("]");
+                        String placeholderStr = "{{" + propertyNameArray.toString() + "}}";
+                        placeholdersToTranslationsMap.put(propertyNameArray.toString(), elements.get(j).getAsString());
+                        placeholderArray.add(placeholderStr);
+                        if (j == elements.size() - 1) {
+                            parentElement.add(fieldToReplace, placeholderArray);
+                            placeholderArray = new JsonArray();
+                        }
                     }
+                } else if (fieldToReplace.equals(JsonFormConstants.DYNAMIC_LABEL_INFO)) {
+
+                    JsonArray labelsArray = parentElement.get(JsonFormConstants.DYNAMIC_LABEL_INFO).getAsJsonArray();
+                    for (int j = 0; j < labelsArray.size(); j++) {
+                        JsonObject jsonObject = labelsArray.get(j).getAsJsonObject();
+
+                        StringBuilder propertyNameArray = new StringBuilder(propertyName);
+                        propertyNameArray.append("[").append(j).append("]");
+
+                        JsonObject placeHolderObject = new JsonObject();
+                        placeHolderObject.addProperty(DYNAMIC_LABEL_TITLE,
+                                "{{" + propertyNameArray.toString() + "." + DYNAMIC_LABEL_TITLE + "}}");
+
+                        placeHolderObject.addProperty(DYNAMIC_LABEL_TEXT,
+                                "{{" + propertyNameArray.toString() + "." + DYNAMIC_LABEL_TEXT + "}}");
+                        placeHolderObject.addProperty(DYNAMIC_LABEL_IMAGE_SRC,
+                                "{{" + propertyNameArray.toString() + "." + DYNAMIC_LABEL_IMAGE_SRC + "}}");
+
+                        placeholdersToTranslationsMap.put(propertyNameArray.toString() + "." + DYNAMIC_LABEL_TITLE, jsonObject.get(DYNAMIC_LABEL_TITLE).getAsString());
+                        placeholdersToTranslationsMap.put(propertyNameArray.toString() + "." + DYNAMIC_LABEL_TEXT, jsonObject.get(DYNAMIC_LABEL_TEXT).getAsString());
+                        placeholdersToTranslationsMap.put(propertyNameArray.toString() + "." + DYNAMIC_LABEL_IMAGE_SRC, jsonObject.get(DYNAMIC_LABEL_IMAGE_SRC).getAsString());
+                        placeholderArray.add(placeHolderObject);
+
+                        if (j == labelsArray.size() - 1) {
+                            parentElement.add(fieldToReplace, placeholderArray);
+                            placeholderArray = new JsonArray();
+                        }
+                    }
+                }
+            } else if (fieldValueToReplace == null && fieldToReplace.equals("ex")) {
+                Object[] keySet = parentElement.keySet().toArray();
+                if (parentElement.get(String.valueOf(keySet[0])).getAsJsonObject().has("type") &&
+                        parentElement.get(String.valueOf(keySet[0])).getAsJsonObject().get("type").getAsString().equals("string")
+                ) {
+                    String fieldValueToReplaceStr = "";
+
+                    String placeholderStr = "{{" + propertyName.toString() + "}}";
+                    String relevanceField = parentElement.get(String.valueOf(keySet[0])).getAsJsonObject().get(fieldToReplace).getAsString();
+                    Pattern p = Pattern.compile("\"([^\"]*)\"");
+                    Matcher m = p.matcher(relevanceField);
+                    while (m.find()) {
+                        fieldValueToReplaceStr = m.group(1);
+                    }
+
+                    placeholdersToTranslationsMap.put(propertyName.toString(), fieldValueToReplaceStr);
+                    parentElement.getAsJsonObject(String.valueOf(keySet[0])).
+                            addProperty(fieldToReplace, relevanceField.replaceAll(fieldValueToReplaceStr, placeholderStr));
                 }
             }
         }
