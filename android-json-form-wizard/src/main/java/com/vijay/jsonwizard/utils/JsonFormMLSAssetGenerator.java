@@ -17,8 +17,6 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import timber.log.Timber;
 
@@ -274,25 +272,6 @@ public class JsonFormMLSAssetGenerator {
                             placeholderArray = new JsonArray();
                         }
                     }
-                }
-            } else if (fieldValueToReplace == null && fieldToReplace.equals("ex")) {
-                Object[] keySet = parentElement.keySet().toArray();
-                if (parentElement.get(String.valueOf(keySet[0])).getAsJsonObject().has("type") &&
-                        parentElement.get(String.valueOf(keySet[0])).getAsJsonObject().get("type").getAsString().equals("string")
-                ) {
-                    String fieldValueToReplaceStr = "";
-
-                    String placeholderStr = "{{" + propertyName.toString() + "}}";
-                    String relevanceField = parentElement.get(String.valueOf(keySet[0])).getAsJsonObject().get(fieldToReplace).getAsString();
-                    Pattern p = Pattern.compile("\"([^\"]*)\"");
-                    Matcher m = p.matcher(relevanceField);
-                    while (m.find()) {
-                        fieldValueToReplaceStr = m.group(1);
-                    }
-
-                    placeholdersToTranslationsMap.put(propertyName.toString(), fieldValueToReplaceStr);
-                    parentElement.getAsJsonObject(String.valueOf(keySet[0])).
-                            addProperty(fieldToReplace, relevanceField.replaceAll(fieldValueToReplaceStr, placeholderStr));
                 }
             }
         }
