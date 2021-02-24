@@ -8,7 +8,7 @@ import org.json.JSONException;
 /**
  * Created by keyman on 04/12/2018.
  */
-public class JsonWizardFormActivity extends FormConfigurationJsonFormActivity {
+public class JsonWizardFormActivity extends JsonFormActivity {
 
     @Override
     public void initializeFormFragment() {
