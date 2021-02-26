@@ -135,7 +135,6 @@ public class JsonFormConstants {
     public static final String DISPLAY_BACK_BUTTON = "display_back_button";
     public static final String COUNT = "count";
     public static final String CALCULATION = "calculation";
-    public static final String DATE_FORMAT = "date_format";
     public static final String HIDDEN = "hidden";
     public static final String SECONDARY_VALUE = "secondary_value";
     public static final String CONTENT_FORM_LOCATION = "content_form_location";
