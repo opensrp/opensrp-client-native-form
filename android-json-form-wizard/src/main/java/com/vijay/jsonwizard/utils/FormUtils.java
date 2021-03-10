@@ -2039,10 +2039,6 @@ public class FormUtils {
     public BufferedReader getRulesFromRepository(@NonNull Context context, @NonNull ClientFormContract.Dao clientFormDao, @NonNull String fileName) {
         String locale = context.getResources().getConfiguration().locale.getLanguage();
 
-        // Strip anything before the '/'
-        if (StringUtils.isNotBlank(fileName) && fileName.contains("/")) {
-            fileName =  fileName.split("/")[1];
-        }
         //Check the current locale of the app to load the correct version of the form in the desired language
         String localeFormIdentity = fileName;
         if (!Locale.ENGLISH.getLanguage().equals(locale)) {
@@ -2050,6 +2046,14 @@ public class FormUtils {
         }
 
         ClientFormContract.Model clientForm = clientFormDao.getActiveClientFormByIdentifier(localeFormIdentity);
+        if (clientForm == null) {
+            // Strip anything before the '/'
+            if (StringUtils.isNotBlank(fileName) && fileName.contains("/")) {
+                localeFormIdentity =  localeFormIdentity.split("/")[1];
+            }
+            //retry with just the filename without the file path prefix
+            clientForm = clientFormDao.getActiveClientFormByIdentifier(localeFormIdentity);
+        }
         if (clientForm != null) {
             Timber.d("============%s form loaded from db============", localeFormIdentity);
             String originalJson = clientForm.getJson();
