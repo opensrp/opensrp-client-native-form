@@ -1664,7 +1664,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         if (rules == null) {
             try {
                 Yaml yaml = new Yaml();
-                BufferedReader inputStreamReader = getRules(getApplicationContext(),filename);
+                BufferedReader inputStreamReader = getRules(getApplicationContext(), getRulesEngineFactory().getRulesFolderPath() + filename);
                 Iterable<Object> ruleObjects = yaml.loadAll(inputStreamReader);
 
                 for (Object object : ruleObjects) {
