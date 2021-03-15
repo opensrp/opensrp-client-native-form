@@ -2102,7 +2102,7 @@ public class FormUtils {
         ClientFormContract.Model clientForm = clientFormDao.getActiveClientFormByIdentifier(localeFormIdentity);
         if (clientForm == null) {
             // Strip anything before the '/'
-            if (StringUtils.isNotBlank(fileName) && fileName.contains("/")) {
+            if (StringUtils.isNotBlank(fileName) && fileName.contains("/") && !fileName.endsWith("/")) {
                 localeFormIdentity =  localeFormIdentity.split("/")[1];
             }
             //retry with just the filename without the file path prefix
