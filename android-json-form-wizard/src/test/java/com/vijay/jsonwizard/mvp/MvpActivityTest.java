@@ -2,7 +2,6 @@ package com.vijay.jsonwizard.mvp;
 
 import com.vijay.jsonwizard.activities.BaseActivityTest;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
