@@ -394,7 +394,7 @@ public class FormUtilsTest extends BaseTest {
     }
 
     @Test
-    public void getRulesFromRepositoryShouldRetryRepositoryQueryingClientFormWhenFilenameHasFilePath() {
+    public void getRulesFromRepositoryShouldRetryRepositoryQueryingClientFormWhenFilenameWithFilePathDoesNotExist() {
         String rulesFileIdentifierWithFilePath = "rest/registration_calculation.yml";
         String rulesFileIdentifier = "registration_calculation.yml";
         Context context = Mockito.spy(RuntimeEnvironment.application);
