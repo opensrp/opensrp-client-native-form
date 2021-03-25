@@ -807,7 +807,7 @@ public class JsonFormFragmentPresenter extends
                 field.put(JsonFormConstants.READ_ONLY, false);
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
     }
 
