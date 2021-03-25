@@ -2104,9 +2104,10 @@ public class FormUtils {
             // Strip anything before the '/'
             if (StringUtils.isNotBlank(fileName) && fileName.contains("/") && !fileName.endsWith("/")) {
                 localeFormIdentity =  localeFormIdentity.split("/")[1];
+                //retry with just the filename without the file path prefix
+                clientForm = clientFormDao.getActiveClientFormByIdentifier(localeFormIdentity);
             }
-            //retry with just the filename without the file path prefix
-            clientForm = clientFormDao.getActiveClientFormByIdentifier(localeFormIdentity);
+
         }
         if (clientForm != null) {
             Timber.d("============%s form loaded from db============", localeFormIdentity);
