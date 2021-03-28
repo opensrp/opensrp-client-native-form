@@ -2100,6 +2100,13 @@ public class FormUtils {
         }
 
         ClientFormContract.Model clientForm = clientFormDao.getActiveClientFormByIdentifier(localeFormIdentity);
+        if (clientForm == null && StringUtils.isNotBlank(fileName) && fileName.contains("/") && !fileName.endsWith("/")) {
+            // Strip anything before the '/'
+            localeFormIdentity =  localeFormIdentity.split("/")[1];
+            //retry with just the filename without the file path prefix
+            clientForm = clientFormDao.getActiveClientFormByIdentifier(localeFormIdentity);
+
+        }
         if (clientForm != null) {
             Timber.d("============%s form loaded from db============", localeFormIdentity);
             String originalJson = clientForm.getJson();
