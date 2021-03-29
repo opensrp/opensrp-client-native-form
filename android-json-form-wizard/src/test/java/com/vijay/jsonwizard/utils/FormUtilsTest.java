@@ -15,8 +15,8 @@ import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.ExpansionPanelItemModel;
 import com.vijay.jsonwizard.domain.ExpansionPanelValuesModel;
 import com.vijay.jsonwizard.interfaces.OnFormFetchedCallback;
-import com.vijay.jsonwizard.views.CustomTextView;
 import com.vijay.jsonwizard.model.DynamicLabelInfo;
+import com.vijay.jsonwizard.views.CustomTextView;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jeasy.rules.api.Facts;
@@ -34,6 +34,7 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.client.utils.contract.ClientFormContract;
 
+import java.io.BufferedReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -389,6 +390,24 @@ public class FormUtilsTest extends BaseTest {
 
         Assert.assertNotNull(formUtils.getRulesFromRepository(context, clientFormRepository, rulesFileIdentifier));
 
+        Mockito.verify(clientFormRepository).getActiveClientFormByIdentifier(Mockito.eq(rulesFileIdentifier));
+    }
+
+    @Test
+    public void getRulesFromRepositoryShouldRetryRepositoryQueryingClientFormWhenFilenameWithFilePathDoesNotExist() {
+        String rulesFileIdentifierWithFilePath = "rest/registration_calculation.yml";
+        String rulesFileIdentifier = "registration_calculation.yml";
+        Context context = Mockito.spy(RuntimeEnvironment.application);
+        ClientFormContract.Model clientForm = new TestClientForm();
+
+        clientForm.setJson("");
+        ClientFormContract.Dao clientFormRepository = Mockito.mock(ClientFormContract.Dao.class);
+        Mockito.doReturn(null).when(clientFormRepository).getActiveClientFormByIdentifier(Mockito.eq(rulesFileIdentifierWithFilePath));
+        Mockito.doReturn(clientForm).when(clientFormRepository).getActiveClientFormByIdentifier(Mockito.eq(rulesFileIdentifier));
+
+        BufferedReader bufferedReader = formUtils.getRulesFromRepository(context, clientFormRepository, rulesFileIdentifierWithFilePath);
+        Assert.assertNotNull(bufferedReader);
+        Mockito.verify(clientFormRepository).getActiveClientFormByIdentifier(Mockito.eq(rulesFileIdentifierWithFilePath));
         Mockito.verify(clientFormRepository).getActiveClientFormByIdentifier(Mockito.eq(rulesFileIdentifier));
     }
 
