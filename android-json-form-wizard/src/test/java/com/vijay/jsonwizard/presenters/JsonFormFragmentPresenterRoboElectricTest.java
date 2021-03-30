@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatSpinner;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
@@ -32,6 +33,7 @@ import com.vijay.jsonwizard.utils.AppExecutors;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.views.CustomTextView;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
+import com.vijay.jsonwizard.widgets.NumberSelectorFactory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -676,5 +678,39 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         verify(jsonFormFragmentView, only())
                 .writeValue(eq(STEP1), anyString(), eq("1"), anyString(),
                         anyString(), anyString(), eq(false));
+    }
+
+    @Test
+    public void testOnMenuItemClickOnNumberSelectorMenuShouldWriteValue() {
+        ReflectionHelpers.setStaticField(NumberSelectorFactory.class, "selectedTextView", mock(CustomTextView.class));
+        ReflectionHelpers.setField(presenter, "mStepName", STEP1);
+        Intent intent = new Intent();
+        MenuItem menuItem = mock(MenuItem.class);
+        doReturn("Test").when(menuItem).getTitle();
+        doReturn(intent).when(menuItem).getIntent();
+        presenter.onMenuItemClick(menuItem);
+        verify(formFragment).writeValue(eq(STEP1), nullable(String.class), eq("Test"), nullable(String.class), nullable(String.class), nullable(String.class), eq(false));
+    }
+
+    @Test
+    public void testOnSpinnerEditBtnClickShouldResetWidgetReadOnly() throws JSONException {
+        String formWithReadOnlySpinner = "{\"count\":\"1\",\"encounter_type\":\"Test\",\"entity_id\":\"\",\"relational_id\":\"\",\"validate_on_submit\":true,\"show_errors_on_submit\":true,\"metadata\":{\"start\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"start\",\"openmrs_entity_id\":\"163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"end\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"end\",\"openmrs_entity_id\":\"163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"today\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"encounter\",\"openmrs_entity_id\":\"encounter_date\"},\"deviceid\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"deviceid\",\"openmrs_entity_id\":\"163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"subscriberid\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"subscriberid\",\"openmrs_entity_id\":\"163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"simserial\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"simserial\",\"openmrs_entity_id\":\"163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"phonenumber\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"phonenumber\",\"openmrs_entity_id\":\"163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"encounter_location\":\"\",\"look_up\":{\"entity_id\":\"\",\"value\":\"\"}},\"step1\":{\"title\":\"Basic Form One\",\"fields\":[{\"key\":\"user_spinner\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"type\":\"spinner\",\"hint\":\"User Spinners\",\"values\":[\"User Option One\",\"User Option Two\"],\"keys\":[\"user_option_one\",\"user_option_two\"],\"v_required\":{\"value\":\"true\",\"err\":\"Please enter the sex\"},\"read_only\":true,\"openmrs_choice_ids\":{\"user_one\":\"1107AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"user_two\":\"1713AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}}]}}";
+        JSONObject jsonForm = new JSONObject(formWithReadOnlySpinner);
+        when(jsonFormActivity.getmJSONObject()).thenReturn(jsonForm);
+
+        View view = spy(new View(RuntimeEnvironment.application));
+        view.setTag(R.id.key, "user_spinner");
+        view.setId(R.id.spinner_edit_button);
+        view.setTag(R.id.type, JsonFormConstants.SPINNER);
+
+        JSONObject expectedField = FormUtils.getFieldFromForm(jsonForm, (String) view.getTag(R.id.key));
+        assertTrue(expectedField.optBoolean(JsonFormConstants.READ_ONLY));
+
+        View editableView = spy(new View(RuntimeEnvironment.application));
+        view.setTag(R.id.editable_view, editableView);
+        presenter.onClick(view);
+
+        expectedField = FormUtils.getFieldFromForm(jsonForm, (String) view.getTag(R.id.key));
+        assertFalse(expectedField.optBoolean(JsonFormConstants.READ_ONLY));
     }
 }
