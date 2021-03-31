@@ -145,7 +145,9 @@ public class NativeFormLangUtils {
 
     public static String getEscapedValue(String value) {
         return value.replace("\n", "\\n") // ensure \n is preserved in a String
-                .replace("\"", "\\\""); // ensure "" is preserved in a String
+                .replace("\"", "\\\"") // ensure "" is preserved in a String
+                .replace("â\u0080\u0099", "’")
+                .replace("â\u0097\u008F", "●");
     }
 
     /**
@@ -180,7 +182,7 @@ public class NativeFormLangUtils {
         if (!Locale.ENGLISH.getLanguage().equals(locale)) {
             identifier = identifier + "_" + locale;
         }
-         identifier = identifier + JsonFormConstants.PROPERTIES_FILE_EXTENSION;
+        identifier = identifier + JsonFormConstants.PROPERTIES_FILE_EXTENSION;
         return ResourceBundle.getBundle(DBResourceBundle.class.getCanonicalName(), new DBResourceBundleControl(identifier));
     }
 }
