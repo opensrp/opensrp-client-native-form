@@ -1,6 +1,5 @@
 package com.vijay.jsonwizard.widgets;
 
-import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
@@ -24,6 +23,7 @@ import com.vijay.jsonwizard.task.AttachRepeatingGroupTask;
 import com.vijay.jsonwizard.utils.AppExecutors;
 import com.vijay.jsonwizard.utils.FormUtils;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,9 +42,6 @@ import java.util.Map;
 import java.util.Set;
 
 import static android.os.Looper.getMainLooper;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.FIELDS;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.STEPNAME;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP_TITLE;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -63,6 +60,8 @@ public class RepeatingGroupFactoryTest extends FactoryTest {
 
     @Mock
     private JsonFormFragment jsonFormFragment;
+
+    private final String REPEATING_GROUP_FORM = "{\"count\":\"1\",\"encounter_type\":\"Test\",\"entity_id\":\"\",\"relational_id\":\"\",\"validate_on_submit\":true,\"show_errors_on_submit\":true,\"metadata\":{\"start\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"start\",\"openmrs_entity_id\":\"163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"end\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"end\",\"openmrs_entity_id\":\"163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"today\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"encounter\",\"openmrs_entity_id\":\"encounter_date\"},\"deviceid\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"deviceid\",\"openmrs_entity_id\":\"163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"subscriberid\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"subscriberid\",\"openmrs_entity_id\":\"163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"simserial\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"simserial\",\"openmrs_entity_id\":\"163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"phonenumber\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"phonenumber\",\"openmrs_entity_id\":\"163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"encounter_location\":\"\",\"look_up\":{\"entity_id\":\"\",\"value\":\"\"}},\"step1\":{\"title\":\"Basic Form One\",\"fields\":[{\"key\":\"dips\",\"type\":\"repeating_group\",\"reference_edit_text\":\"step1:larval_count\",\"reference_edit_text_hint\":\"# of dips\",\"repeating_group_label\":\"dip\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"dips_count\":\"2\",\"v_required\":{\"value\":true,\"err\":\"Please specify the # of dips\"},\"value\":[{\"key\":\"larvae_total\",\"type\":\"edit_text\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"hint\":\"# of larvae collected\",\"v_numeric_integer\":{\"value\":\"true\",\"err\":\"Must be a rounded number\"}}]}]}}";
 
     @Override
     @Before
@@ -236,95 +235,107 @@ public class RepeatingGroupFactoryTest extends FactoryTest {
 
     @Test
     public void testAddOnDoneActionShouldCreateRepeatingGroups() throws InterruptedException, JSONException {
-        String strFormJsonObj = "{\"count\":\"1\",\"encounter_type\":\"Test\",\"entity_id\":\"\",\"relational_id\":\"\",\"validate_on_submit\":true,\"show_errors_on_submit\":true,\"metadata\":{\"start\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"start\",\"openmrs_entity_id\":\"163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"end\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"end\",\"openmrs_entity_id\":\"163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"today\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"encounter\",\"openmrs_entity_id\":\"encounter_date\"},\"deviceid\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"deviceid\",\"openmrs_entity_id\":\"163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"subscriberid\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"subscriberid\",\"openmrs_entity_id\":\"163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"simserial\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"simserial\",\"openmrs_entity_id\":\"163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"phonenumber\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"phonenumber\",\"openmrs_entity_id\":\"163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"encounter_location\":\"\",\"look_up\":{\"entity_id\":\"\",\"value\":\"\"}},\"step1\":{\"title\":\"Basic Form One\",\"fields\":[{\"key\":\"dips\",\"type\":\"repeating_group\",\"reference_edit_text\":\"step1:larval_count\",\"reference_edit_text_hint\":\"# of dips\",\"repeating_group_label\":\"dip\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"dips_count\":\"2\",\"v_required\":{\"value\":true,\"err\":\"Please specify the # of dips\"},\"value\":[{\"key\":\"larvae_total\",\"type\":\"edit_text\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"hint\":\"# of larvae collected\",\"v_numeric_integer\":{\"value\":\"true\",\"err\":\"Must be a rounded number\"}}]}]}}";
-        JSONObject jsonFormObj = new JSONObject(strFormJsonObj);
+        JSONObject jsonFormObj = new JSONObject(REPEATING_GROUP_FORM);
         JSONObject jsonField = FormUtils.getFieldFromForm(jsonFormObj, "dips");
-        JsonFormFragmentPresenter mockJsonFormFragmentPresenter = mock(JsonFormFragmentPresenter.class);
-        JsonFormInteractor jsonFormInteractor = new JsonFormInteractor();
-        String number = "2";
-        Application runtimeApplication = RuntimeEnvironment.application;
-        doReturn(jsonFormActivity).when(jsonFormFragment).getContext();
-        doReturn(jsonFormObj).when(jsonFormActivity).getmJSONObject();
-        doReturn(jsonFormActivity).when(jsonFormFragment).getJsonApi();
-        doReturn(mockJsonFormFragmentPresenter).when(jsonFormFragment).getPresenter();
-        doReturn(jsonFormInteractor).when(mockJsonFormFragmentPresenter).getInteractor();
-
-        LinearLayout rootLayout = new LinearLayout(runtimeApplication);
-        rootLayout.setId(ViewUtil.generateViewId());
-        LinearLayout linearLayout = new LinearLayout(runtimeApplication);
-        linearLayout.setId(ViewUtil.generateViewId());
-        TextView textView = new MaterialEditText(runtimeApplication);
-        textView.setText(number);
-        textView.setTag(R.id.repeating_group_item_count, Integer.parseInt(number));
-        textView.setTag(R.id.repeating_group_label, "sample");
-
-        linearLayout.addView(textView);
-        rootLayout.addView(linearLayout);
 
         Assert.assertEquals(1, FormUtils.getMultiStepFormFields(jsonFormObj).length());
 
-        Map<Integer, String> repeatingGroupLayouts = new HashMap<>();
-        repeatingGroupLayouts.put(rootLayout.getId(), jsonField.optJSONArray(JsonFormConstants.VALUE).toString());
+        String count = "2";
+        LinearLayout linearLayout = prepareLinearLayout();
+        TextView textView = prepareRepeatingGrpTextView(count);
+        linearLayout.addView(textView);
 
-        ImageButton imageButton = new ImageButton(runtimeApplication);
-        WidgetArgs widgetArgs = new WidgetArgs().withContext(jsonFormActivity)
-                .withFormFragment(jsonFormFragment)
-                .withPopup(false)
-                .withStepName(JsonFormConstants.STEP1)
-                .withJsonObject(jsonField);
+        LinearLayout rootLayout = prepareLinearLayout();
+        rootLayout.addView(linearLayout);
 
-        ReflectionHelpers.setField(factory, "repeatingGroupLayouts", repeatingGroupLayouts);
+        createRepeatingGroup(jsonFormObj, jsonField, rootLayout, textView);
 
-        factory.addOnDoneAction(textView, imageButton, widgetArgs);
+        backgroundThreadHandling();
 
-        Thread.sleep(TIMEOUT);
-        ShadowLooper.runUiThreadTasks();
-
-        Assert.assertEquals(1 + Integer.parseInt(number), FormUtils.getMultiStepFormFields(jsonFormObj).length());
+        Assert.assertEquals(1 + Integer.parseInt(count), FormUtils.getMultiStepFormFields(jsonFormObj).length());
     }
 
     @Test
     public void testAddOnDoneActionShouldUpdateRepeatingGroups() throws InterruptedException, JSONException {
-        String strFormJsonObj = "{\"count\":\"1\",\"encounter_type\":\"Test\",\"entity_id\":\"\",\"relational_id\":\"\",\"validate_on_submit\":true,\"show_errors_on_submit\":true,\"metadata\":{\"start\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"start\",\"openmrs_entity_id\":\"163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"end\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"end\",\"openmrs_entity_id\":\"163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"today\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"encounter\",\"openmrs_entity_id\":\"encounter_date\"},\"deviceid\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"deviceid\",\"openmrs_entity_id\":\"163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"subscriberid\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"subscriberid\",\"openmrs_entity_id\":\"163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"simserial\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"simserial\",\"openmrs_entity_id\":\"163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"phonenumber\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"phonenumber\",\"openmrs_entity_id\":\"163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"encounter_location\":\"\",\"look_up\":{\"entity_id\":\"\",\"value\":\"\"}},\"step1\":{\"title\":\"Basic Form One\",\"fields\":[{\"key\":\"dips\",\"type\":\"repeating_group\",\"reference_edit_text\":\"step1:larval_count\",\"reference_edit_text_hint\":\"# of dips\",\"repeating_group_label\":\"dip\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"dips_count\":\"2\",\"v_required\":{\"value\":true,\"err\":\"Please specify the # of dips\"},\"value\":[{\"key\":\"larvae_total\",\"type\":\"edit_text\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"hint\":\"# of larvae collected\",\"v_numeric_integer\":{\"value\":\"true\",\"err\":\"Must be a rounded number\"}}]}]}}";
-        JSONObject jsonFormObj = new JSONObject(strFormJsonObj);
-        JSONObject jsonField = FormUtils.getFieldFromForm(jsonFormObj, "dips");
-        JsonFormFragmentPresenter mockJsonFormFragmentPresenter = mock(JsonFormFragmentPresenter.class);
-        JsonFormInteractor jsonFormInteractor = new JsonFormInteractor();
-        String number = "2";
 
-        JSONObject stepDetails = new JSONObject();
-        stepDetails.put(STEP_TITLE, "Test Title");
-        stepDetails.put(FIELDS, FormUtils.getMultiStepFormFields(jsonFormObj));
+        JSONObject jsonFormObj = new JSONObject(REPEATING_GROUP_FORM);
+        JSONObject jsonField = FormUtils.getFieldFromForm(jsonFormObj, "dips");
+
+        JSONObject stepDetails = prepareStepDetails(jsonFormObj);
         Bundle bundle = new Bundle();
-        bundle.putString(STEPNAME, JsonFormConstants.STEP1);
+        bundle.putString(JsonFormConstants.STEPNAME, JsonFormConstants.STEP1);
         doReturn(bundle).when(jsonFormFragment).getArguments();
         doReturn(stepDetails).when(jsonFormFragment).getStep(JsonFormConstants.STEP1);
 
-        Application runtimeApplication = RuntimeEnvironment.application;
+        String initialCount = "2";
+        Assert.assertEquals(1, FormUtils.getMultiStepFormFields(jsonFormObj).length());
+
+        LinearLayout linearLayout = prepareLinearLayout();
+
+        TextView textView = prepareRepeatingGrpTextView(initialCount);
+        linearLayout.addView(textView);
+
+        LinearLayout rootLayout = prepareLinearLayout();
+        rootLayout.addView(linearLayout);
+
+        createRepeatingGroup(jsonFormObj, jsonField, rootLayout, textView);
+
+        backgroundThreadHandling();
+
+        //invoke again the same method to remove excess methods
+        String newCount = "1";
+        Assert.assertEquals(3, FormUtils.getMultiStepFormFields(jsonFormObj).length());
+        textView.setText(newCount);
+        createRepeatingGroup(jsonFormObj, jsonField, rootLayout, textView);
+
+        backgroundThreadHandling();
+
+        Assert.assertEquals(1 + Integer.parseInt(newCount), FormUtils.getMultiStepFormFields(jsonFormObj).length());
+    }
+
+    @NotNull
+    private JSONObject prepareStepDetails(JSONObject jsonFormObj) throws JSONException {
+        JSONObject stepDetails = new JSONObject();
+        stepDetails.put(JsonFormConstants.STEP_TITLE, "Test Title");
+        stepDetails.put(JsonFormConstants.FIELDS, FormUtils.getMultiStepFormFields(jsonFormObj));
+        return stepDetails;
+    }
+
+    @NotNull
+    private TextView prepareRepeatingGrpTextView(String count) {
+        TextView textView = new MaterialEditText(RuntimeEnvironment.application);
+        textView.setText(count);
+        textView.setTag(R.id.repeating_group_item_count, Integer.parseInt(count));
+        textView.setTag(R.id.repeating_group_label, "sample");
+        return textView;
+    }
+
+    private void backgroundThreadHandling() throws InterruptedException {
+        Thread.sleep(TIMEOUT);
+        ShadowLooper.runUiThreadTasks();
+    }
+
+    @NotNull
+    private LinearLayout prepareLinearLayout() {
+        LinearLayout linearLayout = new LinearLayout(RuntimeEnvironment.application);
+        linearLayout.setId(ViewUtil.generateViewId());
+        return linearLayout;
+    }
+
+    private void createRepeatingGroup(JSONObject jsonFormObject, JSONObject jsonField, LinearLayout rootLayout, TextView textView) {
+        JsonFormInteractor jsonFormInteractor = new JsonFormInteractor();
+        JsonFormFragmentPresenter mockJsonFormFragmentPresenter = mock(JsonFormFragmentPresenter.class);
         doReturn(jsonFormActivity).when(jsonFormFragment).getContext();
-        doReturn(jsonFormObj).when(jsonFormActivity).getmJSONObject();
+        doReturn(jsonFormObject).when(jsonFormActivity).getmJSONObject();
         doReturn(jsonFormActivity).when(jsonFormFragment).getJsonApi();
         doReturn(mockJsonFormFragmentPresenter).when(jsonFormFragment).getPresenter();
         doReturn(jsonFormInteractor).when(mockJsonFormFragmentPresenter).getInteractor();
 
-        LinearLayout rootLayout = new LinearLayout(runtimeApplication);
-        rootLayout.setId(ViewUtil.generateViewId());
-        LinearLayout linearLayout = new LinearLayout(runtimeApplication);
-        linearLayout.setId(ViewUtil.generateViewId());
-        TextView textView = new MaterialEditText(runtimeApplication);
-        textView.setText(number);
-        textView.setTag(R.id.repeating_group_item_count, Integer.parseInt(number));
-        textView.setTag(R.id.repeating_group_label, "sample");
-
-        linearLayout.addView(textView);
-        rootLayout.addView(linearLayout);
-
-        Assert.assertEquals(1, FormUtils.getMultiStepFormFields(jsonFormObj).length());
 
         Map<Integer, String> repeatingGroupLayouts = new HashMap<>();
         repeatingGroupLayouts.put(rootLayout.getId(), jsonField.optJSONArray(JsonFormConstants.VALUE).toString());
 
-        ImageButton imageButton = new ImageButton(runtimeApplication);
+        ImageButton imageButton = new ImageButton(RuntimeEnvironment.application);
         WidgetArgs widgetArgs = new WidgetArgs().withContext(jsonFormActivity)
                 .withFormFragment(jsonFormFragment)
                 .withPopup(false)
@@ -334,16 +345,6 @@ public class RepeatingGroupFactoryTest extends FactoryTest {
         ReflectionHelpers.setField(factory, "repeatingGroupLayouts", repeatingGroupLayouts);
 
         factory.addOnDoneAction(textView, imageButton, widgetArgs);
-
-        Thread.sleep(TIMEOUT);
-        ShadowLooper.runUiThreadTasks();
-
-        textView.setText("1");
-        factory.addOnDoneAction(textView, imageButton, widgetArgs);
-        Thread.sleep(TIMEOUT);
-        ShadowLooper.runUiThreadTasks();
-
-        Assert.assertEquals(1 + Integer.parseInt(textView.getText().toString()), FormUtils.getMultiStepFormFields(jsonFormObj).length());
     }
 
     private List<View> invokeGetViewsFromJson() throws Exception {
