@@ -228,6 +228,10 @@ public class SpinnerFactory extends BaseFactory {
     public Set<String> getCustomTranslatableWidgetFields() {
         Set<String> customTranslatableWidgetFields = new HashSet<>();
         customTranslatableWidgetFields.add(JsonFormConstants.OPTIONS_FIELD_NAME + "." + JsonFormConstants.TEXT);
+        customTranslatableWidgetFields.add(JsonFormConstants.VALUES);
+        customTranslatableWidgetFields.add(JsonFormConstants.LABEL_INFO_TITLE);
+        customTranslatableWidgetFields.add(JsonFormConstants.LABEL_INFO_TEXT);
+        customTranslatableWidgetFields.add(JsonFormConstants.DYNAMIC_LABEL_INFO);
         return customTranslatableWidgetFields;
     }
 }
