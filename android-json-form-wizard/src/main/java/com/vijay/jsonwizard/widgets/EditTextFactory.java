@@ -159,6 +159,7 @@ public class EditTextFactory implements FormWidgetFactory {
         addRequiredValidator(jsonObject, editText);
         addLengthValidator(jsonObject, editText);
         addRegexValidator(jsonObject, editText);
+        addArrayValidator(jsonObject, editText);
         addEmailValidator(jsonObject, editText);
         addUrlValidator(jsonObject, editText);
         addNumericValidator(jsonObject, editText);
@@ -239,6 +240,16 @@ public class EditTextFactory implements FormWidgetFactory {
             String regexValue = regexObject.optString(JsonFormConstants.VALUE);
             if (!TextUtils.isEmpty(regexValue)) {
                 editText.addValidator(new RegexpValidator(regexObject.getString(JsonFormConstants.ERR), regexValue));
+            }
+        }
+    }
+
+    private void addArrayValidator(JSONObject jsonObject, MaterialEditText editText) throws JSONException {
+        JSONObject arrayObject = jsonObject.optJSONObject(JsonFormConstants.V_ARRAY);
+        if (arrayObject != null) {
+            String regexValue = arrayObject.optString(JsonFormConstants.VALUE);
+            if (!TextUtils.isEmpty(regexValue)) {
+                editText.addValidator(new RegexpValidator(arrayObject.getString(JsonFormConstants.ERR), regexValue));
             }
         }
     }

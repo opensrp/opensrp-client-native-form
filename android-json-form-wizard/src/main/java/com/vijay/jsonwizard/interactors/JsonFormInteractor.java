@@ -108,6 +108,7 @@ public class JsonFormInteractor {
         defaultTranslatableWidgetFields.add(JsonFormConstants.V_REQUIRED + "." + JsonFormConstants.ERR);
         defaultTranslatableWidgetFields.add(JsonFormConstants.CONSTRAINTS + "." + JsonFormConstants.ERR);
         defaultTranslatableWidgetFields.add(JsonFormConstants.V_REGEX + "." + JsonFormConstants.ERR);
+        defaultTranslatableWidgetFields.add(JsonFormConstants.V_ARRAY + "." + JsonFormConstants.ERR);
         defaultTranslatableWidgetFields.add(JsonFormConstants.V_NUMERIC + "." + JsonFormConstants.ERR);
         defaultTranslatableWidgetFields.add(JsonFormConstants.V_NUMERIC_INTEGER + "." + JsonFormConstants.ERR);
         defaultTranslatableWidgetFields.add(JsonFormConstants.V_MIN + "." + JsonFormConstants.ERR);

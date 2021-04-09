@@ -43,6 +43,7 @@ import com.shashank.sony.fancydialoglib.Animation;
 import com.shashank.sony.fancydialoglib.FancyAlertDialog;
 import com.shashank.sony.fancydialoglib.Icon;
 import com.vijay.jsonwizard.R;
+import com.vijay.jsonwizard.comparisons.ArrayComparison;
 import com.vijay.jsonwizard.comparisons.Comparison;
 import com.vijay.jsonwizard.comparisons.EqualToComparison;
 import com.vijay.jsonwizard.comparisons.GreaterThanComparison;
@@ -1452,6 +1453,10 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             RegexComparison regexComparison = new RegexComparison();
             functionRegex += "|" + regexComparison.getFunctionName();
             comparisons.put(regexComparison.getFunctionName(), regexComparison);
+
+            ArrayComparison arrayComparison = new ArrayComparison();
+            functionRegex += "|" + arrayComparison.getFunctionName();
+            comparisons.put(arrayComparison.getFunctionName(), arrayComparison);
         }
     }
 
