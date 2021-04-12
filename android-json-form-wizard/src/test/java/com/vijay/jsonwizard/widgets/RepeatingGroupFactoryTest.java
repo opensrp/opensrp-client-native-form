@@ -1,6 +1,7 @@
 package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
@@ -9,16 +10,20 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
+import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.WidgetArgs;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
+import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.presenters.JsonFormFragmentPresenter;
 import com.vijay.jsonwizard.task.AttachRepeatingGroupTask;
 import com.vijay.jsonwizard.utils.AppExecutors;
+import com.vijay.jsonwizard.utils.FormUtils;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,11 +31,14 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.LooperMode;
+import org.robolectric.shadows.ShadowLooper;
 import org.robolectric.util.ReflectionHelpers;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static android.os.Looper.getMainLooper;
@@ -52,6 +60,8 @@ public class RepeatingGroupFactoryTest extends FactoryTest {
 
     @Mock
     private JsonFormFragment jsonFormFragment;
+
+    private final String REPEATING_GROUP_FORM = "{\"count\":\"1\",\"encounter_type\":\"Test\",\"entity_id\":\"\",\"relational_id\":\"\",\"validate_on_submit\":true,\"show_errors_on_submit\":true,\"metadata\":{\"start\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"start\",\"openmrs_entity_id\":\"163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"end\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"end\",\"openmrs_entity_id\":\"163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"today\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"encounter\",\"openmrs_entity_id\":\"encounter_date\"},\"deviceid\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"deviceid\",\"openmrs_entity_id\":\"163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"subscriberid\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"subscriberid\",\"openmrs_entity_id\":\"163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"simserial\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"simserial\",\"openmrs_entity_id\":\"163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"phonenumber\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"phonenumber\",\"openmrs_entity_id\":\"163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"encounter_location\":\"\",\"look_up\":{\"entity_id\":\"\",\"value\":\"\"}},\"step1\":{\"title\":\"Basic Form One\",\"fields\":[{\"key\":\"dips\",\"type\":\"repeating_group\",\"reference_edit_text\":\"step1:larval_count\",\"reference_edit_text_hint\":\"# of dips\",\"repeating_group_label\":\"dip\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"dips_count\":\"2\",\"v_required\":{\"value\":true,\"err\":\"Please specify the # of dips\"},\"value\":[{\"key\":\"larvae_total\",\"type\":\"edit_text\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"hint\":\"# of larvae collected\",\"v_numeric_integer\":{\"value\":\"true\",\"err\":\"Must be a rounded number\"}}]}]}}";
 
     @Override
     @Before
@@ -221,6 +231,120 @@ public class RepeatingGroupFactoryTest extends FactoryTest {
 
         JSONObject repeatingGroupCountObj = stepJsonObject.getJSONArray(JsonFormConstants.FIELDS).getJSONObject(0);
         Assert.assertEquals("0", repeatingGroupCountObj.getString(JsonFormConstants.VALUE));
+    }
+
+    @Test
+    public void testAddOnDoneActionShouldCreateRepeatingGroups() throws InterruptedException, JSONException {
+        JSONObject jsonFormObj = new JSONObject(REPEATING_GROUP_FORM);
+        JSONObject jsonField = FormUtils.getFieldFromForm(jsonFormObj, "dips");
+
+        Assert.assertEquals(1, FormUtils.getMultiStepFormFields(jsonFormObj).length());
+
+        String count = "2";
+        LinearLayout linearLayout = prepareLinearLayout();
+        TextView textView = prepareRepeatingGrpTextView(count);
+        linearLayout.addView(textView);
+
+        LinearLayout rootLayout = prepareLinearLayout();
+        rootLayout.addView(linearLayout);
+
+        createRepeatingGroup(jsonFormObj, jsonField, rootLayout, textView);
+
+        backgroundThreadHandling();
+
+        Assert.assertEquals(1 + Integer.parseInt(count), FormUtils.getMultiStepFormFields(jsonFormObj).length());
+    }
+
+    @Test
+    public void testAddOnDoneActionShouldUpdateRepeatingGroups() throws InterruptedException, JSONException {
+
+        JSONObject jsonFormObj = new JSONObject(REPEATING_GROUP_FORM);
+        JSONObject jsonField = FormUtils.getFieldFromForm(jsonFormObj, "dips");
+
+        JSONObject stepDetails = prepareStepDetails(jsonFormObj);
+        Bundle bundle = new Bundle();
+        bundle.putString(JsonFormConstants.STEPNAME, JsonFormConstants.STEP1);
+        doReturn(bundle).when(jsonFormFragment).getArguments();
+        doReturn(stepDetails).when(jsonFormFragment).getStep(JsonFormConstants.STEP1);
+
+        String initialCount = "2";
+        Assert.assertEquals(1, FormUtils.getMultiStepFormFields(jsonFormObj).length());
+
+        LinearLayout linearLayout = prepareLinearLayout();
+
+        TextView textView = prepareRepeatingGrpTextView(initialCount);
+        linearLayout.addView(textView);
+
+        LinearLayout rootLayout = prepareLinearLayout();
+        rootLayout.addView(linearLayout);
+
+        createRepeatingGroup(jsonFormObj, jsonField, rootLayout, textView);
+
+        backgroundThreadHandling();
+
+        //invoke again the same method to remove excess methods
+        String newCount = "1";
+        Assert.assertEquals(3, FormUtils.getMultiStepFormFields(jsonFormObj).length());
+        textView.setText(newCount);
+        createRepeatingGroup(jsonFormObj, jsonField, rootLayout, textView);
+
+        backgroundThreadHandling();
+
+        Assert.assertEquals(1 + Integer.parseInt(newCount), FormUtils.getMultiStepFormFields(jsonFormObj).length());
+    }
+
+    @NotNull
+    private JSONObject prepareStepDetails(JSONObject jsonFormObj) throws JSONException {
+        JSONObject stepDetails = new JSONObject();
+        stepDetails.put(JsonFormConstants.STEP_TITLE, "Test Title");
+        stepDetails.put(JsonFormConstants.FIELDS, FormUtils.getMultiStepFormFields(jsonFormObj));
+        return stepDetails;
+    }
+
+    @NotNull
+    private TextView prepareRepeatingGrpTextView(String count) {
+        TextView textView = new MaterialEditText(RuntimeEnvironment.application);
+        textView.setText(count);
+        textView.setTag(R.id.repeating_group_item_count, Integer.parseInt(count));
+        textView.setTag(R.id.repeating_group_label, "sample");
+        return textView;
+    }
+
+    private void backgroundThreadHandling() throws InterruptedException {
+        Thread.sleep(TIMEOUT);
+        ShadowLooper.runUiThreadTasks();
+    }
+
+    @NotNull
+    private LinearLayout prepareLinearLayout() {
+        LinearLayout linearLayout = new LinearLayout(RuntimeEnvironment.application);
+        linearLayout.setId(ViewUtil.generateViewId());
+        return linearLayout;
+    }
+
+    private void createRepeatingGroup(JSONObject jsonFormObject, JSONObject jsonField, LinearLayout rootLayout, TextView textView) {
+        JsonFormInteractor jsonFormInteractor = new JsonFormInteractor();
+        JsonFormFragmentPresenter mockJsonFormFragmentPresenter = mock(JsonFormFragmentPresenter.class);
+        doReturn(jsonFormActivity).when(jsonFormFragment).getContext();
+        doReturn(jsonFormObject).when(jsonFormActivity).getmJSONObject();
+        doReturn(jsonFormActivity).when(jsonFormFragment).getJsonApi();
+        doReturn(mockJsonFormFragmentPresenter).when(jsonFormFragment).getPresenter();
+        doReturn(jsonFormInteractor).when(mockJsonFormFragmentPresenter).getInteractor();
+
+
+        Map<Integer, String> repeatingGroupLayouts = new HashMap<>();
+        repeatingGroupLayouts.put(rootLayout.getId(), jsonField.optJSONArray(JsonFormConstants.VALUE).toString());
+
+        ImageButton imageButton = new ImageButton(RuntimeEnvironment.application);
+        WidgetArgs widgetArgs = new WidgetArgs().withContext(jsonFormActivity)
+                .withFormFragment(jsonFormFragment)
+                .withPopup(false)
+                .withStepName(JsonFormConstants.STEP1)
+                .withJsonObject(jsonField);
+
+        ReflectionHelpers.setField(factory, "repeatingGroupLayouts", repeatingGroupLayouts);
+
+        factory.addOnDoneAction(textView, imageButton, widgetArgs);
     }
 
     private List<View> invokeGetViewsFromJson() throws Exception {
