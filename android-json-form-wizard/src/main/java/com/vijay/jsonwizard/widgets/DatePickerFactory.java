@@ -148,6 +148,8 @@ public class DatePickerFactory implements FormWidgetFactory {
     public Set<String> getCustomTranslatableWidgetFields() {
         Set<String> customTranslatableWidgetFields = new HashSet<>();
         customTranslatableWidgetFields.add(DatePickerFactory.KEY.DURATION + "." + JsonFormConstants.LABEL);
+        customTranslatableWidgetFields.add(JsonFormConstants.LABEL_INFO_TITLE);
+        customTranslatableWidgetFields.add(JsonFormConstants.LABEL_INFO_TEXT);
         return customTranslatableWidgetFields;
     }
 
