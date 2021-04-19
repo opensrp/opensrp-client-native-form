@@ -16,9 +16,11 @@ import com.vijay.jsonwizard.utils.NumericDatePickerValidator;
 
 import org.joda.time.LocalDate;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Formatter;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -74,6 +76,9 @@ public class NumericDatePicker extends DatePicker {
 
         NumericDatePickerValidator validator = validateCurrentSelectedDate();
 
+        List<Integer> previousMinResetPickerIds = new ArrayList<>();
+        List<Integer> previousMaxResetPickerIds = new ArrayList<>();
+
         while (!(validator.isValid()) && changedPickerId > 0) {
 
             NumericDatePickerValidator.Violation violation = validator.getViolation();
@@ -87,19 +92,22 @@ public class NumericDatePicker extends DatePicker {
 
                 case MAX_DATE:
 
-                    if (changedPickerId == R.id.year) {
+                    if (changedPickerId == R.id.year || !previousMaxResetPickerIds.contains(R.id.year)) {
 
                         resetPicker(yearPicker, maxYear);
+                        previousMaxResetPickerIds.add(R.id.year);
 
-                    } else if (changedPickerId == R.id.month) {
+                    } else if (changedPickerId == R.id.month || !previousMaxResetPickerIds.contains(R.id.month)) {
 
                         monthPicker.setMaxValue(maxMonth + 1);
                         resetPicker(monthPicker, maxMonth + 1);
+                        previousMaxResetPickerIds.add(R.id.month);
 
-                    } else if (changedPickerId == R.id.day) {
+                    } else if (changedPickerId == R.id.day || !previousMaxResetPickerIds.contains(R.id.day)) {
 
                         dayPicker.setMaxValue(maxDay);
                         resetPicker(dayPicker, maxDay);
+                        previousMaxResetPickerIds.add(R.id.day);
 
                     }
 
@@ -107,21 +115,25 @@ public class NumericDatePicker extends DatePicker {
 
                 case MIN_DATE:
 
-                    if (changedPickerId == R.id.year) {
+                    if (changedPickerId == R.id.year || !previousMinResetPickerIds.contains(R.id.year)) {
 
                         resetPicker(yearPicker, minYear);
+                        previousMinResetPickerIds.add(R.id.year);
 
-                    } else if (changedPickerId == R.id.month) {
+                    } else if (changedPickerId == R.id.month || !previousMinResetPickerIds.contains(R.id.month)) {
 
                         monthPicker.setMinValue(minMonth + 1);
                         resetPicker(monthPicker, minMonth + 1);
+                        previousMinResetPickerIds.add(R.id.month);
 
-                    } else if (changedPickerId == R.id.day) {
+                    } else if (changedPickerId == R.id.day || !previousMinResetPickerIds.contains(R.id.day)) {
 
                         dayPicker.setMinValue(minDay);
                         resetPicker(dayPicker, minDay);
+                        previousMinResetPickerIds.add(R.id.day);
 
                     }
+
                     break;
 
                 default:

@@ -445,6 +445,9 @@ public class EditTextFactory implements FormWidgetFactory {
 
     @Override
     public Set<String> getCustomTranslatableWidgetFields() {
-        return new HashSet<>();
+        Set<String> customTranslatableWidgetFields = new HashSet<>();
+        customTranslatableWidgetFields.add(JsonFormConstants.LABEL_INFO_TITLE);
+        customTranslatableWidgetFields.add(JsonFormConstants.LABEL_INFO_TEXT);
+        return customTranslatableWidgetFields;
     }
 }
