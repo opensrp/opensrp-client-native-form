@@ -47,7 +47,11 @@ public class NativeEditTextFactory implements FormWidgetFactory {
         if (editText.isEnabled()) {
             boolean validate = editText.validate();
             if (!validate) {
-                validationStatus = new ValidationStatus(false, editText.getError().toString(), formFragmentView, editText);
+                String errorString = null;
+                if (editText != null && editText.getError() != null) {
+                    errorString = editText.getError().toString();
+                }
+                validationStatus = new ValidationStatus(false, errorString, formFragmentView, editText);
             }
         }
 
