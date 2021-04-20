@@ -18,6 +18,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import timber.log.Timber;
+
 public class DynamicLabelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final Context context;
     private final ArrayList<DynamicLabelInfo> dynamicLabelInfoList;
@@ -37,7 +39,8 @@ public class DynamicLabelAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         final RecyclerViewHolder recyclerViewHolder = (RecyclerViewHolder) holder;
-        String dynamicLabelTitle = dynamicLabelInfoList.get(position).getDynamicLabelTitle();
+        DynamicLabelInfo dynamicLabelInfo = dynamicLabelInfoList.get(position);
+        String dynamicLabelTitle = dynamicLabelInfo.getDynamicLabelTitle();
         if (StringUtils.isNotBlank(dynamicLabelTitle)) {
             recyclerViewHolder.tileTextView.setText(dynamicLabelTitle);
             recyclerViewHolder.tileTextView.setVisibility(View.VISIBLE);
@@ -45,7 +48,7 @@ public class DynamicLabelAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             recyclerViewHolder.tileTextView.setVisibility(View.GONE);
         }
 
-        String dynamicLabelText = dynamicLabelInfoList.get(position).getDynamicLabelText();
+        String dynamicLabelText = dynamicLabelInfo.getDynamicLabelText();
         if (StringUtils.isNotBlank(dynamicLabelText)) {
             recyclerViewHolder.descriptionTextView.setText(dynamicLabelText);
             recyclerViewHolder.descriptionTextView.setVisibility(View.VISIBLE);
@@ -53,13 +56,13 @@ public class DynamicLabelAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             recyclerViewHolder.descriptionTextView.setVisibility(View.GONE);
         }
 
-        String dynamicLabelImageSrc = dynamicLabelInfoList.get(position).getDynamicLabelImageSrc();
+        String dynamicLabelImageSrc = dynamicLabelInfo.getDynamicLabelImageSrc();
         if (StringUtils.isNotBlank(dynamicLabelImageSrc)) {
             try {
                 recyclerViewHolder.imageViewLabel.setImageDrawable(FormUtils.readImageFromAsset(context, dynamicLabelImageSrc));
                 recyclerViewHolder.imageViewLabel.setVisibility(View.VISIBLE);
             } catch (IOException e) {
-                e.printStackTrace();
+                Timber.e(e);
                 recyclerViewHolder.imageViewLabel.setVisibility(View.GONE);
             }
         } else {
