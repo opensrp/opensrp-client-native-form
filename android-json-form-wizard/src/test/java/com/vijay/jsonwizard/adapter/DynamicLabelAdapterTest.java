@@ -45,7 +45,9 @@ public class DynamicLabelAdapterTest extends BaseTest {
         ReflectionHelpers.setField(dynamicLabelAdapter, "dynamicLabelInfoList", dynamicLabelInfos);
         LinearLayout linearLayout = new LinearLayout(RuntimeEnvironment.application);
         RecyclerView.ViewHolder viewHolder = dynamicLabelAdapter.onCreateViewHolder(linearLayout, 0);
+
         dynamicLabelAdapter.onBindViewHolder(viewHolder, 0);
+
         assertEquals(View.VISIBLE, viewHolder.itemView.findViewById(R.id.descriptionText).getVisibility());
         assertEquals(View.VISIBLE, viewHolder.itemView.findViewById(R.id.labelTitle).getVisibility());
         assertEquals(View.VISIBLE, viewHolder.itemView.findViewById(R.id.imageViewLabel).getVisibility());
@@ -59,7 +61,9 @@ public class DynamicLabelAdapterTest extends BaseTest {
         ReflectionHelpers.setField(dynamicLabelAdapter, "dynamicLabelInfoList", dynamicLabelInfos);
         LinearLayout linearLayout = new LinearLayout(RuntimeEnvironment.application);
         RecyclerView.ViewHolder viewHolder = dynamicLabelAdapter.onCreateViewHolder(linearLayout, 0);
+
         dynamicLabelAdapter.onBindViewHolder(viewHolder, 0);
+
         assertEquals(View.GONE, viewHolder.itemView.findViewById(R.id.descriptionText).getVisibility());
         assertEquals(View.GONE, viewHolder.itemView.findViewById(R.id.labelTitle).getVisibility());
         assertEquals(View.GONE, viewHolder.itemView.findViewById(R.id.imageViewLabel).getVisibility());
