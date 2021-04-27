@@ -115,35 +115,35 @@ public class FormUtilsTest extends BaseTest {
     }
 
     @Test
-    public void testSetTextStyleBOLD(){
+    public void testSetTextStyleBold(){
         AppCompatTextView mockTextView = PowerMockito.mock(AppCompatTextView.class);
         FormUtils.setTextStyle(JsonFormConstants.BOLD, mockTextView);
         Mockito.verify(mockTextView).setTypeface(ArgumentMatchers.<Typeface>isNull(), eq(Typeface.BOLD));
     }
 
     @Test
-    public void testSetTextStyleITALIC(){
+    public void testSetTextStyleItalic(){
         AppCompatTextView mockTextView = PowerMockito.mock(AppCompatTextView.class);
         FormUtils.setTextStyle(JsonFormConstants.ITALIC, mockTextView);
         Mockito.verify(mockTextView).setTypeface(ArgumentMatchers.<Typeface>isNull(), eq(Typeface.ITALIC));
     }
 
     @Test
-    public void testSetTextStyleBOLD_ITALIC(){
+    public void testSetTextStyleBoldItalic(){
         AppCompatTextView mockTextView = PowerMockito.mock(AppCompatTextView.class);
         FormUtils.setTextStyle(JsonFormConstants.BOLD_ITALIC, mockTextView);
         Mockito.verify(mockTextView).setTypeface(ArgumentMatchers.<Typeface>isNull(), eq(Typeface.BOLD_ITALIC));
     }
 
     @Test
-    public void testSetTextStyleNORMAL(){
+    public void testSetTextStyleNormal(){
         AppCompatTextView mockTextView = PowerMockito.mock(AppCompatTextView.class);
         FormUtils.setTextStyle(JsonFormConstants.NORMAL, mockTextView);
         Mockito.verify(mockTextView).setTypeface(ArgumentMatchers.<Typeface>isNull(), eq(Typeface.NORMAL));
     }
 
     @Test
-    public void testSetTextStyleUNKNOWN(){
+    public void testSetTextStyleUnknown(){
         AppCompatTextView mockTextView = PowerMockito.mock(AppCompatTextView.class);
         FormUtils.setTextStyle("normal", mockTextView);
         Mockito.verify(mockTextView).setTypeface(ArgumentMatchers.<Typeface>isNull(), eq(Typeface.NORMAL));
