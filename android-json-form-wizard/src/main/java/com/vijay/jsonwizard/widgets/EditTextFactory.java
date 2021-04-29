@@ -108,7 +108,7 @@ public class EditTextFactory implements FormWidgetFactory {
                 try {
                     attachLayout(stepName, context, formFragment, jsonObject, editText, editButton);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Timber.e(e);
                 }
             }
         });
