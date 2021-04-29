@@ -91,17 +91,27 @@ public class EditTextFactory implements FormWidgetFactory {
         return attachJson(stepName, context, formFragment, jsonObject, listener, false);
     }
 
-    protected List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject,
+    protected List<View> attachJson(final String stepName, final Context context, final JsonFormFragment formFragment, final JSONObject jsonObject,
                                     CommonListener listener, boolean popup) throws Exception {
         List<View> views = new ArrayList<>(1);
 
         RelativeLayout rootLayout = getRelativeLayout(context);
         RelativeLayout editTextLayout = rootLayout.findViewById(R.id.edit_text_layout);
-        MaterialEditText editText = editTextLayout.findViewById(R.id.edit_text);
-        ImageView editButton = editTextLayout.findViewById(R.id.material_edit_text_edit_button);
+        final MaterialEditText editText = editTextLayout.findViewById(R.id.edit_text);
+        final ImageView editButton = editTextLayout.findViewById(R.id.material_edit_text_edit_button);
 
         FormUtils.setEditButtonAttributes(jsonObject, editText, editButton, listener);
-        attachLayout(stepName, context, formFragment, jsonObject, editText, editButton);
+
+        formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    attachLayout(stepName, context, formFragment, jsonObject, editText, editButton);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         JSONArray canvasIds = new JSONArray();
         rootLayout.setId(ViewUtil.generateViewId());
