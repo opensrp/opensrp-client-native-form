@@ -92,10 +92,10 @@ public class EditTextFactory implements FormWidgetFactory {
     }
 
     protected List<View> attachJson(final String stepName, final Context context, final JsonFormFragment formFragment, final JSONObject jsonObject,
-                                    CommonListener listener, boolean popup) throws Exception {
-        List<View> views = new ArrayList<>(1);
+                                    final CommonListener listener, final boolean popup) throws Exception {
+        final List<View> views = new ArrayList<>(1);
 
-        RelativeLayout rootLayout = getRelativeLayout(context);
+        final RelativeLayout rootLayout = getRelativeLayout(context);
         RelativeLayout editTextLayout = rootLayout.findViewById(R.id.edit_text_layout);
         final MaterialEditText editText = editTextLayout.findViewById(R.id.edit_text);
         final ImageView editButton = editTextLayout.findViewById(R.id.material_edit_text_edit_button);
@@ -107,22 +107,23 @@ public class EditTextFactory implements FormWidgetFactory {
             public void run() {
                 try {
                     attachLayout(stepName, context, formFragment, jsonObject, editText, editButton);
+
+                    JSONArray canvasIds = new JSONArray();
+                    rootLayout.setId(ViewUtil.generateViewId());
+                    canvasIds.put(rootLayout.getId());
+                    editText.setTag(R.id.canvas_ids, canvasIds.toString());
+                    editText.setTag(R.id.extraPopup, popup);
+
+                    attachInfoIcon(stepName, jsonObject, rootLayout, canvasIds, listener);
+
+                    ((JsonApi) context).addFormDataView(editText);
+                    views.add(rootLayout);
                 } catch (Exception e) {
                     Timber.e(e);
                 }
             }
         });
 
-        JSONArray canvasIds = new JSONArray();
-        rootLayout.setId(ViewUtil.generateViewId());
-        canvasIds.put(rootLayout.getId());
-        editText.setTag(R.id.canvas_ids, canvasIds.toString());
-        editText.setTag(R.id.extraPopup, popup);
-
-        attachInfoIcon(stepName, jsonObject, rootLayout, canvasIds, listener);
-
-        ((JsonApi) context).addFormDataView(editText);
-        views.add(rootLayout);
         return views;
     }
 
