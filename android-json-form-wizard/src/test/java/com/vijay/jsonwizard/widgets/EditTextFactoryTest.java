@@ -21,9 +21,11 @@ import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.powermock.reflect.Whitebox;
 
 import java.util.List;
 
@@ -258,6 +260,17 @@ public class EditTextFactoryTest extends BaseTest {
         List<View> viewList = factorySpy.getViewsFromJson("RandomStepName", context, formFragment, new JSONObject(gpsString), listener);
         Assert.assertNotNull(viewList);
         Assert.assertEquals(0, viewList.size());
+    }
+
+    @Test
+    public void testGetViewUsingAddressShouldReturnNull() throws Exception {
+
+        Assert.assertNotNull(factory);
+
+        JsonApi jsonApi = Mockito.mock(JsonApi.class);
+        Mockito.when(jsonApi.getFormDataView(ArgumentMatchers.anyString())).thenReturn(null);
+
+        Assert.assertNull(Whitebox.invokeMethod(factory, "getViewUsingAddress", "", "", jsonApi));
     }
 
     private void buildMockedJsonFormFragment() {
