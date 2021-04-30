@@ -226,6 +226,40 @@ public class EditTextFactoryTest extends BaseTest {
         Assert.assertEquals(1, viewList.size());
     }
 
+    @Test
+    public void testCatchJsonExceptionViewsShouldBeEmpty() throws Exception {
+        Assert.assertNotNull(factory);
+        EditTextFactory factorySpy = Mockito.spy(factory);
+        Assert.assertNotNull(factorySpy);
+
+        FormUtils formUtils = new FormUtils();
+        FormUtils formUtilsSpy = Mockito.spy(formUtils);
+        Assert.assertNotNull(formUtilsSpy);
+
+        Mockito.doReturn(resources).when(context).getResources();
+        Assert.assertNotNull(resources);
+
+        context.setTheme(R.style.NativeFormsAppTheme);
+        Mockito.doReturn(rootLayout).when(factorySpy).getRelativeLayout(context);
+        Assert.assertNotNull(rootLayout);
+
+        Mockito.doReturn(editTextLayout).when(rootLayout).findViewById(R.id.edit_text_layout);
+        Assert.assertNotNull(editTextLayout);
+
+        Mockito.doReturn(editText).when(editTextLayout).findViewById(R.id.edit_text);
+        Assert.assertNotNull(editText);
+
+        Mockito.doReturn(editButton).when(editTextLayout).findViewById(R.id.material_edit_text_edit_button);
+        Assert.assertNotNull(editButton);
+
+        buildMockedJsonFormFragment();
+
+        String gpsString = "{\"key\":\"test_field\",\"type\":\"edit_text\"}";
+        List<View> viewList = factorySpy.getViewsFromJson("RandomStepName", context, formFragment, new JSONObject(gpsString), listener);
+        Assert.assertNotNull(viewList);
+        Assert.assertEquals(0, viewList.size());
+    }
+
     private void buildMockedJsonFormFragment() {
         JsonFormActivity jsonFormActivitySpy = Mockito.spy(new JsonFormActivity());
         Mockito.doReturn(new AppExecutors()).when(jsonFormActivitySpy).getAppExecutors();
