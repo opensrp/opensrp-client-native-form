@@ -152,17 +152,8 @@ public class EditTextFactory implements FormWidgetFactory {
         editText.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
 
         if (!TextUtils.isEmpty(jsonObject.optString(JsonFormConstants.VALUE))) {
-            formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        editText.setText(jsonObject.optString(JsonFormConstants.VALUE));
-                        editText.setSelection(editText.getText().length());
-                    } catch (Exception e) {
-                        Timber.e(e, "Catching an error throw on spannable, when loading report form");
-                    }
-                }
-            });
+            editText.setText(jsonObject.optString(JsonFormConstants.VALUE));
+            editText.setSelection(editText.getText().length());
         }
         if (jsonObject.has(JsonFormConstants.HINT)) {
             editText.setHint(jsonObject.getString(JsonFormConstants.HINT));
