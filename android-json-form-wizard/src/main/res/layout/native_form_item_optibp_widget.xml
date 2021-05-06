@@ -1,0 +1,32 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    android:orientation="vertical">
+
+    <com.rey.material.widget.TextView
+        android:id="@+id/optibp_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_marginTop="@dimen/default_bottom_margin"
+        android:layout_marginBottom="@dimen/default_bottom_margin"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/section_header_text_size" />
+
+    <com.rey.material.widget.Button
+        android:id="@+id/optibp_launch_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:background="@drawable/optbp_btn_bg"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:padding="@dimen/button_padding"
+        android:text="@string/optibp_btn_get_started"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/button_text_size" />
+
+</LinearLayout>

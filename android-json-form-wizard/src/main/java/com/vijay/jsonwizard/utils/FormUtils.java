@@ -299,6 +299,13 @@ public class FormUtils {
         }
     }
 
+    public static JSONObject createOptiBPDataObject(String clientId, String clientOpenSRPId) throws JSONException{
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(JsonFormConstants.OPTIBP_CONSTANTS.OPTIBP_KEY_CLIENT_ID, clientId);
+        jsonObject.put(JsonFormConstants.OPTIBP_CONSTANTS.OPTIBP_KEY_CLIENT_OPENSRP_ID, clientOpenSRPId);
+        return jsonObject;
+    }
+
     public Map<String, View> createRadioButtonAndCheckBoxLabel(String stepName, LinearLayout linearLayout,
                                                                JSONObject jsonObject, Context context,
                                                                JSONArray canvasIds, final Boolean readOnly,

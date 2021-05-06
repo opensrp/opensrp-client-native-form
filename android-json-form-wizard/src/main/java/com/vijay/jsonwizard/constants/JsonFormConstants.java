@@ -232,6 +232,7 @@ public class JsonFormConstants {
     public static final String DEFAULT_FORMS_DIRECTORY = "opensrpNativeFormTester";
     public static final String JSON_FORM_DIRECTORY = "json.form";
     public static final String MEDIA_LOGIC = "media_logic";
+    public static final String FIELDS_TO_USE_VALUE = "fields_to_use_value";
 
     public static final String PROPERTIES_FILE_EXTENSION = ".properties";
     public static final String JSON_FILE_EXTENSION = ".json";
@@ -310,6 +311,20 @@ public class JsonFormConstants {
         public static final int BARCODE_REQUEST_CODE = 0x0000c0de;
         // intent request code to handle updating play services if needed.
         public static final int RC_HANDLE_GMS = 9001;
+    }
+
+    public static class OPTIBP_CONSTANTS {
+        public static final String OPTIBP_WIDGET = "optibp";
+        public static final int OPTIBP_REQUEST_CODE = 301;
+        public static final String OPTIBP_REPORT_RESULT = "result";
+        public static final String OPTIBP_REPORT_COMPONENT = "component";
+        public static final String OPTIBP_REPORT_VALUE_QUANITITY = "valueQuantity";
+        public static final String OPTIBP_LAUNCH_INTENT = "android.intent.action.BLOOD_MEASURE";
+        public static final String OPTIBP_KEY_DATA = "optibp_data";
+        public static final String OPTIBP_KEY_CLIENT_ID = "clientId";
+        public static final String OPTIBP_KEY_CLIENT_OPENSRP_ID = "clientOpenSRPId";
+        public static final String OPTIBP_KEY_BUTTON_BG_COLOR = "optibp_button_bg_color";
+        public static final String OPTIBP_KEY_BUTTON_TEXT_COLOR = "optibp_button_text_color";
     }
 
     public static class EDIT_TEXT_TYPE {
