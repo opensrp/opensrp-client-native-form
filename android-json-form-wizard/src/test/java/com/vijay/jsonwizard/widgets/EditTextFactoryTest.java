@@ -26,6 +26,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
+import org.robolectric.Robolectric;
 
 import java.util.List;
 
@@ -230,47 +231,14 @@ public class EditTextFactoryTest extends BaseTest {
 
     @Test
     public void testCatchJsonExceptionViewsShouldBeEmpty() throws Exception {
-        Assert.assertNotNull(factory);
-        EditTextFactory factorySpy = Mockito.spy(factory);
-        Assert.assertNotNull(factorySpy);
 
-        FormUtils formUtils = new FormUtils();
-        FormUtils formUtilsSpy = Mockito.spy(formUtils);
-        Assert.assertNotNull(formUtilsSpy);
-
-        Mockito.doReturn(resources).when(context).getResources();
-        Assert.assertNotNull(resources);
-
-        context.setTheme(R.style.NativeFormsAppTheme);
-        Mockito.doReturn(rootLayout).when(factorySpy).getRelativeLayout(context);
-        Assert.assertNotNull(rootLayout);
-
-        Mockito.doReturn(editTextLayout).when(rootLayout).findViewById(R.id.edit_text_layout);
-        Assert.assertNotNull(editTextLayout);
-
-        Mockito.doReturn(editText).when(editTextLayout).findViewById(R.id.edit_text);
-        Assert.assertNotNull(editText);
-
-        Mockito.doReturn(editButton).when(editTextLayout).findViewById(R.id.material_edit_text_edit_button);
-        Assert.assertNotNull(editButton);
-
-        buildMockedJsonFormFragment();
+        JsonFormActivity formActivity = Robolectric.buildActivity(JsonFormActivity.class, getJsonFormActivityIntent()).create().get();
+        Mockito.doReturn(formActivity).when(formFragment).getJsonApi();
 
         String gpsString = "{\"key\":\"test_field\",\"type\":\"edit_text\"}";
-        List<View> viewList = factorySpy.getViewsFromJson("RandomStepName", context, formFragment, new JSONObject(gpsString), listener);
+        List<View> viewList = factory.getViewsFromJson("RandomStepName", formActivity, formFragment, new JSONObject(gpsString), listener);
         Assert.assertNotNull(viewList);
         Assert.assertEquals(0, viewList.size());
-    }
-
-    @Test
-    public void testGetViewUsingAddressShouldReturnNull() throws Exception {
-
-        Assert.assertNotNull(factory);
-
-        JsonApi jsonApi = Mockito.mock(JsonApi.class);
-        Mockito.when(jsonApi.getFormDataView(ArgumentMatchers.anyString())).thenReturn(null);
-
-        Assert.assertNull(Whitebox.invokeMethod(factory, "getViewUsingAddress", "", "", jsonApi));
     }
 
     private void buildMockedJsonFormFragment() {
