@@ -91,28 +91,39 @@ public class EditTextFactory implements FormWidgetFactory {
         return attachJson(stepName, context, formFragment, jsonObject, listener, false);
     }
 
-    protected List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject,
-                                    CommonListener listener, boolean popup) throws Exception {
-        List<View> views = new ArrayList<>(1);
+    protected List<View> attachJson(final String stepName, final Context context, final JsonFormFragment formFragment, final JSONObject jsonObject,
+                                    final CommonListener listener, final boolean popup) throws Exception {
+        final List<View> views = new ArrayList<>(1);
 
-        RelativeLayout rootLayout = getRelativeLayout(context);
+        final RelativeLayout rootLayout = getRelativeLayout(context);
         RelativeLayout editTextLayout = rootLayout.findViewById(R.id.edit_text_layout);
-        MaterialEditText editText = editTextLayout.findViewById(R.id.edit_text);
-        ImageView editButton = editTextLayout.findViewById(R.id.material_edit_text_edit_button);
+        final MaterialEditText editText = editTextLayout.findViewById(R.id.edit_text);
+        final ImageView editButton = editTextLayout.findViewById(R.id.material_edit_text_edit_button);
 
         FormUtils.setEditButtonAttributes(jsonObject, editText, editButton, listener);
-        attachLayout(stepName, context, formFragment, jsonObject, editText, editButton);
 
-        JSONArray canvasIds = new JSONArray();
-        rootLayout.setId(ViewUtil.generateViewId());
-        canvasIds.put(rootLayout.getId());
-        editText.setTag(R.id.canvas_ids, canvasIds.toString());
-        editText.setTag(R.id.extraPopup, popup);
+        formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    attachLayout(stepName, context, formFragment, jsonObject, editText, editButton);
 
-        attachInfoIcon(stepName, jsonObject, rootLayout, canvasIds, listener);
+                    JSONArray canvasIds = new JSONArray();
+                    rootLayout.setId(ViewUtil.generateViewId());
+                    canvasIds.put(rootLayout.getId());
+                    editText.setTag(R.id.canvas_ids, canvasIds.toString());
+                    editText.setTag(R.id.extraPopup, popup);
 
-        ((JsonApi) context).addFormDataView(editText);
-        views.add(rootLayout);
+                    attachInfoIcon(stepName, jsonObject, rootLayout, canvasIds, listener);
+
+                    ((JsonApi) context).addFormDataView(editText);
+                    views.add(rootLayout);
+                } catch (Exception e) {
+                    Timber.e(e);
+                }
+            }
+        });
+
         return views;
     }
 
@@ -141,17 +152,8 @@ public class EditTextFactory implements FormWidgetFactory {
         editText.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
 
         if (!TextUtils.isEmpty(jsonObject.optString(JsonFormConstants.VALUE))) {
-            formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        editText.setText(jsonObject.optString(JsonFormConstants.VALUE));
-                        editText.setSelection(editText.getText().length());
-                    } catch (Exception e) {
-                        Timber.e(e, "Catching an error throw on spannable, when loading report form");
-                    }
-                }
-            });
+            editText.setText(jsonObject.optString(JsonFormConstants.VALUE));
+            editText.setSelection(editText.getText().length());
         }
         if (jsonObject.has(JsonFormConstants.HINT)) {
             editText.setHint(jsonObject.getString(JsonFormConstants.HINT));
