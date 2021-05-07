@@ -10,6 +10,8 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.support.annotation.NonNull;
+
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -56,21 +58,21 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
     private List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, final JSONObject jsonObject, @SuppressWarnings("unused") CommonListener listener, boolean popup) {
         List<View> views = new ArrayList<>(1);
         final LinearLayout rootLayout = getRootLayout(context);
-        addViewTags(stepName, rootLayout, jsonObject);
+        addViewTags(stepName, rootLayout, jsonObject, popup);
         try {
             initLabelValue(rootLayout, jsonObject);
             initOptiBPLaunchButton((Activity) context, rootLayout, formFragment, jsonObject, stepName, popup);
         } catch (JSONException e) {
             Timber.e(e);
         }
-
+        attachRefreshLogic(context, jsonObject, rootLayout);
         views.add(rootLayout);
         return views;
     }
 
     private void initOptiBPLaunchButton(final Activity context, final LinearLayout rootLayout,
                                         final JsonFormFragment formFragment, final JSONObject jsonObject,
-                                        final String stepName, final boolean popup) throws  JSONException{
+                                        final String stepName, final boolean popup) throws JSONException {
         final Button getStarted = rootLayout.findViewById(R.id.optibp_launch_button);
         setButtonParams(getStarted, jsonObject);
         getStarted.setOnClickListener(new View.OnClickListener() {
@@ -93,14 +95,24 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
                     new OnActivityResultListener() {
                         @Override
                         public void onActivityResult(int requestCode,
-                                                     int resultCode, Intent data) {
+                                                     int resultCode, final Intent data) {
                             if (requestCode == JsonFormConstants.OPTIBP_CONSTANTS.OPTIBP_REQUEST_CODE && resultCode == RESULT_OK) {
                                 try {
                                     if (data != null) {
-                                        String resultJson = data.getStringExtra(Intent.EXTRA_TEXT);
-                                        Timber.d("Resultant OptiBP JSON: %s ", resultJson);
-                                        populateValues(context, formFragment, resultJson, jsonObject, stepName);
-                                        writeResult(jsonApi, rootLayout, stepName, resultJson, popup);
+                                        formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                try {
+                                                    String resultJson = data.getStringExtra(Intent.EXTRA_TEXT);
+                                                    Timber.d("Resultant OptiBP JSON: %s ", resultJson);
+                                                    populateValues(context, formFragment, resultJson, jsonObject, stepName);
+                                                    writeResult(jsonApi, rootLayout, stepName, resultJson, popup);
+                                                } catch (JSONException e) {
+                                                    Timber.e(e);
+                                                }
+                                            }
+                                        });
+
                                     } else
                                         Timber.i("NO RESULT FOR QR CODE");
                                 } catch (Exception e) {
@@ -114,7 +126,7 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
 
     }
 
-    private void setButtonParams(Button getStarted, JSONObject jsonObject) throws JSONException{
+    private void setButtonParams(Button getStarted, JSONObject jsonObject) throws JSONException {
         if (jsonObject.has(JsonFormConstants.OPTIBP_CONSTANTS.OPTIBP_KEY_BUTTON_BG_COLOR)) {
             String colorString = jsonObject.getString(JsonFormConstants.OPTIBP_CONSTANTS.OPTIBP_KEY_BUTTON_BG_COLOR);
             applyBgColor(getStarted, colorString);
@@ -128,11 +140,11 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
     private void applyBgColor(Button getStarted, String colorString) {
         Drawable background = getStarted.getBackground();
         if (background instanceof ShapeDrawable) {
-            ((ShapeDrawable)background).getPaint().setColor(Color.parseColor(colorString));
+            ((ShapeDrawable) background).getPaint().setColor(Color.parseColor(colorString));
         } else if (background instanceof GradientDrawable) {
-            ((GradientDrawable)background).setColor(Color.parseColor(colorString));
+            ((GradientDrawable) background).setColor(Color.parseColor(colorString));
         } else if (background instanceof ColorDrawable) {
-            ((ColorDrawable)background).setColor(Color.parseColor(colorString));
+            ((ColorDrawable) background).setColor(Color.parseColor(colorString));
         }
     }
 
@@ -155,10 +167,16 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
         JSONArray fields = jsonObject.getJSONArray(JsonFormConstants.FIELDS_TO_USE_VALUE);
         EditText sbp = getFormObject(formFragment, stepName, fields.get(0).toString());
         sbp.setText(getBPValue(resultJson, true));
-        sbp.setEnabled(false);
+        disableView(sbp);
         EditText dbp = getFormObject(formFragment, stepName, fields.get(1).toString());
         dbp.setText(getBPValue(resultJson, false));
-        dbp.setEnabled(false);
+        disableView(dbp);
+    }
+
+    private void disableView(EditText editText) {
+        editText.setClickable(false);
+        editText.setEnabled(false);
+        editText.setFocusable(false);
     }
 
     private String getBPValue(String resultData, boolean isSystolic) throws JSONException {
@@ -182,7 +200,10 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
         JSONObject optiBPData = jsonObject.getJSONObject(JsonFormConstants.OPTIBP_CONSTANTS.OPTIBP_KEY_DATA);
         if (!optiBPData.has(JsonFormConstants.OPTIBP_CONSTANTS.OPTIBP_KEY_CLIENT_ID)
                 || !optiBPData.has(JsonFormConstants.OPTIBP_CONSTANTS.OPTIBP_KEY_CLIENT_OPENSRP_ID))
-        throw new Exception(context.getString(R.string.missing_client_info));
+            throw new Exception(context.getString(R.string.missing_client_info));
+        if (TextUtils.isEmpty(optiBPData.getString(JsonFormConstants.OPTIBP_CONSTANTS.OPTIBP_KEY_CLIENT_ID))
+                || TextUtils.isEmpty(optiBPData.getString(JsonFormConstants.OPTIBP_CONSTANTS.OPTIBP_KEY_CLIENT_OPENSRP_ID)))
+            throw new Exception(context.getString(R.string.missing_client_info));
         return optiBPData.toString();
     }
 
@@ -197,7 +218,7 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
         return jsonObject.getString(JsonFormConstants.LABEL);
     }
 
-    private void addViewTags(String stepName, LinearLayout rootLayout, JSONObject jsonObject) {
+    private void addViewTags(String stepName, View rootLayout, JSONObject jsonObject, boolean popup) {
         try {
             String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
             String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
@@ -209,6 +230,7 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
             rootLayout.setTag(R.id.openmrs_entity, openMrsEntity);
             rootLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
             rootLayout.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
+            rootLayout.setTag(R.id.extraPopup, popup);
             rootLayout.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
         } catch (JSONException e) {
             Timber.e(e);
@@ -226,5 +248,28 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
         Set<String> customTranslatableWidgetFields = new HashSet<>();
         customTranslatableWidgetFields.add(JsonFormConstants.LABEL);
         return customTranslatableWidgetFields;
+    }
+
+    private void attachRefreshLogic(Context context, JSONObject jsonObject, View rootLayout) {
+        String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
+        String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
+        String calculation = jsonObject.optString(JsonFormConstants.CALCULATION);
+
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+            rootLayout.setTag(R.id.relevance, relevance);
+            ((JsonApi) context).addSkipLogicView(rootLayout);
+        }
+
+        if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
+            rootLayout.setTag(R.id.constraints, constraints);
+            ((JsonApi) context).addConstrainedView(rootLayout);
+        }
+
+        if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
+            rootLayout.setTag(R.id.calculation, calculation);
+            ((JsonApi) context).addCalculationLogicView(rootLayout);
+        }
+
+        ((JsonApi) context).addFormDataView(rootLayout);
     }
 }
