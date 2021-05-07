@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.NumberPicker;
 
 import com.vijay.jsonwizard.R;
+import com.vijay.jsonwizard.utils.DateUtil;
 import com.vijay.jsonwizard.utils.NumericDatePickerHelper;
 import com.vijay.jsonwizard.utils.NumericDatePickerValidator;
 
@@ -86,7 +87,7 @@ public class NumericDatePicker extends DatePicker {
             switch (violation) {
                 case MALFORMED_DATE:
                     // Only Day can malform since different months have different days in the Gregorian calendar
-                    resetPicker(dayPicker, previousDay > 0 ? previousDay : minDay);
+                    resetPicker(dayPicker, getPreviousDay(previousDay, minDay));
 
                     break;
 
@@ -588,7 +589,6 @@ public class NumericDatePicker extends DatePicker {
         numberPicker.setDisplayedValues(null);
 
         //set new value
-
         if (value != 0)
             numberPicker.setValue(value);
 
@@ -655,5 +655,13 @@ public class NumericDatePicker extends DatePicker {
 
     private int getMaxDayForSelectedDate() {
         return NumericDatePickerHelper.getDaysInMonth(getMonth(), NumericDatePickerHelper.isLeapYear(getYear()));
+    }
+
+    private int getPreviousDay(int prevDay, int minDay) {
+        if (prevDay > 0) {
+            return getMonth() + 1 == 2 ? Math.min(prevDay, (DateUtil.isLeapYear(getYear()) ? 29 : 28)) : prevDay;
+        } else {
+            return minDay;
+        }
     }
 }

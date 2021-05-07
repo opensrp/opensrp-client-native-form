@@ -43,8 +43,6 @@ public class DateUtil {
     }
 
     public static String getDuration(long timeDiff, Locale locale, Context context) {
-
-
         String duration = "";
         if (timeDiff >= 0
                 && timeDiff <= TimeUnit.MILLISECONDS.convert(13, TimeUnit.DAYS)) {
@@ -116,5 +114,9 @@ public class DateUtil {
 
         return duration;
 
+    }
+
+    public static boolean isLeapYear(int year) {
+        return ((year % 4 == 0) && (year % 100 != 0)) || year % 400 == 0;
     }
 }
