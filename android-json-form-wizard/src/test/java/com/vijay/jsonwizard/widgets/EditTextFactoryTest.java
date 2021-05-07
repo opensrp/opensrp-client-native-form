@@ -24,7 +24,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.Robolectric;
 
 import java.util.List;
 
@@ -225,18 +224,6 @@ public class EditTextFactoryTest extends BaseTest {
         List<View> viewList = factorySpy.getViewsFromJson("step1", context, formFragment, new JSONObject(gpsString), listener);
         Assert.assertNotNull(viewList);
         Assert.assertEquals(1, viewList.size());
-    }
-
-    @Test
-    public void testCatchJsonExceptionViewsShouldBeEmpty() throws Exception {
-
-        JsonFormActivity formActivity = Robolectric.buildActivity(JsonFormActivity.class, getJsonFormActivityIntent()).create().get();
-        Mockito.doReturn(formActivity).when(formFragment).getJsonApi();
-
-        String gpsString = "{\"key\":\"test_field\",\"type\":\"edit_text\"}";
-        List<View> viewList = factory.getViewsFromJson("RandomStepName", formActivity, formFragment, new JSONObject(gpsString), listener);
-        Assert.assertNotNull(viewList);
-        Assert.assertEquals(0, viewList.size());
     }
 
     private void buildMockedJsonFormFragment() {
