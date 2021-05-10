@@ -86,7 +86,6 @@ public class NumericDatePicker extends DatePicker {
 
             switch (violation) {
                 case MALFORMED_DATE:
-                    // Only Day can malform since different months have different days in the Gregorian calendar
                     resetPicker(dayPicker, getPreviousDay(previousDay, minDay));
 
                     break;
@@ -659,7 +658,7 @@ public class NumericDatePicker extends DatePicker {
 
     private int getPreviousDay(int prevDay, int minDay) {
         if (prevDay > 0) {
-            return getMonth() + 1 == 2 ? Math.min(prevDay, (DateUtil.isLeapYear(getYear()) ? 29 : 28)) : prevDay;
+            return getMonth() + 1 == 2 ? Math.min(prevDay, (NumericDatePickerHelper.isLeapYear(getYear()) ? 29 : 28)) : prevDay;
         } else {
             return minDay;
         }
