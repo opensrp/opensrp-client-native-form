@@ -9,16 +9,14 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.ShapeDrawable;
-import android.support.annotation.NonNull;
 
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
-import androidx.core.content.ContextCompat;
 
 import com.rey.material.util.ViewUtil;
 import com.rey.material.widget.Button;
@@ -31,6 +29,7 @@ import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.interfaces.OnActivityResultListener;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -112,10 +111,10 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
             @Override
             public void onClick(View view) {
                 try {
-                    Intent intent = new Intent(JsonFormConstants.OPTIBP_CONSTANTS.OPTIBP_LAUNCH_INTENT);
+                    Intent intent = new Intent(JsonFormConstants.OptibpConstants.OPTIBP_LAUNCH_INTENT);
                     intent.setType("text/json");
                     intent.putExtra(Intent.EXTRA_TEXT, getInputJson(context, jsonObject));
-                    context.startActivityForResult(Intent.createChooser(intent, ""), JsonFormConstants.OPTIBP_CONSTANTS.OPTIBP_REQUEST_CODE);
+                    context.startActivityForResult(Intent.createChooser(intent, ""), JsonFormConstants.OptibpConstants.OPTIBP_REQUEST_CODE);
                 } catch (Exception e) {
                     Timber.e(e);
                     Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -124,12 +123,12 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
         });
         if (context instanceof JsonApi) {
             final JsonApi jsonApi = (JsonApi) context;
-            jsonApi.addOnActivityResultListener(JsonFormConstants.OPTIBP_CONSTANTS.OPTIBP_REQUEST_CODE,
+            jsonApi.addOnActivityResultListener(JsonFormConstants.OptibpConstants.OPTIBP_REQUEST_CODE,
                     new OnActivityResultListener() {
                         @Override
                         public void onActivityResult(int requestCode,
                                                      int resultCode, final Intent data) {
-                            if (requestCode == JsonFormConstants.OPTIBP_CONSTANTS.OPTIBP_REQUEST_CODE && resultCode == RESULT_OK) {
+                            if (requestCode == JsonFormConstants.OptibpConstants.OPTIBP_REQUEST_CODE && resultCode == RESULT_OK) {
                                 try {
                                     if (data != null) {
                                         formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
@@ -160,12 +159,12 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
     }
 
     private void setButtonParams(Button getStarted, JSONObject jsonObject) throws JSONException {
-        if (jsonObject.has(JsonFormConstants.OPTIBP_CONSTANTS.OPTIBP_KEY_BUTTON_BG_COLOR)) {
-            String colorString = jsonObject.getString(JsonFormConstants.OPTIBP_CONSTANTS.OPTIBP_KEY_BUTTON_BG_COLOR);
+        if (jsonObject.has(JsonFormConstants.OptibpConstants.OPTIBP_KEY_BUTTON_BG_COLOR)) {
+            String colorString = jsonObject.getString(JsonFormConstants.OptibpConstants.OPTIBP_KEY_BUTTON_BG_COLOR);
             applyBgColor(getStarted, colorString);
         }
-        if (jsonObject.has(JsonFormConstants.OPTIBP_CONSTANTS.OPTIBP_KEY_BUTTON_TEXT_COLOR)) {
-            String colorString = jsonObject.getString(JsonFormConstants.OPTIBP_CONSTANTS.OPTIBP_KEY_BUTTON_TEXT_COLOR);
+        if (jsonObject.has(JsonFormConstants.OptibpConstants.OPTIBP_KEY_BUTTON_TEXT_COLOR)) {
+            String colorString = jsonObject.getString(JsonFormConstants.OptibpConstants.OPTIBP_KEY_BUTTON_TEXT_COLOR);
             getStarted.setTextColor(Color.parseColor(colorString));
         }
     }
@@ -214,11 +213,11 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
 
     private String getBPValue(String resultData, boolean isSystolic) throws JSONException {
         JSONObject resultJson = new JSONObject(resultData);
-        JSONArray result = resultJson.getJSONArray(JsonFormConstants.OPTIBP_CONSTANTS.OPTIBP_REPORT_RESULT);
+        JSONArray result = resultJson.getJSONArray(JsonFormConstants.OptibpConstants.OPTIBP_REPORT_RESULT);
         JSONObject resultObject = result.getJSONObject(0);
-        JSONArray component = resultObject.getJSONArray(JsonFormConstants.OPTIBP_CONSTANTS.OPTIBP_REPORT_COMPONENT);
+        JSONArray component = resultObject.getJSONArray(JsonFormConstants.OptibpConstants.OPTIBP_REPORT_COMPONENT);
         JSONObject bpComponent = ((JSONObject) component.get(isSystolic ? 1 : 0));
-        JSONObject valueQuantity = bpComponent.getJSONObject(JsonFormConstants.OPTIBP_CONSTANTS.OPTIBP_REPORT_VALUE_QUANITITY);
+        JSONObject valueQuantity = bpComponent.getJSONObject(JsonFormConstants.OptibpConstants.OPTIBP_REPORT_VALUE_QUANITITY);
         int value = valueQuantity.getInt(JsonFormConstants.VALUE);
         return String.valueOf(value);
     }
@@ -228,15 +227,15 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
     }
 
     private String getInputJson(Context context, JSONObject jsonObject) throws Exception {
-        if (!jsonObject.has(JsonFormConstants.OPTIBP_CONSTANTS.OPTIBP_KEY_DATA))
-            throw new Exception(context.getString(R.string.missing_client_info));
-        JSONObject optiBPData = jsonObject.getJSONObject(JsonFormConstants.OPTIBP_CONSTANTS.OPTIBP_KEY_DATA);
-        if (!optiBPData.has(JsonFormConstants.OPTIBP_CONSTANTS.OPTIBP_KEY_CLIENT_ID)
-                || !optiBPData.has(JsonFormConstants.OPTIBP_CONSTANTS.OPTIBP_KEY_CLIENT_OPENSRP_ID))
-            throw new Exception(context.getString(R.string.missing_client_info));
-        if (TextUtils.isEmpty(optiBPData.getString(JsonFormConstants.OPTIBP_CONSTANTS.OPTIBP_KEY_CLIENT_ID))
-                || TextUtils.isEmpty(optiBPData.getString(JsonFormConstants.OPTIBP_CONSTANTS.OPTIBP_KEY_CLIENT_OPENSRP_ID)))
-            throw new Exception(context.getString(R.string.missing_client_info));
+        if (!jsonObject.has(JsonFormConstants.OptibpConstants.OPTIBP_KEY_DATA))
+            throw new JSONException(context.getString(R.string.missing_client_info));
+        JSONObject optiBPData = jsonObject.getJSONObject(JsonFormConstants.OptibpConstants.OPTIBP_KEY_DATA);
+        if (!optiBPData.has(JsonFormConstants.OptibpConstants.OPTIBP_KEY_CLIENT_ID)
+                || !optiBPData.has(JsonFormConstants.OptibpConstants.OPTIBP_KEY_CLIENT_OPENSRP_ID))
+            throw new JSONException(context.getString(R.string.missing_client_info));
+        if (TextUtils.isEmpty(optiBPData.getString(JsonFormConstants.OptibpConstants.OPTIBP_KEY_CLIENT_ID))
+                || TextUtils.isEmpty(optiBPData.getString(JsonFormConstants.OptibpConstants.OPTIBP_KEY_CLIENT_OPENSRP_ID)))
+            throw new JSONException(context.getString(R.string.missing_client_info));
         return optiBPData.toString();
     }
 
