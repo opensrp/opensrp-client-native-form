@@ -11,7 +11,6 @@ import android.widget.EditText;
 import android.widget.NumberPicker;
 
 import com.vijay.jsonwizard.R;
-import com.vijay.jsonwizard.utils.DateUtil;
 import com.vijay.jsonwizard.utils.NumericDatePickerHelper;
 import com.vijay.jsonwizard.utils.NumericDatePickerValidator;
 
