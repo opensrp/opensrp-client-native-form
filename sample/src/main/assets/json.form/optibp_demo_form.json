@@ -145,7 +145,7 @@
         "label": "Measure the blood pressure using OptiBP",
         "optibp_button_bg_color": "#d32f2f",
         "optibp_button_text_color": "#FFFFFF",
-        "read_only": true,
+        "read_only": false,
         "optibp_data": {
           "clientId": "",
           "clientOpenSRPId": ""
@@ -153,14 +153,7 @@
         "fields_to_use_value": [
           "bp_systolic",
           "bp_diastolic"
-        ],
-        "value": {},
-        "relevance": {
-          "step1:user_first_name": {
-            "type": "string",
-            "ex": "equalTo(., \"test\")"
-          }
-        }
+        ]
       }
     ]
   }
