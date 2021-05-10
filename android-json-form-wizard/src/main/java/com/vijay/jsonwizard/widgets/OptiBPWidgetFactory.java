@@ -18,6 +18,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.core.content.ContextCompat;
+
 import com.rey.material.util.ViewUtil;
 import com.rey.material.widget.Button;
 import com.rey.material.widget.TextView;
@@ -55,25 +57,56 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
         return attachJson(stepName, context, formFragment, jsonObject, listener, popup);
     }
 
-    private List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, final JSONObject jsonObject, @SuppressWarnings("unused") CommonListener listener, boolean popup) {
+    private List<View> attachJson(String stepName, final Context context, JsonFormFragment formFragment, final JSONObject jsonObject, @SuppressWarnings("unused") CommonListener listener, boolean popup) {
         List<View> views = new ArrayList<>(1);
+        JSONArray canvasIds = new JSONArray();
         final LinearLayout rootLayout = getRootLayout(context);
-        addViewTags(stepName, rootLayout, jsonObject, popup);
+        rootLayout.setId(ViewUtil.generateViewId());
+        canvasIds.put(rootLayout.getId());
+        addViewTags(stepName, rootLayout, jsonObject, popup, canvasIds);
+        attachRefreshLogic(context, jsonObject, rootLayout);
         try {
-            initLabelValue(rootLayout, jsonObject);
-            initOptiBPLaunchButton((Activity) context, rootLayout, formFragment, jsonObject, stepName, popup);
+            final TextView label = rootLayout.findViewById(R.id.optibp_label);
+            label.setId(ViewUtil.generateViewId());
+            initLabelValue(label, jsonObject);
+            addViewTags(stepName, label, jsonObject, popup, canvasIds);
+            attachRefreshLogic(context, jsonObject, label);
+            final Button getStarted = rootLayout.findViewById(R.id.optibp_launch_button);
+            getStarted.setId(ViewUtil.generateViewId());
+            initOptiBPLaunchButton((Activity) context, rootLayout, getStarted, formFragment, jsonObject, stepName, popup);
+            addViewTags(stepName, getStarted, jsonObject, popup, canvasIds);
+            attachRefreshLogic(context, jsonObject, getStarted);
+
+            formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
+                            boolean readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
+                            if (readOnly) {
+                                label.setTextColor(ContextCompat.getColor(context, android.R.color.darker_gray));
+                                getStarted.setBackgroundDrawable(new ColorDrawable(context.getResources()
+                                        .getColor(android.R.color.darker_gray)));
+                                getStarted.setClickable(false);
+                                getStarted.setEnabled(false);
+                                getStarted.setFocusable(false);
+                            }
+                        }
+                    }catch ( JSONException e) {
+                        Timber.e(e);
+                    }
+                }
+            });
         } catch (JSONException e) {
             Timber.e(e);
         }
-        attachRefreshLogic(context, jsonObject, rootLayout);
         views.add(rootLayout);
         return views;
     }
 
-    private void initOptiBPLaunchButton(final Activity context, final LinearLayout rootLayout,
+    private void initOptiBPLaunchButton(final Activity context, final LinearLayout rootLayout, final Button getStarted,
                                         final JsonFormFragment formFragment, final JSONObject jsonObject,
                                         final String stepName, final boolean popup) throws JSONException {
-        final Button getStarted = rootLayout.findViewById(R.id.optibp_launch_button);
         setButtonParams(getStarted, jsonObject);
         getStarted.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -207,9 +240,8 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
         return optiBPData.toString();
     }
 
-    private void initLabelValue(LinearLayout rootLayout, JSONObject jsonObject) throws JSONException {
-        final TextView label = rootLayout.findViewById(R.id.optibp_label);
-        label.setText(obtainLabelText(rootLayout.getContext(), jsonObject));
+    private void initLabelValue(TextView label, JSONObject jsonObject) throws JSONException {
+        label.setText(obtainLabelText(label.getContext(), jsonObject));
     }
 
     private String obtainLabelText(Context context, JSONObject jsonObject) throws JSONException {
@@ -218,14 +250,14 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
         return jsonObject.getString(JsonFormConstants.LABEL);
     }
 
-    private void addViewTags(String stepName, View rootLayout, JSONObject jsonObject, boolean popup) {
+    private void addViewTags(String stepName, View rootLayout, JSONObject jsonObject, boolean popup, JSONArray canvasIds) {
         try {
             String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
             String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
             String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
 
             rootLayout.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
-            rootLayout.setId(ViewUtil.generateViewId());
+            rootLayout.setTag(R.id.canvas_ids, canvasIds.toString());
             rootLayout.setTag(R.id.openmrs_entity_parent, openMrsEntityParent);
             rootLayout.setTag(R.id.openmrs_entity, openMrsEntity);
             rootLayout.setTag(R.id.openmrs_entity_id, openMrsEntityId);
@@ -242,9 +274,8 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
         return (LinearLayout) LayoutInflater.from(context).inflate(R.layout.native_form_item_optibp_widget, null);
     }
 
-    @NonNull
     @Override
-    public Set<String> getCustomTranslatableWidgetFields() {
+    public @NotNull Set<String> getCustomTranslatableWidgetFields() {
         Set<String> customTranslatableWidgetFields = new HashSet<>();
         customTranslatableWidgetFields.add(JsonFormConstants.LABEL);
         return customTranslatableWidgetFields;
