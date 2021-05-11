@@ -115,17 +115,7 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
                 rootLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
                     public void onGlobalLayout() {
-                        if (rootLayout.getVisibility() == View.VISIBLE) {
-                            Timber.i("OptiBP widget visible");
-                            if (!TextUtils.isEmpty(sbp.getText())
-                                    && !TextUtils.isEmpty(dbp.getText())) {
-                                disableEditText(context, sbp);
-                                disableEditText(context, dbp);
-                            } else  {
-                                enableEditText(context,sbp);
-                                enableEditText(context, dbp);
-                            }
-                        } else {
+                        if (rootLayout.getVisibility() != View.VISIBLE) {
                             Timber.i("OptiBP widget not visible");
                             enableEditText(context,sbp);
                             enableEditText(context, dbp);
