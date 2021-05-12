@@ -77,6 +77,7 @@ repositories {
 }
 
 dependencies {
+    implementation "androidx.appcompat:appcompat:1.2.0"
     api('org.smartregister:opensrp-client-simprints:1.0.7-PREVIEW2-SNAPSHOT@aar') {
         transitive = true
         exclude group: 'com.android.support', module: 'appcompat-v7'
