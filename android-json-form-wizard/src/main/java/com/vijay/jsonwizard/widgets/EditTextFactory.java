@@ -68,7 +68,11 @@ public class EditTextFactory implements FormWidgetFactory {
         if (editText.isEnabled()) {
             boolean validate = editText.validate();
             if (!validate) {
-                return new ValidationStatus(false, editText.getError().toString(), formFragmentView, editText);
+                String errorString = null;
+                if (editText != null && editText.getError() != null) {
+                    errorString = editText.getError().toString();
+                }
+                return new ValidationStatus(false, errorString, formFragmentView, editText);
             }
         }
         return new ValidationStatus(true, null, formFragmentView, editText);
@@ -441,6 +445,9 @@ public class EditTextFactory implements FormWidgetFactory {
 
     @Override
     public Set<String> getCustomTranslatableWidgetFields() {
-        return new HashSet<>();
+        Set<String> customTranslatableWidgetFields = new HashSet<>();
+        customTranslatableWidgetFields.add(JsonFormConstants.LABEL_INFO_TITLE);
+        customTranslatableWidgetFields.add(JsonFormConstants.LABEL_INFO_TEXT);
+        return customTranslatableWidgetFields;
     }
 }

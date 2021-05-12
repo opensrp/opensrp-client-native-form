@@ -33,7 +33,7 @@ public class GreaterThanComparison extends Comparison {
                         b = DEFAULT_DATE;
                     }
                     Date dateA = DatePickerFactory.DATE_FORMAT.parse(Utils.getDateFormattedForCalculation(a,  Form.getDatePickerDisplayFormat()));
-                    Date dateB = DatePickerFactory.DATE_FORMAT.parse(b);
+                    Date dateB = DatePickerFactory.DATE_FORMAT.parse(Utils.getDateFormattedForCalculation(b,  Form.getDatePickerDisplayFormat()));
                     return dateA.getTime() > dateB.getTime();
                 default:
                     break;

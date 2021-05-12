@@ -111,7 +111,7 @@ public class DatePickerFactoryTest extends BaseTest {
         Assert.assertNotNull(factorySpy);
 
         Set<String> editableProperties = factorySpy.getCustomTranslatableWidgetFields();
-        assertEquals(1, editableProperties.size());
+        assertEquals(3, editableProperties.size());
         assertEquals("duration.label", editableProperties.iterator().next());
     }
 

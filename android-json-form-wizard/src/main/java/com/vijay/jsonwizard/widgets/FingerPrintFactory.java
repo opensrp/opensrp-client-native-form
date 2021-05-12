@@ -13,6 +13,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import androidx.annotation.VisibleForTesting;
+
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
@@ -170,7 +172,8 @@ public class FingerPrintFactory implements FormWidgetFactory {
         return views;
     }
 
-    private void setViewTags(JSONObject jsonObject, String stepName, View view, boolean popup) throws JSONException {
+    @VisibleForTesting
+    protected void setViewTags(JSONObject jsonObject, String stepName, View view, boolean popup) throws JSONException {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);

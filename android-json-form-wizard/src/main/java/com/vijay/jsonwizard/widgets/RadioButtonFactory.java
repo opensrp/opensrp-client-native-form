@@ -6,6 +6,8 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
@@ -33,6 +35,7 @@ import static com.vijay.jsonwizard.utils.FormUtils.getTextViewWith;
 /**
  * Created by vijay on 24-05-2015.
  */
+@Deprecated
 public class RadioButtonFactory implements FormWidgetFactory {
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
@@ -111,7 +114,10 @@ public class RadioButtonFactory implements FormWidgetFactory {
     }
 
     @Override
+    @NonNull
     public Set<String> getCustomTranslatableWidgetFields() {
-        return new HashSet<>();
+        Set<String> customTranslatableWidgetFields = new HashSet<>();
+        customTranslatableWidgetFields.add(JsonFormConstants.OPTIONS_FIELD_NAME + "." + JsonFormConstants.TEXT);
+        return customTranslatableWidgetFields;
     }
 }

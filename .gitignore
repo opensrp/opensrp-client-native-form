@@ -16,3 +16,4 @@ project.properties
 .settings
 build/
 .gradle
+android-json-form-wizard/jacoco.exec

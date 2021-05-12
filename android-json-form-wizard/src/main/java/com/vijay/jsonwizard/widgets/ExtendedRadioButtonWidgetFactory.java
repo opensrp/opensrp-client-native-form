@@ -31,7 +31,9 @@ import java.util.Map;
 import java.util.Set;
 
 public class ExtendedRadioButtonWidgetFactory extends NativeRadioButtonFactory {
+
     private FormUtils formUtils = new FormUtils();
+
     @Override
     protected List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject,
                                     CommonListener commonListener, boolean popup) throws JSONException {
@@ -163,7 +165,7 @@ public class ExtendedRadioButtonWidgetFactory extends NativeRadioButtonFactory {
                 rootLayout.addView(radioButton);
             }
         } else {
-            Toast.makeText(context, "Please make sure you have set the radio button options", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.extended_radio_info_text_ensure_options_set, Toast.LENGTH_SHORT).show();
         }
     }
 
