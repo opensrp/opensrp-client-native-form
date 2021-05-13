@@ -4,7 +4,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath'com.android.tools.build:gradle:3.5.3'
+        classpath 'com.android.tools.build:gradle:3.5.3'
         classpath 'org.apache.commons:commons-lang3:3.7'
     }
 }
@@ -61,6 +61,10 @@ android {
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
     }
+
+    configurations.all {
+        resolutionStrategy.force 'com.android.support:design:28.0.0'
+    }
 }
 
 
@@ -108,6 +112,8 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
         exclude group: 'com.android.support', module: 'recyclerview-v7'
     }
+
+    implementation 'com.android.support:design:28.0.0'
 
     implementation 'org.smartregister:opensrp-client-utils:0.0.4-SNAPSHOT'
 
