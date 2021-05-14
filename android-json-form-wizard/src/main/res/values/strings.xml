@@ -119,6 +119,6 @@
     <string name="optibp_unable_to_receive">Unable to receive any result</string>
     <string name="missing_client_info">Missing client info</string>
     <string name="optibp_label">Measure the blood pressure using OptiBP</string>
-    <string name="optibp_values_error">No fields defined to populate values</string>
+    <string name="optibp_values_error">No fields defined to populate BP values</string>
 
 </resources>
