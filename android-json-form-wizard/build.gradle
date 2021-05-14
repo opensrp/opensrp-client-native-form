@@ -1,10 +1,9 @@
 buildscript {
     repositories {
         google()
-        jcenter()
     }
     dependencies {
-        classpath'com.android.tools.build:gradle:3.5.3'
+        classpath 'com.android.tools.build:gradle:3.5.3'
         classpath 'org.apache.commons:commons-lang3:3.7'
     }
 }
@@ -61,6 +60,10 @@ android {
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
     }
+
+    configurations.all {
+        resolutionStrategy.force 'com.android.support:design:28.0.0'
+    }
 }
 
 
@@ -74,9 +77,10 @@ repositories {
 }
 
 dependencies {
-    api('org.smartregister:opensrp-client-simprints:1.0.3-SNAPSHOT@aar') {
+    implementation('org.smartregister:opensrp-client-simprints:1.0.6-SNAPSHOT@aar') {
         transitive = true
         exclude group: 'com.android.support', module: 'appcompat-v7'
+        exclude group: 'com.android.support', module: 'design'
     }
     implementation 'com.github.bmelnychuk:atv:1.2.9'
     implementation('com.android.support:design:28.0.0') {
