@@ -68,9 +68,7 @@ public class OptiBPWidgetFactory implements FormWidgetFactory, OnActivityResultL
 
         JSONArray canvasIds = new JSONArray();
         rootLayout = getRootLayout(context);
-        rootLayout.setId(ViewUtil.generateViewId());
-        FormUtils.setViewOpenMRSEntityAttributes(jsonObject, rootLayout);
-        canvasIds.put(rootLayout.getId());
+        setWidgetTags(rootLayout, canvasIds);
         observeLayoutChanges(rootLayout);
         attachRefreshLogic(context, jsonObject, rootLayout);
 
@@ -92,19 +90,17 @@ public class OptiBPWidgetFactory implements FormWidgetFactory, OnActivityResultL
         return views;
     }
 
-    private void setWidgetTags(View view, JSONArray canvasIds) {
-        try {
-            JSONObject jsonObject = widgetArgs.getJsonObject();
-            FormUtils.setViewOpenMRSEntityAttributes(jsonObject, view);
+    private void setWidgetTags(View view, JSONArray canvasIds) throws JSONException {
+        JSONObject jsonObject = widgetArgs.getJsonObject();
+        FormUtils.setViewOpenMRSEntityAttributes(jsonObject, view);
 
-            view.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
-            view.setTag(R.id.canvas_ids, canvasIds.toString());
-            view.setTag(R.id.type, widgetArgs.getJsonObject().getString(JsonFormConstants.TYPE));
-            view.setTag(R.id.extraPopup, widgetArgs.isPopup());
-            view.setTag(R.id.address, widgetArgs.getStepName() + ":" + jsonObject.getString(JsonFormConstants.KEY));
-        } catch (JSONException je) {
-            Timber.e(je);
-        }
+        view.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+        view.setTag(R.id.canvas_ids, canvasIds.toString());
+        view.setTag(R.id.type, widgetArgs.getJsonObject().getString(JsonFormConstants.TYPE));
+        view.setTag(R.id.extraPopup, widgetArgs.isPopup());
+        view.setTag(R.id.address, widgetArgs.getStepName() + ":" + jsonObject.getString(JsonFormConstants.KEY));
+        view.setId(ViewUtil.generateViewId());
+        canvasIds.put(view.getId());
     }
 
     private void initBPEditTexts(Activity context, JsonFormFragment formFragment, String stepName, JSONObject jsonObject) {
