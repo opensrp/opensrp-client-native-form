@@ -52,6 +52,7 @@ public class OptiBPWidgetFactory implements FormWidgetFactory, OnActivityResultL
     protected WidgetArgs widgetArgs;
     protected LinearLayout rootLayout;
     private TextView labelTextView;
+    private Button launchButton;
     private EditText systolicBPEditText;
     private EditText diastolicBPEditText;
 
@@ -79,8 +80,11 @@ public class OptiBPWidgetFactory implements FormWidgetFactory, OnActivityResultL
 
         initLabel(rootLayout, context, jsonObject, readOnly);
         initLaunchButton(rootLayout, readOnly);
-        initBPEditTexts((Activity) context, formFragment, stepName, jsonObject);
+        initBPEditTexts((Activity) context, formFragment, stepName);
         setWidgetTags(labelTextView, canvasIds);
+        attachRefreshLogic(context, jsonObject, labelTextView);
+        setWidgetTags(launchButton, canvasIds);
+        attachRefreshLogic(context, jsonObject, launchButton);
         setUpOptiBpActivityResultListener();
 
         ((JsonApi) context).addFormDataView(rootLayout);
@@ -103,9 +107,9 @@ public class OptiBPWidgetFactory implements FormWidgetFactory, OnActivityResultL
         canvasIds.put(view.getId());
     }
 
-    private void initBPEditTexts(Activity context, JsonFormFragment formFragment, String stepName, JSONObject jsonObject) {
-        systolicBPEditText = getBPEditTextField(context, formFragment, stepName, jsonObject, BPFieldType.SYSTOLIC_BP);
-        diastolicBPEditText = getBPEditTextField(context, formFragment, stepName, jsonObject, BPFieldType.DIASTOLIC_BP);
+    private void initBPEditTexts(Activity context, JsonFormFragment formFragment, String stepName) {
+        systolicBPEditText = getBPEditTextField(context, formFragment, stepName, BPFieldType.SYSTOLIC_BP);
+        diastolicBPEditText = getBPEditTextField(context, formFragment, stepName, BPFieldType.DIASTOLIC_BP);
     }
 
     private void initLabel(LinearLayout rootLayout, Context context, JSONObject jsonObject, boolean readOnly) throws JSONException {
@@ -117,7 +121,7 @@ public class OptiBPWidgetFactory implements FormWidgetFactory, OnActivityResultL
     }
 
     private void initLaunchButton(LinearLayout rootLayout, boolean readOnly) throws JSONException {
-        Button launchButton = rootLayout.findViewById(R.id.optibp_launch_button);
+        launchButton = rootLayout.findViewById(R.id.optibp_launch_button);
         formatButtonWidget(launchButton);
         launchButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -227,7 +231,7 @@ public class OptiBPWidgetFactory implements FormWidgetFactory, OnActivityResultL
         return String.valueOf(value);
     }
 
-    private EditText getBPEditTextField(Activity context, JsonFormFragment formFragment, String stepName, JSONObject jsonObject, BPFieldType field) {
+    private EditText getBPEditTextField(Activity context, JsonFormFragment formFragment, String stepName, BPFieldType field) {
         EditText bpEditText = (EditText) formFragment.getJsonApi().getFormDataView(stepName + ":" + field.getKey());
         if (bpEditText == null) {
             Toast.makeText(context, context.getString(R.string.optibp_values_error), Toast.LENGTH_SHORT).show();
