@@ -40,6 +40,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import timber.log.Timber;
@@ -49,12 +50,13 @@ import static android.app.Activity.RESULT_OK;
 
 public class OptiBPWidgetFactory implements FormWidgetFactory, OnActivityResultListener {
 
-    protected WidgetArgs widgetArgs;
-    protected LinearLayout rootLayout;
+    private WidgetArgs widgetArgs;
+    private LinearLayout rootLayout;
     private TextView labelTextView;
     private Button launchButton;
     private EditText systolicBPEditText;
     private EditText diastolicBPEditText;
+    private int requestCode;
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
@@ -63,12 +65,14 @@ public class OptiBPWidgetFactory implements FormWidgetFactory, OnActivityResultL
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
+        requestCode = new Random().nextInt(999);
         widgetArgs = new WidgetArgs();
         widgetArgs.withStepName(stepName).withContext(context).withFormFragment(formFragment)
                 .withJsonObject(jsonObject).withListener(listener).withPopup(popup);
 
-        JSONArray canvasIds = new JSONArray();
         rootLayout = getRootLayout(context);
+        JSONArray canvasIds = new JSONArray();
+        canvasIds.put(rootLayout.getId());
         setWidgetTags(rootLayout, canvasIds);
         observeLayoutChanges(rootLayout);
         attachRefreshLogic(context, jsonObject, rootLayout);
@@ -103,17 +107,24 @@ public class OptiBPWidgetFactory implements FormWidgetFactory, OnActivityResultL
         view.setTag(R.id.type, widgetArgs.getJsonObject().getString(JsonFormConstants.TYPE));
         view.setTag(R.id.extraPopup, widgetArgs.isPopup());
         view.setTag(R.id.address, widgetArgs.getStepName() + ":" + jsonObject.getString(JsonFormConstants.KEY));
-        view.setId(ViewUtil.generateViewId());
-        canvasIds.put(view.getId());
     }
 
-    private void initBPEditTexts(Activity context, JsonFormFragment formFragment, String stepName) {
+    private void initBPEditTexts(Activity context, JsonFormFragment formFragment, String stepName) throws JSONException {
+        initKeys();
         systolicBPEditText = getBPEditTextField(context, formFragment, stepName, BPFieldType.SYSTOLIC_BP);
         diastolicBPEditText = getBPEditTextField(context, formFragment, stepName, BPFieldType.DIASTOLIC_BP);
     }
 
+    private void initKeys() throws JSONException {
+        JSONObject jsonObject = widgetArgs.getJsonObject();
+        JSONArray fields = jsonObject.getJSONArray(JsonFormConstants.FIELDS_TO_USE_VALUE);
+        BPFieldType.SYSTOLIC_BP.setKey(fields.get(0).toString());
+        BPFieldType.DIASTOLIC_BP.setKey(fields.get(1).toString());
+    }
+
     private void initLabel(LinearLayout rootLayout, Context context, JSONObject jsonObject, boolean readOnly) throws JSONException {
         labelTextView = rootLayout.findViewById(R.id.optibp_label);
+        labelTextView.setId(ViewUtil.generateViewId());
         labelTextView.setText(getLabelText(context, jsonObject));
         if (readOnly) {
             labelTextView.setTextColor(ContextCompat.getColor(context, android.R.color.darker_gray));
@@ -122,6 +133,7 @@ public class OptiBPWidgetFactory implements FormWidgetFactory, OnActivityResultL
 
     private void initLaunchButton(LinearLayout rootLayout, boolean readOnly) throws JSONException {
         launchButton = rootLayout.findViewById(R.id.optibp_launch_button);
+        launchButton.setId(ViewUtil.generateViewId());
         formatButtonWidget(launchButton);
         launchButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,7 +142,7 @@ public class OptiBPWidgetFactory implements FormWidgetFactory, OnActivityResultL
                     Intent intent = new Intent(JsonFormConstants.OptibpConstants.OPTIBP_LAUNCH_INTENT);
                     intent.setType("text/json");
                     intent.putExtra(Intent.EXTRA_TEXT, getInputJsonString(widgetArgs.getContext(), widgetArgs.getJsonObject()));
-                    ((Activity) widgetArgs.getContext()).startActivityForResult(Intent.createChooser(intent, ""), JsonFormConstants.OptibpConstants.OPTIBP_REQUEST_CODE);
+                    ((Activity) widgetArgs.getContext()).startActivityForResult(Intent.createChooser(intent, ""), requestCode);
                 } catch (Exception e) {
                     Timber.e(e);
                 }
@@ -162,7 +174,7 @@ public class OptiBPWidgetFactory implements FormWidgetFactory, OnActivityResultL
         Context context = widgetArgs.getContext();
         if (context instanceof JsonApi) {
             final JsonApi jsonApi = (JsonApi) context;
-            jsonApi.addOnActivityResultListener(JsonFormConstants.OptibpConstants.OPTIBP_REQUEST_CODE, this);
+            jsonApi.addOnActivityResultListener(requestCode, this);
         }
     }
 
@@ -171,7 +183,9 @@ public class OptiBPWidgetFactory implements FormWidgetFactory, OnActivityResultL
             rootLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
-                    if (rootLayout.getVisibility() != View.VISIBLE) {
+                    if (rootLayout.getVisibility() != View.VISIBLE
+                            && TextUtils.isEmpty(systolicBPEditText.getText())
+                            && TextUtils.isEmpty(diastolicBPEditText.getText())) {
                         Timber.i("OptiBP widget not visible");
                         toggleEditTextEnabled(systolicBPEditText, true);
                         toggleEditTextEnabled(diastolicBPEditText, true);
@@ -266,7 +280,9 @@ public class OptiBPWidgetFactory implements FormWidgetFactory, OnActivityResultL
 
     @SuppressLint("InflateParams")
     public LinearLayout getRootLayout(Context context) {
-        return (LinearLayout) LayoutInflater.from(context).inflate(R.layout.native_form_item_optibp_widget, null);
+        LinearLayout layout = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.native_form_item_optibp_widget, null);
+        layout.setId(ViewUtil.generateViewId());
+        return layout;
     }
 
     @Override
@@ -300,7 +316,7 @@ public class OptiBPWidgetFactory implements FormWidgetFactory, OnActivityResultL
     @Override
     public void onActivityResult(int requestCode, int resultCode, final Intent data) {
         final JsonApi jsonApi = (JsonApi) widgetArgs.getContext();
-        if (requestCode == JsonFormConstants.OptibpConstants.OPTIBP_REQUEST_CODE && resultCode == RESULT_OK) {
+        if (requestCode == this.requestCode && resultCode == RESULT_OK) {
             try {
                 if (data != null) {
                     try {
@@ -313,7 +329,7 @@ public class OptiBPWidgetFactory implements FormWidgetFactory, OnActivityResultL
                     }
 
                 } else
-                    Timber.i("NO RESULT FOR QR CODE");
+                    Timber.i("NO RESULT FROM OPTIBP APP");
             } catch (Exception e) {
                 Timber.e(e);
             }
@@ -325,10 +341,14 @@ public class OptiBPWidgetFactory implements FormWidgetFactory, OnActivityResultL
     private enum BPFieldType {
         DIASTOLIC_BP("bp_diastolic"), SYSTOLIC_BP("bp_systolic");  // TODO -> Add these KEYS to explicit documentation
 
-        private final String key;
+        private String key;
 
         public String getKey() {
             return key;
+        }
+
+        public void setKey(String key) {
+            this.key = key;
         }
 
         BPFieldType(String key) {
@@ -336,3 +356,4 @@ public class OptiBPWidgetFactory implements FormWidgetFactory, OnActivityResultL
         }
     }
 }
+
