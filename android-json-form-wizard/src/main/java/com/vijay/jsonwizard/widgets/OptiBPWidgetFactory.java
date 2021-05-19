@@ -104,9 +104,14 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
     }
 
     private void initBPFieldsKeys(JSONObject jsonObject) throws JSONException {
-        JSONArray fields = jsonObject.getJSONArray(JsonFormConstants.FIELDS_TO_USE_VALUE);
-        BPFieldType.SYSTOLIC_BP.setKey(fields.get(0).toString());
-        BPFieldType.DIASTOLIC_BP.setKey(fields.get(1).toString());
+        if (jsonObject.has(JsonFormConstants.FIELDS_TO_USE_VALUE)
+                && jsonObject.getJSONArray(JsonFormConstants.FIELDS_TO_USE_VALUE).length()  == 2) {
+            JSONArray fields = jsonObject.getJSONArray(JsonFormConstants.FIELDS_TO_USE_VALUE);
+            BPFieldType.SYSTOLIC_BP.setKey(fields.get(0).toString());
+            BPFieldType.DIASTOLIC_BP.setKey(fields.get(1).toString());
+        } else {
+            Timber.e("No field values defined to populate BP values");
+        }
     }
 
     private TextView initLabel(LinearLayout rootLayout, WidgetArgs widgetArgs, boolean readOnly) throws JSONException {
