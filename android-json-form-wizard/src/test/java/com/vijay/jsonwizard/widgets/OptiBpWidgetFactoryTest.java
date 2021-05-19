@@ -67,7 +67,7 @@ public class OptiBpWidgetFactoryTest extends FactoryTest {
             "        }" +
             "      }";
 
-    String formString = "{\n" +
+    private final String formString = "{\n" +
             "  \"show_errors_on_submit\": true,\n" +
             "  \"encounter_type\": \"OptiBP Demo\",\n" +
             "  \"count\": \"1\",\n" +
