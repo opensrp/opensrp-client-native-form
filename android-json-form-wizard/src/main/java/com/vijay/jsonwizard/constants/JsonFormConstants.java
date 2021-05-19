@@ -316,6 +316,7 @@ public class JsonFormConstants {
     public static class OptibpConstants {
         public static final String OPTIBP_WIDGET = "optibp";
         public static final int OPTIBP_REQUEST_CODE = 301;
+        public static final int OPTIBP_REPEAT_REQUEST_CODE = 302;
         public static final String OPTIBP_REPORT_RESULT = "result";
         public static final String OPTIBP_REPORT_COMPONENT = "component";
         public static final String OPTIBP_REPORT_VALUE_QUANITITY = "valueQuantity";
