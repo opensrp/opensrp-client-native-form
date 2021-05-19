@@ -257,7 +257,7 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
         editText.setFocusableInTouchMode(enabled);
     }
 
-    private String getBPValue(String resultJsonString, BPFieldType field) throws JSONException {
+    protected String getBPValue(String resultJsonString, BPFieldType field) throws JSONException {
         JSONObject jsonObject = new JSONObject(resultJsonString);
         JSONArray result = jsonObject.getJSONArray(JsonFormConstants.OptibpConstants.OPTIBP_REPORT_RESULT);
         JSONObject resultObject = result.getJSONObject(0);
@@ -268,7 +268,7 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
         return String.valueOf(value);
     }
 
-    private EditText getBPEditTextField(WidgetArgs widgetArgs, BPFieldType field) {
+    protected EditText getBPEditTextField(WidgetArgs widgetArgs, BPFieldType field) {
         Context context = widgetArgs.getContext();
         EditText bpEditText = (EditText) widgetArgs.getFormFragment().getJsonApi().getFormDataView(widgetArgs.getStepName() + ":" + field.getKey());
         if (bpEditText == null) {
@@ -283,11 +283,12 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
         return isRepeat ? JsonFormConstants.OptibpConstants.OPTIBP_REPEAT_REQUEST_CODE : JsonFormConstants.OptibpConstants.OPTIBP_REQUEST_CODE;
     }
 
+    @SuppressWarnings("SameParameterValue")
     private boolean isRepeatMeasurement(BPFieldType systolicField, BPFieldType diastolicField) {
         return systolicField.getKey().contains("repeat") && diastolicField.getKey().contains("repeat");
     }
 
-    private String getInputJsonString(Context context, JSONObject jsonObject) throws Exception {
+    protected String getInputJsonString(Context context, JSONObject jsonObject) throws JSONException {
         if (!jsonObject.has(JsonFormConstants.OptibpConstants.OPTIBP_KEY_DATA)) {
             throw new JSONException(context.getString(R.string.missing_client_info));
         }
@@ -343,7 +344,7 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
         }
     }
 
-    private enum BPFieldType {
+    protected enum BPFieldType {
         DIASTOLIC_BP("bp_diastolic"), SYSTOLIC_BP("bp_systolic");  // TODO -> Add these KEYS to explicit documentation
 
         private String key;
