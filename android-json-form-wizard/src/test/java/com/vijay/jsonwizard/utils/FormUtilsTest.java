@@ -725,4 +725,11 @@ public class FormUtilsTest extends BaseTest {
         Assert.assertEquals(expectedList.get(0).getDynamicLabelTitle(), actualList.get(0).getDynamicLabelTitle());
         Assert.assertEquals(expectedList.get(0).getDynamicLabelImageSrc(), actualList.get(0).getDynamicLabelImageSrc());
     }
+
+    @Test
+    public void testCreateOptiBPDataObject() throws JSONException {
+        JSONObject inputJson = FormUtils.createOptiBPDataObject("clientId", "clientOpenSRPId");
+
+        Assert.assertEquals(inputJson.toString(), "{\"clientId\":\"clientId\",\"clientOpenSRPId\":\"clientOpenSRPId\"}");
+    }
 }
