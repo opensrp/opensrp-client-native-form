@@ -239,7 +239,7 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
                 openMrsEntity, openMrsEntityId, widgetArgs.isPopup());
     }
 
-    private void populateBPEditTextValues(String resultJsonJsonString, EditText systolicBPEditText, EditText diastolicBPEditText) throws JSONException {
+    protected void populateBPEditTextValues(String resultJsonJsonString, EditText systolicBPEditText, EditText diastolicBPEditText) throws JSONException {
         if (systolicBPEditText != null) {
             systolicBPEditText.setText(getBPValue(resultJsonJsonString, BPFieldType.SYSTOLIC_BP));
             toggleEditTextEnabled(systolicBPEditText, false);

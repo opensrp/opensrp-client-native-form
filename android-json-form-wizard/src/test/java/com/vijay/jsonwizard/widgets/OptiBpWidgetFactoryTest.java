@@ -64,7 +64,11 @@ public class OptiBpWidgetFactoryTest extends FactoryTest {
             "        \"optibp_data\": {\n" +
             "          \"clientId\": \"sampleClientId\",\n" +
             "          \"clientOpenSRPId\": \"sampleClientOpenSRPId\"\n" +
-            "        }" +
+            "        }," +
+            "        \"fields_to_use_value\": [\n" +
+            "          \"bp_systolic\",\n" +
+            "          \"bp_diastolic\"\n" +
+            "        ]" +
             "      }";
 
     private final String formString = "{\n" +
@@ -228,6 +232,75 @@ public class OptiBpWidgetFactoryTest extends FactoryTest {
             "  }\n" +
             "}";
 
+    private final String resultJson = "{\n" +
+            " \"resourceType\": \"DiagnosticReport\",\n" +
+            " \"identifier\": [\n" +
+            "  {\n" +
+            "   \"use\": \"official\",\n" +
+            "   \"value\": \"uuid\" \n" +
+            "  }\n" +
+            " ],\n" +
+            " \"subject\": \"patient-uuid\", \n" +
+            " \"result\": [\n" +
+            "  {\n" +
+            "   \"status\": \"final\",\n" +
+            "   \"category\": [\n" +
+            "    {\n" +
+            "     \"coding\": [\n" +
+            "      {\n" +
+            "       \"system\": \"http://terminology.hl7.org/CodeSystem/observation-category\",\n" +
+            "       \"code\": \"vital-signs\",\n" +
+            "       \"display\": \"vital-signs\"\n" +
+            "      }\n" +
+            "     ]\n" +
+            "    }\n" +
+            "   ],\n" +
+            "   \"code\": {\n" +
+            "    \"coding\": [\n" +
+            "     {\n" +
+            "      \"system\": \"http://loinc.org\",\n" +
+            "      \"code\": \"55284-4\",\n" +
+            "      \"display\": \"Blood Pressure\"\n" +
+            "     }\n" +
+            "    ],\n" +
+            "    \"text\": \"Blood Pressure\"\n" +
+            "   },\n" +
+            "   \"component\": [\n" +
+            "    {\n" +
+            "     \"code\": {\n" +
+            "      \"coding\": [\n" +
+            "       {\n" +
+            "        \"system\": \"http://loinc.org\",\n" +
+            "        \"code\": \"8462-4\",\n" +
+            "        \"display\": \"Diastolic Blood Pressure\"\n" +
+            "       }\n" +
+            "      ],\n" +
+            "      \"text\": \"Diastolic Blood Pressure\"\n" +
+            "     },\n" +
+            "     \"valueQuantity\": {\n" +
+            "      \"value\": 70\n" +
+            "     }\n" +
+            "    },\n" +
+            "    {\n" +
+            "     \"code\": {\n" +
+            "      \"coding\": [\n" +
+            "       {\n" +
+            "        \"system\": \"http://loinc.org\",\n" +
+            "        \"code\": \"8480-6\",\n" +
+            "        \"display\": \"Systolic Blood Pressure\"\n" +
+            "       }\n" +
+            "      ],\n" +
+            "      \"text\": \"Systolic Blood Pressure\"\n" +
+            "     },\n" +
+            "     \"valueQuantity\": {\n" +
+            "      \"value\": 110\n" +
+            "     }\n" +
+            "    }\n" +
+            "   ]\n" +
+            "  }\n" +
+            " ]\n" +
+            "}";
+
     @Before
     public void setUp() {
         super.setUp();
@@ -290,75 +363,6 @@ public class OptiBpWidgetFactoryTest extends FactoryTest {
 
     @Test
     public void testResultJson() throws JSONException {
-        String resultJson = "{\n" +
-                " \"resourceType\": \"DiagnosticReport\",\n" +
-                " \"identifier\": [\n" +
-                "  {\n" +
-                "   \"use\": \"official\",\n" +
-                "   \"value\": \"uuid\" \n" +
-                "  }\n" +
-                " ],\n" +
-                " \"subject\": \"patient-uuid\", \n" +
-                " \"result\": [\n" +
-                "  {\n" +
-                "   \"status\": \"final\",\n" +
-                "   \"category\": [\n" +
-                "    {\n" +
-                "     \"coding\": [\n" +
-                "      {\n" +
-                "       \"system\": \"http://terminology.hl7.org/CodeSystem/observation-category\",\n" +
-                "       \"code\": \"vital-signs\",\n" +
-                "       \"display\": \"vital-signs\"\n" +
-                "      }\n" +
-                "     ]\n" +
-                "    }\n" +
-                "   ],\n" +
-                "   \"code\": {\n" +
-                "    \"coding\": [\n" +
-                "     {\n" +
-                "      \"system\": \"http://loinc.org\",\n" +
-                "      \"code\": \"55284-4\",\n" +
-                "      \"display\": \"Blood Pressure\"\n" +
-                "     }\n" +
-                "    ],\n" +
-                "    \"text\": \"Blood Pressure\"\n" +
-                "   },\n" +
-                "   \"component\": [\n" +
-                "    {\n" +
-                "     \"code\": {\n" +
-                "      \"coding\": [\n" +
-                "       {\n" +
-                "        \"system\": \"http://loinc.org\",\n" +
-                "        \"code\": \"8462-4\",\n" +
-                "        \"display\": \"Diastolic Blood Pressure\"\n" +
-                "       }\n" +
-                "      ],\n" +
-                "      \"text\": \"Diastolic Blood Pressure\"\n" +
-                "     },\n" +
-                "     \"valueQuantity\": {\n" +
-                "      \"value\": 70\n" +
-                "     }\n" +
-                "    },\n" +
-                "    {\n" +
-                "     \"code\": {\n" +
-                "      \"coding\": [\n" +
-                "       {\n" +
-                "        \"system\": \"http://loinc.org\",\n" +
-                "        \"code\": \"8480-6\",\n" +
-                "        \"display\": \"Systolic Blood Pressure\"\n" +
-                "       }\n" +
-                "      ],\n" +
-                "      \"text\": \"Systolic Blood Pressure\"\n" +
-                "     },\n" +
-                "     \"valueQuantity\": {\n" +
-                "      \"value\": 110\n" +
-                "     }\n" +
-                "    }\n" +
-                "   ]\n" +
-                "  }\n" +
-                " ]\n" +
-                "}";
-
         Assert.assertNotNull(factory);
         OptiBPWidgetFactory factorySpy = Mockito.spy(factory);
         Assert.assertNotNull(factorySpy);
@@ -368,5 +372,19 @@ public class OptiBpWidgetFactoryTest extends FactoryTest {
 
         Assert.assertEquals(systolic, "110");
         Assert.assertEquals(diastolic, "70");
+    }
+
+    @Test
+    public void testPopulateETValues() throws JSONException {
+        Assert.assertNotNull(factory);
+        OptiBPWidgetFactory factorySpy = Mockito.spy(factory);
+        Assert.assertNotNull(factorySpy);
+
+        EditText sbp = Mockito.mock(EditText.class);
+        EditText dbp = Mockito.mock(EditText.class);
+        factorySpy.populateBPEditTextValues(resultJson, sbp, dbp);
+
+        Mockito.verify(sbp).setEnabled(false);
+        Mockito.verify(dbp).setEnabled(false);
     }
 }
