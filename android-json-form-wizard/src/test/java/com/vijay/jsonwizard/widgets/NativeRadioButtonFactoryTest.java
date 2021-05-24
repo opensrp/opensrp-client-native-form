@@ -50,6 +50,9 @@ public class NativeRadioButtonFactoryTest extends BaseTest {
         Assert.assertNotNull(formUtilsSpy);
         Whitebox.setInternalState(factory, "formUtils", formUtilsSpy);
 
+        //noinspection ResultOfMethodCallIgnored
+        Mockito.doReturn(jsonFormActivity).when(formFragment).getJsonApi();
+
         List<View> viewList = factory.getViewsFromJson("RandomStepName", jsonFormActivity, formFragment, nativeRadioButtonObject, listener);
         Assert.assertNotNull(viewList);
         Assert.assertTrue(viewList.size() > 0);
