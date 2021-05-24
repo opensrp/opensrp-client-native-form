@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import timber.log.Timber;
+
 import static com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT;
 import static com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT;
 import static com.vijay.jsonwizard.utils.FormUtils.getCurrentCheckboxValues;
@@ -84,26 +86,15 @@ public class CheckBoxFactory extends BaseFactory {
         return attachJson(stepName, context, jsonObject, listener, formFragment, false);
     }
 
-    private List<View> attachJson(String stepName, Context context, JSONObject jsonObject, CommonListener listener, JsonFormFragment formFragment,
-                                  boolean popup) throws JSONException {
+    private List<View> attachJson(final String stepName, final Context context, final JSONObject jsonObject, final CommonListener listener, final JsonFormFragment formFragment,
+                                  final boolean popup) throws JSONException {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
 
-        boolean readOnly = false;
-        boolean editable = false;
-
-        if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
-            readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
-        }
-        if (jsonObject.has(JsonFormConstants.EDITABLE)) {
-            editable = jsonObject.getBoolean(JsonFormConstants.EDITABLE);
-        }
-
         List<View> views = new ArrayList<>(1);
-        JSONArray canvasIds = new JSONArray();
-        ImageView editButton;
-        LinearLayout rootLayout = getLinearLayout(context);
+        final JSONArray canvasIds = new JSONArray();
+        final LinearLayout rootLayout = getLinearLayout(context);
 
         rootLayout.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
         rootLayout.setId(ViewUtil.generateViewId());
@@ -117,23 +108,42 @@ public class CheckBoxFactory extends BaseFactory {
         canvasIds.put(rootLayout.getId());
         addRequiredValidator(rootLayout, jsonObject);
 
-        Map<String, View> labelViews = formUtils.createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly, listener, popup);
+        formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    boolean editable = false;
+                    if (jsonObject.has(JsonFormConstants.EDITABLE)) {
+                        editable = jsonObject.getBoolean(JsonFormConstants.EDITABLE);
+                    }
+                    boolean readOnly = false;
 
+                    if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
+                        readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
+                    }
+                    final Map<String, View> labelViews = formUtils.createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly, listener, popup);
 
-        ArrayList<View> editableCheckBoxes = addCheckBoxOptionsElements(jsonObject, context, readOnly, canvasIds, stepName,
-                rootLayout, listener, popup);
+                    final ImageView editButton;
+                    ArrayList<View> editableCheckBoxes = addCheckBoxOptionsElements(jsonObject, context, readOnly, canvasIds, stepName,
+                            rootLayout, listener, popup);
+                    if (labelViews != null && labelViews.size() > 0) {
+                        editButton = (ImageView) labelViews.get(JsonFormConstants.EDIT_BUTTON);
+                        if (editButton != null) {
+                            showEditButton(jsonObject, editableCheckBoxes, editButton, listener);
+                            editButton.setTag(R.id.extraPopup, popup);
+                            if (editable) {
+                                editButton.setVisibility(View.VISIBLE);
+                            }
+                        }
 
-        if (labelViews != null && labelViews.size() > 0) {
-            editButton = (ImageView) labelViews.get(JsonFormConstants.EDIT_BUTTON);
-            if (editButton != null) {
-                showEditButton(jsonObject, editableCheckBoxes, editButton, listener);
-                editButton.setTag(R.id.extraPopup, popup);
-                if (editable) {
-                    editButton.setVisibility(View.VISIBLE);
+                    }
+                } catch (JSONException e) {
+                    Timber.e(e);
                 }
             }
+        });
 
-        }
+
         formUtils.updateValueToJSONArray(jsonObject, jsonObject.optString(JsonFormConstants.VALUE, ""));
         attachRefreshLogic(jsonObject, context, rootLayout);
         rootLayout.setTag(R.id.canvas_ids, canvasIds.toString());

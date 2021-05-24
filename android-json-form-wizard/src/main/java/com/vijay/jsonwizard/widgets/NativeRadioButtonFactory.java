@@ -344,46 +344,58 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         return attachJson(stepName, context, formFragment, jsonObject, listener, false);
     }
 
-    protected List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject,
-                                    CommonListener listener, boolean popup) throws JSONException {
+    protected List<View> attachJson(final String stepName, final Context context, JsonFormFragment formFragment, final JSONObject jsonObject,
+                                    final CommonListener listener, final boolean popup) throws JSONException {
 
-        JSONArray canvasIds = new JSONArray();
+        final JSONArray canvasIds = new JSONArray();
         this.stepName = stepName;
         this.formFragment = formFragment;
         this.context = context;
         this.canvasIds = canvasIds;
 
-        boolean readOnly = false;
-        boolean editable = false;
-        if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
-            readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
-        }
-        if (jsonObject.has(JsonFormConstants.EDITABLE)) {
-            editable = jsonObject.getBoolean(JsonFormConstants.EDITABLE);
-        }
+
         List<View> views = new ArrayList<>(1);
-        ImageView editButton;
 
-        LinearLayout rootLayout = getLinearRootLayout(context);
+        final LinearLayout rootLayout = getLinearRootLayout(context);
 
-        Map<String, View> labelViews = new HashMap<>();
-        String label = jsonObject.optString(JsonFormConstants.LABEL, "");
-        if (StringUtils.isNotBlank(label)) {
-            labelViews = formUtils.createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly, listener, popup);
-        }
+        formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    boolean editable = false;
+                    if (jsonObject.has(JsonFormConstants.EDITABLE)) {
+                        editable = jsonObject.getBoolean(JsonFormConstants.EDITABLE);
+                    }
 
-        View radioGroup = addRadioButtonOptionsElements(jsonObject, context, stepName, rootLayout, listener, popup);
-        radioGroup.setTag(R.id.json_object, jsonObject);
+                    boolean readOnly = false;
+                    if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
+                        readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
+                    }
 
-        if (labelViews != null && labelViews.size() > 0) {
-            editButton = (ImageView) labelViews.get(JsonFormConstants.EDIT_BUTTON);
-            if (editButton != null) {
-                FormUtils.setEditButtonAttributes(jsonObject, radioGroup, editButton, listener);
-                if (editable) {
-                    editButton.setVisibility(View.VISIBLE);
+                    Map<String, View> labelViews = new HashMap<>();
+                    String label = jsonObject.optString(JsonFormConstants.LABEL, "");
+                    if (StringUtils.isNotBlank(label)) {
+                        labelViews = formUtils.createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly, listener, popup);
+                    }
+
+                    ImageView editButton;
+                    View radioGroup = addRadioButtonOptionsElements(jsonObject, context, stepName, rootLayout, listener, popup);
+                    radioGroup.setTag(R.id.json_object, jsonObject);
+
+                    if (labelViews != null && labelViews.size() > 0) {
+                        editButton = (ImageView) labelViews.get(JsonFormConstants.EDIT_BUTTON);
+                        if (editButton != null) {
+                            FormUtils.setEditButtonAttributes(jsonObject, radioGroup, editButton, listener);
+                            if (editable) {
+                                editButton.setVisibility(View.VISIBLE);
+                            }
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             }
-        }
+        });
 
         populateTags(rootLayout, stepName, popup, "", "", "", jsonObject);
 
