@@ -329,7 +329,7 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         assertEquals("Please enter the last name", presenter.getInvalidFields().get("step1#Basic Form One:user_last_name").getErrorMessage());
         assertEquals("Please enter the sex", presenter.getInvalidFields().get("step1#Basic Form One:user_spinner").getErrorMessage());
         shadowOf(getMainLooper()).idle();
-        verify(formFragment, times(2)).writeValue(anyString(), anyString(), anyString(), anyString(), anyString(),
+        verify(formFragment, times(1)).writeValue(anyString(), anyString(), anyString(), anyString(), anyString(),
                 anyString(), anyBoolean());
         verify(onFieldsInvalid, times(1)).passInvalidFields(presenter.getInvalidFields());
     }
