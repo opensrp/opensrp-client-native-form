@@ -45,6 +45,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
@@ -158,6 +159,7 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
 
 
     private void initWithActualForm() throws InterruptedException {
+        Mockito.reset(jsonFormActivity);
         Intent intent = new Intent();
         intent.putExtra("json", TestConstants.BASIC_FORM);
         jsonFormActivity = spy(Robolectric.buildActivity(JsonFormActivity.class, intent).create().resume().get());
@@ -327,7 +329,7 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         assertEquals("Please enter the last name", presenter.getInvalidFields().get("step1#Basic Form One:user_last_name").getErrorMessage());
         assertEquals("Please enter the sex", presenter.getInvalidFields().get("step1#Basic Form One:user_spinner").getErrorMessage());
         shadowOf(getMainLooper()).idle();
-        verify(formFragment, times(1)).writeValue(anyString(), anyString(), anyString(), anyString(), anyString(),
+        verify(formFragment, times(2)).writeValue(anyString(), anyString(), anyString(), anyString(), anyString(),
                 anyString(), anyBoolean());
         verify(onFieldsInvalid, times(1)).passInvalidFields(presenter.getInvalidFields());
     }
