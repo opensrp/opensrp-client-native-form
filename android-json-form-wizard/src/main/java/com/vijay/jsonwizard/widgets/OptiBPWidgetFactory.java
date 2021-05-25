@@ -263,7 +263,7 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
         JSONObject resultObject = result.getJSONObject(0);
         JSONArray component = resultObject.getJSONArray(JsonFormConstants.OptibpConstants.OPTIBP_REPORT_COMPONENT);
         JSONObject bpComponent = ((JSONObject) component.get(BPFieldType.SYSTOLIC_BP.equals(field) ? 1 : 0));
-        JSONObject valueQuantity = bpComponent.getJSONObject(JsonFormConstants.OptibpConstants.OPTIBP_REPORT_VALUE_QUANITITY);
+        JSONObject valueQuantity = bpComponent.getJSONObject(JsonFormConstants.OptibpConstants.OPTIBP_REPORT_VALUE_QUANTITY);
         int value = valueQuantity.getInt(JsonFormConstants.VALUE);
         return String.valueOf(value);
     }
