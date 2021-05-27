@@ -344,58 +344,46 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         return attachJson(stepName, context, formFragment, jsonObject, listener, false);
     }
 
-    protected List<View> attachJson(final String stepName, final Context context, JsonFormFragment formFragment, final JSONObject jsonObject,
-                                    final CommonListener listener, final boolean popup) throws JSONException {
+    protected List<View> attachJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject,
+                                    CommonListener listener, boolean popup) throws JSONException {
 
-        final JSONArray canvasIds = new JSONArray();
+        JSONArray canvasIds = new JSONArray();
         this.stepName = stepName;
         this.formFragment = formFragment;
         this.context = context;
         this.canvasIds = canvasIds;
 
-
+        boolean readOnly = false;
+        boolean editable = false;
+        if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
+            readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
+        }
+        if (jsonObject.has(JsonFormConstants.EDITABLE)) {
+            editable = jsonObject.getBoolean(JsonFormConstants.EDITABLE);
+        }
         List<View> views = new ArrayList<>(1);
+        ImageView editButton;
 
-        final LinearLayout rootLayout = getLinearRootLayout(context);
+        LinearLayout rootLayout = getLinearRootLayout(context);
 
-        formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    boolean editable = false;
-                    if (jsonObject.has(JsonFormConstants.EDITABLE)) {
-                        editable = jsonObject.getBoolean(JsonFormConstants.EDITABLE);
-                    }
+        Map<String, View> labelViews = new HashMap<>();
+        String label = jsonObject.optString(JsonFormConstants.LABEL, "");
+        if (StringUtils.isNotBlank(label)) {
+            labelViews = formUtils.createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly, listener, popup);
+        }
 
-                    boolean readOnly = false;
-                    if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
-                        readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
-                    }
+        View radioGroup = addRadioButtonOptionsElements(jsonObject, context, stepName, rootLayout, listener, popup);
+        radioGroup.setTag(R.id.json_object, jsonObject);
 
-                    Map<String, View> labelViews = new HashMap<>();
-                    String label = jsonObject.optString(JsonFormConstants.LABEL, "");
-                    if (StringUtils.isNotBlank(label)) {
-                        labelViews = formUtils.createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly, listener, popup);
-                    }
-
-                    ImageView editButton;
-                    View radioGroup = addRadioButtonOptionsElements(jsonObject, context, stepName, rootLayout, listener, popup);
-                    radioGroup.setTag(R.id.json_object, jsonObject);
-
-                    if (labelViews != null && labelViews.size() > 0) {
-                        editButton = (ImageView) labelViews.get(JsonFormConstants.EDIT_BUTTON);
-                        if (editButton != null) {
-                            FormUtils.setEditButtonAttributes(jsonObject, radioGroup, editButton, listener);
-                            if (editable) {
-                                editButton.setVisibility(View.VISIBLE);
-                            }
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+        if (labelViews != null && labelViews.size() > 0) {
+            editButton = (ImageView) labelViews.get(JsonFormConstants.EDIT_BUTTON);
+            if (editButton != null) {
+                FormUtils.setEditButtonAttributes(jsonObject, radioGroup, editButton, listener);
+                if (editable) {
+                    editButton.setVisibility(View.VISIBLE);
                 }
             }
-        });
+        }
 
         populateTags(rootLayout, stepName, popup, "", "", "", jsonObject);
 
@@ -575,7 +563,12 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
             if (!TextUtils.isEmpty(jsonObject.optString(JsonFormConstants.VALUE)) &&
                     jsonObject.optString(JsonFormConstants.VALUE).equals(item.getString(JsonFormConstants.KEY))) {
-                radioButton.setChecked(true);
+                ((Activity) context).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        radioButton.setChecked(true);
+                    }
+                });
             }
             String optionTextColor = JsonFormConstants.DEFAULT_TEXT_COLOR;
             if (item.has(JsonFormConstants.TEXT_COLOR)) {
