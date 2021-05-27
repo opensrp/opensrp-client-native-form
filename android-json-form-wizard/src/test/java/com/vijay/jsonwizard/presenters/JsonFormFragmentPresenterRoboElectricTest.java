@@ -159,7 +159,6 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
 
 
     private void initWithActualForm() throws InterruptedException {
-        Mockito.reset(jsonFormActivity);
         Intent intent = new Intent();
         intent.putExtra("json", TestConstants.BASIC_FORM);
         jsonFormActivity = spy(Robolectric.buildActivity(JsonFormActivity.class, intent).create().resume().get());

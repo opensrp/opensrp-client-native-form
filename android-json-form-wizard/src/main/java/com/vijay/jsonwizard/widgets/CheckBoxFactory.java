@@ -1,5 +1,6 @@
 package com.vijay.jsonwizard.widgets;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
@@ -92,9 +93,20 @@ public class CheckBoxFactory extends BaseFactory {
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
 
+        boolean readOnly = false;
+        boolean editable = false;
+
+        if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
+            readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
+        }
+        if (jsonObject.has(JsonFormConstants.EDITABLE)) {
+            editable = jsonObject.getBoolean(JsonFormConstants.EDITABLE);
+        }
+
         List<View> views = new ArrayList<>(1);
-        final JSONArray canvasIds = new JSONArray();
-        final LinearLayout rootLayout = getLinearLayout(context);
+        JSONArray canvasIds = new JSONArray();
+        ImageView editButton;
+        LinearLayout rootLayout = getLinearLayout(context);
 
         rootLayout.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
         rootLayout.setId(ViewUtil.generateViewId());
@@ -108,42 +120,22 @@ public class CheckBoxFactory extends BaseFactory {
         canvasIds.put(rootLayout.getId());
         addRequiredValidator(rootLayout, jsonObject);
 
-        formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    boolean editable = false;
-                    if (jsonObject.has(JsonFormConstants.EDITABLE)) {
-                        editable = jsonObject.getBoolean(JsonFormConstants.EDITABLE);
-                    }
-                    boolean readOnly = false;
+        Map<String, View> labelViews = formUtils.createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly, listener, popup);
 
-                    if (jsonObject.has(JsonFormConstants.READ_ONLY)) {
-                        readOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
-                    }
-                    final Map<String, View> labelViews = formUtils.createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly, listener, popup);
+        ArrayList<View> editableCheckBoxes = addCheckBoxOptionsElements(jsonObject, context, readOnly, canvasIds, stepName,
+                rootLayout, listener, popup);
 
-                    final ImageView editButton;
-                    ArrayList<View> editableCheckBoxes = addCheckBoxOptionsElements(jsonObject, context, readOnly, canvasIds, stepName,
-                            rootLayout, listener, popup);
-                    if (labelViews != null && labelViews.size() > 0) {
-                        editButton = (ImageView) labelViews.get(JsonFormConstants.EDIT_BUTTON);
-                        if (editButton != null) {
-                            showEditButton(jsonObject, editableCheckBoxes, editButton, listener);
-                            editButton.setTag(R.id.extraPopup, popup);
-                            if (editable) {
-                                editButton.setVisibility(View.VISIBLE);
-                            }
-                        }
-
-                    }
-                } catch (JSONException e) {
-                    Timber.e(e);
+        if (labelViews != null && labelViews.size() > 0) {
+            editButton = (ImageView) labelViews.get(JsonFormConstants.EDIT_BUTTON);
+            if (editButton != null) {
+                showEditButton(jsonObject, editableCheckBoxes, editButton, listener);
+                editButton.setTag(R.id.extraPopup, popup);
+                if (editable) {
+                    editButton.setVisibility(View.VISIBLE);
                 }
             }
-        });
 
-
+        }
         formUtils.updateValueToJSONArray(jsonObject, jsonObject.optString(JsonFormConstants.VALUE, ""));
         attachRefreshLogic(jsonObject, context, rootLayout);
         rootLayout.setTag(R.id.canvas_ids, canvasIds.toString());
@@ -187,7 +179,7 @@ public class CheckBoxFactory extends BaseFactory {
         ArrayList<CheckBox> checkBoxes = new ArrayList<>();
         ArrayList<View> checkboxLayouts = new ArrayList<>();
         for (int i = 0; i < options.length(); i++) {
-            JSONObject item = options.getJSONObject(i);
+            final JSONObject item = options.getJSONObject(i);
 
             String openMrsEntityParent = item.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
             String openMrsEntity = item.optString(JsonFormConstants.OPENMRS_ENTITY);
@@ -215,14 +207,23 @@ public class CheckBoxFactory extends BaseFactory {
             checkboxLayout.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE) + JsonFormConstants.SUFFIX.PARENT);
             canvasIds.put(checkboxLayout.getId());
 
-            if (StringUtils.isNotEmpty(item.optString(JsonFormConstants.VALUE))) {
-                checkBox.setChecked(Boolean.valueOf(item.optString(JsonFormConstants.VALUE)));
-            }
-
-            //Preselect values if they exist
-            if (checkBoxValues != null && getCurrentCheckboxValues(checkBoxValues).contains(item.getString(JsonFormConstants.KEY))) {
-                checkBox.setChecked(true);
-            }
+            final JSONArray finalCheckBoxValues = checkBoxValues;
+            ((Activity) context).runOnUiThread(new Runnable() {
+                @Override
+                public void run(){
+                    if (StringUtils.isNotEmpty(item.optString(JsonFormConstants.VALUE))) {
+                        checkBox.setChecked(Boolean.parseBoolean(item.optString(JsonFormConstants.VALUE)));
+                    }
+                    //Preselect values if they exist
+                    try {
+                        if (finalCheckBoxValues != null && getCurrentCheckboxValues(finalCheckBoxValues).contains(item.getString(JsonFormConstants.KEY))) {
+                            checkBox.setChecked(true);
+                        }
+                    } catch (JSONException e) {
+                        Timber.e(e);
+                    }
+                }
+            });
 
             checkBox.setEnabled(!readOnly);
             if (i == options.length() - 1) {

@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-public class CheckBoxFactoryTest extends FactoryTest {
+public class CheckBoxFactoryTest extends BaseTest {
     private CheckBoxFactory factory;
     @Mock
     private JsonFormActivity context;
@@ -64,12 +64,12 @@ public class CheckBoxFactoryTest extends FactoryTest {
 
     @Before
     public void setUp() {
-        super.setUp();
+        MockitoAnnotations.initMocks(this);
         factory = new CheckBoxFactory();
     }
 
     @Test
-    public void testCheckboxFactoryInstantiatesViewsCorrectly() throws Exception {
+    public void testTimePickerFactoryInstantiatesViewsCorrectly() throws Exception {
         String checkBoxWidgetString = "{\"key\":\"delivery_complications\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"161641AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_data_type\":\"select one\",\"type\":\"check_box\",\"label\":\"Any delivery complications?\",\"label_text_size\":\"18sp\",\"text_size\":\"18sp\",\"label_text_color\":\"#FF9800\",\"hint\":\"Any delivery complications?\",\"read_only\":true,\"editable\":true,\"value\":\"['perineal_tear']\",\"exclusive\":[\"none\"],\"options\":[{\"key\":\"prolonged_obstructed_labour\",\"text\":\"Prolonged/obstructed labour\",\"value\":false,\"openmrs_choice_id\":\"160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},{\"key\":\"abnormal_presentation\",\"text\":\"Abnormal presentation\",\"value\":false,\"openmrs_choice_id\":\"160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"text_color\":\"#FF9800\"},{\"key\":\"perineal_tear\",\"text\":\"Perineal tear (2, 3 or 4th degree)\",\"value\":false,\"openmrs_choice_id\":\"160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},{\"key\":\"Other\",\"text\":\"Other\",\"value\":false,\"openmrs_choice_id\":\"160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}],\"v_required\":{\"value\":true},\"relevance\":{\"rules-engine\":{\"ex-rules\":{\"rules-file\":\"sample-relevance-rules.yml\"}}},\"calculation\":{\"rules-engine\":{\"ex-rules\":{\"rules-file\":\"sample-calculations-rules.yml\"}}},\"constraints\":{\"rules-engine\":{\"ex-rules\":{\"rules-file\":\"sample-constraints-rules.yml\"}}}}";
         JSONObject checkBoxWidget = new JSONObject(checkBoxWidgetString);
         Assert.assertNotNull(factory);
@@ -82,10 +82,8 @@ public class CheckBoxFactoryTest extends FactoryTest {
         Mockito.doReturn(resources).when(context).getResources();
         Assert.assertNotNull(resources);
 
-        jsonFormActivity.setTheme(R.style.NativeFormsAppTheme);
-//        rootLayout.setTag(R.id.address, "RandomStepName:delivery_complications");
+        context.setTheme(R.style.NativeFormsAppTheme);
         Mockito.doReturn(rootLayout).when(factorySpy).getLinearLayout(context);
-        Mockito.doReturn("RandomStepName:delivery_complications").when(rootLayout).getTag(R.id.address);
         Mockito.doReturn(checkboxLayout).when(factorySpy).getCheckboxLayout(context);
         Mockito.doReturn(displayMetrics).when(resources).getDisplayMetrics();
         Mockito.doReturn(constraintLayout).when(formUtilsSpy).getRootConstraintLayout(context);
@@ -96,9 +94,6 @@ public class CheckBoxFactoryTest extends FactoryTest {
         Mockito.doReturn(labelText).when(labelConstraintLayout).findViewById(R.id.label_text);
         Mockito.doReturn(editButton).when(labelConstraintLayout).findViewById(R.id.label_edit_button);
         Mockito.doReturn(labelConstraintLayout).when(formUtilsSpy).createLabelLinearLayout(ArgumentMatchers.anyString(), ArgumentMatchers.eq(new JSONArray()), ArgumentMatchers.eq(new JSONObject()), ArgumentMatchers.eq(context), ArgumentMatchers.eq(listener));
-
-        //noinspection ResultOfMethodCallIgnored
-        Mockito.doReturn(jsonFormActivity).when(formFragment).getJsonApi();
 
         List<View> viewList = factorySpy.getViewsFromJson("RandomStepName", context, formFragment, checkBoxWidget, listener);
         Assert.assertNotNull(viewList);
