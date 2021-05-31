@@ -77,15 +77,17 @@ repositories {
 }
 
 dependencies {
-    def core_version = "1.3.2"
+    def core_version = "1.5.0"
     implementation "androidx.core:core:$core_version"
-    implementation "androidx.appcompat:appcompat:1.2.0"
+    implementation "androidx.appcompat:appcompat:1.3.0"
+    implementation "androidx.annotation:annotation:1.2.0"
+    implementation "androidx.recyclerview:recyclerview:1.2.0"
     api('org.smartregister:opensrp-client-simprints:1.0.7-PREVIEW2-SNAPSHOT@aar') {
         transitive = true
         exclude group: 'com.android.support', module: 'appcompat-v7'
     }
     implementation 'com.github.bmelnychuk:atv:1.2.9'
-    implementation('com.google.android.material:material:1.1.0') {
+    implementation('com.google.android.material:material:1.3.0') {
         exclude group: 'com.android.support', module: 'recyclerview-v7'
         exclude group: 'com.android.support', module: 'appcompat-v7'
         exclude group: 'com.android.support', module: 'support-v4'
@@ -93,7 +95,7 @@ dependencies {
     implementation 'com.github.johnkil.print:print:1.3.1'
     implementation 'com.github.rey5137:material:1.2.5'
     implementation 'org.smartregister:opensrp-client-materialedittext:2.1.6-SNAPSHOT'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation('com.github.ganfra:material-spinner:2.0.0') {
         exclude group: 'com.nineoldandroids', module: 'library'
         exclude group: 'com.android.support', module: 'appcompat-v7'
@@ -101,12 +103,12 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
         exclude group: 'com.android.support', module: 'recyclerview-v7'
     }
-    implementation('com.google.android.gms:play-services-location:17.0.0') {
+    implementation('com.google.android.gms:play-services-location:18.0.0') {
         exclude group: 'com.android.support', module: 'appcompat-v7'
         exclude group: 'com.android.support', module: 'support-annotations'
         exclude group: 'com.android.support', module: 'recyclerview-v7'
     }
-    implementation('com.google.android.gms:play-services-vision:20.1.0') {
+    implementation('com.google.android.gms:play-services-vision:20.1.3') {
         exclude group: 'com.android.support', module: 'appcompat-v7'
         exclude group: 'com.android.support', module: 'support-v4'
         exclude group: 'com.android.support', module: 'support-annotations'
@@ -125,7 +127,7 @@ dependencies {
         exclude group: 'com.android.support.test.espresso', module: 'espresso-core'
         exclude group: 'com.google.android.gms', module: 'play-services-vision'
     }
-    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.10'
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
     implementation('io.ona.CircleProgressbar:lib:0.1.0@aar') {
         exclude group: 'com.android.support.constraint', module: 'constraint-layout'
         exclude group: 'com.android.support', module: 'design'
@@ -134,11 +136,11 @@ dependencies {
         exclude group: 'com.android.support.test.espresso', module: 'espresso-core'
     }
     implementation 'com.jakewharton.timber:timber:4.7.1'
-    implementation 'org.greenrobot:eventbus:3.1.1'
-    implementation 'androidx.multidex:multidex:2.0.0'
+    implementation 'org.greenrobot:eventbus:3.2.0'
+    implementation 'androidx.multidex:multidex:2.0.1'
 
     // PowerMock
-    def powerMockVersion = '2.0.4'
+    def powerMockVersion = '2.0.7'
     testImplementation "org.powermock:powermock-module-junit4:$powerMockVersion"
     testImplementation "org.powermock:powermock-module-junit4-rule:$powerMockVersion"
     testImplementation "org.powermock:powermock-api-mockito2:$powerMockVersion"
@@ -149,23 +151,23 @@ dependencies {
 
     androidTestImplementation 'com.jayway.android.robotium:robotium-solo:5.6.3'
     androidTestImplementation 'com.google.dexmaker:dexmaker-mockito:1.2'
-    androidTestImplementation 'junit:junit:4.12'
-    androidTestImplementation('androidx.test.ext:junit:1.1.1') {
+    androidTestImplementation 'junit:junit:4.13.2'
+    androidTestImplementation('androidx.test.ext:junit:1.1.2') {
         exclude group: 'com.android.support', module: 'appcompat-v7'
 
     }
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
-    androidTestImplementation('androidx.test:rules:1.1.1') {
+    androidTestImplementation('androidx.test:rules:1.3.0') {
         exclude group: 'com.android.support', module: 'appcompat-v7'
 
     }
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.apache.maven:maven-ant-tasks:2.1.3'
-    testImplementation 'org.mockito:mockito-core:3.1.0'
+    testImplementation 'org.mockito:mockito-core:3.5.15'
     testImplementation('com.squareup:fest-android:1.0.8') { exclude module: 'support-v4' }
-    testImplementation 'org.robolectric:robolectric:4.3.1'
+    testImplementation 'org.robolectric:robolectric:4.4'
     testImplementation "org.json:json:20190722"
 }
 
