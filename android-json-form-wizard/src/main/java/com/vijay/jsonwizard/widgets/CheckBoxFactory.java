@@ -1,5 +1,6 @@
 package com.vijay.jsonwizard.widgets;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
@@ -31,6 +32,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import timber.log.Timber;
 
 import static com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT;
 import static com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT;
@@ -84,8 +87,8 @@ public class CheckBoxFactory extends BaseFactory {
         return attachJson(stepName, context, jsonObject, listener, formFragment, false);
     }
 
-    private List<View> attachJson(String stepName, Context context, JSONObject jsonObject, CommonListener listener, JsonFormFragment formFragment,
-                                  boolean popup) throws JSONException {
+    private List<View> attachJson(final String stepName, final Context context, final JSONObject jsonObject, final CommonListener listener, final JsonFormFragment formFragment,
+                                  final boolean popup) throws JSONException {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
@@ -118,7 +121,6 @@ public class CheckBoxFactory extends BaseFactory {
         addRequiredValidator(rootLayout, jsonObject);
 
         Map<String, View> labelViews = formUtils.createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly, listener, popup);
-
 
         ArrayList<View> editableCheckBoxes = addCheckBoxOptionsElements(jsonObject, context, readOnly, canvasIds, stepName,
                 rootLayout, listener, popup);
@@ -177,7 +179,7 @@ public class CheckBoxFactory extends BaseFactory {
         ArrayList<CheckBox> checkBoxes = new ArrayList<>();
         ArrayList<View> checkboxLayouts = new ArrayList<>();
         for (int i = 0; i < options.length(); i++) {
-            JSONObject item = options.getJSONObject(i);
+            final JSONObject item = options.getJSONObject(i);
 
             String openMrsEntityParent = item.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
             String openMrsEntity = item.optString(JsonFormConstants.OPENMRS_ENTITY);
@@ -205,14 +207,23 @@ public class CheckBoxFactory extends BaseFactory {
             checkboxLayout.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE) + JsonFormConstants.SUFFIX.PARENT);
             canvasIds.put(checkboxLayout.getId());
 
-            if (StringUtils.isNotEmpty(item.optString(JsonFormConstants.VALUE))) {
-                checkBox.setChecked(Boolean.valueOf(item.optString(JsonFormConstants.VALUE)));
-            }
-
-            //Preselect values if they exist
-            if (checkBoxValues != null && getCurrentCheckboxValues(checkBoxValues).contains(item.getString(JsonFormConstants.KEY))) {
-                checkBox.setChecked(true);
-            }
+            final JSONArray finalCheckBoxValues = checkBoxValues;
+            ((Activity) context).runOnUiThread(new Runnable() {
+                @Override
+                public void run(){
+                    if (StringUtils.isNotEmpty(item.optString(JsonFormConstants.VALUE))) {
+                        checkBox.setChecked(Boolean.parseBoolean(item.optString(JsonFormConstants.VALUE)));
+                    }
+                    //Preselect values if they exist
+                    try {
+                        if (finalCheckBoxValues != null && getCurrentCheckboxValues(finalCheckBoxValues).contains(item.getString(JsonFormConstants.KEY))) {
+                            checkBox.setChecked(true);
+                        }
+                    } catch (JSONException e) {
+                        Timber.e(e);
+                    }
+                }
+            });
 
             checkBox.setEnabled(!readOnly);
             if (i == options.length() - 1) {

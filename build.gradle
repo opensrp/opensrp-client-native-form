@@ -2,7 +2,6 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        jcenter()
         maven{  url 'https://plugins.gradle.org/m2/' }
     }
 
@@ -19,11 +18,11 @@ configure(allprojects) { project ->
         group = GROUP
 
         repositories {
-            jcenter()
             mavenCentral()
             maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
             maven { url 'https://plugins.gradle.org/m2/'}
             mavenLocal()
+            jcenter()
         }
     }
 }
@@ -42,7 +41,6 @@ subprojects {
     ext.androidAnnotationsAPIVersion = '3.0.1'
 
     repositories {
-        jcenter()
         mavenCentral()
         maven { url 'https://jitpack.io' }
         maven { url "http://acra.googlecode.com/svn/repository/releases" }
@@ -50,6 +48,7 @@ subprojects {
         maven { url "http://cloudant.github.io/cloudant-sync-eap/repository" }
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
         mavenLocal()
+        jcenter()
     }
 
     // Improve build server performance by allowing disabling of pre-dexing

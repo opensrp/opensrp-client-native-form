@@ -109,4 +109,25 @@ public class CheckBoxFactoryTest extends BaseTest {
         Assert.assertEquals(1, editableProperties.size());
         Assert.assertEquals("options.text", editableProperties.iterator().next());
     }
+
+
+    @Test
+    public void testPerformValidation() throws Exception {
+        Assert.assertNotNull(factory);
+        CheckBoxFactory factorySpy = Mockito.spy(factory);
+        Assert.assertNotNull(rootLayout);
+        LinearLayout rootLayoutSpy = Mockito.spy(rootLayout);
+
+        LinearLayout checkboxOptionLayout = Mockito.mock(LinearLayout.class);
+        CheckBox currentCheckbox = Mockito.mock(CheckBox.class);
+
+        Mockito.doReturn(2).when(rootLayoutSpy).getChildCount();
+        Mockito.doReturn(checkboxOptionLayout).when(rootLayoutSpy).getChildAt(Mockito.anyInt());
+        Mockito.doReturn(currentCheckbox).when(checkboxOptionLayout).getChildAt(0);
+        Mockito.doReturn(true).when(currentCheckbox).isChecked();
+
+        Boolean checked = Whitebox.invokeMethod(factorySpy, "performValidation", rootLayoutSpy);
+
+        Assert.assertTrue(checked);
+    }
 }
