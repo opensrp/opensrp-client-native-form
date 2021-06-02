@@ -3,6 +3,8 @@ package com.vijay.jsonwizard.widgets;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
@@ -212,7 +214,14 @@ public class CheckBoxFactory extends BaseFactory {
                 @Override
                 public void run(){
                     if (StringUtils.isNotEmpty(item.optString(JsonFormConstants.VALUE))) {
-                        checkBox.setChecked(Boolean.parseBoolean(item.optString(JsonFormConstants.VALUE)));
+                        if (StringUtils.isNotEmpty(item.optString(JsonFormConstants.VALUE))) {
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    checkBox.setChecked(Boolean.parseBoolean(item.optString(JsonFormConstants.VALUE)));
+                                }
+                            });
+                        }
                     }
                     //Preselect values if they exist
                     try {
