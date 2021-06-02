@@ -213,7 +213,6 @@ public class CheckBoxFactory extends BaseFactory {
             ((Activity) context).runOnUiThread(new Runnable() {
                 @Override
                 public void run(){
-                    if (StringUtils.isNotEmpty(item.optString(JsonFormConstants.VALUE))) {
                         if (StringUtils.isNotEmpty(item.optString(JsonFormConstants.VALUE))) {
                             new Handler(Looper.getMainLooper()).post(new Runnable() {
                                 @Override
@@ -222,7 +221,6 @@ public class CheckBoxFactory extends BaseFactory {
                                 }
                             });
                         }
-                    }
                     //Preselect values if they exist
                     try {
                         if (finalCheckBoxValues != null && getCurrentCheckboxValues(finalCheckBoxValues).contains(item.getString(JsonFormConstants.KEY))) {
