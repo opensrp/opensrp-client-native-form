@@ -14,6 +14,7 @@ import com.vijay.jsonwizard.activities.JsonWizardFormActivity;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.factory.FileSourceFactoryHelper;
+import com.vijay.jsonwizard.utils.FormUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.expansion_panel_button).setOnClickListener(this);
         findViewById(R.id.repeating_group_button).setOnClickListener(this);
         findViewById(R.id.multiselect_list).setOnClickListener(this);
+        findViewById(R.id.optibp_widget).setOnClickListener(this);
     }
 
     @Override
@@ -190,6 +192,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     startActivityForResult(intent, jsonFormActivityRequestCode);
                     break;
                 }
+                case "optibp_demo_form": {
+                    JSONObject stepOne = jsonForm.getJSONObject(STEP1);
+                    JSONArray jsonArray = stepOne.getJSONArray(FIELDS);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        if (jsonObject.getString(KEY).equalsIgnoreCase("optipb_widget1")) {
+                            if (jsonObject.has(JsonFormConstants.OptibpConstants.OPTIBP_KEY_DATA)) {
+                                jsonObject.remove(JsonFormConstants.OptibpConstants.OPTIBP_KEY_DATA);
+                            }
+                            JSONObject optiBPData = FormUtils.createOptiBPDataObject("46ccd2e0-bbec-4e4a-8f73-972a2f1f95ea",
+                                    "1272326657");
+                            jsonObject.put(JsonFormConstants.OptibpConstants.OPTIBP_KEY_DATA, optiBPData);
+                            break;
+                        }
+                    }
+
+                    Intent intent = new Intent(this, JsonFormActivity.class);
+                    intent.putExtra("json", jsonForm.toString());
+                    intent.putExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, translate);
+                    Timber.d(getClass().getName(), "form is %s", jsonForm.toString());
+                    startActivityForResult(intent, jsonFormActivityRequestCode);
+                    break;
+                }
                 default: {
 
 
@@ -279,6 +304,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case R.id.multiselect_list:
                     startForm(REQUEST_CODE_GET_JSON, "multi_select_list_form", null, false);
+                    break;
+                case R.id.optibp_widget:
+                    startForm(REQUEST_CODE_GET_JSON, "optibp_demo_form", null, false);
                     break;
                 default:
                     break;

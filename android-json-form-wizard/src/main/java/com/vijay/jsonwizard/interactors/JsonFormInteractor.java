@@ -34,6 +34,7 @@ import com.vijay.jsonwizard.widgets.MultiSelectListFactory;
 import com.vijay.jsonwizard.widgets.NativeEditTextFactory;
 import com.vijay.jsonwizard.widgets.NativeRadioButtonFactory;
 import com.vijay.jsonwizard.widgets.NumberSelectorFactory;
+import com.vijay.jsonwizard.widgets.OptiBPWidgetFactory;
 import com.vijay.jsonwizard.widgets.RadioButtonFactory;
 import com.vijay.jsonwizard.widgets.RepeatingGroupFactory;
 import com.vijay.jsonwizard.widgets.SectionFactory;
@@ -148,6 +149,7 @@ public class JsonFormInteractor {
         map.put(JsonFormConstants.EXTENDED_RADIO_BUTTON, new ExtendedRadioButtonWidgetFactory());
         map.put(JsonFormConstants.EXPANSION_PANEL, new ExpansionPanelFactory());
         map.put(JsonFormConstants.MULTI_SELECT_LIST, new MultiSelectListFactory());
+        map.put(JsonFormConstants.OptibpConstants.OPTIBP_WIDGET, new OptiBPWidgetFactory());
 
     }
 

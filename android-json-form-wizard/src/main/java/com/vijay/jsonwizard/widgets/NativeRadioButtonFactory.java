@@ -564,7 +564,12 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
             if (!TextUtils.isEmpty(jsonObject.optString(JsonFormConstants.VALUE)) &&
                     jsonObject.optString(JsonFormConstants.VALUE).equals(item.getString(JsonFormConstants.KEY))) {
-                radioButton.setChecked(true);
+                ((Activity) context).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        radioButton.setChecked(true);
+                    }
+                });
             }
             String optionTextColor = JsonFormConstants.DEFAULT_TEXT_COLOR;
             if (item.has(JsonFormConstants.TEXT_COLOR)) {

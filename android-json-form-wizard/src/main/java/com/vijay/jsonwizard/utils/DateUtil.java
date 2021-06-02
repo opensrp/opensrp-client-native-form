@@ -43,8 +43,6 @@ public class DateUtil {
     }
 
     public static String getDuration(long timeDiff, Locale locale, Context context) {
-
-
         String duration = "";
         if (timeDiff >= 0
                 && timeDiff <= TimeUnit.MILLISECONDS.convert(13, TimeUnit.DAYS)) {
