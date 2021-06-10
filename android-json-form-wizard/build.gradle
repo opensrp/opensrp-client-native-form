@@ -1,7 +1,7 @@
 buildscript {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.3'
@@ -86,7 +86,7 @@ dependencies {
     implementation "androidx.appcompat:appcompat:1.3.0"
     implementation "androidx.annotation:annotation:1.2.0"
     implementation "androidx.recyclerview:recyclerview:1.2.0"
-    api('org.smartregister:opensrp-client-simprints:1.0.7-PREVIEW2-SNAPSHOT@aar') {
+    api('org.smartregister:opensrp-client-simprints:1.0.7-PREVIEW3-SNAPSHOT@aar') {
         transitive = true
         exclude group: 'com.android.support', module: 'appcompat-v7'
         exclude group: 'com.android.support', module: 'design'
@@ -143,6 +143,8 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:4.7.1'
     implementation 'org.greenrobot:eventbus:3.2.0'
     implementation 'androidx.multidex:multidex:2.0.1'
+    // https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk15
+   // implementation group: 'org.bouncycastle', name: 'bcprov-jdk15', version: '1.46'
 
     // PowerMock
     def powerMockVersion = '2.0.7'
@@ -172,9 +174,7 @@ dependencies {
     testImplementation 'org.apache.maven:maven-ant-tasks:2.1.3'
     testImplementation 'org.mockito:mockito-core:3.5.15'
     testImplementation('com.squareup:fest-android:1.0.8') { exclude module: 'support-v4' }
-    testImplementation('org.robolectric:robolectric:4.4') {
-        exclude group: 'org.bouncycastle', module: 'bcprov-jdk15on'
-    }
+    testImplementation'org.robolectric:robolectric:4.4'
     testImplementation "org.json:json:20190722"
 }
 
