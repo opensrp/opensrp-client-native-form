@@ -3,8 +3,6 @@ package com.vijay.jsonwizard.widgets;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
@@ -163,7 +161,7 @@ public class CheckBoxFactory extends BaseFactory {
         }
     }
 
-    private ArrayList<View> addCheckBoxOptionsElements(JSONObject jsonObject, Context context, Boolean readOnly,
+    private ArrayList<View> addCheckBoxOptionsElements(JSONObject jsonObject, final Context context, Boolean readOnly,
                                                        JSONArray canvasIds,
                                                        String stepName, LinearLayout linearLayout, CommonListener listener,
                                                        boolean popup) throws JSONException {
@@ -212,15 +210,15 @@ public class CheckBoxFactory extends BaseFactory {
             final JSONArray finalCheckBoxValues = checkBoxValues;
             ((Activity) context).runOnUiThread(new Runnable() {
                 @Override
-                public void run(){
-                        if (StringUtils.isNotEmpty(item.optString(JsonFormConstants.VALUE))) {
-                            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    checkBox.setChecked(Boolean.parseBoolean(item.optString(JsonFormConstants.VALUE)));
-                                }
-                            });
-                        }
+                public void run() {
+                    if (StringUtils.isNotEmpty(item.optString(JsonFormConstants.VALUE))) {
+                        ((JsonApi) context).getAppExecutors().mainThread().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                checkBox.setChecked(Boolean.parseBoolean(item.optString(JsonFormConstants.VALUE)));
+                            }
+                        });
+                    }
                     //Preselect values if they exist
                     try {
                         if (finalCheckBoxValues != null && getCurrentCheckboxValues(finalCheckBoxValues).contains(item.getString(JsonFormConstants.KEY))) {
