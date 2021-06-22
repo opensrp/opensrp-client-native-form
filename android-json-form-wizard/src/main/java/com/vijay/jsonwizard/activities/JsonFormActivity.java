@@ -81,7 +81,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.InputStreamReader;
+import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -1667,8 +1667,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         if (rules == null) {
             try {
                 Yaml yaml = new Yaml();
-                InputStreamReader inputStreamReader = new InputStreamReader(
-                        this.getAssets().open((getRulesEngineFactory().getRulesFolderPath() + filename)));
+                BufferedReader inputStreamReader = getRules(getApplicationContext(), getRulesEngineFactory().getRulesFolderPath() + filename);
                 Iterable<Object> ruleObjects = yaml.loadAll(inputStreamReader);
 
                 for (Object object : ruleObjects) {
