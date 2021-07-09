@@ -16,6 +16,7 @@ import com.vijay.jsonwizard.interfaces.OnFormFetchedCallback;
 import com.vijay.jsonwizard.utils.AppExecutors;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.NativeFormLangUtils;
+import com.vijay.jsonwizard.utils.NoLocaleFormUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,8 +44,15 @@ public class FormConfigurationJsonFormActivity extends JsonFormActivity {
         checkIfFormUpdate(jsonObject);
     }
 
-    protected FormUtils getFormUtils(){
-        return FormUtils.newInstance();
+    private FormUtils getFormUtils(){
+        if (!this.isUsingLocaleForms()){
+            return new NoLocaleFormUtils();
+        }
+        return new FormUtils();
+    }
+
+    protected boolean isUsingLocaleForms(){
+        return true;
     }
 
     private void checkIfFormUpdate(@NonNull JSONObject formJsonObject) {
