@@ -4,12 +4,12 @@ import com.vijay.jsonwizard.delegates.JsonWizardFormDelegate;
 
 import org.json.JSONException;
 
-public class FormConfigurationJsonWizardFormActivity extends FormConfigurationJsonFormActivity{
+public class FormConfigurationJsonWizardFormActivity extends FormConfigurationJsonFormActivity {
 
     private final JsonWizardFormDelegate delegate = new JsonWizardFormDelegate();
 
     @Override
-    public void initializeFormFragment() {
+    public synchronized void initializeFormFragment() {
         initializeFormFragmentCore();
     }
 
@@ -23,7 +23,7 @@ public class FormConfigurationJsonWizardFormActivity extends FormConfigurationJs
         callSuperFinish();
     }
 
-    protected void callSuperFinish(){
+    protected void callSuperFinish() {
         super.onFormFinish();
     }
 
@@ -31,7 +31,7 @@ public class FormConfigurationJsonWizardFormActivity extends FormConfigurationJs
         super.writeValue(stepName, key, value, openMrsEntityParent, openMrsEntity, openMrsEntityId);
     }
 
-    protected void initializeFormFragmentCore(){
+    protected void initializeFormFragmentCore() {
         delegate.initializeFormFragmentCore(this.getSupportFragmentManager());
     }
 }

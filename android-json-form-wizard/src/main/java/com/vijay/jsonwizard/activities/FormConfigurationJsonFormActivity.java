@@ -44,14 +44,14 @@ public class FormConfigurationJsonFormActivity extends JsonFormActivity {
         checkIfFormUpdate(jsonObject);
     }
 
-    private FormUtils getFormUtils(){
-        if (!this.isUsingLocaleForms()){
+    private FormUtils getFormUtils() {
+        if (!this.supportsLocaleBasedForms()) {
             return new NoLocaleFormUtils();
         }
         return new FormUtils();
     }
 
-    protected boolean isUsingLocaleForms(){
+    protected boolean supportsLocaleBasedForms() {
         return true;
     }
 
