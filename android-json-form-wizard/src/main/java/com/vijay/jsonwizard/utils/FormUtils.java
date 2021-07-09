@@ -104,6 +104,19 @@ public class FormUtils {
     private Utils utils = new Utils();
     private GenericDialogInterface genericDialogInterface;
 
+    public static FormUtils newInstance(){
+        return new FormUtils();
+    }
+
+    public static FormUtils newInstanceWithNoLocale(){
+        return new FormUtils(){
+            @Override
+            protected String getLocaleFormIdentity(Context context, String formIdentity) {
+                return formIdentity;
+            }
+        };
+    }
+
     public static Point getViewLocationOnScreen(View view) {
         int[] location = new int[2];
         view.getLocationOnScreen(location);

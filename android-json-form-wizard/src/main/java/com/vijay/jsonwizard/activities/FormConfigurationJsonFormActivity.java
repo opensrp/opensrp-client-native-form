@@ -15,7 +15,6 @@ import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.interfaces.OnFormFetchedCallback;
 import com.vijay.jsonwizard.utils.AppExecutors;
 import com.vijay.jsonwizard.utils.FormUtils;
-import com.vijay.jsonwizard.utils.FormUtilsFactory;
 import com.vijay.jsonwizard.utils.NativeFormLangUtils;
 
 import org.json.JSONException;
@@ -45,7 +44,7 @@ public class FormConfigurationJsonFormActivity extends JsonFormActivity {
     }
 
     protected FormUtils getFormUtils(){
-        return FormUtilsFactory.newInstance();
+        return FormUtils.newInstance();
     }
 
     private void checkIfFormUpdate(@NonNull JSONObject formJsonObject) {
