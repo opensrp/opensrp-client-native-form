@@ -75,7 +75,7 @@ public class MultiSelectListFactoryTest extends FactoryTest {
                 .createActionView(Mockito.eq(jsonFormActivity));
 
         Mockito.verify(multiSelectListFactory, Mockito.times(1))
-                .createSelectedRecyclerView(Mockito.eq(jsonFormActivity), key);
+                .createSelectedRecyclerView(Mockito.eq(jsonFormActivity), Mockito.eq(key));
 
         Mockito.verify(multiSelectListFactory, Mockito.times(1))
                 .prepareListData();
@@ -122,7 +122,7 @@ public class MultiSelectListFactoryTest extends FactoryTest {
 
         HashMap<String, MultiSelectListAccessory> accessoryHashMap = new HashMap<>();
         Whitebox.setInternalState(MultiSelectListFactory.class, "multiSelectListAccessoryHashMap", accessoryHashMap);
-        MultiSelectListSelectedAdapter multiSelectListAdapter = new MultiSelectListSelectedAdapter(new ArrayList<MultiSelectItem>(), multiSelectListFactory);
+        MultiSelectListSelectedAdapter multiSelectListAdapter = new MultiSelectListSelectedAdapter(new ArrayList<MultiSelectItem>(),"", multiSelectListFactory);
 
         MultiSelectListAccessory multiSelectListAccessory = new MultiSelectListAccessory(
                 multiSelectListAdapter,
@@ -146,7 +146,7 @@ public class MultiSelectListFactoryTest extends FactoryTest {
     public void updateListData() throws Exception {
         HashMap<String, MultiSelectListAccessory> accessoryHashMap = new HashMap<>();
         Whitebox.setInternalState(MultiSelectListFactory.class, "multiSelectListAccessoryHashMap", accessoryHashMap);
-        MultiSelectListSelectedAdapter multiSelectListAdapter = new MultiSelectListSelectedAdapter(new ArrayList<MultiSelectItem>(), multiSelectListFactory);
+        MultiSelectListSelectedAdapter multiSelectListAdapter = new MultiSelectListSelectedAdapter(new ArrayList<MultiSelectItem>(),"",  multiSelectListFactory);
 
         MultiSelectListAccessory multiSelectListAccessory = new MultiSelectListAccessory(
                 multiSelectListAdapter,
@@ -298,7 +298,7 @@ public class MultiSelectListFactoryTest extends FactoryTest {
 
         HashMap<String, MultiSelectListAccessory> accessoryHashMap = new HashMap<>();
         Whitebox.setInternalState(MultiSelectListFactory.class, "multiSelectListAccessoryHashMap", accessoryHashMap);
-        MultiSelectListSelectedAdapter multiSelectListAdapter = new MultiSelectListSelectedAdapter(new ArrayList<MultiSelectItem>(), multiSelectListFactory);
+        MultiSelectListSelectedAdapter multiSelectListAdapter = new MultiSelectListSelectedAdapter(new ArrayList<MultiSelectItem>(), "", multiSelectListFactory);
 
         MultiSelectListAccessory multiSelectListAccessory = new MultiSelectListAccessory(
                 multiSelectListAdapter,
