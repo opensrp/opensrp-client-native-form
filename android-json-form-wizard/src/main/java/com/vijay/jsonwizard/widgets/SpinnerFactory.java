@@ -2,7 +2,6 @@ package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -14,11 +13,9 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
-import com.vijay.jsonwizard.adapter.CustomSpinnerAdapter;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.MaterialSpinner;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
@@ -173,14 +170,8 @@ public class SpinnerFactory extends BaseFactory {
 
         if (values != null) {
             ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.native_form_simple_list_item_1, values);
-            CustomSpinnerAdapter adapter_ = new CustomSpinnerAdapter(context, R.layout.native_form_simple_list_item_1, values);
-            adapter_.setDropDownViewResource(R.layout.native_form_simple_list_item_1);
             spinner.setAdapter(adapter);
             spinner.setDataList(values);
-            spinner.setVerticalScrollBarEnabled(false);
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                spinner.setNestedScrollingEnabled(false);
-//            }
             spinner.setSelection(indexToSelect + 1, true);
             spinner.setOnItemSelectedListener(listener);
         }
