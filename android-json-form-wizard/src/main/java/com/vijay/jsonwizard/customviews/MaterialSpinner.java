@@ -969,7 +969,7 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
                 public void run() {
                     finalItem.setTextSize(18f);
                     finalItem.setSingleLine(false);
-                    finalItem.setPadding(20, 0, 40, 0);
+                    finalItem.setPadding(20, 4, 40, 0);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         finalItem.setTextAppearance(context, android.R.attr.textAppearanceListItemSmall);
                     }
@@ -983,7 +983,8 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
             final int resid = isDropDownView ? mDropDownHintView : mHintView;
             final TextView textView = (TextView) inflater.inflate(resid, parent, false);
             textView.setText(hint);
-            textView.setPadding(20,0,0,0);
+            if (isDropDownView)
+                textView.setPadding(20, 0, 0, 0);
             textView.setTextColor(MaterialSpinner.this.isEnabled() ? hintColor : disabledColor);
             textView.setTag(HINT_TYPE);
             return textView;
