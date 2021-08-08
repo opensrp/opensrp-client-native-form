@@ -1,5 +1,6 @@
 package com.vijay.jsonwizard.customviews;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -105,6 +106,7 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
     private boolean isRtl;
 
     private HintAdapter hintAdapter;
+    private String[] values = null;
 
     //Default hint views
     private Integer mDropDownHintView;
@@ -826,6 +828,10 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
         super.setAdapter(hintAdapter);
     }
 
+    public void setDataList(String[] values_) {
+        values = values_;
+    }
+
     private float pxToDp(float px) {
         final DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
         return px * displayMetrics.density;
@@ -947,7 +953,54 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
                 convertView = (convertView.getTag() != null && convertView.getTag() instanceof Integer && (Integer) convertView.getTag() != HINT_TYPE) ? convertView : null;
             }
             position = hint != null ? position - 1 : position;
-            return isDropDownView ? mSpinnerAdapter.getDropDownView(position, convertView, parent) : mSpinnerAdapter.getView(position, convertView, parent);
+            //return isDropDownView ? mSpinnerAdapter.getDropDownView(position, convertView, parent) : mSpinnerAdapter.getView(position, convertView, parent);
+            return isDropDownView ? getSpinnerDropDownView(position, convertView, parent) : getSpinnerItemView(position, convertView, parent);
+        }
+
+        private View getSpinnerDropDownView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = new TextView(context);
+            }
+            TextView item = (TextView) convertView;
+            item.setText(values[position]);
+            final TextView finalItem = item;
+            item.post(new Runnable() {
+                @SuppressLint("ResourceType")
+                @Override
+                public void run() {
+                    finalItem.setTextSize(18f);
+                    finalItem.setSingleLine(false);
+                    finalItem.setPadding(20, 0, 20, 0);
+                    finalItem.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        finalItem.setTextAppearance(context, android.R.attr.textAppearanceListItemSmall);
+                    }
+                }
+            });
+            return item;
+        }
+
+        private View getSpinnerItemView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = new TextView(context);
+            }
+            TextView item = (TextView) convertView;
+            item.setText(values[position]);
+            final TextView finalItem = item;
+            item.post(new Runnable() {
+                @SuppressLint("ResourceType")
+                @Override
+                public void run() {
+                    finalItem.setTextSize(16f);
+                    finalItem.setSingleLine(false);
+                    finalItem.setPadding(0, 0,0, 0);
+                    finalItem.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        finalItem.setTextAppearance(context, android.R.attr.textAppearanceListItemSmall);
+                    }
+                }
+            });
+            return item;
         }
 
         private View getHintView(final ViewGroup parent, final boolean isDropDownView) {
