@@ -953,14 +953,11 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
                 convertView = (convertView.getTag() != null && convertView.getTag() instanceof Integer && (Integer) convertView.getTag() != HINT_TYPE) ? convertView : null;
             }
             position = hint != null ? position - 1 : position;
-            return isDropDownView ? getSpinnerDropDownView(position, convertView, parent) : mSpinnerAdapter.getView(position, convertView, parent);
+            return isDropDownView ? getSpinnerDropDownView(position, convertView) : mSpinnerAdapter.getView(position, convertView, parent);
         }
 
-        private View getSpinnerDropDownView(int position, View convertView, ViewGroup parent) {
-            if (convertView == null) {
-                convertView = new TextView(context);
-            }
-            TextView item = (TextView) convertView;
+        private View getSpinnerDropDownView(int position, View convertView) {
+            TextView item = convertView == null ? new TextView(context) : (TextView) convertView;
             item.setText(values[position]);
             final TextView finalItem = item;
             item.post(new Runnable() {
