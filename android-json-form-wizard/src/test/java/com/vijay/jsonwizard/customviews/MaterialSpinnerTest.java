@@ -16,7 +16,7 @@ import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 
 /**
- * Created by ndegwamartin on 2020-02-03.
+ * Created by abdulwahabmemon on 2021-08-10.
  */
 public class MaterialSpinnerTest extends BaseTest {
 
