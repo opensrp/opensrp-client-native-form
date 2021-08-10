@@ -964,9 +964,9 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
                 @SuppressLint("ResourceType")
                 @Override
                 public void run() {
-                    finalItem.setTextSize(18f);
+                    finalItem.setTextSize(20f);
                     finalItem.setSingleLine(false);
-                    finalItem.setPadding(20, 4, 40, 0);
+                    finalItem.setPadding(20, 4, 40, 4);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         finalItem.setTextAppearance(context, android.R.attr.textAppearanceListItemSmall);
                     }
