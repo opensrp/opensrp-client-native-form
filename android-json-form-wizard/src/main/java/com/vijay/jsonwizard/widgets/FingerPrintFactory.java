@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.Build;
-import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.View;
@@ -41,6 +40,8 @@ import java.util.Set;
 import timber.log.Timber;
 
 import static android.app.Activity.RESULT_OK;
+
+import androidx.annotation.VisibleForTesting;
 
 /**
  * Created by vijay on 24-05-2015.

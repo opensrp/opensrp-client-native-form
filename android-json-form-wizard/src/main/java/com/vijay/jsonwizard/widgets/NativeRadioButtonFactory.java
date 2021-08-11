@@ -1,5 +1,7 @@
 package com.vijay.jsonwizard.widgets;
 
+import static com.vijay.jsonwizard.widgets.DatePickerFactory.DATE_FORMAT;
+
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
@@ -7,9 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
@@ -23,6 +22,10 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
@@ -53,8 +56,6 @@ import java.util.Map;
 import java.util.Set;
 
 import timber.log.Timber;
-
-import static com.vijay.jsonwizard.widgets.DatePickerFactory.DATE_FORMAT;
 
 
 /**

@@ -1,7 +1,6 @@
 package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
-import android.support.annotation.VisibleForTesting;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -23,6 +22,8 @@ import java.util.List;
 import java.util.Set;
 
 import static com.vijay.jsonwizard.constants.JsonFormConstants.RDT_CAPTURE_CODE;
+
+import androidx.annotation.VisibleForTesting;
 
 /**
  * Created by Vincent Karuri on 24/05/2019

@@ -1,6 +1,10 @@
 package com.vijay.jsonwizard.validators.edittext;
 
-import android.support.annotation.NonNull;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP1;
+import static com.vijay.jsonwizard.utils.FormUtils.fields;
+import static com.vijay.jsonwizard.utils.FormUtils.getFieldJSONObject;
+
+import androidx.annotation.NonNull;
 
 import com.rengwuxian.materialedittext.validation.METValidator;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
@@ -10,10 +14,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import timber.log.Timber;
-
-import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP1;
-import static com.vijay.jsonwizard.utils.FormUtils.fields;
-import static com.vijay.jsonwizard.utils.FormUtils.getFieldJSONObject;
 
 /**
  * @author Vincent Karuri
