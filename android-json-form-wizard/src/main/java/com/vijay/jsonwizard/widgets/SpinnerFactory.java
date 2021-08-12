@@ -111,7 +111,6 @@ public class SpinnerFactory extends BaseFactory {
         String calculations = jsonObject.optString(JsonFormConstants.CALCULATION);
 
         MaterialSpinner spinner = getMaterialSpinner(spinnerRelativeLayout);
-        //MaterialSpinner spinner = spinnerRelativeLayout.findViewById(R.id.material_spinner);
         ImageView spinnerInfoIconImageView = spinnerRelativeLayout.findViewById(R.id.spinner_info_icon);
         ImageView editButton = spinnerRelativeLayout.findViewById(R.id.spinner_edit_button);
         FormUtils.setEditButtonAttributes(jsonObject, spinner, editButton, listener);
