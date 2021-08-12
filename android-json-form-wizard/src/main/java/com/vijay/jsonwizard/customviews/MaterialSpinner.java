@@ -106,7 +106,7 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
     private boolean isRtl;
 
     private HintAdapter hintAdapter;
-    private String[] values = null;
+    public String[] values = null;
 
     //Default hint views
     private Integer mDropDownHintView;

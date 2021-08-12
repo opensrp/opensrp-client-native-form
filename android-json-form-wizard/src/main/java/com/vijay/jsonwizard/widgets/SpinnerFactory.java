@@ -3,6 +3,7 @@ package com.vijay.jsonwizard.widgets;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -25,6 +26,7 @@ import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -108,7 +110,8 @@ public class SpinnerFactory extends BaseFactory {
         String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
         String calculations = jsonObject.optString(JsonFormConstants.CALCULATION);
 
-        MaterialSpinner spinner = spinnerRelativeLayout.findViewById(R.id.material_spinner);
+        MaterialSpinner spinner = getMaterialSpinner(spinnerRelativeLayout);
+        //MaterialSpinner spinner = spinnerRelativeLayout.findViewById(R.id.material_spinner);
         ImageView spinnerInfoIconImageView = spinnerRelativeLayout.findViewById(R.id.spinner_info_icon);
         ImageView editButton = spinnerRelativeLayout.findViewById(R.id.spinner_edit_button);
         FormUtils.setEditButtonAttributes(jsonObject, spinner, editButton, listener);
@@ -234,5 +237,11 @@ public class SpinnerFactory extends BaseFactory {
         customTranslatableWidgetFields.add(JsonFormConstants.LABEL_INFO_TEXT);
         customTranslatableWidgetFields.add(JsonFormConstants.DYNAMIC_LABEL_INFO);
         return customTranslatableWidgetFields;
+    }
+
+    @NotNull
+    @VisibleForTesting
+    public MaterialSpinner getMaterialSpinner(View view) {
+        return view.findViewById(R.id.material_spinner);
     }
 }
