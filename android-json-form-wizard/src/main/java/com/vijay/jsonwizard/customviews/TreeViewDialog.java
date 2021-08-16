@@ -30,20 +30,32 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
     private ArrayList<String> name;
     private HashMap<TreeNode, String> treeNodeHashMap;
     private ArrayList<String> defaultValue;
+    private AndroidTreeView androidTreeView;
+    private LinearLayout canvas;
+    private boolean shouldDisableOnClickListener = false;
+    private boolean restrictSelectionByLevel = false;
 
-    public TreeViewDialog(Context context, JSONArray structure, ArrayList<String> defaultValue, ArrayList<String> value)
+    public TreeViewDialog(Context context, JSONArray structure, ArrayList<String> defaultValue,
+                          ArrayList<String> value)
             throws
             JSONException {
         super(context);
         this.context = context;
-        init(structure, defaultValue, value);
+        init(structure, defaultValue, value, false);
+    }
+
+    public TreeViewDialog(Context context, int theme, JSONArray structure, ArrayList<String> defaultValue,
+                          ArrayList<String> value, boolean isSelectionMode) throws JSONException {
+        super(context, theme);
+        this.context = context;
+        init(structure, defaultValue, value, isSelectionMode);
     }
 
     public TreeViewDialog(Context context, int theme, JSONArray structure, ArrayList<String> defaultValue,
                           ArrayList<String> value) throws JSONException {
         super(context, theme);
         this.context = context;
-        init(structure, defaultValue, value);
+        init(structure, defaultValue, value, false);
     }
 
     protected TreeViewDialog(Context context, boolean cancelable, OnCancelListener
@@ -51,7 +63,7 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
             throws JSONException {
         super(context, cancelable, cancelListener);
         this.context = context;
-        init(structure, defaultValue, value);
+        init(structure, defaultValue, value, false);
     }
 
     private static void retrieveValue(HashMap<TreeNode, String> treeNodeHashMap, TreeNode node,
@@ -99,11 +111,15 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
 
     public void init(JSONArray nodes, ArrayList<String> defaultValue,
                      final ArrayList<String> value) throws JSONException {
+        init(nodes, defaultValue, value, false);
+    }
+
+    public void init(JSONArray nodes, ArrayList<String> defaultValue,
+                     final ArrayList<String> value, boolean isSelectionMode) throws JSONException {
         this.defaultValue = defaultValue;
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.setContentView(R.layout.native_form_dialog_tree_view);
-        LinearLayout canvas = this.findViewById(R.id.canvas);
-
+        canvas = this.findViewById(R.id.canvas);
 
         this.value = new ArrayList<>();
         this.name = new ArrayList<>();
@@ -114,9 +130,11 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
         rootObject.put(KEY_NAME, "");
         rootObject.put(KEY_LEVEL, "");
         rootObject.put(KEY_NODES, nodes);
-        TreeNode rootNode = constructTreeView(rootObject, null, value == null || value.size() == 0 ? defaultValue : value);
+        TreeNode rootNode = constructTreeView(rootObject, null,
+                value == null || value.size() == 0 ? defaultValue : value, 0, isSelectionMode);
 
-        AndroidTreeView androidTreeView = new AndroidTreeView(context, rootNode);
+        androidTreeView = new AndroidTreeView(context, rootNode);
+        androidTreeView.setSelectionModeEnabled(isSelectionMode);
         androidTreeView.setDefaultContainerStyle(R.style.TreeNodeStyle);
 
         canvas.addView(androidTreeView.getView());
@@ -124,7 +142,8 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
         setValue(value);
     }
 
-    private TreeNode constructTreeView(JSONObject structure, TreeNode parent, ArrayList<String> defaultValue) throws
+    private TreeNode constructTreeView(JSONObject structure, TreeNode parent, ArrayList<String> defaultValue,
+                                       int level, boolean isSelectionMode) throws
             JSONException {
         String name = structure.optString(KEY_NAME, "");
         String key = structure.optString(KEY_KEY, "");
@@ -135,10 +154,15 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
         if (parent == null) {
             curNode.setSelectable(false);
         }
+
+        if (isSelectionMode && isRestrictSelectionByLevel()) {
+            curNode.setSelectable(levelRestrictionLogic(level));
+        }
+
         if (structure.has(KEY_NODES)) {
             JSONArray options = structure.getJSONArray(KEY_NODES);
             for (int i = 0; i < options.length(); i++) {
-                constructTreeView(options.getJSONObject(i), curNode, defaultValue);
+                constructTreeView(options.getJSONObject(i), curNode, defaultValue, level + 1, isSelectionMode);
             }
         }
 
@@ -167,12 +191,14 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
 
     @Override
     public void onClick(TreeNode node, Object value) {
-        this.value = new ArrayList<>();
-        this.name = new ArrayList<>();
-        if (shouldExpandAllNodes() && !getDefaultValue().contains(String.valueOf(value))) {
-            executeOnClick(node);
-        } else if (!shouldExpandAllNodes() && (node.getChildren().size() == 0)) {
-            executeOnClick(node);
+        if (!shouldDisableOnClickListener()) {
+            this.value = new ArrayList<>();
+            this.name = new ArrayList<>();
+            if (shouldExpandAllNodes() && !getDefaultValue().contains(String.valueOf(value))) {
+                executeOnClick(node);
+            } else if (!shouldExpandAllNodes() && (node.getChildren().size() == 0)) {
+                executeOnClick(node);
+            }
         }
     }
 
@@ -211,4 +237,31 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
         this.treeNodeHashMap = treeNodeHashMap;
     }
 
+    public AndroidTreeView getTreeView() {
+        return androidTreeView;
+    }
+
+    public LinearLayout getCanvas() {
+        return canvas;
+    }
+
+    public void setShouldDisableOnClickListener(boolean shouldDisableOnClickListener) {
+        this.shouldDisableOnClickListener = shouldDisableOnClickListener;
+    }
+
+    public boolean shouldDisableOnClickListener() {
+        return shouldDisableOnClickListener;
+    }
+
+    public boolean isRestrictSelectionByLevel() {
+        return restrictSelectionByLevel;
+    }
+
+    public void setRestrictSelectionByLevel(boolean restrictSelectionByLevel) {
+        this.restrictSelectionByLevel = restrictSelectionByLevel;
+    }
+
+    public boolean levelRestrictionLogic(int level){
+        return level > 2;
+    }
 }
