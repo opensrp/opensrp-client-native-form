@@ -2,6 +2,7 @@ package com.vijay.jsonwizard.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.AppCompatRadioButton;
 import android.text.Html;
 import android.text.Spanned;
@@ -422,4 +423,24 @@ public class JsonFormActivityTest extends BaseActivityTest {
         Mockito.verify(mockUtils)
                 .enableExpansionPanelViews(ArgumentMatchers.eq(linearLayout));
     }
+    @Test
+    public void testGetRelevanceAddressReturnsExpectedAddressAndRelevancePair() throws JSONException {
+        View view = new View(activity.getBaseContext());
+        view.setTag(R.id.relevance, "{\"step1:medications\":{\"ex-checkbox\":[{\"or\":[\"other\"]}]}}");
+        view.setTag(R.id.key, JsonFormConstants.SIMPRINTS_OPTION_REGISTER);
+        view.setTag(R.id.address, "medications_other");
+        view.setTag(R.id.extraPopup, false);
+        String[] address = new String[]{"step1", "medications"};
+        JSONObject curRelevance = new JSONObject();
+        try {
+            curRelevance.put("ex-checkbox", "[{\"or\":[\"other\"]}]}");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Pair<String[],JSONObject> pair = new Pair<>(address, curRelevance);
+        Assert.assertEquals(pair, activity.getRelevanceAddress(view, false));
+//        Pair result = new Pair<>(address, curRelevance);
+
+    }
+
 }
