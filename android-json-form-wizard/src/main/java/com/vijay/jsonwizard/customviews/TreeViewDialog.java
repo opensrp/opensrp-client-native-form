@@ -20,10 +20,10 @@ import java.util.HashMap;
 import java.util.List;
 
 public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickListener {
-    private static final String KEY_NODES = "nodes";
-    private static final String KEY_LEVEL = "level";
-    private static final String KEY_NAME = "name";
-    private static final String KEY_KEY = "key";
+    protected static final String KEY_NODES = "nodes";
+    protected static final String KEY_LEVEL = "level";
+    protected static final String KEY_NAME = "name";
+    protected static final String KEY_KEY = "key";
     private final Context context;
     private boolean shouldExpandAllNodes = false;
     private ArrayList<String> value;
@@ -33,7 +33,6 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
     private AndroidTreeView androidTreeView;
     private LinearLayout canvas;
     private boolean shouldDisableOnClickListener = false;
-    private boolean restrictSelectionByLevel = false;
 
     public TreeViewDialog(Context context, JSONArray structure, ArrayList<String> defaultValue,
                           ArrayList<String> value)
@@ -131,7 +130,7 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
         rootObject.put(KEY_LEVEL, "");
         rootObject.put(KEY_NODES, nodes);
         TreeNode rootNode = constructTreeView(rootObject, null,
-                value == null || value.size() == 0 ? defaultValue : value, 0, isSelectionMode);
+                value == null || value.size() == 0 ? defaultValue : value, 0);
 
         androidTreeView = new AndroidTreeView(context, rootNode);
         androidTreeView.setSelectionModeEnabled(isSelectionMode);
@@ -143,26 +142,24 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
     }
 
     private TreeNode constructTreeView(JSONObject structure, TreeNode parent, ArrayList<String> defaultValue,
-                                       int level, boolean isSelectionMode) throws
+                                       int level) throws
             JSONException {
         String name = structure.optString(KEY_NAME, "");
         String key = structure.optString(KEY_KEY, "");
         TreeNode curNode = new TreeNode(name);
         treeNodeHashMap.put(curNode, key);
         curNode.setClickListener(this);
-        curNode.setViewHolder(new SelectableItemHolder(context, structure.optString(KEY_LEVEL, "")));
+        curNode.setViewHolder(getNodeViewHolder(context, structure));
         if (parent == null) {
             curNode.setSelectable(false);
         }
 
-        if (isSelectionMode && isRestrictSelectionByLevel()) {
-            curNode.setSelectable(levelRestrictionLogic(level));
-        }
+        updateTreeNode(level, curNode, parent);
 
         if (structure.has(KEY_NODES)) {
             JSONArray options = structure.getJSONArray(KEY_NODES);
             for (int i = 0; i < options.length(); i++) {
-                constructTreeView(options.getJSONObject(i), curNode, defaultValue, level + 1, isSelectionMode);
+                constructTreeView(options.getJSONObject(i), curNode, defaultValue, level + 1);
             }
         }
 
@@ -174,6 +171,14 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
         }
 
         return curNode;
+    }
+
+    public void updateTreeNode(int level, TreeNode curNode, TreeNode parentNode) {
+        //Do nothing on default implementation
+    }
+
+    public TreeNode.BaseNodeViewHolder<String> getNodeViewHolder(Context context, JSONObject structure) {
+        return new SelectableItemHolder(context, structure.optString(KEY_LEVEL, ""));
     }
 
     private void extractName() {
@@ -251,17 +256,5 @@ public class TreeViewDialog extends Dialog implements TreeNode.TreeNodeClickList
 
     public boolean shouldDisableOnClickListener() {
         return shouldDisableOnClickListener;
-    }
-
-    public boolean isRestrictSelectionByLevel() {
-        return restrictSelectionByLevel;
-    }
-
-    public void setRestrictSelectionByLevel(boolean restrictSelectionByLevel) {
-        this.restrictSelectionByLevel = restrictSelectionByLevel;
-    }
-
-    public boolean levelRestrictionLogic(int level){
-        return level > 2;
     }
 }
