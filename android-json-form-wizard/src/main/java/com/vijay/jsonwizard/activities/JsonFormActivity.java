@@ -1,5 +1,9 @@
 package com.vijay.jsonwizard.activities;
 
+import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
+import static com.vijay.jsonwizard.utils.FormUtils.getCheckboxValueJsonArray;
+import static com.vijay.jsonwizard.utils.FormUtils.getCurrentCheckboxValues;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -93,10 +97,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import timber.log.Timber;
-
-import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
-import static com.vijay.jsonwizard.utils.FormUtils.getCheckboxValueJsonArray;
-import static com.vijay.jsonwizard.utils.FormUtils.getCurrentCheckboxValues;
 
 public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private FormUtils formUtils = new FormUtils();
@@ -852,7 +852,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             }
 
             if (checkboxObject != null && checkboxOptions != null) {
-                if (checkboxObject.has(JsonFormConstants.VALUE) && StringUtils.isNotEmpty(checkboxObject.getString(JsonFormConstants.VALUE))) {
+                if (checkboxObject.has(JsonFormConstants.VALUE) && checkboxObject.get(JsonFormConstants.VALUE) != null) {
                     currentValues.addAll(getCurrentCheckboxValues(checkboxObject.getJSONArray(JsonFormConstants.VALUE)));
                 }
 

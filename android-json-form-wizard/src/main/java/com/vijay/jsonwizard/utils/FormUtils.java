@@ -1,5 +1,8 @@
 package com.vijay.jsonwizard.utils;
 
+import static com.vijay.jsonwizard.utils.Utils.convertStreamToString;
+import static com.vijay.jsonwizard.utils.Utils.isEmptyJsonArray;
+
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Context;
@@ -75,9 +78,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import timber.log.Timber;
-
-import static com.vijay.jsonwizard.utils.Utils.convertStreamToString;
-import static com.vijay.jsonwizard.utils.Utils.isEmptyJsonArray;
 
 /**
  * Created by vijay on 24-05-2015.
@@ -1229,9 +1229,12 @@ public class FormUtils {
         for (int j = 0; j < options.length(); j++) {
             if (options.getJSONObject(j).has(JsonFormConstants.VALUE)) {
                 if (jsonObject.has(RuleConstant.IS_RULE_CHECK) && jsonObject.getBoolean(RuleConstant.IS_RULE_CHECK)) {
-                    if (Boolean.valueOf(options.getJSONObject(j).getString(JsonFormConstants.VALUE))) {//Rules engine use only true values
-                        result.put(options.getJSONObject(j).getString(JsonFormConstants.KEY),
-                                options.getJSONObject(j).getString(JsonFormConstants.VALUE));
+                    JSONObject checkboxOption = options.getJSONObject(j);
+                    if (checkboxOption.get(JsonFormConstants.VALUE) instanceof String ?
+                            Boolean.valueOf(checkboxOption.getString(JsonFormConstants.VALUE)) :
+                            Boolean.valueOf(checkboxOption.getBoolean(JsonFormConstants.VALUE))) { // Rules engine use only true values
+
+                        result.put(checkboxOption.getString(JsonFormConstants.KEY), checkboxOption.getBoolean(JsonFormConstants.VALUE));
                     }
                 } else {
                     result.put(options.getJSONObject(j).getString(JsonFormConstants.KEY),
