@@ -253,7 +253,7 @@ public class MultiSelectListFactoryTest extends FactoryTest {
 
         Assert.assertEquals(7, multiSelectListAdapterSpy.getData().size());
 
-        Mockito.verify(multiSelectListFactory, Mockito.timeout(2)).updateListData(Mockito.eq(true), key);
+        Mockito.verify(multiSelectListFactory, Mockito.timeout(2)).updateListData(Mockito.eq(true), Mockito.eq(key));
     }
 
     @Test
