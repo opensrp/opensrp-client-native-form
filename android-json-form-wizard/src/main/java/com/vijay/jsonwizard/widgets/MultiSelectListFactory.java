@@ -270,13 +270,13 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         getMultiSelectListSelectedAdapter(key).notifyDataSetChanged();
     }
 
-    public void updateListData(boolean clearData) {
-        MultiSelectListAccessory multiSelectListAccessory = getMultiSelectListAccessoryHashMap().get(currentAdapterKey);
+    public void updateListData(boolean clearData, String currentKey) {
+        MultiSelectListAccessory multiSelectListAccessory = getMultiSelectListAccessoryHashMap().get(currentKey);
         if (clearData) {
-            getMultiSelectListAdapter().getData().clear();
+            getMultiSelectListAdapter(currentAdapterKey).getData().clear();
         }
-        getMultiSelectListAdapter().getData().addAll(multiSelectListAccessory.getItemList());
-        getMultiSelectListAdapter().notifyDataSetChanged();
+        getMultiSelectListAdapter(currentKey).getData().addAll(multiSelectListAccessory.getItemList());
+        getMultiSelectListAdapter(currentKey).notifyDataSetChanged();
     }
 
     private void showListDataDialog(String currentAdapterKey) {
@@ -308,7 +308,7 @@ public class MultiSelectListFactory implements FormWidgetFactory {
             }
         });
 
-        final MultiSelectListAdapter multiSelectListAdapter = getMultiSelectListAdapter();
+        final MultiSelectListAdapter multiSelectListAdapter = getMultiSelectListAdapter(currentKey);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(multiSelectListAdapter);
@@ -330,7 +330,7 @@ public class MultiSelectListFactory implements FormWidgetFactory {
             public void onItemClick(View view) {
                 int position = recyclerView.getChildLayoutPosition(view);
                 String key = (String) view.getTag(R.id.key);
-                handleClickEventOnListData(getMultiSelectListAdapter().getItemAt(position), key);
+                handleClickEventOnListData(getMultiSelectListAdapter(key).getItemAt(position), key);
             }
         });
 
@@ -373,8 +373,8 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         return null;
     }
 
-    public MultiSelectListAdapter getMultiSelectListAdapter() {
-        MultiSelectListAccessory multiSelectListAccessory = getMultiSelectListAccessoryHashMap().get(currentAdapterKey);
+    public MultiSelectListAdapter getMultiSelectListAdapter(String currentKey) {
+        MultiSelectListAccessory multiSelectListAccessory = getMultiSelectListAccessoryHashMap().get(currentKey);
         if (multiSelectListAccessory != null) {
             return multiSelectListAccessory.getListAdapter();
         }
@@ -427,7 +427,7 @@ public class MultiSelectListFactory implements FormWidgetFactory {
                         return;
                     }
                 }
-                updateListData(true);
+                updateListData(true, currentAdapterKey);
                 showListDataDialog(currentAdapterKey);
             }
         });

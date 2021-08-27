@@ -164,12 +164,11 @@ public class MultiSelectListFactoryTest extends FactoryTest {
 
         Whitebox.invokeMethod(multiSelectListFactory, "updateMultiSelectListAccessoryHashMap", multiSelectListAccessory);
         try {
-
-            multiSelectListFactory.updateListData(true);
+            multiSelectListFactory.updateListData(true, key);
         } catch (NullPointerException e) {
             //this exception catches call on notifyDataSetChanged since no recylclerview has been attached to the adapter;
         }
-        Assert.assertEquals(1, multiSelectListFactory.getMultiSelectListAdapter().getData().size());
+        Assert.assertEquals(1, multiSelectListFactory.getMultiSelectListAdapter(key).getData().size());
     }
 
     @Test
@@ -254,7 +253,7 @@ public class MultiSelectListFactoryTest extends FactoryTest {
 
         Assert.assertEquals(7, multiSelectListAdapterSpy.getData().size());
 
-        Mockito.verify(multiSelectListFactory, Mockito.timeout(2)).updateListData(Mockito.eq(true));
+        Mockito.verify(multiSelectListFactory, Mockito.timeout(2)).updateListData(Mockito.eq(true), key);
     }
 
     @Test
