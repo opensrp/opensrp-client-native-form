@@ -173,7 +173,6 @@ public class SpinnerFactory extends BaseFactory {
         if (values != null) {
             ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.native_form_simple_list_item_1, values);
             spinner.setAdapter(adapter);
-            spinner.setDataList(values);
             spinner.setSelection(indexToSelect + 1, true);
             spinner.setOnItemSelectedListener(listener);
         }
