@@ -599,8 +599,8 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             radioButton.setText(optionText);
             radioButton.setEnabled(!readOnly);
 
-            // Fix listener bug on older Android versions
-            if (!TextUtils.isEmpty(jsonObject.optString(JsonFormConstants.VALUE)) &&
+            // Make sure to register listener after setting the value to avoid unnecessary onCheckedChange call
+            if (StringUtils.isNotBlank(jsonObject.optString(JsonFormConstants.VALUE)) &&
                     jsonObject.optString(JsonFormConstants.VALUE).equals(item.getString(JsonFormConstants.KEY))) {
                 ((Activity) context).runOnUiThread(new Runnable() {
                     @Override
