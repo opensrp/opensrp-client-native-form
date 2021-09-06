@@ -598,7 +598,20 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             radioButton.setTextSize(FormUtils.getValueFromSpOrDpOrPx(optionTextSize, this.context));
             radioButton.setText(optionText);
             radioButton.setEnabled(!readOnly);
-            radioButton.setOnCheckedChangeListener(listener);
+
+            // Fix listener bug on older Android versions
+            if (!TextUtils.isEmpty(jsonObject.optString(JsonFormConstants.VALUE)) &&
+                    jsonObject.optString(JsonFormConstants.VALUE).equals(item.getString(JsonFormConstants.KEY))) {
+                ((Activity) context).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        radioButton.setChecked(true);
+                        radioButton.setOnCheckedChangeListener(listener);
+                    }
+                });
+            } else {
+                radioButton.setOnCheckedChangeListener(listener);
+            }
         }
     }
 
