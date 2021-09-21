@@ -32,7 +32,7 @@ import static org.robolectric.annotation.LooperMode.Mode.PAUSED;
 /**
  * Created by Vincent Karuri on 09/12/2020
  */
-@LooperMode(PAUSED)
+
 public class JsonFormInteractorTest extends BaseTest {
 
     private JsonFormInteractor jsonFormInteractor;
@@ -59,7 +59,7 @@ public class JsonFormInteractorTest extends BaseTest {
         JsonFormFragment jsonFormFragment = Mockito.mock(JsonFormFragment.class);
         Mockito.doReturn(activity).when(jsonFormFragment).getActivity();
         Mockito.doReturn(activity).when(jsonFormFragment).getJsonApi();
-
+        shadowOf(getMainLooper()).idle();
         Whitebox.invokeMethod(jsonFormInteractor, "fetchViews", new ArrayList<View>(), "",
                 jsonFormFragment, "", null, Mockito.mock(CommonListener.class), false);
 
