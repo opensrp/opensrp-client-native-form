@@ -219,17 +219,27 @@ public class JsonFormInteractor {
         }
     }
 
-    private void fetchViews(List<View> viewsFromJson, String stepName, JsonFormFragment formFragment,
-                            String type, JSONObject jsonObject, CommonListener listener, Boolean popup) {
+    private void fetchViews(final List<View> viewsFromJson, final String stepName, final JsonFormFragment formFragment,
+                            final String type, final JSONObject jsonObject, final CommonListener listener, final Boolean popup) {
         try {
-            FormWidgetFactory formWidgetFactory = map.get(type);
-            if (formWidgetFactory != null) {
-                List<View> views = formWidgetFactory
-                        .getViewsFromJson(stepName, formFragment.getActivity(), formFragment, jsonObject, listener, popup);
-                if (views.size() > 0) {
-                    viewsFromJson.addAll(views);
+            formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
+                @Override
+                public void run() {
+                    FormWidgetFactory formWidgetFactory = map.get(type);
+                    if (formWidgetFactory != null) {
+                        List<View> views = null;
+                        try {
+                            views = formWidgetFactory.getViewsFromJson(stepName, formFragment.getActivity(), formFragment, jsonObject, listener, popup);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        if (views.size() > 0) {
+                            viewsFromJson.addAll(views);
+                        }
+                    }
                 }
-            }
+            });
+
         } catch (RuntimeException e) {
             closeActivityAfterRuntimeException(formFragment, e);
         } catch (Exception e) {
