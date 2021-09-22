@@ -16,13 +16,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MultiSelectListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
+    private final String currentKey;
     private List<MultiSelectItem> data;
     private List<MultiSelectItem> origData;
     private static ClickListener clickListener;
 
-    public MultiSelectListAdapter(List<MultiSelectItem> data) {
+    public MultiSelectListAdapter(List<MultiSelectItem> data, String currentAdapterKey) {
         this.data = data;
         this.origData = data;
+        this.currentKey = currentAdapterKey;
     }
 
     public List<MultiSelectItem> getData() {
@@ -38,6 +40,7 @@ public class MultiSelectListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == 0) {
             View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.mutiselectlistitem, parent, false);
+            itemView.setTag(R.id.key, currentKey);
             return new SectionViewHolder(itemView);
         } else if (viewType == 1) {
             View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.mutiselectlistitem_head, parent, false);

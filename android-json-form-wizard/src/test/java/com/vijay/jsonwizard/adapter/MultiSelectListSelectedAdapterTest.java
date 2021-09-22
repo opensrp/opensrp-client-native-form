@@ -31,7 +31,7 @@ public class MultiSelectListSelectedAdapterTest extends BaseTest {
     @Before
     public void setUp() {
         multiSelectListFactory = spy(new MultiSelectListFactory());
-        multiSelectListSelectedAdapter = spy(new MultiSelectListSelectedAdapter(new ArrayList<MultiSelectItem>(),
+        multiSelectListSelectedAdapter = spy(new MultiSelectListSelectedAdapter(new ArrayList<MultiSelectItem>(), "",
                 multiSelectListFactory));
     }
 
@@ -58,7 +58,7 @@ public class MultiSelectListSelectedAdapterTest extends BaseTest {
         multiSelectItem.setValue(valueJsonObject.toString());
         multiSelectListSelectedAdapter.getData().add(multiSelectItem);
 
-        doNothing().when(multiSelectListFactory).writeToForm();
+        doNothing().when(multiSelectListFactory).writeToForm("");
         MultiSelectListSelectedAdapter.MyViewHolder myViewHolder = spy(multiSelectListSelectedAdapter.onCreateViewHolder(linearLayout, 0));
         multiSelectListSelectedAdapter.onBindViewHolder(myViewHolder, 0);
 
@@ -69,6 +69,6 @@ public class MultiSelectListSelectedAdapterTest extends BaseTest {
 
         assertEquals(0, multiSelectListSelectedAdapter.getData().size());
 
-        verify(multiSelectListFactory, only()).writeToForm();
+        verify(multiSelectListFactory, only()).writeToForm("");
     }
 }

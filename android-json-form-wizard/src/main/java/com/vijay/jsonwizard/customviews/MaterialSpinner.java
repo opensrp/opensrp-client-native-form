@@ -951,7 +951,6 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
         }
 
         private View getHintView(final ViewGroup parent, final boolean isDropDownView) {
-
             final LayoutInflater inflater = LayoutInflater.from(mContext);
             final int resid = isDropDownView ? mDropDownHintView : mHintView;
             final TextView textView = (TextView) inflater.inflate(resid, parent, false);
