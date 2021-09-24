@@ -156,7 +156,7 @@ public class NativeEditText extends AppCompatEditText {
         }
 
         CharSequence text = getText();
-        boolean isEmpty = text.length() == 0;
+        boolean isEmpty = text.toString().trim().length() == 0;
 
         boolean isValid = true;
         for (final METValidator validator : validators) {
