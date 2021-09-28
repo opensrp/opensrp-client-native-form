@@ -72,7 +72,6 @@ public class MaterialSpinnerTest extends BaseTest {
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.native_form_simple_list_item_1, values);
         materialSpinner.setAdapter(adapter);
-        materialSpinner.setDataList(values);
 
         Assert.assertEquals(3, materialSpinner.getAdapter().getCount());
         Assert.assertEquals("Male", materialSpinner.getAdapter().getItem(1).toString());

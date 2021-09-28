@@ -101,7 +101,7 @@ public class MultiSelectListLoadTask {
         if (multiSelectItems != null) {
             MultiSelectListAccessory multiSelectListAccessory = multiSelectListFactory.getMultiSelectListAccessoryHashMap().get(currentAdapterKey);
             multiSelectListAccessory.setItemList(multiSelectItems);
-            multiSelectListFactory.updateListData(true);
+            multiSelectListFactory.updateListData(true, currentAdapterKey);
         }
     }
 }

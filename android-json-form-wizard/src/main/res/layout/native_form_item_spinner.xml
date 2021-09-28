@@ -13,7 +13,7 @@
         android:layout_alignParentLeft="true"
         android:layout_toLeftOf="@+id/spinner_edit_button"
         android:entries="@array/spinnerItems"
-        android:textSize="@dimen/button_text_size"
+        android:textSize="@dimen/default_text_size"
         app:ms_alignLabels="false"
         app:ms_arrowColor="@color/text_hint_color"
         app:ms_arrowSize="@dimen/default_spinner_arrow_size"

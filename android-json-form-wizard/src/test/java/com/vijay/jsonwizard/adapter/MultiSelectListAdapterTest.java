@@ -25,7 +25,7 @@ public class MultiSelectListAdapterTest extends BaseTest {
 
     @Before
     public void setUp() {
-        multiSelectListAdapter = spy(new MultiSelectListAdapter(new ArrayList<MultiSelectItem>()));
+        multiSelectListAdapter = spy(new MultiSelectListAdapter(new ArrayList<MultiSelectItem>(), ""));
     }
 
     @Test
