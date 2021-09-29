@@ -444,10 +444,12 @@ public class JsonFormActivityTest extends BaseActivityTest {
 
         Pair pair = new Pair<>(address, curRelevance);
         Pair activityPair = activity.getRelevanceAddress(view, false);
-
+        // assert that the right relevance condition is returned
         Assert.assertTrue(pair.second.toString().equals(activityPair.second.toString()));
-//        Assert.assertEquals(pair, activity.getRelevanceAddress(view, false));
-//        Pair result = new Pair<>(address, curRelevance);
+        String[] activityAddress = (String[]) pair.first;
+        // assert address array contains expected elements
+        Assert.assertTrue(address[0].equals(activityAddress[0]));
+        Assert.assertTrue(address[1].equals(activityAddress[1]));
 
     }
 
