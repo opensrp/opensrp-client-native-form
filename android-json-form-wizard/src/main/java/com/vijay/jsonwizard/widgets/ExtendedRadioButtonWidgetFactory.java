@@ -170,6 +170,10 @@ public class ExtendedRadioButtonWidgetFactory extends NativeRadioButtonFactory {
 
     @Override
     public Set<String> getCustomTranslatableWidgetFields() {
-        return new HashSet<>();
-    }
+        Set<String> customTranslatableWidgetFields = new HashSet<>();
+        customTranslatableWidgetFields.add(JsonFormConstants.OPTIONS_FIELD_NAME + "." + JsonFormConstants.TEXT);
+        customTranslatableWidgetFields.add(JsonFormConstants.OPTIONS_FIELD_NAME + "." + JsonFormConstants.CONTENT_INFO);
+        customTranslatableWidgetFields.add(JsonFormConstants.LABEL_INFO_TEXT);
+        customTranslatableWidgetFields.add(JsonFormConstants.LABEL_INFO_TITLE);
+        return customTranslatableWidgetFields;    }
 }
