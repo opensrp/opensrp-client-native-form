@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
+import com.google.firebase.perf.metrics.AddTrace;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
@@ -152,6 +153,7 @@ public class JsonFormInteractor {
 
     }
 
+    @AddTrace(name = "JsonFormInteractor#fetchFormElements")
     public List<View> fetchFormElements(String stepName, JsonFormFragment formFragment,
                                         JSONObject parentJson, CommonListener listener, Boolean popup) {
         List<View> viewsFromJson = new ArrayList<>(5);
@@ -201,6 +203,7 @@ public class JsonFormInteractor {
         }
     }
 
+    @AddTrace(name = "JsonFormInteractor#fetchFields")
     public void fetchFields(List<View> viewsFromJson, String stepName, JsonFormFragment formFragment,
                             JSONArray fields, CommonListener listener, Boolean popup) {
 
