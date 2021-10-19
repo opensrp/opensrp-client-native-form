@@ -194,7 +194,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
     public void updateVisibilityOfNextAndSave(boolean next, boolean save) {
         Form form = getForm();
         if (form != null && form.isWizard()) {
-            getMenu().findItem(com.vijay.jsonwizard.R.id.action_next).setVisible(false);
+            getMenu().findItem(com.vijay.jsonwizard.R.id.action_next).setVisible(next && form.isShowNextInToolbarWhenWizard());
             getMenu().findItem(com.vijay.jsonwizard.R.id.action_save).setVisible(save);
         } else {
             getMenu().findItem(com.vijay.jsonwizard.R.id.action_next).setVisible(next);
@@ -245,6 +245,9 @@ public class JsonWizardFormFragment extends JsonFormFragment {
             if (form != null && form.isHidePreviousButton()) {
                 previousButton.setVisibility(View.GONE);
             }
+            if (form != null && form.isHideNextIcon()) nextIcon.setVisibility(View.GONE);
+
+            if (form != null && form.isHidePreviousIcon()) previousIcon.setVisibility(View.GONE);
         }
 
         //hide wizard nav bar if stepcount is zero
