@@ -18,10 +18,10 @@ import com.vijay.jsonwizard.R;
  * Created by Bogdan Melnychuk on 2/15/15.
  */
 public class SelectableItemHolder extends TreeNode.BaseNodeViewHolder<String> {
-    private CheckBox nodeSelector;
+    protected CheckBox nodeSelector;
     private String levelLabel;
     private PrintView arrowView;
-    private Context context;
+    protected Context context;
 
     public SelectableItemHolder(Context context, String levelLabel) {
         super(context);

@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
+import com.rengwuxian.materialedittext.validation.METValidator;
 import com.rengwuxian.materialedittext.validation.RegexpValidator;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
@@ -34,6 +35,7 @@ import com.vijay.jsonwizard.validators.edittext.RelativeNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -67,16 +69,34 @@ public class EditTextFactory implements FormWidgetFactory {
                                             MaterialEditText editText) {
         if (editText.isEnabled()) {
             boolean validate = editText.validate();
-            if (!validate) {
+            if (!validate || (StringUtils.isBlank(editText.getText()) && getRequiredValidator(editText) != null)) {
                 String errorString = null;
                 if (editText != null && editText.getError() != null) {
                     errorString = editText.getError().toString();
+                } else if (StringUtils.isBlank(editText.getText())) {
+                    // Patching MaterialEditText to handle case
+                    // when empty spaces are entered
+                    METValidator validator = getRequiredValidator(editText);
+                    errorString = validator.getErrorMessage();
+                    editText.setError(errorString);
                 }
                 return new ValidationStatus(false, errorString, formFragmentView, editText);
             }
         }
         return new ValidationStatus(true, null, formFragmentView, editText);
     }
+
+    private static METValidator getRequiredValidator(MaterialEditText editText) {
+        if (editText.getValidators() != null) {
+            for (METValidator validator : editText.getValidators()) {
+                if (validator instanceof RequiredValidator) {
+                    return validator;
+                }
+            }
+        }
+        return null;
+    }
+
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,

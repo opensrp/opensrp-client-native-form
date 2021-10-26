@@ -98,6 +98,33 @@
         "uploadButtonText": "Verify finger print",
         "image_file": ""
       },
+
+      {
+        "key": "Sex",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "hint",
+        "options": [
+          {
+            "key": "male",
+            "text": "male",
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "female",
+            "text": "female",
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "please select the gender"
+        }
+      },
       {
         "key": "user_first_name",
         "openmrs_entity_parent": "",
