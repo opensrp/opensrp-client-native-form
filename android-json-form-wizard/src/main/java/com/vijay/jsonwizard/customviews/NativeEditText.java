@@ -12,6 +12,8 @@ import android.util.AttributeSet;
 import com.rengwuxian.materialedittext.validation.METLengthChecker;
 import com.rengwuxian.materialedittext.validation.METValidator;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -156,7 +158,7 @@ public class NativeEditText extends AppCompatEditText {
         }
 
         CharSequence text = getText();
-        boolean isEmpty = text.length() == 0;
+        boolean isEmpty = StringUtils.isBlank(text);
 
         boolean isValid = true;
         for (final METValidator validator : validators) {

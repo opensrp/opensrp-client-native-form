@@ -219,22 +219,32 @@ public class JsonFormInteractor {
         }
     }
 
-    private void fetchViews(List<View> viewsFromJson, String stepName, JsonFormFragment formFragment,
-                            String type, JSONObject jsonObject, CommonListener listener, Boolean popup) {
-        try {
-            FormWidgetFactory formWidgetFactory = map.get(type);
-            if (formWidgetFactory != null) {
-                List<View> views = formWidgetFactory
-                        .getViewsFromJson(stepName, formFragment.getActivity(), formFragment, jsonObject, listener, popup);
-                if (views.size() > 0) {
-                    viewsFromJson.addAll(views);
+    private void fetchViews(final List<View> viewsFromJson, final String stepName, final JsonFormFragment formFragment,
+                            final String type, final JSONObject jsonObject, final CommonListener listener, final Boolean popup) {
+        formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    FormWidgetFactory formWidgetFactory = map.get(type);
+                    if (formWidgetFactory != null) {
+                        List<View> views = null;
+                        try {
+                            views = formWidgetFactory.getViewsFromJson(stepName, formFragment.getActivity(), formFragment, jsonObject, listener, popup);
+                        } catch (Exception e) {
+                            Timber.e(e, "Exception encountered in getViewsFromJsoo");
+                        }
+                        if (views != null && views.size() > 0) {
+                            viewsFromJson.addAll(views);
+                        }
+                    }
+                } catch (RuntimeException e) {
+                    closeActivityAfterRuntimeException(formFragment, e);
+                } catch (Exception e) {
+                    Timber.e(e, "Exception encountered while creating form widget!");
                 }
             }
-        } catch (RuntimeException e) {
-            closeActivityAfterRuntimeException(formFragment, e);
-        } catch (Exception e) {
-            Timber.e(e, "Exception encountered while creating form widget!");
-        }
+        });
+//
     }
 
     private void closeActivityAfterRuntimeException(JsonFormFragment jsonFormFragment, final RuntimeException e) {

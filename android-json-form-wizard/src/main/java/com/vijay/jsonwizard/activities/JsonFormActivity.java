@@ -33,6 +33,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -2222,6 +2223,9 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             refreshNumberSelector(group);
             for (int id = 0; id < group.getChildCount(); id++) {
                 View child = group.getChildAt(id);
+                if (child instanceof Spinner) {
+                    ((Spinner) child).setSelection(0);
+                }
                 if (child instanceof CheckBox) {
                     ((CheckBox) child).setChecked(false);
                 } else if (child instanceof RadioButton) {

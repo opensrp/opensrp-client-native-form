@@ -124,21 +124,22 @@ public class MultiSelectListFactoryTest extends FactoryTest {
         Whitebox.setInternalState(MultiSelectListFactory.class, "multiSelectListAccessoryHashMap", accessoryHashMap);
         MultiSelectListSelectedAdapter multiSelectListAdapter = new MultiSelectListSelectedAdapter(new ArrayList<MultiSelectItem>(),"", multiSelectListFactory);
 
+        String key = "test";
+        multiSelectListFactory.currentAdapterKey = key;
         MultiSelectListAccessory multiSelectListAccessory = new MultiSelectListAccessory(
                 multiSelectListAdapter,
-                new MultiSelectListAdapter(new ArrayList<MultiSelectItem>()),
+                new MultiSelectListAdapter(new ArrayList<MultiSelectItem>(), key),
                 null,
                 new ArrayList<MultiSelectItem>(),
                 new ArrayList<MultiSelectItem>());
-        multiSelectListFactory.currentAdapterKey = "test";
 
         Whitebox.invokeMethod(multiSelectListFactory, "updateMultiSelectListAccessoryHashMap", multiSelectListAccessory);
         try {
-            multiSelectListFactory.updateSelectedData(new MultiSelectItem(), true);
+            multiSelectListFactory.updateSelectedData(new MultiSelectItem(), true, key);
         } catch (NullPointerException e) {
             //this exception catches call on notifyDataSetChanged since no recylclerview has been attached to the adapter;
         }
-        Assert.assertEquals(1, multiSelectListFactory.getMultiSelectListSelectedAdapter().getData().size());
+        Assert.assertEquals(1, multiSelectListFactory.getMultiSelectListSelectedAdapter(key).getData().size());
 
     }
 
@@ -148,13 +149,14 @@ public class MultiSelectListFactoryTest extends FactoryTest {
         Whitebox.setInternalState(MultiSelectListFactory.class, "multiSelectListAccessoryHashMap", accessoryHashMap);
         MultiSelectListSelectedAdapter multiSelectListAdapter = new MultiSelectListSelectedAdapter(new ArrayList<MultiSelectItem>(),"",  multiSelectListFactory);
 
+        String key = "test";
+        multiSelectListFactory.currentAdapterKey = key;
         MultiSelectListAccessory multiSelectListAccessory = new MultiSelectListAccessory(
                 multiSelectListAdapter,
-                new MultiSelectListAdapter(new ArrayList<MultiSelectItem>()),
+                new MultiSelectListAdapter(new ArrayList<MultiSelectItem>(), key),
                 null,
                 new ArrayList<MultiSelectItem>(),
                 new ArrayList<MultiSelectItem>());
-        multiSelectListFactory.currentAdapterKey = "test";
 
         List<MultiSelectItem> multiSelectItems = new ArrayList<>();
         multiSelectItems.add(new MultiSelectItem());
@@ -162,12 +164,11 @@ public class MultiSelectListFactoryTest extends FactoryTest {
 
         Whitebox.invokeMethod(multiSelectListFactory, "updateMultiSelectListAccessoryHashMap", multiSelectListAccessory);
         try {
-
-            multiSelectListFactory.updateListData(true);
+            multiSelectListFactory.updateListData(true, key);
         } catch (NullPointerException e) {
             //this exception catches call on notifyDataSetChanged since no recylclerview has been attached to the adapter;
         }
-        Assert.assertEquals(1, multiSelectListFactory.getMultiSelectListAdapter().getData().size());
+        Assert.assertEquals(1, multiSelectListFactory.getMultiSelectListAdapter(key).getData().size());
     }
 
     @Test
@@ -229,9 +230,10 @@ public class MultiSelectListFactoryTest extends FactoryTest {
         Mockito.doReturn(jsonFormFragment).when(multiSelectListFactory).getJsonFormFragment();
         Mockito.doReturn(RuntimeEnvironment.application).when(multiSelectListFactory).getContext();
         multiSelectListFactory.jsonObject = jsonObject;
-        multiSelectListFactory.currentAdapterKey = "user_dummy";
+        String key = "user_dummy";
+        multiSelectListFactory.currentAdapterKey = key;
 
-        MultiSelectListAdapter multiSelectListAdapterSpy = Mockito.spy(new MultiSelectListAdapter(new ArrayList<MultiSelectItem>()));
+        MultiSelectListAdapter multiSelectListAdapterSpy = Mockito.spy(new MultiSelectListAdapter(new ArrayList<MultiSelectItem>(), key));
 
         HashMap<String, MultiSelectListAccessory> listAccessoryHashMap = new HashMap<>();
         listAccessoryHashMap.put(multiSelectListFactory.currentAdapterKey,
@@ -251,7 +253,7 @@ public class MultiSelectListFactoryTest extends FactoryTest {
 
         Assert.assertEquals(7, multiSelectListAdapterSpy.getData().size());
 
-        Mockito.verify(multiSelectListFactory, Mockito.timeout(2)).updateListData(Mockito.eq(true));
+        Mockito.verify(multiSelectListFactory, Mockito.timeout(2)).updateListData(Mockito.eq(true), Mockito.eq(key));
     }
 
     @Test
@@ -300,17 +302,18 @@ public class MultiSelectListFactoryTest extends FactoryTest {
         Whitebox.setInternalState(MultiSelectListFactory.class, "multiSelectListAccessoryHashMap", accessoryHashMap);
         MultiSelectListSelectedAdapter multiSelectListAdapter = new MultiSelectListSelectedAdapter(new ArrayList<MultiSelectItem>(), "", multiSelectListFactory);
 
+        String key = "test";
+        multiSelectListFactory.currentAdapterKey = key;
         MultiSelectListAccessory multiSelectListAccessory = new MultiSelectListAccessory(
                 multiSelectListAdapter,
-                new MultiSelectListAdapter(new ArrayList<MultiSelectItem>()),
+                new MultiSelectListAdapter(new ArrayList<MultiSelectItem>(), key),
                 null,
                 new ArrayList<MultiSelectItem>(),
                 new ArrayList<MultiSelectItem>());
-        multiSelectListFactory.currentAdapterKey = "test";
 
         Whitebox.invokeMethod(multiSelectListFactory, "updateMultiSelectListAccessoryHashMap", multiSelectListAccessory);
         try {
-            multiSelectListFactory.updateSelectedData(new MultiSelectItem(), true);
+            multiSelectListFactory.updateSelectedData(new MultiSelectItem(), true, key);
         } catch (NullPointerException e) {
             //this exception catches call on notifyDataSetChanged since no recylclerview has been attached to the adapter;
         }
