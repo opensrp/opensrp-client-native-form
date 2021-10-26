@@ -8,13 +8,17 @@ import android.support.v7.widget.AppCompatTextView;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.View;
+import android.widget.ImageView;
 
 import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.utils.FormUtils;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
@@ -115,6 +119,80 @@ public class FormUtilsTest extends BaseTest {
     }
 
     @Test
+    public void showInfoIconLabelHasImage() throws JSONException {
+        HashMap<String, String> imageAttributes = new HashMap<>(2);
+        imageAttributes.put(JsonFormConstants.LABEL_INFO_HAS_IMAGE, "true");
+        imageAttributes.put(JsonFormConstants.LABEL_INFO_IMAGE_SRC, "random_image_src");
+        ImageView testImageView = PowerMockito.mock(ImageView.class);
+        CommonListener listener = Mockito.mock(CommonListener.class);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(JsonFormConstants.KEY, "key");
+        jsonObject.put(JsonFormConstants.TYPE, "type");
+        String stepName = "step_name_test";
+        JSONArray canvasIds = new JSONArray();
+
+        formUtils.showInfoIcon(stepName, jsonObject, listener, imageAttributes, testImageView, canvasIds);
+
+        Mockito.verify(testImageView).setTag(eq(R.id.label_dialog_image_src), eq(imageAttributes.get(JsonFormConstants.LABEL_INFO_IMAGE_SRC)));
+        Mockito.verify(testImageView).setTag(eq(R.id.key), eq(jsonObject.getString(JsonFormConstants.KEY)));
+        Mockito.verify(testImageView).setTag(eq(R.id.type), eq(jsonObject.getString(JsonFormConstants.TYPE)));
+        Mockito.verify(testImageView).setTag(eq(R.id.address), eq(stepName + ":" + jsonObject.getString(JsonFormConstants.KEY)));
+        Mockito.verify(testImageView).setTag(eq(R.id.canvas_ids), eq(canvasIds.toString()));
+        Mockito.verify(testImageView).setOnClickListener(eq(listener));
+        Mockito.verify(testImageView).setVisibility(eq(View.VISIBLE));
+    }
+
+    @Test
+    public void showInfoIconLabelHasText() throws JSONException {
+        HashMap<String, String> imageAttributes = new HashMap<>(2);
+        imageAttributes.put(JsonFormConstants.LABEL_INFO_TEXT, "test_text");
+        imageAttributes.put(JsonFormConstants.LABEL_INFO_TITLE, "test_title");
+        ImageView testImageView = PowerMockito.mock(ImageView.class);
+        CommonListener listener = Mockito.mock(CommonListener.class);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(JsonFormConstants.KEY, "key");
+        jsonObject.put(JsonFormConstants.TYPE, "type");
+        String stepName = "step_name_test";
+        JSONArray canvasIds = new JSONArray();
+
+        formUtils.showInfoIcon(stepName, jsonObject, listener, imageAttributes, testImageView, canvasIds);
+
+        Mockito.verify(testImageView).setTag(eq(R.id.label_dialog_info), eq(imageAttributes.get(JsonFormConstants.LABEL_INFO_TEXT)));
+        Mockito.verify(testImageView).setTag(eq(R.id.label_dialog_title), eq(imageAttributes.get(JsonFormConstants.LABEL_INFO_TITLE)));
+        Mockito.verify(testImageView).setTag(eq(R.id.key), eq(jsonObject.getString(JsonFormConstants.KEY)));
+        Mockito.verify(testImageView).setTag(eq(R.id.type), eq(jsonObject.getString(JsonFormConstants.TYPE)));
+        Mockito.verify(testImageView).setTag(eq(R.id.address), eq(stepName + ":" + jsonObject.getString(JsonFormConstants.KEY)));
+        Mockito.verify(testImageView).setTag(eq(R.id.canvas_ids), eq(canvasIds.toString()));
+        Mockito.verify(testImageView).setOnClickListener(eq(listener));
+        Mockito.verify(testImageView).setVisibility(eq(View.VISIBLE));
+    }
+
+    @Test
+    public void showInfoIconLabelIsDynamic() throws JSONException {
+        HashMap<String, String> imageAttributes = new HashMap<>(2);
+        imageAttributes.put(JsonFormConstants.LABEL_IS_DYNAMIC, "true");
+        imageAttributes.put(JsonFormConstants.LABEL_INFO_TITLE, "test_title");
+        ImageView testImageView = PowerMockito.mock(ImageView.class);
+        CommonListener listener = Mockito.mock(CommonListener.class);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(JsonFormConstants.KEY, "key");
+        jsonObject.put(JsonFormConstants.TYPE, "type");
+        jsonObject.put(JsonFormConstants.DYNAMIC_LABEL_INFO, new JSONArray());
+        String stepName = "step_name_test";
+        JSONArray canvasIds = new JSONArray();
+
+        formUtils.showInfoIcon(stepName, jsonObject, listener, imageAttributes, testImageView, canvasIds);
+
+        Mockito.verify(testImageView).setTag(eq(R.id.dynamic_label_info), eq(jsonObject.getJSONArray(JsonFormConstants.DYNAMIC_LABEL_INFO)));
+        Mockito.verify(testImageView).setTag(eq(R.id.label_dialog_title), eq(imageAttributes.get(JsonFormConstants.LABEL_INFO_TITLE)));
+        Mockito.verify(testImageView).setTag(eq(R.id.key), eq(jsonObject.getString(JsonFormConstants.KEY)));
+        Mockito.verify(testImageView).setTag(eq(R.id.type), eq(jsonObject.getString(JsonFormConstants.TYPE)));
+        Mockito.verify(testImageView).setTag(eq(R.id.address), eq(stepName + ":" + jsonObject.getString(JsonFormConstants.KEY)));
+        Mockito.verify(testImageView).setTag(eq(R.id.canvas_ids), eq(canvasIds.toString()));
+        Mockito.verify(testImageView).setOnClickListener(eq(listener));
+        Mockito.verify(testImageView).setVisibility(eq(View.VISIBLE));
+    }
+
     public void testSetTextStyleBold(){
         AppCompatTextView mockTextView = PowerMockito.mock(AppCompatTextView.class);
         FormUtils.setTextStyle(JsonFormConstants.BOLD, mockTextView);
