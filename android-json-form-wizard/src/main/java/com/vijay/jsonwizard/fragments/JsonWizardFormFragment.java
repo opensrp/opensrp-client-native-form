@@ -134,13 +134,6 @@ public class JsonWizardFormFragment extends JsonFormFragment {
 
     }
 
-    private Form getForm() {
-        if (getActivity() != null && getActivity() instanceof JsonFormActivity) {
-            return ((JsonFormActivity) getActivity()).getForm();
-        }
-        return null;
-    }
-
     @Override
     public void onResume() {
         super.onResume();
