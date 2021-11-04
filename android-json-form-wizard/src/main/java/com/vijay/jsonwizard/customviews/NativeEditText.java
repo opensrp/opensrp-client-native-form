@@ -142,6 +142,21 @@ public class NativeEditText extends AppCompatEditText {
         return isValid;
     }
 
+    public boolean isFilledValidly(){
+        boolean noValidators = validators == null || validators.isEmpty();
+        if (noValidators) return true;
+
+        boolean valid = true;
+        for (METValidator validator: validators){
+            valid = valid && validator.isValid(getText(), isEmpty());
+        }
+        return valid;
+    }
+
+    public boolean isEmpty(){
+        return getText().length() == 0;
+    }
+
     /**
      * Check all validators, sets the error text if not
      * <p/>

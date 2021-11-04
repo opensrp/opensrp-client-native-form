@@ -55,6 +55,11 @@ public class CheckBoxFactory extends BaseFactory {
         return new ValidationStatus(true, null, formFragmentView, checkboxLinearLayout);
     }
 
+    public static boolean isValid(final LinearLayout checkboxLinearLayout){
+        boolean isRequired = checkboxLinearLayout.isEnabled() && checkboxLinearLayout.getTag(R.id.error) != null;
+        return !isRequired || performValidation(checkboxLinearLayout);
+    }
+
     private static boolean performValidation(LinearLayout checkboxLinearLayout) {
         //Iterate through child layouts skipping first which is the label for the checkbox factory
         boolean isChecked = false;
