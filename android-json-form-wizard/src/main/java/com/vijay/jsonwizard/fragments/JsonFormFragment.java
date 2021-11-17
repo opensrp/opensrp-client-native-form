@@ -594,7 +594,6 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    view.requestFocus();
                     if (!(view instanceof MaterialEditText)) {
                         mScrollView.post(new Runnable() {
                             @Override
@@ -606,6 +605,12 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
                                 mScrollView.scrollTo(0, viewLength);
                             }
                         });
+                    }
+
+                    Form form = getForm();
+                    if (!(view instanceof MaterialEditText)
+                            || !form.isGreyOutSaveWhenFormInvalid()){
+                        view.requestFocus();
                     }
                 }
             });
