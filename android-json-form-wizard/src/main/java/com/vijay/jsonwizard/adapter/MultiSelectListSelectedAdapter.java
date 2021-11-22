@@ -23,11 +23,13 @@ import timber.log.Timber;
 
 public class MultiSelectListSelectedAdapter extends RecyclerView.Adapter<MultiSelectListSelectedAdapter.MyViewHolder> {
     private List<MultiSelectItem> data;
+    private String key;
     private static ClickListener clickListener;
     private MultiSelectListFactory multiSelectListFactory;
 
-    public MultiSelectListSelectedAdapter(List<MultiSelectItem> data, MultiSelectListFactory multiSelectListFactory) {
+    public MultiSelectListSelectedAdapter(List<MultiSelectItem> data, String currentKey, MultiSelectListFactory multiSelectListFactory) {
         this.data = data;
+        this.key = currentKey;
         this.multiSelectListFactory = multiSelectListFactory;
     }
 
@@ -45,23 +47,23 @@ public class MultiSelectListSelectedAdapter extends RecyclerView.Adapter<MultiSe
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
         MultiSelectItem multiSelectItem = data.get(position);
-        holder.multiSelectListTextView.setText(multiSelectItem.getText());
-        holder.imgDelete.setOnClickListener(new View.OnClickListener() {
+        holder.itemTextView().setText(multiSelectItem.getText());
+        holder.deleteImageView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 data.remove(position);
                 notifyDataSetChanged();
 
-                multiSelectListFactory.writeToForm();
+                multiSelectListFactory.writeToForm(key);
             }
         });
         String value = multiSelectItem.getValue();
         try {
-            JSONObject jsonObject = new JSONObject(value);
-            if (jsonObject.has(JsonFormConstants.MultiSelectUtils.META)) {
-                holder.multiSelectListTextViewAdditionalInfo.setVisibility(View.VISIBLE);
-                holder.multiSelectListTextViewAdditionalInfo.setTypeface(Typeface.DEFAULT);
-                holder.multiSelectListTextViewAdditionalInfo.setText(jsonObject.optJSONObject(JsonFormConstants.MultiSelectUtils.META).getString(JsonFormConstants.MultiSelectUtils.INFO));
+            JSONObject valueJsonObject = new JSONObject(value);
+            if (valueJsonObject.has(JsonFormConstants.MultiSelectUtils.META)) {
+                holder.additionalInfoView().setVisibility(View.VISIBLE);
+                holder.additionalInfoView().setTypeface(Typeface.DEFAULT);
+                holder.additionalInfoView().setText(valueJsonObject.optJSONObject(JsonFormConstants.MultiSelectUtils.META).optString(JsonFormConstants.MultiSelectUtils.INFO));
             }
         } catch (JSONException e) {
             Timber.e(e);
@@ -84,6 +86,18 @@ public class MultiSelectListSelectedAdapter extends RecyclerView.Adapter<MultiSe
             multiSelectListTextViewAdditionalInfo = view.findViewById(R.id.multiSelectListTextViewAdditionalInfo);
             imgDelete = view.findViewById(R.id.multiSelectListDelete);
             view.setOnClickListener(this);
+        }
+
+        public TextView itemTextView() {
+            return multiSelectListTextView;
+        }
+
+        public ImageView deleteImageView() {
+            return imgDelete;
+        }
+
+        public TextView additionalInfoView() {
+            return multiSelectListTextViewAdditionalInfo;
         }
 
         @Override

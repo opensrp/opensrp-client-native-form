@@ -1,7 +1,6 @@
 package com.vijay.jsonwizard.activities;
 
-import com.vijay.jsonwizard.constants.JsonFormConstants;
-import com.vijay.jsonwizard.fragments.JsonWizardFormFragment;
+import com.vijay.jsonwizard.delegates.JsonWizardFormDelegate;
 
 import org.json.JSONException;
 
@@ -10,8 +9,10 @@ import org.json.JSONException;
  */
 public class JsonWizardFormActivity extends JsonFormActivity {
 
+    private final JsonWizardFormDelegate delegate = new JsonWizardFormDelegate();
+
     @Override
-    public void initializeFormFragment() {
+    public synchronized void initializeFormFragment() {
         initializeFormFragmentCore();
     }
 
@@ -34,9 +35,7 @@ public class JsonWizardFormActivity extends JsonFormActivity {
     }
 
     protected void initializeFormFragmentCore() {
-        JsonWizardFormFragment jsonWizardFormFragment = JsonWizardFormFragment.getFormFragment(JsonFormConstants.FIRST_STEP_NAME);
-        getSupportFragmentManager().beginTransaction()
-                .add(com.vijay.jsonwizard.R.id.container, jsonWizardFormFragment).commit();
+        delegate.initializeFormFragmentCore(this.getSupportFragmentManager());
     }
 }
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.support.annotation.VisibleForTesting;
+import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.domain.WidgetArgs;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
@@ -35,8 +37,16 @@ public class ImageViewFactory implements FormWidgetFactory {
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
         rootLayout = getRootLayout(context);
         descriptionTextView = rootLayout.findViewById(R.id.imageViewLabel);
-        setWidgetTags(jsonObject, stepName);
-        setViewConfigs(jsonObject, context);
+        WidgetArgs widgetArgs = new WidgetArgs()
+                .withJsonObject(jsonObject)
+                .withContext(context)
+                .withFormFragment(formFragment)
+                .withListener(listener)
+                .withPopup(popup)
+                .withStepName(stepName);
+
+        setWidgetTags(widgetArgs);
+        setViewConfigs(widgetArgs);
 
         List<View> views = new ArrayList<>(1);
         views.add(rootLayout);
@@ -57,7 +67,10 @@ public class ImageViewFactory implements FormWidgetFactory {
         return R.layout.native_form_image_view;
     }
 
-    private void setWidgetTags(JSONObject jsonObject, String stepName) {
+    private void setWidgetTags(WidgetArgs widgetArgs) {
+        JSONObject jsonObject = widgetArgs.getJsonObject();
+        String stepName = widgetArgs.getStepName();
+
         FormUtils.setViewOpenMRSEntityAttributes(jsonObject, rootLayout);
         FormUtils.setViewOpenMRSEntityAttributes(jsonObject, descriptionTextView);
 
@@ -71,31 +84,36 @@ public class ImageViewFactory implements FormWidgetFactory {
     }
 
 
-    private void setViewConfigs(JSONObject jsonObject, Context context) {
+    private void setViewConfigs(WidgetArgs widgetArgs) {
+        JSONObject jsonObject = widgetArgs.getJsonObject();
+        Context context = widgetArgs.getContext();
+
         String descriptionText = jsonObject.optString(JsonFormConstants.TEXT, "");
-        String imageFile = jsonObject.optString(JsonFormConstants.IMAGE_FILE, "");
 
         if (!TextUtils.isEmpty(descriptionText)) {
-            descriptionTextView.setText(descriptionText);
+            descriptionTextView.setText(Html.fromHtml(descriptionText));
             String textColor = jsonObject.optString(JsonFormConstants.TEXT_COLOR, "#000000");
             descriptionTextView.setTextColor(Color.parseColor(textColor));
             String textSize = jsonObject.optString(JsonFormConstants.TEXT_SIZE, String.valueOf(context.getResources().getDimension(R.dimen.label_text_size)));
             descriptionTextView.setTextSize(FormUtils.getValueFromSpOrDpOrPx(textSize, context));
         }
 
-        if (!TextUtils.isEmpty(imageFile)) {
-            String folderName = jsonObject.optString(JsonFormConstants.IMAGE_FOLDER, "");
-            Bitmap bitmap = getBitmap(context, imageFile, folderName);
-            if (bitmap != null) {
-                ImageView imageView = rootLayout.findViewById(R.id.image);
-                imageView.setImageBitmap(bitmap);
-            }
+        Bitmap bitmap = getBitmap(widgetArgs);
+        if (bitmap != null) {
+            ImageView imageView = rootLayout.findViewById(R.id.image);
+            imageView.setImageBitmap(bitmap);
         }
+    }
+
+    protected Bitmap getBitmap(WidgetArgs widgetArgs) {
+        JSONObject jsonObject = widgetArgs.getJsonObject();
+        return getBitmap(widgetArgs.getContext(), jsonObject.optString(JsonFormConstants.IMAGE_FILE, ""),
+                jsonObject.optString(JsonFormConstants.IMAGE_FOLDER, ""));
     }
 
     @VisibleForTesting
     protected Bitmap getBitmap(Context context, String imageFile, String folderName) {
-        return FormUtils.getBitmap(context, folderName, imageFile);
+        return TextUtils.isEmpty(imageFile) ? null : FormUtils.getBitmap(context, folderName, imageFile);
     }
 
     @Override

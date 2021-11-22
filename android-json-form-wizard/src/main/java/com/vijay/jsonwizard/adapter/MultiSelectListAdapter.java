@@ -16,13 +16,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MultiSelectListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
+    private final String currentKey;
     private List<MultiSelectItem> data;
     private List<MultiSelectItem> origData;
     private static ClickListener clickListener;
 
-    public MultiSelectListAdapter(List<MultiSelectItem> data) {
+    public MultiSelectListAdapter(List<MultiSelectItem> data, String currentAdapterKey) {
         this.data = data;
         this.origData = data;
+        this.currentKey = currentAdapterKey;
     }
 
     public List<MultiSelectItem> getData() {
@@ -38,6 +40,7 @@ public class MultiSelectListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == 0) {
             View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.mutiselectlistitem, parent, false);
+            itemView.setTag(R.id.key, currentKey);
             return new SectionViewHolder(itemView);
         } else if (viewType == 1) {
             View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.mutiselectlistitem_head, parent, false);
@@ -51,10 +54,10 @@ public class MultiSelectListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         MultiSelectItem multiSelectItem = data.get(position);
         if (multiSelectItem.getValue() != null) {
             SectionViewHolder sectionViewHolder = (SectionViewHolder) holder;
-            sectionViewHolder.txtMultiSelectItem.setText(multiSelectItem.getText());
+            sectionViewHolder.itemTextView().setText(multiSelectItem.getText());
         } else {
             SectionTitleViewHolder sectionViewHolder = (SectionTitleViewHolder) holder;
-            sectionViewHolder.txtMultiSelectHeader.setText(multiSelectItem.getText());
+            sectionViewHolder.itemHeaderView().setText(multiSelectItem.getText());
         }
     }
 
@@ -107,6 +110,10 @@ public class MultiSelectListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             view.setOnClickListener(this);
         }
 
+        public TextView itemTextView() {
+            return txtMultiSelectItem;
+        }
+
         @Override
         public void onClick(View view) {
             if (clickListener != null) {
@@ -121,6 +128,10 @@ public class MultiSelectListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         private SectionTitleViewHolder(View view) {
             super(view);
             txtMultiSelectHeader = view.findViewById(R.id.txtMultiSelectHeader);
+        }
+
+        public TextView itemHeaderView() {
+            return txtMultiSelectHeader;
         }
     }
 

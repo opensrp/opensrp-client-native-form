@@ -24,7 +24,10 @@ public class JsonFormConstants {
     public static final String LABEL_TEXT_SIZE = "label_text_size";
     public static final String LABEL_TEXT_COLOR = "label_text_color";
     public static final String LABEL_INFO_TEXT = "label_info_text";
+    public static final String DYNAMIC_LABEL_INFO = "dynamic_label_info";
+    public static final String DYNAMIC_LABEL_TITLE = "dynamic_label_title";
     public static final String LABEL_INFO_TITLE = "label_info_title";
+    public static final String DYNAMIC_LABEL_TEXT = "dynamic_label_text";
     public static final String LABEL_NUMBER = "label_number";
     public static final String CHOOSE_IMAGE = "choose_image";
     public static final String FINGER_PRINT = "finger_print";
@@ -143,6 +146,7 @@ public class JsonFormConstants {
     public static final String MIN_DATE = "min_date";
     public static final String MAX_DATE = "max_date";
     public static final String EXPANDED = "expanded";
+    public static final String EXPAND_ON_TEXT_CHANGE = "expand_on_text_change";
     public static final String NUMBER = "number";
     public static final String TOP_MARGIN = "top_margin";
     public static final String BOTTOM_MARGIN = "bottom_margin";
@@ -197,6 +201,8 @@ public class JsonFormConstants {
     public static final String INVISIBLE_REQUIRED_FIELDS = "invisible_required_fields";
     public static final String LABEL_INFO_HAS_IMAGE = "label_info_has_image";
     public static final String LABEL_INFO_IMAGE_SRC = "label_info_image_src";
+    public static final String DYNAMIC_LABEL_IMAGE_SRC = "dynamic_label_image_src";
+    public static final String LABEL_IS_DYNAMIC = "label_is_dynamic";
     public static final String ACCORDION_INFO_TEXT = "accordion_info_text";
     public static final String ACCORDION_INFO_TITLE = "accordion_info_title";
     public static final String DISPLAY_BOTTOM_SECTION = "display_bottom_section";
@@ -225,6 +231,8 @@ public class JsonFormConstants {
     public static final String FROM_DATA_SOURCE = "form_data_source";
     public static final String DEFAULT_FORMS_DIRECTORY = "opensrpNativeFormTester";
     public static final String JSON_FORM_DIRECTORY = "json.form";
+    public static final String MEDIA_LOGIC = "media_logic";
+    public static final String FIELDS_TO_USE_VALUE = "fields_to_use_value";
 
     public static final String PROPERTIES_FILE_EXTENSION = ".properties";
     public static final String JSON_FILE_EXTENSION = ".json";
@@ -305,6 +313,21 @@ public class JsonFormConstants {
         public static final int RC_HANDLE_GMS = 9001;
     }
 
+    public static class OptibpConstants {
+        public static final String OPTIBP_WIDGET = "optibp";
+        public static final int OPTIBP_REQUEST_CODE = 301;
+        public static final int OPTIBP_REPEAT_REQUEST_CODE = 302;
+        public static final String OPTIBP_REPORT_RESULT = "result";
+        public static final String OPTIBP_REPORT_COMPONENT = "component";
+        public static final String OPTIBP_REPORT_VALUE_QUANTITY = "valueQuantity";
+        public static final String OPTIBP_LAUNCH_INTENT = "android.intent.action.BLOOD_MEASURE";
+        public static final String OPTIBP_KEY_DATA = "optibp_data";
+        public static final String OPTIBP_KEY_CLIENT_ID = "clientId";
+        public static final String OPTIBP_KEY_CLIENT_OPENSRP_ID = "clientOpenSRPId";
+        public static final String OPTIBP_KEY_BUTTON_BG_COLOR = "optibp_button_bg_color";
+        public static final String OPTIBP_KEY_BUTTON_TEXT_COLOR = "optibp_button_text_color";
+    }
+
     public static class EDIT_TEXT_TYPE {
         public static final String NUMBER = "number";
     }
@@ -323,6 +346,14 @@ public class JsonFormConstants {
     public static class INTENT_KEY {
         public static final String MESSAGE = "message";
         public static final String MESSAGE_TYPE = "message_type";
+    }
+
+    public interface RESULT_CODE {
+        int RUNTIME_EXCEPTION_OCCURRED = 8037;
+    }
+
+    public interface RESULT_INTENT {
+        String RUNTIME_EXCEPTION = "runtime_exception";
     }
 
     public static class MESSAGE_TYPE {

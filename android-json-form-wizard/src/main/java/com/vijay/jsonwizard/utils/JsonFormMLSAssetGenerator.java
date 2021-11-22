@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 
@@ -19,6 +20,9 @@ import java.util.Set;
 
 import timber.log.Timber;
 
+import static com.vijay.jsonwizard.constants.JsonFormConstants.DYNAMIC_LABEL_IMAGE_SRC;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.DYNAMIC_LABEL_TEXT;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.DYNAMIC_LABEL_TITLE;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.MLS.PROPERTIES_FILE_NAME;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP;
@@ -37,7 +41,6 @@ public class JsonFormMLSAssetGenerator {
     private static JsonFormInteractor jsonFormInteractor;
 
     /**
-     *
      * Processes the {@param formToTranslate} outputting a placeholder-injected form
      * and its corresponding property file
      *
@@ -66,7 +69,6 @@ public class JsonFormMLSAssetGenerator {
     }
 
     /**
-     *
      * Returns the path to which generated assets should be stored
      *
      * @return
@@ -77,7 +79,6 @@ public class JsonFormMLSAssetGenerator {
     }
 
     /**
-     *
      * Converts a {@link String} representation of JSON into a {@link JsonObject}
      *
      * @param json
@@ -88,13 +89,12 @@ public class JsonFormMLSAssetGenerator {
     }
 
     /**
-     *
      * Replaces {@link String} literals in the {@param jsonForm} with placeholders.
-     *
+     * <p>
      * The {@link String} literals (fields) to be replaced have to be defined either globally or as part of a widget's definition.
-     *
+     * <p>
      * The placeholders follow the scheme : {{form_name.step_name.widget_key.field_identifier}} for widget fields
-     *
+     * <p>
      * And {{form_name.step_name.field_identifier}} for step-level fields
      *
      * @param jsonForm
@@ -102,7 +102,9 @@ public class JsonFormMLSAssetGenerator {
      * @return
      */
     private static JsonObject injectPlaceholders(JsonObject jsonForm, String formName, boolean isSubForm) {
-        if (isSubForm) { jsonForm.addProperty(JsonFormConstants.COUNT, 1); }
+        if (isSubForm) {
+            jsonForm.addProperty(JsonFormConstants.COUNT, 1);
+        }
         for (int i = 1; i <= getNumOfSteps(jsonForm); i++) {
             String stepName = STEP + i;
             String placeholderStringPrefix = formName + "." + stepName;
@@ -113,14 +115,15 @@ public class JsonFormMLSAssetGenerator {
     }
 
     /**
-     *
      * Replaces {@link String} literals at step level with the appropriate placeholders
      *
      * @param stepJsonObject
      * @param placeholderStrPrefix
      */
     private static void replaceStepStringLiterals(String placeholderStrPrefix, JsonObject stepJsonObject) {
-        if (stepJsonObject == null) { return; }
+        if (stepJsonObject == null) {
+            return;
+        }
         for (String stepField : jsonFormInteractor.getDefaultTranslatableStepFields()) {
             JsonElement strLiteralElement = stepJsonObject.get(stepField);
             if (strLiteralElement != null) {
@@ -133,7 +136,6 @@ public class JsonFormMLSAssetGenerator {
     }
 
     /**
-     *
      * Replaces {@link String} literals in widgets with the appropriate placeholders
      *
      * @param rootPlaceholderPrefix
@@ -194,7 +196,6 @@ public class JsonFormMLSAssetGenerator {
 
 
     /**
-     *
      * For each parent element in {@param parentElements}, replaces the {@param fieldToReplace}
      * with the appropriate placeholder derived from {@param placeholderPrefix}
      *
@@ -202,34 +203,81 @@ public class JsonFormMLSAssetGenerator {
      * @param placeholderPrefix
      * @param fieldToReplace
      */
-    private static void performReplacements(JsonArray parentElements, String placeholderPrefix, String fieldToReplace){
+    private static void performReplacements(JsonArray parentElements, String placeholderPrefix, String fieldToReplace) {
         if (parentElements == null) {
             return;
         }
 
         for (int i = 0; i < parentElements.size(); i++) {
-            String propertyName = placeholderPrefix;
+            StringBuilder propertyName = new StringBuilder(placeholderPrefix);
             JsonObject parentElement = parentElements.get(i).getAsJsonObject();
             JsonElement parentElementKey = parentElement.get(KEY);
 
             // add unique key identifier if it exists
             if (parentElementKey != null) {
-                propertyName += "." + parentElementKey.getAsString();
+                propertyName.append(".").append(parentElementKey.getAsString());
             }
-            propertyName = propertyName.replaceAll("\\s", "_") + "." + fieldToReplace;
-
-            String placeholderStr = "{{" + propertyName + "}}";
+            propertyName = new StringBuilder(propertyName.toString().replaceAll("\\s", "_") + "." + fieldToReplace);
 
             JsonElement fieldValueToReplace = parentElement.get(fieldToReplace);
-            if (fieldValueToReplace != null) {
-                placeholdersToTranslationsMap.put(propertyName, fieldValueToReplace.getAsString());
+
+            JsonArray placeholderArray = new JsonArray();
+
+            if (fieldValueToReplace instanceof JsonPrimitive) {
+
+                String placeholderStr = "{{" + propertyName.toString() + "}}";
+                placeholdersToTranslationsMap.put(propertyName.toString(), fieldValueToReplace.getAsString());
                 parentElement.addProperty(fieldToReplace, placeholderStr);
+            } else if (fieldValueToReplace instanceof JsonArray) {
+
+                if (fieldToReplace.equals(JsonFormConstants.VALUES)) {
+                    JsonArray elements = fieldValueToReplace.getAsJsonArray();
+                    for (int j = 0; j < elements.size(); j++) {
+
+                        StringBuilder propertyNameArray = new StringBuilder(propertyName);
+                        propertyNameArray.append("[").append(j).append("]");
+                        String placeholderStr = "{{" + propertyNameArray.toString() + "}}";
+                        placeholdersToTranslationsMap.put(propertyNameArray.toString(), elements.get(j).getAsString());
+                        placeholderArray.add(placeholderStr);
+                        if (j == elements.size() - 1) {
+                            parentElement.add(fieldToReplace, placeholderArray);
+                            placeholderArray = new JsonArray();
+                        }
+                    }
+                } else if (fieldToReplace.equals(JsonFormConstants.DYNAMIC_LABEL_INFO)) {
+
+                    JsonArray labelsArray = parentElement.get(JsonFormConstants.DYNAMIC_LABEL_INFO).getAsJsonArray();
+                    for (int j = 0; j < labelsArray.size(); j++) {
+                        JsonObject jsonObject = labelsArray.get(j).getAsJsonObject();
+
+                        StringBuilder propertyNameArray = new StringBuilder(propertyName);
+                        propertyNameArray.append("[").append(j).append("]");
+
+                        JsonObject placeHolderObject = new JsonObject();
+                        placeHolderObject.addProperty(DYNAMIC_LABEL_TITLE,
+                                "{{" + propertyNameArray.toString() + "." + DYNAMIC_LABEL_TITLE + "}}");
+
+                        placeHolderObject.addProperty(DYNAMIC_LABEL_TEXT,
+                                "{{" + propertyNameArray.toString() + "." + DYNAMIC_LABEL_TEXT + "}}");
+                        placeHolderObject.addProperty(DYNAMIC_LABEL_IMAGE_SRC,
+                                "{{" + propertyNameArray.toString() + "." + DYNAMIC_LABEL_IMAGE_SRC + "}}");
+
+                        placeholdersToTranslationsMap.put(propertyNameArray.toString() + "." + DYNAMIC_LABEL_TITLE, jsonObject.get(DYNAMIC_LABEL_TITLE).getAsString());
+                        placeholdersToTranslationsMap.put(propertyNameArray.toString() + "." + DYNAMIC_LABEL_TEXT, jsonObject.get(DYNAMIC_LABEL_TEXT).getAsString());
+                        placeholdersToTranslationsMap.put(propertyNameArray.toString() + "." + DYNAMIC_LABEL_IMAGE_SRC, jsonObject.get(DYNAMIC_LABEL_IMAGE_SRC).getAsString());
+                        placeholderArray.add(placeHolderObject);
+
+                        if (j == labelsArray.size() - 1) {
+                            parentElement.add(fieldToReplace, placeholderArray);
+                            placeholderArray = new JsonArray();
+                        }
+                    }
+                }
             }
         }
     }
 
     /**
-     *
      * Gets all the widget definitions in a particular {@param step} of the {@param jsonForm}
      * or in the {@code JsonFormConstants.CONTENT_FORM} portion of a sub-form
      *
@@ -243,7 +291,6 @@ public class JsonFormMLSAssetGenerator {
     }
 
     /**
-     *
      * Get the {@link JsonObject} representation of a {@param jsonForm} {@param step}
      *
      * @param jsonForm
@@ -255,7 +302,6 @@ public class JsonFormMLSAssetGenerator {
     }
 
     /**
-     *
      * Extracts the number of steps in a {@param jsonForm}
      *
      * @param jsonForm
@@ -266,7 +312,6 @@ public class JsonFormMLSAssetGenerator {
     }
 
     /**
-     *
      * Utility that prints to system out for debugging
      *
      * @param str
@@ -276,9 +321,7 @@ public class JsonFormMLSAssetGenerator {
     }
 
     /**
-     *
      * Creates a property file and writes it to disk
-     *
      */
     private static void createTranslationsPropertyFile() {
         StringBuilder stringBuilder = new StringBuilder();
@@ -289,7 +332,6 @@ public class JsonFormMLSAssetGenerator {
     }
 
     /**
-     *
      * Writes {@param data} to disk at the specified {@param path}
      *
      * @param data
@@ -303,13 +345,13 @@ public class JsonFormMLSAssetGenerator {
         }
     }
 
-    private static  JsonFormInteractor getJsonFormInteractor() throws Exception {
+    private static JsonFormInteractor getJsonFormInteractor() throws Exception {
         String jsonFormInteractorName = System.getenv("JSON_FORM_INTERACTOR_NAME");
         jsonFormInteractorName = jsonFormInteractorName == null
                 ? "com.vijay.jsonwizard.interactors.JsonFormInteractor" : jsonFormInteractorName;
         Class<?> clazz = Class.forName(jsonFormInteractorName);
         Method factoryMethod = clazz.getDeclaredMethod("getInstance");
-        return (JsonFormInteractor) factoryMethod.invoke(null, null);
+        return (JsonFormInteractor) factoryMethod.invoke(null,  (Object[]) null);
     }
 
     public static void main(String[] args) throws Exception {
