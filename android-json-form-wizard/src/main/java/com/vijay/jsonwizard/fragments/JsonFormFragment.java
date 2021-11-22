@@ -285,7 +285,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         inflater.inflate(R.menu.menu_toolbar, menu);
         presenter.setUpToolBar();
 
-        if (getForm().isGreyOutSaveWhenFormInvalid()){
+        if (getForm() != null && getForm().isGreyOutSaveWhenFormInvalid()){
             boolean isFormFilled = presenter.areFormViewsFilled();
             if (isFormFilled) {
                 menu.findItem(R.id.action_next).setTitle(R.string.next);
@@ -736,7 +736,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
                     Form form = getForm();
                     if (!(view instanceof MaterialEditText)
-                            || !form.isGreyOutSaveWhenFormInvalid()){
+                            || (form != null && !form.isGreyOutSaveWhenFormInvalid())){
                         view.requestFocus();
                     }
                 }
