@@ -352,6 +352,21 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         verify(onFieldsInvalid, times(2)).passInvalidFields(presenter.getInvalidFields());
     }
 
+    @Test
+    public void testAreFormViewsFilledValid() throws InterruptedException {
+        initWithActualForm();
+        boolean valid = presenter.areFormViewsFilled();
+        shadowOf(getMainLooper()).idle();
+        assertFalse(valid);
+
+        setTextValue("step1:user_last_name", "Doe");
+        setTextValue("step1:user_first_name", "John");
+        setTextValue("step1:user_age", "21");
+        ((AppCompatSpinner) formFragment.getJsonApi().getFormDataView("step1:user_spinner")).setSelection(1, false);
+        boolean newValid = presenter.areFormViewsFilled();
+        assertTrue(newValid);
+    }
+
     private void setTextValue(String address, String value) {
         TextView view = (TextView) formFragment.getJsonApi().getFormDataView(address);
         view.setTag(R.id.raw_value, value);
@@ -712,5 +727,12 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
 
         expectedField = FormUtils.getFieldFromForm(jsonForm, (String) view.getTag(R.id.key));
         assertFalse(expectedField.optBoolean(JsonFormConstants.READ_ONLY));
+    }
+
+    @Test
+    public void testCleanUp(){
+        presenter.cleanUp();
+        boolean cleanUpAndExit = Whitebox.getInternalState(presenter, "cleanupAndExit");
+        assertTrue(cleanUpAndExit);
     }
 }
