@@ -39,6 +39,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
+import com.rengwuxian.materialedittext.validation.METValidator;
 import com.rey.material.widget.Button;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
@@ -370,6 +371,69 @@ public class JsonFormFragmentPresenter extends
                     getView().getContext().getResources().getString(R.string.json_form_on_next_error_msg));
         }
         return false;
+    }
+
+    public boolean areFormViewsFilled() {
+        boolean filled = true;
+        for (View childView : formFragment.getJsonApi().getFormDataViews()) {
+            if (childView instanceof RadioGroup) {
+                filled = filled && NativeRadioButtonFactory.isValid((RadioGroup) childView);
+
+            } else if (childView instanceof NativeEditText) {
+                boolean filledValid = ((NativeEditText) childView).isFilledValidly();
+                filled = filled && filledValid;
+
+            } else if (childView instanceof MaterialEditText) {
+                MaterialEditText editView = (MaterialEditText) childView;
+                boolean noValidation = (!childView.isEnabled() ||  !editView.hasValidators());
+                boolean valid = true;
+                if (!noValidation && editView.getValidators() != null) {
+                    for (METValidator validator : editView.getValidators()) {
+                        valid = valid && validator.isValid(editView.getText(), editView.getText().length() == 0);
+                    }
+                }
+                filled = filled && (noValidation || valid);
+
+            } else if (childView instanceof ImageView) {
+                boolean isRequired = (((childView.getTag(R.id.v_required) instanceof String) || (childView.getTag(R.id.error) instanceof String))
+                        && childView.isEnabled()
+                        && Boolean.parseBoolean((String) childView.getTag(R.id.v_required)));
+                boolean isEmpty = childView.getTag(R.id.imagePath) == null
+                        || TextUtils.isEmpty((String) childView.getTag(R.id.imagePath));
+
+                filled = filled && (!isRequired || !isEmpty);
+
+            } else if (childView instanceof Button) {
+                String type = (String) childView.getTag(R.id.type);
+                if (!TextUtils.isEmpty(type) && type.equals(JsonFormConstants.GPS)) {
+                    boolean isRequired = ((childView.getTag(R.id.v_required) instanceof String) || (childView.getTag(R.id.error) instanceof String)
+                            && childView.isEnabled()
+                            && Boolean.parseBoolean((String) childView.getTag(R.id.v_required)));
+                    filled = filled && !isRequired;
+                }
+
+            } else if (childView instanceof MaterialSpinner) {
+                boolean isRequired = (childView.getTag(R.id.v_required) != null
+                        && (boolean) childView.getTag(R.id.v_required)
+                        && childView.isEnabled());
+                boolean isEmpty = (((MaterialSpinner) childView).getSelectedItemPosition() == 0
+                        || ((MaterialSpinner) childView).getSelectedItemPosition() == AdapterView.INVALID_POSITION);
+
+                filled = filled && (!isRequired || !isEmpty);
+
+            } else if (childView instanceof ViewGroup
+                    && childView.getTag(R.id.is_checkbox_linear_layout) != null
+                    && Boolean.TRUE.equals(childView.getTag(R.id.is_checkbox_linear_layout))) {
+                filled = filled && CheckBoxFactory.isValid((LinearLayout) childView);
+
+            } else if (childView instanceof ViewGroup
+                    && childView.getTag(R.id.is_number_selector_linear_layout) != null
+                    && Boolean.TRUE.equals(childView.getTag(R.id.is_number_selector_linear_layout))) {
+                filled = filled && NumberSelectorFactory.isValid((ViewGroup) childView);
+            }
+        }
+
+        return filled;
     }
 
     public void validateAndWriteValues() {

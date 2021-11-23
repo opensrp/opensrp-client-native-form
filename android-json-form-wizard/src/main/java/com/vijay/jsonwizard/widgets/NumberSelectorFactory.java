@@ -164,6 +164,13 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         selectedTextView.setText(viewText);
     }
 
+    public static boolean isValid(ViewGroup childAt){
+        boolean isRequired = Boolean.parseBoolean((String) childAt.getTag(R.id.v_required));
+        String selectedNumber = (String) childAt.getTag(R.id.selected_number_value);
+
+        return !(isRequired && TextUtils.isEmpty(selectedNumber) && (childAt.getChildCount() != 0 && childAt.getVisibility() == View.VISIBLE));
+    }
+
     public static ValidationStatus validate(JsonFormFragmentView formFragmentView, ViewGroup childAt) {
 
         boolean isRequired = Boolean.valueOf((String) childAt.getTag(R.id.v_required));
