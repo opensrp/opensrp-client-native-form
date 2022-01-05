@@ -1,5 +1,8 @@
 package com.vijay.jsonwizard.utils;
 
+import static com.vijay.jsonwizard.utils.Utils.convertStreamToString;
+import static com.vijay.jsonwizard.utils.Utils.isEmptyJsonArray;
+
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Context;
@@ -77,9 +80,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import timber.log.Timber;
-
-import static com.vijay.jsonwizard.utils.Utils.convertStreamToString;
-import static com.vijay.jsonwizard.utils.Utils.isEmptyJsonArray;
 
 /**
  * Created by vijay on 24-05-2015.
@@ -299,7 +299,27 @@ public class FormUtils {
         }
     }
 
-    public static JSONObject createOptiBPDataObject(String clientId, String clientOpenSRPId) throws JSONException{
+    /**
+     * Returns the value string value for special translated fields like the Native Radio Button, Spinner, Check Box e.tc
+     *
+     * @param jsonObject -- Widget #JSONObject
+     * @return
+     */
+    public String returnValue(JSONObject jsonObject) {
+        String value = "";
+        NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
+        if (nativeFormsProperties != null && nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_RADIO_BUTTON_VALUE_TRANSLATED)) {
+            JSONObject valueObject = jsonObject.optJSONObject(JsonFormConstants.VALUE);
+            if (valueObject != null) {
+                value = valueObject.optString(JsonFormConstants.VALUE, "");
+            }
+        } else {
+            value = jsonObject.optString(JsonFormConstants.VALUE, "");
+        }
+        return value;
+    }
+
+    public static JSONObject createOptiBPDataObject(String clientId, String clientOpenSRPId) throws JSONException {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put(JsonFormConstants.OptibpConstants.OPTIBP_KEY_CLIENT_ID, clientId);
         jsonObject.put(JsonFormConstants.OptibpConstants.OPTIBP_KEY_CLIENT_OPENSRP_ID, clientOpenSRPId);
@@ -1306,6 +1326,21 @@ public class FormUtils {
         return result;
     }
 
+    public JSONObject getOptionFromOptionsUsingKey(JSONArray options, String key) throws JSONException {
+        JSONObject option = new JSONObject();
+        if (options != null && options.length() > 0) {
+            for (int i = 0; i < options.length(); i++) {
+                JSONObject checkOption = options.getJSONObject(i);
+                if (checkOption != null && checkOption.has(JsonFormConstants.KEY) && checkOption.getString(JsonFormConstants.KEY).equals(key)) {
+                    option = checkOption;
+                    break;
+                }
+            }
+        }
+
+        return option;
+    }
+
     /**
      * @param multiRelevance {@link Boolean}
      * @param object         {@link JSONObject}
@@ -1979,7 +2014,7 @@ public class FormUtils {
         }
     }
 
-    protected String getLocaleFormIdentity(final Context context, final String formIdentity){
+    protected String getLocaleFormIdentity(final Context context, final String formIdentity) {
         String locale = context.getResources().getConfiguration().locale.getLanguage();
         if (!Locale.ENGLISH.getLanguage().equals(locale)) {
             return formIdentity + "-" + locale;
@@ -2103,7 +2138,7 @@ public class FormUtils {
         ClientFormContract.Model clientForm = clientFormDao.getActiveClientFormByIdentifier(localeFormIdentity);
         if (clientForm == null && StringUtils.isNotBlank(fileName) && fileName.contains("/") && !fileName.endsWith("/")) {
             // Strip anything before the '/'
-            localeFormIdentity =  localeFormIdentity.split("/")[1];
+            localeFormIdentity = localeFormIdentity.split("/")[1];
             //retry with just the filename without the file path prefix
             clientForm = clientFormDao.getActiveClientFormByIdentifier(localeFormIdentity);
 

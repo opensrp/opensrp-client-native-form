@@ -237,6 +237,7 @@ public class JsonFormConstants {
     public static final String PROPERTIES_FILE_EXTENSION = ".properties";
     public static final String JSON_FILE_EXTENSION = ".json";
     public static final String CLIENT_FORM_ASSET_VERSION = "base version";
+    public static final String TRANSLATION_TEXT = "translation_text";
 
     public interface MultiSelectUtils {
         String IS_HEADER = "isHeader";

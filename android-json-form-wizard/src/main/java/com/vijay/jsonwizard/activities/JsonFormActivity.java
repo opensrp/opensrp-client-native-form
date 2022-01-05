@@ -1,5 +1,9 @@
 package com.vijay.jsonwizard.activities;
 
+import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
+import static com.vijay.jsonwizard.utils.FormUtils.getCheckboxValueJsonArray;
+import static com.vijay.jsonwizard.utils.FormUtils.getCurrentCheckboxValues;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -58,6 +62,7 @@ import com.vijay.jsonwizard.customviews.MaterialSpinner;
 import com.vijay.jsonwizard.customviews.TextableView;
 import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.event.RefreshExpansionPanelEvent;
+import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.GenericDialogInterface;
 import com.vijay.jsonwizard.interfaces.JsonApi;
@@ -68,6 +73,7 @@ import com.vijay.jsonwizard.rules.RuleConstant;
 import com.vijay.jsonwizard.utils.AppExecutors;
 import com.vijay.jsonwizard.utils.ExObjectResult;
 import com.vijay.jsonwizard.utils.FormUtils;
+import com.vijay.jsonwizard.utils.NativeFormsProperties;
 import com.vijay.jsonwizard.utils.PermissionUtils;
 import com.vijay.jsonwizard.utils.PropertyManager;
 import com.vijay.jsonwizard.utils.Utils;
@@ -101,10 +107,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import timber.log.Timber;
-
-import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
-import static com.vijay.jsonwizard.utils.FormUtils.getCheckboxValueJsonArray;
-import static com.vijay.jsonwizard.utils.FormUtils.getCurrentCheckboxValues;
 
 public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
@@ -947,9 +949,37 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         if (!TextUtils.isEmpty(value)) {
             value = value.trim();
         }
-        item.put(JsonFormConstants.VALUE, itemType.equals(JsonFormConstants.HIDDEN) && TextUtils.isEmpty(value) ?
-                item.has(JsonFormConstants.VALUE) && !TextUtils.isEmpty(item.getString(JsonFormConstants.VALUE)) ?
-                        item.getString(JsonFormConstants.VALUE) : value : value);
+        if (itemType.equals(JsonFormConstants.HIDDEN) && TextUtils.isEmpty(value)) {
+            if (item.has(JsonFormConstants.VALUE) && !TextUtils.isEmpty(item.getString(JsonFormConstants.VALUE)))
+                item.put(JsonFormConstants.VALUE, item.getString(JsonFormConstants.VALUE));
+            else item.put(JsonFormConstants.VALUE, value);
+        } else {
+            NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
+            if (itemType.equals(JsonFormConstants.NATIVE_RADIO_BUTTON) && nativeFormsProperties != null && nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_RADIO_BUTTON_VALUE_TRANSLATED)) {
+                item.put(JsonFormConstants.VALUE, generateTranslatableValue(value, item, itemType));
+            } else {
+                item.put(JsonFormConstants.VALUE, value);
+            }
+        }
+    }
+
+    /**
+     * Generates a JSONObject Value for the value translatable fields
+     * @param value
+     * @param item
+     * @param itemType
+     * @return
+     */
+    private JSONObject generateTranslatableValue(String value, JSONObject item, String itemType) throws JSONException {
+        JSONObject newValue = new JSONObject();
+        if (itemType.equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
+            JSONArray options = item.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
+            JSONObject selectedOption = formUtils.getOptionFromOptionsUsingKey(options,value);
+
+            newValue.put(JsonFormConstants.VALUE, value);
+            newValue.put(JsonFormConstants.TEXT, selectedOption.optString(JsonFormConstants.TRANSLATION_TEXT,""));
+        }
+        return newValue;
     }
 
     private boolean checkPopUpValidity(String[] curKey, boolean popup) throws JSONException {

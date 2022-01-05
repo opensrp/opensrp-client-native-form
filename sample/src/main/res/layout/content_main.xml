@@ -81,6 +81,14 @@
             android:text="Basic Form"
             android:textColor="@android:color/white"
             android:theme="@style/NativeFormsAppTheme" />
+        <Button
+            android:id="@+id/update_radio_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Update Radio Button"
+            android:textColor="@android:color/white"
+            android:theme="@style/NativeFormsAppTheme" />
 
         <Button
             android:id="@+id/expansion_panel_button"
