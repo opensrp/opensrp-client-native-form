@@ -36,6 +36,7 @@ import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.NativeFormsProperties;
+import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.CustomTextView;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
@@ -607,7 +608,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             radioButton.setEnabled(!readOnly);
 
             // Make sure to register listener after setting the value to avoid unnecessary onCheckedChange call
-            checkSelectedRadioButton(listener, radioButton, formUtils.returnValue(jsonObject), item);
+            checkSelectedRadioButton(listener, radioButton, Utils.returnValue(jsonObject), item);
         }
     }
 
@@ -676,7 +677,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
                                        JsonFormFragment formFragment, String stepName)
             throws JSONException {
         String optionKey = item.optString(JsonFormConstants.KEY, "");
-        String widgetValue = formUtils.returnValue(jsonObject);
+        String widgetValue = Utils.returnValue(jsonObject);
 
         String specifyText;
         if (item.has(JsonFormConstants.SECONDARY_VALUE) && widgetValue.equals(optionKey))
@@ -708,7 +709,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
     private String getOptionTextWithSecondaryValue(JSONObject item, JSONObject jsonObject) throws JSONException {
         String optionText = item.getString(JsonFormConstants.TEXT);
         String optionKey = item.getString(JsonFormConstants.KEY);
-        String widgetValue = formUtils.returnValue(jsonObject);
+        String widgetValue = Utils.returnValue(jsonObject);
 
         if (optionKey.equals(widgetValue) && item.has(JsonFormConstants.SECONDARY_VALUE)) {
             JSONArray secondaryValueArray = item.getJSONArray(JsonFormConstants.SECONDARY_VALUE);
@@ -787,7 +788,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         String popupReasonsText = "";
         CustomTextView reasonsTextView = rootLayout.findViewById(R.id.reasonsTextView);
         String optionKey = item.optString(JsonFormConstants.KEY, "");
-        String widgetValue = formUtils.returnValue(jsonObject);
+        String widgetValue = Utils.returnValue(jsonObject);
         if (widgetValue.equals(optionKey)) {
             if (item.has(JsonFormConstants.SECONDARY_VALUE)) {
                 popupReasonsText = formUtils.getSpecifyText(item.getJSONArray(JsonFormConstants.SECONDARY_VALUE));

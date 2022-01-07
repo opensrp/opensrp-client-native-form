@@ -521,13 +521,30 @@ public class Utils {
                 object.get(RuleConstant.STEP) + "_" + object.get(KEY) : VALUE;
     }
 
+    /**
+     * Returns the value string value for special translated fields like the Native Radio Button, Spinner, Check Box e.tc
+     *
+     * @param jsonObject -- Widget #JSONObject
+     * @return
+     */
+    public static String returnValue(JSONObject jsonObject) {
+        String value = "";
+        NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
+        if (nativeFormsProperties != null && jsonObject.has(TYPE) && jsonObject.optString(TYPE).equals(JsonFormConstants.NATIVE_RADIO_BUTTON) && nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_RADIO_BUTTON_VALUE_TRANSLATED)) {
+            JSONObject valueObject = jsonObject.optJSONObject(JsonFormConstants.VALUE);
+            if (valueObject != null) {
+                value = valueObject.optString(JsonFormConstants.VALUE, "");
+            }
+        } else {
+            value = jsonObject.optString(JsonFormConstants.VALUE, "");
+        }
+        return value;
+    }
+
     protected Object getValue(JSONObject object) throws JSONException {
         Object value;
-
         if (object.has(VALUE)) {
-
-            value = object.opt(VALUE);
-
+            value = returnValue(object);
             if (isNumberWidget(object)) {
                 value = TextUtils.isEmpty(object.optString(VALUE)) ? 0 :
                         processNumberValues(object.optString(VALUE));

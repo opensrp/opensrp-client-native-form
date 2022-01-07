@@ -299,25 +299,6 @@ public class FormUtils {
         }
     }
 
-    /**
-     * Returns the value string value for special translated fields like the Native Radio Button, Spinner, Check Box e.tc
-     *
-     * @param jsonObject -- Widget #JSONObject
-     * @return
-     */
-    public String returnValue(JSONObject jsonObject) {
-        String value = "";
-        NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
-        if (nativeFormsProperties != null && nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_RADIO_BUTTON_VALUE_TRANSLATED)) {
-            JSONObject valueObject = jsonObject.optJSONObject(JsonFormConstants.VALUE);
-            if (valueObject != null) {
-                value = valueObject.optString(JsonFormConstants.VALUE, "");
-            }
-        } else {
-            value = jsonObject.optString(JsonFormConstants.VALUE, "");
-        }
-        return value;
-    }
 
     public static JSONObject createOptiBPDataObject(String clientId, String clientOpenSRPId) throws JSONException {
         JSONObject jsonObject = new JSONObject();
