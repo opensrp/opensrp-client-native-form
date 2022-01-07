@@ -164,6 +164,12 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
             String colorString = jsonObject.getString(JsonFormConstants.OptibpConstants.OPTIBP_KEY_BUTTON_TEXT_COLOR);
             button.setTextColor(Color.parseColor(colorString));
         }
+        if(jsonObject.has(JsonFormConstants.OptibpConstants.OPTIBP_KEY_BUTTON_TEXT))
+        {
+            String buttonText = jsonObject.getString(JsonFormConstants.OptibpConstants.OPTIBP_KEY_BUTTON_TEXT);
+            button.setText(buttonText);
+        }
+
     }
 
     public void setUpOptiBpActivityResultListener(final WidgetArgs widgetArgs, int requestCode, final LinearLayout rootLayout, final EditText systolicEditText, final EditText diastolicEditText) {
