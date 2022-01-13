@@ -1334,7 +1334,7 @@ public class FormUtils {
             JSONArray jsonArray = object.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
             for (int j = 0; j < jsonArray.length(); j++) {
                 if (object.has(JsonFormConstants.VALUE)) {
-                    if (object.getString(JsonFormConstants.VALUE).equals(jsonArray.getJSONObject(j).getString(JsonFormConstants.KEY))) {
+                    if (Utils.returnValue(object).equals(jsonArray.getJSONObject(j).getString(JsonFormConstants.KEY))) {
                         result.put(jsonArray.getJSONObject(j).getString(JsonFormConstants.KEY), String.valueOf(true));
                     } else {
                         if (!object.has(RuleConstant.IS_RULE_CHECK) || !object.getBoolean(RuleConstant.IS_RULE_CHECK)) {

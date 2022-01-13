@@ -10,44 +10,51 @@
       "openmrs_entity_parent": "",
       "openmrs_entity": "concept",
       "openmrs_data_type": "start",
-      "openmrs_entity_id": "163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      "openmrs_entity_id": "163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "value": "2022-01-13 12:14:01"
     },
     "end": {
       "openmrs_entity_parent": "",
       "openmrs_entity": "concept",
       "openmrs_data_type": "end",
-      "openmrs_entity_id": "163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      "openmrs_entity_id": "163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "value": "2022-01-13 12:14:13"
     },
     "today": {
       "openmrs_entity_parent": "",
       "openmrs_entity": "encounter",
-      "openmrs_entity_id": "encounter_date"
+      "openmrs_entity_id": "encounter_date",
+      "value": "13-01-2022"
     },
     "deviceid": {
       "openmrs_entity_parent": "",
       "openmrs_entity": "concept",
       "openmrs_data_type": "deviceid",
-      "openmrs_entity_id": "163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      "openmrs_entity_id": "163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "value": ""
     },
     "subscriberid": {
       "openmrs_entity_parent": "",
       "openmrs_entity": "concept",
       "openmrs_data_type": "subscriberid",
-      "openmrs_entity_id": "163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      "openmrs_entity_id": "163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "value": ""
     },
     "simserial": {
       "openmrs_entity_parent": "",
       "openmrs_entity": "concept",
       "openmrs_data_type": "simserial",
-      "openmrs_entity_id": "163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      "openmrs_entity_id": "163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "value": ""
     },
     "phonenumber": {
       "openmrs_entity_parent": "",
       "openmrs_entity": "concept",
       "openmrs_data_type": "phonenumber",
-      "openmrs_entity_id": "163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      "openmrs_entity_id": "163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "value": ""
     },
-    "encounter_location": "",
+    "encounter_location": "Kenya",
     "look_up": {
       "entity_id": "",
       "value": ""
@@ -73,19 +80,28 @@
             "openmrs_entity_parent": "",
             "openmrs_entity": "",
             "openmrs_entity_id": "",
-            "text": "Yes",
-            "translation_text": "Yes"
+            "text": "{{option.yes}}",
+            "translation_text": "option.yes"
           },
           {
             "key": "no",
             "openmrs_entity_parent": "",
             "openmrs_entity": "",
             "openmrs_entity_id": "",
-            "text": "No",
-            "translation_text": "No"
+            "text": "{{option.no}}",
+            "translation_text": "option.no"
           }
-        ]
+        ],
+        "value": {
+          "value": "yes",
+          "text": "option.yes"
+        }
       }
     ]
+  },
+  "invisible_required_fields": "[]",
+  "details": {
+    "appVersionName": "0.0.6-SNAPSHOT",
+    "formVersion": ""
   }
 }
