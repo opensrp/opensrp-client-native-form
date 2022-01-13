@@ -77,7 +77,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     protected ScrollView mScrollView;
     private Menu mMenu;
     private JsonApi mJsonApi;
-    private Map<String, List<View>> lookUpMap = new HashMap<>();
+    private final Map<String, List<View>> lookUpMap = new HashMap<>();
     private Button previousButton;
     private Button nextButton;
     private String stepName;
@@ -87,7 +87,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     private static NativeFormsProperties nativeFormProperties;
 
-    private final Handler handler = new Handler(Looper.getMainLooper(),this);
+    private final Handler handler = new Handler(Looper.getMainLooper(), this);
 
     public static JsonFormFragment getFormFragment(String stepName) {
         JsonFormFragment jsonFormFragment = new JsonFormFragment();
@@ -101,7 +101,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     @Override
     public boolean handleMessage(@NonNull @NotNull Message msg) {
         //noinspection SwitchStatementWithTooFewBranches
-        switch (msg.what){
+        switch (msg.what) {
             case GRAY_OUT_ACTIVE_WHAT:
                 requireActivity().invalidateOptionsMenu();
                 return true;
@@ -286,7 +286,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         inflater.inflate(R.menu.menu_toolbar, menu);
         presenter.setUpToolBar();
 
-        if (getForm() != null && getForm().isGreyOutSaveWhenFormInvalid()){
+        if (getForm() != null && getForm().isGreyOutSaveWhenFormInvalid()) {
             boolean isFormFilled = presenter.areFormViewsFilled();
             if (isFormFilled) {
                 menu.findItem(R.id.action_next).setTitle(R.string.next);
@@ -679,7 +679,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
                         break;
                     }
                 } else if (isCheckbox(view)) {
-                    CheckBox checkBox = ((LinearLayout) view).findViewWithTag(JsonFormConstants.CHECK_BOX);
+                    CheckBox checkBox = view.findViewWithTag(JsonFormConstants.CHECK_BOX);
                     String parentKeyAtIndex = (String) checkBox.getTag(R.id.key);
                     String childKeyAtIndex = (String) checkBox.getTag(R.id.childKey);
                     if (checkBox.isChecked() && parentKeyAtIndex.equals(parentKey) && childKeyAtIndex.equals(exclusiveKey)) {
@@ -737,7 +737,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
                     Form form = getForm();
                     if (!(view instanceof MaterialEditText)
-                            || (form != null && !form.isGreyOutSaveWhenFormInvalid())){
+                            || (form != null && !form.isGreyOutSaveWhenFormInvalid())) {
                         view.requestFocus();
                     }
                 }
