@@ -955,7 +955,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             else item.put(JsonFormConstants.VALUE, value);
         } else {
             NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
-            if (itemType.equals(JsonFormConstants.NATIVE_RADIO_BUTTON) && nativeFormsProperties != null && nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_RADIO_BUTTON_VALUE_TRANSLATED)) {
+            if (itemType.equals(JsonFormConstants.NATIVE_RADIO_BUTTON) && nativeFormsProperties != null && nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_VALUE_TRANSLATED)) {
                 item.put(JsonFormConstants.VALUE, generateTranslatableValue(value, item, itemType));
             } else {
                 item.put(JsonFormConstants.VALUE, value);
