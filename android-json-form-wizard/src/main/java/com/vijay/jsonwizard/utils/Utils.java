@@ -1,5 +1,15 @@
 package com.vijay.jsonwizard.utils;
 
+import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.OPENMRS_ENTITY;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.OPENMRS_ENTITY_ID;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.OPENMRS_ENTITY_PARENT;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.TEXT;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.TYPE;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUE;
+import static com.vijay.jsonwizard.utils.NativeFormLangUtils.getTranslatedString;
+import static com.vijay.jsonwizard.widgets.RepeatingGroupFactory.REFERENCE_EDIT_TEXT_HINT;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -66,16 +76,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import timber.log.Timber;
-
-import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.OPENMRS_ENTITY;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.OPENMRS_ENTITY_ID;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.OPENMRS_ENTITY_PARENT;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.TEXT;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.TYPE;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUE;
-import static com.vijay.jsonwizard.utils.NativeFormLangUtils.getTranslatedString;
-import static com.vijay.jsonwizard.widgets.RepeatingGroupFactory.REFERENCE_EDIT_TEXT_HINT;
 
 public class Utils {
     public final static List<String> PREFICES_OF_INTEREST = Arrays.asList(RuleConstant.PREFIX.GLOBAL, RuleConstant.STEP);
@@ -479,48 +479,6 @@ public class Utils {
         return stepName + "#" + stepTitle + ":";
     }
 
-    public List<String> createExpansionPanelChildren(JSONArray jsonArray) throws JSONException {
-        List<String> stringList = new ArrayList<>();
-        String label;
-        for (int i = 0; i < jsonArray.length(); i++) {
-            if (!jsonArray.isNull(i)) {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                if (jsonObject.has(JsonFormConstants.VALUES) && jsonObject.has(JsonFormConstants.LABEL) &&
-                        !"".equals(jsonObject.getString(JsonFormConstants.LABEL))) {
-                    //Get label and replace any colon in some labels. Not needed at this point
-                    label = jsonObject.getString(JsonFormConstants.LABEL).replace(":", "");
-                    stringList.add(label + ":" + getStringValue(jsonObject));
-                }
-            }
-        }
-
-        return stringList;
-    }
-
-    private String getStringValue(JSONObject jsonObject) throws JSONException {
-        StringBuilder value = new StringBuilder();
-        if (jsonObject != null) {
-            JSONArray jsonArray = jsonObject.getJSONArray(JsonFormConstants.VALUES);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                String stringValue = jsonArray.getString(i);
-                value.append(getValueFromSecondaryValues(stringValue));
-                value.append(", ");
-            }
-        }
-
-        return value.toString().replaceAll(", $", "");
-    }
-
-    private String getValueFromSecondaryValues(String itemString) {
-        String[] strings = itemString.split(":");
-        return strings.length > 1 ? strings[1] : strings[0];
-    }
-
-    protected String getKey(JSONObject object) throws JSONException {
-        return object.has(RuleConstant.IS_RULE_CHECK) && object.getBoolean(RuleConstant.IS_RULE_CHECK) ?
-                object.get(RuleConstant.STEP) + "_" + object.get(KEY) : VALUE;
-    }
-
     /**
      * Returns the value string value for special translated fields like the Native Radio Button, Spinner, Check Box e.tc
      *
@@ -530,7 +488,8 @@ public class Utils {
     public static String returnValue(JSONObject jsonObject) {
         String value = "";
         NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
-        if (nativeFormsProperties != null && jsonObject.has(TYPE) && jsonObject.optString(TYPE).equals(JsonFormConstants.NATIVE_RADIO_BUTTON) && nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_VALUE_TRANSLATED)) {
+        if (nativeFormsProperties != null && jsonObject.has(TYPE) && (jsonObject.optString(TYPE).equals(JsonFormConstants.NATIVE_RADIO_BUTTON) || jsonObject.optString(TYPE).equals(JsonFormConstants.CHECK_BOX) || jsonObject.optString(TYPE).equals(JsonFormConstants.SPINNER))
+                && nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_VALUE_TRANSLATED)) {
             JSONObject valueObject = jsonObject.optJSONObject(JsonFormConstants.VALUE);
             if (valueObject != null) {
                 value = valueObject.optString(JsonFormConstants.VALUE, "");
@@ -540,111 +499,6 @@ public class Utils {
         }
         return value;
     }
-
-    protected Object getValue(JSONObject object) throws JSONException {
-        Object value;
-        if (object.has(VALUE)) {
-            value = returnValue(object);
-            if (isNumberWidget(object)) {
-                value = TextUtils.isEmpty(object.optString(VALUE)) ? 0 :
-                        processNumberValues(object.optString(VALUE));
-            } else if (value != null && !TextUtils.isEmpty(object.getString(VALUE)) &&
-                    canHaveNumber(object)) {
-                value = processNumberValues(value);
-            }
-
-        } else {
-            value = isNumberWidget(object) ? 0 : "";
-        }
-
-        return value;
-    }
-
-    protected boolean isNumberWidget(JSONObject object) throws JSONException {
-        return object.has(JsonFormConstants.EDIT_TYPE) &&
-                object.getString(JsonFormConstants.EDIT_TYPE).equals(JsonFormConstants.EDIT_TEXT_TYPE.NUMBER) ||
-                object.getString(TYPE).equals(JsonFormConstants.NUMBER_SELECTOR);
-    }
-
-    protected Object processNumberValues(Object object) {
-        Object value = object;
-        try {
-            if (value.toString().contains(".")) {
-                value = String.valueOf((float) Math.round(Float.valueOf(value.toString()) * 100) / 100);
-            } else {
-                value = Integer.valueOf(value.toString());
-            }
-        } catch (NumberFormatException e) {
-            Timber.e(e);
-        }
-        return value;
-    }
-
-    protected boolean canHaveNumber(JSONObject object) throws JSONException {
-        return isNumberWidget(object) || object.getString(TYPE).equals(JsonFormConstants.HIDDEN) ||
-                object.getString(TYPE).equals(JsonFormConstants.SPINNER);
-    }
-
-    public void setChildKey(View view, String type, ExpansionPanelGenericPopupDialog genericPopupDialog) {
-        String childKey;
-        if (type != null && (type.equals(JsonFormConstants.CHECK_BOX) || type.equals(JsonFormConstants.NATIVE_RADIO_BUTTON) || type.equals(JsonFormConstants.EXTENDED_RADIO_BUTTON))) {
-            childKey = (String) view.getTag(com.vijay.jsonwizard.R.id.childKey);
-            genericPopupDialog.setChildKey(childKey);
-        }
-    }
-
-    public void setExpansionPanelDetails(String type, String toolbarHeader, String container, ExpansionPanelGenericPopupDialog genericPopupDialog) {
-        if (type != null && type.equals(JsonFormConstants.EXPANSION_PANEL)) {
-            genericPopupDialog.setHeader(toolbarHeader);
-            genericPopupDialog.setContainer(container);
-        }
-    }
-
-    /**
-     * Gets the {@link android.support.v4.app.FragmentTransaction} from the {@link Context} and removes any {@link android.support.v4.app.Fragment} with the tag `GenericPopup` from the transaction.
-     * Then nullifies the stack by calling {@link android.support.v4.app.FragmentTransaction#addToBackStack(String)} with a null value.
-     *
-     * @param context {@link Activity} The activity context where this transaction called from
-     * @return fragmentTransaction {@link android.support.v4.app.FragmentTransaction}
-     */
-    @NotNull
-    public FragmentTransaction getFragmentTransaction(Activity context) {
-        FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
-        Fragment fragment = context.getFragmentManager().findFragmentByTag("GenericPopup");
-        if (fragment != null) {
-            fragmentTransaction.remove(fragment);
-        }
-
-        fragmentTransaction.addToBackStack(null);
-        return fragmentTransaction;
-    }
-
-    /**
-     * Enabling the expansion panel views after they were disabled on sub form opening.
-     *
-     * @param linearLayout {@link LinearLayout}
-     */
-    public void enableExpansionPanelViews(LinearLayout linearLayout) {
-        RelativeLayout layoutHeader = (RelativeLayout) linearLayout.getChildAt(0);
-        RelativeLayout expansionHeaderLayout = layoutHeader.findViewById(R.id.expansion_header_layout);
-        expansionHeaderLayout.setEnabled(true);
-        expansionHeaderLayout.setClickable(true);
-
-        ImageView statusImageView = expansionHeaderLayout.findViewById(R.id.statusImageView);
-        statusImageView.setEnabled(true);
-        statusImageView.setClickable(true);
-
-        CustomTextView topBarTextView = expansionHeaderLayout.findViewById(R.id.topBarTextView);
-        topBarTextView.setClickable(true);
-        topBarTextView.setEnabled(true);
-
-        LinearLayout contentLayout = (LinearLayout) linearLayout.getChildAt(1);
-        LinearLayout buttonLayout = contentLayout.findViewById(R.id.accordion_bottom_navigation);
-        Button okButton = buttonLayout.findViewById(R.id.ok_button);
-        okButton.setEnabled(true);
-        okButton.setClickable(true);
-    }
-
 
     @NonNull
     private static String cleanToken(String conditionTokenRaw) {
@@ -769,7 +623,6 @@ public class Utils {
         return fileContents;
     }
 
-
     /**
      * Converts an {@link InputStream} into a {@link String}
      *
@@ -782,7 +635,6 @@ public class Utils {
         closeScanner(scanner);
         return data;
     }
-
 
     /**
      * Gets form config entries as specified in json.form.config.json
@@ -901,7 +753,6 @@ public class Utils {
         return sdf.format(newDate);
     }
 
-
     public static int getResourceId(Context context, String name, ResourceType resourceType) {
         try {
             return context.getResources().getIdentifier(name, resourceType.getType(), context.getPackageName());
@@ -938,7 +789,6 @@ public class Utils {
         return jsonObject == null || jsonObject.length() == 0;
     }
 
-
     /**
      * Returns the object that holds the repeating group count
      *
@@ -969,6 +819,152 @@ public class Utils {
         repeatingGroupCountObj.put(TEXT, widgetArgs.getJsonObject().get(REFERENCE_EDIT_TEXT_HINT));
         stepFields.put(repeatingGroupCountObj);
         return repeatingGroupCountObj;
+    }
+
+    public List<String> createExpansionPanelChildren(JSONArray jsonArray) throws JSONException {
+        List<String> stringList = new ArrayList<>();
+        String label;
+        for (int i = 0; i < jsonArray.length(); i++) {
+            if (!jsonArray.isNull(i)) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                if (jsonObject.has(JsonFormConstants.VALUES) && jsonObject.has(JsonFormConstants.LABEL) &&
+                        !"".equals(jsonObject.getString(JsonFormConstants.LABEL))) {
+                    //Get label and replace any colon in some labels. Not needed at this point
+                    label = jsonObject.getString(JsonFormConstants.LABEL).replace(":", "");
+                    stringList.add(label + ":" + getStringValue(jsonObject));
+                }
+            }
+        }
+
+        return stringList;
+    }
+
+    private String getStringValue(JSONObject jsonObject) throws JSONException {
+        StringBuilder value = new StringBuilder();
+        if (jsonObject != null) {
+            JSONArray jsonArray = jsonObject.getJSONArray(JsonFormConstants.VALUES);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                String stringValue = jsonArray.getString(i);
+                value.append(getValueFromSecondaryValues(stringValue));
+                value.append(", ");
+            }
+        }
+
+        return value.toString().replaceAll(", $", "");
+    }
+
+    private String getValueFromSecondaryValues(String itemString) {
+        String[] strings = itemString.split(":");
+        return strings.length > 1 ? strings[1] : strings[0];
+    }
+
+    protected String getKey(JSONObject object) throws JSONException {
+        return object.has(RuleConstant.IS_RULE_CHECK) && object.getBoolean(RuleConstant.IS_RULE_CHECK) ?
+                object.get(RuleConstant.STEP) + "_" + object.get(KEY) : VALUE;
+    }
+
+    protected Object getValue(JSONObject object) throws JSONException {
+        Object value;
+        if (object.has(VALUE)) {
+            value = returnValue(object);
+            if (isNumberWidget(object)) {
+                value = TextUtils.isEmpty(object.optString(VALUE)) ? 0 :
+                        processNumberValues(object.optString(VALUE));
+            } else if (value != null && !TextUtils.isEmpty(object.getString(VALUE)) &&
+                    canHaveNumber(object)) {
+                value = processNumberValues(value);
+            }
+
+        } else {
+            value = isNumberWidget(object) ? 0 : "";
+        }
+
+        return value;
+    }
+
+    protected boolean isNumberWidget(JSONObject object) throws JSONException {
+        return object.has(JsonFormConstants.EDIT_TYPE) &&
+                object.getString(JsonFormConstants.EDIT_TYPE).equals(JsonFormConstants.EDIT_TEXT_TYPE.NUMBER) ||
+                object.getString(TYPE).equals(JsonFormConstants.NUMBER_SELECTOR);
+    }
+
+    protected Object processNumberValues(Object object) {
+        Object value = object;
+        try {
+            if (value.toString().contains(".")) {
+                value = String.valueOf((float) Math.round(Float.valueOf(value.toString()) * 100) / 100);
+            } else {
+                value = Integer.valueOf(value.toString());
+            }
+        } catch (NumberFormatException e) {
+            Timber.e(e);
+        }
+        return value;
+    }
+
+    protected boolean canHaveNumber(JSONObject object) throws JSONException {
+        return isNumberWidget(object) || object.getString(TYPE).equals(JsonFormConstants.HIDDEN) ||
+                object.getString(TYPE).equals(JsonFormConstants.SPINNER);
+    }
+
+    public void setChildKey(View view, String type, ExpansionPanelGenericPopupDialog genericPopupDialog) {
+        String childKey;
+        if (type != null && (type.equals(JsonFormConstants.CHECK_BOX) || type.equals(JsonFormConstants.NATIVE_RADIO_BUTTON) || type.equals(JsonFormConstants.EXTENDED_RADIO_BUTTON))) {
+            childKey = (String) view.getTag(com.vijay.jsonwizard.R.id.childKey);
+            genericPopupDialog.setChildKey(childKey);
+        }
+    }
+
+    public void setExpansionPanelDetails(String type, String toolbarHeader, String container, ExpansionPanelGenericPopupDialog genericPopupDialog) {
+        if (type != null && type.equals(JsonFormConstants.EXPANSION_PANEL)) {
+            genericPopupDialog.setHeader(toolbarHeader);
+            genericPopupDialog.setContainer(container);
+        }
+    }
+
+    /**
+     * Gets the {@link android.support.v4.app.FragmentTransaction} from the {@link Context} and removes any {@link android.support.v4.app.Fragment} with the tag `GenericPopup` from the transaction.
+     * Then nullifies the stack by calling {@link android.support.v4.app.FragmentTransaction#addToBackStack(String)} with a null value.
+     *
+     * @param context {@link Activity} The activity context where this transaction called from
+     * @return fragmentTransaction {@link android.support.v4.app.FragmentTransaction}
+     */
+    @NotNull
+    public FragmentTransaction getFragmentTransaction(Activity context) {
+        FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
+        Fragment fragment = context.getFragmentManager().findFragmentByTag("GenericPopup");
+        if (fragment != null) {
+            fragmentTransaction.remove(fragment);
+        }
+
+        fragmentTransaction.addToBackStack(null);
+        return fragmentTransaction;
+    }
+
+    /**
+     * Enabling the expansion panel views after they were disabled on sub form opening.
+     *
+     * @param linearLayout {@link LinearLayout}
+     */
+    public void enableExpansionPanelViews(LinearLayout linearLayout) {
+        RelativeLayout layoutHeader = (RelativeLayout) linearLayout.getChildAt(0);
+        RelativeLayout expansionHeaderLayout = layoutHeader.findViewById(R.id.expansion_header_layout);
+        expansionHeaderLayout.setEnabled(true);
+        expansionHeaderLayout.setClickable(true);
+
+        ImageView statusImageView = expansionHeaderLayout.findViewById(R.id.statusImageView);
+        statusImageView.setEnabled(true);
+        statusImageView.setClickable(true);
+
+        CustomTextView topBarTextView = expansionHeaderLayout.findViewById(R.id.topBarTextView);
+        topBarTextView.setClickable(true);
+        topBarTextView.setEnabled(true);
+
+        LinearLayout contentLayout = (LinearLayout) linearLayout.getChildAt(1);
+        LinearLayout buttonLayout = contentLayout.findViewById(R.id.accordion_bottom_navigation);
+        Button okButton = buttonLayout.findViewById(R.id.ok_button);
+        okButton.setEnabled(true);
+        okButton.setClickable(true);
     }
 }
 
