@@ -36,6 +36,7 @@ import android.widget.Toast;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.NativeFormLibrary;
 import com.vijay.jsonwizard.R;
+import com.vijay.jsonwizard.activities.JsonFormActivity;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.ExpansionPanelGenericPopupDialog;
 import com.vijay.jsonwizard.domain.ExpansionPanelItemModel;
@@ -50,7 +51,6 @@ import com.vijay.jsonwizard.model.DynamicLabelInfo;
 import com.vijay.jsonwizard.rules.RuleConstant;
 import com.vijay.jsonwizard.views.CustomTextView;
 
-import org.apache.commons.lang3.CharEncoding;
 import org.apache.commons.lang3.StringUtils;
 import org.jeasy.rules.api.Facts;
 import org.jetbrains.annotations.NotNull;
@@ -66,6 +66,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -101,7 +102,7 @@ public class FormUtils {
     private static final String TODAY_JAVAROSA_PROPERTY = "today";
     private static final String DEFAULT_FORM_IMAGES_FOLDER = "image/";
     private static final String TAG = FormUtils.class.getSimpleName();
-    private Utils utils = new Utils();
+    private final Utils utils = new Utils();
     private GenericDialogInterface genericDialogInterface;
 
     public static Point getViewLocationOnScreen(View view) {
@@ -689,7 +690,13 @@ public class FormUtils {
             throws JSONException {
         HashSet<String> result = new HashSet<>();
         for (int i = 0; i < optionsArray.length(); i++) {
-            result.add(optionsArray.getString(i));
+            String translatedCheckBox = optionsArray.getString(i);
+            if (translatedCheckBox.charAt(0) == '{') {
+                JSONObject object = new JSONObject(translatedCheckBox);
+                result.add(object.optString(JsonFormConstants.TEXT, ""));
+            } else {
+                result.add(translatedCheckBox);
+            }
         }
         return result;
     }
@@ -786,6 +793,19 @@ public class FormUtils {
                 !fieldObject.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.TOASTER_NOTES) &&
                 !fieldObject.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.HIDDEN)) &&
                 isValueRequired;
+    }
+
+    public static int getClientFormId(@NonNull JSONObject jsonObject) {
+        try {
+            return jsonObject.getInt(JsonFormConstants.Properties.CLIENT_FORM_ID);
+        } catch (JSONException e) {
+            Timber.e(e);
+            return 0;
+        }
+    }
+
+    public static boolean isFormNew(@NonNull JSONObject jsonObject) {
+        return jsonObject.optBoolean(JsonFormConstants.Properties.IS_NEW, false);
     }
 
     public Map<String, View> createRadioButtonAndCheckBoxLabel(String stepName, LinearLayout linearLayout,
@@ -1353,14 +1373,29 @@ public class FormUtils {
     }
 
     public void updateValueToJSONArray(JSONObject jsonObject, String valueString) {
+        NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
+        JsonFormActivity jsonFormActivity = new JsonFormActivity();
         try {
             JSONArray values = null;
             if (StringUtils.isNotEmpty(valueString)) {
-                values = new JSONArray(valueString);
+                if (nativeFormsProperties != null && nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_VALUE_TRANSLATED)) {
+                    if (valueString.charAt(0) == '{') {
+                        JSONObject object = new JSONObject(valueString);
+                        values = new JSONArray(object.optString(JsonFormConstants.TEXT, ""));
+                    } else {
+                        JSONObject createJsonValues = jsonFormActivity.generateTranslatableValue(jsonObject.optString(JsonFormConstants.VALUE, ""), jsonObject);
+                        values = new JSONArray(createJsonValues);
+                    }
+                } else {
+                    values = new JSONArray(valueString);
+                }
+                if (values != null) {
+                    //added
+                    jsonObject.put(JsonFormConstants.VALUE, values);
+
+                }
             }
-            if (values != null) {
-                jsonObject.put(JsonFormConstants.VALUE, values);
-            }
+
         } catch (JSONException e) {
             Timber.e(e, "%s --> updateValueToJSONArray", this.getClass().getCanonicalName());
         }
@@ -1564,655 +1599,635 @@ public class FormUtils {
                         secondaryValue = key + ":" + text;
                         break;
                     }
-                }
-                else if (option.has(JsonFormConstants.KEY) && value.equals(option.getString(JsonFormConstants.KEY))) {
-                        String key = option.getString(JsonFormConstants.KEY);
-                        String text = option.getString(JsonFormConstants.TEXT);
-                        secondaryValue = key + ":" + text;
-                        break;
-                    }
-                }
-            }
-            return secondaryValue;
-        }
-
-        public void getSpinnerValueOpenMRSAttributes (JSONObject item, JSONArray
-        valueOpenMRSAttributes) throws JSONException {
-
-            if (item == null || !item.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.SPINNER)) {
-                return;
-            }
-
-            String spinnerValue = item.getString(JsonFormConstants.VALUE);
-            String spinnerKey = item.getString(JsonFormConstants.KEY);
-            if (item.has(JsonFormConstants.OPENMRS_CHOICE_IDS)) {
-                JSONObject openMRSChoiceIds = item.getJSONObject(JsonFormConstants.OPENMRS_CHOICE_IDS);
-                Iterator<String> keys = openMRSChoiceIds.keys();
-                while (keys.hasNext()) {
-                    String key = keys.next();
-                    if (spinnerValue.equals(key)) {
-                        addOpenMRSAttributes(valueOpenMRSAttributes, item, spinnerKey,
-                                openMRSChoiceIds.getString(key));
-                        break;
-                    }
-                }
-            } else if (item.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
-                // if an options block is defined
-                JSONArray options = item.optJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
-                for (int i = 0; i < options.length(); i++) {
-                    JSONObject option = options.getJSONObject(i);
-                    if (option.get(JsonFormConstants.KEY).equals(spinnerValue)) {
-                        addOpenMRSAttributes(valueOpenMRSAttributes, option, spinnerKey,
-                                option.getString(JsonFormConstants.OPENMRS_ENTITY_ID));
-                        break;
-                    }
+                } else if (option.has(JsonFormConstants.KEY) && value.equals(option.getString(JsonFormConstants.KEY))) {
+                    String key = option.getString(JsonFormConstants.KEY);
+                    String text = option.getString(JsonFormConstants.TEXT);
+                    secondaryValue = key + ":" + text;
+                    break;
                 }
             }
         }
+        return secondaryValue;
+    }
 
+    public void getSpinnerValueOpenMRSAttributes(JSONObject item, JSONArray
+            valueOpenMRSAttributes) throws JSONException {
 
-        private void addOpenMRSAttributes (JSONArray valueOpenMRSAttributes, JSONObject item, String
-        key, String openMRSEntityId) throws JSONException {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put(JsonFormConstants.KEY, key);
-            jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_PARENT, item.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT));
-            jsonObject.put(JsonFormConstants.OPENMRS_ENTITY, item.getString(JsonFormConstants.OPENMRS_ENTITY));
-            jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_ID, openMRSEntityId);
-
-            valueOpenMRSAttributes.put(jsonObject);
+        if (item == null || !item.getString(JsonFormConstants.TYPE).equals(JsonFormConstants.SPINNER)) {
+            return;
         }
 
-        private JSONObject createValueObject (String key, String type, String label,
-        int index, JSONArray values, JSONObject openMRSAttributes, JSONArray valueOpenMRSAttributes)
-        {
-            JSONObject jsonObject = new JSONObject();
-            try {
-                if (values.length() > 0) {
-                    jsonObject.put(JsonFormConstants.KEY, key);
-                    jsonObject.put(JsonFormConstants.TYPE, type);
-                    jsonObject.put(JsonFormConstants.LABEL, label);
-                    jsonObject.put(JsonFormConstants.INDEX, index);
-                    jsonObject.put(JsonFormConstants.VALUES, values);
-                    jsonObject.put(JsonFormConstants.OPENMRS_ATTRIBUTES, openMRSAttributes);
-                    if (valueOpenMRSAttributes.length() > 0) {
-                        jsonObject.put(JsonFormConstants.VALUE_OPENMRS_ATTRIBUTES, valueOpenMRSAttributes);
-                    }
+        String spinnerValue = item.getString(JsonFormConstants.VALUE);
+        String spinnerKey = item.getString(JsonFormConstants.KEY);
+        if (item.has(JsonFormConstants.OPENMRS_CHOICE_IDS)) {
+            JSONObject openMRSChoiceIds = item.getJSONObject(JsonFormConstants.OPENMRS_CHOICE_IDS);
+            Iterator<String> keys = openMRSChoiceIds.keys();
+            while (keys.hasNext()) {
+                String key = keys.next();
+                if (spinnerValue.equals(key)) {
+                    addOpenMRSAttributes(valueOpenMRSAttributes, item, spinnerKey,
+                            openMRSChoiceIds.getString(key));
+                    break;
                 }
-            } catch (JSONException e) {
-                Timber.e(e, " --> createValueObject");
-
             }
-            return jsonObject;
-        }
-
-        /**
-         * @param key
-         * @param type
-         * @param values
-         * @param openMRSAttributes
-         * @param valueOpenMRSAttributes
-         * @return
-         */
-        public JSONObject createSecondaryValueObject (String key, String type, JSONArray
-        values, JSONObject openMRSAttributes,
-                JSONArray valueOpenMRSAttributes){
-            JSONObject jsonObject = new JSONObject();
-            try {
-                if (values.length() > 0) {
-                    jsonObject.put(JsonFormConstants.KEY, key);
-                    jsonObject.put(JsonFormConstants.TYPE, type);
-                    jsonObject.put(JsonFormConstants.VALUES, values);
-                    jsonObject.put(JsonFormConstants.OPENMRS_ATTRIBUTES, openMRSAttributes);
-                    if (valueOpenMRSAttributes.length() > 0) {
-                        jsonObject.put(JsonFormConstants.VALUE_OPENMRS_ATTRIBUTES, valueOpenMRSAttributes);
-                    }
+        } else if (item.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
+            // if an options block is defined
+            JSONArray options = item.optJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
+            for (int i = 0; i < options.length(); i++) {
+                JSONObject option = options.getJSONObject(i);
+                if (option.get(JsonFormConstants.KEY).equals(spinnerValue)) {
+                    addOpenMRSAttributes(valueOpenMRSAttributes, option, spinnerKey,
+                            option.getString(JsonFormConstants.OPENMRS_ENTITY_ID));
+                    break;
                 }
-            } catch (JSONException e) {
-                Timber.e(e, " --> createSecondaryValueObject");
-
             }
-            return jsonObject;
         }
+    }
 
-        /**
-         * Extracts the openmrs attributes of the Radio button & check box components on popups.
-         *
-         * @param valueOpenMRSAttributes {@link JSONArray}
-         * @param itemOption             {@link JSONObject}
-         * @param itemKey                {@link String}
-         * @throws JSONException
-         */
-        protected void extractOptionOpenMRSAttributes (JSONArray valueOpenMRSAttributes, JSONObject
-        itemOption, String itemKey)
+    private void addOpenMRSAttributes(JSONArray valueOpenMRSAttributes, JSONObject item, String
+            key, String openMRSEntityId) throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(JsonFormConstants.KEY, key);
+        jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_PARENT, item.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT));
+        jsonObject.put(JsonFormConstants.OPENMRS_ENTITY, item.getString(JsonFormConstants.OPENMRS_ENTITY));
+        jsonObject.put(JsonFormConstants.OPENMRS_ENTITY_ID, openMRSEntityId);
+
+        valueOpenMRSAttributes.put(jsonObject);
+    }
+
+    private JSONObject createValueObject(String key, String type, String label,
+                                         int index, JSONArray values, JSONObject openMRSAttributes, JSONArray valueOpenMRSAttributes) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            if (values.length() > 0) {
+                jsonObject.put(JsonFormConstants.KEY, key);
+                jsonObject.put(JsonFormConstants.TYPE, type);
+                jsonObject.put(JsonFormConstants.LABEL, label);
+                jsonObject.put(JsonFormConstants.INDEX, index);
+                jsonObject.put(JsonFormConstants.VALUES, values);
+                jsonObject.put(JsonFormConstants.OPENMRS_ATTRIBUTES, openMRSAttributes);
+                if (valueOpenMRSAttributes.length() > 0) {
+                    jsonObject.put(JsonFormConstants.VALUE_OPENMRS_ATTRIBUTES, valueOpenMRSAttributes);
+                }
+            }
+        } catch (JSONException e) {
+            Timber.e(e, " --> createValueObject");
+
+        }
+        return jsonObject;
+    }
+
+    /**
+     * @param key
+     * @param type
+     * @param values
+     * @param openMRSAttributes
+     * @param valueOpenMRSAttributes
+     * @return
+     */
+    public JSONObject createSecondaryValueObject(String key, String type, JSONArray
+            values, JSONObject openMRSAttributes,
+                                                 JSONArray valueOpenMRSAttributes) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            if (values.length() > 0) {
+                jsonObject.put(JsonFormConstants.KEY, key);
+                jsonObject.put(JsonFormConstants.TYPE, type);
+                jsonObject.put(JsonFormConstants.VALUES, values);
+                jsonObject.put(JsonFormConstants.OPENMRS_ATTRIBUTES, openMRSAttributes);
+                if (valueOpenMRSAttributes.length() > 0) {
+                    jsonObject.put(JsonFormConstants.VALUE_OPENMRS_ATTRIBUTES, valueOpenMRSAttributes);
+                }
+            }
+        } catch (JSONException e) {
+            Timber.e(e, " --> createSecondaryValueObject");
+
+        }
+        return jsonObject;
+    }
+
+    /**
+     * Extracts the openmrs attributes of the Radio button & check box components on popups.
+     *
+     * @param valueOpenMRSAttributes {@link JSONArray}
+     * @param itemOption             {@link JSONObject}
+     * @param itemKey                {@link String}
+     * @throws JSONException
+     */
+    protected void extractOptionOpenMRSAttributes(JSONArray valueOpenMRSAttributes, JSONObject
+            itemOption, String itemKey)
             throws JSONException {
-            if (itemOption.has(JsonFormConstants.OPENMRS_ENTITY_PARENT) && itemOption.has(JsonFormConstants.OPENMRS_ENTITY) &&
-                    itemOption.has(JsonFormConstants.OPENMRS_ENTITY_ID)) {
-                String openmrsEntityParent = itemOption.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
-                String openmrsEntity = itemOption.getString(JsonFormConstants.OPENMRS_ENTITY);
-                String openmrsEntityId = itemOption.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
+        if (itemOption.has(JsonFormConstants.OPENMRS_ENTITY_PARENT) && itemOption.has(JsonFormConstants.OPENMRS_ENTITY) &&
+                itemOption.has(JsonFormConstants.OPENMRS_ENTITY_ID)) {
+            String openmrsEntityParent = itemOption.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
+            String openmrsEntity = itemOption.getString(JsonFormConstants.OPENMRS_ENTITY);
+            String openmrsEntityId = itemOption.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
 
-                JSONObject valueOpenMRSObject = new JSONObject();
-                valueOpenMRSObject.put(JsonFormConstants.KEY, itemKey);
-                valueOpenMRSObject.put(JsonFormConstants.OPENMRS_ENTITY_PARENT, openmrsEntityParent);
-                valueOpenMRSObject.put(JsonFormConstants.OPENMRS_ENTITY, openmrsEntity);
-                valueOpenMRSObject.put(JsonFormConstants.OPENMRS_ENTITY_ID, openmrsEntityId);
+            JSONObject valueOpenMRSObject = new JSONObject();
+            valueOpenMRSObject.put(JsonFormConstants.KEY, itemKey);
+            valueOpenMRSObject.put(JsonFormConstants.OPENMRS_ENTITY_PARENT, openmrsEntityParent);
+            valueOpenMRSObject.put(JsonFormConstants.OPENMRS_ENTITY, openmrsEntity);
+            valueOpenMRSObject.put(JsonFormConstants.OPENMRS_ENTITY_ID, openmrsEntityId);
 
-                valueOpenMRSAttributes.put(valueOpenMRSObject);
-            }
+            valueOpenMRSAttributes.put(valueOpenMRSObject);
         }
+    }
 
-        /**
-         * Loads the values from the expansion panel
-         *
-         * @param formFields {@link JSONArray} -- The form values mostly the accordion widgets
-         * @param parentKey  {@link String} -- the accordion widget key
-         * @return values {@link JSONArray} -- the extracted accordion values
-         */
-        public JSONArray loadExpansionPanelValues (JSONArray formFields, String parentKey){
-            JSONArray values = new JSONArray();
-            try {
-                if (formFields != null && formFields.length() > 0) {
-                    for (int i = 0; i < formFields.length(); i++) {
-                        JSONObject item = formFields.getJSONObject(i);
-                        if (item.has(JsonFormConstants.KEY) && item.getString(JsonFormConstants.KEY).equals(parentKey) && item.has(JsonFormConstants.VALUE)) {
-                            values = item.getJSONArray(JsonFormConstants.VALUE);
-                            break;
-                        }
-                    }
-                }
-            } catch (JSONException e) {
-                Timber.e(e, " --> loadExpansionPanelValues");
-            }
-            return values;
-        }
-
-        /**
-         * Creates the expasnion panel secondary values maps
-         *
-         * @param secondaryValues {@link JSONArray}
-         * @return expansionPanelValuesMap {@link Map<>}
-         */
-        public Map<String, ExpansionPanelValuesModel> createSecondaryValuesMap (JSONArray
-        secondaryValues){
-            Map<String, ExpansionPanelValuesModel> expansionPanelValuesModelMap = new HashMap<>();
-            if (secondaryValues != null && secondaryValues.length() > 0) {
-                for (int i = 0; i < secondaryValues.length(); i++) {
-                    if (!secondaryValues.isNull(i)) {
-                        try {
-                            JSONObject jsonObject = secondaryValues.getJSONObject(i);
-                            String key = jsonObject.getString(JsonFormConstants.KEY);
-                            String type = jsonObject.getString(JsonFormConstants.TYPE);
-                            String label = jsonObject.getString(JsonFormConstants.LABEL);
-                            JSONArray values = jsonObject.getJSONArray(JsonFormConstants.VALUES);
-                            int index = jsonObject.optInt(JsonFormConstants.INDEX);
-
-                            JSONObject openmrsAttributes = getSecondaryOpenMRSAttributes(jsonObject);
-                            JSONArray valueOpenMRSAttributes = getValueOpenMRSAttributes(jsonObject);
-
-                            expansionPanelValuesModelMap.put(key,
-                                    new ExpansionPanelValuesModel(key, type, label, index, values, openmrsAttributes,
-                                            valueOpenMRSAttributes));
-                        } catch (JSONException e) {
-                            Timber.e(e, " --> createSecondaryValuesMap");
-                        }
+    /**
+     * Loads the values from the expansion panel
+     *
+     * @param formFields {@link JSONArray} -- The form values mostly the accordion widgets
+     * @param parentKey  {@link String} -- the accordion widget key
+     * @return values {@link JSONArray} -- the extracted accordion values
+     */
+    public JSONArray loadExpansionPanelValues(JSONArray formFields, String parentKey) {
+        JSONArray values = new JSONArray();
+        try {
+            if (formFields != null && formFields.length() > 0) {
+                for (int i = 0; i < formFields.length(); i++) {
+                    JSONObject item = formFields.getJSONObject(i);
+                    if (item.has(JsonFormConstants.KEY) && item.getString(JsonFormConstants.KEY).equals(parentKey) && item.has(JsonFormConstants.VALUE)) {
+                        values = item.getJSONArray(JsonFormConstants.VALUE);
+                        break;
                     }
                 }
             }
-
-            return expansionPanelValuesModelMap;
+        } catch (JSONException e) {
+            Timber.e(e, " --> loadExpansionPanelValues");
         }
+        return values;
+    }
 
-        /**
-         * Gets the expansion secondary values openmrs attributtes
-         *
-         * @param jsonObject {@link JSONObject} -- expansion panel value item.
-         * @return openmrsAttributtes {@link JSONObject}
-         * @throws JSONException
-         */
-        public JSONObject getSecondaryOpenMRSAttributes (JSONObject jsonObject) throws JSONException
-        {
-            JSONObject openmrsAttributes = new JSONObject();
-            if (jsonObject.has(JsonFormConstants.OPENMRS_ATTRIBUTES)) {
-                openmrsAttributes = jsonObject.getJSONObject(JsonFormConstants.OPENMRS_ATTRIBUTES);
-            }
-            return openmrsAttributes;
-        }
-
-        /**
-         * Gets the expansion secondary values, value openmrs attributes
-         *
-         * @param jsonObject {@link JSONObject} -- expansion panel value item.
-         * @return valueOpenmrsAttributes {@link JSONObject}
-         * @throws JSONException
-         */
-        public JSONArray getValueOpenMRSAttributes (JSONObject jsonObject) throws JSONException {
-            JSONArray valueOpenMRSAttributes = new JSONArray();
-            if (jsonObject.has(JsonFormConstants.VALUE_OPENMRS_ATTRIBUTES)) {
-                valueOpenMRSAttributes = jsonObject.getJSONArray(JsonFormConstants.VALUE_OPENMRS_ATTRIBUTES);
-            }
-            return valueOpenMRSAttributes;
-        }
-
-        /**
-         * Assigns each subform widget its value from the expansion panels values attributte
-         *
-         * @param fields                       {@link JSONArray} -- subforms fields.
-         * @param expansionPanelValuesModelMap {@link Map} -- secondary values map
-         * @return fields {@link JSONArray} -- all the sub form fields
-         */
-        public JSONArray addExpansionPanelFormValues (JSONArray
-        fields, Map < String, ExpansionPanelValuesModel > expansionPanelValuesModelMap){
-            if (fields != null && expansionPanelValuesModelMap != null) {
-                for (int i = 0; i < fields.length(); i++) {
-                    JSONObject formValue;
+    /**
+     * Creates the expasnion panel secondary values maps
+     *
+     * @param secondaryValues {@link JSONArray}
+     * @return expansionPanelValuesMap {@link Map<>}
+     */
+    public Map<String, ExpansionPanelValuesModel> createSecondaryValuesMap(JSONArray
+                                                                                   secondaryValues) {
+        Map<String, ExpansionPanelValuesModel> expansionPanelValuesModelMap = new HashMap<>();
+        if (secondaryValues != null && secondaryValues.length() > 0) {
+            for (int i = 0; i < secondaryValues.length(); i++) {
+                if (!secondaryValues.isNull(i)) {
                     try {
-                        formValue = fields.getJSONObject(i);
-                        String key = formValue.getString(JsonFormConstants.KEY);
-                        formValue.put(JsonFormConstants.INDEX, String.valueOf(i));
-                        if (expansionPanelValuesModelMap.containsKey(key)) {
-                            SecondaryValueModel secondaryValueModel = expansionPanelValuesModelMap.get(key);
-                            String type = secondaryValueModel.getType();
-                            if (type != null && (type.equals(JsonFormConstants.CHECK_BOX))) {
-                                if (formValue.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
-                                    JSONArray options = formValue.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
-                                    JSONArray values = secondaryValueModel.getValues();
-                                    setCompoundButtonValues(options, values);
+                        JSONObject jsonObject = secondaryValues.getJSONObject(i);
+                        String key = jsonObject.getString(JsonFormConstants.KEY);
+                        String type = jsonObject.getString(JsonFormConstants.TYPE);
+                        String label = jsonObject.getString(JsonFormConstants.LABEL);
+                        JSONArray values = jsonObject.getJSONArray(JsonFormConstants.VALUES);
+                        int index = jsonObject.optInt(JsonFormConstants.INDEX);
+
+                        JSONObject openmrsAttributes = getSecondaryOpenMRSAttributes(jsonObject);
+                        JSONArray valueOpenMRSAttributes = getValueOpenMRSAttributes(jsonObject);
+
+                        expansionPanelValuesModelMap.put(key,
+                                new ExpansionPanelValuesModel(key, type, label, index, values, openmrsAttributes,
+                                        valueOpenMRSAttributes));
+                    } catch (JSONException e) {
+                        Timber.e(e, " --> createSecondaryValuesMap");
+                    }
+                }
+            }
+        }
+
+        return expansionPanelValuesModelMap;
+    }
+
+    /**
+     * Gets the expansion secondary values openmrs attributtes
+     *
+     * @param jsonObject {@link JSONObject} -- expansion panel value item.
+     * @return openmrsAttributtes {@link JSONObject}
+     * @throws JSONException
+     */
+    public JSONObject getSecondaryOpenMRSAttributes(JSONObject jsonObject) throws JSONException {
+        JSONObject openmrsAttributes = new JSONObject();
+        if (jsonObject.has(JsonFormConstants.OPENMRS_ATTRIBUTES)) {
+            openmrsAttributes = jsonObject.getJSONObject(JsonFormConstants.OPENMRS_ATTRIBUTES);
+        }
+        return openmrsAttributes;
+    }
+
+    /**
+     * Gets the expansion secondary values, value openmrs attributes
+     *
+     * @param jsonObject {@link JSONObject} -- expansion panel value item.
+     * @return valueOpenmrsAttributes {@link JSONObject}
+     * @throws JSONException
+     */
+    public JSONArray getValueOpenMRSAttributes(JSONObject jsonObject) throws JSONException {
+        JSONArray valueOpenMRSAttributes = new JSONArray();
+        if (jsonObject.has(JsonFormConstants.VALUE_OPENMRS_ATTRIBUTES)) {
+            valueOpenMRSAttributes = jsonObject.getJSONArray(JsonFormConstants.VALUE_OPENMRS_ATTRIBUTES);
+        }
+        return valueOpenMRSAttributes;
+    }
+
+    /**
+     * Assigns each subform widget its value from the expansion panels values attributte
+     *
+     * @param fields                       {@link JSONArray} -- subforms fields.
+     * @param expansionPanelValuesModelMap {@link Map} -- secondary values map
+     * @return fields {@link JSONArray} -- all the sub form fields
+     */
+    public JSONArray addExpansionPanelFormValues(JSONArray
+                                                         fields, Map<String, ExpansionPanelValuesModel> expansionPanelValuesModelMap) {
+        if (fields != null && expansionPanelValuesModelMap != null) {
+            for (int i = 0; i < fields.length(); i++) {
+                JSONObject formValue;
+                try {
+                    formValue = fields.getJSONObject(i);
+                    String key = formValue.getString(JsonFormConstants.KEY);
+                    formValue.put(JsonFormConstants.INDEX, String.valueOf(i));
+                    if (expansionPanelValuesModelMap.containsKey(key)) {
+                        SecondaryValueModel secondaryValueModel = expansionPanelValuesModelMap.get(key);
+                        String type = secondaryValueModel.getType();
+                        if (type != null && (type.equals(JsonFormConstants.CHECK_BOX))) {
+                            if (formValue.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
+                                JSONArray options = formValue.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
+                                JSONArray values = secondaryValueModel.getValues();
+                                setCompoundButtonValues(options, values);
+                            }
+                        } else {
+                            JSONArray values = secondaryValueModel.getValues();
+                            if (type != null && (type.equals(JsonFormConstants.NATIVE_RADIO_BUTTON) ||
+                                    type.equals(JsonFormConstants.EXTENDED_RADIO_BUTTON))) {
+                                for (int k = 0; k < values.length(); k++) {
+                                    formValue.put(JsonFormConstants.VALUE, getValueKey(values.getString(k)));
                                 }
                             } else {
-                                JSONArray values = secondaryValueModel.getValues();
-                                if (type != null && (type.equals(JsonFormConstants.NATIVE_RADIO_BUTTON) ||
-                                        type.equals(JsonFormConstants.EXTENDED_RADIO_BUTTON))) {
-                                    for (int k = 0; k < values.length(); k++) {
-                                        formValue.put(JsonFormConstants.VALUE, getValueKey(values.getString(k)));
-                                    }
-                                } else {
-                                    formValue.put(JsonFormConstants.VALUE, setValues(values, type));
-                                }
+                                formValue.put(JsonFormConstants.VALUE, setValues(values, type));
                             }
                         }
-                    } catch (JSONException e) {
-                        Timber.e(e, " --> loadSubForms");
-                    }
-                }
-            }
-            return fields;
-        }
-
-        public void setCompoundButtonValues (JSONArray options, JSONArray secondValues){
-            for (int i = 0; i < options.length(); i++) {
-                JSONObject jsonObject;
-                try {
-                    jsonObject = options.getJSONObject(i);
-                    String mainKey = jsonObject.getString(JsonFormConstants.KEY);
-                    for (int j = 0; j < secondValues.length(); j++) {
-                        String key = getValueKey(secondValues.getString(j));
-                        if (mainKey.equals(key)) {
-                            jsonObject.put(JsonFormConstants.VALUE, true);
-                            break;
-                        }
                     }
                 } catch (JSONException e) {
-                    Timber.e(e, " --> setCompoundButtonValues");
+                    Timber.e(e, " --> loadSubForms");
                 }
             }
         }
+        return fields;
+    }
 
-        public String getValueKey (String value){
-            String key = "";
-            String[] strings = value.split(":");
-            if (strings.length > 0) {
-                key = strings[0];
-            }
-            return key;
-        }
-
-        public String setValues (JSONArray jsonArray, String type){
-            FormUtils formUtils = new FormUtils();
-            String value = "";
-            for (int i = 0; i < jsonArray.length(); i++) {
-                try {
-                    value = formUtils.getValueFromSecondaryValues(type, jsonArray.getString(i));
-                } catch (JSONException e) {
-                    Timber.e(e, " --> setValues");
-                }
-            }
-
-            return value.replaceAll(", $", "");
-        }
-
-        @Nullable
-        public JSONObject getFormJsonFromRepositoryOrAssets (@NonNull Context
-        context, @NonNull String formIdentity) throws JSONException {
-            ClientFormContract.Dao clientFormRepository = NativeFormLibrary.getInstance().getClientFormDao();
-            return getFormJsonFromRepositoryOrAssetsWithOptionalCallback(context, clientFormRepository, formIdentity, null);
-        }
-
-        @Nullable
-        public JSONObject getFormJsonFromRepositoryOrAssets (@NonNull Context
-        context, @NonNull ClientFormContract.Dao clientFormRepository, @NonNull String formIdentity) throws
-        JSONException {
-            return getFormJsonFromRepositoryOrAssetsWithOptionalCallback(context, clientFormRepository, formIdentity, null);
-        }
-
-
-        /**
-         * Fetches the JSON form from the repository or assets folder and handles the JSONException thrown
-         * by providing the user with rollback capability. The rollback form chosen by the user will be
-         * returned in the callback
-         *
-         * @param context
-         * @param formIdentity
-         * @param onFormFetchedCallback
-         */
-        public void getFormJsonFromRepositoryOrAssets (@NonNull Context context, @NonNull String
-        formIdentity, @NonNull OnFormFetchedCallback < JSONObject > onFormFetchedCallback){
-            ClientFormContract.Dao clientFormRepository = NativeFormLibrary.getInstance().getClientFormDao();
+    public void setCompoundButtonValues(JSONArray options, JSONArray secondValues) {
+        for (int i = 0; i < options.length(); i++) {
+            JSONObject jsonObject;
             try {
-                getFormJsonFromRepositoryOrAssetsWithOptionalCallback(context, clientFormRepository, formIdentity, onFormFetchedCallback);
-            } catch (JSONException ex) {
-                Timber.wtf(ex, "This should never happen --> Error was handled but onFormFetchedCallback was NULL");
-            }
-        }
-
-
-        public void getFormJsonFromRepositoryOrAssets (@NonNull Context
-        context, @NonNull ClientFormContract.Dao clientFormRepository, @NonNull String
-        formIdentity, @Nullable OnFormFetchedCallback < JSONObject > onFormFetchedCallback){
-            try {
-                getFormJsonFromRepositoryOrAssetsWithOptionalCallback(context, clientFormRepository, formIdentity, onFormFetchedCallback);
-            } catch (JSONException ex) {
-                Timber.wtf(ex, "This should never happen --> Error was handled but onFormFetchedCallback was NULL");
-            }
-        }
-
-        /**
-         * Fetches the JSON form from the repository or assets folder and handles the JSONException thrown
-         * by providing the user with rollback capability. The rollback form chosen by the user will be
-         * * returned in the callback
-         *
-         * @param context
-         * @param clientFormRepository
-         * @param formIdentity
-         * @param onFormFetchedCallback
-         * @return
-         * @throws JSONException
-         */
-        private JSONObject getFormJsonFromRepositoryOrAssetsWithOptionalCallback (@NonNull Context
-        context, @Nullable ClientFormContract.Dao clientFormRepository, String formIdentity,
-        @Nullable final OnFormFetchedCallback<JSONObject> onFormFetchedCallback) throws
-        JSONException {
-            if (clientFormRepository != null) {
-                ClientFormContract.Model clientForm = getClientFormFromRepository(context, clientFormRepository, formIdentity);
-
-                try {
-                    if (clientForm != null) {
-                        Timber.d("============%s form loaded from db============", formIdentity);
-                        String formVersion = clientForm.getVersion();
-                        JSONObject formJson = new JSONObject(clientForm.getJson());
-                        formJson.put(JsonFormConstants.FORM_VERSION, formVersion);
-                        injectFormStatus(formJson, clientForm);
-
-                        if (onFormFetchedCallback != null) {
-                            onFormFetchedCallback.onFormFetched(formJson);
-                            return null;
-                        } else {
-                            return formJson;
-                        }
+                jsonObject = options.getJSONObject(i);
+                String mainKey = jsonObject.getString(JsonFormConstants.KEY);
+                for (int j = 0; j < secondValues.length(); j++) {
+                    String key = getValueKey(secondValues.getString(j));
+                    if (mainKey.equals(key)) {
+                        jsonObject.put(JsonFormConstants.VALUE, true);
+                        break;
                     }
-                } catch (JSONException e) {
-                    Timber.e(e);
+                }
+            } catch (JSONException e) {
+                Timber.e(e, " --> setCompoundButtonValues");
+            }
+        }
+    }
+
+    public String getValueKey(String value) {
+        String key = "";
+        String[] strings = value.split(":");
+        if (strings.length > 0) {
+            key = strings[0];
+        }
+        return key;
+    }
+
+    public String setValues(JSONArray jsonArray, String type) {
+        FormUtils formUtils = new FormUtils();
+        String value = "";
+        for (int i = 0; i < jsonArray.length(); i++) {
+            try {
+                value = formUtils.getValueFromSecondaryValues(type, jsonArray.getString(i));
+            } catch (JSONException e) {
+                Timber.e(e, " --> setValues");
+            }
+        }
+
+        return value.replaceAll(", $", "");
+    }
+
+    @Nullable
+    public JSONObject getFormJsonFromRepositoryOrAssets(@NonNull Context
+                                                                context, @NonNull String formIdentity) throws JSONException {
+        ClientFormContract.Dao clientFormRepository = NativeFormLibrary.getInstance().getClientFormDao();
+        return getFormJsonFromRepositoryOrAssetsWithOptionalCallback(context, clientFormRepository, formIdentity, null);
+    }
+
+    @Nullable
+    public JSONObject getFormJsonFromRepositoryOrAssets(@NonNull Context
+                                                                context, @NonNull ClientFormContract.Dao clientFormRepository, @NonNull String formIdentity) throws
+            JSONException {
+        return getFormJsonFromRepositoryOrAssetsWithOptionalCallback(context, clientFormRepository, formIdentity, null);
+    }
+
+    /**
+     * Fetches the JSON form from the repository or assets folder and handles the JSONException thrown
+     * by providing the user with rollback capability. The rollback form chosen by the user will be
+     * returned in the callback
+     *
+     * @param context
+     * @param formIdentity
+     * @param onFormFetchedCallback
+     */
+    public void getFormJsonFromRepositoryOrAssets(@NonNull Context context, @NonNull String
+            formIdentity, @NonNull OnFormFetchedCallback<JSONObject> onFormFetchedCallback) {
+        ClientFormContract.Dao clientFormRepository = NativeFormLibrary.getInstance().getClientFormDao();
+        try {
+            getFormJsonFromRepositoryOrAssetsWithOptionalCallback(context, clientFormRepository, formIdentity, onFormFetchedCallback);
+        } catch (JSONException ex) {
+            Timber.wtf(ex, "This should never happen --> Error was handled but onFormFetchedCallback was NULL");
+        }
+    }
+
+    public void getFormJsonFromRepositoryOrAssets(@NonNull Context
+                                                          context, @NonNull ClientFormContract.Dao clientFormRepository, @NonNull String
+                                                          formIdentity, @Nullable OnFormFetchedCallback<JSONObject> onFormFetchedCallback) {
+        try {
+            getFormJsonFromRepositoryOrAssetsWithOptionalCallback(context, clientFormRepository, formIdentity, onFormFetchedCallback);
+        } catch (JSONException ex) {
+            Timber.wtf(ex, "This should never happen --> Error was handled but onFormFetchedCallback was NULL");
+        }
+    }
+
+    /**
+     * Fetches the JSON form from the repository or assets folder and handles the JSONException thrown
+     * by providing the user with rollback capability. The rollback form chosen by the user will be
+     * * returned in the callback
+     *
+     * @param context
+     * @param clientFormRepository
+     * @param formIdentity
+     * @param onFormFetchedCallback
+     * @return
+     * @throws JSONException
+     */
+    private JSONObject getFormJsonFromRepositoryOrAssetsWithOptionalCallback(@NonNull Context
+                                                                                     context, @Nullable ClientFormContract.Dao clientFormRepository, String formIdentity,
+                                                                             @Nullable final OnFormFetchedCallback<JSONObject> onFormFetchedCallback) throws
+            JSONException {
+        if (clientFormRepository != null) {
+            ClientFormContract.Model clientForm = getClientFormFromRepository(context, clientFormRepository, formIdentity);
+
+            try {
+                if (clientForm != null) {
+                    Timber.d("============%s form loaded from db============", formIdentity);
+                    String formVersion = clientForm.getVersion();
+                    JSONObject formJson = new JSONObject(clientForm.getJson());
+                    formJson.put(JsonFormConstants.FORM_VERSION, formVersion);
+                    injectFormStatus(formJson, clientForm);
 
                     if (onFormFetchedCallback != null) {
-                        handleJsonFormOrRulesError(context, clientFormRepository, false, formIdentity, new OnFormFetchedCallback<String>() {
-                            @Override
-                            public void onFormFetched(@Nullable String form) {
-                                try {
-                                    JSONObject jsonObject = form == null ? null : new JSONObject(form);
-                                    onFormFetchedCallback.onFormFetched(jsonObject);
-                                } catch (JSONException ex) {
-                                    Timber.e(ex);
-                                }
-                            }
-                        });
+                        onFormFetchedCallback.onFormFetched(formJson);
+                        return null;
                     } else {
-                        throw e;
+                        return formJson;
                     }
                 }
-            }
-
-            Timber.d("============%s form loaded from Assets=============", formIdentity);
-            JSONObject jsonObject = getFormJson(context, formIdentity);
-
-            if (onFormFetchedCallback != null) {
-                onFormFetchedCallback.onFormFetched(jsonObject);
-                return null;
-            } else {
-                return jsonObject;
-            }
-        }
-
-        public JSONObject getFormJson (@NonNull Context context, @NonNull String formIdentity){
-            try {
-                String locale = context.getResources().getConfiguration().locale.getLanguage();
-                locale = locale.equalsIgnoreCase(Locale.ENGLISH.getLanguage()) ? "" : "-" + locale;
-
-                InputStream inputStream;
-                try {
-                    inputStream = context.getApplicationContext().getAssets()
-                            .open("json.form" + locale + "/" + formIdentity + JsonFormConstants.JSON_FILE_EXTENSION);
-                } catch (FileNotFoundException e) {
-                    // file for the language not found, defaulting to english language
-                    inputStream = context.getApplicationContext().getAssets()
-                            .open("json.form/" + formIdentity + JsonFormConstants.JSON_FILE_EXTENSION);
-                }
-                BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(inputStream, CharEncoding.UTF_8));
-                String jsonString;
-                StringBuilder stringBuilder = new StringBuilder();
-
-                while ((jsonString = reader.readLine()) != null) {
-                    stringBuilder.append(jsonString);
-                }
-                inputStream.close();
-
-                return new JSONObject(stringBuilder.toString());
-            } catch (IOException | JSONException e) {
-                Timber.e(e);
-                return null;
-            }
-        }
-
-        protected String getLocaleFormIdentity ( final Context context, final String formIdentity){
-            String locale = context.getResources().getConfiguration().locale.getLanguage();
-            if (!Locale.ENGLISH.getLanguage().equals(locale)) {
-                return formIdentity + "-" + locale;
-            }
-            return formIdentity;
-        }
-
-        private ClientFormContract.Model getClientFormFromRepository (@NonNull Context
-        context, @NonNull ClientFormContract.Dao clientFormRepository, String formIdentity){
-            //Check the current locale of the app to load the correct version of the form in the desired language
-            String localeFormIdentity = getLocaleFormIdentity(context, formIdentity);
-
-            ClientFormContract.Model clientForm = clientFormRepository.getActiveClientFormByIdentifier(localeFormIdentity);
-
-            if (clientForm == null) {
-                String revisedFormName = extractFormNameWithoutExtension(localeFormIdentity);
-                clientForm = clientFormRepository.getActiveClientFormByIdentifier(revisedFormName);
-            }
-            return clientForm;
-        }
-
-        public void handleJsonFormOrRulesError (@NonNull Context context, @NonNull String
-        formIdentity, @NonNull OnFormFetchedCallback < String > onFormFetchedCallback){
-            ClientFormContract.Dao clientFormRepository = NativeFormLibrary.getInstance().getClientFormDao();
-            if (clientFormRepository != null) {
-                handleJsonFormOrRulesError(context, clientFormRepository, false, formIdentity, onFormFetchedCallback);
-            } else {
-                Timber.e(new Exception(), "Cannot handle JSON Form/Rules File error because client form respository is null");
-            }
-        }
-
-        public void handleJsonFormOrRulesError (@NonNull Context
-        context, @NonNull ClientFormContract.Dao clientFormRepository, @NonNull String
-        formIdentity, @NonNull OnFormFetchedCallback < String > onFormFetchedCallback){
-            handleJsonFormOrRulesError(context, clientFormRepository, false, formIdentity, onFormFetchedCallback);
-        }
-
-        public void handleJsonFormOrRulesError ( @NonNull final Context context,
-        @NonNull final ClientFormContract.Dao clientFormRepository, final boolean isRulesFile,
-        @NonNull final String formIdentity,
-        @NonNull final OnFormFetchedCallback<String> onFormFetchedCallback){
-            final ClientFormContract.Model clientForm = getClientFormFromRepository(context, clientFormRepository, formIdentity);
-            List<ClientFormContract.Model> clientForms = clientFormRepository.getClientFormByIdentifier(clientForm.getIdentifier());
-
-            if (clientForms.size() > 0) {
-                // Show dialog asking user if they want to rollback to the previous available version X
-                // if YES, then provide that form instead
-                // if NO, then continue down
-
-                boolean dialogIsShowing = (context instanceof ClientFormContract.View) && ((ClientFormContract.View) context).isVisibleFormErrorAndRollbackDialog();
-
-                if (!dialogIsShowing) {
-                    FormRollbackDialogUtil.showAvailableRollbackFormsDialog(context, clientFormRepository, clientForms, clientForm, new RollbackDialogCallback() {
-                        @Override
-                        public void onFormSelected(@NonNull ClientFormContract.Model selectedForm) {
-                            if (selectedForm.getJson() == null && selectedForm.getVersion().equals(JsonFormConstants.CLIENT_FORM_ASSET_VERSION)) {
-
-                                if (isRulesFile) {
-                                    try {
-                                        clientForm.setJson(convertStreamToString(context.getAssets().open(formIdentity)));
-                                    } catch (IOException e) {
-                                        Timber.e(e);
-                                    }
-                                } else {
-                                    try {
-                                        JSONObject jsonObject = getFormJson(context, formIdentity);
-                                        String formVersion = clientForm.getVersion();
-                                        jsonObject.put(JsonFormConstants.FORM_VERSION, formVersion);
-
-                                        if (jsonObject != null) {
-                                            clientForm.setJson(jsonObject.toString());
-                                        }
-                                    } catch (JSONException e) {
-                                        Timber.e(e);
-                                    }
-                                }
-                            }
-
-                            onFormFetchedCallback.onFormFetched(clientForm.getJson());
-                        }
-
-                        @Override
-                        public void onCancelClicked() {
-                            onFormFetchedCallback.onFormFetched(null);
-                        }
-                    });
-                }
-            }
-        }
-
-        @Nullable
-        public JSONObject getSubFormJsonFromRepository (@NonNull Context
-        context, @NonNull ClientFormContract.Dao clientFormDao, String formIdentity, String
-        subFormsLocation,boolean translateSubForm) throws JSONException {
-            //Check the current locale of the app to load the correct version of the form in the desired language
-            String localeFormIdentity = getLocaleFormIdentity(context, formIdentity);
-
-            String dbFormName = StringUtils.isBlank(subFormsLocation) ? localeFormIdentity : subFormsLocation + "/" + localeFormIdentity;
-            ClientFormContract.Model clientForm = clientFormDao.getActiveClientFormByIdentifier(dbFormName);
-
-            if (clientForm == null) {
-                String revisedFormName = extractFormNameWithoutExtension(dbFormName);
-                clientForm = clientFormDao.getActiveClientFormByIdentifier(revisedFormName);
-
-                if (clientForm == null) {
-                    String finalSubFormsLocation = getSubFormLocation(subFormsLocation);
-                    dbFormName = StringUtils.isBlank(finalSubFormsLocation) ? localeFormIdentity : finalSubFormsLocation + "/" + localeFormIdentity;
-                    clientForm = clientFormDao.getActiveClientFormByIdentifier(dbFormName);
-                }
-            }
-
-            if (clientForm != null) {
-                Timber.d("============%s form loaded from db============", dbFormName);
-                String originalJson = clientForm.getJson();
-
-                if (translateSubForm) {
-                    originalJson = NativeFormLangUtils.getTranslatedStringWithDBResourceBundle(context, originalJson, null);
-                }
-                return new JSONObject(originalJson);
-            }
-
-            return null;
-        }
-
-        @Nullable
-        public BufferedReader getRulesFromRepository (@NonNull Context
-        context, @NonNull ClientFormContract.Dao clientFormDao, @NonNull String fileName){
-            //Check the current locale of the app to load the correct version of the form in the desired language
-            String localeFormIdentity = getLocaleFormIdentity(context, fileName);
-
-            ClientFormContract.Model clientForm = clientFormDao.getActiveClientFormByIdentifier(localeFormIdentity);
-            if (clientForm == null && StringUtils.isNotBlank(fileName) && fileName.contains("/") && !fileName.endsWith("/")) {
-                // Strip anything before the '/'
-                localeFormIdentity = localeFormIdentity.split("/")[1];
-                //retry with just the filename without the file path prefix
-                clientForm = clientFormDao.getActiveClientFormByIdentifier(localeFormIdentity);
-
-            }
-            if (clientForm != null) {
-                Timber.d("============%s form loaded from db============", localeFormIdentity);
-                String originalJson = clientForm.getJson();
-
-                return new BufferedReader(new StringReader(originalJson));
-            }
-
-            return null;
-        }
-
-        public String getPropertiesFileContentsFromDB (String identifier){
-            ClientFormContract.Dao clientFormRepository = NativeFormLibrary.getInstance().getClientFormDao();
-            if (clientFormRepository != null) {
-                ClientFormContract.Model clientForm = clientFormRepository.getActiveClientFormByIdentifier(identifier);
-                if (clientForm != null) {
-                    return clientForm.getJson();
-                }
-            }
-            return null;
-        }
-
-        @NonNull
-        protected String extractFormNameWithoutExtension (String localeFormIdentity){
-            return localeFormIdentity.endsWith(JsonFormConstants.JSON_FILE_EXTENSION)
-                    ? localeFormIdentity.substring(0, localeFormIdentity.length() - JsonFormConstants.JSON_FILE_EXTENSION.length()) :
-                    localeFormIdentity + JsonFormConstants.JSON_FILE_EXTENSION;
-        }
-
-        public void injectFormStatus (@NonNull JSONObject
-        jsonObject, @NonNull ClientFormContract.Model clientForm){
-            if (clientForm.isNew()) {
-                try {
-                    jsonObject.put(JsonFormConstants.Properties.IS_NEW, clientForm.isNew());
-                    jsonObject.put(JsonFormConstants.Properties.CLIENT_FORM_ID, clientForm.getId());
-                    jsonObject.put(JsonFormConstants.Properties.FORM_VERSION, clientForm.getVersion());
-                } catch (JSONException e) {
-                    Timber.e(e);
-                }
-            }
-        }
-
-        public static int getClientFormId (@NonNull JSONObject jsonObject){
-            try {
-                return jsonObject.getInt(JsonFormConstants.Properties.CLIENT_FORM_ID);
             } catch (JSONException e) {
                 Timber.e(e);
-                return 0;
+
+                if (onFormFetchedCallback != null) {
+                    handleJsonFormOrRulesError(context, clientFormRepository, false, formIdentity, new OnFormFetchedCallback<String>() {
+                        @Override
+                        public void onFormFetched(@Nullable String form) {
+                            try {
+                                JSONObject jsonObject = form == null ? null : new JSONObject(form);
+                                onFormFetchedCallback.onFormFetched(jsonObject);
+                            } catch (JSONException ex) {
+                                Timber.e(ex);
+                            }
+                        }
+                    });
+                } else {
+                    throw e;
+                }
             }
         }
 
-        public static boolean isFormNew (@NonNull JSONObject jsonObject){
-            return jsonObject.optBoolean(JsonFormConstants.Properties.IS_NEW, false);
+        Timber.d("============%s form loaded from Assets=============", formIdentity);
+        JSONObject jsonObject = getFormJson(context, formIdentity);
+
+        if (onFormFetchedCallback != null) {
+            onFormFetchedCallback.onFormFetched(jsonObject);
+            return null;
+        } else {
+            return jsonObject;
+        }
+    }
+
+    public JSONObject getFormJson(@NonNull Context context, @NonNull String formIdentity) {
+        try {
+            String locale = context.getResources().getConfiguration().locale.getLanguage();
+            locale = locale.equalsIgnoreCase(Locale.ENGLISH.getLanguage()) ? "" : "-" + locale;
+
+            InputStream inputStream;
+            try {
+                inputStream = context.getApplicationContext().getAssets()
+                        .open("json.form" + locale + "/" + formIdentity + JsonFormConstants.JSON_FILE_EXTENSION);
+            } catch (FileNotFoundException e) {
+                // file for the language not found, defaulting to english language
+                inputStream = context.getApplicationContext().getAssets()
+                        .open("json.form/" + formIdentity + JsonFormConstants.JSON_FILE_EXTENSION);
+            }
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+            String jsonString;
+            StringBuilder stringBuilder = new StringBuilder();
+
+            while ((jsonString = reader.readLine()) != null) {
+                stringBuilder.append(jsonString);
+            }
+            inputStream.close();
+            return new JSONObject(stringBuilder.toString());
+        } catch (IOException | JSONException e) {
+            Timber.e(e);
+            return null;
+        }
+    }
+
+    protected String getLocaleFormIdentity(final Context context, final String formIdentity) {
+        String locale = context.getResources().getConfiguration().locale.getLanguage();
+        if (!Locale.ENGLISH.getLanguage().equals(locale)) {
+            return formIdentity + "-" + locale;
+        }
+        return formIdentity;
+    }
+
+    private ClientFormContract.Model getClientFormFromRepository(@NonNull Context
+                                                                         context, @NonNull ClientFormContract.Dao clientFormRepository, String formIdentity) {
+        //Check the current locale of the app to load the correct version of the form in the desired language
+        String localeFormIdentity = getLocaleFormIdentity(context, formIdentity);
+
+        ClientFormContract.Model clientForm = clientFormRepository.getActiveClientFormByIdentifier(localeFormIdentity);
+
+        if (clientForm == null) {
+            String revisedFormName = extractFormNameWithoutExtension(localeFormIdentity);
+            clientForm = clientFormRepository.getActiveClientFormByIdentifier(revisedFormName);
+        }
+        return clientForm;
+    }
+
+    public void handleJsonFormOrRulesError(@NonNull Context context, @NonNull String
+            formIdentity, @NonNull OnFormFetchedCallback<String> onFormFetchedCallback) {
+        ClientFormContract.Dao clientFormRepository = NativeFormLibrary.getInstance().getClientFormDao();
+        if (clientFormRepository != null) {
+            handleJsonFormOrRulesError(context, clientFormRepository, false, formIdentity, onFormFetchedCallback);
+        } else {
+            Timber.e(new Exception(), "Cannot handle JSON Form/Rules File error because client form respository is null");
+        }
+    }
+
+    public void handleJsonFormOrRulesError(@NonNull Context
+                                                   context, @NonNull ClientFormContract.Dao clientFormRepository, @NonNull String
+                                                   formIdentity, @NonNull OnFormFetchedCallback<String> onFormFetchedCallback) {
+        handleJsonFormOrRulesError(context, clientFormRepository, false, formIdentity, onFormFetchedCallback);
+    }
+
+    public void handleJsonFormOrRulesError(@NonNull final Context context,
+                                           @NonNull final ClientFormContract.Dao clientFormRepository, final boolean isRulesFile,
+                                           @NonNull final String formIdentity,
+                                           @NonNull final OnFormFetchedCallback<String> onFormFetchedCallback) {
+        final ClientFormContract.Model clientForm = getClientFormFromRepository(context, clientFormRepository, formIdentity);
+        List<ClientFormContract.Model> clientForms = clientFormRepository.getClientFormByIdentifier(clientForm.getIdentifier());
+
+        if (clientForms.size() > 0) {
+            // Show dialog asking user if they want to rollback to the previous available version X
+            // if YES, then provide that form instead
+            // if NO, then continue down
+
+            boolean dialogIsShowing = (context instanceof ClientFormContract.View) && ((ClientFormContract.View) context).isVisibleFormErrorAndRollbackDialog();
+
+            if (!dialogIsShowing) {
+                FormRollbackDialogUtil.showAvailableRollbackFormsDialog(context, clientFormRepository, clientForms, clientForm, new RollbackDialogCallback() {
+                    @Override
+                    public void onFormSelected(@NonNull ClientFormContract.Model selectedForm) {
+                        if (selectedForm.getJson() == null && selectedForm.getVersion().equals(JsonFormConstants.CLIENT_FORM_ASSET_VERSION)) {
+
+                            if (isRulesFile) {
+                                try {
+                                    clientForm.setJson(convertStreamToString(context.getAssets().open(formIdentity)));
+                                } catch (IOException e) {
+                                    Timber.e(e);
+                                }
+                            } else {
+                                try {
+                                    JSONObject jsonObject = getFormJson(context, formIdentity);
+                                    String formVersion = clientForm.getVersion();
+                                    jsonObject.put(JsonFormConstants.FORM_VERSION, formVersion);
+
+                                    if (jsonObject != null) {
+                                        clientForm.setJson(jsonObject.toString());
+                                    }
+                                } catch (JSONException e) {
+                                    Timber.e(e);
+                                }
+                            }
+                        }
+
+                        onFormFetchedCallback.onFormFetched(clientForm.getJson());
+                    }
+
+                    @Override
+                    public void onCancelClicked() {
+                        onFormFetchedCallback.onFormFetched(null);
+                    }
+                });
+            }
+        }
+    }
+
+    @Nullable
+    public JSONObject getSubFormJsonFromRepository(@NonNull Context
+                                                           context, @NonNull ClientFormContract.Dao clientFormDao, String formIdentity, String
+                                                           subFormsLocation, boolean translateSubForm) throws JSONException {
+        //Check the current locale of the app to load the correct version of the form in the desired language
+        String localeFormIdentity = getLocaleFormIdentity(context, formIdentity);
+
+        String dbFormName = StringUtils.isBlank(subFormsLocation) ? localeFormIdentity : subFormsLocation + "/" + localeFormIdentity;
+        ClientFormContract.Model clientForm = clientFormDao.getActiveClientFormByIdentifier(dbFormName);
+
+        if (clientForm == null) {
+            String revisedFormName = extractFormNameWithoutExtension(dbFormName);
+            clientForm = clientFormDao.getActiveClientFormByIdentifier(revisedFormName);
+
+            if (clientForm == null) {
+                String finalSubFormsLocation = getSubFormLocation(subFormsLocation);
+                dbFormName = StringUtils.isBlank(finalSubFormsLocation) ? localeFormIdentity : finalSubFormsLocation + "/" + localeFormIdentity;
+                clientForm = clientFormDao.getActiveClientFormByIdentifier(dbFormName);
+            }
         }
 
+        if (clientForm != null) {
+            Timber.d("============%s form loaded from db============", dbFormName);
+            String originalJson = clientForm.getJson();
+
+            if (translateSubForm) {
+                originalJson = NativeFormLangUtils.getTranslatedStringWithDBResourceBundle(context, originalJson, null);
+            }
+            return new JSONObject(originalJson);
+        }
+
+        return null;
     }
+
+    @Nullable
+    public BufferedReader getRulesFromRepository(@NonNull Context
+                                                         context, @NonNull ClientFormContract.Dao clientFormDao, @NonNull String fileName) {
+        //Check the current locale of the app to load the correct version of the form in the desired language
+        String localeFormIdentity = getLocaleFormIdentity(context, fileName);
+
+        ClientFormContract.Model clientForm = clientFormDao.getActiveClientFormByIdentifier(localeFormIdentity);
+        if (clientForm == null && StringUtils.isNotBlank(fileName) && fileName.contains("/") && !fileName.endsWith("/")) {
+            // Strip anything before the '/'
+            localeFormIdentity = localeFormIdentity.split("/")[1];
+            //retry with just the filename without the file path prefix
+            clientForm = clientFormDao.getActiveClientFormByIdentifier(localeFormIdentity);
+
+        }
+        if (clientForm != null) {
+            Timber.d("============%s form loaded from db============", localeFormIdentity);
+            String originalJson = clientForm.getJson();
+
+            return new BufferedReader(new StringReader(originalJson));
+        }
+
+        return null;
+    }
+
+    public String getPropertiesFileContentsFromDB(String identifier) {
+        ClientFormContract.Dao clientFormRepository = NativeFormLibrary.getInstance().getClientFormDao();
+        if (clientFormRepository != null) {
+            ClientFormContract.Model clientForm = clientFormRepository.getActiveClientFormByIdentifier(identifier);
+            if (clientForm != null) {
+                return clientForm.getJson();
+            }
+        }
+        return null;
+    }
+
+    @NonNull
+    protected String extractFormNameWithoutExtension(String localeFormIdentity) {
+        return localeFormIdentity.endsWith(JsonFormConstants.JSON_FILE_EXTENSION)
+                ? localeFormIdentity.substring(0, localeFormIdentity.length() - JsonFormConstants.JSON_FILE_EXTENSION.length()) :
+                localeFormIdentity + JsonFormConstants.JSON_FILE_EXTENSION;
+    }
+
+    public void injectFormStatus(@NonNull JSONObject
+                                         jsonObject, @NonNull ClientFormContract.Model clientForm) {
+        if (clientForm.isNew()) {
+            try {
+                jsonObject.put(JsonFormConstants.Properties.IS_NEW, clientForm.isNew());
+                jsonObject.put(JsonFormConstants.Properties.CLIENT_FORM_ID, clientForm.getId());
+                jsonObject.put(JsonFormConstants.Properties.FORM_VERSION, clientForm.getVersion());
+            } catch (JSONException e) {
+                Timber.e(e);
+            }
+        }
+    }
+
+}

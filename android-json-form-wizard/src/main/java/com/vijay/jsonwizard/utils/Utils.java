@@ -488,7 +488,7 @@ public class Utils {
     public static String returnValue(JSONObject jsonObject) {
         String value = "";
         NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
-        if (nativeFormsProperties != null && jsonObject.has(TYPE) && (jsonObject.optString(TYPE).equals(JsonFormConstants.NATIVE_RADIO_BUTTON) || jsonObject.optString(TYPE).equals(JsonFormConstants.CHECK_BOX) || jsonObject.optString(TYPE).equals(JsonFormConstants.SPINNER))
+        if (nativeFormsProperties != null && jsonObject.has(TYPE) && (jsonObject.optString(TYPE).equals(JsonFormConstants.NATIVE_RADIO_BUTTON) || jsonObject.optString(TYPE).equals(JsonFormConstants.SPINNER) || jsonObject.optString(TYPE).equals(JsonFormConstants.CHECK_BOX))
                 && nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_VALUE_TRANSLATED)) {
             JSONObject valueObject = jsonObject.optJSONObject(JsonFormConstants.VALUE);
             if (valueObject != null) {
