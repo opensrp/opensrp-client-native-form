@@ -83,6 +83,7 @@ public class Utils {
             Arrays.asList('(', '!', ',', '?', '+', '-', '*', '/', '%', '+', '-', '.', '^', ')', '<', '>', '=', '{', '}', ':',
                     ';', '[', ']'));
     private static ProgressDialog progressDialog;
+    private static final FormUtils formUtils = new FormUtils();
 
     public static void showToast(Context context, String message) {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show();
@@ -821,7 +822,20 @@ public class Utils {
         return repeatingGroupCountObj;
     }
 
-
+    public static JSONObject generateTranslatableValue(String value, JSONObject item) throws JSONException {
+        FormUtils formUtils = new FormUtils();
+        JSONObject newValue = new JSONObject();
+        if (item.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
+            JSONArray options = item.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
+            JSONObject selectedOption = formUtils.getOptionFromOptionsUsingKey(options, value);
+            newValue.put(JsonFormConstants.VALUE, value);
+            newValue.put(JsonFormConstants.TEXT, selectedOption.optString(JsonFormConstants.TRANSLATION_TEXT, ""));
+            return newValue;
+        }
+        newValue.put(JsonFormConstants.VALUE, value);
+        newValue.put(JsonFormConstants.TEXT, item.optString(JsonFormConstants.TRANSLATION_TEXT, ""));
+        return newValue;
+    }
 
     public List<String> createExpansionPanelChildren(JSONArray jsonArray) throws JSONException {
         List<String> stringList = new ArrayList<>();
@@ -968,6 +982,19 @@ public class Utils {
         okButton.setEnabled(true);
         okButton.setClickable(true);
     }
+
+    public static JSONObject generateTranslatableValue(String value, JSONObject item, String itemType) throws JSONException {
+        JSONObject newValue = new JSONObject();
+        if (itemType.equals(JsonFormConstants.NATIVE_RADIO_BUTTON) ||
+                itemType.equals(JsonFormConstants.SPINNER) || itemType.equals(JsonFormConstants.CHECK_BOX)) {
+            JSONArray options = item.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
+            JSONObject selectedOption = formUtils.getOptionFromOptionsUsingKey(options, value);
+            newValue.put(JsonFormConstants.VALUE, value);
+            newValue.put(JsonFormConstants.TEXT, selectedOption.optString(JsonFormConstants.TRANSLATION_TEXT, ""));
+        }
+        return newValue;
+    }
+
 }
 
 

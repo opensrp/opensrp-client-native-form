@@ -144,20 +144,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private boolean isNextStepRelevant;
     private String nextStep = "";
 
-    private static JSONObject generateTranslatableValue(String value, JSONObject item) throws JSONException {
-        FormUtils formUtils = new FormUtils();
-        JSONObject newValue = new JSONObject();
-        if (item.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
-            JSONArray options = item.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
-            JSONObject selectedOption = formUtils.getOptionFromOptionsUsingKey(options, value);
-            newValue.put(JsonFormConstants.VALUE, value);
-            newValue.put(JsonFormConstants.TEXT, selectedOption.optString(JsonFormConstants.TRANSLATION_TEXT, ""));
-            return newValue;
-        }
-        newValue.put(JsonFormConstants.VALUE, value);
-        newValue.put(JsonFormConstants.TEXT, item.optString(JsonFormConstants.TRANSLATION_TEXT, ""));
-        return newValue;
-    }
 
     public void performActionOnReceived(String stepName) {
         try {
@@ -910,7 +896,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         if (JsonFormConstants.CHECK_BOX.equals(fieldObject.getString(JsonFormConstants.TYPE))) {
                             value = String.valueOf(fieldObject.getJSONArray(JsonFormConstants.VALUES));
                             if (nativeFormsProperties != null && nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_VALUE_TRANSLATED)) {
-                                fieldObject.put(value, generateTranslatableValue(value, fieldObject));
+                                fieldObject.put(value,Utils. generateTranslatableValue(value, fieldObject));
                             } else {
                                 fieldObject.put(JsonFormConstants.VALUE, value);
                             }
@@ -968,7 +954,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         } else {
             NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
             if ((itemType.equals(JsonFormConstants.NATIVE_RADIO_BUTTON) || itemType.equals(JsonFormConstants.SPINNER) || itemType.equals(JsonFormConstants.CHECK_BOX)) && nativeFormsProperties != null && nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_VALUE_TRANSLATED)) {
-                item.put(JsonFormConstants.VALUE, generateTranslatableValue(value, item, itemType));
+                item.put(JsonFormConstants.VALUE, Utils.generateTranslatableValue(value, item, itemType));
             } else {
                 item.put(JsonFormConstants.VALUE, value);
             }
@@ -983,17 +969,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
      * @param itemType
      * @return
      */
-    private JSONObject generateTranslatableValue(String value, JSONObject item, String itemType) throws JSONException {
-        JSONObject newValue = new JSONObject();
-        if (itemType.equals(JsonFormConstants.NATIVE_RADIO_BUTTON) ||
-                itemType.equals(JsonFormConstants.SPINNER) || itemType.equals(JsonFormConstants.CHECK_BOX)) {
-            JSONArray options = item.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
-            JSONObject selectedOption = formUtils.getOptionFromOptionsUsingKey(options, value);
-            newValue.put(JsonFormConstants.VALUE, value);
-            newValue.put(JsonFormConstants.TEXT, selectedOption.optString(JsonFormConstants.TRANSLATION_TEXT, ""));
-        }
-        return newValue;
-    }
+
 
     private boolean checkPopUpValidity(String[] curKey, boolean popup) throws JSONException {
         boolean validity = false;
@@ -1064,7 +1040,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         option.put(JsonFormConstants.VALUE, Boolean.parseBoolean(value));
                         if (Boolean.parseBoolean(value)) {
                             if (nativeFormsProperties != null && nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_VALUE_TRANSLATED)) {
-                                currentValues.add(generateTranslatableValue(childKey, option).toString());
+                                currentValues.add(Utils.generateTranslatableValue(childKey, option).toString());
                             } else {
                                 currentValues.add(childKey);
                             }

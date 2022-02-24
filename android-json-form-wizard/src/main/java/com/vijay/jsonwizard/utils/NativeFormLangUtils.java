@@ -1,5 +1,7 @@
 package com.vijay.jsonwizard.utils;
 
+import static com.vijay.jsonwizard.constants.JsonFormConstants.MLS.PROPERTIES_FILE_NAME;
+
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -21,8 +23,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import timber.log.Timber;
-
-import static com.vijay.jsonwizard.constants.JsonFormConstants.MLS.PROPERTIES_FILE_NAME;
 
 public class NativeFormLangUtils {
 
@@ -89,6 +89,18 @@ public class NativeFormLangUtils {
         }
         Locale currLocale = context == null ? Locale.getDefault() : getLocale(context);
         return translateString(str, ResourceBundle.getBundle(translationsFileName, currLocale));
+    }
+
+    public static String getTranslatedANCString(String key, Context context) {
+        //anc_profile.step4.allergies.options.albendazole.text
+        String resourceBuddleName = key.split("\\.")[0];
+        Locale currLocale = context == null ? Locale.getDefault() : getLocale(context);
+        ResourceBundle resourceBundle = ResourceBundle.getBundle(resourceBuddleName, currLocale);
+        if (!resourceBundle.containsKey(key)) {
+            Timber.e("Could not translate the String. Translation file name is not specified!");
+            return key;
+        }
+        return resourceBundle.getString(key);
     }
 
     /**

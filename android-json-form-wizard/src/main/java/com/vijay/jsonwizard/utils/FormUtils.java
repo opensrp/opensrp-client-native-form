@@ -1383,7 +1383,7 @@ public class FormUtils {
                         JSONObject object = new JSONObject(valueString);
                         values = new JSONArray(object.optString(JsonFormConstants.TEXT, ""));
                     } else {
-                        JSONObject createJsonValues = jsonFormActivity.generateTranslatableValue(jsonObject.optString(JsonFormConstants.VALUE, ""), jsonObject);
+                        JSONObject createJsonValues = Utils.generateTranslatableValue(jsonObject.optString(JsonFormConstants.VALUE, ""), jsonObject);
                         values = new JSONArray(createJsonValues);
                     }
                 } else {
