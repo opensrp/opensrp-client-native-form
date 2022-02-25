@@ -7,7 +7,6 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.vijay.jsonwizard.constants.JsonFormConstants;
@@ -92,13 +91,20 @@ public class NativeFormLangUtils {
         return translateString(str, ResourceBundle.getBundle(translationsFileName, currLocale));
     }
 
-    public static String getTranslatedANCString(String key, @NonNull Context context) {
+    /**
+     * @param key is the string to translate e.g anc_profile.step4.text
+     *                This key has a first item of anc_profile which is the resource bundle name. For this to work, rename texts with bundle_name as the first item separated by .
+     * @param context this is the application context which is an instance of Android.intent.Context
+     * @return The value as a string depending on locale if found
+     */
+
+    public static String translateDatabaseString(String key, Context context) {
         String resourceBuddleName = key.split("\\.")[0];
-        Locale currLocale = getLocale(context);
+        Locale currLocale = context == null ? Locale.getDefault() : getLocale(context);
         ResourceBundle resourceBundle = ResourceBundle.getBundle(resourceBuddleName, currLocale);
         if (!resourceBundle.containsKey(key)) {
-            Timber.e("Could not translate the String. Translation file name is not specified!");
-            return key;
+            Timber.e("Could not translate String %s. String not found in resource bundle %s ", key, resourceBuddleName);
+            return "";
         }
         return resourceBundle.getString(key);
     }
