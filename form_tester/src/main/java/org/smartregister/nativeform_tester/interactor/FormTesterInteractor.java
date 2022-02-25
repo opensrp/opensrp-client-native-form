@@ -5,14 +5,16 @@ import android.content.res.AssetManager;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.utils.Utils;
 
-import org.jetbrains.annotations.NotNull;
+
 import org.smartregister.nativeform_tester.contract.FormTesterContract;
 import org.smartregister.nativeform_tester.domain.ConfigForm;
 import org.smartregister.nativeform_tester.domain.JsonForm;
@@ -129,7 +131,7 @@ public class FormTesterInteractor implements FormTesterContract.Interactor {
     }
 
     @Override
-    public void readForms(@NotNull Context context, FormTesterContract.Presenter presenter) {
+    public void readForms(@NonNull Context context, FormTesterContract.Presenter presenter) {
         executorService.execute(() -> {
             String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString();
             File myDir = new File(root + "/" + JsonFormConstants.DEFAULT_FORMS_DIRECTORY + "/" + JsonFormConstants.JSON_FORM_DIRECTORY + "/");
@@ -150,7 +152,7 @@ public class FormTesterInteractor implements FormTesterContract.Interactor {
     }
 
     @Override
-    public void executeOnMainThread(@NotNull Runnable runnable) {
+    public void executeOnMainThread(@NonNull Runnable runnable) {
         new Handler(Looper.getMainLooper()).post(runnable);
     }
 

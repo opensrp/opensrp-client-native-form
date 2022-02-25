@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.Build;
-import android.support.annotation.VisibleForTesting;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.View;
@@ -25,7 +27,7 @@ import com.vijay.jsonwizard.utils.ImageUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
-import org.jetbrains.annotations.NotNull;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -132,7 +134,7 @@ public class ImagePickerFactory implements FormWidgetFactory {
         return views;
     }
 
-    @NotNull
+    @NonNull
     @VisibleForTesting
     protected Button getButton(Context context) {
         return new Button(context);
@@ -187,7 +189,7 @@ public class ImagePickerFactory implements FormWidgetFactory {
         views.add(imageView);
     }
 
-    @NotNull
+    @NonNull
     @VisibleForTesting
     protected ImageView getImageView(Context context) {
         return new ImageView(context);

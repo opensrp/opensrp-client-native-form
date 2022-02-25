@@ -9,6 +9,8 @@ import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
+import com.vijay.jsonwizard.fragments.JsonFormFragment;
+
 
 /**
  * Created by keyman on 25/04/2017.
@@ -21,6 +23,11 @@ public class DatePickerUtils {
         if (!dialog.isShowing()) {
             throw new IllegalStateException("Dialog must be showing");
         }
+
+//        // properties configs
+//        NativeFormsProperties properties = JsonFormFragment.getNativeFormProperties();
+//        if(properties.isTrue(NativeFormsProperties.KEY.WIDGET_DATEPICKER_IS_NEPAL))
+//            // config end
 
         themeDatePicker(dialog.getDatePicker(), ymdOrder);
     }

@@ -10,13 +10,14 @@ buildscript {
 }
 
 apply plugin: 'com.android.library'
-apply plugin: 'jacoco'
-apply plugin: 'com.github.kt3k.coveralls'
+//apply plugin: 'jacoco'
+//apply plugin: 'com.github.kt3k.coveralls'
 
-jacoco {
-    toolVersion = "0.8.3"
-    reportsDir = file("$buildDir/reports/jacoco")
-}
+//jacoco {
+//    toolVersion = "0.8.3"
+//    reportsDir = file("$buildDir/reports/jacoco")
+//}
+
 
 android {
     compileSdkVersion androidCompileSdkVersion
@@ -27,8 +28,8 @@ android {
     defaultConfig {
         minSdkVersion androidMinSdkVersion
         targetSdkVersion androidTargetSdkVersion
-        versionCode Integer.parseInt(project.VERSION_CODE)
-        versionName project.VERSION_NAME
+        versionCode 1
+        versionName "123"
         multiDexEnabled true
         testInstrumentationRunner "com.android.test.runner.MultiDexTestRunner"
 
@@ -68,8 +69,12 @@ android {
 }
 
 
-tasks.withType(Test) {
-    jacoco.includeNoLocationClasses = true
+//tasks.withType(Test) {
+//    jacoco.includeNoLocationClasses = true
+//}
+configurations {
+    cleanedAnnotations
+    compile.exclude group: 'org.jetbrains' , module:'annotations'
 }
 
 repositories {
@@ -84,7 +89,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'design'
     }
     implementation 'com.github.bmelnychuk:atv:1.2.9'
-    implementation('com.android.support:design:28.0.0') {
+    implementation('com.google.android.material:material:1.0.0') {
         exclude group: 'com.android.support', module: 'recyclerview-v7'
         exclude group: 'com.android.support', module: 'appcompat-v7'
         exclude group: 'com.android.support', module: 'support-v4'
@@ -93,7 +98,7 @@ dependencies {
     implementation 'com.github.johnkil.print:print:1.3.1'
     implementation 'com.github.rey5137:material:1.2.5'
     implementation 'org.smartregister:opensrp-client-materialedittext:2.1.6-SNAPSHOT'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation('com.github.ganfra:material-spinner:2.0.0') {
         exclude group: 'com.nineoldandroids', module: 'library'
         exclude group: 'com.android.support', module: 'appcompat-v7'
@@ -138,7 +143,8 @@ dependencies {
     }
     implementation 'com.jakewharton.timber:timber:4.7.1'
     implementation 'org.greenrobot:eventbus:3.1.1'
-    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'androidx.multidex:multidex:2.0.0'
+
 
     // PowerMock
     def powerMockVersion = '2.0.4'
@@ -154,16 +160,20 @@ dependencies {
     androidTestImplementation 'com.jayway.android.robotium:robotium-solo:5.6.3'
     androidTestImplementation 'com.google.dexmaker:dexmaker-mockito:1.2'
     androidTestImplementation 'junit:junit:4.12'
-    androidTestImplementation("com.android.support.test:runner:1.0.2") {
+    androidTestImplementation('androidx.test.ext:junit:1.1.1') {
         exclude group: 'com.android.support', module: 'appcompat-v7'
 
     }
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2', {
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
-    androidTestImplementation('com.android.support.test:rules:1.0.2') {
+    androidTestImplementation('androidx.test:rules:1.1.1') {
         exclude group: 'com.android.support', module: 'appcompat-v7'
 
+    }
+
+    implementation ('com.github.keyrunHORNET:date_picker_converter:3.0.0') {
+        exclude group: 'org.jetbrains' , module:'annotations'
     }
 
     testImplementation 'junit:junit:4.12'
@@ -174,43 +184,43 @@ dependencies {
     testImplementation "org.json:json:20190722"
 }
 
-task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'createDebugCoverageReport']) {
+//task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'createDebugCoverageReport']) {
+//
+//    reports {
+//
+//        xml.enabled = true
+//        xml.destination = file("${buildDir}/reports/jacoco/jacocoRootReport/merged.xml")
+//
+//        html.enabled = true
+//        html.destination file("${buildDir}/reports/jacoco/jacocoRootReport/html")
+//    }
+//
+//    def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*', '**/*$ViewBinder*.*']
+//    def debugTree = fileTree(dir: "$project.buildDir/intermediates/javac/debug/classes/", excludes: fileFilter)
+//    def mainSrc = "$project.projectDir/src/main/java"
+//
+//    sourceDirectories.from = files([mainSrc])
+//    classDirectories.from = files([debugTree])
+//    executionData.from = fileTree(dir: project.buildDir, includes: [
+//            'jacoco/testDebugUnitTest.exec', 'outputs/code-coverage/connected/*coverage.ec'
+//    ])
+//}
 
-    reports {
-
-        xml.enabled = true
-        xml.destination = file("${buildDir}/reports/jacoco/jacocoRootReport/merged.xml")
-
-        html.enabled = true
-        html.destination file("${buildDir}/reports/jacoco/jacocoRootReport/html")
-    }
-
-    def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*', '**/*$ViewBinder*.*']
-    def debugTree = fileTree(dir: "$project.buildDir/intermediates/javac/debug/classes/", excludes: fileFilter)
-    def mainSrc = "$project.projectDir/src/main/java"
-
-    sourceDirectories.from = files([mainSrc])
-    classDirectories.from = files([debugTree])
-    executionData.from = fileTree(dir: project.buildDir, includes: [
-            'jacoco/testDebugUnitTest.exec', 'outputs/code-coverage/connected/*coverage.ec'
-    ])
-}
-
-tasks.coveralls {
-    dependsOn 'jacocoTestReport'
-}
-
-coveralls {
-    jacocoReportPath = "${buildDir}/reports/jacoco/jacocoRootReport/merged.xml"
-}
+//tasks.coveralls {
+//    dependsOn 'jacocoTestReport'
+//}
+//
+//coveralls {
+//    jacocoReportPath = "${buildDir}/reports/jacoco/jacocoRootReport/merged.xml"
+//}
 
 
-apply from: '../maven.gradle'
-
-task javadoc(type: Javadoc) {
-    failOnError false
-    def mainSrc = "$project.projectDir/src/main/java"
-    source = files([mainSrc])
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-    classpath += configurations.compile
-}
+//apply from: '../maven.gradle'
+//
+//task javadoc(type: Javadoc) {
+//    failOnError false
+//    def mainSrc = "$project.projectDir/src/main/java"
+//    source = files([mainSrc])
+//    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+//    classpath += configurations.compile
+//}

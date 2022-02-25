@@ -13,15 +13,15 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.annotation.VisibleForTesting;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.FileProvider;
-import android.support.v7.widget.AppCompatButton;
-import android.support.v7.widget.AppCompatRadioButton;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.core.content.FileProvider;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatRadioButton;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
@@ -55,6 +55,7 @@ import com.vijay.jsonwizard.model.DynamicLabelInfo;
 import com.vijay.jsonwizard.mvp.MvpBasePresenter;
 import com.vijay.jsonwizard.rules.RuleConstant;
 import com.vijay.jsonwizard.task.ExpansionPanelGenericPopupDialogTask;
+import com.vijay.jsonwizard.utils.DateConverter;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ImageUtils;
 import com.vijay.jsonwizard.utils.PermissionUtils;
@@ -296,7 +297,7 @@ public class JsonFormFragmentPresenter extends
                             if (formFragment.getJsonApi().skipBlankSteps()) {
                                 Utils.checkIfStepHasNoSkipLogic(formFragment);
                                 if (mStepName.equals(JsonFormConstants.STEP1) && !formFragment.getJsonApi().isPreviousPressed()) {
-                                    formFragment.getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
+                                    formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
                                         @Override
                                         public void run() {
                                             formFragment.skipLoadedStepsOnNextPressed();
@@ -462,6 +463,18 @@ public class JsonFormFragmentPresenter extends
 
                         String type = (String) childView.getTag(R.id.type);
                         rawValue = JsonFormConstants.DATE_PICKER.equals(type) || JsonFormConstants.TIME_PICKER.equals(type) ? childView.getTag(R.id.locale_independent_value).toString() : rawValue;
+                       //boolean isBikramSambat = true;
+//                       if(isBikramSambat && JsonFormConstants.DATE_PICKER.equals(type) && !rawValue.isEmpty())
+//                       {
+////                           DateConverter converter = new DateConverter();
+////                           String[] BSDate = StringUtils.split(rawValue,"-");
+////                           if(BSDate.length == 3)
+////                           {
+//                              // Date date = converter.convertBsToAd(BSDate[2]+BSDate[1]+BSDate[0]);
+//                               //rawValue = Utils.getStringFromDate(date);
+//                               Log.d("date value",""+rawValue);
+//                         //  }
+//                       }
                         getView().writeValue(mStepName, key, rawValue, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
 
                         //for repeating grp referenceEditText validation

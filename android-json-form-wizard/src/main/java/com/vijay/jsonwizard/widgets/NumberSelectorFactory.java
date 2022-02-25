@@ -6,7 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import android.support.annotation.VisibleForTesting;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +28,7 @@ import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.CustomTextView;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
-import org.jetbrains.annotations.NotNull;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -297,7 +299,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         return views;
     }
 
-    @NotNull
+    @NonNull
     @VisibleForTesting
     protected LinearLayout getRootLayout(Context context) {
         return new LinearLayout(context);
@@ -384,7 +386,7 @@ public class NumberSelectorFactory implements FormWidgetFactory {
         return customTextView;
     }
 
-    @NotNull
+    @NonNull
     @VisibleForTesting
     protected CustomTextView getCustomTextView(Context context, JSONObject jsonObject, int numberOfSelectors, int item) throws JSONException {
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);

@@ -7,10 +7,12 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
-import android.support.v4.util.LruCache;
+
+import androidx.annotation.Nullable;
+import androidx.collection.LruCache;
 import android.util.Log;
 
-import org.jetbrains.annotations.Nullable;
+
 
 import java.io.File;
 import java.io.IOException;

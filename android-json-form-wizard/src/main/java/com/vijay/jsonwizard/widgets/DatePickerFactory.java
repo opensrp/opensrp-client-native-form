@@ -6,8 +6,10 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.VisibleForTesting;
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
@@ -26,6 +28,7 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.utils.DateConverter;
 import com.vijay.jsonwizard.utils.DateUtil;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.NativeFormLangUtils;
@@ -34,11 +37,12 @@ import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -95,6 +99,28 @@ public class DatePickerFactory implements FormWidgetFactory {
         ((JsonApi) context).getAppExecutors().mainThread().execute(new Runnable() {
             @Override
             public void run() {
+                boolean bikramSambatDate = true;
+                if(bikramSambatDate)
+                {
+                    if(!date.isEmpty())
+                    {
+                        try {
+                            DateConverter dateConverter = new DateConverter();
+                            String[] dateString = StringUtils.split(date, "-");
+                            String day = dateString[0];
+                            int monthValue = Integer.parseInt(dateString[1]);
+                            String month = monthValue <= 9 ? "0"+monthValue : ""+monthValue;
+                            String year = dateString[2];
+                            String BSDate = dateConverter.convertAdToBs(day + "-" + month + "-" + year);
+                            editText.setText(BSDate);
+                        }
+                        catch (Exception e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                else
                 editText.setText(StringUtils.isNoneBlank(Form.getDatePickerDisplayFormat()) ?
                         Utils.formatDateToPattern(date, DATE_FORMAT.toPattern(), Form.getDatePickerDisplayFormat())
                         : date);
@@ -118,13 +144,13 @@ public class DatePickerFactory implements FormWidgetFactory {
         }
     }
 
-    @NotNull
+    @NonNull
     @VisibleForTesting
     protected String getDurationText(Context context, String date, Locale locale) {
         return DateUtil.getDuration(DateUtil.getDurationTimeDifference(date, null), locale.getLanguage().equals("ar") ? Locale.ENGLISH : locale, context);
     }
 
-    @NotNull
+    @NonNull
     @VisibleForTesting
     protected Locale getSetLanguage(Context context) {
         return new Locale(NativeFormLangUtils.getLanguage(context));
@@ -359,6 +385,7 @@ public class DatePickerFactory implements FormWidgetFactory {
         datePickerDialog.setOnDateSetListener(new android.app.DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                boolean isBSDate = true;
                 Calendar calendarDate = Calendar.getInstance();
                 calendarDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                 calendarDate.set(Calendar.MONTH, monthOfYear);
@@ -366,15 +393,46 @@ public class DatePickerFactory implements FormWidgetFactory {
 
                 editText.setTag(R.id.locale_independent_value, DATE_FORMAT_LOCALE_INDEPENDENT.format(calendarDate.getTime()));
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB
-                        && calendarDate.getTimeInMillis() >= view.getMinDate()
-                        && calendarDate.getTimeInMillis() <= view.getMaxDate()) {
-                    updateDateText(context, editText, duration,
-                            DATE_FORMAT.format(calendarDate.getTime()));
-                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                    updateDateText(context, editText, duration, "");
-                }
+
+//                if(isBSDate)
+//                {
+//                    DateConverter dateConverter = new DateConverter();
+//                    int month = monthOfYear+1;
+//                    String BSDay = dayOfMonth+"";
+//                    String BSMonth = monthOfYear+"";
+//
+//                    try {
+//                        if(dayOfMonth<=9)
+//                        {
+//                            BSDay = "0"+BSDay;
+//                        }
+//                        if(month <= 9)
+//                        {
+//                            BSMonth = "0"+month;
+//                        }
+//
+//                        String date =   dateConverter.convertAdToBs(BSDay+"-"+BSMonth+"-"+year);
+//                        Log.d("BS date",date);
+//                        updateDateText(context,editText,duration,date);
+//                    } catch (ParseException e) {
+//                        e.printStackTrace();
+//                    }
+
+               // }
+                //else {
+
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB
+                            && calendarDate.getTimeInMillis() >= view.getMinDate()
+                            && calendarDate.getTimeInMillis() <= view.getMaxDate()) {
+                        updateDateText(context, editText, duration,
+                                DATE_FORMAT.format(calendarDate.getTime()));
+                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                        updateDateText(context, editText, duration, "");
+                    }
+
             }
+          //  }
         });
 
         if (jsonObject.has(JsonFormConstants.MIN_DATE) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {

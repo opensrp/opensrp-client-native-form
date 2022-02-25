@@ -9,12 +9,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.AppCompatRadioButton;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.AppCompatRadioButton;
+import androidx.appcompat.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
@@ -50,7 +50,6 @@ import com.vijay.jsonwizard.views.JsonFormFragmentView;
 import com.vijay.jsonwizard.viewstates.JsonFormFragmentViewState;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -77,7 +76,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     protected ScrollView mScrollView;
     private Menu mMenu;
     private JsonApi mJsonApi;
-    private final Map<String, List<View>> lookUpMap = new HashMap<>();
+    private Map<String, List<View>> lookUpMap = new HashMap<>();
     private Button previousButton;
     private Button nextButton;
     private String stepName;
@@ -87,7 +86,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     private static NativeFormsProperties nativeFormProperties;
 
-    private final Handler handler = new Handler(Looper.getMainLooper(), this);
+    private final Handler handler = new Handler(this);
 
     public static JsonFormFragment getFormFragment(String stepName) {
         JsonFormFragment jsonFormFragment = new JsonFormFragment();
@@ -99,9 +98,9 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     }
 
     @Override
-    public boolean handleMessage(@NonNull @NotNull Message msg) {
+    public boolean handleMessage(@NonNull Message msg) {
         //noinspection SwitchStatementWithTooFewBranches
-        switch (msg.what) {
+        switch (msg.what){
             case GRAY_OUT_ACTIVE_WHAT:
                 requireActivity().invalidateOptionsMenu();
                 return true;
@@ -286,7 +285,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         inflater.inflate(R.menu.menu_toolbar, menu);
         presenter.setUpToolBar();
 
-        if (getForm() != null && getForm().isGreyOutSaveWhenFormInvalid()) {
+        if (getForm() != null && getForm().isGreyOutSaveWhenFormInvalid()){
             boolean isFormFilled = presenter.areFormViewsFilled();
             if (isFormFilled) {
                 menu.findItem(R.id.action_next).setTitle(R.string.next);
@@ -679,7 +678,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
                         break;
                     }
                 } else if (isCheckbox(view)) {
-                    CheckBox checkBox = view.findViewWithTag(JsonFormConstants.CHECK_BOX);
+                    CheckBox checkBox = ((LinearLayout) view).findViewWithTag(JsonFormConstants.CHECK_BOX);
                     String parentKeyAtIndex = (String) checkBox.getTag(R.id.key);
                     String childKeyAtIndex = (String) checkBox.getTag(R.id.childKey);
                     if (checkBox.isChecked() && parentKeyAtIndex.equals(parentKey) && childKeyAtIndex.equals(exclusiveKey)) {
@@ -737,7 +736,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
                     Form form = getForm();
                     if (!(view instanceof MaterialEditText)
-                            || (form != null && !form.isGreyOutSaveWhenFormInvalid())) {
+                            || (form != null && !form.isGreyOutSaveWhenFormInvalid())){
                         view.requestFocus();
                     }
                 }

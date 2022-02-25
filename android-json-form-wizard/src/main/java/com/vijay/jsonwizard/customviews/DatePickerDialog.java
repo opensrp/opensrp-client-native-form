@@ -5,7 +5,9 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,11 +15,16 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 
+import com.hornet.dateconverter.Model;
 import com.vijay.jsonwizard.R;
+import com.vijay.jsonwizard.utils.DateConverter;
 import com.vijay.jsonwizard.utils.DatePickerUtils;
 
+import java.sql.Time;
 import java.util.Calendar;
 import java.util.Date;
+
+import timber.log.Timber;
 
 import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 
@@ -25,7 +32,7 @@ import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
  * Created by Jason Rogena - jrogena@ona.io on 08/05/2017.
  */
 
-public class DatePickerDialog extends DialogFragment {
+public class DatePickerDialog extends DialogFragment implements BikramSambatCalendar.OnDateSetListener {
     private DatePicker datePicker;
     private android.app.DatePickerDialog.OnDateSetListener onDateSetListener;
     private DialogInterface.OnShowListener onShowListener;
@@ -36,6 +43,7 @@ public class DatePickerDialog extends DialogFragment {
     private Context context;
     private char[] ymdOrder = new char[]{'d', 'm', 'y'};
     private boolean isNumericDatePicker = false;
+    private BikramSambatCalendar BSCalendar;
 
     public DatePickerDialog() {
         this.minDate = -1;
@@ -81,7 +89,10 @@ public class DatePickerDialog extends DialogFragment {
         });
 
         datePicker = dialogView.findViewById(isNumericDatePicker ? R.id.date_picker_numeric : R.id.date_picker);
-        datePicker.setVisibility(View.VISIBLE);
+        datePicker.setVisibility(View.GONE);
+//  BS logic from the gradle properties.
+        BSCalendar = dialogView.findViewById(R.id.calendar);
+        BSCalendar.setOnDateSetListener(this);
 
         if (minDate != -1) {
             datePicker.setMinDate(minDate);
@@ -129,6 +140,15 @@ public class DatePickerDialog extends DialogFragment {
             public void onClick(View v) {
                 if (onDateSetListener != null) {
                     DatePickerDialog.this.dismiss();
+                    boolean bikramSambat = true;
+                    if(bikramSambat)
+                    {
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(date);
+                        onDateSetListener.onDateSet(datePicker, calendar.get(Calendar.YEAR),
+                                calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+                    }
+                    else
                     onDateSetListener.onDateSet(datePicker, datePicker.getYear(),
                             datePicker.getMonth(), datePicker.getDayOfMonth());
                 }
@@ -178,5 +198,23 @@ public class DatePickerDialog extends DialogFragment {
 
     public void setNumericDatePicker(boolean numericDatePicker) {
         isNumericDatePicker = numericDatePicker;
+    }
+
+    @Override
+    public void onDateClick(View calendar, int year, int month, int day) {
+        DateConverter dateConverter  = new DateConverter();
+        month = month+1;
+        String dayFiller = "";
+        String monthFiller = "";
+        if(day<=9)
+            dayFiller = "0";
+        if(month <=9)
+            monthFiller = "0";
+        date =  dateConverter.convertBsToAd(dayFiller+day+monthFiller+month+year);
+        setDate(date);
+
+//        Model model = dateConverter.getEnglishDate(year,month,day);
+//        Calendar convertedCalendar = DateConverter.convertModelToCalendar(model);
+//        setDate(convertedCalendar);
     }
 }
