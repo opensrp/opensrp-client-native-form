@@ -7,6 +7,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.vijay.jsonwizard.constants.JsonFormConstants;
@@ -91,10 +92,9 @@ public class NativeFormLangUtils {
         return translateString(str, ResourceBundle.getBundle(translationsFileName, currLocale));
     }
 
-    public static String getTranslatedANCString(String key, Context context) {
-        //anc_profile.step4.allergies.options.albendazole.text
+    public static String getTranslatedANCString(String key, @NonNull Context context) {
         String resourceBuddleName = key.split("\\.")[0];
-        Locale currLocale = context == null ? Locale.getDefault() : getLocale(context);
+        Locale currLocale = getLocale(context);
         ResourceBundle resourceBundle = ResourceBundle.getBundle(resourceBuddleName, currLocale);
         if (!resourceBundle.containsKey(key)) {
             Timber.e("Could not translate the String. Translation file name is not specified!");

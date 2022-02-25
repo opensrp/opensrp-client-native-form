@@ -3,6 +3,7 @@ package com.vijay.jsonwizard.utils;
 import static com.vijay.jsonwizard.utils.Utils.convertStreamToString;
 import static com.vijay.jsonwizard.utils.Utils.isEmptyJsonArray;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Context;
@@ -36,7 +37,6 @@ import android.widget.Toast;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.NativeFormLibrary;
 import com.vijay.jsonwizard.R;
-import com.vijay.jsonwizard.activities.JsonFormActivity;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.ExpansionPanelGenericPopupDialog;
 import com.vijay.jsonwizard.domain.ExpansionPanelItemModel;
@@ -1372,11 +1372,11 @@ public class FormUtils {
         return result;
     }
 
+    @SuppressLint("NewApi")
     public void updateValueToJSONArray(JSONObject jsonObject, String valueString) {
         NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
-        JsonFormActivity jsonFormActivity = new JsonFormActivity();
         try {
-            JSONArray values = null;
+            JSONArray values;
             if (StringUtils.isNotEmpty(valueString)) {
                 if (nativeFormsProperties != null && nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_VALUE_TRANSLATED)) {
                     if (valueString.charAt(0) == '{') {
@@ -2020,6 +2020,7 @@ public class FormUtils {
         }
     }
 
+    @SuppressLint("NewApi")
     public JSONObject getFormJson(@NonNull Context context, @NonNull String formIdentity) {
         try {
             String locale = context.getResources().getConfiguration().locale.getLanguage();
