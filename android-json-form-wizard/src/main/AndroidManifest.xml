@@ -37,7 +37,12 @@
             android:value="@integer/google_play_services_version" />
 
         <meta-data
-            android:name="firebase_performance_logcat_enabled"
-            android:value="true" />
+            android:name="io.sentry.dsn"
+            android:value="https://d4003cd0df6548b9aac50a9b709cbab3@sentry.k8s.onalabs.org/57" />
+
+        <meta-data
+            android:name="io.sentry.traces.sample-rate"
+            android:value="1.0" />
+
     </application>
 </manifest>
