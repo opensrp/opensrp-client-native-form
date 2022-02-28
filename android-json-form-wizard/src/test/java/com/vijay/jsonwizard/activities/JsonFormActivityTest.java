@@ -2,6 +2,7 @@ package com.vijay.jsonwizard.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.AppCompatRadioButton;
 import android.text.Html;
 import android.text.Spanned;
@@ -422,4 +423,32 @@ public class JsonFormActivityTest extends BaseActivityTest {
         Mockito.verify(mockUtils)
                 .enableExpansionPanelViews(ArgumentMatchers.eq(linearLayout));
     }
+    @Test
+    public void testGetRelevanceAddressReturnsExpectedAddressAndRelevancePair() throws JSONException {
+        View view = new View(activity.getBaseContext());
+        JSONObject curRelevance = new JSONObject();
+        try {
+          curRelevance = new JSONObject("{ex-checkbox:[{\"or\":[\"other\"]}]}}");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        view.setTag(R.id.relevance,
+                "{\"step1:medications\":{ex-checkbox:[{\"or\":[\"other\"]}]}}");
+        view.setTag(R.id.key, JsonFormConstants.SIMPRINTS_OPTION_REGISTER);
+        view.setTag(R.id.address, "step1:medications_other");
+        view.setTag(R.id.extraPopup, false);
+        String[] address = new String[]{"step1", "medications"};
+
+        Pair pair = new Pair<>(address, curRelevance);
+        Pair activityPair = activity.getRelevanceAddress(view, false);
+        // assert that the right relevance condition is returned
+        Assert.assertTrue(pair.second.toString().equals(activityPair.second.toString()));
+        String[] activityAddress = (String[]) pair.first;
+        // assert address array contains expected elements
+        Assert.assertTrue(address[0].equals(activityAddress[0]));
+        Assert.assertTrue(address[1].equals(activityAddress[1]));
+
+    }
+
 }

@@ -4,13 +4,20 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.AppCompatRadioButton;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,6 +38,7 @@ import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.RadioButton;
+import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.interfaces.OnFieldsInvalid;
@@ -42,6 +50,7 @@ import com.vijay.jsonwizard.views.JsonFormFragmentView;
 import com.vijay.jsonwizard.viewstates.JsonFormFragmentViewState;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -59,14 +68,16 @@ import timber.log.Timber;
  * Created by vijay on 5/7/15.
  */
 public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, JsonFormFragmentViewState>
-        implements CommonListener, JsonFormFragmentView<JsonFormFragmentViewState> {
+        implements CommonListener, JsonFormFragmentView<JsonFormFragmentViewState>, Handler.Callback {
     private static final String TAG = "JsonFormFragment";
+    private static final int GRAY_OUT_ACTIVE_WHAT = 1212;
+
     public OnFieldsInvalid onFieldsInvalid;
     protected LinearLayout mMainView;
     protected ScrollView mScrollView;
     private Menu mMenu;
     private JsonApi mJsonApi;
-    private Map<String, List<View>> lookUpMap = new HashMap<>();
+    private final Map<String, List<View>> lookUpMap = new HashMap<>();
     private Button previousButton;
     private Button nextButton;
     private String stepName;
@@ -76,6 +87,8 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
     private static NativeFormsProperties nativeFormProperties;
 
+    private final Handler handler = new Handler(Looper.getMainLooper(), this);
+
     public static JsonFormFragment getFormFragment(String stepName) {
         JsonFormFragment jsonFormFragment = new JsonFormFragment();
         Bundle bundle = new Bundle();
@@ -83,6 +96,25 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         jsonFormFragment.setArguments(bundle);
 
         return jsonFormFragment;
+    }
+
+    @Override
+    public boolean handleMessage(@NonNull @NotNull Message msg) {
+        //noinspection SwitchStatementWithTooFewBranches
+        switch (msg.what) {
+            case GRAY_OUT_ACTIVE_WHAT:
+                requireActivity().invalidateOptionsMenu();
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    Form getForm() {
+        if (getActivity() != null && getActivity() instanceof JsonFormActivity) {
+            return ((JsonFormActivity) getActivity()).getForm();
+        }
+        return null;
     }
 
     @Override
@@ -117,6 +149,12 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
         presenter.preLoadRules(getJsonApi().getmJSONObject(), stepName);
         return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        handler.removeMessages(GRAY_OUT_ACTIVE_WHAT);
+        super.onDestroyView();
     }
 
     private void setupToolbarBackButton() {
@@ -247,6 +285,23 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         menu.clear();
         inflater.inflate(R.menu.menu_toolbar, menu);
         presenter.setUpToolBar();
+
+        if (getForm() != null && getForm().isGreyOutSaveWhenFormInvalid()) {
+            boolean isFormFilled = presenter.areFormViewsFilled();
+            if (isFormFilled) {
+                menu.findItem(R.id.action_next).setTitle(R.string.next);
+                menu.findItem(R.id.action_save).setTitle(R.string.save);
+            } else {
+                SpannableString nextString = new SpannableString(getString(R.string.next));
+                SpannableString saveString = new SpannableString(getString(R.string.save));
+                nextString.setSpan(new ForegroundColorSpan(Color.parseColor("#EECCCCCC")), 0, nextString.length(), 0);
+                saveString.setSpan(new ForegroundColorSpan(Color.parseColor("#EECCCCCC")), 0, saveString.length(), 0);
+                menu.findItem(R.id.action_next).setTitle(nextString);
+                menu.findItem(R.id.action_save).setTitle(saveString);
+            }
+
+            handler.sendEmptyMessageDelayed(GRAY_OUT_ACTIVE_WHAT, 100);
+        }
     }
 
     @Override
@@ -624,7 +679,7 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
                         break;
                     }
                 } else if (isCheckbox(view)) {
-                    CheckBox checkBox = ((LinearLayout) view).findViewWithTag(JsonFormConstants.CHECK_BOX);
+                    CheckBox checkBox = view.findViewWithTag(JsonFormConstants.CHECK_BOX);
                     String parentKeyAtIndex = (String) checkBox.getTag(R.id.key);
                     String childKeyAtIndex = (String) checkBox.getTag(R.id.childKey);
                     if (checkBox.isChecked() && parentKeyAtIndex.equals(parentKey) && childKeyAtIndex.equals(exclusiveKey)) {
@@ -667,7 +722,6 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
             getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
                 @Override
                 public void run() {
-                    view.requestFocus();
                     if (!(view instanceof MaterialEditText)) {
                         mScrollView.post(new Runnable() {
                             @Override
@@ -679,6 +733,12 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
                                 mScrollView.scrollTo(0, viewLength);
                             }
                         });
+                    }
+
+                    Form form = getForm();
+                    if (!(view instanceof MaterialEditText)
+                            || (form != null && !form.isGreyOutSaveWhenFormInvalid())) {
+                        view.requestFocus();
                     }
                 }
             });

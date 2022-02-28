@@ -14,7 +14,9 @@ import com.vijay.jsonwizard.activities.JsonFormActivity;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.utils.FormUtils;
+import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.CustomTextView;
+import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -129,5 +131,43 @@ public class CheckBoxFactoryTest extends BaseTest {
         Boolean checked = Whitebox.invokeMethod(factorySpy, "performValidation", rootLayoutSpy);
 
         Assert.assertTrue(checked);
+    }
+
+    @Test
+    public void testIsValid() throws Exception {
+        Assert.assertNotNull(factory);
+        CheckBoxFactory factorySpy = Mockito.spy(factory);
+        Assert.assertNotNull(rootLayout);
+        LinearLayout rootLayoutSpy = Mockito.spy(rootLayout);
+
+        LinearLayout checkboxOptionLayout = Mockito.mock(LinearLayout.class);
+        CheckBox currentCheckbox = Mockito.mock(CheckBox.class);
+
+        Mockito.doReturn(2).when(rootLayoutSpy).getChildCount();
+        Mockito.doReturn(checkboxOptionLayout).when(rootLayoutSpy).getChildAt(Mockito.anyInt());
+        Mockito.doReturn(currentCheckbox).when(checkboxOptionLayout).getChildAt(0);
+        Mockito.doReturn(true).when(currentCheckbox).isChecked();
+
+        boolean isValid = factorySpy.isValid(rootLayoutSpy);
+        Assert.assertTrue(isValid);
+    }
+
+    @Test
+    public void testValidate(){
+        CheckBoxFactory factorySpy = Mockito.spy(factory);
+        LinearLayout rootLayoutSpy = Mockito.spy(rootLayout);
+        JsonFormFragmentView fragmentView = Mockito.mock(JsonFormFragmentView.class);
+        LinearLayout checkboxOptionLayout = Mockito.mock(LinearLayout.class);
+        CheckBox currentCheckbox = Mockito.mock(CheckBox.class);
+        Mockito.doReturn(2).when(rootLayoutSpy).getChildCount();
+        Mockito.doReturn(checkboxOptionLayout).when(rootLayoutSpy).getChildAt(Mockito.anyInt());
+        Mockito.doReturn(currentCheckbox).when(checkboxOptionLayout).getChildAt(0);
+        Mockito.doReturn(true).when(currentCheckbox).isChecked();
+        Mockito.when(rootLayoutSpy.getTag(ArgumentMatchers.anyInt())).thenReturn("error");
+        Mockito.doReturn("error").when(rootLayoutSpy).getTag();
+
+        ValidationStatus validationStatus = factorySpy.validate(fragmentView, rootLayoutSpy);
+        Assert.assertTrue(validationStatus.isValid());
+
     }
 }
