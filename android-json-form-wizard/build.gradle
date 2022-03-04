@@ -18,6 +18,13 @@ jacoco {
     reportsDir = file("$buildDir/reports/jacoco")
 }
 
+configurations {
+    cleanedAnnotations
+    compile.exclude group: 'org.jetbrains' , module:'annotations'
+   // compile.exclude group: 'com.intellij', module:'annotations'
+   // compile.exclude group: 'org.intellij', module:'annotations'
+}
+
 
 android {
     compileSdkVersion androidCompileSdkVersion
