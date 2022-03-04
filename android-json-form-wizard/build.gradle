@@ -20,7 +20,7 @@ jacoco {
 
 configurations {
     cleanedAnnotations
-    compile.exclude group: 'org.jetbrains' , module:'annotations'
+    compile.exclude group: 'org.jetbrains' , module:'annotations-java5'
    // compile.exclude group: 'com.intellij', module:'annotations'
    // compile.exclude group: 'org.intellij', module:'annotations'
 }
@@ -180,7 +180,7 @@ dependencies {
     }
 
     implementation ('com.github.keyrunHORNET:date_picker_converter:3.0.0') {
-        exclude group: 'org.jetbrains' , module:'annotations'
+        exclude group: 'com.android.support', module: 'support-annotations'
     }
 
     testImplementation 'junit:junit:4.12'
