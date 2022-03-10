@@ -82,6 +82,7 @@ public class Utils {
     public final static Set<Character> JAVA_OPERATORS = new HashSet<>(
             Arrays.asList('(', '!', ',', '?', '+', '-', '*', '/', '%', '+', '-', '.', '^', ')', '<', '>', '=', '{', '}', ':',
                     ';', '[', ']'));
+    private static final FormUtils formUtils = new FormUtils();
     private static ProgressDialog progressDialog;
 
     public static void showToast(Context context, String message) {
@@ -821,6 +822,33 @@ public class Utils {
         return repeatingGroupCountObj;
     }
 
+
+    /**
+     * @param This     function is to return JSON Object of i.e {"value":"widget_item_key","text":"translated_text_value"} for translatable_widgets_keys. It's not specific to the widget_type
+     * @param item
+     * @param itemType
+     * @return
+     * @throws JSONException
+     */
+
+    public static JSONObject generateTranslatableValue(String value, JSONObject item) throws JSONException {
+        JSONObject newValue = new JSONObject();
+        String itemType = item.has(JsonFormConstants.TYPE) ? item.getString(JsonFormConstants.TYPE) : "";
+        if (JsonFormConstants.NATIVE_RADIO_BUTTON.equals(itemType) || JsonFormConstants.SPINNER.equals(itemType) || JsonFormConstants.CHECK_BOX.equals(itemType)) {
+            if (item.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
+                JSONArray options = item.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
+                JSONObject selectedOption = formUtils.getOptionFromOptionsUsingKey(options, value);
+                newValue.put(JsonFormConstants.VALUE, value);
+                newValue.put(JsonFormConstants.TEXT, selectedOption.optString(JsonFormConstants.TRANSLATION_TEXT));
+                return newValue;
+            }
+            newValue.put(JsonFormConstants.VALUE, value);
+            newValue.put(JsonFormConstants.TEXT, item.optString(JsonFormConstants.TRANSLATION_TEXT));
+            return newValue;
+        }
+        return newValue;
+    }
+
     public List<String> createExpansionPanelChildren(JSONArray jsonArray) throws JSONException {
         List<String> stringList = new ArrayList<>();
         String label;
@@ -966,6 +994,7 @@ public class Utils {
         okButton.setEnabled(true);
         okButton.setClickable(true);
     }
+
 }
 
 
