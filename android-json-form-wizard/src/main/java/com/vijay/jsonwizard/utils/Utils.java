@@ -491,12 +491,12 @@ public class Utils {
         NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
         if (nativeFormsProperties != null && jsonObject.has(TYPE) && (jsonObject.optString(TYPE).equals(JsonFormConstants.NATIVE_RADIO_BUTTON) || jsonObject.optString(TYPE).equals(JsonFormConstants.SPINNER) || jsonObject.optString(TYPE).equals(JsonFormConstants.CHECK_BOX))
                 && nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_VALUE_TRANSLATED)) {
-            JSONObject valueObject = jsonObject.optJSONObject(JsonFormConstants.VALUE);
+            JSONObject valueObject = jsonObject.optJSONObject(VALUE);
             if (valueObject != null) {
-                value = valueObject.optString(JsonFormConstants.VALUE, "");
+                value = valueObject.optString(VALUE, "");
             }
         } else {
-            value = jsonObject.optString(JsonFormConstants.VALUE, "");
+            value = jsonObject.optString(VALUE, "");
         }
         return value;
     }
@@ -833,17 +833,17 @@ public class Utils {
 
     public static JSONObject generateTranslatableValue(String value, JSONObject item) throws JSONException {
         JSONObject newValue = new JSONObject();
-        String itemType = item.has(JsonFormConstants.TYPE) ? item.getString(JsonFormConstants.TYPE) : "";
+        String itemType = item.has(TYPE) ? item.getString(TYPE) : "";
         if (JsonFormConstants.NATIVE_RADIO_BUTTON.equals(itemType) || JsonFormConstants.SPINNER.equals(itemType) || JsonFormConstants.CHECK_BOX.equals(itemType)) {
             if (item.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
                 JSONArray options = item.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
                 JSONObject selectedOption = formUtils.getOptionFromOptionsUsingKey(options, value);
-                newValue.put(JsonFormConstants.VALUE, value);
-                newValue.put(JsonFormConstants.TEXT, selectedOption.optString(JsonFormConstants.TRANSLATION_TEXT));
+                newValue.put(VALUE, value);
+                newValue.put(TEXT, selectedOption.optString(JsonFormConstants.TRANSLATION_TEXT));
                 return newValue;
             }
-            newValue.put(JsonFormConstants.VALUE, value);
-            newValue.put(JsonFormConstants.TEXT, item.optString(JsonFormConstants.TRANSLATION_TEXT));
+            newValue.put(VALUE, value);
+            newValue.put(TEXT, item.optString(JsonFormConstants.TRANSLATION_TEXT));
             return newValue;
         }
         return newValue;

@@ -74,7 +74,6 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
     private JsonFormFragment formFragment;
     private String stepName;
     private JSONArray canvasIds;
-    private NativeFormsProperties nativeFormsProperties;
 
     public static void showDateDialog(View view) {
         Context context = (Context) view.getTag(R.id.specify_context);
