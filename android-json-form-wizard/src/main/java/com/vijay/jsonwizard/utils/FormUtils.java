@@ -1,5 +1,9 @@
 package com.vijay.jsonwizard.utils;
 
+import static com.vijay.jsonwizard.utils.Utils.convertStreamToString;
+import static com.vijay.jsonwizard.utils.Utils.isEmptyJsonArray;
+
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Context;
@@ -62,6 +66,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -76,9 +81,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import timber.log.Timber;
-
-import static com.vijay.jsonwizard.utils.Utils.convertStreamToString;
-import static com.vijay.jsonwizard.utils.Utils.isEmptyJsonArray;
 
 /**
  * Created by vijay on 24-05-2015.
@@ -100,7 +102,7 @@ public class FormUtils {
     private static final String TODAY_JAVAROSA_PROPERTY = "today";
     private static final String DEFAULT_FORM_IMAGES_FOLDER = "image/";
     private static final String TAG = FormUtils.class.getSimpleName();
-    private Utils utils = new Utils();
+    private final Utils utils = new Utils();
     private GenericDialogInterface genericDialogInterface;
 
     public static Point getViewLocationOnScreen(View view) {
@@ -830,7 +832,13 @@ public class FormUtils {
             throws JSONException {
         HashSet<String> result = new HashSet<>();
         for (int i = 0; i < optionsArray.length(); i++) {
-            result.add(optionsArray.getString(i));
+            String translatedCheckBox = optionsArray.getString(i);
+            if (translatedCheckBox.charAt(0) == '{') {
+                JSONObject object = new JSONObject(translatedCheckBox);
+                result.add(object.optString(JsonFormConstants.TEXT, ""));
+            } else {
+                result.add(translatedCheckBox);
+            }
         }
         return result;
     }
@@ -1305,6 +1313,21 @@ public class FormUtils {
         return result;
     }
 
+    public JSONObject getOptionFromOptionsUsingKey(JSONArray options, String key) throws JSONException {
+        JSONObject option = new JSONObject();
+        if (options != null && options.length() > 0) {
+            for (int i = 0; i < options.length(); i++) {
+                JSONObject checkOption = options.getJSONObject(i);
+                if (checkOption != null && checkOption.has(JsonFormConstants.KEY) && checkOption.getString(JsonFormConstants.KEY).equals(key)) {
+                    option = checkOption;
+                    break;
+                }
+            }
+        }
+
+        return option;
+    }
+
     /**
      * @param multiRelevance {@link Boolean}
      * @param object         {@link JSONObject}
@@ -1317,7 +1340,7 @@ public class FormUtils {
             JSONArray jsonArray = object.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
             for (int j = 0; j < jsonArray.length(); j++) {
                 if (object.has(JsonFormConstants.VALUE)) {
-                    if (object.getString(JsonFormConstants.VALUE).equals(jsonArray.getJSONObject(j).getString(JsonFormConstants.KEY))) {
+                    if (Utils.returnValue(object).equals(jsonArray.getJSONObject(j).getString(JsonFormConstants.KEY))) {
                         result.put(jsonArray.getJSONObject(j).getString(JsonFormConstants.KEY), String.valueOf(true));
                     } else {
                         if (!object.has(RuleConstant.IS_RULE_CHECK) || !object.getBoolean(RuleConstant.IS_RULE_CHECK)) {
@@ -1335,15 +1358,30 @@ public class FormUtils {
         return result;
     }
 
+    @SuppressLint("NewApi")
     public void updateValueToJSONArray(JSONObject jsonObject, String valueString) {
+        NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
         try {
-            JSONArray values = null;
+            JSONArray values;
             if (StringUtils.isNotEmpty(valueString)) {
-                values = new JSONArray(valueString);
+                if (nativeFormsProperties != null && nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_VALUE_TRANSLATED)) {
+                    if (valueString.charAt(0) == '{') {
+                        JSONObject object = new JSONObject(valueString);
+                        values = new JSONArray(object.optString(JsonFormConstants.TEXT, ""));
+                    } else {
+                        JSONObject createJsonValues = Utils.generateTranslatableValue(jsonObject.optString(JsonFormConstants.VALUE, ""), jsonObject);
+                        values = new JSONArray(createJsonValues);
+                    }
+                } else {
+                    values = new JSONArray(valueString);
+                }
+                if (values != null) {
+                    //added
+                    jsonObject.put(JsonFormConstants.VALUE, values);
+
+                }
             }
-            if (values != null) {
-                jsonObject.put(JsonFormConstants.VALUE, values);
-            }
+
         } catch (JSONException e) {
             Timber.e(e, "%s --> updateValueToJSONArray", this.getClass().getCanonicalName());
         }
@@ -1539,7 +1577,15 @@ public class FormUtils {
         if (!TextUtils.isEmpty(value)) {
             for (int i = 0; i < options.length(); i++) {
                 JSONObject option = options.getJSONObject(i);
-                if (option.has(JsonFormConstants.KEY) && value.equals(option.getString(JsonFormConstants.KEY))) {
+                if (value.charAt(0) == '{') {
+                    JSONObject valueObject = new JSONObject(value);
+                    if (valueObject.getString("value").equals(option.getString(JsonFormConstants.KEY))) {
+                        String key = option.getString(JsonFormConstants.KEY);
+                        String text = option.getString(JsonFormConstants.TEXT);
+                        secondaryValue = key + ":" + text;
+                        break;
+                    }
+                } else if (option.has(JsonFormConstants.KEY) && value.equals(option.getString(JsonFormConstants.KEY))) {
                     String key = option.getString(JsonFormConstants.KEY);
                     String text = option.getString(JsonFormConstants.TEXT);
                     secondaryValue = key + ":" + text;
@@ -1947,6 +1993,7 @@ public class FormUtils {
         }
     }
 
+    @SuppressLint("NewApi")
     public JSONObject getFormJson(@NonNull Context context, @NonNull String formIdentity) {
         try {
             String locale = context.getResources().getConfiguration().locale.getLanguage();
@@ -1962,7 +2009,7 @@ public class FormUtils {
                         .open("json.form/" + formIdentity + JsonFormConstants.JSON_FILE_EXTENSION);
             }
             BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(inputStream, CharEncoding.UTF_8));
+                    new InputStreamReader(inputStream, StandardCharsets.UTF_8));
             String jsonString;
             StringBuilder stringBuilder = new StringBuilder();
 

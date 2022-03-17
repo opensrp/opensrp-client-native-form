@@ -1,5 +1,15 @@
 package com.vijay.jsonwizard.utils;
 
+import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.OPENMRS_ENTITY;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.OPENMRS_ENTITY_ID;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.OPENMRS_ENTITY_PARENT;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.TEXT;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.TYPE;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUE;
+import static com.vijay.jsonwizard.utils.NativeFormLangUtils.getTranslatedString;
+import static com.vijay.jsonwizard.widgets.RepeatingGroupFactory.REFERENCE_EDIT_TEXT_HINT;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -67,21 +77,12 @@ import java.util.concurrent.TimeUnit;
 
 import timber.log.Timber;
 
-import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.OPENMRS_ENTITY;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.OPENMRS_ENTITY_ID;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.OPENMRS_ENTITY_PARENT;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.TEXT;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.TYPE;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUE;
-import static com.vijay.jsonwizard.utils.NativeFormLangUtils.getTranslatedString;
-import static com.vijay.jsonwizard.widgets.RepeatingGroupFactory.REFERENCE_EDIT_TEXT_HINT;
-
 public class Utils {
     public final static List<String> PREFICES_OF_INTEREST = Arrays.asList(RuleConstant.PREFIX.GLOBAL, RuleConstant.STEP);
     public final static Set<Character> JAVA_OPERATORS = new HashSet<>(
             Arrays.asList('(', '!', ',', '?', '+', '-', '*', '/', '%', '+', '-', '.', '^', ')', '<', '>', '=', '{', '}', ':',
                     ';', '[', ']'));
+    private static final FormUtils formUtils = new FormUtils();
     private static ProgressDialog progressDialog;
 
     public static void showToast(Context context, String message) {
@@ -479,86 +480,23 @@ public class Utils {
         return stepName + "#" + stepTitle + ":";
     }
 
-    public List<String> createExpansionPanelChildren(JSONArray jsonArray) throws JSONException {
-        List<String> stringList = new ArrayList<>();
-        String label;
-        for (int i = 0; i < jsonArray.length(); i++) {
-            if (!jsonArray.isNull(i)) {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                if (jsonObject.has(JsonFormConstants.VALUES) && jsonObject.has(JsonFormConstants.LABEL) &&
-                        !"".equals(jsonObject.getString(JsonFormConstants.LABEL))) {
-                    //Get label and replace any colon in some labels. Not needed at this point
-                    label = jsonObject.getString(JsonFormConstants.LABEL).replace(":", "");
-                    stringList.add(label + ":" + getStringValue(jsonObject));
-                }
+    /**
+     * Returns the value string value for special translated fields like the Native Radio Button, Spinner, Check Box e.tc
+     *
+     * @param jsonObject -- Widget #JSONObject
+     * @return
+     */
+    public static String returnValue(JSONObject jsonObject) {
+        String value = "";
+        NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
+        if (nativeFormsProperties != null && jsonObject.has(TYPE) && (jsonObject.optString(TYPE).equals(JsonFormConstants.NATIVE_RADIO_BUTTON) || jsonObject.optString(TYPE).equals(JsonFormConstants.SPINNER) || jsonObject.optString(TYPE).equals(JsonFormConstants.CHECK_BOX))
+                && nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_VALUE_TRANSLATED)) {
+            JSONObject valueObject = jsonObject.optJSONObject(JsonFormConstants.VALUE);
+            if (valueObject != null) {
+                value = valueObject.optString(JsonFormConstants.VALUE, "");
             }
-        }
-
-        return stringList;
-    }
-
-    private String getStringValue(JSONObject jsonObject) throws JSONException {
-        StringBuilder value = new StringBuilder();
-        if (jsonObject != null) {
-            JSONArray jsonArray = jsonObject.getJSONArray(JsonFormConstants.VALUES);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                String stringValue = jsonArray.getString(i);
-                value.append(getValueFromSecondaryValues(stringValue));
-                value.append(", ");
-            }
-        }
-
-        return value.toString().replaceAll(", $", "");
-    }
-
-    private String getValueFromSecondaryValues(String itemString) {
-        String[] strings = itemString.split(":");
-        return strings.length > 1 ? strings[1] : strings[0];
-    }
-
-    protected String getKey(JSONObject object) throws JSONException {
-        return object.has(RuleConstant.IS_RULE_CHECK) && object.getBoolean(RuleConstant.IS_RULE_CHECK) ?
-                object.get(RuleConstant.STEP) + "_" + object.get(KEY) : VALUE;
-    }
-
-    protected Object getValue(JSONObject object) throws JSONException {
-        Object value;
-
-        if (object.has(VALUE)) {
-
-            value = object.opt(VALUE);
-
-            if (isNumberWidget(object)) {
-                value = TextUtils.isEmpty(object.optString(VALUE)) ? 0 :
-                        processNumberValues(object.optString(VALUE));
-            } else if (value != null && !TextUtils.isEmpty(object.getString(VALUE)) &&
-                    canHaveNumber(object)) {
-                value = processNumberValues(value);
-            }
-
         } else {
-            value = isNumberWidget(object) ? 0 : "";
-        }
-
-        return value;
-    }
-
-    protected boolean isNumberWidget(JSONObject object) throws JSONException {
-        return object.has(JsonFormConstants.EDIT_TYPE) &&
-                object.getString(JsonFormConstants.EDIT_TYPE).equals(JsonFormConstants.EDIT_TEXT_TYPE.NUMBER) ||
-                object.getString(TYPE).equals(JsonFormConstants.NUMBER_SELECTOR);
-    }
-
-    protected Object processNumberValues(Object object) {
-        Object value = object;
-        try {
-            if (value.toString().contains(".")) {
-                value = String.valueOf((float) Math.round(Float.valueOf(value.toString()) * 100) / 100);
-            } else {
-                value = Integer.valueOf(value.toString());
-            }
-        } catch (NumberFormatException e) {
-            Timber.e(e);
+            value = jsonObject.optString(JsonFormConstants.VALUE, "");
         }
         return value;
     }
@@ -953,6 +891,116 @@ public class Utils {
         stepFields.put(repeatingGroupCountObj);
         return repeatingGroupCountObj;
     }
+
+
+    /**
+     * @param This     function is to return JSON Object of i.e {"value":"widget_item_key","text":"translated_text_value"} for translatable_widgets_keys. It's not specific to the widget_type
+     * @param item
+     * @param itemType
+     * @return
+     * @throws JSONException
+     */
+
+    public static JSONObject generateTranslatableValue(String value, JSONObject item) throws JSONException {
+        JSONObject newValue = new JSONObject();
+        String itemType = item.has(JsonFormConstants.TYPE) ? item.getString(JsonFormConstants.TYPE) : "";
+        if (JsonFormConstants.NATIVE_RADIO_BUTTON.equals(itemType) || JsonFormConstants.SPINNER.equals(itemType) || JsonFormConstants.CHECK_BOX.equals(itemType)) {
+            if (item.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
+                JSONArray options = item.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
+                JSONObject selectedOption = formUtils.getOptionFromOptionsUsingKey(options, value);
+                newValue.put(JsonFormConstants.VALUE, value);
+                newValue.put(JsonFormConstants.TEXT, selectedOption.optString(JsonFormConstants.TRANSLATION_TEXT));
+                return newValue;
+            }
+            newValue.put(JsonFormConstants.VALUE, value);
+            newValue.put(JsonFormConstants.TEXT, item.optString(JsonFormConstants.TRANSLATION_TEXT));
+            return newValue;
+        }
+        return newValue;
+    }
+
+    public List<String> createExpansionPanelChildren(JSONArray jsonArray) throws JSONException {
+        List<String> stringList = new ArrayList<>();
+        String label;
+        for (int i = 0; i < jsonArray.length(); i++) {
+            if (!jsonArray.isNull(i)) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                if (jsonObject.has(JsonFormConstants.VALUES) && jsonObject.has(JsonFormConstants.LABEL) &&
+                        !"".equals(jsonObject.getString(JsonFormConstants.LABEL))) {
+                    //Get label and replace any colon in some labels. Not needed at this point
+                    label = jsonObject.getString(JsonFormConstants.LABEL).replace(":", "");
+                    stringList.add(label + ":" + getStringValue(jsonObject));
+                }
+            }
+        }
+
+        return stringList;
+    }
+
+    private String getStringValue(JSONObject jsonObject) throws JSONException {
+        StringBuilder value = new StringBuilder();
+        if (jsonObject != null) {
+            JSONArray jsonArray = jsonObject.getJSONArray(JsonFormConstants.VALUES);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                String stringValue = jsonArray.getString(i);
+                value.append(getValueFromSecondaryValues(stringValue));
+                value.append(", ");
+            }
+        }
+
+        return value.toString().replaceAll(", $", "");
+    }
+
+    private String getValueFromSecondaryValues(String itemString) {
+        String[] strings = itemString.split(":");
+        return strings.length > 1 ? strings[1] : strings[0];
+    }
+
+    protected String getKey(JSONObject object) throws JSONException {
+        return object.has(RuleConstant.IS_RULE_CHECK) && object.getBoolean(RuleConstant.IS_RULE_CHECK) ?
+                object.get(RuleConstant.STEP) + "_" + object.get(KEY) : VALUE;
+    }
+
+    protected Object getValue(JSONObject object) throws JSONException {
+        Object value;
+        if (object.has(VALUE)) {
+            value = returnValue(object);
+            if (isNumberWidget(object)) {
+                value = TextUtils.isEmpty(object.optString(VALUE)) ? 0 :
+                        processNumberValues(object.optString(VALUE));
+            } else if (value != null && !TextUtils.isEmpty(object.getString(VALUE)) &&
+                    canHaveNumber(object)) {
+                value = processNumberValues(value);
+            }
+
+        } else {
+            value = isNumberWidget(object) ? 0 : "";
+        }
+
+        return value;
+    }
+
+    protected boolean isNumberWidget(JSONObject object) throws JSONException {
+        return object.has(JsonFormConstants.EDIT_TYPE) &&
+                object.getString(JsonFormConstants.EDIT_TYPE).equals(JsonFormConstants.EDIT_TEXT_TYPE.NUMBER) ||
+                object.getString(TYPE).equals(JsonFormConstants.NUMBER_SELECTOR);
+    }
+
+    protected Object processNumberValues(Object object) {
+        Object value = object;
+        try {
+            if (value.toString().contains(".")) {
+                value = String.valueOf((float) Math.round(Float.valueOf(value.toString()) * 100) / 100);
+            } else {
+                value = Integer.valueOf(value.toString());
+            }
+        } catch (NumberFormatException e) {
+            Timber.e(e);
+        }
+        return value;
+    }
+
+
 }
 
 

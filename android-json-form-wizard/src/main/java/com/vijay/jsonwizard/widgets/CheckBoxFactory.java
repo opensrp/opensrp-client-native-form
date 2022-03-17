@@ -20,6 +20,7 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
+import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
@@ -150,7 +151,8 @@ public class CheckBoxFactory extends BaseFactory {
             }
 
         }
-        formUtils.updateValueToJSONArray(jsonObject, jsonObject.optString(JsonFormConstants.VALUE, ""));
+        //formUtils.updateValueToJSONArray(jsonObject, jsonObject.optString(JsonFormConstants.VALUE, ""));
+        formUtils.updateValueToJSONArray(jsonObject, Utils.returnValue(jsonObject));
         attachRefreshLogic(jsonObject, context, rootLayout);
         rootLayout.setTag(R.id.canvas_ids, canvasIds.toString());
 
