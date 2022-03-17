@@ -33,6 +33,7 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.utils.DateConverter;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.CustomTextView;
@@ -46,6 +47,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -130,6 +132,28 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
                 calendarDate.set(Calendar.YEAR, year);
                 if (calendarDate.getTimeInMillis() >= view.getMinDate() &&
                         calendarDate.getTimeInMillis() <= view.getMaxDate()) {
+
+                    boolean bikramSambatDate = true;
+                    if(bikramSambatDate)
+                    {
+                        String  date = DATE_FORMAT.format(calendarDate.getTime());
+                            try {
+                                DateConverter dateConverter = new DateConverter();
+                                String[] dateString = StringUtils.split(date, "-");
+                                String day = dateString[0];
+                                int monthValue = Integer.parseInt(dateString[1]);
+                                String month = monthValue <= 9 ? "0"+monthValue : ""+monthValue;
+                                String BSyear = dateString[2];
+                                String BSDate = dateConverter.convertAdToBs(day + "-" + month + "-" + BSyear);
+                                radioButton.setText(arrayString[0] + ": " + BSDate);
+                            }
+                            catch (Exception e)
+                            {
+                                e.printStackTrace();
+                            }
+
+                    }
+                    else
                     radioButton.setText(arrayString[0] + ": " + DATE_FORMAT.format(calendarDate.getTime()));
                     customTextView.setText(
                             createSpecifyText(context.getResources().getString(R.string.radio_button_tap_to_change)));

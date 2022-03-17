@@ -128,7 +128,7 @@ public class DatePickerFactoryTest extends BaseTest {
         assertEquals(1, viewList.size());
         verify(formActivity).addFormDataView(viewArgumentCaptor.capture());
         viewArgumentCaptor.getValue().performClick();
-        verify(factory).showDatePickerDialog(eq(formActivity), datePickerDialogArgumentCaptor.capture(), any(MaterialEditText.class));
+        verify(factory).showDatePickerDialog(eq(formActivity), datePickerDialogArgumentCaptor.capture(), any(MaterialEditText.class),null);
         verify(fragmentManager).beginTransaction();
         verify(fragmentManager).executePendingTransactions();
         DatePickerDialog datePickerDialog = datePickerDialogArgumentCaptor.getValue();

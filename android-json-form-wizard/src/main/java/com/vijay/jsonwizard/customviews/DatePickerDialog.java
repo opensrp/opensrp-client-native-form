@@ -32,7 +32,7 @@ import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
  * Created by Jason Rogena - jrogena@ona.io on 08/05/2017.
  */
 
-public class DatePickerDialog extends DialogFragment implements BikramSambatCalendar.OnDateSetListener {
+public class DatePickerDialog extends DialogFragment {
     private DatePicker datePicker;
     private android.app.DatePickerDialog.OnDateSetListener onDateSetListener;
     private DialogInterface.OnShowListener onShowListener;
@@ -43,7 +43,6 @@ public class DatePickerDialog extends DialogFragment implements BikramSambatCale
     private Context context;
     private char[] ymdOrder = new char[]{'d', 'm', 'y'};
     private boolean isNumericDatePicker = false;
-    private BikramSambatCalendar BSCalendar;
 
     public DatePickerDialog() {
         this.minDate = -1;
@@ -89,10 +88,7 @@ public class DatePickerDialog extends DialogFragment implements BikramSambatCale
         });
 
         datePicker = dialogView.findViewById(isNumericDatePicker ? R.id.date_picker_numeric : R.id.date_picker);
-        datePicker.setVisibility(View.GONE);
-//  BS logic from the gradle properties.
-        BSCalendar = dialogView.findViewById(R.id.calendar);
-        BSCalendar.setOnDateSetListener(this);
+        datePicker.setVisibility(View.VISIBLE);
 
         if (minDate != -1) {
             datePicker.setMinDate(minDate);
@@ -140,15 +136,8 @@ public class DatePickerDialog extends DialogFragment implements BikramSambatCale
             public void onClick(View v) {
                 if (onDateSetListener != null) {
                     DatePickerDialog.this.dismiss();
-                    boolean bikramSambat = true;
-                    if(bikramSambat)
-                    {
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.setTime(date);
-                        onDateSetListener.onDateSet(datePicker, calendar.get(Calendar.YEAR),
-                                calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
-                    }
-                    else
+
+
                     onDateSetListener.onDateSet(datePicker, datePicker.getYear(),
                             datePicker.getMonth(), datePicker.getDayOfMonth());
                 }
@@ -164,6 +153,14 @@ public class DatePickerDialog extends DialogFragment implements BikramSambatCale
 
     public void setMaxDate(long maxDate) {
         this.maxDate = maxDate;
+    }
+
+    public long getMinDate() {
+        return minDate;
+    }
+
+    public long getMaxDate() {
+        return maxDate;
     }
 
     public void setCalendarViewShown(boolean calendarViewShown) {
@@ -200,21 +197,4 @@ public class DatePickerDialog extends DialogFragment implements BikramSambatCale
         isNumericDatePicker = numericDatePicker;
     }
 
-    @Override
-    public void onDateClick(View calendar, int year, int month, int day) {
-        DateConverter dateConverter  = new DateConverter();
-        month = month+1;
-        String dayFiller = "";
-        String monthFiller = "";
-        if(day<=9)
-            dayFiller = "0";
-        if(month <=9)
-            monthFiller = "0";
-        date =  dateConverter.convertBsToAd(dayFiller+day+monthFiller+month+year);
-        setDate(date);
-
-//        Model model = dateConverter.getEnglishDate(year,month,day);
-//        Calendar convertedCalendar = DateConverter.convertModelToCalendar(model);
-//        setDate(convertedCalendar);
-    }
 }
