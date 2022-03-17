@@ -893,13 +893,7 @@ public class Utils {
     }
 
 
-    /**
-     * @param This     function is to return JSON Object of i.e {"value":"widget_item_key","text":"translated_text_value"} for translatable_widgets_keys. It's not specific to the widget_type
-     * @param item
-     * @param itemType
-     * @return
-     * @throws JSONException
-     */
+
 
     public static JSONObject generateTranslatableValue(String value, JSONObject item) throws JSONException {
         JSONObject newValue = new JSONObject();
