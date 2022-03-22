@@ -668,7 +668,7 @@ public class NumericDatePicker extends DatePicker {
                 case 11:
                     return Math.min(prevDay, 30);
                 default:
-                    return prevDay;
+                    return Math.min(prevDay, 31);
             }
         } else {
             return minDay;
