@@ -5,6 +5,7 @@ import android.content.Context;
 import com.vijay.jsonwizard.R;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -114,5 +115,30 @@ public class DateUtil {
 
         return duration;
 
+    }
+
+    public static Date convertToADDate(String BSFormat)
+    {
+        String[] dateString = BSFormat.trim().split("-");
+        int BSMonth = Integer.parseInt(dateString[1])-1;
+        String BSMonthString = BSMonth<=9 ? "0"+BSMonth : ""+BSMonth;
+        Date date = new DateConverter().convertBsToAd(dateString[2]+BSMonthString+dateString[0]);
+        return date;
+    }
+
+    public static String convertADtoBSDAte(String adDate)
+    {
+        try {
+            String BSdate = new DateConverter().convertAdToBs(adDate.trim());
+            String BSdateStrings[] = BSdate.split("-");
+            int monthDate = Integer.parseInt(BSdateStrings[1]) + 1;
+            String monthDateString = monthDate <= 9 ? "0" + monthDate : "" + monthDate;
+            return BSdateStrings[0]+"-" + monthDateString+"-" + BSdateStrings[2];
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return "";
+        }
     }
 }

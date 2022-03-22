@@ -71,6 +71,7 @@ import com.vijay.jsonwizard.interfaces.OnActivityRequestPermissionResultListener
 import com.vijay.jsonwizard.interfaces.OnActivityResultListener;
 import com.vijay.jsonwizard.rules.RuleConstant;
 import com.vijay.jsonwizard.utils.AppExecutors;
+import com.vijay.jsonwizard.utils.DateConverter;
 import com.vijay.jsonwizard.utils.ExObjectResult;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.NativeFormsProperties;
@@ -95,6 +96,7 @@ import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -1428,6 +1430,28 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 case JsonFormConstants.EXTENDED_RADIO_BUTTON:
                     boolean multiRelevance = object.optBoolean(JsonFormConstants.NATIVE_RADIO_BUTTON_MULTI_RELEVANCE, false);
                     result = formUtils.getRadioButtonResults(multiRelevance, object);
+                    break;
+                case JsonFormConstants.DATE_PICKER:
+                    NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
+                    boolean isBikramSambatEnabled = nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_DATEPICKER_IS_NEPAL);
+                    if(isBikramSambatEnabled && StringUtils.isNotBlank(getValue(object).toString()))
+                    {
+                        String[] BSDate = getValue(object).toString().split("-");
+                        if(BSDate[0].length() == 4) {
+                            int BSMonth = Integer.parseInt(BSDate[1]) - 1;
+                            String BSMonthString = BSMonth <= 9 ? "0" + BSMonth : "" + BSMonth;
+                            Date ADdate = new DateConverter().convertBsToAd(BSDate[2] + BSMonthString + BSDate[0]);
+                            String ADDateString = Utils.getStringFromDate(ADdate);
+                            result.put(getKey(object), ADDateString);
+                        }
+                        else
+                        {
+                            result.put(getKey(object), getValue(object));
+                        }
+
+                    }
+                    else
+                        result.put(getKey(object), getValue(object));
                     break;
                 default:
                     result.put(getKey(object), getValue(object));

@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,6 +58,8 @@ import java.util.Set;
 
 import timber.log.Timber;
 
+import static com.vijay.jsonwizard.constants.JsonFormConstants.DATE_PICKER;
+
 /**
  * @author Jason Rogena - jrogena@ona.io
  * @since 25/01/2017
@@ -71,7 +74,7 @@ public class DatePickerFactory implements FormWidgetFactory {
 
 
     @VisibleForTesting
-    protected void showDatePickerDialog(final AppCompatActivity context, DatePickerDialog datePickerDialog, final MaterialEditText editText, final TextView duration) {
+    protected void showDatePickerDialog(final AppCompatActivity context, final DatePickerDialog datePickerDialog, final MaterialEditText editText, final TextView duration) {
         NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
 
         if(!nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_DATEPICKER_IS_NEPAL)) {
@@ -104,6 +107,7 @@ public class DatePickerFactory implements FormWidgetFactory {
         {
             long minDate = datePickerDialog.getMinDate();
             long maxDate = datePickerDialog.getMaxDate();
+            final DateConverter dateConverter = new DateConverter();
             String date = editText.getText().toString();
             Model model = new Model();
             com.hornet.dateconverter.DatePicker.DatePickerDialog dpd;
@@ -112,18 +116,22 @@ public class DatePickerFactory implements FormWidgetFactory {
             public void onDateSet(com.hornet.dateconverter.DatePicker.DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
                 String BSDate;
                 String yearString = ""+year;
+                monthOfYear = monthOfYear+1;
                 String monthString = monthOfYear <=9 ? "0"+monthOfYear : ""+monthOfYear;
                 String dayString = dayOfMonth <= 9 ? "0"+dayOfMonth : ""+dayOfMonth;
-
                 BSDate = yearString+"-"+monthString+"-"+dayString;
+                Date date = dateConverter.convertBsToAd(dayString+monthString+yearString);
+                editText.setTag(R.id.locale_independent_value, DATE_FORMAT_LOCALE_INDEPENDENT.format(date.getTime()));
+                datePickerDialog.setDate(date);
                 updateDateText(context,editText,duration,BSDate);
+
             }
         };
             if(StringUtils.isNotBlank(date))
             {
                 String[] dateString = StringUtils.split(date, "-");
                 model.setDay(Integer.parseInt(dateString[2]));
-                model.setMonth(Integer.parseInt(dateString[1]));
+                model.setMonth(Integer.parseInt(dateString[1])-1);
                 model.setYear(Integer.parseInt(dateString[0]));
                 dpd = com.hornet.dateconverter.DatePicker.DatePickerDialog.newInstance(datePickerCallback,model);
 
@@ -131,7 +139,7 @@ public class DatePickerFactory implements FormWidgetFactory {
             else
                 dpd = com.hornet.dateconverter.DatePicker.DatePickerDialog.newInstance(datePickerCallback);
 
-            DateConverter dateConverter = new DateConverter();
+
             try {
                 if (minDate != -1) {
                     Date minRangeAD = new Date(minDate);
@@ -186,8 +194,19 @@ public class DatePickerFactory implements FormWidgetFactory {
                 {
                     if(!date.isEmpty())
                     {
+                            String[] BSDate = date.split("-");
+                            if(BSDate[0].length() ==2)
+                            {
+                                try {
+                                    String BSDateString = new DateConverter().convertAdToBs(date);
+                                    editText.setText(BSDateString);
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
 
-                            editText.setText(date);
+                            }
+                            else
+                                editText.setText(date);
                     }
                 }
                 else
@@ -204,7 +223,7 @@ public class DatePickerFactory implements FormWidgetFactory {
                 DateConverter dateConverter = new DateConverter();
                 String[] dateString = StringUtils.split(date, "-");
                 String day = dateString[2];
-                int month = Integer.parseInt(dateString[1])+1;
+                int month = Integer.parseInt(dateString[1]);
                 String monthString = month <=9 ? "0"+month : ""+month;
                 String year = dateString[0];
                 Date BSDate = dateConverter.convertBsToAd(day + monthString + year);

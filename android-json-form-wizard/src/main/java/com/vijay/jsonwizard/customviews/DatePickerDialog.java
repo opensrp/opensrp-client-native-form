@@ -177,6 +177,10 @@ public class DatePickerDialog extends DialogFragment {
         calendar.setTime(this.date);
         setDate(calendar);
     }
+    public Date getDate()
+    {
+        return  this.date;
+    }
 
     private void setDate(Calendar calendar) {
 

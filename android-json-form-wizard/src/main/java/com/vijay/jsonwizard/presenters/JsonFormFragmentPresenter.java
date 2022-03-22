@@ -455,26 +455,27 @@ public class JsonFormFragmentPresenter extends
                     if (editText.getParent() != null && ((ViewGroup) editText.getParent()).isShown()) {
 
                         String rawValue = (String) editText.getTag(R.id.raw_value);
-                        if (rawValue == null) {
+                        String type = (String) childView.getTag(R.id.type);
+                        if (rawValue == null && !JsonFormConstants.DATE_PICKER.equals(type)) {
                             rawValue = editText.getText().toString();
                         }
 
-                        handleWrongFormatInputs(validationStatus, fieldKey, rawValue);
-
-                        String type = (String) childView.getTag(R.id.type);
                         rawValue = JsonFormConstants.DATE_PICKER.equals(type) || JsonFormConstants.TIME_PICKER.equals(type) ? childView.getTag(R.id.locale_independent_value).toString() : rawValue;
-                       //boolean isBikramSambat = true;
-//                       if(isBikramSambat && JsonFormConstants.DATE_PICKER.equals(type) && !rawValue.isEmpty())
+ //                      boolean isBikramSambat = true;
+//                     if(isBikramSambat && JsonFormConstants.DATE_PICKER.equals(type) )
 //                       {
-////                           DateConverter converter = new DateConverter();
-////                           String[] BSDate = StringUtils.split(rawValue,"-");
-////                           if(BSDate.length == 3)
-////                           {
-//                              // Date date = converter.convertBsToAd(BSDate[2]+BSDate[1]+BSDate[0]);
-//                               //rawValue = Utils.getStringFromDate(date);
+//                           DateConverter converter = new DateConverter();
+//                           String[] BSDate = StringUtils.split(rawValue,"-");
+//                           String BSMonthString = (Integer.parseInt(BSDate[1])-1) <=9 ? "0"+(Integer.parseInt(BSDate[1])-1) : ""+(Integer.parseInt(BSDate[1])-1);
+//                           if(BSDate.length == 3)
+//                           {
+//                               Date date = converter.convertBsToAd(BSDate[2]+BSMonthString+BSDate[0]);
+//                               rawValue = Utils.getStringFromDate(date);
 //                               Log.d("date value",""+rawValue);
-//                         //  }
+//                           }
 //                       }
+
+                        handleWrongFormatInputs(validationStatus, fieldKey, rawValue);
                         getView().writeValue(mStepName, key, rawValue, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
 
                         //for repeating grp referenceEditText validation

@@ -11,8 +11,11 @@ import android.graphics.Color;
 import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +28,7 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.hornet.dateconverter.Model;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
@@ -35,6 +39,7 @@ import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.DateConverter;
+import com.vijay.jsonwizard.utils.DateUtil;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.NativeFormsProperties;
 import com.vijay.jsonwizard.utils.Utils;
@@ -119,12 +124,83 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
         datePickerDialog.setContext(context);
         setDate(datePickerDialog, radioButton, customTextView, context);
-        showDatePickerDialog((Activity) context, datePickerDialog, radioButton);
+        showDatePickerDialog((AppCompatActivity) context, datePickerDialog, radioButton,customTextView);
     }
 
     private static void setDate(DatePickerDialog datePickerDialog, final RadioButton radioButton,
                                 final CustomTextView customTextView, final Context context) {
         final String[] arrayString = radioButton.getText().toString().split(":");
+
+        NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
+        boolean bikramSambatDate = nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_DATEPICKER_IS_NEPAL);
+        if(datePickerDialog.getDate()!= null && bikramSambatDate) {
+            Calendar calendarDate = Calendar.getInstance();
+            calendarDate.setTime(datePickerDialog.getDate());
+
+            if (calendarDate.getTimeInMillis() >= datePickerDialog.getMinDate() &&
+                    calendarDate.getTimeInMillis() <= datePickerDialog.getMaxDate()) {
+
+
+                    String date = DATE_FORMAT.format(calendarDate.getTime());
+                    try {
+                        DateConverter dateConverter = new DateConverter();
+                        String[] dateString = StringUtils.split(date, "-");
+                        String day = dateString[0];
+                        int monthValue = Integer.parseInt(dateString[1]);
+                        String month = monthValue <= 9 ? "0" + monthValue : "" + monthValue;
+                        String BSyear = dateString[2];
+                        String BSDate = dateConverter.convertAdToBs(day + "-" + month + "-" + BSyear);
+                        radioButton.setText(arrayString[0] + ": " + BSDate);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+
+                customTextView.setText(
+                        createSpecifyText(context.getResources().getString(R.string.radio_button_tap_to_change)));
+
+                if (context instanceof JsonFormActivity) {
+                    HashMap<String, String> map = new HashMap<>();
+                    map.put(customTextView.getTag(R.id.key).toString(),
+                            customTextView.getTag(R.id.childKey) + ":" + DATE_FORMAT.format(calendarDate.getTime()));
+
+                    Intent intent = new Intent(JsonFormConstants.INTENT_ACTION.JSON_FORM_ACTIVITY);
+                    intent.putExtra(JsonFormConstants.INTENT_KEY.MESSAGE, map);
+                    intent.putExtra(JsonFormConstants.STEPNAME, ((String) customTextView.getTag(R.id.specify_step_name)));
+
+                    intent.putExtra(JsonFormConstants.INTENT_KEY.MESSAGE_TYPE,
+                            JsonFormConstants.MESSAGE_TYPE.GLOBAL_VALUES);
+
+                    ((JsonFormActivity) context).getLocalBroadcastManager().sendBroadcast(intent);
+                }
+                String key = (String) customTextView.getTag(R.id.key);
+                String childKey = (String) customTextView.getTag(R.id.childKey);
+                String stepName = (String) customTextView.getTag(R.id.specify_step_name);
+                Context contextView = (Context) customTextView.getTag(R.id.specify_context);
+
+                JSONArray fields = new FormUtils().getFormFields(stepName, contextView);
+                if (fields.length() > 0) {
+                    for (int i = 0; i < fields.length(); i++) {
+                        try {
+                            JSONObject widget = fields.getJSONObject(i);
+                            if (widget != null && widget.getString(JsonFormConstants.KEY).equals(key)) {
+                                radioButtonOptionAssignSecondaryValue(widget, childKey, calendarDate);
+                            }
+                            if (widget != null && widget.getString(JsonFormConstants.KEY)
+                                    .equals(key + JsonFormConstants.SPECIFY_DATE_HIDDEN_FIELD_SUFFIX)) {
+                                assignHiddenDateValue(widget, calendarDate);
+                            }
+                        } catch (JSONException e) {
+                            Timber.e(e, "--> setDate");
+                        }
+                    }
+                }
+
+            } else {
+                radioButton.setText(arrayString[0]);
+            }
+        }
+
         datePickerDialog.setOnDateSetListener(new android.app.DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
@@ -204,18 +280,107 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         });
     }
 
-    private static void showDatePickerDialog(Activity context, DatePickerDialog datePickerDialog, RadioButton radioButton) {
-        FragmentTransaction ft = context.getFragmentManager().beginTransaction();
-        Fragment prev = context.getFragmentManager().findFragmentByTag(TAG);
-        if (prev != null) {
-            ft.remove(prev);
-        }
-
-        ft.addToBackStack(null);
-
-        datePickerDialog.show(ft, TAG);
+    private static void showDatePickerDialog(final AppCompatActivity context, final DatePickerDialog datePickerDialog, final RadioButton radioButton, final CustomTextView customTextView) {
+        NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
         Calendar calendar = getDate(radioButton);
-        datePickerDialog.setDate(calendar.getTime());
+        if (!nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_DATEPICKER_IS_NEPAL)) {
+            FragmentTransaction ft = context.getFragmentManager().beginTransaction();
+            Fragment prev = context.getFragmentManager().findFragmentByTag(TAG);
+            if (prev != null) {
+                ft.remove(prev);
+            }
+
+            ft.addToBackStack(null);
+
+            datePickerDialog.show(ft, TAG);
+
+            datePickerDialog.setDate(calendar.getTime());
+        }
+        else
+        {
+
+            try {
+                long minDate = datePickerDialog.getMinDate();
+                long maxDate = datePickerDialog.getMaxDate();
+                final DateConverter dateConverter = new DateConverter();
+
+                final String date = dateConverter.convertAdToBs(Utils.getStringFromDate(calendar.getTime()));
+                Model model = new Model();
+                com.hornet.dateconverter.DatePicker.DatePickerDialog dpd;
+                com.hornet.dateconverter.DatePicker.DatePickerDialog.OnDateSetListener datePickerCallback = new com.hornet.dateconverter.DatePicker.DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(com.hornet.dateconverter.DatePicker.DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
+
+                        String yearString = "" + year;
+                        monthOfYear = monthOfYear + 1;
+                        String monthString = monthOfYear <= 9 ? "0" + monthOfYear : "" + monthOfYear;
+                        String dayString = dayOfMonth <= 9 ? "0" + dayOfMonth : "" + dayOfMonth;
+                        Date ADdate = dateConverter.convertBsToAd(dayString + monthString + yearString);
+                        datePickerDialog.setDate(ADdate);
+                        setDate(datePickerDialog,radioButton,customTextView,context);
+
+
+                    }
+                };
+
+            if(StringUtils.isNotBlank(date))
+            {
+                String[] dateString = StringUtils.split(date, "-");
+                model.setDay(Integer.parseInt(dateString[2]));
+                model.setMonth(Integer.parseInt(dateString[1])-1);
+                model.setYear(Integer.parseInt(dateString[0]));
+                dpd = com.hornet.dateconverter.DatePicker.DatePickerDialog.newInstance(datePickerCallback,model);
+
+            }
+
+            else
+                dpd = com.hornet.dateconverter.DatePicker.DatePickerDialog.newInstance(datePickerCallback);
+
+
+
+
+
+                if (maxDate != -1) {
+                    Date maxRangeAD = new Date(maxDate);
+                    String maxRangeADString = Utils.getStringFromDate(maxRangeAD);
+                    String bsMaxRange = dateConverter.convertAdToBs(maxRangeADString);
+
+
+                    String[] bsDateMax = bsMaxRange.split("-");
+                    Model maxModel = new Model();
+                    maxModel.setYear(Integer.parseInt(bsDateMax[0]));
+                    maxModel.setMonth(Integer.parseInt(bsDateMax[1])-1);
+                    maxModel.setDay(Integer.parseInt(bsDateMax[2]));
+                    dpd.setMaxDate(maxModel);
+
+                    Log.d("max date", bsMaxRange);
+                    Log.d("max date AD",maxRangeADString);
+                }
+
+                if (minDate != -1) {
+                    Date minRangeAD = new Date(minDate);
+                    String minRangeADString = Utils.getStringFromDate(minRangeAD);
+                    String bsMinRange = dateConverter.convertAdToBs(minRangeADString);
+                    String[] bsDateMin = bsMinRange.split("-");
+                    Model minModel = new Model();
+                    minModel.setYear(Integer.parseInt(bsDateMin[0]));
+                    minModel.setMonth(Integer.parseInt(bsDateMin[1])-1);
+                    minModel.setDay(Integer.parseInt(bsDateMin[2]));
+                    dpd.setMinDate(minModel);
+                    Log.d("min date", bsMinRange);
+                    Log.d("min date AD",minRangeADString);
+
+
+                }
+                dpd.show(context.getSupportFragmentManager(),"ssdsd");
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+
+
+        }
     }
 
     private static String createSpecifyText(String text) {
@@ -257,6 +422,15 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         if (arrayString.length > 1) {
             dateString = arrayString[1];
         }
+        NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
+        boolean bikramSambatDate = nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_DATEPICKER_IS_NEPAL);
+        if(bikramSambatDate && StringUtils.isNotBlank(dateString))
+        {
+            Date date = DateUtil.convertToADDate(dateString);
+            String ADDateString =  Utils.getStringFromDate(date);
+            return FormUtils.getDate(ADDateString);
+        }
+
         return FormUtils.getDate(dateString);
     }
 
@@ -624,11 +798,23 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
                         this.stepName
                 );
             }
-
             addPopupRelevantTags(radioButton, jsonObject, popup, item, this.context, this.formFragment, this.stepName, listener);
             radioButton.setTextColor(Color.parseColor(optionTextColor));
             radioButton.setTextSize(FormUtils.getValueFromSpOrDpOrPx(optionTextSize, this.context));
-            radioButton.setText(optionText);
+
+            NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
+            boolean bikramSambatDate = nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_DATEPICKER_IS_NEPAL);
+            String[] optionTextStrings = optionText.split(":");
+
+            if(bikramSambatDate && optionTextStrings.length>1)
+            {
+                String BSdate = DateUtil.convertADtoBSDAte(optionTextStrings[1]);
+                radioButton.setText(optionTextStrings[0]+":"+BSdate);
+            }
+            else
+                radioButton.setText(optionText);
+
+
             radioButton.setEnabled(!readOnly);
 
             // Make sure to register listener after setting the value to avoid unnecessary onCheckedChange call
