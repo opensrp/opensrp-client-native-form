@@ -1,5 +1,7 @@
 package com.vijay.jsonwizard.customviews;
 
+import static org.mockito.Mockito.mock;
+
 import android.util.AttributeSet;
 import android.widget.DatePicker;
 import android.widget.NumberPicker;
@@ -12,7 +14,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.util.ReflectionHelpers;
@@ -441,5 +445,71 @@ public class NumericDatePickerTest extends BaseTest {
         Assert.assertEquals(30, datePicker.getDayOfMonth());
         Assert.assertEquals(Calendar.OCTOBER, datePicker.getMonth());
 
+    }
+
+    @Test
+    public void testGetPreviousDayReturns1WhenDateSelectedIsLowerThanZero() throws Exception {
+        NumericDatePicker datePicker1 = mock(NumericDatePicker.class);
+        Mockito.when(datePicker1.getMonth()).thenReturn(10); // November
+        Mockito.when(datePicker1.getYear()).thenReturn(2022);
+
+        int prevDay = -2;
+        int minDay = 1;
+        Assert.assertEquals(1, Whitebox.invokeMethod(datePicker1, "getPreviousDay", prevDay, minDay));
+    }
+
+    @Test
+    public void testGetPreviousDayReturnsMinDayWhenDateSelectedIsLowerThanLastDayOfTheMonth() throws Exception {
+        NumericDatePicker datePicker1 = mock(NumericDatePicker.class);
+        Mockito.when(datePicker1.getMonth()).thenReturn(10); // November
+        Mockito.when(datePicker1.getYear()).thenReturn(2022);
+
+        int prevDay = 10;
+        int minDay = 30;
+        Assert.assertEquals(10, Whitebox.invokeMethod(datePicker1, "getPreviousDay", prevDay, minDay));
+    }
+
+    @Test
+    public void testGetPreviousDayReturns30WhenMonthIs30DaysLongAndDateSelectedIsHigher() throws Exception {
+        NumericDatePicker datePicker1 = mock(NumericDatePicker.class);
+        Mockito.when(datePicker1.getMonth()).thenReturn(3); // April
+        Mockito.when(datePicker1.getYear()).thenReturn(2022);
+
+        int prevDay = 31;
+        int minDay = 30;
+        Assert.assertEquals(30, Whitebox.invokeMethod(datePicker1, "getPreviousDay", prevDay, minDay));
+    }
+
+    @Test
+    public void testGetPreviousDayReturns31WhenMonthIs31DaysLongAndDateSelectedIsHigher() throws Exception {
+        NumericDatePicker datePicker1 = mock(NumericDatePicker.class);
+        Mockito.when(datePicker1.getMonth()).thenReturn(0); // January
+        Mockito.when(datePicker1.getYear()).thenReturn(2022);
+
+        int prevDay = 35;
+        int minDay = 31;
+        Assert.assertEquals(31, Whitebox.invokeMethod(datePicker1, "getPreviousDay", prevDay, minDay));
+    }
+
+    @Test
+    public void testGetPreviousDayReturns28WhenMonthIsFebruaryAndYearIsNotALeapYearAndDateSelectedIsHigher() throws Exception {
+        NumericDatePicker datePicker1 = mock(NumericDatePicker.class);
+        Mockito.when(datePicker1.getMonth()).thenReturn(1);
+        Mockito.when(datePicker1.getYear()).thenReturn(2022);
+
+        int prevDay = 31;
+        int minDay = 28;
+        Assert.assertEquals(28, Whitebox.invokeMethod(datePicker1, "getPreviousDay", prevDay, minDay));
+    }
+
+    @Test
+    public void testGetPreviousDayReturns29WhenMonthIsFebruaryAndYearIsALeapYearAndDateSelectedIsHigher() throws Exception {
+        NumericDatePicker datePicker1 = mock(NumericDatePicker.class);
+        Mockito.when(datePicker1.getMonth()).thenReturn(1);
+        Mockito.when(datePicker1.getYear()).thenReturn(2020);
+
+        int prevDay = 31;
+        int minDay = 29;
+        Assert.assertEquals(29, Whitebox.invokeMethod(datePicker1, "getPreviousDay", prevDay, minDay));
     }
 }
