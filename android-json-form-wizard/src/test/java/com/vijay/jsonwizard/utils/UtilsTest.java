@@ -145,6 +145,13 @@ public class UtilsTest extends BaseTest {
     }
 
     @Test
+    public void testGetDurationWithMonths() {
+        String duration = Utils.getDuration("10-01-2021", "01-12-2021");
+        Assert.assertNotNull(duration);
+        Assert.assertEquals("10m 3w", duration);
+    }
+
+    @Test
     public void testBuildRulesWithUniqueIdShouldUpdateRelevanceRulesEngineObjectAccordingly() throws JSONException, IOException {
         String ruleType = "relevance";
         JSONObject element = new JSONObject();
