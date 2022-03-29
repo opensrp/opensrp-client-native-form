@@ -12,6 +12,8 @@ import com.vijay.jsonwizard.NativeFormLibrary;
 import com.vijay.jsonwizard.TestUtils;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.robolectric.RuntimeEnvironment;
@@ -27,6 +29,13 @@ import java.util.ResourceBundle;
 public class NativeFormLangUtilsTest extends BaseTest {
 
     private final TestUtils testUtils = new TestUtils();
+    private Context context;
+
+    @Before
+    public void setUp() {
+        context = RuntimeEnvironment.application;
+
+    }
 
     @Test
     public void testJsonFormTranslationShouldTranslateForm() {
@@ -118,6 +127,16 @@ public class NativeFormLangUtilsTest extends BaseTest {
 
         ResourceBundle mlsResourceBundle = NativeFormLangUtils.getResourceBundleFromRepository(RuntimeEnvironment.application, interpolatedJsonForm);
         assertFalse(mlsResourceBundle.getKeys().hasMoreElements());
+    }
+
+    @Test
+    public void testGetDatabaseString() {
+        String stringToTranslate = "form_strings.step1.danger_signs.danger_bleeding.text", expected_string = "Danger Bleeding";
+        Locale locale = new Locale(Locale.ENGLISH.getLanguage());
+        ResourceBundle bundle = ResourceBundle.getBundle("form_strings", locale);
+        Assert.assertEquals(bundle.containsKey(stringToTranslate), true);
+        Assert.assertEquals(expected_string, NativeFormLangUtils.translateDatabaseString(stringToTranslate, context));
+
     }
 
 }
