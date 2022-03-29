@@ -131,11 +131,15 @@ public class NativeFormLangUtilsTest extends BaseTest {
 
     @Test
     public void testGetDatabaseString() {
-        String stringToTranslate = "form_strings.step1.danger_signs.danger_bleeding.text", expected_string = "Danger Bleeding";
+        String stringToTranslate = "form_strings.step1.danger_signs.danger_bleeding.text";
+        String expected_string = "Danger Bleeding";
+        String actual = "";
         Locale locale = new Locale(Locale.ENGLISH.getLanguage());
         ResourceBundle bundle = ResourceBundle.getBundle("form_strings", locale);
-        Assert.assertEquals(bundle.containsKey(stringToTranslate), true);
-        Assert.assertEquals(expected_string, NativeFormLangUtils.translateDatabaseString(stringToTranslate, context));
+        boolean keyIsFound = bundle.containsKey(stringToTranslate);
+        Assert.assertEquals(keyIsFound, true);
+        actual = NativeFormLangUtils.translateDatabaseString(stringToTranslate, context);
+        Assert.assertEquals(expected_string, actual);
 
     }
 
