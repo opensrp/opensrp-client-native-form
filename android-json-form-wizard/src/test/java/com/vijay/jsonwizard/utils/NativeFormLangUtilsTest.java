@@ -137,9 +137,9 @@ public class NativeFormLangUtilsTest extends BaseTest {
         Locale locale = new Locale(Locale.ENGLISH.getLanguage());
         ResourceBundle bundle = ResourceBundle.getBundle("form_strings", locale);
         boolean keyIsFound = bundle.containsKey(stringToTranslate);
-        Assert.assertEquals(keyIsFound, true);
+        Assert.assertTrue(keyIsFound);
         actual = NativeFormLangUtils.translateDatabaseString(stringToTranslate, context);
-        Assert.assertEquals(expected_string, actual);
+        assertEquals(expected_string, actual);
 
     }
 
