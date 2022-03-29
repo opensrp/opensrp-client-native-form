@@ -657,7 +657,19 @@ public class NumericDatePicker extends DatePicker {
 
     private int getPreviousDay(int prevDay, int minDay) {
         if (prevDay > 0) {
-            return getMonth() + 1 == 2 ? Math.min(prevDay, (NumericDatePickerHelper.isLeapYear(getYear()) ? 29 : 28)) : prevDay;
+            int selectedMonth = getMonth() + 1;
+
+            switch (selectedMonth) {
+                case 2:
+                    return Math.min(prevDay, (NumericDatePickerHelper.isLeapYear(getYear()) ? 29 : 28));
+                case 4:
+                case 6:
+                case 9:
+                case 11:
+                    return Math.min(prevDay, 30);
+                default:
+                    return Math.min(prevDay, 31);
+            }
         } else {
             return minDay;
         }
