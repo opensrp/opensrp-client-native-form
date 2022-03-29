@@ -1,5 +1,7 @@
 package com.vijay.jsonwizard.utils;
 
+import static junit.framework.TestCase.assertEquals;
+
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.FragmentTransaction;
@@ -14,6 +16,7 @@ import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.ExpansionPanelItemModel;
 import com.vijay.jsonwizard.domain.ExpansionPanelValuesModel;
+import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.OnFormFetchedCallback;
 import com.vijay.jsonwizard.model.DynamicLabelInfo;
 import com.vijay.jsonwizard.views.CustomTextView;
@@ -26,10 +29,12 @@ import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.client.utils.contract.ClientFormContract;
@@ -42,12 +47,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import static junit.framework.TestCase.assertEquals;
-
+@RunWith(MockitoJUnitRunner.class)
 public class FormUtilsTest extends BaseTest {
-    private FormUtils formUtils;
-    private JSONObject jsonFormObject;
-
     private final String spinnerWithOptions = " {\n" +
             "        \"key\": \"response_spinner_with_options\",\n" +
             "        \"openmrs_entity_parent\": \"\",\n" +
@@ -84,7 +85,6 @@ public class FormUtilsTest extends BaseTest {
             "          \"err\": \"Please enter response\"\n" +
             "        }\n" +
             "      }";
-
     private final String spinnerWithoutOptions = " {\n" +
             "        \"key\": \"user_spinner\",\n" +
             "        \"openmrs_entity\": \"openmrs_entity\",\n" +
@@ -110,13 +110,18 @@ public class FormUtilsTest extends BaseTest {
             "        },\n" +
             "        \"value\": \"user_one\"\n" +
             "      }";
-
-    private String jsonForm = "{\"count\":\"4\",\"encounter_type\":\"Test\",\"entity_id\":\"\",\"relational_id\":\"\",\"validate_on_submit\":true,\"show_errors_on_submit\":true,\"metadata\":{\"start\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"start\",\"openmrs_entity_id\":\"163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"end\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"end\",\"openmrs_entity_id\":\"163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"today\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"encounter\",\"openmrs_entity_id\":\"encounter_date\"},\"deviceid\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"deviceid\",\"openmrs_entity_id\":\"163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"subscriberid\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"subscriberid\",\"openmrs_entity_id\":\"163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"simserial\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"simserial\",\"openmrs_entity_id\":\"163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"phonenumber\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"phonenumber\",\"openmrs_entity_id\":\"163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"encounter_location\":\"\",\"look_up\":{\"entity_id\":\"\",\"value\":\"\"}},\"step1\":{\"title\":\"Test\",\"next\":\"step2\",\"fields\":[{\"key\":\"delivery_complications\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"161641AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_data_type\":\"select one\",\"type\":\"check_box\",\"label\":\"Any delivery complications?\",\"label_text_size\":\"18sp\",\"label_text_color\":\"#FF9800\",\"hint\":\"Any delivery complications?\",\"read_only\":true,\"editable\":true,\"exclusive\":[\"none\"],\"options\":[{\"key\":\"none\",\"text\":\"None\",\"value\":false,\"openmrs_choice_id\":\"160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},{\"key\":\"severe_bleeding\",\"text\":\"Severe bleeding/Hemorrhage\",\"value\":false,\"openmrs_choice_id\":\"160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"text_color\":\"#000000\"},{\"key\":\"placenta_previa\",\"text\":\"Placenta previa\",\"value\":false,\"openmrs_choice_id\":\"160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"text_size\":\"15sp\"},{\"key\":\"cord_prolapse\",\"text\":\"Cord prolapse\",\"value\":false,\"openmrs_choice_id\":\"160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"text_size\":\"10sp\"},{\"key\":\"prolonged_obstructed_labour\",\"text\":\"Prolonged/obstructed labour\",\"value\":false,\"openmrs_choice_id\":\"160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},{\"key\":\"abnormal_presentation\",\"text\":\"Abnormal presentation\",\"value\":false,\"openmrs_choice_id\":\"160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"text_color\":\"#FF9800\"},{\"key\":\"perineal_tear\",\"text\":\"Perineal tear (2, 3 or 4th degree)\",\"value\":false,\"openmrs_choice_id\":\"160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},{\"key\":\"Other\",\"text\":\"Other\",\"value\":false,\"openmrs_choice_id\":\"160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}],\"v_required\":{\"value\":\"false\"}},{\"key\":\"first_name\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"person\",\"openmrs_entity_id\":\"first_name\",\"type\":\"edit_text\",\"hidden\":true,\"hint\":\"First name\",\"edit_type\":\"name\",\"v_required\":{\"value\":\"true\",\"err\":\"Please enter the first name\"},\"v_regex\":{\"value\":\"[A-Za-z\\\\s\\\\.\\\\-]*\",\"err\":\"Please enter a valid name\"},\"calculation\":{\"rules-engine\":{\"ex-rules\":{\"rules-file\":\"sample-calculation-rules.yml\"}}}}]},\"step2\":{\"title\":\"Test 2\",\"next\":\"step3\",\"fields\":[{\"key\":\"fetal_heartbeat\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"type\":\"native_radio\",\"label\":\"Which medications is she still taking ? Which medications is she still taking ?\",\"label_text_style\":\"bold\",\"text_color\":\"#000000\",\"extra_rel\":true,\"has_extra_rel\":\"yes\",\"options\":[{\"key\":\"yes\",\"text\":\"Yes\",\"value\":false,\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"specify_info\":\"specify fetal heart rate (bpm)...\",\"specify_widget\":\"normal_edit_text\",\"specify_info_color\":\"#8C8C8C\",\"secondary_suffix\":\"bpm\",\"content_form\":\"fetal_heartbeat_sub_form\"},{\"key\":\"no\",\"text\":\"No\",\"value\":false,\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"specify_info\":\"specify fetal heart rate (bpm)...\",\"specify_widget\":\"check_box\",\"specify_info_color\":\"#8C8C8C\",\"content_form\":\"fetal_heartbeat_sub_form\"}],\"v_required\":{\"value\":true,\"err\":\"Please specify if fetal heartbeat is present.\"}},{\"key\":\"fetal_heart_beat_rate_value\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"type\":\"normal_edit_text\",\"edit_text_style\":\"bordered\",\"edit_type\":\"number\"}]},\"step3\":{\"title\":\"Maternal Exam\",\"next\":\"step4\",\"fields\":[{\"key\":\"spacer\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"spacer\",\"type\":\"spacer\",\"spacer_height\":\"20dp\"},{\"key\":\"gravida_label\",\"type\":\"label\",\"label_text_style\":\"bold\",\"text\":\"No. of pregnancies (including this pregnancy)\",\"text_color\":\"#000000\",\"v_required\":{\"value\":true}}]}}";
+    private final String jsonForm = "{\"count\":\"4\",\"encounter_type\":\"Test\",\"entity_id\":\"\",\"relational_id\":\"\",\"validate_on_submit\":true,\"show_errors_on_submit\":true,\"metadata\":{\"start\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"start\",\"openmrs_entity_id\":\"163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"end\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"end\",\"openmrs_entity_id\":\"163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"today\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"encounter\",\"openmrs_entity_id\":\"encounter_date\"},\"deviceid\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"deviceid\",\"openmrs_entity_id\":\"163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"subscriberid\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"subscriberid\",\"openmrs_entity_id\":\"163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"simserial\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"simserial\",\"openmrs_entity_id\":\"163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"phonenumber\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"phonenumber\",\"openmrs_entity_id\":\"163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"encounter_location\":\"\",\"look_up\":{\"entity_id\":\"\",\"value\":\"\"}},\"step1\":{\"title\":\"Test\",\"next\":\"step2\",\"fields\":[{\"key\":\"delivery_complications\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"161641AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_data_type\":\"select one\",\"type\":\"check_box\",\"label\":\"Any delivery complications?\",\"label_text_size\":\"18sp\",\"label_text_color\":\"#FF9800\",\"hint\":\"Any delivery complications?\",\"read_only\":true,\"editable\":true,\"exclusive\":[\"none\"],\"options\":[{\"key\":\"none\",\"text\":\"None\",\"value\":false,\"openmrs_choice_id\":\"160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},{\"key\":\"severe_bleeding\",\"text\":\"Severe bleeding/Hemorrhage\",\"value\":false,\"openmrs_choice_id\":\"160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"text_color\":\"#000000\"},{\"key\":\"placenta_previa\",\"text\":\"Placenta previa\",\"value\":false,\"openmrs_choice_id\":\"160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"text_size\":\"15sp\"},{\"key\":\"cord_prolapse\",\"text\":\"Cord prolapse\",\"value\":false,\"openmrs_choice_id\":\"160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"text_size\":\"10sp\"},{\"key\":\"prolonged_obstructed_labour\",\"text\":\"Prolonged/obstructed labour\",\"value\":false,\"openmrs_choice_id\":\"160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},{\"key\":\"abnormal_presentation\",\"text\":\"Abnormal presentation\",\"value\":false,\"openmrs_choice_id\":\"160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"text_color\":\"#FF9800\"},{\"key\":\"perineal_tear\",\"text\":\"Perineal tear (2, 3 or 4th degree)\",\"value\":false,\"openmrs_choice_id\":\"160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},{\"key\":\"Other\",\"text\":\"Other\",\"value\":false,\"openmrs_choice_id\":\"160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}],\"v_required\":{\"value\":\"false\"}},{\"key\":\"first_name\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"person\",\"openmrs_entity_id\":\"first_name\",\"type\":\"edit_text\",\"hidden\":true,\"hint\":\"First name\",\"edit_type\":\"name\",\"v_required\":{\"value\":\"true\",\"err\":\"Please enter the first name\"},\"v_regex\":{\"value\":\"[A-Za-z\\\\s\\\\.\\\\-]*\",\"err\":\"Please enter a valid name\"},\"calculation\":{\"rules-engine\":{\"ex-rules\":{\"rules-file\":\"sample-calculation-rules.yml\"}}}}]},\"step2\":{\"title\":\"Test 2\",\"next\":\"step3\",\"fields\":[{\"key\":\"fetal_heartbeat\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"type\":\"native_radio\",\"label\":\"Which medications is she still taking ? Which medications is she still taking ?\",\"label_text_style\":\"bold\",\"text_color\":\"#000000\",\"extra_rel\":true,\"has_extra_rel\":\"yes\",\"options\":[{\"key\":\"yes\",\"text\":\"Yes\",\"value\":false,\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"specify_info\":\"specify fetal heart rate (bpm)...\",\"specify_widget\":\"normal_edit_text\",\"specify_info_color\":\"#8C8C8C\",\"secondary_suffix\":\"bpm\",\"content_form\":\"fetal_heartbeat_sub_form\"},{\"key\":\"no\",\"text\":\"No\",\"value\":false,\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"specify_info\":\"specify fetal heart rate (bpm)...\",\"specify_widget\":\"check_box\",\"specify_info_color\":\"#8C8C8C\",\"content_form\":\"fetal_heartbeat_sub_form\"}],\"v_required\":{\"value\":true,\"err\":\"Please specify if fetal heartbeat is present.\"}},{\"key\":\"fetal_heart_beat_rate_value\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"type\":\"normal_edit_text\",\"edit_text_style\":\"bordered\",\"edit_type\":\"number\"}]},\"step3\":{\"title\":\"Maternal Exam\",\"next\":\"step4\",\"fields\":[{\"key\":\"spacer\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"spacer\",\"type\":\"spacer\",\"spacer_height\":\"20dp\"},{\"key\":\"gravida_label\",\"type\":\"label\",\"label_text_style\":\"bold\",\"text\":\"No. of pregnancies (including this pregnancy)\",\"text_color\":\"#000000\",\"v_required\":{\"value\":true}}]}}";
+    private FormUtils mockedFormUtils;
+    private FormUtils formUtils;
+    private JSONObject jsonFormObject;
+    private NativeFormsProperties nativeFormsProperties;
 
     @Before
     public void setUp() throws JSONException {
         MockitoAnnotations.initMocks(this);
         formUtils = new FormUtils();
+        mockedFormUtils = Mockito.mock(FormUtils.class);
+        nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
         jsonFormObject = new JSONObject(jsonForm);
     }
 
@@ -714,13 +719,13 @@ public class FormUtilsTest extends BaseTest {
         Mockito.verify(mainLayout, Mockito.only()).clearFocus();
         Mockito.verify(mockFragmentTransaction).add(ArgumentMatchers.any(DialogFragment.class), ArgumentMatchers.eq("GenericPopup"));
     }
-  
+
     @Test
     public void testGetDynamicLabelInfoList() throws JSONException {
         JSONArray jsonArray = new JSONArray("[{\"dynamic_label_title\": \"sample title\",\"dynamic_label_text\": \"sample text\",\"dynamic_label_image_src\": \"img/img.png\"}]");
         ArrayList<DynamicLabelInfo> expectedList = new ArrayList<>();
         expectedList.add(new DynamicLabelInfo("sample title", "sample text", "img/img.png"));
-        ArrayList<DynamicLabelInfo> actualList =  FormUtils.getDynamicLabelInfoList(jsonArray);
+        ArrayList<DynamicLabelInfo> actualList = FormUtils.getDynamicLabelInfoList(jsonArray);
         Assert.assertEquals(expectedList.get(0).getDynamicLabelText(), actualList.get(0).getDynamicLabelText());
         Assert.assertEquals(expectedList.get(0).getDynamicLabelTitle(), actualList.get(0).getDynamicLabelTitle());
         Assert.assertEquals(expectedList.get(0).getDynamicLabelImageSrc(), actualList.get(0).getDynamicLabelImageSrc());
@@ -731,5 +736,24 @@ public class FormUtilsTest extends BaseTest {
         JSONObject inputJson = FormUtils.createOptiBPDataObject("clientId", "clientOpenSRPId");
 
         Assert.assertEquals(inputJson.toString(), "{\"clientId\":\"clientId\",\"clientOpenSRPId\":\"clientOpenSRPId\"}");
+    }
+
+    @Test
+    public void testUpdateValueToJsonArray() throws Exception {
+        String item = "{\n" +
+                "  \"key\": \"resThree3\",\n" +
+                "  \"text\": \"Abnormal\",\n" +
+                "  \"specify_info\": \"Specify\",\n" +
+                "  \"specify_info_color\": \"#b5b5b5\",\n" +
+                "  \"specify_widget\": \"check_box\",\n" +
+                "  \"content_form\": \"child_enrollment_third_sub_form\",\n" +
+                "  \"secondary_suffix\": \"bpm\",\n" +
+                "  \"content_form_location\": \"\",\n" +
+                "  \"translated_text\": \"form_strings.step1.danger_signs.danger_bleeding.text\"\n" +
+                "}";
+        NativeFormsProperties mockedNativeProps = Mockito.mock(NativeFormsProperties.class);
+        Mockito.when(mockedNativeProps.isTrue(NativeFormsProperties.KEY.WIDGET_VALUE_TRANSLATED)).thenReturn(true);
+        Mockito.verify(mockedFormUtils, Mockito.times(0)).updateValueToJSONArray(new JSONObject(item), new JSONObject(item).optString(JsonFormConstants.VALUE));
+
     }
 }
