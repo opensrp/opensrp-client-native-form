@@ -182,7 +182,7 @@ dependencies {
 
     }
 
-    implementation ('com.github.keyrunHORNET:date_picker_converter:3.0.0') {
+    implementation ('com.github.keyrunHORNET:date_picker_converter:3.0.1') {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
 

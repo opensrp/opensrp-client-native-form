@@ -436,6 +436,8 @@ public class DatePickerFactory implements FormWidgetFactory {
 
         Locale locale = getCurrentLocale(context);
         final SimpleDateFormat DATE_FORMAT_LOCALE = new SimpleDateFormat("dd-MM-yyyy", locale);
+        NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
+        final boolean bikramSambatEnabled = nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_DATEPICKER_IS_NEPAL);
 
         String openMrsEntityParent = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
@@ -468,7 +470,10 @@ public class DatePickerFactory implements FormWidgetFactory {
         }
 
         if (StringUtils.isNotBlank(dateValue)) {
+            if(!bikramSambatEnabled)
             updateDateText(context, editText, duration, DATE_FORMAT_LOCALE.format(FormUtils.getDate(dateValue).getTime()));
+            else
+                updateDateText(context, editText, duration,dateValue);
         }
 
         if (jsonObject.has(JsonFormConstants.READ_ONLY)) {

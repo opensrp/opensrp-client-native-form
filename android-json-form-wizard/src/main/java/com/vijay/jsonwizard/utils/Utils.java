@@ -914,6 +914,9 @@ public class Utils {
     }
 
     public List<String> createExpansionPanelChildren(JSONArray jsonArray) throws JSONException {
+        NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
+        final boolean bikramSambatEnabled = nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_DATEPICKER_IS_NEPAL);
+
         List<String> stringList = new ArrayList<>();
         String label;
         for (int i = 0; i < jsonArray.length(); i++) {
@@ -923,7 +926,12 @@ public class Utils {
                         !"".equals(jsonObject.getString(JsonFormConstants.LABEL))) {
                     //Get label and replace any colon in some labels. Not needed at this point
                     label = jsonObject.getString(JsonFormConstants.LABEL).replace(":", "");
-                    stringList.add(label + ":" + getStringValue(jsonObject));
+                    String value = getStringValue(jsonObject);
+                    if(bikramSambatEnabled && FormattedDateMatcher.matches(value))
+                    {
+                        value = DateUtil.convertADtoBSDAte(value);
+                    }
+                    stringList.add(label + ":" + value);
                 }
             }
         }
