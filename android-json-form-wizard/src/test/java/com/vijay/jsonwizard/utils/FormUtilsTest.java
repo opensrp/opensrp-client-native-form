@@ -732,4 +732,23 @@ public class FormUtilsTest extends BaseTest {
 
         Assert.assertEquals(inputJson.toString(), "{\"clientId\":\"clientId\",\"clientOpenSRPId\":\"clientOpenSRPId\"}");
     }
+    @Test
+    public void testUpdateValueToJsonArray() throws Exception {
+        FormUtils mockedFormUtils=Mockito.mock(FormUtils.class);
+        String item = "{\n" +
+                "  \"key\": \"resThree3\",\n" +
+                "  \"text\": \"Abnormal\",\n" +
+                "  \"specify_info\": \"Specify\",\n" +
+                "  \"specify_info_color\": \"#b5b5b5\",\n" +
+                "  \"specify_widget\": \"check_box\",\n" +
+                "  \"content_form\": \"child_enrollment_third_sub_form\",\n" +
+                "  \"secondary_suffix\": \"bpm\",\n" +
+                "  \"content_form_location\": \"\",\n" +
+                "  \"translated_text\": \"form_strings.step1.danger_signs.danger_bleeding.text\"\n" +
+                "}";
+        NativeFormsProperties mockedNativeProps = Mockito.mock(NativeFormsProperties.class);
+        Mockito.when(mockedNativeProps.isTrue(NativeFormsProperties.KEY.WIDGET_VALUE_TRANSLATED)).thenReturn(true);
+        Mockito.verify(mockedFormUtils, Mockito.times(0)).updateValueToJSONArray(new JSONObject(item), new JSONObject(item).optString(JsonFormConstants.VALUE));
+
+    }
 }
