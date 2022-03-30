@@ -23,6 +23,8 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 
+import timber.log.Timber;
+
 /**
  * Created by Vincent Karuri on 20/02/2020
  */
@@ -142,5 +144,4 @@ public class NativeFormLangUtilsTest extends BaseTest {
         assertEquals(expected_string, actual);
 
     }
-
 }
