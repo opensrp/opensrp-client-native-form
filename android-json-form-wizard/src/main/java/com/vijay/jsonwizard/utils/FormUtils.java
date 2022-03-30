@@ -493,7 +493,12 @@ public class FormUtils {
 
     public static void setEditMode(JSONObject jsonObject, View editableView, ImageView editButton)
             throws JSONException {
-        if (jsonObject.has(JsonFormConstants.EDITABLE)) {
+        if (jsonObject.has(JsonFormConstants.EDITABLE) && jsonObject
+                .has(JsonFormConstants.READ_ONLY)) {
+            editButton.setVisibility(View.VISIBLE);
+            editableView.setEnabled(false);
+        }
+        else if (jsonObject.has(JsonFormConstants.EDITABLE)) {
             boolean editable = jsonObject.getBoolean(JsonFormConstants.EDITABLE);
             if (editable) {
                 editButton.setVisibility(View.VISIBLE);
@@ -505,10 +510,6 @@ public class FormUtils {
             boolean readyOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
             editableView.setEnabled(!readyOnly);
             editButton.setVisibility(View.GONE);
-        } else if (jsonObject.has(JsonFormConstants.EDITABLE) && jsonObject
-                .has(JsonFormConstants.READ_ONLY)) {
-            editButton.setVisibility(View.VISIBLE);
-            editableView.setEnabled(false);
         }
     }
 
@@ -1068,7 +1069,7 @@ public class FormUtils {
                     }
                 }
             } catch (Exception e) {
-                Log.i(TAG, Log.getStackTraceString(e));
+                Timber.e(e);
             }
 
         }
@@ -1383,7 +1384,7 @@ public class FormUtils {
                         JSONObject object = new JSONObject(valueString);
                         values = new JSONArray(object.optString(JsonFormConstants.TEXT, ""));
                     } else {
-                        JSONObject createJsonValues = Utils.generateTranslatableValue(jsonObject.optString(JsonFormConstants.VALUE, ""), jsonObject);
+                        JSONObject createJsonValues = Utils.generateTranslatableValue(jsonObject.optString(JsonFormConstants.KEY), jsonObject);
                         values = new JSONArray(createJsonValues);
                     }
                 } else {
