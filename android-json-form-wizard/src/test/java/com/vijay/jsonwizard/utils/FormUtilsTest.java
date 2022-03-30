@@ -47,7 +47,6 @@ import java.util.Map;
 public class FormUtilsTest extends BaseTest {
     private FormUtils formUtils;
     private JSONObject jsonFormObject;
-    private FormUtils mockedFormUtils;
 
     private final String spinnerWithOptions = " {\n" +
             "        \"key\": \"response_spinner_with_options\",\n" +
@@ -118,7 +117,7 @@ public class FormUtilsTest extends BaseTest {
     public void setUp() throws JSONException {
         MockitoAnnotations.initMocks(this);
         formUtils = new FormUtils();
-        mockedFormUtils = Mockito.mock(FormUtils.class);
+        FormUtils mockedFormUtils = Mockito.mock(FormUtils.class);
         jsonFormObject = new JSONObject(jsonForm);
     }
 
