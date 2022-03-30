@@ -117,7 +117,6 @@ public class FormUtilsTest extends BaseTest {
     public void setUp() throws JSONException {
         MockitoAnnotations.initMocks(this);
         formUtils = new FormUtils();
-        FormUtils mockedFormUtils = Mockito.mock(FormUtils.class);
         jsonFormObject = new JSONObject(jsonForm);
     }
 
