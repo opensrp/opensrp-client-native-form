@@ -834,7 +834,7 @@ public class Utils {
     public static JSONObject generateTranslatableValue(String value, JSONObject item) throws JSONException {
         JSONObject newValue = new JSONObject();
         String itemType = item.has(JsonFormConstants.TYPE) ? item.getString(JsonFormConstants.TYPE) : "";
-        if (JsonFormConstants.NATIVE_RADIO_BUTTON.equals(itemType) || JsonFormConstants.SPINNER.equals(itemType) || JsonFormConstants.CHECK_BOX.equals(itemType)) {
+        if (JsonFormConstants.NATIVE_RADIO_BUTTON.equals(itemType) || JsonFormConstants.SPINNER.equals(itemType) || JsonFormConstants.CHECK_BOX.equals(itemType) || item.has(JsonFormConstants.TRANSLATION_TEXT)) {
             if (item.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
                 JSONArray options = item.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
                 JSONObject selectedOption = formUtils.getOptionFromOptionsUsingKey(options, value);
