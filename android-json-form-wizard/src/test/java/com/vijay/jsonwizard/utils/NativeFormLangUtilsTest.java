@@ -12,6 +12,8 @@ import com.vijay.jsonwizard.NativeFormLibrary;
 import com.vijay.jsonwizard.TestUtils;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.robolectric.RuntimeEnvironment;
@@ -19,6 +21,7 @@ import org.smartregister.client.utils.contract.ClientFormContract;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
+
 
 import timber.log.Timber;
 
@@ -28,6 +31,13 @@ import timber.log.Timber;
 public class NativeFormLangUtilsTest extends BaseTest {
 
     private final TestUtils testUtils = new TestUtils();
+    private Context context;
+
+    @Before
+    public void setUp() {
+        context = RuntimeEnvironment.application;
+
+    }
 
     @Test
     public void testJsonFormTranslationShouldTranslateForm() {
@@ -121,4 +131,17 @@ public class NativeFormLangUtilsTest extends BaseTest {
         assertFalse(mlsResourceBundle.getKeys().hasMoreElements());
     }
 
+    @Test
+    public void testGetDatabaseString() {
+        String stringToTranslate = "form_strings.step1.danger_signs.danger_bleeding.text";
+        String expected_string = "Danger Bleeding";
+        String actual = "";
+        Locale locale = new Locale(Locale.ENGLISH.getLanguage());
+        ResourceBundle bundle = ResourceBundle.getBundle("form_strings", locale);
+        boolean keyIsFound = bundle.containsKey(stringToTranslate);
+        Assert.assertTrue(keyIsFound);
+        actual = NativeFormLangUtils.translateDatabaseString(stringToTranslate, context);
+        assertEquals(expected_string, actual);
+
+    }
 }
