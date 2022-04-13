@@ -890,4 +890,13 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         customTranslatableWidgetFields.add(JsonFormConstants.LABEL_INFO_TITLE);
         return customTranslatableWidgetFields;
     }
+
+    public void cleanUp(){
+        this.context = null;
+        this.formFragment = null;
+        this.radioButton = null;
+        this.extraInfoTextView = null;
+        this.specifyTextView = null;
+        this.reasonsTextView = null;
+    }
 }
