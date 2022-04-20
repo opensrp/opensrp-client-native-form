@@ -896,7 +896,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         if (JsonFormConstants.CHECK_BOX.equals(fieldObject.getString(JsonFormConstants.TYPE))) {
                             value = String.valueOf(fieldObject.getJSONArray(JsonFormConstants.VALUES));
                             if (nativeFormsProperties != null && nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_VALUE_TRANSLATED)) {
-                                fieldObject.put(value,Utils. generateTranslatableValue(value, fieldObject));
+                                fieldObject.put(value, Utils.generateTranslatableValue(value, fieldObject));
                             } else {
                                 fieldObject.put(JsonFormConstants.VALUE, value);
                             }
@@ -954,7 +954,15 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         } else {
             NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
             if ((itemType.equals(JsonFormConstants.NATIVE_RADIO_BUTTON) || itemType.equals(JsonFormConstants.SPINNER) || itemType.equals(JsonFormConstants.CHECK_BOX)) && nativeFormsProperties != null && nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_VALUE_TRANSLATED)) {
-                item.put(JsonFormConstants.VALUE, Utils.generateTranslatableValue(value, item));
+                if (itemType.equals(JsonFormConstants.SPINNER)) {
+                    if (item.has(JsonFormConstants.KEYS) && item.has(JsonFormConstants.VALUES)) {
+                        item.put(JsonFormConstants.VALUE, value);
+                    } else {
+                        item.put(JsonFormConstants.VALUE, Utils.generateTranslatableValue(value, item));
+                    }
+                } else {
+                    item.put(JsonFormConstants.VALUE, Utils.generateTranslatableValue(value, item));
+                }
             } else {
                 item.put(JsonFormConstants.VALUE, value);
             }
