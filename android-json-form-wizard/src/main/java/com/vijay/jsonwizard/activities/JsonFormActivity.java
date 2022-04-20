@@ -1438,7 +1438,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     {
                         String[] BSDate = getValue(object).toString().split("-");
                         if(BSDate[0].length() == 4) {
-                            int BSMonth = Integer.parseInt(BSDate[1]) - 1;
+                            int BSMonth = Integer.parseInt(BSDate[1]);
                             String BSMonthString = BSMonth <= 9 ? "0" + BSMonth : "" + BSMonth;
                             Date ADdate = new DateConverter().convertBsToAd(BSDate[2] + BSMonthString + BSDate[0]);
                             String ADDateString = Utils.getStringFromDate(ADdate);
