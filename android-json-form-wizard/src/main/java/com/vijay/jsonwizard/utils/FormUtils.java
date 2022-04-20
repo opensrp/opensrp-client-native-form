@@ -686,19 +686,17 @@ public class FormUtils {
         return new JSONArray(optionValues);
     }
 
-    public static HashSet<String> getCurrentCheckboxValues(JSONArray optionsArray)
-            throws JSONException {
-        HashSet<String> result = new HashSet<>();
-        for (int i = 0; i < optionsArray.length(); i++) {
-            String translatedCheckBox = optionsArray.getString(i);
-            if (translatedCheckBox.charAt(0) == '{') {
-                JSONObject object = new JSONObject(translatedCheckBox);
-                result.add(object.optString(JsonFormConstants.TEXT, ""));
-            } else {
-                result.add(translatedCheckBox);
+    public static HashSet<String> getCurrentCheckboxValues(JSONArray optionsArray) {
+        try {
+            HashSet<String> result = new HashSet<>();
+            for (int i = 0; i < optionsArray.length(); i++) {
+                result.add(optionsArray.getString(i));
             }
+            return result;
+        } catch (Exception e) {
+            Timber.e(e);
+            return null;
         }
-        return result;
     }
 
     /**
@@ -1381,10 +1379,14 @@ public class FormUtils {
                 if (nativeFormsProperties != null && nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_VALUE_TRANSLATED)) {
                     if (valueString.charAt(0) == '{') {
                         JSONObject object = new JSONObject(valueString);
-                        values = new JSONArray(object.optString(JsonFormConstants.TEXT, ""));
+                        values = new JSONArray(object.toString());
                     } else {
-                        JSONObject createJsonValues = Utils.generateTranslatableValue(jsonObject.optString(JsonFormConstants.VALUE, ""), jsonObject);
-                        values = new JSONArray(createJsonValues);
+                        if (valueString.charAt(0) == '[' && valueString.contains(JsonFormConstants.VALUE) && valueString.contains(JsonFormConstants.TEXT)) {
+                            values = new JSONArray(valueString);
+                        } else {
+                            JSONObject createJsonValues = Utils.generateTranslatableValue(jsonObject.optString(JsonFormConstants.VALUE, ""), jsonObject);
+                            values = new JSONArray(createJsonValues);
+                        }
                     }
                 } else {
                     values = new JSONArray(valueString);

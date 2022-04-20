@@ -1,5 +1,11 @@
 package com.vijay.jsonwizard.widgets;
 
+import static com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT;
+import static com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT;
+import static com.vijay.jsonwizard.utils.FormUtils.getCurrentCheckboxValues;
+import static com.vijay.jsonwizard.utils.FormUtils.getLinearLayoutParams;
+import static com.vijay.jsonwizard.utils.FormUtils.getValueFromSpOrDpOrPx;
+
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
@@ -37,17 +43,11 @@ import java.util.Set;
 
 import timber.log.Timber;
 
-import static com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT;
-import static com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT;
-import static com.vijay.jsonwizard.utils.FormUtils.getCurrentCheckboxValues;
-import static com.vijay.jsonwizard.utils.FormUtils.getLinearLayoutParams;
-import static com.vijay.jsonwizard.utils.FormUtils.getValueFromSpOrDpOrPx;
-
 /**
  * Created by vijay on 24-05-2015.
  */
 public class CheckBoxFactory extends BaseFactory {
-    private FormUtils formUtils = new FormUtils();
+    private final FormUtils formUtils = new FormUtils();
 
     public static ValidationStatus validate(JsonFormFragmentView formFragmentView, LinearLayout checkboxLinearLayout) {
         String error = (String) checkboxLinearLayout.getTag(R.id.error);
@@ -60,7 +60,7 @@ public class CheckBoxFactory extends BaseFactory {
         return new ValidationStatus(true, null, formFragmentView, checkboxLinearLayout);
     }
 
-    public static boolean isValid(final LinearLayout checkboxLinearLayout){
+    public static boolean isValid(final LinearLayout checkboxLinearLayout) {
         boolean isRequired = checkboxLinearLayout.isEnabled() && checkboxLinearLayout.getTag(R.id.error) != null;
         return !isRequired || performValidation(checkboxLinearLayout);
     }
@@ -234,14 +234,24 @@ public class CheckBoxFactory extends BaseFactory {
                                 checkBox.setChecked(Boolean.parseBoolean(item.optString(JsonFormConstants.VALUE)));
                             }
                         });
-                    }
-                    //Preselect values if they exist
-                    try {
-                        if (finalCheckBoxValues != null && getCurrentCheckboxValues(finalCheckBoxValues).contains(item.getString(JsonFormConstants.KEY))) {
-                            checkBox.setChecked(true);
+                    } else {
+                        //Preselect values if they exist
+                        try {
+                            if (finalCheckBoxValues != null) {
+                                HashSet<String> checkBoxValues = getCurrentCheckboxValues(finalCheckBoxValues);
+                                for (String checkBoxVal : checkBoxValues) {
+                                    if (checkBoxVal.charAt(0) == '{') {
+                                        if (new JSONObject(checkBoxVal).optString(JsonFormConstants.VALUE).equalsIgnoreCase(item.getString(JsonFormConstants.KEY))) {
+                                            checkBox.setChecked(true);
+                                        }
+                                    } else if (getCurrentCheckboxValues(finalCheckBoxValues).contains(item.getString(JsonFormConstants.KEY))) {
+                                        checkBox.setChecked(true);
+                                    }
+                                }
+                            }
+                        } catch (JSONException e) {
+                            Timber.e(e,"Exception occurred",this.getClass().getCanonicalName());
                         }
-                    } catch (JSONException e) {
-                        Timber.e(e);
                     }
                 }
             });
