@@ -62,7 +62,6 @@ import com.vijay.jsonwizard.customviews.MaterialSpinner;
 import com.vijay.jsonwizard.customviews.TextableView;
 import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.event.RefreshExpansionPanelEvent;
-import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.GenericDialogInterface;
 import com.vijay.jsonwizard.interfaces.JsonApi;
@@ -885,7 +884,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     private void getFieldObject(String stepName, List<String> rulesList, JSONArray rulesArray, JSONArray fields)
             throws JSONException {
-        NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
         if (fields.length() > 0) {
             for (int j = 0; j < fields.length(); j++) {
                 JSONObject fieldObject = fields.getJSONObject(j);
@@ -895,7 +893,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         String value;
                         if (JsonFormConstants.CHECK_BOX.equals(fieldObject.getString(JsonFormConstants.TYPE))) {
                             value = String.valueOf(fieldObject.getJSONArray(JsonFormConstants.VALUES));
-                            if (nativeFormsProperties != null && nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_VALUE_TRANSLATED)) {
+                            if (Utils.enabledProperty(NativeFormsProperties.KEY.WIDGET_VALUE_TRANSLATED)) {
                                 fieldObject.put(value, Utils.generateTranslatableValue(value, fieldObject));
                             } else {
                                 fieldObject.put(JsonFormConstants.VALUE, value);
@@ -952,8 +950,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 item.put(JsonFormConstants.VALUE, item.getString(JsonFormConstants.VALUE));
             else item.put(JsonFormConstants.VALUE, value);
         } else {
-            NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
-            if ((itemType.equals(JsonFormConstants.NATIVE_RADIO_BUTTON) || itemType.equals(JsonFormConstants.SPINNER) || itemType.equals(JsonFormConstants.CHECK_BOX)) && nativeFormsProperties != null && nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_VALUE_TRANSLATED)) {
+            if ((itemType.equals(JsonFormConstants.NATIVE_RADIO_BUTTON) || itemType.equals(JsonFormConstants.SPINNER) || itemType.equals(JsonFormConstants.CHECK_BOX)) && Utils.enabledProperty(NativeFormsProperties.KEY.WIDGET_VALUE_TRANSLATED)) {
                 if (itemType.equals(JsonFormConstants.SPINNER)) {
                     if (item.has(JsonFormConstants.KEYS) && item.has(JsonFormConstants.VALUES)) {
                         item.put(JsonFormConstants.VALUE, value);
@@ -1031,7 +1028,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             JSONObject checkboxObject = formFields.get(stepName + "_" + parentKey);
             JSONArray checkboxOptions = checkboxObject.getJSONArray(childObjectKey);
             HashSet<String> currentValues = new HashSet<>();
-            NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
             //Get current values
             if (checkboxObject.has(JsonFormConstants.VALUE)) {
                 formUtils.updateValueToJSONArray(checkboxObject, checkboxObject.optString(JsonFormConstants.VALUE, ""));
@@ -1044,16 +1040,24 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
                 for (int index = 0; index < checkboxOptions.length(); index++) {
                     JSONObject option = checkboxOptions.getJSONObject(index);
-                    if (option.has(JsonFormConstants.KEY) && childKey.equals(option.getString(JsonFormConstants.KEY))) {
+                    if (option.has(JsonFormConstants.KEY) &&
+                            childKey.equals(option.getString(JsonFormConstants.KEY))) {
                         option.put(JsonFormConstants.VALUE, Boolean.parseBoolean(value));
                         if (Boolean.parseBoolean(value)) {
-                            if (nativeFormsProperties != null && nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_VALUE_TRANSLATED)) {
-                                currentValues.add(Utils.generateTranslatableValue(childKey, option).toString());
+                            if (Utils.enabledProperty(NativeFormsProperties.KEY.WIDGET_VALUE_TRANSLATED)) {
+                                JSONObject object = Utils.generateTranslatableValue(childKey, option);
+                                currentValues.add(object.toString());
                             } else {
                                 currentValues.add(childKey);
                             }
                         } else {
-                            currentValues.remove(childKey);
+                            if (Utils.enabledProperty(NativeFormsProperties.KEY.WIDGET_VALUE_TRANSLATED)) {
+                                JSONObject object = Utils.generateTranslatableValue(childKey, option);
+                                currentValues.remove(object.toString());
+                            }
+                            else {
+                                currentValues.remove(childKey);
+                            }
                         }
                     }
                 }
