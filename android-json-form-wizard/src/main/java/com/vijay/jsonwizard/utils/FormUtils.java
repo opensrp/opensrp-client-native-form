@@ -1370,34 +1370,15 @@ public class FormUtils {
         return result;
     }
 
-    @SuppressLint("NewApi")
     public void updateValueToJSONArray(JSONObject jsonObject, String valueString) {
-        NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
         try {
-            JSONArray values;
+            JSONArray values = null;
             if (StringUtils.isNotEmpty(valueString)) {
-                if (nativeFormsProperties != null && nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_VALUE_TRANSLATED)) {
-                    if (valueString.charAt(0) == '{') {
-                        JSONObject object = new JSONObject(valueString);
-                        values = new JSONArray(object.toString());
-                    } else {
-                        if (valueString.charAt(0) == '[' && valueString.contains(JsonFormConstants.VALUE) && valueString.contains(JsonFormConstants.TEXT)) {
-                            values = new JSONArray(valueString);
-                        } else {
-                            JSONObject createJsonValues = Utils.generateTranslatableValue(jsonObject.optString(JsonFormConstants.VALUE, ""), jsonObject);
-                            values = new JSONArray(createJsonValues);
-                        }
-                    }
-                } else {
-                    values = new JSONArray(valueString);
-                }
-                if (values != null) {
-                    //added
-                    jsonObject.put(JsonFormConstants.VALUE, values);
-
-                }
+                values = new JSONArray(valueString);
             }
-
+            if (values != null) {
+                jsonObject.put(JsonFormConstants.VALUE, values);
+            }
         } catch (JSONException e) {
             Timber.e(e, "%s --> updateValueToJSONArray", this.getClass().getCanonicalName());
         }

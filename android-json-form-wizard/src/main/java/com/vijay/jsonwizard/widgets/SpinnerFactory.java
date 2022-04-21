@@ -26,6 +26,7 @@ import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,7 +41,7 @@ import java.util.Set;
  * Created by nipun on 30/05/15.
  */
 public class SpinnerFactory extends BaseFactory {
-    private FormUtils formUtils = new FormUtils();
+    private final FormUtils formUtils = new FormUtils();
 
     public static ValidationStatus validate(JsonFormFragmentView formFragmentView, MaterialSpinner spinner) {
         if (spinner.getTag(R.id.v_required) == null) {
@@ -166,7 +167,11 @@ public class SpinnerFactory extends BaseFactory {
                     indexToSelect = i;
                 } else if (keysJson != null && valueToSelect.equals(keysJson.optString(i))) {
                     indexToSelect = i;
+                } else if (keysJson != null && StringUtils.isNotBlank(valueToSelect) && valueToSelect.charAt(0) == '{' && new JSONObject(valueToSelect).has(JsonFormConstants.VALUE)
+                        && new JSONObject(valueToSelect).optString(JsonFormConstants.VALUE).equals(keysJson.optString(i))) {
+                    indexToSelect = i;
                 }
+
             }
         }
 

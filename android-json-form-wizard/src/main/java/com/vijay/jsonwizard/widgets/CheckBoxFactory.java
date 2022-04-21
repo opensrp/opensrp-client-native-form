@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import timber.log.Timber;
@@ -238,8 +239,7 @@ public class CheckBoxFactory extends BaseFactory {
                         //Preselect values if they exist
                         try {
                             if (finalCheckBoxValues != null) {
-                                HashSet<String> checkBoxValues = getCurrentCheckboxValues(finalCheckBoxValues);
-                                for (String checkBoxVal : checkBoxValues) {
+                                for (String checkBoxVal : Objects.requireNonNull(getCurrentCheckboxValues(finalCheckBoxValues))) {
                                     if (checkBoxVal.charAt(0) == '{') {
                                         if (new JSONObject(checkBoxVal).optString(JsonFormConstants.VALUE).equalsIgnoreCase(item.getString(JsonFormConstants.KEY))) {
                                             checkBox.setChecked(true);
@@ -250,7 +250,7 @@ public class CheckBoxFactory extends BaseFactory {
                                 }
                             }
                         } catch (JSONException e) {
-                            Timber.e(e,"Exception occurred",this.getClass().getCanonicalName());
+                            Timber.e(e,"---> Exception occurred");
                         }
                     }
                 }
