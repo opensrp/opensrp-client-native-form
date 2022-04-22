@@ -182,7 +182,8 @@ dependencies {
 
     }
 
-    implementation ('com.github.keyrunHORNET:date_picker_converter:3.0.1') {
+    implementation ('org.smartregister:date_picker_converter:3.0.1-PREVIEW-SNAPSHOT@aar') {
+        transitive = true
         exclude group: 'com.android.support', module: 'support-annotations'
     }
 
