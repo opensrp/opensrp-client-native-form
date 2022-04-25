@@ -620,7 +620,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
                         radioButton.setOnCheckedChangeListener(listener);
                     }
                 });
-            } else if (value.charAt(0) == '{') {
+            } else if (StringUtils.isNotBlank(value) && value.charAt(0) == '{') {
                 if (new JSONObject(value).optString(JsonFormConstants.VALUE).equals(item.getString(JsonFormConstants.KEY))) {
                     ((Activity) context).runOnUiThread(new Runnable() {
                         @Override
