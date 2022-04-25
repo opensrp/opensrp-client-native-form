@@ -955,10 +955,10 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     if (item.has(JsonFormConstants.KEYS) && item.has(JsonFormConstants.VALUES)) {
                         item.put(JsonFormConstants.VALUE, value);
                     } else {
-                        item.put(JsonFormConstants.VALUE, Utils.generateTranslatableValue(value, item));
+                        item.put(JsonFormConstants.VALUE, Utils.generateTranslatableValue(value, item).toString());
                     }
                 } else {
-                    item.put(JsonFormConstants.VALUE, Utils.generateTranslatableValue(value, item));
+                    item.put(JsonFormConstants.VALUE, Utils.generateTranslatableValue(value, item).toString());
                 }
             } else {
                 item.put(JsonFormConstants.VALUE, value);
