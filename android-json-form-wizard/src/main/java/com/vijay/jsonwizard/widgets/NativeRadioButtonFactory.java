@@ -621,7 +621,8 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
                     }
                 });
             } else if (value.charAt(0) == '{') {
-                if (new JSONObject(value).optString(JsonFormConstants.VALUE).equals(item.getString(JsonFormConstants.KEY))) {
+                JSONObject object = new JSONObject(value);
+                if (object.has(JsonFormConstants.VALUE) && object.optString(JsonFormConstants.VALUE).equals(item.getString(JsonFormConstants.KEY))) {
                     ((Activity) context).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

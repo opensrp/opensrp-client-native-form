@@ -240,7 +240,7 @@ public class CheckBoxFactory extends BaseFactory {
                         try {
                             if (finalCheckBoxValues != null) {
                                 for (String checkBoxVal : Objects.requireNonNull(getCurrentCheckboxValues(finalCheckBoxValues))) {
-                                    if (checkBoxVal.charAt(0) == '{') {
+                                    if (checkBoxVal!=null &&checkBoxVal.charAt(0) == '{') {
                                         if (new JSONObject(checkBoxVal).optString(JsonFormConstants.VALUE).equalsIgnoreCase(item.getString(JsonFormConstants.KEY))) {
                                             checkBox.setChecked(true);
                                         }
