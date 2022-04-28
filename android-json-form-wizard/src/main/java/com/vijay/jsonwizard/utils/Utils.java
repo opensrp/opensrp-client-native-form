@@ -850,6 +850,21 @@ public class Utils {
         return nativeFormsProperties != null && nativeFormsProperties.isTrue(appPropName);
     }
 
+    public static String getValueFromTranslatedObject(JSONObject item) {
+        try {
+            if (item != null && item.has(VALUE)) {
+                if (item.opt(VALUE) != null && item.opt(VALUE).toString().charAt(0) == '{') {
+                    return new JSONObject(item.opt(VALUE).toString()).optString(VALUE);
+                }
+                return item.opt(VALUE) + "";
+            }
+            return "";
+        } catch (Exception e) {
+            Timber.e(e, "----> getValueFromTranslatedObject");
+            return "";
+        }
+    }
+
     public List<String> createExpansionPanelChildren(JSONArray jsonArray) throws JSONException {
         List<String> stringList = new ArrayList<>();
         String label;

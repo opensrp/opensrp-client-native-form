@@ -25,7 +25,7 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Run unit tests with Gradle
-      run: ./gradlew :android-json-form-wizard:clean :android-json-form-wizard:jacocoTestReport  --stacktrace
+      run: ./gradlew android-json-form-wizard:clean  && ./gradlew android-json-form-wizard:build && ./gradlew android-json-form-wizard:jacocoTestReport  --stacktrace -Dorg.gradle.jvmargs="-Xmx4096m -XX:+HeapDumpOnOutOfMemoryError"
     - name: Upload coverage to Coveralls with Gradle
       run: ./gradlew coveralls --stacktrace
       env:
