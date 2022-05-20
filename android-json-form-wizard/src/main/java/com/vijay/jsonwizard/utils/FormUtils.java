@@ -686,19 +686,17 @@ public class FormUtils {
         return new JSONArray(optionValues);
     }
 
-    public static HashSet<String> getCurrentCheckboxValues(JSONArray optionsArray)
-            throws JSONException {
-        HashSet<String> result = new HashSet<>();
-        for (int i = 0; i < optionsArray.length(); i++) {
-            String translatedCheckBox = optionsArray.getString(i);
-            if (translatedCheckBox.charAt(0) == '{') {
-                JSONObject object = new JSONObject(translatedCheckBox);
-                result.add(object.optString(JsonFormConstants.TEXT, ""));
-            } else {
-                result.add(translatedCheckBox);
+    public static HashSet<String> getCurrentCheckboxValues(JSONArray optionsArray) {
+        try {
+            HashSet<String> result = new HashSet<>();
+            for (int i = 0; i < optionsArray.length(); i++) {
+                result.add(optionsArray.getString(i));
             }
+            return result;
+        } catch (Exception e) {
+            Timber.e(e);
+            return null;
         }
-        return result;
     }
 
     /**
@@ -1068,7 +1066,7 @@ public class FormUtils {
                     }
                 }
             } catch (Exception e) {
-                Log.i(TAG, Log.getStackTraceString(e));
+                Timber.e(e);
             }
 
         }
@@ -1395,7 +1393,6 @@ public class FormUtils {
 
                 }
             }
-
         } catch (JSONException e) {
             Timber.e(e, "%s --> updateValueToJSONArray", this.getClass().getCanonicalName());
         }
