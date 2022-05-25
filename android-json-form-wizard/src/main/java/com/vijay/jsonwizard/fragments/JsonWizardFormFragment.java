@@ -248,7 +248,6 @@ public class JsonWizardFormFragment extends JsonFormFragment {
             navigationToolbar.setVisibility(View.GONE);
         }
     }
-
     protected void save() {
         try {
             Boolean skipValidation = ((JsonFormActivity) mMainView.getContext()).getIntent()
@@ -307,5 +306,4 @@ public class JsonWizardFormFragment extends JsonFormFragment {
 
     }
 }
-
 

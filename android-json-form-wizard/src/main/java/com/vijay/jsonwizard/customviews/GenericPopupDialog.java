@@ -1,5 +1,7 @@
 package com.vijay.jsonwizard.customviews;
 
+import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
+
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
@@ -43,12 +45,10 @@ import java.util.Set;
 
 import timber.log.Timber;
 
-import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
-
 public class GenericPopupDialog extends DialogFragment implements GenericDialogInterface {
+    private final JsonFormInteractor jsonFormInteractor = JsonFormInteractor.getInstance();
+    private final FormUtils formUtils = new FormUtils();
     private ViewGroup dialogView;
-    private JsonFormInteractor jsonFormInteractor = JsonFormInteractor.getInstance();
-    private FormUtils formUtils = new FormUtils();
     private JsonApi jsonApi;
     private Context context;
     private CommonListener commonListener;
@@ -143,6 +143,10 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
 
     public ViewGroup getDialogView() {
         return dialogView;
+    }
+
+    public void setDialogView(ViewGroup dialogView) {
+        this.dialogView = dialogView;
     }
 
     public List<View> getViewList() {
@@ -351,10 +355,6 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         return dialogView;
     }
 
-    public void setDialogView(ViewGroup dialogView) {
-        this.dialogView = dialogView;
-    }
-
     private void addWidgetViews(ViewGroup dialogView) {
         LinearLayout genericDialogContent = dialogView.findViewById(R.id.generic_dialog_content);
         for (View view : getViewList()) {
@@ -400,13 +400,16 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
     private void attachDialogOkButton(ViewGroup dialogView) {
         Button okButton;
         okButton = dialogView.findViewById(R.id.generic_dialog_done_button);
+
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                passData();
-                getJsonApi().setGenericPopup(null);
-                getJsonApi().updateGenericPopupSecondaryValues(null, getStepName());
-                GenericPopupDialog.this.dismiss();
+               if(getFormFragment().saveWithoutClosingForm(false)){
+                    processTestData();
+                    getJsonApi().setGenericPopup(null);
+                    getJsonApi().updateGenericPopupSecondaryValues(null, getStepName());
+                    GenericPopupDialog.this.dismiss();
+                }
             }
         });
     }
@@ -431,7 +434,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         this.context = context;
     }
 
-    protected void passData() {
+    protected void processTestData() {
         onGenericDataPass(getParentKey(), getChildKey());
     }
 
@@ -566,7 +569,8 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
                     formUtils.getOptionsOpenMRSAttributes(field, valueOpenMRSAttributes);
                 } else if (JsonFormConstants.SPINNER.equals(field.getString(JsonFormConstants.TYPE)) && field
                         .has(JsonFormConstants.VALUE)) {
-                    values.put(field.optString(JsonFormConstants.VALUE));
+//                    values.put(field.optString(JsonFormConstants.VALUE));
+                    Utils.addTranslatedTestValues(field.optString(JsonFormConstants.VALUE), field);
                     formUtils.getSpinnerValueOpenMRSAttributes(field, valueOpenMRSAttributes);
                 } else {
                     if (field.has(JsonFormConstants.VALUE)) {
@@ -575,8 +579,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
                 }
 
                 if (values.length() > 0) {
-                    selectedValues
-                            .put(formUtils.createSecondaryValueObject(key, type, values, openMRSAttributes, valueOpenMRSAttributes));
+                    selectedValues.put(formUtils.createSecondaryValueObject(key, type, values, openMRSAttributes, valueOpenMRSAttributes));
                 }
             }
         }
@@ -698,4 +701,6 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         }
 
     }
+
+
 }

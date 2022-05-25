@@ -6,6 +6,7 @@ import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.fragments.JsonWizardFormFragment;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
+import com.vijay.jsonwizard.utils.Utils;
 
 /**
  * Created by keyman on 04/12/18.

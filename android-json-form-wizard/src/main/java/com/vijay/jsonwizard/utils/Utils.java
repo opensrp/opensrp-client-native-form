@@ -865,6 +865,19 @@ public class Utils {
         }
     }
 
+
+
+    public static JSONArray addTranslatedTestValues(String value, JSONObject object) throws JSONException {
+        JSONArray values = new JSONArray();
+        if (enabledProperty(NativeFormsProperties.KEY.WIDGET_VALUE_TRANSLATED)) {
+            return values.put(generateTranslatableValue(value, object));
+        }
+        return values.put(value);
+
+    }
+
+
+
     public List<String> createExpansionPanelChildren(JSONArray jsonArray) throws JSONException {
         List<String> stringList = new ArrayList<>();
         String label;

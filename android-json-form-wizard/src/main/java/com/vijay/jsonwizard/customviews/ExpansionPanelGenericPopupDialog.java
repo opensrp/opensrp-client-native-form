@@ -1,5 +1,7 @@
 package com.vijay.jsonwizard.customviews;
 
+import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -37,8 +39,6 @@ import java.util.Map;
 
 import timber.log.Timber;
 
-import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
-
 /**
  * Performs the expansion panel's {@link com.vijay.jsonwizard.widgets.ExpansionPanelFactory} functionality, which includes
  * Reading and assigning values on load
@@ -46,15 +46,15 @@ import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
  * Saving the new selected values to the expansion panel's widget `value` attribute
  */
 public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
+    private final FormUtils formUtils = new FormUtils();
+    private final Utils utils = new Utils();
     protected Toolbar mToolbar;
     protected String container;
     private Map<String, ExpansionPanelValuesModel> secondaryValuesMap = new HashMap<>();
-    private FormUtils formUtils = new FormUtils();
     private Activity activity;
     private Context context;
     private String header;
     private LinearLayout linearLayout;
-    private Utils utils = new Utils();
 
     @Override
     public void onAttach(Context context) {
@@ -202,16 +202,18 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
         });
     }
 
-    private void attachOkDialogButton(ViewGroup dialogView) {
+    private void attachOkDialogButton(final ViewGroup dialogView) {
         Button okButton;
         okButton = dialogView.findViewById(R.id.generic_dialog_done_button);
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                passData();
-                getJsonApi().setGenericPopup(null);
-                getJsonApi().updateGenericPopupSecondaryValues(new JSONArray(), getStepName());
-                ExpansionPanelGenericPopupDialog.this.dismissAllowingStateLoss();
+                if (getFormFragment().saveWithoutClosingForm(false)) {
+                    processTestData();
+                    getJsonApi().setGenericPopup(null);
+                    getJsonApi().updateGenericPopupSecondaryValues(new JSONArray(), getStepName());
+                    ExpansionPanelGenericPopupDialog.this.dismissAllowingStateLoss();
+                }
             }
         });
     }
@@ -350,7 +352,7 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
     }
 
     @Override
-    protected void passData() {
+    protected void processTestData() {
         if (!TextUtils.isEmpty(getWidgetType()) && getWidgetType().equals(JsonFormConstants.EXPANSION_PANEL)) {
             onDataPass(getParentKey(), getChildKey());
         } else {
@@ -450,10 +452,12 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
         this.linearLayout = linearLayout;
     }
 
+
     @Override
     protected void createDialogWindow() {
         ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
         params.width = ViewGroup.LayoutParams.MATCH_PARENT;
         params.height = ViewGroup.LayoutParams.MATCH_PARENT;
-        getDialog().getWindow().setAttributes((WindowManager.LayoutParams) params);    }
+        getDialog().getWindow().setAttributes((WindowManager.LayoutParams) params);
+    }
 }

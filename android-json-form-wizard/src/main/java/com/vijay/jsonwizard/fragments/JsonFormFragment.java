@@ -71,23 +71,20 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         implements CommonListener, JsonFormFragmentView<JsonFormFragmentViewState>, Handler.Callback {
     private static final String TAG = "JsonFormFragment";
     private static final int GRAY_OUT_ACTIVE_WHAT = 1212;
-
+    private static NativeFormsProperties nativeFormProperties;
+    private final Map<String, List<View>> lookUpMap = new HashMap<>();
+    private final Handler handler = new Handler(Looper.getMainLooper(), this);
     public OnFieldsInvalid onFieldsInvalid;
     protected LinearLayout mMainView;
     protected ScrollView mScrollView;
     private Menu mMenu;
     private JsonApi mJsonApi;
-    private final Map<String, List<View>> lookUpMap = new HashMap<>();
     private Button previousButton;
     private Button nextButton;
     private String stepName;
     private LinearLayout bottomNavigation;
     private BottomNavigationListener navigationListener;
     private boolean shouldSkipStep = true;
-
-    private static NativeFormsProperties nativeFormProperties;
-
-    private final Handler handler = new Handler(Looper.getMainLooper(), this);
 
     public static JsonFormFragment getFormFragment(String stepName) {
         JsonFormFragment jsonFormFragment = new JsonFormFragment();
@@ -96,6 +93,13 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         jsonFormFragment.setArguments(bundle);
 
         return jsonFormFragment;
+    }
+
+    /**
+     * Getter for native form properties
+     */
+    public static NativeFormsProperties getNativeFormProperties() {
+        return nativeFormProperties;
     }
 
     @Override
@@ -285,7 +289,6 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         menu.clear();
         inflater.inflate(R.menu.menu_toolbar, menu);
         presenter.setUpToolBar();
-
         if (getForm() != null && getForm().isGreyOutSaveWhenFormInvalid()) {
             boolean isFormFilled = presenter.areFormViewsFilled();
             if (isFormFilled) {
@@ -466,6 +469,18 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         }
 
         return false;
+    }
+
+    public boolean saveWithoutClosingForm(boolean skipValidation) {
+        try {
+            mMainView.setTag(R.id.skip_validation, skipValidation);
+            return presenter.onSaveWithoutClosingForm(mMainView);
+        } catch (Exception e) {
+            Timber.e(e, " --> save");
+            return false;
+        }
+
+
     }
 
     public boolean shouldSkipStep() {
@@ -824,6 +839,14 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         return presenter.onMenuItemClick(item);
     }
 
+    public OnFieldsInvalid getOnFieldsInvalidCallback() {
+        return onFieldsInvalid;
+    }
+
+    public void setOnFieldsInvalid(OnFieldsInvalid onFieldsInvalid) {
+        this.onFieldsInvalid = onFieldsInvalid;
+    }
+
     protected class BottomNavigationListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {
@@ -840,20 +863,5 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
                 }
             }
         }
-    }
-
-    public OnFieldsInvalid getOnFieldsInvalidCallback() {
-        return onFieldsInvalid;
-    }
-
-    public void setOnFieldsInvalid(OnFieldsInvalid onFieldsInvalid) {
-        this.onFieldsInvalid = onFieldsInvalid;
-    }
-
-    /**
-     * Getter for native form properties
-     */
-    public static NativeFormsProperties getNativeFormProperties() {
-        return nativeFormProperties;
     }
 }

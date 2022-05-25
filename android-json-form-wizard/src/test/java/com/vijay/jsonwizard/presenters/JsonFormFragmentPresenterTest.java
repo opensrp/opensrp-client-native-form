@@ -49,13 +49,6 @@ public class JsonFormFragmentPresenterTest {
         jsonFormFragmentPresenter = new JsonFormFragmentPresenter(jsonFormFragment);
     }
 
-    @Test
-    public void testValidateOnSubmitShouldReturnCorrectValidationStatus() throws JSONException {
-        assertTrue(jsonFormFragmentPresenter.validateOnSubmit());
-        setUpJsonFormFragment(false);
-        assertFalse(jsonFormFragmentPresenter.validateOnSubmit());
-    }
-
 
     @Test
     public void testMoveToNextStepShouldMoveToNextStepIfExists() throws Exception {

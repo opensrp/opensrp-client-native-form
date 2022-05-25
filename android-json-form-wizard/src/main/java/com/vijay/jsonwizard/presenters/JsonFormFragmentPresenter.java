@@ -1,5 +1,8 @@
 package com.vijay.jsonwizard.presenters;
 
+import static com.vijay.jsonwizard.utils.FormUtils.dpToPixels;
+import static com.vijay.jsonwizard.utils.FormUtils.getDynamicLabelInfoList;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -92,9 +95,6 @@ import java.util.Stack;
 
 import timber.log.Timber;
 
-import static com.vijay.jsonwizard.utils.FormUtils.dpToPixels;
-import static com.vijay.jsonwizard.utils.FormUtils.getDynamicLabelInfoList;
-
 /**
  * Created by vijay on 5/14/15.
  */
@@ -104,6 +104,9 @@ public class JsonFormFragmentPresenter extends
     protected static final int RESULT_LOAD_IMG = 1;
     private static final String TAG = "FormFragmentPresenter";
     private final JsonFormFragment formFragment;
+    private final Map<String, ValidationStatus> invalidFields;
+    private final Stack<String> incorrectlyFormattedFields;
+    private final FormUtils formUtils = new FormUtils();
     protected JSONObject mStepDetails;
     protected String key;
     protected String type;
@@ -111,10 +114,7 @@ public class JsonFormFragmentPresenter extends
     private String mCurrentKey;
     private String mCurrentPhotoPath;
     private JsonFormInteractor mJsonFormInteractor;
-    private Map<String, ValidationStatus> invalidFields;
-    private Stack<String> incorrectlyFormattedFields;
     private JsonFormErrorFragment errorFragment;
-    private FormUtils formUtils = new FormUtils();
     private boolean cleanupAndExit;
 
     public JsonFormFragmentPresenter(JsonFormFragment formFragment,
@@ -385,7 +385,7 @@ public class JsonFormFragmentPresenter extends
 
             } else if (childView instanceof MaterialEditText) {
                 MaterialEditText editView = (MaterialEditText) childView;
-                boolean noValidation = (!childView.isEnabled() ||  !editView.hasValidators());
+                boolean noValidation = (!childView.isEnabled() || !editView.hasValidators());
                 boolean valid = true;
                 if (!noValidation && editView.getValidators() != null) {
                     for (METValidator validator : editView.getValidators()) {
@@ -633,7 +633,7 @@ public class JsonFormFragmentPresenter extends
         validateAndWriteValues();
         checkAndStopCountdownAlarm();
         boolean isFormValid = isFormValid();
-        if (isFormValid || Boolean.valueOf(mainView.getTag(R.id.skip_validation).toString())) {
+        if (isFormValid || Boolean.parseBoolean(mainView.getTag(R.id.skip_validation).toString())) {
             Utils.removeGeneratedDynamicRules(formFragment);
             Intent returnIntent = new Intent();
             getView().onFormFinish();
@@ -654,10 +654,37 @@ public class JsonFormFragmentPresenter extends
         }
     }
 
+    public boolean onSaveWithoutClosingForm(LinearLayout mainView) {
+        validateAndWriteValues();
+        checkAndStopCountdownAlarm();
+        boolean isFormValid = isFormValid();
+        if (isFormValid || Boolean.parseBoolean(mainView.getTag(R.id.skip_validation).toString())) {
+            Utils.removeGeneratedDynamicRules(formFragment);
+            Intent returnIntent = new Intent();
+            getView().onFormFinish();
+            returnIntent.putExtra("json", formUtils.addFormDetails(getView().getCurrentJsonState()));
+            returnIntent.putExtra(JsonFormConstants.SKIP_VALIDATION,
+                    Boolean.valueOf(mainView.getTag(R.id.skip_validation).toString()));
+            return true;
+        } else {
+            if (showErrorsOnSubmit()) {
+                launchErrorDialog();
+                getView().showToast(getView().getContext().getResources()
+                        .getString(R.string.json_form_error_msg, getInvalidFields().size()));
+            } else {
+                getView().showSnackBar(getView().getContext().getResources()
+                        .getString(R.string.json_form_error_msg, getInvalidFields().size()));
+
+            }
+            return false;
+        }
+    }
+
     public boolean showErrorsOnSubmit() {
         JSONObject entireJsonForm = formFragment.getJsonApi().getmJSONObject();
         return entireJsonForm.optBoolean(JsonFormConstants.SHOW_ERRORS_ON_SUBMIT, false);
     }
+
 
     protected void launchErrorDialog() {
         if (errorFragment == null) {

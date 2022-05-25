@@ -1590,7 +1590,7 @@ public class FormUtils {
                 JSONObject option = options.getJSONObject(i);
                 if (value.charAt(0) == '{') {
                     JSONObject valueObject = new JSONObject(value);
-                    if (valueObject.getString("value").equals(option.getString(JsonFormConstants.KEY))) {
+                    if (valueObject.getString(JsonFormConstants.VALUE).equals(option.getString(JsonFormConstants.KEY))) {
                         String key = option.getString(JsonFormConstants.KEY);
                         String text = option.getString(JsonFormConstants.TEXT);
                         secondaryValue = key + ":" + text;
