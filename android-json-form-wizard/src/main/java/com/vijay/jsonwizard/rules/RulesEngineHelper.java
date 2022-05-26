@@ -1,6 +1,16 @@
 package com.vijay.jsonwizard.rules;
 
+
+
+import android.icu.text.SimpleDateFormat;
+
+import com.vijay.jsonwizard.utils.DateUtil;
+import com.vijay.jsonwizard.utils.FormattedDateMatcher;
+import com.vijay.jsonwizard.utils.Utils;
+
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by ndegwamartin on 17/12/2018.
@@ -12,7 +22,13 @@ public class RulesEngineHelper {
     private RulesEngineDateUtil rulesEngineDateUtil = new RulesEngineDateUtil();
 
     public long getDifferenceDays(String dateString) {
+       // if(!Utils.isBikramSambatDate())
         return rulesEngineDateUtil.getDifferenceDays(dateString);
+//        else
+//        {
+//            String ADdate = Utils.getStringFromDate(com.vijay.jsonwizard.utils.DateUtil.convertToADDate(dateString));
+//            return  rulesEngineDateUtil.getDifferenceDays(ADdate);
+//        }
     }
 
     public long getDifferenceDays(String dateString, String dateString2) {
@@ -77,6 +93,12 @@ public class RulesEngineHelper {
             String[] valArray = value.split(":");
             return valArray[1];
         } else {
+            if(Utils.isBikramSambatDate() && FormattedDateMatcher.matchesBSdate(value))
+            {
+                Date date = DateUtil.convertToADDate(value);
+                return  Utils.getStringFromDate(date);
+            }
+            else
             return value;
         }
     }

@@ -72,8 +72,10 @@ import com.vijay.jsonwizard.interfaces.OnActivityResultListener;
 import com.vijay.jsonwizard.rules.RuleConstant;
 import com.vijay.jsonwizard.utils.AppExecutors;
 import com.vijay.jsonwizard.utils.DateConverter;
+import com.vijay.jsonwizard.utils.DateUtil;
 import com.vijay.jsonwizard.utils.ExObjectResult;
 import com.vijay.jsonwizard.utils.FormUtils;
+import com.vijay.jsonwizard.utils.FormattedDateMatcher;
 import com.vijay.jsonwizard.utils.NativeFormsProperties;
 import com.vijay.jsonwizard.utils.PermissionUtils;
 import com.vijay.jsonwizard.utils.PropertyManager;
@@ -173,6 +175,10 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         if (invokeRefreshLogic(stepName, null, key, value)) {
             if (!popup) {
                 cacheFormMapValues(stepName, null, key, value);
+            }
+            if(Utils.isBikramSambatDate() && FormattedDateMatcher.matchesBSdate(value) )
+            {
+                value = Utils.getStringFromDate(Utils.convertToADDate(value));
             }
             widgetsWriteValue(stepName, key, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
         }
@@ -1991,6 +1997,9 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 getAppExecutors().mainThread().execute(new Runnable() {
                     @Override
                     public void run() {
+                        if(Utils.isBikramSambatDate() && FormattedDateMatcher.matches(finalCalculation))
+                            ((EditText) view).setText(Utils.convertADtoBSDAte(finalCalculation));
+                        else
                         ((EditText) view).setText(finalCalculation);
                     }
                 });
@@ -2139,8 +2148,11 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     public Spanned stringFormat(String string, Map<String, Object> valueMap, boolean makeBold) {
         String resString = string;
+
         for (Map.Entry<String, Object> entry : valueMap.entrySet()) {
             String templateValue = getTemplateValue(entry.getValue());
+            if(Utils.isBikramSambatDate() && FormattedDateMatcher.matches(templateValue))
+                templateValue = DateUtil.convertADtoBSDAte(templateValue);
             if (makeBold) {
                 templateValue = "<b>" + getTemplateValue(entry.getValue()) + "</b>";
             }

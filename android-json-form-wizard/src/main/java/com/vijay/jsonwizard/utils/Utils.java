@@ -70,6 +70,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
@@ -807,7 +808,7 @@ public class Utils {
 
     public static String formatDateToPattern(String date, String inputFormat, String outputFormat) {
         if (StringUtils.isEmpty(date)) return "";
-        SimpleDateFormat sdf = new SimpleDateFormat(inputFormat);
+        SimpleDateFormat sdf = new SimpleDateFormat(inputFormat, Locale.ENGLISH);
         sdf.setLenient(false);
         Date newDate = null;
         try {
@@ -818,7 +819,7 @@ public class Utils {
         if (newDate == null) {
             return date;
         }
-        sdf = new SimpleDateFormat(outputFormat);
+        sdf = new SimpleDateFormat(outputFormat,Locale.ENGLISH);
         return sdf.format(newDate);
     }
 
@@ -1001,6 +1002,40 @@ public class Utils {
         }
         return value;
     }
+
+    public static Date convertToADDate(String BSFormat)
+    {
+        String[] dateString = BSFormat.trim().split("-");
+        int BSMonth = Integer.parseInt(dateString[1]);
+        String BSMonthString = BSMonth<=9 ? "0"+BSMonth : ""+BSMonth;
+        Date date = new DateConverter().convertBsToAd(dateString[2]+BSMonthString+dateString[0]);
+        return date;
+    }
+
+    public static String convertADtoBSDAte(String adDate)
+    {
+        try {
+            String BSdate = new DateConverter().convertAdToBs(adDate.trim());
+            String BSdateStrings[] = BSdate.split("-");
+            int monthDate = Integer.parseInt(BSdateStrings[1]);
+            String monthDateString = monthDate <= 9 ? "0" + monthDate : "" + monthDate;
+            return BSdateStrings[0]+"-" + monthDateString+"-" + BSdateStrings[2];
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+
+    public static boolean isBikramSambatDate()
+    {
+        NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
+        return nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_DATEPICKER_IS_NEPAL);
+    }
+
+
 
 
 }

@@ -9,6 +9,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
@@ -91,7 +92,7 @@ public class DateConverter {
    public String convertAdToBs(String adDate) throws ParseException {
         String[] adDateParts = adDate.split("-");
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy").withLocale(Locale.ENGLISH);
         LocalDate inputAdDate = LocalDate.parse(adDate, formatter);
         LocalDate lookupNearestAdDate = null;
         int equivalentNepaliYear = Lookup.lookupNepaliYearStart;
@@ -101,7 +102,7 @@ public class DateConverter {
         for (int i = 0; i < Lookup.adEquivalentDatesForNewNepaliYear.size(); i++) {
             String[] adEquivalentDateForNewNepaliYear = Lookup.adEquivalentDatesForNewNepaliYear.get(i).split("-");
             if (adEquivalentDateForNewNepaliYear[2].equals(adDateParts[2])) {
-                DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
+                DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("dd-MMM-yyyy").withLocale(Locale.ENGLISH);
                 lookupNearestAdDate = LocalDate.parse(Lookup.adEquivalentDatesForNewNepaliYear.get(i), formatter1);
                 monthDay = Lookup.numberOfDaysInNepaliMonth.get(i + Lookup.lookupNepaliYearStart);
                 equivalentNepaliYear += i;
@@ -189,7 +190,7 @@ public class DateConverter {
         // where...
         String dateFormat = "dd-MMM-yyyy";
         java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat(
-                dateFormat);
+                dateFormat,Locale.ENGLISH);
         sdf.setLenient(false);
         Calendar c1 = Calendar.getInstance();
         try {

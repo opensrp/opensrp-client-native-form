@@ -4,7 +4,10 @@ import androidx.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.vijay.jsonwizard.domain.Form;
+import com.vijay.jsonwizard.fragments.JsonFormFragment;
+import com.vijay.jsonwizard.utils.DateConverter;
 import com.vijay.jsonwizard.utils.FormUtils;
+import com.vijay.jsonwizard.utils.NativeFormsProperties;
 import com.vijay.jsonwizard.utils.Utils;
 
 import org.joda.time.Days;
@@ -14,6 +17,7 @@ import org.joda.time.Months;
 import org.joda.time.Weeks;
 import org.joda.time.Years;
 
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -132,6 +136,7 @@ public class RulesEngineDateUtil {
     public String addDuration(String dateString, String durationString) {
         LocalDate date = new LocalDate(Utils.reverseDateString(Utils.getDateFormattedForCalculation(dateString,  Form.getDatePickerDisplayFormat()), "-"));
         String[] durationArr = getDurationArray(durationString);
+        NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
 
         for (String duration : durationArr) {
             char suffix = duration.charAt(duration.length() - 1);
@@ -154,7 +159,16 @@ public class RulesEngineDateUtil {
             }
         }
 
-        return date.toString(FormUtils.NATIIVE_FORM_DATE_FORMAT_PATTERN);
+       // if(!nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_DATEPICKER_IS_NEPAL))
+            return date.toString(FormUtils.NATIIVE_FORM_DATE_FORMAT_PATTERN);
+//        else {
+//            try {
+//                return new DateConverter().convertAdToBs(date.toString(FormUtils.NATIIVE_FORM_DATE_FORMAT_PATTERN));
+//            } catch (ParseException e) {
+//                e.printStackTrace();
+//                return "";
+//            }
+//        }
     }
 
     @NonNull

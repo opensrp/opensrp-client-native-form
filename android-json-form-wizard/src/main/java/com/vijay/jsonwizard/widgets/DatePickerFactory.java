@@ -34,6 +34,7 @@ import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.DateConverter;
 import com.vijay.jsonwizard.utils.DateUtil;
 import com.vijay.jsonwizard.utils.FormUtils;
+import com.vijay.jsonwizard.utils.FormattedDateMatcher;
 import com.vijay.jsonwizard.utils.NativeFormLangUtils;
 import com.vijay.jsonwizard.utils.NativeFormsProperties;
 import com.vijay.jsonwizard.utils.Utils;
@@ -65,11 +66,12 @@ import static com.vijay.jsonwizard.constants.JsonFormConstants.DATE_PICKER;
  * @since 25/01/2017
  */
 public class DatePickerFactory implements FormWidgetFactory {
-    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
     public static final String DATE_FORMAT_REGEX = "(^(((0[1-9]|1[0-9]|2[0-8])[-](0[1-9]|1[012]))|((29|30|31)[-](0[13578]|1[02]))|((29|30)[-](0[4,6,9]|11)))[-](19|[2-9][0-9])\\d\\d$)|(^29[-]02[-](19|[2-9][0-9])(00|04|08|12|16|20|24|28|32|36|40|44|48|52|56|60|64|68|72|76|80|84|88|92|96)$)|\\s*";
     public static final SimpleDateFormat DATE_FORMAT_LOCALE_INDEPENDENT = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
     private static final String TAG = "DatePickerFactory";
     private final FormUtils formUtils = new FormUtils();
+    TextView duration;
 
 
 
@@ -257,7 +259,7 @@ public class DatePickerFactory implements FormWidgetFactory {
     @NonNull
     @VisibleForTesting
     protected String getDurationText(Context context, String date, Locale locale) {
-        return DateUtil.getDuration(DateUtil.getDurationTimeDifference(date, null), locale.getLanguage().equals("ar") ? Locale.ENGLISH : locale, context);
+        return DateUtil.getDuration(DateUtil.getDurationTimeDifference(date, null), (locale.getLanguage().equals("ar") || locale.getLanguage().equals("ne")) ? Locale.ENGLISH : locale, context);
     }
 
     @NonNull
@@ -297,6 +299,7 @@ public class DatePickerFactory implements FormWidgetFactory {
             RelativeLayout dateViewRelativeLayout = getRelativeLayout(context);
             MaterialEditText editText = dateViewRelativeLayout.findViewById(R.id.edit_text);
             TextView duration = dateViewRelativeLayout.findViewById(R.id.duration);
+            this.duration = duration;
 
             attachLayout(stepName, context, formFragment, jsonObject, editText, duration);
 
@@ -407,7 +410,7 @@ public class DatePickerFactory implements FormWidgetFactory {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
                     datePickerDialog.setArguments(new Bundle());
-                    showDatePickerDialog((AppCompatActivity) context, datePickerDialog, editText,null);
+                    showDatePickerDialog((AppCompatActivity) context, datePickerDialog, editText,duration);
                 }
             }
         });
@@ -435,6 +438,8 @@ public class DatePickerFactory implements FormWidgetFactory {
     private void updateEditText(MaterialEditText editText, JSONObject jsonObject, String stepName, Context context, TextView duration) throws JSONException {
 
         Locale locale = getCurrentLocale(context);
+        if(locale.getLanguage().equals("ne"))
+        locale = Locale.ENGLISH;
         final SimpleDateFormat DATE_FORMAT_LOCALE = new SimpleDateFormat("dd-MM-yyyy", locale);
         NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
         final boolean bikramSambatEnabled = nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_DATEPICKER_IS_NEPAL);
