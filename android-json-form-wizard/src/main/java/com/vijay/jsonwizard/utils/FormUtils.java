@@ -832,8 +832,8 @@ public class FormUtils {
             throws JSONException {
         HashSet<String> result = new HashSet<>();
         for (int i = 0; i < optionsArray.length(); i++) {
-            String translatedCheckBox = optionsArray.getString(i);
-            if (translatedCheckBox.charAt(0) == '{') {
+            String translatedCheckBox = optionsArray.optString(i);
+            if (StringUtils.isNotBlank(translatedCheckBox) && translatedCheckBox.charAt(0) == '{') {
                 JSONObject object = new JSONObject(translatedCheckBox);
                 result.add(object.optString(JsonFormConstants.TEXT, ""));
             } else {
