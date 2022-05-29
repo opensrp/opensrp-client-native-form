@@ -121,7 +121,7 @@ public class ButtonFactory implements FormWidgetFactory {
         }
     }
 
-    private void setUpButtonActions(final JsonApi context, final JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, final Button button) throws JSONException {
+    private void setUpButtonActions(final JsonApi jsonApi, final JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, final Button button) throws JSONException {
         JSONObject action = jsonObject.optJSONObject(JsonFormConstants.ACTION);
         final Boolean confirmationBtnSkipValidation = !jsonObject.isNull(JsonFormConstants.SKIP_VALIDATION) ? jsonObject.getBoolean(JsonFormConstants.SKIP_VALIDATION) : false;
         if (action != null) {
@@ -135,7 +135,7 @@ public class ButtonFactory implements FormWidgetFactory {
                         String addressString = (String) v.getTag(R.id.address);
                         if (!TextUtils.isEmpty(addressString)) {
                             String[] address = addressString.split(":");
-                            JSONObject jsonObject = context
+                            JSONObject jsonObject = jsonApi
                                     .getObjectUsingAddress(address, false);
                             jsonObject.put(JsonFormConstants.VALUE, Boolean.TRUE.toString());
 
@@ -148,9 +148,7 @@ public class ButtonFactory implements FormWidgetFactory {
                                     formFragment.next();
                                     break;
                                 default:
-                                    jsonObject.getJSONObject(JsonFormConstants.ACTION)
-                                            .put(JsonFormConstants.RESULT, false);
-                                    jsonObject.put(JsonFormConstants.VALUE, Boolean.FALSE.toString());
+                                    formFragment.customClick((Context) jsonApi, behaviour);
                                     break;
                             }
                         }
