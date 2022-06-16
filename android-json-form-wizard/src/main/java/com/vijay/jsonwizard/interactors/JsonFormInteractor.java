@@ -282,6 +282,6 @@ public class JsonFormInteractor {
         if(map.get(JsonFormConstants.NATIVE_RADIO_BUTTON) != null){
             NativeRadioButtonFactory nativeRadioButtonFactory = (NativeRadioButtonFactory) map.get(JsonFormConstants.NATIVE_RADIO_BUTTON);
             nativeRadioButtonFactory.cleanUp();
-        };
+        }
     }
 }
