@@ -24,7 +24,7 @@
             android:visibility="gone"
             tools:text="Title" />
 
-        <androidx.appcompat.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/dialogRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
