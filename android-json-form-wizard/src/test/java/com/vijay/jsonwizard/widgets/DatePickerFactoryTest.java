@@ -2,7 +2,7 @@ package com.vijay.jsonwizard.widgets;
 
 import android.app.FragmentManager;
 import android.content.res.Resources;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;

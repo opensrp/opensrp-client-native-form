@@ -34,7 +34,7 @@
         android:background="@drawable/multi_select_search_view_bg"
         android:layout_height="wrap_content"
         >
-        <android.support.v7.widget.SearchView
+        <androidx.appcompat.widget.SearchView
             app:iconifiedByDefault="false"
             android:id="@+id/multiSelectListSearchView"
             android:layout_width="match_parent"
@@ -60,7 +60,7 @@
         android:padding="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <android.support.v7.widget.RecyclerView
+        <androidx.appcompat.widget.RecyclerView
             android:id="@+id/multiSelectListRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>

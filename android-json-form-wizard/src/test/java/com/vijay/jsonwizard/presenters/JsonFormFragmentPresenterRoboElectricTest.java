@@ -6,7 +6,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.AppCompatSpinner;
+import androidx.appcompat.widget.AppCompatSpinner;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
