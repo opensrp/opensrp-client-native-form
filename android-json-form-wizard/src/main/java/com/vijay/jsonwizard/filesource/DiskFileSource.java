@@ -10,6 +10,7 @@ import com.vijay.jsonwizard.utils.Utils;
 
 import org.jeasy.rules.api.Rules;
 import org.jeasy.rules.mvel.MVELRuleFactory;
+import org.jeasy.rules.support.YamlRuleDefinitionReader;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -26,14 +27,16 @@ import java.io.InputStreamReader;
 public class DiskFileSource implements FormFileSource {
 
     public static DiskFileSource INSTANCE = new DiskFileSource();
+    private MVELRuleFactory mvelRuleFactory;
 
     private DiskFileSource() {
+        this.mvelRuleFactory = new MVELRuleFactory(new YamlRuleDefinitionReader());
     }
 
     @Override
     public Rules getRulesFromFile(Context context, String fileName) throws Exception {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(getInputStream(fileName)));
-        return MVELRuleFactory.createRulesFrom(bufferedReader);
+        return this.mvelRuleFactory.createRules(bufferedReader);
     }
 
     @Override

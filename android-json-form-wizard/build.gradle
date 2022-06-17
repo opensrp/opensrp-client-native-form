@@ -115,8 +115,10 @@ dependencies {
 
     implementation 'org.smartregister:opensrp-client-utils:0.0.6-SNAPSHOT'
 
-    implementation 'org.jeasy:easy-rules-core:3.3.0'
-    implementation 'org.jeasy:easy-rules-mvel:3.3.0'
+    def easyRulesVersion = '3.4.0'
+    implementation "org.jeasy:easy-rules-core:$easyRulesVersion"
+    implementation "org.jeasy:easy-rules-mvel:$easyRulesVersion"
+
     implementation 'joda-time:joda-time:2.10.5'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation('io.ona.rdt-capture:lib:2.1.0') {
