@@ -598,6 +598,11 @@ public class NumericDatePicker extends DatePicker {
             numberPicker.setMaxValue(cacheMax);
         }
 
+        // Avoid the case where minV and max cache value are same
+        if (cacheMax == cacheMin) {
+            numberPicker.setMinValue(value);
+            numberPicker.setMaxValue(value);
+        }
 
         if (numberPicker.getId() == R.id.year) {
 
