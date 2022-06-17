@@ -29,7 +29,8 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity android:name="org.smartregister.nativeform_tester.FormTesterActivity"
             android:label="@string/native_app_name"
-            android:theme="@style/NativeFormsAppTheme.NoActionBar">
+            android:theme="@style/NativeFormsAppTheme.NoActionBar"
+            android:exported="true">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

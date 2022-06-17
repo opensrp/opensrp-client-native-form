@@ -61,10 +61,6 @@ android {
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
     }
-
-    configurations.all {
-        resolutionStrategy.force 'com.android.support:design:28.0.0'
-    }
 }
 
 
@@ -78,13 +74,13 @@ repositories {
 }
 
 dependencies {
-    implementation('org.smartregister:opensrp-client-simprints:1.0.6-SNAPSHOT@aar') {
+    implementation('org.smartregister:opensrp-client-simprints:1.1.0-SNAPSHOT@aar') {
         transitive = true
         exclude group: 'com.android.support', module: 'appcompat-v7'
         exclude group: 'com.android.support', module: 'design'
     }
     implementation 'com.github.bmelnychuk:atv:1.2.9'
-    implementation('com.google.android.material:material:1.0.0') {
+    implementation('com.google.android.material:material:1.6.1') {
         exclude group: 'com.android.support', module: 'recyclerview-v7'
         exclude group: 'com.android.support', module: 'appcompat-v7'
         exclude group: 'com.android.support', module: 'support-v4'
@@ -93,7 +89,7 @@ dependencies {
     implementation 'com.github.johnkil.print:print:1.3.1'
     implementation 'com.github.rey5137:material:1.3.1'
     implementation 'org.smartregister:opensrp-client-materialedittext:2.1.6-SNAPSHOT'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation('com.github.ganfra:material-spinner:2.0.0') {
         exclude group: 'com.nineoldandroids', module: 'library'
         exclude group: 'com.android.support', module: 'appcompat-v7'
@@ -114,6 +110,7 @@ dependencies {
     }
 
     implementation 'org.smartregister:opensrp-client-utils:0.0.6-SNAPSHOT'
+    implementation 'androidx.test:core:1.4.0'
 
     def easyRulesVersion = '3.4.0'
     implementation "org.jeasy:easy-rules-core:$easyRulesVersion"
@@ -140,7 +137,7 @@ dependencies {
     }
     implementation 'com.jakewharton.timber:timber:5.0.1'
     implementation "org.greenrobot:eventbus:3.2.0"
-    implementation 'androidx.multidex:multidex:2.0.0'
+    implementation 'androidx.multidex:multidex:2.0.1'
 
     // PowerMock
     def powerMockVersion = '2.0.7'
@@ -154,23 +151,22 @@ dependencies {
     }
 
     androidTestImplementation 'com.jayway.android.robotium:robotium-solo:5.6.3'
-    androidTestImplementation 'com.google.dexmaker:dexmaker-mockito:1.2'
-    androidTestImplementation 'junit:junit:4.12'
-    androidTestImplementation('androidx.test.ext:junit:1.1.1') {
+    androidTestImplementation 'junit:junit:4.13.2'
+    androidTestImplementation('androidx.test.ext:junit:1.1.3') {
         exclude group: 'com.android.support', module: 'appcompat-v7'
 
     }
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
-    androidTestImplementation('androidx.test:rules:1.1.1') {
+    androidTestImplementation('androidx.test:rules:1.4.0') {
         exclude group: 'com.android.support', module: 'appcompat-v7'
 
     }
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.apache.maven:maven-ant-tasks:2.1.3'
-    testImplementation 'org.mockito:mockito-core:4.6.1'
+    testImplementation 'org.mockito:mockito-core:3.12.4'
     testImplementation('com.squareup:fest-android:1.0.8') { exclude module: 'support-v4' }
     testImplementation 'org.robolectric:robolectric:4.8.1'
     testImplementation "org.json:json:20220320"
