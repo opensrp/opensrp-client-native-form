@@ -824,6 +824,12 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         return presenter.onMenuItemClick(item);
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        presenter.cleanUp();
+    }
+
     protected class BottomNavigationListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {
