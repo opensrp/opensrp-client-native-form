@@ -611,14 +611,27 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
     }
 
     private void checkSelectedRadioButton(final CommonListener listener, final RadioButton radioButton, String value, JSONObject item) throws JSONException {
-        if (StringUtils.isNotBlank(value) && value.equals(item.getString(JsonFormConstants.KEY))) {
-            ((Activity) context).runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    radioButton.setChecked(true);
-                    radioButton.setOnCheckedChangeListener(listener);
+        if (StringUtils.isNotBlank(value)) {
+            if (value.equals(item.getString(JsonFormConstants.KEY))) {
+                ((Activity) context).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        radioButton.setChecked(true);
+                        radioButton.setOnCheckedChangeListener(listener);
+                    }
+                });
+            } else if (value.charAt(0) == '{') {
+                JSONObject object = new JSONObject(value);
+                if (object.has(JsonFormConstants.VALUE) && object.optString(JsonFormConstants.VALUE).equals(item.getString(JsonFormConstants.KEY))) {
+                    ((Activity) context).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            radioButton.setChecked(true);
+                            radioButton.setOnCheckedChangeListener(listener);
+                        }
+                    });
                 }
-            });
+            }
         } else {
             radioButton.setOnCheckedChangeListener(listener);
         }
@@ -887,6 +900,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         return customTranslatableWidgetFields;
     }
 
+
     private class CustomTextViewClickListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {
@@ -894,5 +908,12 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             radioButton.setChecked(false);
             radioButton.performClick();
         }
+    public void cleanUp(){
+        this.context = null;
+        this.formFragment = null;
+        this.radioButton = null;
+        this.extraInfoTextView = null;
+        this.specifyTextView = null;
+        this.reasonsTextView = null;
     }
 }

@@ -1,0 +1,119 @@
+<resources>
+    <string name="app_name">jsonwizard</string>
+    <string name="hello_world">Olá Mundo!</string>
+    <string name="action_settings">Configurações</string>
+    <string name="badly_formed_date">Data mal formada</string>
+    <string name="badly_formed_time">Hora mal formada</string>
+    <string name="ic_check_circle_blank">&#xe03e;</string>
+    <string name="ic_keyboard_arrow_down">&#xe0c5;</string>
+    <string name="ic_keyboard_arrow_left">&#xe0c6;</string>
+    <string name="ic_keyboard_arrow_right">&#xe0c7;</string>
+    <string name="ic_keyboard_arrow_up">&#xe0c8;</string>
+    <string name="confirm_form_close">Confirmar fechamento do formulário</string>
+    <string name="confirm_form_close_explanation">Tem certeza de que quer voltar? Todos os dados inseridos neste formulário serão apagados.</string>
+    <string name="yes">Sim</string>
+    <string name="no">Não</string>
+    <string name="cancel">Cancelar</string>
+    <string name="ok">OK</string>
+    <string name="record_location">Salvar Localização</string>
+    <string name="latitude">Latitude: %s</string>
+    <string name="longitude">Longitude: %s</string>
+    <string name="altitude">Altitude: %s</string>
+    <string name="accuracy">Precisão: %s</string>
+    <string name="loading_location">Carregando Localização</string>
+    <string name="could_not_get_your_location">Não foi possível obter sua localização GPS</string>
+    <string name="using_provider">Usando o provedor %s</string>
+    <string name="unknown_gps_accuracy">A precisão é desconhecida</string>
+    <string name="required">*</string>
+    <string name="info_label">Aba de informações</string>
+    <string name="label_text_string">%1$s %2$s</string>
+    <string name="the_toaster_icon">O ícone da informação</string>
+    <string name="asterisks">*</string>
+    <string name="save">Salvar</string>
+    <string name="radio_button_tap_to_change">Toque para alterar</string>
+    <string name="select_one">Selecionar um Número</string>
+    <string name="done">Feito</string>
+    <string name="please_wait_title">Por favor, aguarde</string>
+    <string name="creating_repeating_group_title">Por favor, aguarde</string>
+    <string name="creating_repeating_group_message">Criando Grupo de Repetição</string>
+    <string name="launching_rdt_capture_message">Iniciando o widget de captura RDT</string>
+    <string name="repeating_group_max_value_err_msg">O número de grupos de repetição não pode ser maior que%1$d</string>
+    <string name="repeating_group_min_value_err_msg">O número de grupos de repetição deve ser maior que%1$d</string>
+    <string name="repeating_group_number_format_err_msg">O número de grupos repetidos deve ser um valor inteiro</string>
+    <string name="enter_number_of_repeating_group_items">Insira # itens de grupo repetidos</string>
+    <string name="repeating_group_item">Item</string>
+    <string name="repeating_group_label">repeating_group_label</string>
+
+    <string-array name="spinnerItems">
+    </string-array>
+
+    <string name="scan_qr_code_title">Digitalizar QR Code</string>
+
+    <!--The barcode strings-->
+    <string name="permission_camera_rationale">O acesso à câmera é necessário para esta aplicação</string>
+    <string name="no_camera_permission">Este aplicativo não pode ser executado porque não tem permissão para acessar a câmera. O aplicativo será encerrado agora.</string>
+    <string name="low_storage_error">Os anexos do detector facial não podem ser baixados devido ao baixo armazenamento do dispositivo</string>
+    <string name="title_activity_main">Amostra de Leitor de Código de Barras</string>
+    <string name="barcode_header">Clique em &quot;Read Barcode&quot; para ler um código de barras</string>
+    <string name="read_barcode">Ler código de barras</string>
+    <string name="auto_focus">Auto-foco</string>
+    <string name="use_flash">Usar Flash</string>
+    <string name="barcode_success">Código de barras lido com sucesso</string>
+    <string name="barcode_failure">Nenhum código de barras capturado</string>
+    <string name="barcode_error">Erro ao ler o código de barras: %1$s</string>
+    <string name="allow_camera_management">Você precisa permitir que o aplicativo use a câmera para digitalizar QR codes&#8230;</string>
+    <string name="please_specify_content">Especifique o conteúdo a ser exibido pelo pop-up&#8230;</string>
+    <string name="previous">Anterior</string>
+    <string name="next">Próximo</string>
+    <string name="submit">Enviar</string>
+    <string name="the_extra_info_icon">O ícone de informações extras</string>
+    <string name="edit_button_label">Botão Editar</string>
+    <string name="info_icon">Ícone de informações</string>
+    <string name="attention">Atenção</string>
+    <string name="json_form_error_msg">Encontrado(s) %d erro(s) no formulário. Por favor, corrija-os para enviar.</string>
+    <string name="json_form_on_next_error_msg">Por favor, corrija o(s) erro(s) no formulário para continuar.</string>
+    <string name="go_to_step">Ir para o Passo</string>
+    <string name="shows_image_on_dialog">Mostra a imagem na caixa de diálogo</string>
+    <string name="undo_test_result">Desfazer o resultado %1$s?</string>
+    <string name="record">Gravar</string>
+    <string name="undo">Desfazer</string>
+    <string name="info_icon_display">Exibição do ícone de mais informações</string>
+    <string name="status_icon_display">Exibição do ícone de status</string>
+    <string name="simprints_guid">GUID não encontrado</string>
+    <string name="simprints_init_fail">ID do projeto, ID do usuário ou ID do módulo não foram encontrados. Por favor, use SimprintsLibrary.init</string>
+    <string name="permission_denied_title">Permissão Negada</string>
+    <string name="permission_messege">O aplicativo precisa dessa permissão para capturar as informações do dispositivo necessárias ao enviar formulários. Sem essa permissão, o aplicativo não funcionará corretamente. Tem certeza de que deseja negar esta permissão?</string>
+    <string name="multiselect_msg_on_item_added">Adicionado</string>
+    <string name="loading_multi_select_list">Carregando</string>
+    <string name="loading">Carregando</string>
+    <string name="loading_form_message">Por favor, aguarde enquanto carregamos seu formulário...</string>
+    <string name="opening_forms">Carregando subformulários...</string>
+    <string name="multiselect_already_added_msg">%s já está adicionado</string>
+    <string name="multi_select_list_msg_data_source_invalid">Fonte de dados externa não encontrada ou processada</string>
+    <string name="next_step_loading">Por favor, aguarde enquanto preparamos o próximo passo.</string>
+    <!-- Duration -->
+    <string name="x_seconds">%1$ds</string>
+    <string name="x_minutes">%1$dm</string>
+    <string name="x_hours">%1$dh</string>
+    <string name="x_days">%1$dd</string>
+    <string name="x_weeks">%1$ds</string>
+    <string name="x_weeks_days">%1$ds %2$dd</string>
+    <string name="x_months">%1$dm</string>
+    <string name="x_months_weeks">%1$dm %2$ds</string>
+    <string name="x_years">%1$da</string>
+    <string name="x_years_months">%1$da %2$dm</string>
+    <string name="repeating_group_not_generated_error_message">Por favor, clique no botão &#9989; botão para gerar as perguntas</string>
+
+    <string name="form_update_title">Atualização do formulário</string>
+    <string name="form_update_message">Este formulário tem atualizações de conteúdo</string>
+    <string name="form_changed_reopen_to_take_effect">O formulário foi selecionado com sucesso! Reabra este formulário para que as alterações entrem em vigor</string>
+    <string name="rollback_dialog_title">Selecione uma versão anterior do formulário</string>
+    <string name="current_corrupted_form">(Formulário corrompido atual)</string>
+    <string name="cannot_select_corrupted_form_rollback">Você não pode selecionar este formulário porque está corrompido!</string>
+
+    <string name="error_title">Erro</string>
+    <string name="form_load_error">Desculpe, ocorreu um erro fatal ao carregar o formulário. Entre em contato com um desenvolvedor para obter mais assistência.</string>
+    <string name="select_one_option">Por favor selecione uma opção</string>
+    <string name="extended_radio_info_text_ensure_options_set">Verifique se você definiu as opções</string>
+
+</resources>

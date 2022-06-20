@@ -833,20 +833,36 @@ public class Utils {
 
     public static JSONObject generateTranslatableValue(String value, JSONObject item) throws JSONException {
         JSONObject newValue = new JSONObject();
-        String itemType = item.has(TYPE) ? item.getString(TYPE) : "";
-        if (JsonFormConstants.NATIVE_RADIO_BUTTON.equals(itemType) || JsonFormConstants.SPINNER.equals(itemType) || JsonFormConstants.CHECK_BOX.equals(itemType)) {
-            if (item.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
-                JSONArray options = item.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
-                JSONObject selectedOption = formUtils.getOptionFromOptionsUsingKey(options, value);
-                newValue.put(VALUE, value);
-                newValue.put(TEXT, selectedOption.optString(JsonFormConstants.TRANSLATION_TEXT));
-                return newValue;
-            }
+        if (item.has(JsonFormConstants.OPTIONS_FIELD_NAME)) {
+            JSONArray options = item.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
+            JSONObject selectedOption = formUtils.getOptionFromOptionsUsingKey(options, value);
             newValue.put(VALUE, value);
-            newValue.put(TEXT, item.optString(JsonFormConstants.TRANSLATION_TEXT));
+            newValue.put(TEXT, selectedOption.optString(JsonFormConstants.TRANSLATION_TEXT));
             return newValue;
         }
+        newValue.put(VALUE, value);
+        newValue.put(TEXT, item.optString(JsonFormConstants.TRANSLATION_TEXT));
         return newValue;
+    }
+
+    public static boolean enabledProperty(String appPropName) {
+        NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
+        return nativeFormsProperties != null && nativeFormsProperties.isTrue(appPropName);
+    }
+
+    public static String getValueFromTranslatedObject(JSONObject item) {
+        try {
+            if (item != null && item.has(VALUE)) {
+                if (item.opt(VALUE) != null && item.opt(VALUE).toString().charAt(0) == '{') {
+                    return new JSONObject(item.opt(VALUE).toString()).optString(VALUE);
+                }
+                return item.opt(VALUE) + "";
+            }
+            return "";
+        } catch (Exception e) {
+            Timber.e(e, "----> getValueFromTranslatedObject");
+            return "";
+        }
     }
 
     public List<String> createExpansionPanelChildren(JSONArray jsonArray) throws JSONException {

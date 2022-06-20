@@ -500,7 +500,6 @@ public class UtilsTest extends BaseTest {
         JSONObject expectedJson = new JSONObject(expected);
         JSONObject item = new JSONObject(jsonForm);
         Assert.assertEquals(expectedJson.toString(), Utils.generateTranslatableValue(item.optJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME).optJSONObject(0).optString(JsonFormConstants.KEY), item).toString());
-    }
 
     @Test
     public void testGenerateTranslatableValueWithoutOptionsField() throws Exception {

@@ -493,12 +493,7 @@ public class FormUtils {
 
     public static void setEditMode(JSONObject jsonObject, View editableView, ImageView editButton)
             throws JSONException {
-        if (jsonObject.has(JsonFormConstants.EDITABLE) && jsonObject
-                .has(JsonFormConstants.READ_ONLY)) {
-            editButton.setVisibility(View.VISIBLE);
-            editableView.setEnabled(false);
-        }
-        else if (jsonObject.has(JsonFormConstants.EDITABLE)) {
+        if (jsonObject.has(JsonFormConstants.EDITABLE)) {
             boolean editable = jsonObject.getBoolean(JsonFormConstants.EDITABLE);
             if (editable) {
                 editButton.setVisibility(View.VISIBLE);
@@ -510,6 +505,10 @@ public class FormUtils {
             boolean readyOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
             editableView.setEnabled(!readyOnly);
             editButton.setVisibility(View.GONE);
+        } else if (jsonObject.has(JsonFormConstants.EDITABLE) && jsonObject
+                .has(JsonFormConstants.READ_ONLY)) {
+            editButton.setVisibility(View.VISIBLE);
+            editableView.setEnabled(false);
         }
     }
 
@@ -687,19 +686,17 @@ public class FormUtils {
         return new JSONArray(optionValues);
     }
 
-    public static HashSet<String> getCurrentCheckboxValues(JSONArray optionsArray)
-            throws JSONException {
-        HashSet<String> result = new HashSet<>();
-        for (int i = 0; i < optionsArray.length(); i++) {
-            String translatedCheckBox = optionsArray.getString(i);
-            if (translatedCheckBox.charAt(0) == '{') {
-                JSONObject object = new JSONObject(translatedCheckBox);
-                result.add(object.optString(JsonFormConstants.TEXT, ""));
-            } else {
-                result.add(translatedCheckBox);
+    public static HashSet<String> getCurrentCheckboxValues(JSONArray optionsArray) {
+        try {
+            HashSet<String> result = new HashSet<>();
+            for (int i = 0; i < optionsArray.length(); i++) {
+                result.add(optionsArray.getString(i));
             }
+            return result;
+        } catch (Exception e) {
+            Timber.e(e);
+            return null;
         }
-        return result;
     }
 
     /**
@@ -1384,7 +1381,7 @@ public class FormUtils {
                         JSONObject object = new JSONObject(valueString);
                         values = new JSONArray(object.optString(JsonFormConstants.TEXT, ""));
                     } else {
-                        JSONObject createJsonValues = Utils.generateTranslatableValue(jsonObject.optString(JsonFormConstants.KEY), jsonObject);
+                        JSONObject createJsonValues = Utils.generateTranslatableValue(jsonObject.optString(JsonFormConstants.VALUE, ""), jsonObject);
                         values = new JSONArray(createJsonValues);
                     }
                 } else {
@@ -1396,7 +1393,6 @@ public class FormUtils {
 
                 }
             }
-
         } catch (JSONException e) {
             Timber.e(e, "%s --> updateValueToJSONArray", this.getClass().getCanonicalName());
         }
