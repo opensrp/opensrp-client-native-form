@@ -894,5 +894,12 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             radioButton.setChecked(false);
             radioButton.performClick();
         }
+    public void cleanUp(){
+        this.context = null;
+        this.formFragment = null;
+        this.radioButton = null;
+        this.extraInfoTextView = null;
+        this.specifyTextView = null;
+        this.reasonsTextView = null;
     }
 }
