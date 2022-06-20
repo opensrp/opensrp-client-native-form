@@ -1,18 +1,16 @@
 package com.vijay.jsonwizard.rules;
 
+import static org.junit.Assert.assertEquals;
+
 import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.shadow.ShadowRulesEngineDateUtil;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Created by samuelgithengi on 3/7/19.
@@ -61,7 +59,7 @@ public class RulesEngineHelperTest extends BaseTest {
         String dob = "04-07-1990";
         int expectedAge = 31;
         int actualAge = helper.getMothersAge(dob);
-        Assert.assertEquals(expectedAge, actualAge);
+        assertEquals(expectedAge, actualAge);
     }
 
     @Test
@@ -70,7 +68,7 @@ public class RulesEngineHelperTest extends BaseTest {
         String dateString2 = "06-08-1990";
         Long expectedDays = Long.parseLong("33");
         Long actualDays = helper.getDifferenceDays(dateString2, dateString1);
-        Assert.assertEquals(expectedDays, actualDays);
+        assertEquals(expectedDays, actualDays);
 
     }
 
