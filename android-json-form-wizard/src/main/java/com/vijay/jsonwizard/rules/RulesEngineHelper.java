@@ -9,10 +9,14 @@ import java.util.List;
  */
 public class RulesEngineHelper {
 
-    private RulesEngineDateUtil rulesEngineDateUtil = new RulesEngineDateUtil();
+    private final RulesEngineDateUtil rulesEngineDateUtil = new RulesEngineDateUtil();
 
     public long getDifferenceDays(String dateString) {
         return rulesEngineDateUtil.getDifferenceDays(dateString);
+    }
+
+    public int getMothersAge(String dateOfBirth) {
+        return RulesEngineDateUtil.getAgeFromDate(dateOfBirth);
     }
 
     public long getDifferenceDays(String dateString, String dateString2) {
