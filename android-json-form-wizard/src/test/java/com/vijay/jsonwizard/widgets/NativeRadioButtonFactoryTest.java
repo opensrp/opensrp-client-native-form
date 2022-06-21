@@ -10,7 +10,6 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.utils.FormUtils;
 
-import org.fest.assertions.api.Assertions;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Assert;
