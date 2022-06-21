@@ -1,6 +1,9 @@
 package com.vijay.jsonwizard.widgets;
 
+import android.app.Activity;
+import android.content.Context;
 import android.view.View;
+import android.widget.RadioButton;
 
 import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
@@ -30,6 +33,10 @@ public class NativeRadioButtonFactoryTest extends BaseTest {
     private JsonFormFragment formFragment;
     @Mock
     private CommonListener listener;
+    @Mock
+    private RadioButton radioButton;
+
+    private Context context;
 
     @Before
     public void setUp() {
@@ -37,6 +44,7 @@ public class NativeRadioButtonFactoryTest extends BaseTest {
         factory = new NativeRadioButtonFactory();
         formUtils = new FormUtils();
         jsonFormActivity = Robolectric.buildActivity(JsonFormActivity.class, getJsonFormActivityIntent()).create().get();
+        context = Mockito.mock(Activity.class);
     }
 
     @Test
@@ -116,5 +124,28 @@ public class NativeRadioButtonFactoryTest extends BaseTest {
         Set<String> editableProperties = factory.getCustomTranslatableWidgetFields();
         Assert.assertEquals(4, editableProperties.size());
         Assert.assertEquals("options.text", editableProperties.iterator().next());
+    }
+
+    @Test
+    public void testSelectedButton() throws Exception {
+        String value = "button";
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("key", "button");
+        Whitebox.setInternalState(factory, "context", context);
+        radioButton = Mockito.mock(RadioButton.class);
+        Whitebox.invokeMethod(factory, "checkSelectedRadioButton", listener, radioButton, value, jsonObject);
+
+
+    }
+
+    @Test
+    public void testSelectedTranslatedButton() throws Exception {
+        String value = "{\"value\":\"button\",\"text\":\"text\"}";
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("key", "button");
+        Whitebox.setInternalState(factory, "context", context);
+        radioButton = Mockito.mock(RadioButton.class);
+        Whitebox.invokeMethod(factory, "checkSelectedRadioButton", listener, radioButton, value, jsonObject);
+
     }
 }
