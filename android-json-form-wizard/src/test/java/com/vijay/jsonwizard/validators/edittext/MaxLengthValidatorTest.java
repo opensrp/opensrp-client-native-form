@@ -6,34 +6,28 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class MaxLengthValidatorTest extends BaseTest {
+
     @Test
     public void isValidShouldReturnFalseWhenStringLengthGreaterThanMaxSetValue() {
-
-        MaxLengthValidator validator = new MaxLengthValidator(DEFAULT_ERROR_MSG, CONSTANT_INT_1);
+        MaxLengthValidator validator = new MaxLengthValidator(DEFAULT_ERROR_MSG, CONSTANT_INT_1, false);
         Assert.assertEquals(false, validator.isValid(DEFAULT_TEST_MESSAGE, false));
-
     }
 
     @Test
     public void isValidShouldReturnTrueWhenStringLengthLessThanMaxSetValue() {
-
-        MaxLengthValidator validator = new MaxLengthValidator(DEFAULT_ERROR_MSG, CONSTANT_INT_50);
+        MaxLengthValidator validator = new MaxLengthValidator(DEFAULT_ERROR_MSG, CONSTANT_INT_50, false);
         Assert.assertEquals(true, validator.isValid(DEFAULT_TEST_MESSAGE, false));
-
     }
 
     @Test
     public void isValidShouldReturnTrueWhenStringLengthEqualToMaxSetValue() {
-        MaxLengthValidator validator = new MaxLengthValidator(DEFAULT_ERROR_MSG, CONSTANT_INT_16);
+        MaxLengthValidator validator = new MaxLengthValidator(DEFAULT_ERROR_MSG, CONSTANT_INT_16, false);
         Assert.assertEquals(true, validator.isValid(DEFAULT_TEST_MESSAGE, false));
-
     }
 
     @Test
     public void isValidShouldReturnTrueWhenTheStringIsNull() {
-        MaxLengthValidator validator = new MaxLengthValidator(DEFAULT_ERROR_MSG, CONSTANT_INT_1);
+        MaxLengthValidator validator = new MaxLengthValidator(DEFAULT_ERROR_MSG, CONSTANT_INT_1, false);
         Assert.assertEquals(false, (validator.isValid(null, false)));
     }
-
 }
-
