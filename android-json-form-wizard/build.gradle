@@ -1,7 +1,7 @@
 buildscript {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
     dependencies {
         classpath "com.android.tools.build:gradle:$androidToolsBuildGradle"
@@ -157,7 +157,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'appcompat-v7'
 
     }
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0', {
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
     androidTestImplementation('androidx.test:rules:1.4.0') {
