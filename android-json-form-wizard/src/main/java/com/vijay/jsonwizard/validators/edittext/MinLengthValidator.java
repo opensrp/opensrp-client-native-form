@@ -7,7 +7,7 @@ import com.vijay.jsonwizard.widgets.EditTextFactory;
  */
 public class MinLengthValidator extends LengthValidator {
 
-    public MinLengthValidator(String errorMessage, int minLength) {
-        super(errorMessage, minLength, EditTextFactory.MAX_LENGTH);
+    public MinLengthValidator(String errorMessage, int minLength, boolean isRequired) {
+        super(errorMessage, minLength, EditTextFactory.MAX_LENGTH, isRequired);
     }
 }
