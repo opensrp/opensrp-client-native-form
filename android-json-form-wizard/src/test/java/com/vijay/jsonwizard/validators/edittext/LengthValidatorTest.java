@@ -8,18 +8,32 @@ import org.junit.Test;
 public class LengthValidatorTest extends BaseTest {
 
     @Test
-    public void isValidShouldReturnFalseWhenIsEmptyTrue() {
-
-        LengthValidator validator = new LengthValidator(DEFAULT_ERROR_MSG, CONSTANT_INT_0, CONSTANT_INT_50);
-        Assert.assertEquals(false, validator.isValid(DEFAULT_TEST_MESSAGE, true));
-
+    public void isValidShouldReturnTrueWhenEditTextValueIsEmptyAndMinimumLengthIsZeroAndIsNotRequired() {
+        LengthValidator validator = new LengthValidator(DEFAULT_ERROR_MSG, CONSTANT_INT_0, CONSTANT_INT_50, false);
+        Assert.assertEquals(true, validator.isValid("", true));
     }
 
     @Test
-    public void isValidShouldReturnTrueWhenIsEmptyFalse() {
+    public void isValidShouldReturnFalseWhenEditTextValueIsEmptyAndIsRequired() {
+        LengthValidator validator = new LengthValidator(DEFAULT_ERROR_MSG, CONSTANT_INT_0, CONSTANT_INT_50, true);
+        Assert.assertEquals(false, validator.isValid("", true));
+    }
 
-        LengthValidator validator = new LengthValidator(DEFAULT_ERROR_MSG, CONSTANT_INT_0, CONSTANT_INT_50);
+    @Test
+    public void isValidShouldReturnTrueWhenEditTextValueIsNotEmptyAndIsLowerThanMaximumLength() {
+        LengthValidator validator = new LengthValidator(DEFAULT_ERROR_MSG, CONSTANT_INT_0, CONSTANT_INT_50, false);
+        Assert.assertEquals(true, validator.isValid(DEFAULT_TEST_MESSAGE, false));
+    }
+
+    @Test
+    public void isValidShouldReturnFalseWhenEditTextValueIsLongerThanMaximumLength() {
+        LengthValidator validator = new LengthValidator(DEFAULT_ERROR_MSG, CONSTANT_INT_0, 20, false);
+        Assert.assertEquals(false, validator.isValid("This message is longer", false));
+    }
+
+    @Test
+    public void isValidShouldReturnTrueWhenEditTextValueIsLongerThanMinimumLengthAndShorterThanMaximumLength() {
+        LengthValidator validator = new LengthValidator(DEFAULT_ERROR_MSG, CONSTANT_INT_0, CONSTANT_INT_50, false);
         Assert.assertEquals(true, validator.isValid(DEFAULT_TEST_MESSAGE, false));
     }
 }
-
