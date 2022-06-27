@@ -502,24 +502,24 @@ public class UtilsTest extends BaseTest {
         Assert.assertEquals(expectedJson.toString(), Utils.generateTranslatableValue(item.optJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME).optJSONObject(0).optString(JsonFormConstants.KEY), item).toString());
     }
 
-    @Test
-    public void testGenerateTranslatableValueWithoutOptionsField() throws Exception {
-        String jsonForm =
-                "    {\n" +
-                        "  \"type\": \"native_radio\",\n" +
-                        "      \"key\": \"a\",\n" +
-                        "      \"text\": \"A\",\n" +
-                        "      \"translation_text\": \"anc_profile.values.a\",\n" +
-                        "      \"openmrs_entity_parent\": \"\",\n" +
-                        "      \"openmrs_entity\": \"concept\",\n" +
-                        "      \"openmrs_entity_id\": \"163115AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
-                        "    }";
-        String expected = " {\n" +
-                "         \"value\":\"a\",\n" +
-                "         \"text\":\"anc_profile.values.a\"\n" +
-                "      }";
-        JSONObject expectedJson = new JSONObject(expected);
-        JSONObject item = new JSONObject(jsonForm);
-        Assert.assertEquals(expectedJson.toString(), Utils.generateTranslatableValue(item.optString(JsonFormConstants.KEY), item).toString());
+        @Test
+        public void testGenerateTranslatableValueWithoutOptionsField () throws Exception {
+            String jsonForm =
+                    "    {\n" +
+                            "  \"type\": \"native_radio\",\n" +
+                            "      \"key\": \"a\",\n" +
+                            "      \"text\": \"A\",\n" +
+                            "      \"translation_text\": \"anc_profile.values.a\",\n" +
+                            "      \"openmrs_entity_parent\": \"\",\n" +
+                            "      \"openmrs_entity\": \"concept\",\n" +
+                            "      \"openmrs_entity_id\": \"163115AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+                            "    }";
+            String expected = " {\n" +
+                    "         \"value\":\"a\",\n" +
+                    "         \"text\":\"anc_profile.values.a\"\n" +
+                    "      }";
+            JSONObject expectedJson = new JSONObject(expected);
+            JSONObject item = new JSONObject(jsonForm);
+            Assert.assertEquals(expectedJson.toString(), Utils.generateTranslatableValue(item.optString(JsonFormConstants.KEY), item).toString());
+        }
     }
-}

@@ -1,15 +1,16 @@
 package com.vijay.jsonwizard.rules;
 
+import static org.junit.Assert.assertEquals;
+
 import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.shadow.ShadowRulesEngineDateUtil;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Created by samuelgithengi on 3/7/19.
@@ -17,10 +18,15 @@ import static org.junit.Assert.assertEquals;
 public class RulesEngineHelperTest extends BaseTest {
 
     public static String TEST_DATE_TIME = "2020-05-30T10:15:30Z";
+    private RulesEngineHelper helper;
+
+    @Before
+    public void setUp() {
+        helper = new RulesEngineHelper();
+    }
 
     @Test
     public void testIfNull() {
-        RulesEngineHelper helper = new RulesEngineHelper();
         assertEquals("0", helper.ifNull(null, "0"));
         assertEquals("1", helper.ifNull("", "1"));
         assertEquals("123", helper.ifNull("123", ""));
@@ -30,7 +36,6 @@ public class RulesEngineHelperTest extends BaseTest {
     @Test
     @Config(shadows = {ShadowRulesEngineDateUtil.class})
     public void getDateTimeTodayReturnsExpectedDateTime() {
-        RulesEngineHelper helper = new RulesEngineHelper();
         assertEquals(new RulesEngineDateUtil().getDateTimeToday(), helper.getDateTimeToday());
     }
 
@@ -44,10 +49,27 @@ public class RulesEngineHelperTest extends BaseTest {
     @Test
     public void canGetNonNullValueFromList() {
         List<String> stringList = new ArrayList<>();
-        RulesEngineHelper helper = new RulesEngineHelper();
         stringList.add("Hello");
         stringList.add("");
         assertEquals("Hello", helper.getNonBlankValue(stringList));
+    }
+
+    @Test
+    public void testGetMothersAge() {
+        String dob = "04-07-1990";
+        int expectedAge = 31;
+        int actualAge = helper.getMothersAge(dob);
+        assertEquals(expectedAge, actualAge);
+    }
+
+    @Test
+    public void testGetDifferenceDays() {
+        String dateString1 = "04-07-1990";
+        String dateString2 = "06-08-1990";
+        Long expectedDays = Long.parseLong("33");
+        Long actualDays = helper.getDifferenceDays(dateString2, dateString1);
+        assertEquals(expectedDays, actualDays);
+
     }
 
 }

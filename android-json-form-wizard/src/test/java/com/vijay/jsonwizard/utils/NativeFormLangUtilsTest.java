@@ -22,7 +22,6 @@ import org.smartregister.client.utils.contract.ClientFormContract;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-
 /**
  * Created by Vincent Karuri on 20/02/2020
  */
@@ -142,5 +141,4 @@ public class NativeFormLangUtilsTest extends BaseTest {
         assertEquals(expected_string, actual);
 
     }
-
 }

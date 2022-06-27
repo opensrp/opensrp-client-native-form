@@ -1,6 +1,8 @@
 package com.vijay.jsonwizard.widgets;
 
+import android.app.Activity;
 import android.view.View;
+import android.widget.RadioButton;
 
 import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
@@ -12,12 +14,15 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
+import org.robolectric.shadows.ShadowLooper;
 
 import java.util.List;
 import java.util.Set;
@@ -30,6 +35,10 @@ public class NativeRadioButtonFactoryTest extends BaseTest {
     private JsonFormFragment formFragment;
     @Mock
     private CommonListener listener;
+    @Mock
+    private RadioButton radioButton;
+
+    private Activity activity;
 
     @Before
     public void setUp() {
@@ -37,6 +46,7 @@ public class NativeRadioButtonFactoryTest extends BaseTest {
         factory = new NativeRadioButtonFactory();
         formUtils = new FormUtils();
         jsonFormActivity = Robolectric.buildActivity(JsonFormActivity.class, getJsonFormActivityIntent()).create().get();
+        activity = Mockito.spy(Activity.class);
     }
 
     @Test
@@ -116,5 +126,31 @@ public class NativeRadioButtonFactoryTest extends BaseTest {
         Set<String> editableProperties = factory.getCustomTranslatableWidgetFields();
         Assert.assertEquals(4, editableProperties.size());
         Assert.assertEquals("options.text", editableProperties.iterator().next());
+    }
+
+    @Test
+    @Ignore
+    public void testSelectedButton() throws Exception {
+        String value = "button";
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("key", "button");
+        Whitebox.setInternalState(factory, "context", activity);
+        radioButton = Mockito.mock(RadioButton.class);
+        Whitebox.invokeMethod(factory, "checkSelectedRadioButton", listener, radioButton, value, jsonObject);
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks();
+        Mockito.verify(radioButton).setChecked(ArgumentMatchers.anyBoolean());
+    }
+
+    @Test
+    @Ignore
+    public void testSelectedTranslatedButton() throws Exception {
+        String value = "{\"value\":\"button\",\"text\":\"text\"}";
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("key", "button");
+        Whitebox.setInternalState(factory, "context", activity);
+        radioButton = Mockito.mock(RadioButton.class);
+        Whitebox.invokeMethod(factory, "checkSelectedRadioButton", listener, radioButton, value, jsonObject);
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks();
+        Mockito.verify(radioButton).setChecked(ArgumentMatchers.anyBoolean());
     }
 }
