@@ -129,7 +129,6 @@ public class NativeRadioButtonFactoryTest extends BaseTest {
     }
 
     @Test
-    @Ignore
     public void testSelectedButton() throws Exception {
         String value = "button";
         JSONObject jsonObject = new JSONObject();
@@ -138,11 +137,11 @@ public class NativeRadioButtonFactoryTest extends BaseTest {
         radioButton = Mockito.mock(RadioButton.class);
         Whitebox.invokeMethod(factory, "checkSelectedRadioButton", listener, radioButton, value, jsonObject);
         ShadowLooper.runUiThreadTasksIncludingDelayedTasks();
+        Thread.sleep(TIMEOUT);
         Mockito.verify(radioButton).setChecked(ArgumentMatchers.anyBoolean());
     }
 
     @Test
-    @Ignore
     public void testSelectedTranslatedButton() throws Exception {
         String value = "{\"value\":\"button\",\"text\":\"text\"}";
         JSONObject jsonObject = new JSONObject();
@@ -151,6 +150,7 @@ public class NativeRadioButtonFactoryTest extends BaseTest {
         radioButton = Mockito.mock(RadioButton.class);
         Whitebox.invokeMethod(factory, "checkSelectedRadioButton", listener, radioButton, value, jsonObject);
         ShadowLooper.runUiThreadTasksIncludingDelayedTasks();
+        Thread.sleep(TIMEOUT);
         Mockito.verify(radioButton).setChecked(ArgumentMatchers.anyBoolean());
     }
 }
