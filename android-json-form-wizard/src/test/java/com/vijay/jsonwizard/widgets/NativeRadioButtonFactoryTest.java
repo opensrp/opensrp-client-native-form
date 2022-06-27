@@ -14,6 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
@@ -128,6 +129,7 @@ public class NativeRadioButtonFactoryTest extends BaseTest {
     }
 
     @Test
+    @Ignore
     public void testSelectedButton() throws Exception {
         String value = "button";
         JSONObject jsonObject = new JSONObject();
@@ -140,6 +142,7 @@ public class NativeRadioButtonFactoryTest extends BaseTest {
     }
 
     @Test
+    @Ignore
     public void testSelectedTranslatedButton() throws Exception {
         String value = "{\"value\":\"button\",\"text\":\"text\"}";
         JSONObject jsonObject = new JSONObject();
