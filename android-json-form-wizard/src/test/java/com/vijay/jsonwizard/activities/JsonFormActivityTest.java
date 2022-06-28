@@ -458,7 +458,6 @@ public class JsonFormActivityTest extends BaseActivityTest {
         String[] address = {"address1:one", "address2:two", "address3:three"};
         JSONObject jsonObject = Mockito.mock(JSONObject.class);
         activity = new JsonFormActivity();
-        view = Mockito.mock(View.class);
         Facts facts = Whitebox.invokeMethod(activity, "getValueFromAddress", address, true, jsonObject);
         assertNotNull(facts);
 
