@@ -1,5 +1,8 @@
 package com.vijay.jsonwizard.activities;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.util.Pair;
@@ -34,6 +37,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
@@ -52,12 +56,14 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-
 public class JsonFormActivityTest extends BaseActivityTest {
     private JsonFormActivity activity;
     private ActivityController<JsonFormActivity> controller;
     private final TestUtils testUtils = new TestUtils();
+    @Mock
+    private View view;
+
+    private final String errorMessage = "false";
 
     @Before
     public void setUp() throws JSONException {
@@ -448,6 +454,17 @@ public class JsonFormActivityTest extends BaseActivityTest {
         // assert address array contains expected elements
         Assert.assertTrue(address[0].equals(activityAddress[0]));
         Assert.assertTrue(address[1].equals(activityAddress[1]));
+
+    }
+
+    @Test
+    public void testGetValueFromAddress() throws Exception {
+        String[] address = {"address1:one", "address2:two", "address3:three"};
+        JSONObject jsonObject = Mockito.mock(JSONObject.class);
+        activity = new JsonFormActivity();
+        view = Mockito.mock(View.class);
+        Facts facts = Whitebox.invokeMethod(activity, "getValueFromAddress", address, true, jsonObject);
+        assertNotNull(facts);
 
     }
 

@@ -2146,7 +2146,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
         if (object.has(JsonFormConstants.VALUE)) {
             value = Utils.getValueFromTranslatedObject(object);
-//            value = object.opt(JsonFormConstants.VALUE);
             if (isNumberWidget(object)) {
                 value = TextUtils.isEmpty(object.optString(JsonFormConstants.VALUE)) ? 0 : processNumberValues(object.optString(JsonFormConstants.VALUE));
             } else if (value != null && !TextUtils.isEmpty(object.getString(JsonFormConstants.VALUE)) && canHaveNumber(object)) {
