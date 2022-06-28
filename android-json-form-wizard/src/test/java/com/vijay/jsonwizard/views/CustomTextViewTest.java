@@ -24,7 +24,6 @@ public class CustomTextViewTest extends BaseTest {
         Application application = Mockito.spy(Application.class);
         MockitoAnnotations.initMocks(this);
         Mockito.doReturn(context).when(application).getApplicationContext();
-        attributeSet = Mockito.mock(AttributeSet.class);
     }
 
     @Test
