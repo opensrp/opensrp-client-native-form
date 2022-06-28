@@ -3,6 +3,7 @@ package com.vijay.jsonwizard.activities;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.util.Pair;
@@ -37,6 +38,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
@@ -58,17 +60,21 @@ import java.util.Set;
 public class JsonFormActivityTest extends BaseActivityTest {
     private JsonFormActivity activity;
     private ActivityController<JsonFormActivity> controller;
-    private final TestUtils testUtils = new TestUtils();;
+    private final TestUtils testUtils = new TestUtils();
+
+    @Mock
+    private Context context;
+    private Intent intent;
 
     @Before
     public void setUp() throws JSONException {
         MockitoAnnotations.initMocks(this);
-        Intent intent = new Intent();
+        intent = new Intent();
         intent.putExtra(JsonFormConstants.JSON_FORM_KEY.JSON, DUMMY_JSON_FORM_STRING);
         activity = getActivityWithIntent(intent);
         activity.getmJSONObject().put(JsonFormConstants.SKIP_BLANK_STEPS, true);
-
-        Assert.assertNotNull(activity);
+        Application application = Mockito.spy(Application.class);
+        Mockito.doReturn(context).when(application).getApplicationContext();
     }
 
     @Test
@@ -460,6 +466,21 @@ public class JsonFormActivityTest extends BaseActivityTest {
         Facts facts = Whitebox.invokeMethod(activity, "getValueFromAddress", address, true, jsonObject);
         assertNotNull(facts);
 
+    }
+
+
+    @Test
+    public void testUpdateUiByCalculation() throws JSONException {
+        activity = getActivityWithIntent(intent);
+        int id = ViewUtil.generateViewId();
+        String calculation = "{\"user_last_name\":" + new JSONObject("{\"user_last_name\":\"button\"}") + "}:user_last_name";
+        MaterialEditText view = Mockito.spy(new MaterialEditText(activity.getApplicationContext()));
+        view.setId(id);
+        view.setTag(R.id.calculation, calculation);
+        view.setTag(R.id.key, "form_key");
+        view.setTag(R.id.address, "step1:user_last_name");
+        Pair<String[], JSONObject> pair = activity.getCalculationAddressAndValue(view);
+        Assert.assertNotNull(pair);
     }
 
 }
