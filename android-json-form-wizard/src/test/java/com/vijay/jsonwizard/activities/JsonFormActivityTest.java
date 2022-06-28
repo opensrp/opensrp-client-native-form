@@ -480,7 +480,7 @@ public class JsonFormActivityTest extends BaseActivityTest {
         view.setTag(R.id.key, "form_key");
         view.setTag(R.id.address, "step1:user_last_name");
         Pair<String[], JSONObject> pair = activity.getCalculationAddressAndValue(view);
-        Assert.assertNotNull(pair);
+        assertNotNull(pair);
     }
 
 }
