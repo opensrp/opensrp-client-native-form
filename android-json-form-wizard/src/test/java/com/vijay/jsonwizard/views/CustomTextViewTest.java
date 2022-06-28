@@ -1,19 +1,36 @@
 package com.vijay.jsonwizard.views;
 
+import android.app.Application;
+import android.content.Context;
+import android.util.AttributeSet;
+
 import com.vijay.jsonwizard.BaseTest;
 
+import org.json.JSONException;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 public class CustomTextViewTest extends BaseTest {
+    @Mock
+    private CustomTextView customTextView;
+    @Mock
+    private Context context;
+
+    @Before
+    public void setUp() throws JSONException {
+        Application application = Mockito.spy(Application.class);
+        MockitoAnnotations.initMocks(this);
+        Mockito.doReturn(context).when(application).getApplicationContext();
+        attributeSet = Mockito.mock(AttributeSet.class);
+    }
 
     @Test
     public void testSetText() {
         String text = "<testing>";
-        CustomTextView mockedView = Mockito.mock(CustomTextView.class);
-        mockedView.setText(text);
-        Mockito.verify(mockedView, Mockito.times(1)).setText(text);
-
-
+        customTextView.setText(text);
+        Mockito.verify(customTextView, Mockito.times(1)).setText(text);
     }
 }
