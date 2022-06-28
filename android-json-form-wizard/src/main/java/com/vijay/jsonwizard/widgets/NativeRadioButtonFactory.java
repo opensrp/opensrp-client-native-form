@@ -1,3 +1,4 @@
+
 package com.vijay.jsonwizard.widgets;
 
 import static com.vijay.jsonwizard.widgets.DatePickerFactory.DATE_FORMAT;
@@ -567,8 +568,15 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         if (radioButton != null) {
             setRadioButtonTags(rootLayout, jsonObject, item, extraInfo, radioButton);
 
-            if (!TextUtils.isEmpty(jsonObject.optString(JsonFormConstants.VALUE)) &&
-                    jsonObject.optString(JsonFormConstants.VALUE).equals(item.getString(JsonFormConstants.KEY))) {
+            String valueString  = jsonObject.optString(JsonFormConstants.VALUE);
+            if(valueString != null && valueString.startsWith("{"))
+            {
+                JSONObject translationObject  =  new JSONObject(valueString);
+                valueString  = translationObject.optString(JsonFormConstants.VALUE) != null ? translationObject.optString(JsonFormConstants.VALUE) : "";
+            }
+
+            if (!TextUtils.isEmpty(valueString) &&
+                    valueString.equals(item.getString(JsonFormConstants.KEY))) {
                 ((Activity) context).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
