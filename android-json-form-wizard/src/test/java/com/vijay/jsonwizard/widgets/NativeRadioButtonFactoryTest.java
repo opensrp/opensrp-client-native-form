@@ -136,6 +136,7 @@ public class NativeRadioButtonFactoryTest extends BaseTest {
         radioButton = Mockito.mock(RadioButton.class);
         Whitebox.invokeMethod(factory, "checkSelectedRadioButton", listener, radioButton, value, jsonObject);
         ShadowLooper.runUiThreadTasksIncludingDelayedTasks();
+        Thread.sleep(TIMEOUT);
         Mockito.verify(radioButton).setChecked(ArgumentMatchers.anyBoolean());
     }
 
@@ -148,6 +149,7 @@ public class NativeRadioButtonFactoryTest extends BaseTest {
         radioButton = Mockito.mock(RadioButton.class);
         Whitebox.invokeMethod(factory, "checkSelectedRadioButton", listener, radioButton, value, jsonObject);
         ShadowLooper.runUiThreadTasksIncludingDelayedTasks();
+        Thread.sleep(TIMEOUT);
         Mockito.verify(radioButton).setChecked(ArgumentMatchers.anyBoolean());
     }
 }

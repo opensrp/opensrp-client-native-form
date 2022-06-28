@@ -1,5 +1,18 @@
 package com.vijay.jsonwizard.widgets;
 
+import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_CUMULATIVE_VALIDATION_ERR;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_RELATIVE_MAX_VALIDATION_ERR;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_RELATIVE_MIN_VALIDATION_ERR;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.RELATED_FIELDS;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.RELATIVE_VALIDATION_EXCEPTION;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP1;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.V_CUMULATIVE_TOTAL;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.V_RELATIVE_MAX;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.V_RELATIVE_MIN;
+import static com.vijay.jsonwizard.utils.FormUtils.fields;
+import static com.vijay.jsonwizard.utils.FormUtils.getFieldJSONObject;
+
 import android.content.Context;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -47,26 +60,13 @@ import java.util.Set;
 
 import timber.log.Timber;
 
-import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_CUMULATIVE_VALIDATION_ERR;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_RELATIVE_MAX_VALIDATION_ERR;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_RELATIVE_MIN_VALIDATION_ERR;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.RELATED_FIELDS;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.RELATIVE_VALIDATION_EXCEPTION;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP1;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.V_CUMULATIVE_TOTAL;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.V_RELATIVE_MAX;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.V_RELATIVE_MIN;
-import static com.vijay.jsonwizard.utils.FormUtils.fields;
-import static com.vijay.jsonwizard.utils.FormUtils.getFieldJSONObject;
-
 public class EditTextFactory implements FormWidgetFactory {
+
     public static final int MIN_LENGTH = 0;
     public static final int MAX_LENGTH = 100;
     private FormUtils formUtils = new FormUtils();
 
-    public static ValidationStatus validate(JsonFormFragmentView formFragmentView,
-                                            MaterialEditText editText) {
+    public static ValidationStatus validate(JsonFormFragmentView formFragmentView, MaterialEditText editText) {
         if (editText.isEnabled()) {
             boolean validate = editText.validate();
             if (!validate || (StringUtils.isBlank(editText.getText()) && getRequiredValidator(editText) != null)) {
@@ -97,11 +97,9 @@ public class EditTextFactory implements FormWidgetFactory {
         return null;
     }
 
-
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
-                                       JSONObject jsonObject, CommonListener
-                                               listener, boolean popup) throws Exception {
+                                       JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
         return attachJson(stepName, context, formFragment, jsonObject, listener, popup);
     }
 
@@ -228,13 +226,20 @@ public class EditTextFactory implements FormWidgetFactory {
     private void addLengthValidator(JSONObject jsonObject, MaterialEditText editText) throws JSONException {
         int minLength = MIN_LENGTH;
         int maxLength = MAX_LENGTH;
+        boolean isRequired = fieldIsRequired(jsonObject);
+
         JSONObject minLengthObject = jsonObject.optJSONObject(JsonFormConstants.V_MIN_LENGTH);
         if (minLengthObject != null) {
             String minLengthValue = minLengthObject.optString(JsonFormConstants.VALUE);
             if (!TextUtils.isEmpty(minLengthValue)) {
                 minLength = Integer.parseInt(minLengthValue);
-                editText.addValidator(new MinLengthValidator(minLengthObject.getString(JsonFormConstants.ERR),
-                        Integer.parseInt(minLengthValue)));
+                editText.addValidator(
+                        new MinLengthValidator(
+                                minLengthObject.getString(JsonFormConstants.ERR),
+                                Integer.parseInt(minLengthValue),
+                                isRequired
+                        )
+                );
             }
         }
 
@@ -243,13 +248,17 @@ public class EditTextFactory implements FormWidgetFactory {
             String maxLengthValue = maxLengthObject.optString(JsonFormConstants.VALUE);
             if (!TextUtils.isEmpty(maxLengthValue)) {
                 maxLength = Integer.parseInt(maxLengthValue);
-                editText.addValidator(new MaxLengthValidator(maxLengthObject.getString(JsonFormConstants.ERR),
-                        Integer.parseInt(maxLengthValue)));
+                editText.addValidator(
+                        new MaxLengthValidator(
+                                maxLengthObject.getString(JsonFormConstants.ERR),
+                                Integer.parseInt(maxLengthValue),
+                                isRequired
+                        )
+                );
                 boolean iSFixedSize = maxLengthObject.optBoolean(JsonFormConstants.IS_FIXED_SIZE, false);
                 if (iSFixedSize) {
                     editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
                 }
-
             }
         }
 
@@ -273,12 +282,13 @@ public class EditTextFactory implements FormWidgetFactory {
             String emailValue = emailObject.optString(JsonFormConstants.VALUE);
             if (!TextUtils.isEmpty(emailValue) && Boolean.TRUE.toString().equalsIgnoreCase(emailValue)) {
                 editText.addValidator(
-                        new RegexpValidator(emailObject.getString(JsonFormConstants.ERR), android.util.Patterns.EMAIL_ADDRESS
-                                .toString()));
+                        new RegexpValidator(
+                                emailObject.getString(JsonFormConstants.ERR),
+                                android.util.Patterns.EMAIL_ADDRESS.toString()
+                        )
+                );
             }
-
         }
-
     }
 
     private void addUrlValidator(JSONObject jsonObject, MaterialEditText editText) throws JSONException {
@@ -287,9 +297,12 @@ public class EditTextFactory implements FormWidgetFactory {
             String urlValue = urlObject.optString(JsonFormConstants.VALUE);
             if (!TextUtils.isEmpty(urlValue) && Boolean.TRUE.toString().equalsIgnoreCase(urlValue)) {
                 editText.addValidator(
-                        new RegexpValidator(urlObject.getString(JsonFormConstants.ERR), Patterns.WEB_URL.toString()));
+                        new RegexpValidator(
+                                urlObject.getString(JsonFormConstants.ERR),
+                                Patterns.WEB_URL.toString()
+                        )
+                );
             }
-
         }
     }
 
@@ -299,19 +312,28 @@ public class EditTextFactory implements FormWidgetFactory {
             String numericValue = numericObject.optString(JsonFormConstants.VALUE);
             if (!TextUtils.isEmpty(numericValue) && Boolean.TRUE.toString().equalsIgnoreCase(numericValue)) {
                 editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                editText.addValidator(new RegexpValidator(numericObject.getString(JsonFormConstants.ERR),
-                        "[0-9]*\\.?[0-9]*"));
+                editText.addValidator(
+                        new RegexpValidator(numericObject.getString(JsonFormConstants.ERR), "[0-9]*\\.?[0-9]*")
+                );
 
                 if (jsonObject.has(JsonFormConstants.V_MIN)) {
                     JSONObject minValidation = jsonObject.getJSONObject(JsonFormConstants.V_MIN);
-                    editText.addValidator(new MinNumericValidator(minValidation.getString(JsonFormConstants.ERR),
-                            Double.parseDouble(minValidation.getString(JsonFormConstants.VALUE))));
+                    editText.addValidator(
+                            new MinNumericValidator(
+                                    minValidation.getString(JsonFormConstants.ERR),
+                                    Double.parseDouble(minValidation.getString(JsonFormConstants.VALUE))
+                            )
+                    );
                 }
 
                 if (jsonObject.has(JsonFormConstants.V_MAX)) {
                     JSONObject minValidation = jsonObject.getJSONObject(JsonFormConstants.V_MAX);
-                    editText.addValidator(new MaxNumericValidator(minValidation.getString(JsonFormConstants.ERR),
-                            Double.parseDouble(minValidation.getString(JsonFormConstants.VALUE))));
+                    editText.addValidator(
+                            new MaxNumericValidator(
+                                    minValidation.getString(JsonFormConstants.ERR),
+                                    Double.parseDouble(minValidation.getString(JsonFormConstants.VALUE))
+                            )
+                    );
                 }
             }
         }
@@ -323,19 +345,26 @@ public class EditTextFactory implements FormWidgetFactory {
             String numericValue = numericIntegerObject.optString(JsonFormConstants.VALUE);
             if (!TextUtils.isEmpty(numericValue) && Boolean.TRUE.toString().equalsIgnoreCase(numericValue)) {
                 editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
-                editText.addValidator(new RegexpValidator(numericIntegerObject.getString(JsonFormConstants.ERR),
-                        "\\d*"));
+                editText.addValidator(new RegexpValidator(numericIntegerObject.getString(JsonFormConstants.ERR), "\\d*"));
 
                 if (jsonObject.has(JsonFormConstants.V_MIN)) {
                     JSONObject minValidation = jsonObject.getJSONObject(JsonFormConstants.V_MIN);
-                    editText.addValidator(new MinNumericValidator(minValidation.getString(JsonFormConstants.ERR),
-                            Double.parseDouble(minValidation.getString(JsonFormConstants.VALUE))));
+                    editText.addValidator(
+                            new MinNumericValidator(
+                                    minValidation.getString(JsonFormConstants.ERR),
+                                    Double.parseDouble(minValidation.getString(JsonFormConstants.VALUE))
+                            )
+                    );
                 }
 
                 if (jsonObject.has(JsonFormConstants.V_MAX)) {
                     JSONObject minValidation = jsonObject.getJSONObject(JsonFormConstants.V_MAX);
-                    editText.addValidator(new MaxNumericValidator(minValidation.getString(JsonFormConstants.ERR),
-                            Double.parseDouble(minValidation.getString(JsonFormConstants.VALUE))));
+                    editText.addValidator(
+                            new MaxNumericValidator(
+                                    minValidation.getString(JsonFormConstants.ERR),
+                                    Double.parseDouble(minValidation.getString(JsonFormConstants.VALUE))
+                            )
+                    );
                 }
             }
         }
@@ -352,22 +381,22 @@ public class EditTextFactory implements FormWidgetFactory {
             JSONObject relativeMaxFieldJSONObject = getFieldJSONObject(formFields, relativeMaxValidationKey);
             if (relativeMaxFieldJSONObject != null) {
                 // RELATIVE_MAX_VALIDATION_EXCEPTION, should never be set to Integer.MIN_VALUE in the native form json
-                int relativeMaxValidationException = relativeMaxValidationJSONObject
-                        .optInt(RELATIVE_VALIDATION_EXCEPTION, 0);
+                int relativeMaxValidationException = relativeMaxValidationJSONObject.optInt(RELATIVE_VALIDATION_EXCEPTION, 0);
                 if (relativeMaxValidationException != Integer.MIN_VALUE) {
                     // add validator
-                    String relativeMaxValidationErrorMsg = relativeMaxValidationJSONObject
-                            .optString(JsonFormConstants.ERR, null);
+                    String relativeMaxValidationErrorMsg = relativeMaxValidationJSONObject.optString(JsonFormConstants.ERR, null);
                     String defaultErrMsg = String.format(isMaxValidator ? DEFAULT_RELATIVE_MAX_VALIDATION_ERR : DEFAULT_RELATIVE_MIN_VALIDATION_ERR, relativeMaxValidationKey);
-                    relativeMaxValidationException = relativeMaxValidationJSONObject
-                            .optInt(RELATIVE_VALIDATION_EXCEPTION, Integer.MIN_VALUE);
-                    editText.addValidator(new RelativeNumericValidator(
-                            relativeMaxValidationErrorMsg == null ? defaultErrMsg : relativeMaxValidationErrorMsg,
-                            formFragment,
-                            relativeMaxValidationKey,
-                            relativeMaxValidationException,
-                            STEP1,
-                            isMaxValidator));
+                    relativeMaxValidationException = relativeMaxValidationJSONObject.optInt(RELATIVE_VALIDATION_EXCEPTION, Integer.MIN_VALUE);
+                    editText.addValidator(
+                            new RelativeNumericValidator(
+                                    relativeMaxValidationErrorMsg == null ? defaultErrMsg : relativeMaxValidationErrorMsg,
+                                    formFragment,
+                                    relativeMaxValidationKey,
+                                    relativeMaxValidationException,
+                                    STEP1,
+                                    isMaxValidator
+                            )
+                    );
                 }
             }
         }
@@ -381,14 +410,16 @@ public class EditTextFactory implements FormWidgetFactory {
             JSONArray formFields = fields(new JSONObject(formFragment.getCurrentJsonState()), stepName);
             JSONObject totalFieldJSONObject = getFieldJSONObject(formFields, totalValueKey);
             if (totalFieldJSONObject != null) {
-                String validationErrorMsg = validationJSONObject
-                        .optString(JsonFormConstants.ERR, null);
+                String validationErrorMsg = validationJSONObject.optString(JsonFormConstants.ERR, null);
                 JSONArray relatedFieldsJson = validationJSONObject.optJSONArray(RELATED_FIELDS);
 
                 if (relatedFieldsJson != null) {
-                    String errorMessage = String
-                            .format(DEFAULT_CUMULATIVE_VALIDATION_ERR, editTextJSONObject.get(KEY), relatedFieldsJson.join(", "),
-                                    totalValueKey);
+                    String errorMessage = String.format(
+                            DEFAULT_CUMULATIVE_VALIDATION_ERR,
+                            editTextJSONObject.get(KEY),
+                            relatedFieldsJson.join(", "),
+                            totalValueKey
+                    );
 
                     final CumulativeTotalValidator cumulativeTotalValidator = new CumulativeTotalValidator(
                             validationErrorMsg == null ? errorMessage : validationErrorMsg,
@@ -396,15 +427,19 @@ public class EditTextFactory implements FormWidgetFactory {
                             stepName,
                             totalValueKey,
                             relatedFieldsJson,
-                            jsonApi);
+                            jsonApi
+                    );
                     editText.addValidator(cumulativeTotalValidator);
                     for (int i = 0; i < relatedFieldsJson.length(); i++) {
                         MaterialEditText relatedEditText = getViewUsingAddress(stepName, relatedFieldsJson.getString(i), jsonApi);
                         if (relatedEditText != null) {
                             ReferenceValidator referenceValidator = new ReferenceValidator(
-                                    cumulativeTotalValidator.getErrorMessage(), cumulativeTotalValidator, relatedEditText, editText);
-                            relatedEditText.
-                                    addValidator(referenceValidator);
+                                    cumulativeTotalValidator.getErrorMessage(),
+                                    cumulativeTotalValidator,
+                                    relatedEditText,
+                                    editText
+                            );
+                            relatedEditText.addValidator(referenceValidator);
                             cumulativeTotalValidator.getReferenceValidators().add(referenceValidator);
                         }
                     }
@@ -431,7 +466,6 @@ public class EditTextFactory implements FormWidgetFactory {
                 }
             }
         }
-
     }
 
     private void attachRefreshLogic(Context context, JSONObject jsonObject, MaterialEditText editText) {
@@ -469,5 +503,10 @@ public class EditTextFactory implements FormWidgetFactory {
         customTranslatableWidgetFields.add(JsonFormConstants.LABEL_INFO_TITLE);
         customTranslatableWidgetFields.add(JsonFormConstants.LABEL_INFO_TEXT);
         return customTranslatableWidgetFields;
+    }
+
+    private boolean fieldIsRequired(JSONObject jsonObject) throws JSONException {
+        JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
+        return requiredObject != null && requiredObject.getBoolean(JsonFormConstants.VALUE);
     }
 }
