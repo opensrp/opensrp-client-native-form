@@ -59,11 +59,7 @@ import java.util.Set;
 public class JsonFormActivityTest extends BaseActivityTest {
     private JsonFormActivity activity;
     private ActivityController<JsonFormActivity> controller;
-    private final TestUtils testUtils = new TestUtils();
-    @Mock
-    private View view;
-
-    private final String errorMessage = "false";
+    private final TestUtils testUtils = new TestUtils();;
 
     @Before
     public void setUp() throws JSONException {
