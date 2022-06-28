@@ -2,7 +2,6 @@ package com.vijay.jsonwizard.views;
 
 import android.app.Application;
 import android.content.Context;
-import android.util.AttributeSet;
 
 import com.vijay.jsonwizard.BaseTest;
 
