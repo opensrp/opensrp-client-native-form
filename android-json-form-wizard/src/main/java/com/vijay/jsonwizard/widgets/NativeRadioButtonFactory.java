@@ -572,7 +572,8 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             if(valueString != null && valueString.startsWith("{"))
             {
                 JSONObject translationObject  =  new JSONObject(valueString);
-                valueString  = translationObject.optString(JsonFormConstants.VALUE) != null ? translationObject.optString(JsonFormConstants.VALUE) : "";
+                translationObject.optString(JsonFormConstants.VALUE);
+                valueString  = translationObject.optString(JsonFormConstants.VALUE);
             }
 
             if (!TextUtils.isEmpty(valueString) &&

@@ -482,5 +482,4 @@ public class JsonFormActivityTest extends BaseActivityTest {
         Pair<String[], JSONObject> pair = activity.getCalculationAddressAndValue(view);
         assertNotNull(pair);
     }
-
 }
