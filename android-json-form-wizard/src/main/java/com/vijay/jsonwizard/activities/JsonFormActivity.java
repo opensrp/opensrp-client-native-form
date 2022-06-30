@@ -958,11 +958,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         item.put(JsonFormConstants.VALUE, Utils.generateTranslatableValue(value, item));
                     }
                 } else {
-                    if (item.optString(JsonFormConstants.KEY).equalsIgnoreCase("reminders")) {
-                        item.put(JsonFormConstants.VALUE, value);
-                    } else {
-                        item.put(JsonFormConstants.VALUE, Utils.generateTranslatableValue(value, item));
-                    }
+                    item.put(JsonFormConstants.VALUE, Utils.generateTranslatableValue(value, item));
                 }
             } else {
                 item.put(JsonFormConstants.VALUE, value);
