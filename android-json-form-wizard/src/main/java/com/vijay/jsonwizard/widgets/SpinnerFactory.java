@@ -2,8 +2,8 @@ package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.annotation.NonNull;
-import android.support.annotation.VisibleForTesting;
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -26,7 +26,7 @@ import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
-import org.jetbrains.annotations.NotNull;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -237,7 +237,7 @@ public class SpinnerFactory extends BaseFactory {
         return customTranslatableWidgetFields;
     }
 
-    @NotNull
+    @NonNull
     @VisibleForTesting
     public MaterialSpinner getMaterialSpinner(View view) {
         return view.findViewById(R.id.material_spinner);

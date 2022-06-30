@@ -189,7 +189,7 @@
         "openmrs_entity_id": "Child_Birth_Certificate",
         "read_only": true,
         "v_required": {
-          "value": "true",
+          "value": "false",
           "err": "Please enter child's birth certificate"
         },
         "type": "edit_text",
@@ -224,7 +224,7 @@
         "label_info_title": "GA from SFH or abdominal palpation - weeks",
         "edit_type": "name",
         "v_required": {
-          "value": "true",
+          "value": "false",
           "err": "Please enter the last name"
         },
         "v_regex": {
@@ -244,7 +244,7 @@
           "Female"
         ],
         "v_required": {
-          "value": "true",
+          "value": "false",
           "err": "Please enter the sex"
         }
       },
@@ -264,7 +264,7 @@
           "Single"
         ],
         "v_required": {
-          "value": "true",
+          "value": "false",
           "err": "Please enter the sex"
         },
         "openmrs_choice_ids": {
@@ -288,7 +288,7 @@
         "min_date": "today-5y",
         "max_date": "today",
         "v_required": {
-          "value": "true",
+          "value": "false",
           "err": "Please enter the date of birth"
         }
       },
@@ -304,7 +304,7 @@
           "label": "Birth Time"
         },
         "v_required": {
-          "value": true,
+          "value": false,
           "err": "Please enter the time of birth"
         }
       },
@@ -320,7 +320,7 @@
         "min_date": "today-5y",
         "max_date": "today",
         "v_required": {
-          "value": "true",
+          "value": "false",
           "err": "Enter the date that the child was first seen at a health facility for immunization services"
         },
         "constraints": [
@@ -340,7 +340,7 @@
         "type": "edit_text",
         "hint": "Hb test result - haemoglobinometer\ncomplete test (g/dl)",
         "v_required": {
-          "value": "true",
+          "value": "false",
           "err": "Please enter cool text"
         }
       },
@@ -355,7 +355,7 @@
         "edit_type": "name",
         "look_up": "true",
         "v_required": {
-          "value": "true",
+          "value": "false",
           "err": "Please enter the mother/guardian's first name"
         },
         "v_regex": {
@@ -374,7 +374,7 @@
         "edit_type": "name",
         "look_up": "true",
         "v_required": {
-          "value": "true",
+          "value": "false",
           "err": "Please enter the mother/guardian's last name"
         },
         "v_regex": {
@@ -455,7 +455,7 @@
           }
         ],
         "v_required": {
-          "value": "true",
+          "value": "false",
           "err": "Please answer the question"
         }
       },
@@ -505,7 +505,7 @@
           "Home": "1536AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
         },
         "v_required": {
-          "value": true,
+          "value": false,
           "err": "Please enter the place of birth"
         }
       },
@@ -520,7 +520,7 @@
         "tree": [
         ],
         "v_required": {
-          "value": true,
+          "value": false,
           "err": "Please enter the birth facility name"
         },
         "relevance": {
@@ -539,7 +539,7 @@
         "hint": "Other health facility",
         "edit_type": "name",
         "v_required": {
-          "value": true,
+          "value": false,
           "err": "Please specify the health facility the child was born in"
         },
         "relevance": {
@@ -558,7 +558,7 @@
         "hint": "Home address",
         "edit_type": "name",
         "v_required": {
-          "value": true,
+          "value": false,
           "err": "Please enter the home address"
         }
       },
@@ -800,7 +800,7 @@
           }
         ],
         "v_required": {
-          "value": true,
+          "value": false,
           "err": "Please specify any other symptoms or select none"
         }
       },
@@ -845,7 +845,7 @@
         "text_size": "22px",
         "text_color": "#000000",
         "v_required": {
-          "value": true
+          "value": false
         }
       },
       {
@@ -858,7 +858,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "v_required": {
-          "value": true
+          "value": false
         },
         "label_info_text": "Checking out the display oof the info icon needed to display this infomation",
         "label_info_title": "Highest Level of School"
@@ -874,7 +874,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "v_required": {
-          "value": true
+          "value": false
         },
         "label_info_text": "Checking out the display oof the info icon needed to display this infomation",
         "label_info_title": "Highest Level of School"
@@ -973,7 +973,7 @@
         ],
         "value": "1",
         "v_required": {
-          "value": true,
+          "value": false,
           "err": "Please select where stock was issued"
         }
       },
@@ -998,7 +998,7 @@
         ],
         "value": "1",
         "v_required": {
-          "value": true,
+          "value": false,
           "err": "Please select where stock was issued"
         }
       },
@@ -1049,7 +1049,7 @@
           }
         ],
         "v_required": {
-          "value": true
+          "value": false
         }
       },
       {
@@ -1084,7 +1084,7 @@
         ],
         "value": "",
         "v_required": {
-          "value": true
+          "value": false
         }
       },
       {
@@ -1108,7 +1108,7 @@
         ],
         "value": "",
         "v_required": {
-          "value": true
+          "value": false
         },
         "relevance": {
           "step1:native_radio_tertiary_education": {
@@ -1268,7 +1268,7 @@
         ],
         "value": "",
         "v_required": {
-          "value": true
+          "value": false
         }
       },
       {
@@ -1295,7 +1295,7 @@
         "text": "This is a bold text label that is also required.",
         "text_color": "#000000",
         "v_required": {
-          "value": true
+          "value": false
         }
       },
       {
@@ -1313,7 +1313,7 @@
         "text": "This is the normal edit text design",
         "text_color": "#000000",
         "v_required": {
-          "value": true
+          "value": false
         }
       },
       {
@@ -1327,7 +1327,7 @@
         "value": "1909319333",
         "editable": true,
         "v_required": {
-          "value": "true",
+          "value": "false",
           "err": "Please enter the last name"
         },
         "v_regex": {
@@ -1347,7 +1347,7 @@
         "editable": true,
         "edit_text_style": "bordered",
         "v_required": {
-          "value": true,
+          "value": false,
           "err": "Please enter the guardians name"
         },
         "v_regex": {
@@ -1368,7 +1368,7 @@
         "text_color": "#000000",
         "selected_text_color": "#ffffff",
         "v_required": {
-          "value": true
+          "value": false
         },
         "value": "3"
       },
@@ -1393,7 +1393,7 @@
         "text_color": "#000000",
         "selected_text_color": "#ffffff",
         "v_required": {
-          "value": true
+          "value": false
         },
         "value": "13"
       },
@@ -1418,7 +1418,7 @@
         "text_color": "#000000",
         "selected_text_color": "#ffffff",
         "v_required": {
-          "value": true
+          "value": false
         }
       },
       {
@@ -1453,7 +1453,7 @@
           }
         ],
         "v_required": {
-          "value": true,
+          "value": false,
           "err": "Please select if you use any tobacco products"
         }
       },
@@ -1489,7 +1489,7 @@
         "text": "This is the normal edit text design",
         "text_color": "#000000",
         "v_required": {
-          "value": true
+          "value": false
         }
       },
       {

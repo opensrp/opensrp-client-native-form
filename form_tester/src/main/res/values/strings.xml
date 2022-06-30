@@ -12,6 +12,9 @@
     <string name="previous">Rudi</string>
     <string name="save">Tuma</string>
     <string name="basic_form">Basic Form</string>
+    <string name="progress_initialization">Stay still…</string>
+    <string name="quality_msg_format" formatted="false"> <![CDATA[POSITION/SIZE: %1s <br> SHARPNESS: %2s <br> BRIGHTNESS: %3s <br> NO SHADOW: %s]]></string>
+    <string name="quality_msg_format_text" formatted="false"> <![CDATA[%1s<br>%2s<br>%s<br>%3s]]></string>
 
     <string name="missing_permissions">Your device needs the requested permssions in order to function properly</string>
 </resources>

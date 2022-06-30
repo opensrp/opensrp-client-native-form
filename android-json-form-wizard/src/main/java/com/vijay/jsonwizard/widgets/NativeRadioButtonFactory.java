@@ -7,9 +7,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
@@ -33,19 +33,21 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.utils.DateConverter;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.CustomTextView;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -130,6 +132,28 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
                 calendarDate.set(Calendar.YEAR, year);
                 if (calendarDate.getTimeInMillis() >= view.getMinDate() &&
                         calendarDate.getTimeInMillis() <= view.getMaxDate()) {
+
+                    boolean bikramSambatDate = true;
+                    if(bikramSambatDate)
+                    {
+                        String  date = DATE_FORMAT.format(calendarDate.getTime());
+                            try {
+                                DateConverter dateConverter = new DateConverter();
+                                String[] dateString = StringUtils.split(date, "-");
+                                String day = dateString[0];
+                                int monthValue = Integer.parseInt(dateString[1]);
+                                String month = monthValue <= 9 ? "0"+monthValue : ""+monthValue;
+                                String BSyear = dateString[2];
+                                String BSDate = dateConverter.convertAdToBs(day + "-" + month + "-" + BSyear);
+                                radioButton.setText(arrayString[0] + ": " + BSDate);
+                            }
+                            catch (Exception e)
+                            {
+                                e.printStackTrace();
+                            }
+
+                    }
+                    else
                     radioButton.setText(arrayString[0] + ": " + DATE_FORMAT.format(calendarDate.getTime()));
                     customTextView.setText(
                             createSpecifyText(context.getResources().getString(R.string.radio_button_tap_to_change)));
@@ -486,7 +510,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         return radioGroup;
     }
 
-    @NotNull
+    @NonNull
     public RadioGroup getRadioGroup(JSONObject jsonObject, Context context, String stepName, boolean popup, String openMrsEntityParent, String openMrsEntity, String openMrsEntityId, Boolean extraRelCheck, String extraRelArray) throws JSONException {
         RadioGroup radioGroup = new RadioGroup(context);
         radioGroup.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
@@ -502,7 +526,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         return radioGroup;
     }
 
-    @NotNull
+    @NonNull
     public RelativeLayout getRadioGroupLayout(JSONObject jsonObject, Context context, String stepName, boolean popup, String openMrsEntityParent, String openMrsEntity, String openMrsEntityId, JSONObject item) throws JSONException {
         RelativeLayout radioGroupLayout = getRadioGroupLayout(context);
         radioGroupLayout.setId(ViewUtil.generateViewId());

@@ -3,7 +3,7 @@ package com.vijay.jsonwizard.shadow;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import org.robolectric.annotation.Implements;
 

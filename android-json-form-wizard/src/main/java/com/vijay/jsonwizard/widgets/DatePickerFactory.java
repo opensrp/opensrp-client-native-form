@@ -6,8 +6,11 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.VisibleForTesting;
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
@@ -15,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.hornet.dateconverter.Model;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
@@ -26,6 +30,7 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.utils.DateConverter;
 import com.vijay.jsonwizard.utils.DateUtil;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.NativeFormLangUtils;
@@ -34,14 +39,17 @@ import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -58,73 +66,182 @@ public class DatePickerFactory implements FormWidgetFactory {
     public static final String DATE_FORMAT_REGEX = "(^(((0[1-9]|1[0-9]|2[0-8])[-](0[1-9]|1[012]))|((29|30|31)[-](0[13578]|1[02]))|((29|30)[-](0[4,6,9]|11)))[-](19|[2-9][0-9])\\d\\d$)|(^29[-]02[-](19|[2-9][0-9])(00|04|08|12|16|20|24|28|32|36|40|44|48|52|56|60|64|68|72|76|80|84|88|92|96)$)|\\s*";
     public static final SimpleDateFormat DATE_FORMAT_LOCALE_INDEPENDENT = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
     private static final String TAG = "DatePickerFactory";
-    private FormUtils formUtils = new FormUtils();
+    private final FormUtils formUtils = new FormUtils();
+
 
 
     @VisibleForTesting
-    protected void showDatePickerDialog(Activity context, DatePickerDialog datePickerDialog, MaterialEditText editText) {
+    protected void showDatePickerDialog(final AppCompatActivity context, DatePickerDialog datePickerDialog, final MaterialEditText editText, final TextView duration) {
+        NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
 
-        FragmentTransaction ft = context.getFragmentManager().beginTransaction();
-        Fragment prev = context.getFragmentManager().findFragmentByTag(TAG);
+        if(!nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_DATEPICKER_IS_NEPAL)) {
+            FragmentTransaction ft = context.getFragmentManager().beginTransaction();
+            Fragment prev = context.getFragmentManager().findFragmentByTag(TAG);
 
-        if (!(prev != null && prev.isAdded())) {
+            if (!(prev != null && prev.isAdded())) {
 
-            datePickerDialog.show(ft, TAG);
+                datePickerDialog.show(ft, TAG);
 
-            //Fragments are committed asynchronously, force commit
-            context.getFragmentManager().executePendingTransactions();
+                //Fragments are committed asynchronously, force commit
+                context.getFragmentManager().executePendingTransactions();
 
-            String text = editText.getText().toString();
-            Calendar date = FormUtils.getDate(StringUtils.isNoneBlank(Form.getDatePickerDisplayFormat()) ?
-                    Utils.formatDateToPattern(text, Form.getDatePickerDisplayFormat(), DATE_FORMAT.toPattern())
-                    : text);
-            if (text.isEmpty()) {
-                Object defaultValue = datePickerDialog.getArguments().get(JsonFormConstants.DEFAULT);
-                if (defaultValue != null)
-                    datePickerDialog.setDate(FormUtils.getDate(defaultValue.toString()).getTime());
-                else
+                String text = editText.getText().toString();
+                Calendar date = FormUtils.getDate(StringUtils.isNoneBlank(Form.getDatePickerDisplayFormat()) ?
+                        Utils.formatDateToPattern(text, Form.getDatePickerDisplayFormat(), DATE_FORMAT.toPattern())
+                        : text);
+                if (text.isEmpty()) {
+                    Object defaultValue = datePickerDialog.getArguments().get(JsonFormConstants.DEFAULT);
+                    if (defaultValue != null)
+                        datePickerDialog.setDate(FormUtils.getDate(defaultValue.toString()).getTime());
+                    else
+                        datePickerDialog.setDate(date.getTime());
+                } else {
                     datePickerDialog.setDate(date.getTime());
-            } else {
-                datePickerDialog.setDate(date.getTime());
+                }
             }
+        }
+        else
+        {
+            long minDate = datePickerDialog.getMinDate();
+            long maxDate = datePickerDialog.getMaxDate();
+            String date = editText.getText().toString();
+            Model model = new Model();
+            com.hornet.dateconverter.DatePicker.DatePickerDialog dpd;
+            com.hornet.dateconverter.DatePicker.DatePickerDialog.OnDateSetListener datePickerCallback =  new com.hornet.dateconverter.DatePicker.DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(com.hornet.dateconverter.DatePicker.DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
+                String BSDate;
+                String yearString = ""+year;
+                String monthString = monthOfYear <=9 ? "0"+monthOfYear : ""+monthOfYear;
+                String dayString = dayOfMonth <= 9 ? "0"+dayOfMonth : ""+dayOfMonth;
+
+                BSDate = yearString+"-"+monthString+"-"+dayString;
+                updateDateText(context,editText,duration,BSDate);
+            }
+        };
+            if(StringUtils.isNotBlank(date))
+            {
+                String[] dateString = StringUtils.split(date, "-");
+                model.setDay(Integer.parseInt(dateString[2]));
+                model.setMonth(Integer.parseInt(dateString[1]));
+                model.setYear(Integer.parseInt(dateString[0]));
+                dpd = com.hornet.dateconverter.DatePicker.DatePickerDialog.newInstance(datePickerCallback,model);
+
+            }
+            else
+                dpd = com.hornet.dateconverter.DatePicker.DatePickerDialog.newInstance(datePickerCallback);
+
+            DateConverter dateConverter = new DateConverter();
+            try {
+                if (minDate != -1) {
+                    Date minRangeAD = new Date(minDate);
+                    String minRangeADString = Utils.getStringFromDate(minRangeAD);
+                    String bsMinRange = dateConverter.convertAdToBs(minRangeADString);
+                    String[] bsDateMin = bsMinRange.split("-");
+                    Model minModel = new Model();
+                    minModel.setYear(Integer.parseInt(bsDateMin[0]));
+                    minModel.setMonth(Integer.parseInt(bsDateMin[1])-1);
+                    minModel.setDay(Integer.parseInt(bsDateMin[2]));
+                    dpd.setMinDate(minModel);
+                    Log.d("min date", bsMinRange);
+                    Log.d("min date AD",minRangeADString);
+
+
+                }
+                if (maxDate != -1) {
+                    Date maxRangeAD = new Date(maxDate);
+                    String maxRangeADString = Utils.getStringFromDate(maxRangeAD);
+                    String bsMaxRange = dateConverter.convertAdToBs(maxRangeADString);
+
+
+                    String[] bsDateMax = bsMaxRange.split("-");
+                    Model maxModel = new Model();
+                    maxModel.setYear(Integer.parseInt(bsDateMax[0]));
+                    maxModel.setMonth(Integer.parseInt(bsDateMax[1])-1);
+                    maxModel.setDay(Integer.parseInt(bsDateMax[2]));
+                    dpd.setMaxDate(maxModel);
+
+                    Log.d("max date", bsMaxRange);
+                    Log.d("max date AD",maxRangeADString);
+                }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+
+              dpd.show(context.getSupportFragmentManager(),"ssdsd");
         }
     }
 
-
     private void updateDateText(Context context, final MaterialEditText editText, final TextView duration, final String date) {
+        NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
+        final boolean bikramSambatEnabled = nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_DATEPICKER_IS_NEPAL);
+
         ((JsonApi) context).getAppExecutors().mainThread().execute(new Runnable() {
             @Override
             public void run() {
+
+                if(bikramSambatEnabled)
+                {
+                    if(!date.isEmpty())
+                    {
+
+                            editText.setText(date);
+                    }
+                }
+                else
                 editText.setText(StringUtils.isNoneBlank(Form.getDatePickerDisplayFormat()) ?
                         Utils.formatDateToPattern(date, DATE_FORMAT.toPattern(), Form.getDatePickerDisplayFormat())
                         : date);
             }
         });
 
-        String durationLabel = (String) duration.getTag(R.id.label);
-        if (StringUtils.isNotBlank(durationLabel)) {
-            Locale locale = getSetLanguage(context);
-            String durationText = getDurationText(context, date, locale);
-            if (StringUtils.isNotBlank(durationText)) {
-                durationText = String.format("(%s: %s)", durationLabel, durationText);
+        String durationString = date;
+
+        if(bikramSambatEnabled) {
+            try {
+                DateConverter dateConverter = new DateConverter();
+                String[] dateString = StringUtils.split(date, "-");
+                String day = dateString[2];
+                int month = Integer.parseInt(dateString[1])+1;
+                String monthString = month <=9 ? "0"+month : ""+month;
+                String year = dateString[0];
+                Date BSDate = dateConverter.convertBsToAd(day + monthString + year);
+                String ADDate = Utils.getStringFromDate(BSDate);
+                durationString = ADDate;
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            final String finalDurationText = durationText;
-            ((JsonApi) context).getAppExecutors().mainThread().execute(new Runnable() {
-                @Override
-                public void run() {
-                    duration.setText(finalDurationText);
-                }
-            });
         }
+
+        if(duration!= null) {
+            String durationLabel = (String) duration.getTag(R.id.label);
+            if (StringUtils.isNotBlank(durationLabel)) {
+                Locale locale = getSetLanguage(context);
+                String durationText = getDurationText(context, durationString, locale);
+                if (StringUtils.isNotBlank(durationText)) {
+                    durationText = String.format("(%s: %s)", durationLabel, durationText);
+                }
+                final String finalDurationText = durationText;
+                ((JsonApi) context).getAppExecutors().mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        duration.setText(finalDurationText);
+                    }
+                });
+            }
+        }
+
     }
 
-    @NotNull
+    @NonNull
     @VisibleForTesting
     protected String getDurationText(Context context, String date, Locale locale) {
         return DateUtil.getDuration(DateUtil.getDurationTimeDifference(date, null), locale.getLanguage().equals("ar") ? Locale.ENGLISH : locale, context);
     }
 
-    @NotNull
+    @NonNull
     @VisibleForTesting
     protected Locale getSetLanguage(Context context) {
         return new Locale(NativeFormLangUtils.getLanguage(context));
@@ -234,7 +351,7 @@ public class DatePickerFactory implements FormWidgetFactory {
             editText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    showDatePickerDialog((Activity) context, datePickerDialog, editText);
+                    showDatePickerDialog((AppCompatActivity) context, datePickerDialog, editText,duration);
                 }
             });
 
@@ -271,7 +388,7 @@ public class DatePickerFactory implements FormWidgetFactory {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
                     datePickerDialog.setArguments(new Bundle());
-                    showDatePickerDialog(context, datePickerDialog, editText);
+                    showDatePickerDialog((AppCompatActivity) context, datePickerDialog, editText,null);
                 }
             }
         });
@@ -342,7 +459,6 @@ public class DatePickerFactory implements FormWidgetFactory {
         }
     }
 
-
     @VisibleForTesting
     protected Locale getCurrentLocale(Context context) {
         return context.getResources().getConfiguration().locale.getLanguage().equals("ar") ? Locale.ENGLISH : context.getResources().getConfiguration().locale;//Arabic should render normal numbers/numeric digits
@@ -359,6 +475,7 @@ public class DatePickerFactory implements FormWidgetFactory {
         datePickerDialog.setOnDateSetListener(new android.app.DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                boolean isBSDate = true;
                 Calendar calendarDate = Calendar.getInstance();
                 calendarDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                 calendarDate.set(Calendar.MONTH, monthOfYear);
@@ -366,15 +483,46 @@ public class DatePickerFactory implements FormWidgetFactory {
 
                 editText.setTag(R.id.locale_independent_value, DATE_FORMAT_LOCALE_INDEPENDENT.format(calendarDate.getTime()));
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB
-                        && calendarDate.getTimeInMillis() >= view.getMinDate()
-                        && calendarDate.getTimeInMillis() <= view.getMaxDate()) {
-                    updateDateText(context, editText, duration,
-                            DATE_FORMAT.format(calendarDate.getTime()));
-                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                    updateDateText(context, editText, duration, "");
-                }
+
+//                if(isBSDate)
+//                {
+//                    DateConverter dateConverter = new DateConverter();
+//                    int month = monthOfYear+1;
+//                    String BSDay = dayOfMonth+"";
+//                    String BSMonth = monthOfYear+"";
+//
+//                    try {
+//                        if(dayOfMonth<=9)
+//                        {
+//                            BSDay = "0"+BSDay;
+//                        }
+//                        if(month <= 9)
+//                        {
+//                            BSMonth = "0"+month;
+//                        }
+//
+//                        String date =   dateConverter.convertAdToBs(BSDay+"-"+BSMonth+"-"+year);
+//                        Log.d("BS date",date);
+//                        updateDateText(context,editText,duration,date);
+//                    } catch (ParseException e) {
+//                        e.printStackTrace();
+//                    }
+
+               // }
+                //else {
+
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB
+                            && calendarDate.getTimeInMillis() >= view.getMinDate()
+                            && calendarDate.getTimeInMillis() <= view.getMaxDate()) {
+                        updateDateText(context, editText, duration,
+                                DATE_FORMAT.format(calendarDate.getTime()));
+                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                        updateDateText(context, editText, duration, "");
+                    }
+
             }
+          //  }
         });
 
         if (jsonObject.has(JsonFormConstants.MIN_DATE) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {

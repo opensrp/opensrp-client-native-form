@@ -5,7 +5,9 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,11 +15,16 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 
+import com.hornet.dateconverter.Model;
 import com.vijay.jsonwizard.R;
+import com.vijay.jsonwizard.utils.DateConverter;
 import com.vijay.jsonwizard.utils.DatePickerUtils;
 
+import java.sql.Time;
 import java.util.Calendar;
 import java.util.Date;
+
+import timber.log.Timber;
 
 import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 
@@ -129,6 +136,8 @@ public class DatePickerDialog extends DialogFragment {
             public void onClick(View v) {
                 if (onDateSetListener != null) {
                     DatePickerDialog.this.dismiss();
+
+
                     onDateSetListener.onDateSet(datePicker, datePicker.getYear(),
                             datePicker.getMonth(), datePicker.getDayOfMonth());
                 }
@@ -144,6 +153,14 @@ public class DatePickerDialog extends DialogFragment {
 
     public void setMaxDate(long maxDate) {
         this.maxDate = maxDate;
+    }
+
+    public long getMinDate() {
+        return minDate;
+    }
+
+    public long getMaxDate() {
+        return maxDate;
     }
 
     public void setCalendarViewShown(boolean calendarViewShown) {
@@ -179,4 +196,5 @@ public class DatePickerDialog extends DialogFragment {
     public void setNumericDatePicker(boolean numericDatePicker) {
         isNumericDatePicker = numericDatePicker;
     }
+
 }
