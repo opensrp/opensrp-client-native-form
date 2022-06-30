@@ -77,14 +77,12 @@ public class RadioButtonFactory implements FormWidgetFactory {
 //            radioButton.setTextSize(context.getResources().getDimension(R.dimen.default_text_size));
             radioButton.setOnCheckedChangeListener(listener);
             if (!TextUtils.isEmpty(jsonObject.optString(JsonFormConstants.VALUE))) {
-                if (jsonObject.optString(JsonFormConstants.VALUE).equals(item.getString(JsonFormConstants.KEY))) {
-                    radioButton.setChecked(true);
+                JSONObject translatedObject = null;
+                if (jsonObject.optString(JsonFormConstants.VALUE).startsWith("{")) {
+                    translatedObject = new JSONObject(jsonObject.optString(JsonFormConstants.VALUE));
                 }
-                if (jsonObject.optString(JsonFormConstants.VALUE).charAt(0) == '{') {
-                    JSONObject object = new JSONObject(jsonObject.optString(JsonFormConstants.VALUE));
-                    if (object.optString(JsonFormConstants.VALUE).equals(item.optString(JsonFormConstants.KEY))) {
-                        radioButton.setChecked(true);
-                    }
+                if (jsonObject.optString(JsonFormConstants.VALUE).equals(item.getString(JsonFormConstants.KEY)) || (translatedObject != null && translatedObject.optString(JsonFormConstants.VALUE).equals(item.optString(JsonFormConstants.KEY)))) {
+                    radioButton.setChecked(true);
                 }
             }
 

@@ -168,7 +168,7 @@ public class SpinnerFactory extends BaseFactory {
                 } else if (keysJson != null && valueToSelect.equals(keysJson.optString(i))) {
                     indexToSelect = i;
                 }
-                else if (keysJson != null && StringUtils.isNotBlank(valueToSelect) && valueToSelect.charAt(0) == '{' && new JSONObject(valueToSelect).has(JsonFormConstants.VALUE)
+                else if (keysJson != null && StringUtils.isNotBlank(valueToSelect) && valueToSelect.startsWith("{") && new JSONObject(valueToSelect).has(JsonFormConstants.VALUE)
                         && new JSONObject(valueToSelect).optString(JsonFormConstants.VALUE).equals(keysJson.optString(i))) {
                     indexToSelect = i;
                 }
