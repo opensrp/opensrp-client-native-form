@@ -1,7 +1,7 @@
 package com.vijay.jsonwizard.rules;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.vijay.jsonwizard.activities.JsonFormBaseActivity;
@@ -18,6 +18,7 @@ import org.jeasy.rules.core.DefaultRulesEngine;
 import org.jeasy.rules.core.RulesEngineParameters;
 import org.jeasy.rules.mvel.MVELRule;
 import org.jeasy.rules.mvel.MVELRuleFactory;
+import org.jeasy.rules.support.YamlRuleDefinitionReader;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.smartregister.client.utils.contract.ClientFormContract;
@@ -41,6 +42,7 @@ public class RulesEngineFactory implements RuleListener {
     private Gson gson;
     private RulesEngineHelper rulesEngineHelper;
     private Facts globalFacts;
+    private MVELRuleFactory mvelRuleFactory;
 
     public RulesEngineFactory(Context context, Map<String, String> globalValues) {
         this.context = context;
@@ -50,6 +52,8 @@ public class RulesEngineFactory implements RuleListener {
         this.ruleMap = new HashMap<>();
         gson = new Gson();
         this.rulesEngineHelper = new RulesEngineHelper();
+        this.mvelRuleFactory = new MVELRuleFactory(new YamlRuleDefinitionReader());
+
 
         if (globalValues != null) {
             globalFacts = new Facts();
@@ -149,7 +153,7 @@ public class RulesEngineFactory implements RuleListener {
                 if (context instanceof ClientFormContract.View) {
                     try {
                         BufferedReader bufferedReader = ((ClientFormContract.View) context).getRules(context, fileName);
-                        ruleMap.put(fileName, MVELRuleFactory.createRulesFrom(bufferedReader));
+                        ruleMap.put(fileName, mvelRuleFactory.createRules(bufferedReader));
                     } catch (Exception ex) {
                         ((ClientFormContract.View) context).handleFormError(true, fileName);
                         return null;
