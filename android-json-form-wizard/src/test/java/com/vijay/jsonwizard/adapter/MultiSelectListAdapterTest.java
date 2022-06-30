@@ -1,6 +1,6 @@
 package com.vijay.jsonwizard.adapter;
 
-import androidx.recyclerview.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView;
 import android.widget.LinearLayout;
 
 import com.vijay.jsonwizard.BaseTest;

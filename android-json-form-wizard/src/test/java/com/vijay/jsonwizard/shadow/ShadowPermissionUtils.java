@@ -1,6 +1,6 @@
 package com.vijay.jsonwizard.shadow;
 
-import androidx.fragment.app.Fragment;
+import android.support.v4.app.Fragment;
 
 import com.vijay.jsonwizard.utils.PermissionUtils;
 

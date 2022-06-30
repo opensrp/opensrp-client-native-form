@@ -1,6 +1,6 @@
 package com.vijay.jsonwizard.factory;
 
-import androidx.annotation.Nullable;
+import android.support.annotation.Nullable;
 
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.filesource.AssetsFileSource;

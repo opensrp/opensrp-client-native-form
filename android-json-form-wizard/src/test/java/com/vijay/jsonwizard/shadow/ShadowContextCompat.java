@@ -1,8 +1,8 @@
 package com.vijay.jsonwizard.shadow;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
+import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 
 import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;

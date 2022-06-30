@@ -1,6 +1,6 @@
 package com.vijay.jsonwizard.validators.edittext;
 
-import androidx.annotation.NonNull;
+import android.support.annotation.NonNull;
 
 import com.rengwuxian.materialedittext.validation.METValidator;
 

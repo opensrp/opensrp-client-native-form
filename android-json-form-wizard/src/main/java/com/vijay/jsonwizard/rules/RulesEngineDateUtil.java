@@ -1,6 +1,6 @@
 package com.vijay.jsonwizard.rules;
 
-import androidx.annotation.NonNull;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.vijay.jsonwizard.domain.Form;

@@ -1,7 +1,7 @@
 package com.vijay.jsonwizard.delegates;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentManager;
+import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentManager;
 
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonWizardFormFragment;

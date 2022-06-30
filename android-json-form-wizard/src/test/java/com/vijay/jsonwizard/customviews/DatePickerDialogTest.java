@@ -1,14 +1,5 @@
 package com.vijay.jsonwizard.customviews;
 
-import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.nullable;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -26,6 +17,16 @@ import org.powermock.reflect.Whitebox;
 import org.robolectric.RuntimeEnvironment;
 
 import java.util.Calendar;
+
+import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by samuelgithengi on 9/8/20.
@@ -117,7 +118,7 @@ public class DatePickerDialogTest extends BaseTest {
         when(activity.getSystemService(Context.INPUT_METHOD_SERVICE)).thenReturn(inputManager);
         when(activity.getCurrentFocus()).thenReturn(mock(View.class));
         datePickerDialog.onCreateView(LayoutInflater.from(RuntimeEnvironment.application), null, null);
-        onShowListener = Whitebox.getInternalState(datePickerDialog, "onShowListener");
+        onShowListener = (DialogInterface.OnShowListener) spy(Whitebox.getInternalState(datePickerDialog, "onShowListener"));
         onShowListener.onShow(dialog);
         verify(activity).getSystemService(Context.INPUT_METHOD_SERVICE);
         verify(activity).getCurrentFocus();

@@ -2,7 +2,7 @@ package com.vijay.jsonwizard.customviews;
 
 import android.app.Dialog;
 import android.content.Context;
-import androidx.annotation.VisibleForTesting;
+import android.support.annotation.VisibleForTesting;
 import android.view.Window;
 import android.widget.LinearLayout;
 

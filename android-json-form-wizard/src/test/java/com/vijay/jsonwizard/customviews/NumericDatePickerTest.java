@@ -455,7 +455,7 @@ public class NumericDatePickerTest extends BaseTest {
 
         int prevDay = -2;
         int minDay = 1;
-        Assert.assertEquals(1, (int) Whitebox.invokeMethod(datePicker1, "getPreviousDay", prevDay, minDay));
+        Assert.assertEquals(1, Whitebox.invokeMethod(datePicker1, "getPreviousDay", prevDay, minDay));
     }
 
     @Test
@@ -466,7 +466,7 @@ public class NumericDatePickerTest extends BaseTest {
 
         int prevDay = 10;
         int minDay = 30;
-        Assert.assertEquals(10, (int) Whitebox.invokeMethod(datePicker1, "getPreviousDay", prevDay, minDay));
+        Assert.assertEquals(10, Whitebox.invokeMethod(datePicker1, "getPreviousDay", prevDay, minDay));
     }
 
     @Test
@@ -477,7 +477,7 @@ public class NumericDatePickerTest extends BaseTest {
 
         int prevDay = 31;
         int minDay = 30;
-        Assert.assertEquals(30, (int) Whitebox.invokeMethod(datePicker1, "getPreviousDay", prevDay, minDay));
+        Assert.assertEquals(30, Whitebox.invokeMethod(datePicker1, "getPreviousDay", prevDay, minDay));
     }
 
     @Test
@@ -488,7 +488,7 @@ public class NumericDatePickerTest extends BaseTest {
 
         int prevDay = 35;
         int minDay = 31;
-        Assert.assertEquals(31, (int) Whitebox.invokeMethod(datePicker1, "getPreviousDay", prevDay, minDay));
+        Assert.assertEquals(31, Whitebox.invokeMethod(datePicker1, "getPreviousDay", prevDay, minDay));
     }
 
     @Test
@@ -499,7 +499,7 @@ public class NumericDatePickerTest extends BaseTest {
 
         int prevDay = 31;
         int minDay = 28;
-        Assert.assertEquals(28, (int) Whitebox.invokeMethod(datePicker1, "getPreviousDay", prevDay, minDay));
+        Assert.assertEquals(28, Whitebox.invokeMethod(datePicker1, "getPreviousDay", prevDay, minDay));
     }
 
     @Test
@@ -510,6 +510,6 @@ public class NumericDatePickerTest extends BaseTest {
 
         int prevDay = 31;
         int minDay = 29;
-        Assert.assertEquals(29, (int) Whitebox.invokeMethod(datePicker1, "getPreviousDay", prevDay, minDay));
+        Assert.assertEquals(29, Whitebox.invokeMethod(datePicker1, "getPreviousDay", prevDay, minDay));
     }
 }

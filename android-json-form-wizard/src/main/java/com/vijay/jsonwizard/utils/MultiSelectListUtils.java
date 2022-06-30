@@ -1,6 +1,6 @@
 package com.vijay.jsonwizard.utils;
 
-import androidx.annotation.NonNull;
+import android.support.annotation.NonNull;
 
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.MultiSelectItem;

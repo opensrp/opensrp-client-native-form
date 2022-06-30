@@ -1,6 +1,6 @@
 package com.vijay.jsonwizard.domain;
 
-import androidx.appcompat.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 
 import com.vijay.jsonwizard.adapter.MultiSelectListAdapter;
 import com.vijay.jsonwizard.adapter.MultiSelectListSelectedAdapter;

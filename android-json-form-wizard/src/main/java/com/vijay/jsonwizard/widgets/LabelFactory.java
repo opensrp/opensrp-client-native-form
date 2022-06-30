@@ -3,7 +3,7 @@ package com.vijay.jsonwizard.widgets;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
-import androidx.constraintlayout.widget.ConstraintLayout;
+import android.support.constraint.ConstraintLayout;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;

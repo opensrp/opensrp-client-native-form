@@ -8,7 +8,7 @@ import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.Build;
-import androidx.appcompat.widget.AppCompatSpinner;
+import android.support.v7.widget.AppCompatSpinner;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;

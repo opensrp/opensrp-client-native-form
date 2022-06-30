@@ -24,7 +24,7 @@
             android:visibility="gone"
             tools:text="Title" />
 
-        <androidx.recyclerview.widget.RecyclerView
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/dialogRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
             android:overScrollMode="never"
             android:visibility="gone" />
 
-        <androidx.appcompat.widget.AppCompatButton
+        <android.support.v7.widget.AppCompatButton
             android:id="@+id/dialogButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

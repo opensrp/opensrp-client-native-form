@@ -1,7 +1,7 @@
 package com.vijay.jsonwizard.customviews;
 
 import android.content.Context;
-import androidx.annotation.Nullable;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.widget.TextView;
 

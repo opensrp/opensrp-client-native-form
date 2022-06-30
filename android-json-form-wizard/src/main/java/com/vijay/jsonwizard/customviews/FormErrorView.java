@@ -1,7 +1,7 @@
 package com.vijay.jsonwizard.customviews;
 
 import android.content.Context;
-import androidx.appcompat.widget.LinearLayoutCompat;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;

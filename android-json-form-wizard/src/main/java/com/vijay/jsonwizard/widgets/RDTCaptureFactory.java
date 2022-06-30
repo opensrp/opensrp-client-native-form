@@ -1,7 +1,7 @@
 package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
-import androidx.annotation.VisibleForTesting;
+import android.support.annotation.VisibleForTesting;
 import android.view.LayoutInflater;
 import android.view.View;
 

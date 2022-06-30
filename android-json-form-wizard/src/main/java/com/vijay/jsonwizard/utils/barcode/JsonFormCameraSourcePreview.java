@@ -18,7 +18,7 @@ package com.vijay.jsonwizard.utils.barcode;
 
 import android.Manifest;
 import android.content.Context;
-import androidx.annotation.RequiresPermission;
+import android.support.annotation.RequiresPermission;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;

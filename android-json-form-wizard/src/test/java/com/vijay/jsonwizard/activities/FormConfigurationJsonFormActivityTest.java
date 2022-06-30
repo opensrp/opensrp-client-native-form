@@ -3,7 +3,7 @@ package com.vijay.jsonwizard.activities;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import androidx.appcompat.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.view.Window;
 
 import com.vijay.jsonwizard.NativeFormLibrary;

@@ -451,7 +451,7 @@ public class UtilsTest extends BaseTest {
     public void testGetFieldKeyPrefix() {
        String expectedString = "stepName#stepTitle:";
        String expectedStringWrong = "stepNamestepTitle";
-       Assert.assertEquals(expectedString, Utils.getFieldKeyPrefix(JsonFormConstants.STEPNAME, "stepTitle"));
-       Assert.assertNotEquals(expectedStringWrong, Utils.getFieldKeyPrefix(JsonFormConstants.STEPNAME, "stepTitle"));
+       Assert.assertEquals(expectedString, Utils.getFieldKeyPrefix("stepName", "stepTitle"));
+       Assert.assertNotEquals(expectedStringWrong, Utils.getFieldKeyPrefix("stepName", "stepTitle"));
     }
 }

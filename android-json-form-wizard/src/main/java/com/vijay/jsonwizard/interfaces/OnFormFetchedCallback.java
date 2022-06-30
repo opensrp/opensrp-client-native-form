@@ -1,6 +1,6 @@
 package com.vijay.jsonwizard.interfaces;
 
-import androidx.annotation.Nullable;
+import android.support.annotation.Nullable;
 
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 21-05-2020.

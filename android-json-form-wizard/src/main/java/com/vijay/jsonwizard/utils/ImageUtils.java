@@ -7,7 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
-import androidx.collection.LruCache;
+import android.support.v4.util.LruCache;
 import android.util.Log;
 
 import org.jetbrains.annotations.Nullable;
