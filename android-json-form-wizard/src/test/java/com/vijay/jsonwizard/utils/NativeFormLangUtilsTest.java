@@ -3,6 +3,7 @@ package com.vijay.jsonwizard.utils;
 import static com.vijay.jsonwizard.utils.Utils.getTranslatedYamlFile;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 import android.content.Context;
 import android.preference.PreferenceManager;
@@ -149,8 +150,8 @@ public class NativeFormLangUtilsTest extends BaseTest {
         ResourceBundle bundle = ResourceBundle.getBundle("form_strings", locale);
         boolean keyIsFound = bundle.containsKey(stringToTranslate);
         actual = NativeFormLangUtils.translateDatabaseString(stringToTranslate, context);
-        Assert.assertNotNull(actual);
-        Assert.assertFalse(keyIsFound);
+        assertNotNull(actual);
+        assertFalse(keyIsFound);
 
     }
 }
