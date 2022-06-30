@@ -569,7 +569,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             setRadioButtonTags(rootLayout, jsonObject, item, extraInfo, radioButton);
 
             String valueString  = jsonObject.optString(JsonFormConstants.VALUE);
-            if(valueString != null && valueString.startsWith("{"))
+            if(valueString != null && valueString.charAt(0)=='{')
             {
                 JSONObject translationObject  =  new JSONObject(valueString);
                 translationObject.optString(JsonFormConstants.VALUE);

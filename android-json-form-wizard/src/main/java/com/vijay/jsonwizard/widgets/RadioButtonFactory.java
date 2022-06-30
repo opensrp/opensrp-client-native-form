@@ -76,10 +76,18 @@ public class RadioButtonFactory implements FormWidgetFactory {
             radioButton.setTag(R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
 //            radioButton.setTextSize(context.getResources().getDimension(R.dimen.default_text_size));
             radioButton.setOnCheckedChangeListener(listener);
-            if (!TextUtils.isEmpty(jsonObject.optString(JsonFormConstants.VALUE))
-                    && jsonObject.optString(JsonFormConstants.VALUE).equals(item.getString(JsonFormConstants.KEY))) {
+            if (!TextUtils.isEmpty(jsonObject.optString(JsonFormConstants.VALUE))) {
+            }
+            if (jsonObject.optString(JsonFormConstants.VALUE).equals(item.getString(JsonFormConstants.KEY))) {
                 radioButton.setChecked(true);
             }
+            if (jsonObject.optString(JsonFormConstants.VALUE).charAt(0) == '{') {
+                JSONObject object = new JSONObject(jsonObject.optString(JsonFormConstants.VALUE));
+                if (object.optString(JsonFormConstants.VALUE).equals(item.optString(JsonFormConstants.KEY))) {
+                    radioButton.setChecked(true);
+                }
+            }
+
             radioButton.setEnabled(!readOnly);
             radioButton.setFocusable(!readOnly);
             textView.setEnabled(!readOnly);
