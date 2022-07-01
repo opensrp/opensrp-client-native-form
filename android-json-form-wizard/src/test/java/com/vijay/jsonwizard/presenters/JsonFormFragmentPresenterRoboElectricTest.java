@@ -6,7 +6,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.AppCompatSpinner;
+import androidx.appcompat.widget.AppCompatSpinner;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
@@ -178,10 +178,10 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         when(formFragment.getArguments()).thenReturn(bundle);
         when(formFragment.getStep(STEP1)).thenReturn(mStepDetails);
         List<View> views = Collections.singletonList(textView);
-        when(jsonFormInteractor.fetchFormElements(anyString(), any(JsonFormFragment.class), any(JSONObject.class), isNull(CommonListener.class), anyBoolean())).thenReturn(views);
+        when(jsonFormInteractor.fetchFormElements(anyString(), any(JsonFormFragment.class), any(JSONObject.class), isNull(), anyBoolean())).thenReturn(views);
         presenter.addFormElements();
         shadowOf(getMainLooper()).idle();
-        verify(jsonFormInteractor, timeout(TIMEOUT)).fetchFormElements(eq(STEP1), eq(formFragment), jsonArgumentCaptor.capture(), isNull(CommonListener.class), eq(false));
+        verify(jsonFormInteractor, timeout(TIMEOUT)).fetchFormElements(eq(STEP1), eq(formFragment), jsonArgumentCaptor.capture(), isNull(), eq(false));
         assertEquals(mStepDetails.toString(), jsonArgumentCaptor.getValue().toString());
         verify(formFragment, timeout(TIMEOUT)).addFormElements(views);
     }
@@ -207,10 +207,10 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         when(formFragment.getArguments()).thenReturn(bundle);
         when(formFragment.getStep(STEP1)).thenReturn(mStepDetails);
         List<View> views = Collections.singletonList(textView);
-        when(jsonFormInteractor.fetchFormElements(anyString(), any(JsonFormFragment.class), any(JSONObject.class), isNull(CommonListener.class), anyBoolean())).thenReturn(views);
+        when(jsonFormInteractor.fetchFormElements(anyString(), any(JsonFormFragment.class), any(JSONObject.class), isNull(), anyBoolean())).thenReturn(views);
         presenter.addFormElements();
         shadowOf(getMainLooper()).idle();
-        verify(jsonFormInteractor, timeout(TIMEOUT)).fetchFormElements(eq(STEP1), eq(formFragment), jsonArgumentCaptor.capture(), isNull(CommonListener.class), eq(false));
+        verify(jsonFormInteractor, timeout(TIMEOUT)).fetchFormElements(eq(STEP1), eq(formFragment), jsonArgumentCaptor.capture(), isNull(), eq(false));
         assertEquals(mStepDetails.toString(), jsonArgumentCaptor.getValue().toString());
         verify(formFragment, timeout(TIMEOUT)).addFormElements(views);
         verify(jsonFormActivity).setNextStep(STEP1);
@@ -228,10 +228,10 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         when(formFragment.getArguments()).thenReturn(bundle);
         when(formFragment.getStep(STEP1)).thenReturn(mStepDetails);
         List<View> views = Collections.singletonList(textView);
-        when(jsonFormInteractor.fetchFormElements(anyString(), any(JsonFormFragment.class), any(JSONObject.class), isNull(CommonListener.class), anyBoolean())).thenReturn(views);
+        when(jsonFormInteractor.fetchFormElements(anyString(), any(JsonFormFragment.class), any(JSONObject.class), isNull(), anyBoolean())).thenReturn(views);
         presenter.addFormElements();
         shadowOf(getMainLooper()).idle();
-        verify(jsonFormInteractor, timeout(TIMEOUT)).fetchFormElements(eq(STEP1), eq(formFragment), jsonArgumentCaptor.capture(), isNull(CommonListener.class), eq(false));
+        verify(jsonFormInteractor, timeout(TIMEOUT)).fetchFormElements(eq(STEP1), eq(formFragment), jsonArgumentCaptor.capture(), isNull(), eq(false));
         assertEquals(mStepDetails.toString(), jsonArgumentCaptor.getValue().toString());
         verify(formFragment, timeout(TIMEOUT)).addFormElements(views);
         verify(jsonFormActivity).setNextStep(STEP1);

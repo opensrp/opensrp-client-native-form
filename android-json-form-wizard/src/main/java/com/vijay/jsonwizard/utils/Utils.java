@@ -19,10 +19,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.AssetManager;
 import android.os.Looper;
-import android.support.annotation.NonNull;
-import android.support.annotation.StringRes;
-import android.support.design.widget.Snackbar;
-import android.support.v4.util.TimeUtils;
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.core.util.TimeUtils;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -481,10 +481,16 @@ public class Utils {
     }
 
     /**
+
      * Returns the value string value for special translated fields like the Native Radio Button, Spinner, Check Box e.tc
      *
      * @param jsonObject -- Widget #JSONObject
      * @return
+     * Gets the {@link androidx.fragment.app.FragmentTransaction} from the {@link Context} and removes any {@link androidx.fragment.app.Fragment} with the tag `GenericPopup` from the transaction.
+     * Then nullifies the stack by calling {@link androidx.fragment.app.FragmentTransaction#addToBackStack(String)} with a null value.
+     *
+     * @param context {@link Activity} The activity context where this transaction called from
+     * @return fragmentTransaction {@link androidx.fragment.app.FragmentTransaction}
      */
     public static String returnValue(JSONObject jsonObject) {
         String value = "";
