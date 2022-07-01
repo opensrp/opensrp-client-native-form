@@ -485,19 +485,56 @@ public class JsonFormActivityTest extends BaseActivityTest {
     }
 
     @Test
-    public void testUpdateUIByConstraints() throws Exception {
-        View view = Mockito.mock(View.class);
+    public void testUpdateUIByMaterialEditText() throws Exception {
+        View view = Mockito.mock(MaterialEditText.class);
         String address = "test:key";
         String childKey = "test";
-        String previous="false";
-        String errorMessage="false";
-        String key="yes";
+        String previous = "";
+        String errorMessage = "false";
+        String key = "yes";
         Mockito.doReturn(address).when(view).getTag(R.id.address);
         Mockito.doReturn(childKey).when(view).getTag(R.id.childKey);
         Mockito.doReturn(previous).when(view).getTag(R.id.previous);
         Mockito.doReturn(key).when(view).getTag(R.id.key);
-        Mockito.doReturn("check_box").when(view).getTag(R.id.type);
-        String json=" {\n" +
+        Mockito.doReturn("edit_text").when(view).getTag(R.id.type);
+        String json= " {\n" +
+                "        \"key\": \"user_first_name\",\n" +
+                "        \"openmrs_entity_parent\": \"\",\n" +
+                "        \"openmrs_entity\": \"\",\n" +
+                "        \"openmrs_entity_id\": \"\",\n" +
+                "        \"type\": \"edit_text\",\n" +
+                "        \"hint\": \"User First name\",\n" +
+                "        \"edit_type\": \"name\",\n" +
+                "        \"v_required\": {\n" +
+                "          \"value\": \"true\",\n" +
+                "          \"err\": \"Please enter the first name\"\n" +
+                "        },\n" +
+                "        \"v_regex\": {\n" +
+                "          \"value\": \"[A-Za-z\\\\s\\\\.\\\\-]*\",\n" +
+                "          \"err\": \"Please enter a valid name\"\n" +
+                "        }\n" +
+                "      }";
+        Mockito.doReturn(new JSONObject(json)).when(view).getTag(R.id.json_object);
+        Whitebox.invokeMethod(activity, "updateUiByConstraints", view, true, errorMessage);
+        assertNotNull(view.getTag(R.id.key));
+
+
+    }
+
+    @Test
+    public void testUpdateUIByConstraintsOfLinearLayout() throws Exception {
+        View view = Mockito.mock(LinearLayout.class);
+        String address = "test:key";
+        String childKey = "test";
+        String previous = "";
+        String errorMessage = "false";
+        String key = "yes";
+        Mockito.doReturn(address).when(view).getTag(R.id.address);
+        Mockito.doReturn(childKey).when(view).getTag(R.id.childKey);
+        Mockito.doReturn(previous).when(view).getTag(R.id.previous);
+        Mockito.doReturn(key).when(view).getTag(R.id.key);
+        Mockito.doReturn("linear_layout").when(view).getTag(R.id.type);
+        String json = " {\n" +
                 "        \"key\": \"user_check_box\",\n" +
                 "        \"openmrs_entity_parent\": \"\",\n" +
                 "        \"openmrs_entity\": \"\",\n" +
@@ -540,7 +577,30 @@ public class JsonFormActivityTest extends BaseActivityTest {
         Mockito.doReturn(new JSONObject(json)).when(view).getTag(R.id.json_object);
         Whitebox.invokeMethod(activity, "updateUiByConstraints", view, true, errorMessage);
         assertNotNull(view.getTag(R.id.key));
+    }
 
-
+    @Test
+    public void testUpdateUIByConstraintsOfRadioButton() throws Exception {
+        View view = Mockito.mock(RadioGroup.class);
+        String address = "test:key";
+        String childKey = "test";
+        String previous = "false";
+        String errorMessage = "false";
+        String key = "yes";
+        Mockito.doReturn(address).when(view).getTag(R.id.address);
+        Mockito.doReturn(childKey).when(view).getTag(R.id.childKey);
+        Mockito.doReturn(previous).when(view).getTag(R.id.previous);
+        Mockito.doReturn(key).when(view).getTag(R.id.key);
+        Mockito.doReturn("check_box").when(view).getTag(R.id.type);
+        String json = " {\n" +
+                "                \"key\": \"respiratory_exam_radio_button\",\n" +
+                "                \"type\": \"native_radio\",\n" +
+                "                \"values\": [\n" +
+                "                  \"3:Abnormal\"\n" +
+                "                ]\n" +
+                "              }";
+        Mockito.doReturn(new JSONObject(json)).when(view).getTag(R.id.json_object);
+        Whitebox.invokeMethod(activity, "updateUiByConstraints", view, true, errorMessage);
+        assertNotNull(view.getTag(R.id.key));
     }
 }
