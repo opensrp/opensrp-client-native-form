@@ -6,8 +6,6 @@ import static org.junit.Assert.assertNotNull;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
-import androidx.core.util.Pair;
-import androidx.appcompat.widget.AppCompatRadioButton;
 import android.text.Html;
 import android.text.Spanned;
 import android.view.View;
@@ -16,6 +14,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+
+import androidx.appcompat.widget.AppCompatRadioButton;
+import androidx.core.util.Pair;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rey.material.util.ViewUtil;
@@ -481,5 +482,64 @@ public class JsonFormActivityTest extends BaseActivityTest {
         view.setTag(R.id.address, "step1:user_last_name");
         Pair<String[], JSONObject> pair = activity.getCalculationAddressAndValue(view);
         assertNotNull(pair);
+    }
+
+    @Test
+    public void testUpdateUIByConstraints() throws Exception {
+        View view = Mockito.mock(View.class);
+        String address = "test:key";
+        String childKey = "test";
+        String previous="false";
+        String errorMessage="false";
+        String key="yes";
+        Mockito.doReturn(address).when(view).getTag(R.id.address);
+        Mockito.doReturn(childKey).when(view).getTag(R.id.childKey);
+        Mockito.doReturn(previous).when(view).getTag(R.id.previous);
+        Mockito.doReturn(key).when(view).getTag(R.id.key);
+        Mockito.doReturn("check_box").when(view).getTag(R.id.type);
+        String json=" {\n" +
+                "        \"key\": \"user_check_box\",\n" +
+                "        \"openmrs_entity_parent\": \"\",\n" +
+                "        \"openmrs_entity\": \"\",\n" +
+                "        \"openmrs_entity_id\": \"\",\n" +
+                "        \"openmrs_data_type\": \"select one\",\n" +
+                "        \"type\": \"check_box\",\n" +
+                "        \"label\": \"Do want to select any checkbox?\",\n" +
+                "        \"label_text_style\": \"bold\",\n" +
+                "        \"options\": [\n" +
+                "          {\n" +
+                "            \"key\": \"None\",\n" +
+                "            \"text\": \"None\",\n" +
+                "            \"value\": false,\n" +
+                "            \"openmrs_choice_id\": \"\"\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"key\": \"yes\",\n" +
+                "            \"text\": \"Yes\",\n" +
+                "            \"value\": false,\n" +
+                "            \"openmrs_choice_id\": \"\"\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"key\": \"no\",\n" +
+                "            \"text\": \"No\",\n" +
+                "            \"value\": false,\n" +
+                "            \"openmrs_choice_id\": \"\"\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"key\": \"other\",\n" +
+                "            \"text\": \"Other\",\n" +
+                "            \"value\": false,\n" +
+                "            \"openmrs_choice_id\": \"\"\n" +
+                "          }\n" +
+                "        ],\n" +
+                "        \"v_required\": {\n" +
+                "          \"value\": \"false\"\n" +
+                "        },\n" +
+                "        \"value\": \"[yes]\"\n" +
+                "      }";
+        Mockito.doReturn(new JSONObject(json)).when(view).getTag(R.id.json_object);
+        Whitebox.invokeMethod(activity, "updateUiByConstraints", view, true, errorMessage);
+
+
     }
 }
