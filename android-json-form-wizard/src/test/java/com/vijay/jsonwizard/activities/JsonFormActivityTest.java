@@ -66,7 +66,6 @@ public class JsonFormActivityTest extends BaseActivityTest {
     @Mock
     private Context context;
     private Intent intent;
-    private Form form;
 
     @Before
     public void setUp() throws JSONException {
