@@ -3,7 +3,7 @@ package com.vijay.jsonwizard.listeners;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;

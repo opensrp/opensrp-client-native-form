@@ -3,7 +3,7 @@ package com.vijay.jsonwizard.widgets;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.support.annotation.VisibleForTesting;
+import androidx.annotation.VisibleForTesting;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;

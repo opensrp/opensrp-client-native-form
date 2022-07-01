@@ -7,7 +7,7 @@ import static com.vijay.jsonwizard.utils.FormUtils.getLinearLayoutParams;
 import static com.vijay.jsonwizard.utils.FormUtils.getTextViewWith;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
