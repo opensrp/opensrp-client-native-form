@@ -539,6 +539,7 @@ public class JsonFormActivityTest extends BaseActivityTest {
                 "      }";
         Mockito.doReturn(new JSONObject(json)).when(view).getTag(R.id.json_object);
         Whitebox.invokeMethod(activity, "updateUiByConstraints", view, true, errorMessage);
+        assertNotNull(view.getTag(R.id.key));
 
 
     }

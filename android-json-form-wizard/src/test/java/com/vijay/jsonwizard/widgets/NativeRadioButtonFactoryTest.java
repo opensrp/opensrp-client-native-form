@@ -1,7 +1,6 @@
 package com.vijay.jsonwizard.widgets;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.view.View;
@@ -13,7 +12,6 @@ import com.vijay.jsonwizard.activities.JsonFormActivity;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.utils.FormUtils;
-import com.vijay.jsonwizard.views.CustomTextView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -163,10 +161,9 @@ public class NativeRadioButtonFactoryTest extends BaseTest {
     @Ignore
     public void testShowDateDialog() throws Exception {
         View view = Mockito.mock(View.class);
-        View radioButtonView=Mockito.mock(RadioButton.class);
+        View radioButtonView = Mockito.mock(RadioButton.class);
         radioButton = Mockito.mock(RadioButton.class);
-        Activity  context= Mockito.spy(Activity.class);
-        Context specify_context=RuntimeEnvironment.application.getApplicationContext();
+        Context specify_context = RuntimeEnvironment.application.getApplicationContext();
         String json = "    {\n" +
                 "        \"key\": \"Date_Birth\",\n" +
                 "        \"openmrs_entity_parent\": \"\",\n" +
@@ -189,13 +186,13 @@ public class NativeRadioButtonFactoryTest extends BaseTest {
                 "      }";
         Mockito.doReturn(radioButton).when(view).getTag(R.id.native_radio_button);
         Mockito.doReturn("text:awesome").when(radioButton).getText();
-        Mockito.doReturn(context).when(view).getTag((R.id.specify_context));
+        Mockito.doReturn(specify_context).when(view).getTag((R.id.specify_context));
         Whitebox.setInternalState(factory, "context", activity);
         Mockito.doReturn(new JSONObject(json)).when(radioButton).getTag(R.id.option_json_object);
         Mockito.doReturn(radioButtonView).when(radioButtonView).getTag(R.id.specify_textview);
-        FragmentManager fragment=Mockito.spy(FragmentManager.class);
-        NativeRadioButtonFactory radioButtonFactory=Mockito.mock(NativeRadioButtonFactory.class);
-        Whitebox.setInternalState(NativeRadioButtonFactory.class,"TAG",fragment);
+        FragmentManager fragment = Mockito.spy(FragmentManager.class);
+        NativeRadioButtonFactory radioButtonFactory = Mockito.mock(NativeRadioButtonFactory.class);
+        Whitebox.setInternalState(NativeRadioButtonFactory.class, "TAG", fragment);
         Mockito.verify(radioButtonFactory, Mockito.times(1)).showDateDialog(view);
     }
 }
