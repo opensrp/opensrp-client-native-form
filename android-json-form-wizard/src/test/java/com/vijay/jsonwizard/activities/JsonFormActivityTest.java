@@ -66,6 +66,7 @@ public class JsonFormActivityTest extends BaseActivityTest {
     @Mock
     private Context context;
     private Intent intent;
+    private Form form;
 
     @Before
     public void setUp() throws JSONException {
@@ -602,5 +603,18 @@ public class JsonFormActivityTest extends BaseActivityTest {
         Mockito.doReturn(new JSONObject(json)).when(view).getTag(R.id.json_object);
         Whitebox.invokeMethod(activity, "updateUiByConstraints", view, true, errorMessage);
         assertNotNull(view.getTag(R.id.key));
+    }
+
+    @Test
+    public void testGetView() throws Exception {
+        View view = Mockito.mock(View.class);
+        String key = "key";
+        String childKey = "childKey";
+        JsonFormActivity jsonFormActivity = Mockito.mock(JsonFormActivity.class);
+        Mockito.doReturn(childKey).when(view).getTag(R.id.childKey);
+        Mockito.doReturn(key).when(view).getTag(R.id.key);
+        String returnKey = Whitebox.invokeMethod(jsonFormActivity, "getViewKey", view);
+        assertEquals(key+":"+childKey,returnKey);
+
     }
 }
