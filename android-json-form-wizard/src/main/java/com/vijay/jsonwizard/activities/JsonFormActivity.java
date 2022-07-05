@@ -18,11 +18,6 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.core.util.Pair;
-import androidx.appcompat.widget.AppCompatRadioButton;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -40,6 +35,12 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatRadioButton;
+import androidx.core.app.ActivityCompat;
+import androidx.core.util.Pair;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -1843,8 +1844,12 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 }
                 return false;
             } else {
-                String curValue = String.valueOf(curValueMap.get(JsonFormConstants.VALUE));
-                return doComparison(curValue != null ? curValue : "", curRelevance);
+                Object currObjectValue = curValueMap.get(JsonFormConstants.VALUE);
+                if (currObjectValue != null) {
+                    String curValue = String.valueOf(currObjectValue);
+                    return doComparison(curValue, curRelevance);
+                }
+                return doComparison("", curRelevance);
             }
         }
         return false;
