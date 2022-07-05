@@ -10,9 +10,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -569,10 +569,11 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             setRadioButtonTags(rootLayout, jsonObject, item, extraInfo, radioButton);
 
             String valueString  = jsonObject.optString(JsonFormConstants.VALUE);
-            if(valueString != null && valueString.startsWith("{"))
+            if(valueString != null && valueString.charAt(0)=='{')
             {
                 JSONObject translationObject  =  new JSONObject(valueString);
-                valueString  = translationObject.optString(JsonFormConstants.VALUE) != null ? translationObject.optString(JsonFormConstants.VALUE) : "";
+                translationObject.optString(JsonFormConstants.VALUE);
+                valueString  = translationObject.optString(JsonFormConstants.VALUE);
             }
 
             if (!TextUtils.isEmpty(valueString) &&
@@ -620,7 +621,11 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
     private void checkSelectedRadioButton(final CommonListener listener, final RadioButton radioButton, String value, JSONObject item) throws JSONException {
         if (StringUtils.isNotBlank(value)) {
-            if (value.equals(item.getString(JsonFormConstants.KEY))) {
+            JSONObject jsonObject = null;
+            if (value.startsWith("{")) {
+                jsonObject = new JSONObject(value);
+            }
+            if (value.equals(item.getString(JsonFormConstants.KEY)) || (jsonObject != null && jsonObject.has(JsonFormConstants.VALUE) && jsonObject.optString(JsonFormConstants.VALUE).equals(item.getString(JsonFormConstants.KEY)))) {
                 ((Activity) context).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -628,17 +633,6 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
                         radioButton.setOnCheckedChangeListener(listener);
                     }
                 });
-            } else if (value.charAt(0) == '{') {
-                JSONObject object = new JSONObject(value);
-                if (object.has(JsonFormConstants.VALUE) && object.optString(JsonFormConstants.VALUE).equals(item.getString(JsonFormConstants.KEY))) {
-                    ((Activity) context).runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            radioButton.setChecked(true);
-                            radioButton.setOnCheckedChangeListener(listener);
-                        }
-                    });
-                }
             }
         } else {
             radioButton.setOnCheckedChangeListener(listener);

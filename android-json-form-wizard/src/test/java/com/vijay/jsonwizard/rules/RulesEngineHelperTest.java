@@ -57,7 +57,7 @@ public class RulesEngineHelperTest extends BaseTest {
     @Test
     public void testGetMothersAge() {
         String dob = "04-07-1990";
-        int expectedAge = 31;
+        int expectedAge = 32;
         int actualAge = helper.getMothersAge(dob);
         assertEquals(expectedAge, actualAge);
     }

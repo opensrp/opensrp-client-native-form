@@ -2,7 +2,7 @@ package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.v7.widget.AppCompatRadioButton;
+import androidx.appcompat.widget.AppCompatRadioButton;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;

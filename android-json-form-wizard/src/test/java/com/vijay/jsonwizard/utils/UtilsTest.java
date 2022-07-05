@@ -523,3 +523,4 @@ public class UtilsTest extends BaseTest {
             Assert.assertEquals(expectedJson.toString(), Utils.generateTranslatableValue(item.optString(JsonFormConstants.KEY), item).toString());
         }
     }
+
