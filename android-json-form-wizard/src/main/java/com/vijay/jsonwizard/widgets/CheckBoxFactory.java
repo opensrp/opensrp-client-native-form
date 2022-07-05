@@ -229,12 +229,7 @@ public class CheckBoxFactory extends BaseFactory {
                 @Override
                 public void run() {
                     if (StringUtils.isNotEmpty(item.optString(JsonFormConstants.VALUE))) {
-                        widgetArgs.getFormFragment().getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                checkBox.setChecked(Boolean.parseBoolean(item.optString(JsonFormConstants.VALUE)));
-                            }
-                        });
+                        widgetArgs.getFormFragment().getJsonApi().getAppExecutors().mainThread().execute(() -> checkBox.setChecked(Boolean.parseBoolean(item.optString(JsonFormConstants.VALUE))));
                     } else {
                         //Preselect values if they exist
                         try {

@@ -450,9 +450,7 @@ public class UtilsTest extends BaseTest {
     @Test
     public void testGetFieldKeyPrefix() {
         String expectedString = "stepName#stepTitle:";
-        String expectedStringWrong = "stepNamestepTitle";
         Assert.assertEquals(expectedString, Utils.getFieldKeyPrefix("stepName", "stepTitle"));
-        Assert.assertNotEquals(expectedStringWrong, Utils.getFieldKeyPrefix("stepName", "stepTitle"));
     }
 
     @Test
