@@ -894,7 +894,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         if (JsonFormConstants.CHECK_BOX.equals(fieldObject.getString(JsonFormConstants.TYPE))) {
                             value = String.valueOf(fieldObject.getJSONArray(JsonFormConstants.VALUES));
                             if (Utils.enabledProperty(NativeFormsProperties.KEY.WIDGET_VALUE_TRANSLATED)) {
-                                fieldObject.put(value, Utils.generateTranslatableValue(value, fieldObject));
+                                fieldObject.put(JsonFormConstants.VALUE, Utils.generateTranslatableValue(value, fieldObject));
                             } else {
                                 fieldObject.put(JsonFormConstants.VALUE, value);
                             }
