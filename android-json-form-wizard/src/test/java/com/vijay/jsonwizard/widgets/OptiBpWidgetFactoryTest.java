@@ -10,8 +10,10 @@ import android.widget.TextView;
 import com.rey.material.widget.Button;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
+import com.vijay.jsonwizard.domain.WidgetArgs;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
+import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
 
 import org.json.JSONException;
@@ -226,7 +228,15 @@ public class OptiBpWidgetFactoryTest extends FactoryTest {
             "        \"optibp_data\": {\n" +
             "          \"clientId\": \"sampleClientId\",\n" +
             "          \"clientOpenSRPId\": \"sampleClientOpenSRPId\"\n" +
-            "        }" +
+            "        }\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"key\": \"optibp_client_calibration_data\",\n" +
+            "        \"openmrs_entity_parent\": \"\",\n" +
+            "        \"openmrs_entity\": \"\",\n" +
+            "        \"openmrs_entity_id\": \"\",\n" +
+            "        \"type\": \"hidden\",\n" +
+            "        \"value\": \"[{\\\"date\\\":\\\"2019-03-26T11:20:33+0800\\\",\\\"model\\\":\\\"device model\\\",\\\"height\\\":70,\\\"weight\\\":180,\\\"comperatives\\\":[{\\\"systolic\\\":120,\\\"diastolic\\\":80,\\\"cuffSystolic\\\":120,\\\"cuffDiastolic\\\":80,\\\"features\\\":{\\\"$key\\\":\\\"0.2f\\\"}}]}]\"\n" +
             "      }\n" +
             "    ]\n" +
             "  }\n" +
@@ -356,9 +366,16 @@ public class OptiBpWidgetFactoryTest extends FactoryTest {
         OptiBPWidgetFactory factorySpy = Mockito.spy(factory);
         Assert.assertNotNull(factorySpy);
 
-        String inputJson = factorySpy.getInputJsonString(jsonFormActivity, new JSONObject(optiBPWidgetString));
+        WidgetArgs widgetArgs = Mockito.mock(WidgetArgs.class);
+        JsonFormFragment formFragment = Mockito.mock(JsonFormFragment.class);
+        JsonApi jsonApi = Mockito.mock(JsonApi.class);
+        Mockito.doReturn(formFragment).when(widgetArgs).getFormFragment();
+        Mockito.doReturn(jsonApi).when(formFragment).getJsonApi();
+        Mockito.doReturn(new JSONObject(formString)).when(jsonApi).getmJSONObject();
 
-        Assert.assertEquals(inputJson, "{\"clientId\":\"sampleClientId\",\"clientOpenSRPId\":\"sampleClientOpenSRPId\"}");
+        String inputJson = factorySpy.getInputJsonString(jsonFormActivity, new JSONObject(optiBPWidgetString), widgetArgs);
+
+        Assert.assertEquals(inputJson, "{\"clientId\":\"sampleClientId\",\"clientOpenSRPId\":\"sampleClientOpenSRPId\",\"calibration\":[{\"date\":\"2019-03-26T11:20:33+0800\",\"model\":\"device model\",\"height\":70,\"weight\":180,\"comperatives\":[{\"systolic\":120,\"diastolic\":80,\"cuffSystolic\":120,\"cuffDiastolic\":80,\"features\":{\"$key\":\"0.2f\"}}]}]}");
     }
 
     @Test

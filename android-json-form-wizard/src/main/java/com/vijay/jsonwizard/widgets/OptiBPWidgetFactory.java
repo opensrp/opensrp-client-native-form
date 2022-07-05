@@ -9,7 +9,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.ShapeDrawable;
-import androidx.core.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +17,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.core.content.ContextCompat;
 
 import com.rey.material.util.ViewUtil;
 import com.rey.material.widget.Button;
@@ -105,7 +106,7 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
 
     private void initBPFieldsKeys(JSONObject jsonObject) throws JSONException {
         if (jsonObject.has(JsonFormConstants.FIELDS_TO_USE_VALUE)
-                && jsonObject.getJSONArray(JsonFormConstants.FIELDS_TO_USE_VALUE).length()  == 2) {
+                && jsonObject.getJSONArray(JsonFormConstants.FIELDS_TO_USE_VALUE).length() == 2) {
             JSONArray fields = jsonObject.getJSONArray(JsonFormConstants.FIELDS_TO_USE_VALUE);
             BPFieldType.SYSTOLIC_BP.setKey(fields.get(0).toString());
             BPFieldType.DIASTOLIC_BP.setKey(fields.get(1).toString());
@@ -136,7 +137,7 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
                     Timber.w(" ONCLICK WITH JSON %s", jsonObject);
                     Intent intent = new Intent(JsonFormConstants.OptibpConstants.OPTIBP_LAUNCH_INTENT);
                     intent.setType("text/json");
-                    intent.putExtra(Intent.EXTRA_TEXT, getInputJsonString(context, jsonObject));
+                    intent.putExtra(Intent.EXTRA_TEXT, getInputJsonString(context, jsonObject, widgetArgs));
                     ((Activity) context).startActivityForResult(Intent.createChooser(intent, ""), requestCode);
                 } catch (Exception e) {
                     Timber.e(e);
@@ -164,7 +165,7 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
             String colorString = jsonObject.getString(JsonFormConstants.OptibpConstants.OPTIBP_KEY_BUTTON_TEXT_COLOR);
             button.setTextColor(Color.parseColor(colorString));
         }
-        if(jsonObject.has(JsonFormConstants.OptibpConstants.OPTIBP_KEY_BUTTON_TEXT)) {
+        if (jsonObject.has(JsonFormConstants.OptibpConstants.OPTIBP_KEY_BUTTON_TEXT)) {
             String buttonText = jsonObject.getString(JsonFormConstants.OptibpConstants.OPTIBP_KEY_BUTTON_TEXT);
             button.setText(buttonText);
         }
@@ -293,7 +294,7 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
         return systolicField.getKey().contains("repeat") && diastolicField.getKey().contains("repeat");
     }
 
-    protected String getInputJsonString(Context context, JSONObject jsonObject) throws JSONException {
+    protected String getInputJsonString(Context context, JSONObject jsonObject, WidgetArgs widgetArgs) throws JSONException {
         if (!jsonObject.has(JsonFormConstants.OptibpConstants.OPTIBP_KEY_DATA)) {
             throw new JSONException(context.getString(R.string.missing_client_info));
         }
@@ -306,7 +307,24 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
                 || TextUtils.isEmpty(optiBPData.getString(JsonFormConstants.OptibpConstants.OPTIBP_KEY_CLIENT_OPENSRP_ID))) {
             throw new JSONException(context.getString(R.string.missing_client_info));
         }
+        JSONArray optiBPCalibrationData = getCalibrationData(widgetArgs);
+        if (optiBPCalibrationData != null) {
+            optiBPData.put(JsonFormConstants.OptibpConstants.OPTIBP_KEY_CALIBRATION, optiBPCalibrationData);
+        }
         return optiBPData.toString();
+    }
+
+    private JSONArray getCalibrationData(WidgetArgs widgetArgs) {
+        try {
+            JSONObject calibrationData = FormUtils.getFieldFromForm(widgetArgs.getFormFragment().getJsonApi().getmJSONObject(), JsonFormConstants.OptibpConstants.OPTIBP_KEY_CALIBRATION_DATA);
+            if (calibrationData != null && StringUtils.isNotBlank(calibrationData.toString())) {
+                String data = calibrationData.optString(JsonFormConstants.VALUE);
+                return new JSONArray(data);
+            }
+        } catch (JSONException e) {
+            Timber.e(e);
+        }
+        return null;
     }
 
     private String getLabelText(Context context, JSONObject jsonObject) throws JSONException {
