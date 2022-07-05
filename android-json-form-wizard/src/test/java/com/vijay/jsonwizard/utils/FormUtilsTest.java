@@ -8,7 +8,9 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.vijay.jsonwizard.BaseTest;
@@ -714,13 +716,13 @@ public class FormUtilsTest extends BaseTest {
         Mockito.verify(mainLayout, Mockito.only()).clearFocus();
         Mockito.verify(mockFragmentTransaction).add(ArgumentMatchers.any(DialogFragment.class), ArgumentMatchers.eq("GenericPopup"));
     }
-  
+
     @Test
     public void testGetDynamicLabelInfoList() throws JSONException {
         JSONArray jsonArray = new JSONArray("[{\"dynamic_label_title\": \"sample title\",\"dynamic_label_text\": \"sample text\",\"dynamic_label_image_src\": \"img/img.png\"}]");
         ArrayList<DynamicLabelInfo> expectedList = new ArrayList<>();
         expectedList.add(new DynamicLabelInfo("sample title", "sample text", "img/img.png"));
-        ArrayList<DynamicLabelInfo> actualList =  FormUtils.getDynamicLabelInfoList(jsonArray);
+        ArrayList<DynamicLabelInfo> actualList = FormUtils.getDynamicLabelInfoList(jsonArray);
         Assert.assertEquals(expectedList.get(0).getDynamicLabelText(), actualList.get(0).getDynamicLabelText());
         Assert.assertEquals(expectedList.get(0).getDynamicLabelTitle(), actualList.get(0).getDynamicLabelTitle());
         Assert.assertEquals(expectedList.get(0).getDynamicLabelImageSrc(), actualList.get(0).getDynamicLabelImageSrc());
@@ -732,9 +734,48 @@ public class FormUtilsTest extends BaseTest {
 
         Assert.assertEquals(inputJson.toString(), "{\"clientId\":\"clientId\",\"clientOpenSRPId\":\"clientOpenSRPId\"}");
     }
+
+    public void testSetEditModeShouldShowEditBtnAndDisableEditableView() throws JSONException {
+        View editableView = Mockito.mock(View.class);
+        ImageView editButton = Mockito.mock(ImageView.class);
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(JsonFormConstants.EDITABLE, true);
+        FormUtils.setEditMode(jsonObject, editableView, editButton);
+
+        Mockito.verify(editableView).setEnabled(ArgumentMatchers.eq(false));
+        Mockito.verify(editButton).setVisibility(ArgumentMatchers.eq(View.VISIBLE));
+
+    }
+
+    @Test
+    public void testSetEditModeShouldHideEditBtn() throws JSONException {
+        View editableView = Mockito.mock(View.class);
+        ImageView editButton = Mockito.mock(ImageView.class);
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(JsonFormConstants.EDITABLE, false);
+        FormUtils.setEditMode(jsonObject, editableView, editButton);
+
+        Mockito.verify(editButton).setVisibility(ArgumentMatchers.eq(View.GONE));
+    }
+
+    @Test
+    public void testSetEditModeShouldHideEditBtnAndDisableEditableViewIfReadOnlySet() throws JSONException {
+        View editableView = Mockito.mock(View.class);
+        ImageView editButton = Mockito.mock(ImageView.class);
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(JsonFormConstants.READ_ONLY, false);
+        FormUtils.setEditMode(jsonObject, editableView, editButton);
+
+        Mockito.verify(editButton).setVisibility(ArgumentMatchers.eq(View.GONE));
+        Mockito.verify(editableView).setEnabled(ArgumentMatchers.eq(true));
+    }
+
     @Test
     public void testUpdateValueToJsonArray() throws Exception {
-        FormUtils mockedFormUtils=Mockito.mock(FormUtils.class);
+        FormUtils mockedFormUtils = Mockito.mock(FormUtils.class);
         String item = "{\n" +
                 "  \"key\": \"resThree3\",\n" +
                 "  \"text\": \"Abnormal\",\n" +
@@ -749,6 +790,13 @@ public class FormUtilsTest extends BaseTest {
         NativeFormsProperties mockedNativeProps = Mockito.mock(NativeFormsProperties.class);
         Mockito.when(mockedNativeProps.isTrue(NativeFormsProperties.KEY.WIDGET_VALUE_TRANSLATED)).thenReturn(true);
         Mockito.verify(mockedFormUtils, Mockito.times(0)).updateValueToJSONArray(new JSONObject(item), new JSONObject(item).optString(JsonFormConstants.VALUE));
+    }
 
+    @Test
+    public void testGetRadioButtonTextShouldReturnText() throws JSONException {
+        String field = "{\"key\":\"fetal_heartbeat\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"type\":\"native_radio\",\"label\":\"Which medications is she still taking ? Which medications is she still taking ?\",\"label_text_style\":\"bold\",\"text_color\":\"#000000\",\"extra_rel\":true,\"has_extra_rel\":\"yes\",\"options\":[{\"key\":\"yes\",\"text\":\"Yes\"},{\"key\":\"no\",\"text\":\"No\"}]}";
+        JSONObject jsonObject = new JSONObject(field);
+        String result = formUtils.getRadioButtonText(jsonObject, "yes");
+        Assert.assertEquals(result, "Yes");
     }
 }
