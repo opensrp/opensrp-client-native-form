@@ -7,6 +7,7 @@ import com.vijay.jsonwizard.shadow.ShadowRulesEngineDateUtil;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
@@ -57,7 +58,7 @@ public class RulesEngineHelperTest extends BaseTest {
     @Test
     public void testGetMothersAge() {
         String dob = "04-07-1990";
-        int expectedAge = 31;
+        int expectedAge = 32;
         int actualAge = helper.getMothersAge(dob);
         assertEquals(expectedAge, actualAge);
     }
