@@ -21,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="BIRTH REGISTER"
+            android:text="@string/birth_register"
             android:textColor="@android:color/white"
             android:theme="@style/NativeFormsAppTheme" />
 
@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="WIZARD (MULTI-STEP FORM)"
+            android:text="@string/wizard_multi_step_form"
             android:textColor="@android:color/white"
             android:theme="@style/NativeFormsAppTheme" />
 
@@ -40,7 +40,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="RULES ENGINE LOGIC"
+            android:text="@string/rules_engine_logic"
             android:textColor="@android:color/white"
             android:theme="@style/NativeFormsAppTheme" />
 
@@ -50,7 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="CONSTRAINTS"
+            android:text="@string/constraints"
             android:textColor="@android:color/white"
             android:theme="@style/NativeFormsAppTheme" />
 
@@ -59,7 +59,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="GENERIC POPUP"
+            android:text="@string/generic_popup"
             android:textColor="@android:color/white"
             android:theme="@style/NativeFormsAppTheme" />
 
@@ -69,7 +69,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="FORM VALIDATION"
+            android:text="@string/form_validation"
             android:textColor="@android:color/white"
             android:theme="@style/NativeFormsAppTheme" />
 
@@ -78,7 +78,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Basic Form"
+            android:text="@string/basic_form"
             android:textColor="@android:color/white"
             android:theme="@style/NativeFormsAppTheme" />
         <Button
@@ -96,7 +96,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Expansion Panel"
+            android:text="@string/expansion_panel"
             android:textColor="@android:color/white"
             android:theme="@style/NativeFormsAppTheme" />
 
@@ -105,7 +105,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Repeating Group"
+            android:text="@string/repeating_group"
             android:textColor="@android:color/white"
             android:theme="@style/NativeFormsAppTheme" />
 
@@ -115,7 +115,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="MultiSelect List"
+            android:text="@string/multiselect_list"
             android:textColor="@android:color/white"
             android:theme="@style/NativeFormsAppTheme" />
 
@@ -124,7 +124,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="OptiBP Widget"
+            android:text="@string/optibp_widget"
             android:textColor="@android:color/white"
             android:theme="@style/NativeFormsAppTheme" />
 
