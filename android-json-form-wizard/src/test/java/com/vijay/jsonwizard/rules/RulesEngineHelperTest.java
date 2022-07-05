@@ -7,7 +7,6 @@ import com.vijay.jsonwizard.shadow.ShadowRulesEngineDateUtil;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentMatchers;
 import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
