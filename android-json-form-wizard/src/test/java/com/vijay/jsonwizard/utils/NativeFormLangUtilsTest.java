@@ -3,7 +3,6 @@ package com.vijay.jsonwizard.utils;
 import static com.vijay.jsonwizard.utils.Utils.getTranslatedYamlFile;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 
 import android.content.Context;
 import android.preference.PreferenceManager;
