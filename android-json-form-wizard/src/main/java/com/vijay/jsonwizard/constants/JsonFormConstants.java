@@ -327,6 +327,8 @@ public class JsonFormConstants {
         public static final String OPTIBP_KEY_BUTTON_BG_COLOR = "optibp_button_bg_color";
         public static final String OPTIBP_KEY_BUTTON_TEXT_COLOR = "optibp_button_text_color";
         public static final String OPTIBP_KEY_BUTTON_TEXT = "optibp_button_text";
+        public static final String OPTIBP_KEY_CALIBRATION_DATA = "optibp_client_calibration_data";
+        public static final String OPTIBP_KEY_CALIBRATION = "calibration";
     }
 
     public static class EDIT_TEXT_TYPE {

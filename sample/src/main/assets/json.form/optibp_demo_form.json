@@ -154,6 +154,14 @@
           "clientId": "sampleClientId",
           "clientOpenSRPId": "sampleClientOpenSRPId"
         }
+      },
+      {
+        "key": "optibp_client_calibration_data",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "value": "[{\"date\":\"2019-03-26T11:20:33+0800\",\"model\":\"device model\",\"height\":70,\"weight\":180,\"comperatives\":[{\"systolic\":120,\"diastolic\":80,\"cuffSystolic\":120,\"cuffDiastolic\":80,\"features\":{\"$key\":\"0.2f\"}}]}]"
       }
     ]
   }
