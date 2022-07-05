@@ -10,9 +10,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -25,6 +22,10 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
@@ -569,21 +570,15 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             setRadioButtonTags(rootLayout, jsonObject, item, extraInfo, radioButton);
 
             String valueString  = jsonObject.optString(JsonFormConstants.VALUE);
-            if(valueString != null && valueString.charAt(0)=='{')
+            if(valueString != null && valueString.startsWith("{"))
             {
                 JSONObject translationObject  =  new JSONObject(valueString);
-                translationObject.optString(JsonFormConstants.VALUE);
                 valueString  = translationObject.optString(JsonFormConstants.VALUE);
             }
 
             if (!TextUtils.isEmpty(valueString) &&
                     valueString.equals(item.getString(JsonFormConstants.KEY))) {
-                ((Activity) context).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        radioButton.setChecked(true);
-                    }
-                });
+                ((Activity) context).runOnUiThread(() -> radioButton.setChecked(true));
             }
             String optionTextColor = JsonFormConstants.DEFAULT_TEXT_COLOR;
             if (item.has(JsonFormConstants.TEXT_COLOR)) {
@@ -622,16 +617,13 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
     private void checkSelectedRadioButton(final CommonListener listener, final RadioButton radioButton, String value, JSONObject item) throws JSONException {
         if (StringUtils.isNotBlank(value)) {
             JSONObject jsonObject = null;
-            if (value.startsWith("{")) {
+            if (StringUtils.isNotBlank(value) && value.startsWith("{")) {
                 jsonObject = new JSONObject(value);
             }
             if (value.equals(item.getString(JsonFormConstants.KEY)) || (jsonObject != null && jsonObject.has(JsonFormConstants.VALUE) && jsonObject.optString(JsonFormConstants.VALUE).equals(item.getString(JsonFormConstants.KEY)))) {
-                ((Activity) context).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        radioButton.setChecked(true);
-                        radioButton.setOnCheckedChangeListener(listener);
-                    }
+                ((Activity) context).runOnUiThread(() -> {
+                    radioButton.setChecked(true);
+                    radioButton.setOnCheckedChangeListener(listener);
                 });
             }
         } else {
