@@ -853,7 +853,7 @@ public class Utils {
     public static String getValueFromTranslatedObject(JSONObject item) {
         try {
             if (item != null && item.has(VALUE)) {
-                if (item.opt(VALUE) != null && item.opt(VALUE).toString().charAt(0) == '{') {
+                if (item.opt(VALUE) != null && item.opt(VALUE).toString().length() > 0 && item.opt(VALUE).toString().charAt(0) == '{') {
                     return new JSONObject(item.opt(VALUE).toString()).optString(VALUE);
                 }
                 return item.opt(VALUE) + "";
