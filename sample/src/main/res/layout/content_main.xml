@@ -86,7 +86,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Update Radio Button"
+            android:text="@string/update_radio_button"
             android:textColor="@android:color/white"
             android:theme="@style/NativeFormsAppTheme" />
 
