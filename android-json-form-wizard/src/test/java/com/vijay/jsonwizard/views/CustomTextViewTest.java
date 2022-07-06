@@ -5,7 +5,6 @@ import android.content.Context;
 
 import com.vijay.jsonwizard.BaseTest;
 
-import org.fest.assertions.api.Assertions;
 import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.Before;
