@@ -5,15 +5,17 @@ import android.content.Context;
 
 import com.vijay.jsonwizard.BaseTest;
 
+import org.fest.assertions.api.Assertions;
 import org.json.JSONException;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.robolectric.RuntimeEnvironment;
 
 public class CustomTextViewTest extends BaseTest {
-    @Mock
     private CustomTextView customTextView;
     @Mock
     private Context context;
@@ -27,8 +29,9 @@ public class CustomTextViewTest extends BaseTest {
 
     @Test
     public void testSetText() {
+        customTextView=new CustomTextView(RuntimeEnvironment.application.getApplicationContext());
         String text = "<testing>";
         customTextView.setText(text);
-        Mockito.verify(customTextView, Mockito.times(1)).setText(text);
+        Assert.assertEquals("<testing>",customTextView.getText());
     }
 }
