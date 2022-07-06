@@ -110,7 +110,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
                 }
 
             } catch (JSONException e) {
-                Timber.e(e, "--> showDateDialog");
+                Timber.e(e);
             }
 
         }
@@ -168,7 +168,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
                                     assignHiddenDateValue(widget, calendarDate);
                                 }
                             } catch (JSONException e) {
-                                Timber.e(e, "--> setDate");
+                                Timber.e(e);
                             }
                         }
                     }
@@ -223,7 +223,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         try {
             widget.put(JsonFormConstants.VALUE, DATE_FORMAT.format(calendarDate.getTime()));
         } catch (Exception e) {
-            Timber.e(e, "--> assignHiddenDateValue");
+            Timber.e(e);
         }
     }
 

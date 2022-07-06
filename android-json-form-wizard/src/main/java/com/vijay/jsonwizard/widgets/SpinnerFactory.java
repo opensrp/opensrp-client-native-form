@@ -2,8 +2,6 @@ package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
 import android.graphics.Color;
-import androidx.annotation.NonNull;
-import androidx.annotation.VisibleForTesting;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -14,6 +12,9 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
@@ -167,12 +168,12 @@ public class SpinnerFactory extends BaseFactory {
                     indexToSelect = i;
                 } else if (keysJson != null && valueToSelect.equals(keysJson.optString(i))) {
                     indexToSelect = i;
+                } else if (keysJson != null && StringUtils.isNotBlank(valueToSelect) && valueToSelect.startsWith("{")) {
+                    JSONObject valueObject = new JSONObject(valueToSelect);
+                    if (valueObject.has(JsonFormConstants.VALUE) && valueObject.optString(JsonFormConstants.VALUE).equals(keysJson.optString(i))) {
+                        indexToSelect = i;
+                    }
                 }
-                else if (keysJson != null && StringUtils.isNotBlank(valueToSelect) && valueToSelect.startsWith("{") && new JSONObject(valueToSelect).has(JsonFormConstants.VALUE)
-                        && new JSONObject(valueToSelect).optString(JsonFormConstants.VALUE).equals(keysJson.optString(i))) {
-                    indexToSelect = i;
-                }
-
             }
         }
 

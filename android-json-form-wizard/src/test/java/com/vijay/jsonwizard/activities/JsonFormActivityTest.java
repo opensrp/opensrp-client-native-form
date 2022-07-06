@@ -460,12 +460,12 @@ public class JsonFormActivityTest extends BaseActivityTest {
     }
 
     @Test
-    public void testGetValueFromAddress() throws Exception {
+    public void testGetValueFromAddressReturnsNull() throws Exception {
         String[] address = {"address1:one", "address2:two", "address3:three"};
         JSONObject jsonObject = Mockito.mock(JSONObject.class);
         activity = new JsonFormActivity();
         Facts facts = Whitebox.invokeMethod(activity, "getValueFromAddress", address, true, jsonObject);
-        assertNotNull(facts);
+        assertEquals(0,facts.asMap().size());
 
     }
 
@@ -481,7 +481,7 @@ public class JsonFormActivityTest extends BaseActivityTest {
         view.setTag(R.id.key, "form_key");
         view.setTag(R.id.address, "step1:user_last_name");
         Pair<String[], JSONObject> pair = activity.getCalculationAddressAndValue(view);
-        assertNotNull(pair);
+        assertEquals(null,pair.first);
     }
 
     @Test
@@ -516,7 +516,8 @@ public class JsonFormActivityTest extends BaseActivityTest {
                 "      }";
         Mockito.doReturn(new JSONObject(json)).when(view).getTag(R.id.json_object);
         Whitebox.invokeMethod(activity, "updateUiByConstraints", view, true, errorMessage);
-        assertNotNull(view.getTag(R.id.key));
+        view.getTag(R.id.key);
+        assertEquals("yes",view.getTag(R.id.key));
 
 
     }
@@ -576,7 +577,7 @@ public class JsonFormActivityTest extends BaseActivityTest {
                 "      }";
         Mockito.doReturn(new JSONObject(json)).when(view).getTag(R.id.json_object);
         Whitebox.invokeMethod(activity, "updateUiByConstraints", view, true, errorMessage);
-        assertNotNull(view.getTag(R.id.key));
+        assertEquals("yes",view.getTag(R.id.key));
     }
 
     @Test
