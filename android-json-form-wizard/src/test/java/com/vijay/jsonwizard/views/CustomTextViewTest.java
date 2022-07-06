@@ -2,6 +2,7 @@ package com.vijay.jsonwizard.views;
 
 import android.app.Application;
 import android.content.Context;
+import android.graphics.Color;
 
 import com.vijay.jsonwizard.BaseTest;
 
@@ -31,5 +32,14 @@ public class CustomTextViewTest extends BaseTest {
         String text = "<testing>";
         customTextView.setText(text);
         Assert.assertEquals("<testing>", customTextView.getText());
+    }
+
+    @Test
+    public void testSetTextColor() {
+        CustomTextView customTextView = new CustomTextView(RuntimeEnvironment.application.getApplicationContext());
+        int textColor = Color.parseColor("#00ff00");
+        customTextView.setTextColor(textColor);
+        customTextView.getTextColors().getDefaultColor();
+        Assert.assertEquals(-16711936, customTextView.getTextColors().getDefaultColor());
     }
 }
