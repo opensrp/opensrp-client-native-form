@@ -15,7 +15,6 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.RuntimeEnvironment;
 
 public class CustomTextViewTest extends BaseTest {
-    private CustomTextView customTextView;
     @Mock
     private Context context;
 
@@ -28,9 +27,9 @@ public class CustomTextViewTest extends BaseTest {
 
     @Test
     public void testSetText() {
-        customTextView=new CustomTextView(RuntimeEnvironment.application.getApplicationContext());
+        CustomTextView customTextView = new CustomTextView(RuntimeEnvironment.application.getApplicationContext());
         String text = "<testing>";
         customTextView.setText(text);
-        Assert.assertEquals("<testing>",customTextView.getText());
+        Assert.assertEquals("<testing>", customTextView.getText());
     }
 }
