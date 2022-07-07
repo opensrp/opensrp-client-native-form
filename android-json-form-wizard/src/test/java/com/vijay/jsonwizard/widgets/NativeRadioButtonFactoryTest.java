@@ -92,8 +92,7 @@ public class NativeRadioButtonFactoryTest extends BaseTest {
 
     @Test
     public void testGetSecondaryDateValueWithNullValues() throws Exception {
-        JSONArray jsonArray = null;
-        String date = Whitebox.invokeMethod(new NativeRadioButtonFactory(), "getSecondaryDateValue", jsonArray);
+        String date = Whitebox.invokeMethod(new NativeRadioButtonFactory(), "getSecondaryDateValue", new JSONArray());
         Assert.assertEquals("", date);
     }
 

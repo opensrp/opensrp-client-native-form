@@ -1377,7 +1377,7 @@ public class FormUtils {
             JSONArray values;
             if (StringUtils.isNotEmpty(valueString)) {
                 if (nativeFormsProperties != null && nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_VALUE_TRANSLATED)) {
-                    if (valueString.charAt(0) == '{') {
+                    if (valueString.startsWith("{")) {
                         JSONObject object = new JSONObject(valueString);
                         values = new JSONArray(object.optString(JsonFormConstants.TEXT, ""));
                     } else {
