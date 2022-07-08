@@ -9,6 +9,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.robolectric.annotation.Config;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,7 +61,8 @@ public class RulesEngineHelperTest extends BaseTest {
     @Test
     public void testGetMothersAge() {
         String dob = "04-07-1990";
-        int expectedAge = 32;
+        LocalDate localDate=LocalDate.of(Integer.parseInt(dob.split("-")[2]),Integer.parseInt(dob.split("-")[1]),Integer.parseInt(dob.split("-")[0]));
+        int expectedAge= Period.between(localDate, LocalDate.now()).getYears();
         int actualAge = helper.getMothersAge(dob);
         assertEquals(expectedAge, actualAge);
     }
