@@ -856,7 +856,7 @@ public class Utils {
         return nativeFormsProperties != null && nativeFormsProperties.isTrue(appPropName);
     }
 
-    public static String getValueFromTranslatedObject(JSONObject item) {
+    public static String getValueAfterTranslation(JSONObject item) {
         try {
             if (item != null && item.has(VALUE)) {
                 if (item.opt(VALUE) != null && item.opt(VALUE).toString().length() > 0 && item.opt(VALUE).toString().charAt(0) == '{') {

@@ -187,6 +187,6 @@ public class NativeRadioButtonFactoryTest extends BaseTest {
         FragmentManager fragment = Mockito.spy(FragmentManager.class);
         Whitebox.setInternalState(NativeRadioButtonFactory.class, "TAG", fragment);
         NativeRadioButtonFactory.showDateDialog(view);
-        Assert.assertNotNull(radioButton.getText());
+        Assert.assertEquals("text:12-01-2000",radioButton.getText());
     }
 }

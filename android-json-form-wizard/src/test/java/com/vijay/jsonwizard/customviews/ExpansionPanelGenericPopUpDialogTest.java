@@ -45,7 +45,7 @@ public class ExpansionPanelGenericPopUpDialogTest extends BaseTest {
         JSONArray jsonArray = new JSONObject(theAccordion).getJSONArray("fields");
         Mockito.doReturn(jsonArray).when(expansionPanelGenericPopupDialog).getSubFormsFields();
         Whitebox.invokeMethod(expansionPanelGenericPopupDialog, "addRequiredFields", new JSONObject(theAccordion));
-        Assert.assertNotNull(expansionPanelGenericPopupDialog.getSubFormsFields());
+        Assert.assertEquals(1,expansionPanelGenericPopupDialog.getSubFormsFields().length());
 
     }
 }
