@@ -39,7 +39,6 @@ public class CustomTextViewTest extends BaseTest {
         CustomTextView customTextView = new CustomTextView(RuntimeEnvironment.application.getApplicationContext());
         int expectedTextColor = Color.parseColor("#00ff00");
         customTextView.setTextColor(expectedTextColor);
-        customTextView.getTextColors().getDefaultColor();
         Assert.assertEquals(expectedTextColor, customTextView.getTextColors().getDefaultColor());
     }
 }
