@@ -1,7 +1,6 @@
 package com.vijay.jsonwizard.activities;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import android.app.Application;
 import android.content.Context;
@@ -604,7 +603,7 @@ public class JsonFormActivityTest extends BaseActivityTest {
                 "              }";
         Mockito.doReturn(new JSONObject(json)).when(view).getTag(R.id.json_object);
         Whitebox.invokeMethod(activity, "updateUiByConstraints", view, true, errorMessage);
-        assertEquals(view.getTag(R.id.key));
+        assertEquals(key, view.getTag(R.id.key));
     }
 
     @Test
