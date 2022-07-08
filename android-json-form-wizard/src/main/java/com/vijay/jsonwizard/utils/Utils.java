@@ -866,7 +866,7 @@ public class Utils {
             }
             return "";
         } catch (Exception e) {
-            Timber.e(e, "----> getValueFromTranslatedObject");
+            Timber.e(e);
             return "";
         }
     }
