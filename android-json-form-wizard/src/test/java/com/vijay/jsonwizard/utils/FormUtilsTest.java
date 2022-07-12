@@ -1,12 +1,16 @@
 package com.vijay.jsonwizard.utils;
 
+import static junit.framework.TestCase.assertEquals;
+
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.vijay.jsonwizard.BaseTest;
@@ -41,8 +45,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-
-import static junit.framework.TestCase.assertEquals;
 
 public class FormUtilsTest extends BaseTest {
     private FormUtils formUtils;
@@ -731,5 +733,67 @@ public class FormUtilsTest extends BaseTest {
         JSONObject inputJson = FormUtils.createOptiBPDataObject("clientId", "clientOpenSRPId");
 
         Assert.assertEquals(inputJson.toString(), "{\"clientId\":\"clientId\",\"clientOpenSRPId\":\"clientOpenSRPId\"}");
+    }
+
+    @Test
+    public void testSetEditModeShouldShowEditBtnAndDisableEditableView() throws JSONException {
+        View editableView = Mockito.mock(View.class);
+        ImageView editButton = Mockito.mock(ImageView.class);
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(JsonFormConstants.EDITABLE, true);
+        FormUtils.setEditMode(jsonObject, editableView, editButton);
+
+        Mockito.verify(editableView).setEnabled(ArgumentMatchers.eq(false));
+        Mockito.verify(editButton).setVisibility(ArgumentMatchers.eq(View.VISIBLE));
+
+    }
+
+    @Test
+    public void testSetEditModeShouldHideEditBtn() throws JSONException {
+        View editableView = Mockito.mock(View.class);
+        ImageView editButton = Mockito.mock(ImageView.class);
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(JsonFormConstants.EDITABLE, false);
+        FormUtils.setEditMode(jsonObject, editableView, editButton);
+
+        Mockito.verify(editButton).setVisibility(ArgumentMatchers.eq(View.GONE));
+    }
+
+    @Test
+    public void testSetEditModeShouldHideEditBtnAndDisableEditableViewIfReadOnlySet() throws JSONException {
+        View editableView = Mockito.mock(View.class);
+        ImageView editButton = Mockito.mock(ImageView.class);
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(JsonFormConstants.READ_ONLY, false);
+        FormUtils.setEditMode(jsonObject, editableView, editButton);
+
+        Mockito.verify(editButton).setVisibility(ArgumentMatchers.eq(View.GONE));
+        Mockito.verify(editableView).setEnabled(ArgumentMatchers.eq(true));
+    }
+
+    @Test
+    public void testSetEditModeShouldShowEditBtnAndDisableEditableViewIfEditableAndReadOnlySet() throws JSONException {
+        View editableView = Mockito.mock(View.class);
+        ImageView editButton = Mockito.mock(ImageView.class);
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(JsonFormConstants.READ_ONLY, false);
+        jsonObject.put(JsonFormConstants.EDITABLE, false);
+
+        FormUtils.setEditMode(jsonObject, editableView, editButton);
+
+        Mockito.verify(editButton).setVisibility(ArgumentMatchers.eq(View.VISIBLE));
+        Mockito.verify(editableView).setEnabled(ArgumentMatchers.eq(false));
+    }
+
+    @Test
+    public void testGetRadioButtonTextShouldReturnText() throws JSONException {
+        String field = "{\"key\":\"fetal_heartbeat\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"type\":\"native_radio\",\"label\":\"Which medications is she still taking ? Which medications is she still taking ?\",\"label_text_style\":\"bold\",\"text_color\":\"#000000\",\"extra_rel\":true,\"has_extra_rel\":\"yes\",\"options\":[{\"key\":\"yes\",\"text\":\"Yes\"},{\"key\":\"no\",\"text\":\"No\"}]}";
+        JSONObject jsonObject = new JSONObject(field);
+        String result = formUtils.getRadioButtonText(jsonObject, "yes");
+        Assert.assertEquals(result, "Yes");
     }
 }

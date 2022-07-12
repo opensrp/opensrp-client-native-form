@@ -16,15 +16,15 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.annotation.VisibleForTesting;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.FileProvider;
-import android.support.v7.widget.AppCompatButton;
-import android.support.v7.widget.AppCompatRadioButton;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.core.content.FileProvider;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatRadioButton;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
@@ -258,7 +258,7 @@ public class JsonFormFragmentPresenter extends
         dialog.setTitle(formFragment.getContext().getString(com.vijay.jsonwizard.R.string.loading));
         dialog.setMessage(formFragment.getContext().getString(com.vijay.jsonwizard.R.string.loading_form_message));
         dialog.show();
-        mStepName = getView().getArguments().getString("stepName");
+        mStepName = getView().getArguments().getString(JsonFormConstants.STEPNAME);
         JSONObject step = getView().getStep(mStepName);
         if (step == null) {
             return;
@@ -1296,5 +1296,6 @@ public class JsonFormFragmentPresenter extends
 
     public void cleanUp() {
         cleanupAndExit = true;
+        mJsonFormInteractor.cleanUp();
     }
 }

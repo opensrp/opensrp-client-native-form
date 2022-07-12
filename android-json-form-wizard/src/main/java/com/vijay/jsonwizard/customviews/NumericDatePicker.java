@@ -3,7 +3,7 @@ package com.vijay.jsonwizard.customviews;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
-import android.support.annotation.VisibleForTesting;
+import androidx.annotation.VisibleForTesting;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.DatePicker;
@@ -598,6 +598,11 @@ public class NumericDatePicker extends DatePicker {
             numberPicker.setMaxValue(cacheMax);
         }
 
+        // Avoid the case where minV and max cache value are same
+        if (cacheMax == cacheMin) {
+            numberPicker.setMinValue(value);
+            numberPicker.setMaxValue(value);
+        }
 
         if (numberPicker.getId() == R.id.year) {
 

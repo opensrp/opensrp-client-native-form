@@ -3,7 +3,7 @@ package com.vijay.jsonwizard.interactors;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.view.View;
 
 import com.vijay.jsonwizard.R;
@@ -278,4 +278,10 @@ public class JsonFormInteractor {
         return defaultTranslatableStepFields;
     }
 
+    public void cleanUp() {
+        if(map.get(JsonFormConstants.NATIVE_RADIO_BUTTON) != null){
+            NativeRadioButtonFactory nativeRadioButtonFactory = (NativeRadioButtonFactory) map.get(JsonFormConstants.NATIVE_RADIO_BUTTON);
+            nativeRadioButtonFactory.cleanUp();
+        }
+    }
 }
