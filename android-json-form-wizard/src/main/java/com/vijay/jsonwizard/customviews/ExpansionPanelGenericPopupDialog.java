@@ -1,5 +1,7 @@
 package com.vijay.jsonwizard.customviews;
 
+import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -36,8 +38,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import timber.log.Timber;
-
-import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 
 /**
  * Performs the expansion panel's {@link com.vijay.jsonwizard.widgets.ExpansionPanelFactory} functionality, which includes
@@ -208,10 +208,12 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                passData();
-                getJsonApi().setGenericPopup(null);
-                getJsonApi().updateGenericPopupSecondaryValues(new JSONArray(), getStepName());
-                ExpansionPanelGenericPopupDialog.this.dismissAllowingStateLoss();
+                if (getFormFragment().saveWithoutClosingForm(false)) {
+                    passTestData();
+                    getJsonApi().setGenericPopup(null);
+                    getJsonApi().updateGenericPopupSecondaryValues(new JSONArray(), getStepName());
+                    ExpansionPanelGenericPopupDialog.this.dismissAllowingStateLoss();
+                }
             }
         });
     }
@@ -350,7 +352,7 @@ public class ExpansionPanelGenericPopupDialog extends GenericPopupDialog {
     }
 
     @Override
-    protected void passData() {
+    protected void passTestData() {
         if (!TextUtils.isEmpty(getWidgetType()) && getWidgetType().equals(JsonFormConstants.EXPANSION_PANEL)) {
             onDataPass(getParentKey(), getChildKey());
         } else {

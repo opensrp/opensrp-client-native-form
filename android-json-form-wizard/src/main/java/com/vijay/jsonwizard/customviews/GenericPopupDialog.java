@@ -403,10 +403,12 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                passData();
-                getJsonApi().setGenericPopup(null);
-                getJsonApi().updateGenericPopupSecondaryValues(null, getStepName());
-                GenericPopupDialog.this.dismiss();
+                if (getFormFragment().saveWithoutClosingForm(false)) {
+                    passTestData();
+                    getJsonApi().setGenericPopup(null);
+                    getJsonApi().updateGenericPopupSecondaryValues(null, getStepName());
+                    GenericPopupDialog.this.dismiss();
+                }
             }
         });
     }
@@ -431,7 +433,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         this.context = context;
     }
 
-    protected void passData() {
+    protected void passTestData() {
         onGenericDataPass(getParentKey(), getChildKey());
     }
 
