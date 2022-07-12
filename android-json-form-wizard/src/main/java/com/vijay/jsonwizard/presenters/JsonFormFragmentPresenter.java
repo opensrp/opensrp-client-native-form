@@ -38,7 +38,6 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.firebase.perf.metrics.AddTrace;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rengwuxian.materialedittext.validation.METValidator;
 import com.rey.material.widget.Button;
@@ -131,7 +130,6 @@ public class JsonFormFragmentPresenter extends
         incorrectlyFormattedFields = new Stack<>();
     }
 
-    @AddTrace(name = "JsonFormFragmentPresenter$validate")
     public static ValidationStatus validate(JsonFormFragmentView formFragmentView, View childAt,
                                             boolean requestFocus) {
         if (childAt instanceof RadioGroup) {
@@ -254,7 +252,6 @@ public class JsonFormFragmentPresenter extends
         return mJsonFormInteractor;
     }
 
-    @AddTrace(name = "JsonFormFragmentPresenter#addFormElements")
     public void addFormElements() {
         final ProgressDialog dialog = new ProgressDialog(formFragment.getContext());
         dialog.setCancelable(false);
@@ -376,7 +373,6 @@ public class JsonFormFragmentPresenter extends
         return false;
     }
 
-    @AddTrace(name = "JsonFormFragmentPresenter#validateAndWriteValues")
     public boolean areFormViewsFilled() {
         boolean filled = true;
         for (View childView : formFragment.getJsonApi().getFormDataViews()) {
@@ -539,7 +535,6 @@ public class JsonFormFragmentPresenter extends
     /**
      * Check if alarm is ringing and stop it if so
      */
-    @AddTrace(name = "JsonFormFragmentPresenter#checkAndStopCountdownAlarm")
     public void checkAndStopCountdownAlarm() {
         try {
             JSONObject formJSONObject = new JSONObject(formFragment.getCurrentJsonState());
@@ -560,7 +555,6 @@ public class JsonFormFragmentPresenter extends
         return entireJsonForm.optBoolean(JsonFormConstants.VALIDATE_ON_SUBMIT, false);
     }
 
-    @AddTrace(name = "JsonFormFragmentPresenter#executeRefreshLogicForNextStep")
     public boolean executeRefreshLogicForNextStep() {
         boolean isSkipped = false;
         final String nextStep = getFormFragment().getJsonApi().nextStep();
@@ -636,7 +630,6 @@ public class JsonFormFragmentPresenter extends
         return invalidFields;
     }
 
-    @AddTrace(name = "JsonFormFragmentPresenter#onSaveClick")
     public void onSaveClick(LinearLayout mainView) {
         validateAndWriteValues();
         checkAndStopCountdownAlarm();
@@ -1045,7 +1038,6 @@ public class JsonFormFragmentPresenter extends
         dispatchTakePictureIntent(key, type);
     }
 
-    @AddTrace(name = "JsonFormFragmentPresenter#onCheckedChanged")
     public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
         if (compoundButton instanceof CheckBox) {
             String parentKey = (String) compoundButton.getTag(R.id.key);
@@ -1112,7 +1104,6 @@ public class JsonFormFragmentPresenter extends
         }
     }
 
-    @AddTrace(name = "JsonFormFragmentPresenter#onItemSelected")
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         String parentKey = (String) parent.getTag(R.id.key);
         String openMrsEntityParent = (String) parent.getTag(R.id.openmrs_entity_parent);
@@ -1234,7 +1225,6 @@ public class JsonFormFragmentPresenter extends
     }
 
 
-    @AddTrace(name = "JsonFormFragmentPresenter#preLoadRules")
     private void preLoadRules(String stepName, JSONObject formJSONObject) {
         Set<String> ruleFiles = new HashSet<>();
         JSONObject step = formJSONObject.optJSONObject(stepName);
@@ -1265,7 +1255,6 @@ public class JsonFormFragmentPresenter extends
         }
     }
 
-    @AddTrace(name = "JsonFormFragmentPresenter#addRules")
     private void addRules(JSONObject jsonObject, Set<String> ruleFiles) {
         if (jsonObject != null) {
             JSONObject ruleEngine = jsonObject.optJSONObject(RuleConstant.RULES_ENGINE);

@@ -23,7 +23,6 @@ import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.google.firebase.perf.metrics.AddTrace;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.CompoundButton;
@@ -329,7 +328,6 @@ public class Utils {
         return conditionString.replaceAll("  ", " ");
     }
 
-    @AddTrace(name  = "Utils$buildRulesWithUniqueId")
     public static void buildRulesWithUniqueId(JSONObject element, String uniqueId, String ruleType,
                                               Context context, Map<String, List<Map<String, Object>>> rulesFileMap, String stepName) throws JSONException {
         JSONObject rules = element.optJSONObject(ruleType);
@@ -841,7 +839,6 @@ public class Utils {
     /***
      * removes the generated dynamic rules by repeating group
      */
-    @AddTrace(name = "Utils$removeGeneratedDynamicRules")
     public static void removeGeneratedDynamicRules(JsonFormFragment formFragment) {
         JSONObject form = formFragment.getJsonApi().getmJSONObject();
         JSONArray jsonArray = FormUtils.getMultiStepFormFields(form);
@@ -931,7 +928,6 @@ public class Utils {
      * @return
      * @throws JSONException
      */
-    @Nullable @AddTrace(name = "Utils$getRepeatingGroupCountObj")
     public static JSONObject getRepeatingGroupCountObj(@NotNull WidgetArgs widgetArgs) throws JSONException {
         String repeatingGroupCountObjKey = widgetArgs.getJsonObject().get(KEY) + "_count";
         JSONObject stepJsonObject = widgetArgs.getFormFragment().getStep(widgetArgs.getStepName());

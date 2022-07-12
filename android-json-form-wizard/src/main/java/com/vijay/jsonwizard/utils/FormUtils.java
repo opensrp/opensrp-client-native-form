@@ -30,7 +30,6 @@ import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.google.firebase.perf.metrics.AddTrace;
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.NativeFormLibrary;
 import com.vijay.jsonwizard.R;
@@ -170,7 +169,6 @@ public class FormUtils {
         return textView;
     }
 
-    @AddTrace(name = "FormUtils$updateStartProperties")
     public static void updateStartProperties(PropertyManager propertyManager, JSONObject form)
             throws Exception {
         if (form.has(METADATA_PROPERTY)) {
@@ -231,7 +229,6 @@ public class FormUtils {
         }
     }
 
-    @AddTrace(name = "FormUtils$updateEndProperties")
     public static void updateEndProperties(PropertyManager propertyManager, JSONObject form)
             throws Exception {
         if (form.has(METADATA_PROPERTY)) {
@@ -672,7 +669,6 @@ public class FormUtils {
         return TextUtils.isEmpty(subFormsLocation) ? JsonFormConstants.DEFAULT_SUB_FORM_LOCATION : subFormsLocation;
     }
 
-    @AddTrace(name = "FormUtils$loadSubForm")
     public static String loadSubForm(String formIdentity, String defaultSubFormLocation,
                                      Context context, boolean translateSubForm) throws IOException {
 
@@ -680,14 +676,12 @@ public class FormUtils {
         return translateSubForm ? NativeFormLangUtils.getTranslatedString(subForm, context) : subForm;
     }
 
-    @AddTrace(name = "FormUtils$loadSubForm")
     public static String loadSubForm(String formIdentity, String defaultSubFormLocation,
                                      Context context) throws IOException {
 
         return convertStreamToString(context.getAssets().open(defaultSubFormLocation + "/" + formIdentity + ".json"));
     }
 
-    @AddTrace(name = "FormUtils$getFieldFromForm")
     public static JSONObject getFieldFromForm(JSONObject jsonForm, String key) throws JSONException {
         JSONObject field = new JSONObject();
         if (jsonForm != null) {
@@ -706,7 +700,6 @@ public class FormUtils {
         return field;
     }
 
-    @AddTrace(name = "FormUtils$getMultiStepFormFields")
     public static JSONArray getMultiStepFormFields(JSONObject jsonForm) {
         JSONArray fields = new JSONArray();
         try {
@@ -730,7 +723,6 @@ public class FormUtils {
         return fields;
     }
 
-    @AddTrace(name = "FormUtils$fields")
     public static JSONArray fields(JSONObject jsonForm, String step) {
         try {
             JSONObject stepJSONObject = jsonForm.has(step) ? jsonForm.getJSONObject(step) : null;
@@ -1125,7 +1117,6 @@ public class FormUtils {
      * @return formFields {JSONArray}
      * @author dubdabasoduba
      */
-    @AddTrace(name = "FormUtils$getFormFields")
     public JSONArray getFormFields(String stepName, Context context) {
         Activity activity = (Activity) context;
         JsonApi jsonApi = (JsonApi) activity;
@@ -1271,7 +1262,6 @@ public class FormUtils {
         }
     }
 
-    @AddTrace(name = "FormUtils$getCheckBoxResults")
     public Facts getCheckBoxResults(JSONObject jsonObject) throws JSONException {
         Facts result = new Facts();
         JSONArray options = jsonObject.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
@@ -1322,7 +1312,6 @@ public class FormUtils {
      * @return result {@link Facts}
      * @throws JSONException
      */
-    @AddTrace(name = "FormUtils$getRadioButtonResults")
     public Facts getRadioButtonResults(Boolean multiRelevance, JSONObject object) throws JSONException {
         Facts result = new Facts();
         if (multiRelevance) {
@@ -1857,7 +1846,6 @@ public class FormUtils {
         return value.replaceAll(", $", "");
     }
 
-    @Nullable @AddTrace(name = "FormUtils#getFormJsonFromRepositoryOrAssets")
     public JSONObject getFormJsonFromRepositoryOrAssets(@NonNull Context context, @NonNull String formIdentity) throws JSONException {
         ClientFormContract.Dao clientFormRepository = NativeFormLibrary.getInstance().getClientFormDao();
         return getFormJsonFromRepositoryOrAssetsWithOptionalCallback(context, clientFormRepository, formIdentity, null);
@@ -1907,7 +1895,6 @@ public class FormUtils {
      * @return
      * @throws JSONException
      */
-    @AddTrace(name = "FormUtils#getFormJsonFromRepositoryOrAssetsWithOptionalCallback")
     private JSONObject getFormJsonFromRepositoryOrAssetsWithOptionalCallback(@NonNull Context context, @Nullable ClientFormContract.Dao clientFormRepository, String formIdentity, @Nullable final OnFormFetchedCallback<JSONObject> onFormFetchedCallback) throws JSONException {
         if (clientFormRepository != null) {
             ClientFormContract.Model clientForm = getClientFormFromRepository(context, clientFormRepository, formIdentity);
@@ -1959,7 +1946,6 @@ public class FormUtils {
         }
     }
 
-    @AddTrace(name = "FormUtils#getFormJson")
     public JSONObject getFormJson(@NonNull Context context, @NonNull String formIdentity) {
         try {
             String locale = context.getResources().getConfiguration().locale.getLanguage();
@@ -2025,7 +2011,6 @@ public class FormUtils {
         handleJsonFormOrRulesError(context, clientFormRepository, false, formIdentity, onFormFetchedCallback);
     }
 
-    @AddTrace(name = "FormUtils#handleJsonFormOrRulesError")
     public void handleJsonFormOrRulesError(@NonNull final Context context, @NonNull final ClientFormContract.Dao clientFormRepository, final boolean isRulesFile, @NonNull final String formIdentity, @NonNull final OnFormFetchedCallback<String> onFormFetchedCallback) {
         final ClientFormContract.Model clientForm = getClientFormFromRepository(context, clientFormRepository, formIdentity);
         List<ClientFormContract.Model> clientForms = clientFormRepository.getClientFormByIdentifier(clientForm.getIdentifier());
@@ -2076,7 +2061,6 @@ public class FormUtils {
         }
     }
 
-    @Nullable @AddTrace(name = "FormUtils#getSubFormJsonFromRepository")
     public JSONObject getSubFormJsonFromRepository(@NonNull Context context, @NonNull ClientFormContract.Dao clientFormDao, String formIdentity, String subFormsLocation, boolean translateSubForm) throws JSONException {
         //Check the current locale of the app to load the correct version of the form in the desired language
         String localeFormIdentity = getLocaleFormIdentity(context, formIdentity);
@@ -2108,7 +2092,6 @@ public class FormUtils {
         return null;
     }
 
-    @Nullable @AddTrace(name = "FormUtils#getRulesFromRepository")
     public BufferedReader getRulesFromRepository(@NonNull Context context, @NonNull ClientFormContract.Dao clientFormDao, @NonNull String fileName) {
         //Check the current locale of the app to load the correct version of the form in the desired language
         String localeFormIdentity = getLocaleFormIdentity(context, fileName);
@@ -2131,7 +2114,6 @@ public class FormUtils {
         return null;
     }
 
-    @AddTrace(name = "FormUtils#getPropertiesFileContentsFromDB")
     public String getPropertiesFileContentsFromDB(String identifier) {
         ClientFormContract.Dao clientFormRepository = NativeFormLibrary.getInstance().getClientFormDao();
         if (clientFormRepository != null) {
