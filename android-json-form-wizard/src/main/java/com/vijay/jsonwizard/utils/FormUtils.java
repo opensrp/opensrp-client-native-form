@@ -1,5 +1,8 @@
 package com.vijay.jsonwizard.utils;
 
+import static com.vijay.jsonwizard.utils.Utils.convertStreamToString;
+import static com.vijay.jsonwizard.utils.Utils.isEmptyJsonArray;
+
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Context;
@@ -77,9 +80,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import timber.log.Timber;
-
-import static com.vijay.jsonwizard.utils.Utils.convertStreamToString;
-import static com.vijay.jsonwizard.utils.Utils.isEmptyJsonArray;
 
 /**
  * Created by vijay on 24-05-2015.
@@ -1318,7 +1318,7 @@ public class FormUtils {
             JSONArray jsonArray = object.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
             for (int j = 0; j < jsonArray.length(); j++) {
                 if (object.has(JsonFormConstants.VALUE)) {
-                    if (object.getString(JsonFormConstants.VALUE).equals(jsonArray.getJSONObject(j).getString(JsonFormConstants.KEY))) {
+                    if (Utils.returnValue(object).equals(jsonArray.getJSONObject(j).getString(JsonFormConstants.KEY))) {
                         result.put(jsonArray.getJSONObject(j).getString(JsonFormConstants.KEY), String.valueOf(true));
                     } else {
                         if (!object.has(RuleConstant.IS_RULE_CHECK) || !object.getBoolean(RuleConstant.IS_RULE_CHECK)) {
@@ -1343,7 +1343,22 @@ public class FormUtils {
                 values = new JSONArray(valueString);
             }
             if (values != null) {
-                jsonObject.put(JsonFormConstants.VALUE, values);
+                if (Utils.enabledProperty(NativeFormsProperties.KEY.WIDGET_VALUE_TRANSLATED)) {
+                    if (valueString.startsWith("{")) {
+                        JSONObject object = new JSONObject(valueString);
+                        values = new JSONArray(object.optString(JsonFormConstants.TEXT, ""));
+                    } else {
+                        JSONObject createJsonValues = Utils.generateTranslatableValue(jsonObject.optString(JsonFormConstants.VALUE, ""), jsonObject);
+                        values = new JSONArray(createJsonValues);
+                    }
+                } else {
+                    values = new JSONArray(valueString);
+                }
+                if (values != null) {
+                    //added
+                    jsonObject.put(JsonFormConstants.VALUE, values);
+
+                }
             }
         } catch (JSONException e) {
             Timber.e(e, "%s --> updateValueToJSONArray", this.getClass().getCanonicalName());
@@ -1540,11 +1555,21 @@ public class FormUtils {
         if (!TextUtils.isEmpty(value)) {
             for (int i = 0; i < options.length(); i++) {
                 JSONObject option = options.getJSONObject(i);
-                if (option.has(JsonFormConstants.KEY) && value.equals(option.getString(JsonFormConstants.KEY))) {
-                    String key = option.getString(JsonFormConstants.KEY);
-                    String text = option.getString(JsonFormConstants.TEXT);
-                    secondaryValue = key + ":" + text;
-                    break;
+                if (option.has(JsonFormConstants.KEY)) {
+                    if (value.startsWith("{")) {
+                        JSONObject valueObject = new JSONObject(value);
+                        if (valueObject.optString(JsonFormConstants.VALUE).equals(option.getString(JsonFormConstants.KEY))) {
+                            String key = option.getString(JsonFormConstants.KEY);
+                            String text = option.getString(JsonFormConstants.TEXT);
+                            secondaryValue = key + ":" + text;
+                            break;
+                        } else if (value.equals(option.getString(JsonFormConstants.KEY))) {
+                            String key = option.getString(JsonFormConstants.KEY);
+                            String text = option.getString(JsonFormConstants.TEXT);
+                            secondaryValue = key + ":" + text;
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -2159,6 +2184,29 @@ public class FormUtils {
 
     public static boolean isFormNew(@NonNull JSONObject jsonObject) {
         return jsonObject.optBoolean(JsonFormConstants.Properties.IS_NEW, false);
+    }
+
+    /***
+     *
+     * @param options
+     * @param key
+     * @return
+     * @throws JSONException
+     */
+    public static JSONObject getOptionFromOptionsUsingKey(JSONArray options, String key) throws
+            JSONException {
+        JSONObject option = new JSONObject();
+        if (options != null && options.length() > 0) {
+            for (int i = 0; i < options.length(); i++) {
+                JSONObject checkOption = options.getJSONObject(i);
+                if (checkOption != null && checkOption.has(JsonFormConstants.KEY) && checkOption.getString(JsonFormConstants.KEY).equals(key)) {
+                    option = checkOption;
+                    break;
+                }
+            }
+        }
+
+        return option;
     }
 
 }

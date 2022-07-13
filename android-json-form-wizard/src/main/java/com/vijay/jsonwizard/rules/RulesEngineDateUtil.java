@@ -7,6 +7,7 @@ import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.Utils;
 
+import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
@@ -22,6 +23,11 @@ import java.util.concurrent.TimeUnit;
  * Created by ndegwamartin on 17/12/2018.
  */
 public class RulesEngineDateUtil {
+    public static int getAgeFromDate(String dateOfBirth) {
+        Date date = Utils.getDateFromString(dateOfBirth);
+        Years age = Years.yearsBetween(new DateTime(date).toLocalDate(), LocalDate.now());
+        return age.getYears();
+    }
 
     public long getDifferenceDays(String dateString) {
         Date date = Utils.getDateFromString(dateString);

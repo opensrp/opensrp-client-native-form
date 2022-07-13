@@ -1,5 +1,11 @@
 package com.vijay.jsonwizard.widgets;
 
+import static com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT;
+import static com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT;
+import static com.vijay.jsonwizard.utils.FormUtils.getCurrentCheckboxValues;
+import static com.vijay.jsonwizard.utils.FormUtils.getLinearLayoutParams;
+import static com.vijay.jsonwizard.utils.FormUtils.getValueFromSpOrDpOrPx;
+
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
@@ -20,6 +26,7 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
+import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
@@ -32,15 +39,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import timber.log.Timber;
-
-import static com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT;
-import static com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT;
-import static com.vijay.jsonwizard.utils.FormUtils.getCurrentCheckboxValues;
-import static com.vijay.jsonwizard.utils.FormUtils.getLinearLayoutParams;
-import static com.vijay.jsonwizard.utils.FormUtils.getValueFromSpOrDpOrPx;
 
 /**
  * Created by vijay on 24-05-2015.
@@ -150,7 +152,7 @@ public class CheckBoxFactory extends BaseFactory {
             }
 
         }
-        formUtils.updateValueToJSONArray(jsonObject, jsonObject.optString(JsonFormConstants.VALUE, ""));
+        formUtils.updateValueToJSONArray(jsonObject, Utils.returnValue(jsonObject));
         attachRefreshLogic(jsonObject, context, rootLayout);
         rootLayout.setTag(R.id.canvas_ids, canvasIds.toString());
 
@@ -235,8 +237,17 @@ public class CheckBoxFactory extends BaseFactory {
                     }
                     //Preselect values if they exist
                     try {
-                        if (finalCheckBoxValues != null && getCurrentCheckboxValues(finalCheckBoxValues).contains(item.getString(JsonFormConstants.KEY))) {
-                            checkBox.setChecked(true);
+                        if (finalCheckBoxValues != null) {
+                            HashSet<String> translatedCheckBox = new HashSet<>();
+                            for (String checkBoxVal : Objects.requireNonNull(getCurrentCheckboxValues(finalCheckBoxValues))) {
+                                if (checkBoxVal != null && checkBoxVal.startsWith("{")) {
+                                    JSONObject jsonObject = new JSONObject(checkBoxVal);
+                                    translatedCheckBox.add(jsonObject.optString(JsonFormConstants.VALUE));
+                                }
+                            }
+                            if ((translatedCheckBox.size() > 0 && translatedCheckBox.contains(item.getString(JsonFormConstants.KEY))) || getCurrentCheckboxValues(finalCheckBoxValues).contains(item.getString(JsonFormConstants.KEY))) {
+                                checkBox.setChecked(true);
+                            }
                         }
                     } catch (JSONException e) {
                         Timber.e(e);

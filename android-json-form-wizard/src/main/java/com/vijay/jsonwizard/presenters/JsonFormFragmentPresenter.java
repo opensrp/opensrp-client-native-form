@@ -633,7 +633,7 @@ public class JsonFormFragmentPresenter extends
         validateAndWriteValues();
         checkAndStopCountdownAlarm();
         boolean isFormValid = isFormValid();
-        if (isFormValid || Boolean.valueOf(mainView.getTag(R.id.skip_validation).toString())) {
+        if (isFormValid || Boolean.parseBoolean(mainView.getTag(R.id.skip_validation).toString())) {
             Utils.removeGeneratedDynamicRules(formFragment);
             Intent returnIntent = new Intent();
             getView().onFormFinish();
@@ -707,7 +707,7 @@ public class JsonFormFragmentPresenter extends
 
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
                                            int[] grantResults) {
-        Log.d(TAG, "Permission callback called-------");
+        Timber.tag(TAG).d("Permission callback called-------");
 
         if (grantResults.length == 0) {
             return;

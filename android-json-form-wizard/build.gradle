@@ -61,6 +61,10 @@ android {
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 
     configurations.all {
         resolutionStrategy.force 'com.android.support:design:28.0.0'

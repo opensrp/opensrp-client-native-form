@@ -26,6 +26,7 @@ import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -166,6 +167,11 @@ public class SpinnerFactory extends BaseFactory {
                     indexToSelect = i;
                 } else if (keysJson != null && valueToSelect.equals(keysJson.optString(i))) {
                     indexToSelect = i;
+                } else if (keysJson != null && StringUtils.isNotBlank(valueToSelect) && valueToSelect.startsWith("{")) {
+                    JSONObject valueObject = new JSONObject(valueToSelect);
+                    if (valueObject.has(JsonFormConstants.VALUE) && valueObject.optString(JsonFormConstants.VALUE).equals(keysJson.optString(i))) {
+                        indexToSelect = i;
+                    }
                 }
             }
         }

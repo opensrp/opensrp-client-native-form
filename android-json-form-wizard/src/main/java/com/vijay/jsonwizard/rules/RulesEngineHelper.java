@@ -19,6 +19,10 @@ public class RulesEngineHelper {
         return rulesEngineDateUtil.getDifferenceDays(dateString, dateString2);
     }
 
+    public int getMothersAge(String dateOfBirth) {
+        return RulesEngineDateUtil.getAgeFromDate(dateOfBirth);
+    }
+
     public String addDuration(String dateString, String durationString) {
         return rulesEngineDateUtil.addDuration(dateString, durationString);
     }
