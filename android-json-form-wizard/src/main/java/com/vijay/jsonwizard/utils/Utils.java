@@ -481,28 +481,21 @@ public class Utils {
     }
 
     /**
-
      * Returns the value string value for special translated fields like the Native Radio Button, Spinner, Check Box e.tc
      *
      * @param jsonObject -- Widget #JSONObject
      * @return
-     * Gets the {@link androidx.fragment.app.FragmentTransaction} from the {@link Context} and removes any {@link androidx.fragment.app.Fragment} with the tag `GenericPopup` from the transaction.
-     * Then nullifies the stack by calling {@link androidx.fragment.app.FragmentTransaction#addToBackStack(String)} with a null value.
-     *
-     * @param context {@link Activity} The activity context where this transaction called from
-     * @return fragmentTransaction {@link androidx.fragment.app.FragmentTransaction}
      */
     public static String returnValue(JSONObject jsonObject) {
         String value = "";
         NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
-        if (nativeFormsProperties != null && jsonObject.has(TYPE) && (jsonObject.optString(TYPE).equals(JsonFormConstants.NATIVE_RADIO_BUTTON) || jsonObject.optString(TYPE).equals(JsonFormConstants.SPINNER) || jsonObject.optString(TYPE).equals(JsonFormConstants.CHECK_BOX))
-                && nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_VALUE_TRANSLATED)) {
-            JSONObject valueObject = jsonObject.optJSONObject(VALUE);
+        if (nativeFormsProperties != null && jsonObject.has(TYPE) && jsonObject.optString(TYPE).equals(JsonFormConstants.NATIVE_RADIO_BUTTON) && nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_RADIO_BUTTON_VALUE_TRANSLATED)) {
+            JSONObject valueObject = jsonObject.optJSONObject(JsonFormConstants.VALUE);
             if (valueObject != null) {
-                value = valueObject.optString(VALUE, "");
+                value = valueObject.optString(JsonFormConstants.VALUE, "");
             }
         } else {
-            value = jsonObject.optString(VALUE, "");
+            value = jsonObject.optString(JsonFormConstants.VALUE, "");
         }
         return value;
     }
