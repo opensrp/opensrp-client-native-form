@@ -19,10 +19,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.AssetManager;
 import android.os.Looper;
-import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.core.util.TimeUtils;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +29,11 @@ import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
+import androidx.core.util.TimeUtils;
+
+import com.google.android.material.snackbar.Snackbar;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.CompoundButton;
@@ -488,14 +489,13 @@ public class Utils {
      */
     public static String returnValue(JSONObject jsonObject) {
         String value = "";
-        NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
-        if (nativeFormsProperties != null && jsonObject.has(TYPE) && jsonObject.optString(TYPE).equals(JsonFormConstants.NATIVE_RADIO_BUTTON) && nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_RADIO_BUTTON_VALUE_TRANSLATED)) {
-            JSONObject valueObject = jsonObject.optJSONObject(JsonFormConstants.VALUE);
+        if (enabledProperty(NativeFormsProperties.KEY.WIDGET_VALUE_TRANSLATED) && jsonObject.has(TYPE) && jsonObject.optString(TYPE).equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
+            JSONObject valueObject = jsonObject.optJSONObject(VALUE);
             if (valueObject != null) {
-                value = valueObject.optString(JsonFormConstants.VALUE, "");
+                value = valueObject.optString(VALUE, "");
             }
         } else {
-            value = jsonObject.optString(JsonFormConstants.VALUE, "");
+            value = jsonObject.optString(VALUE, "");
         }
         return value;
     }
