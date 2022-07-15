@@ -274,7 +274,6 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     @Override
     public void onDetach() {
         setmJsonApi(null);
-        presenter.cleanUp();
         super.onDetach();
     }
 
@@ -827,7 +826,6 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     @Override
     public void onStop() {
         super.onStop();
-        presenter.cleanUp();
     }
 
     protected class BottomNavigationListener implements View.OnClickListener {

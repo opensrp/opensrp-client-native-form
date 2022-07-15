@@ -278,10 +278,4 @@ public class JsonFormInteractor {
         return defaultTranslatableStepFields;
     }
 
-    public void cleanUp() {
-        if(map.get(JsonFormConstants.NATIVE_RADIO_BUTTON) != null){
-            NativeRadioButtonFactory nativeRadioButtonFactory = (NativeRadioButtonFactory) map.get(JsonFormConstants.NATIVE_RADIO_BUTTON);
-            nativeRadioButtonFactory.cleanUp();
-        }
-    }
 }
