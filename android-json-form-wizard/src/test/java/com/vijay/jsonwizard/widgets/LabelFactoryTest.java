@@ -1,7 +1,7 @@
 package com.vijay.jsonwizard.widgets;
 
 import android.content.res.Resources;
-import android.support.constraint.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import android.view.View;
 
 import com.vijay.jsonwizard.BaseTest;

@@ -22,7 +22,6 @@ import org.smartregister.client.utils.contract.ClientFormContract;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-
 /**
  * Created by Vincent Karuri on 20/02/2020
  */
@@ -132,15 +131,24 @@ public class NativeFormLangUtilsTest extends BaseTest {
     @Test
     public void testGetDatabaseString() {
         String stringToTranslate = "form_strings.step1.danger_signs.danger_bleeding.text";
-        String expected_string = "Danger Bleeding";
-        String actual = "";
+        String expectedString = "Danger Bleeding";
         Locale locale = new Locale(Locale.ENGLISH.getLanguage());
         ResourceBundle bundle = ResourceBundle.getBundle("form_strings", locale);
         boolean keyIsFound = bundle.containsKey(stringToTranslate);
         Assert.assertTrue(keyIsFound);
-        actual = NativeFormLangUtils.translateDatabaseString(stringToTranslate, context);
-        assertEquals(expected_string, actual);
+        String actual = NativeFormLangUtils.translateDatabaseString(stringToTranslate, context);
+        assertEquals(expectedString, actual);
 
     }
+    @Test
+    public void testInvalidDatabaseString() {
+        String stringToTranslate = "form_strings.step2.danger_signs.danger_bleeding.text";
+        Locale locale = new Locale(Locale.ENGLISH.getLanguage());
+        ResourceBundle bundle = ResourceBundle.getBundle("form_strings", locale);
+        boolean keyIsFound = bundle.containsKey(stringToTranslate);
+        String actual = NativeFormLangUtils.translateDatabaseString(stringToTranslate, context);
+        assertEquals("",actual);
+        assertFalse(keyIsFound);
 
+    }
 }

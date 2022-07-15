@@ -18,11 +18,6 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.util.Pair;
-import android.support.v7.widget.AppCompatRadioButton;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -40,6 +35,12 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatRadioButton;
+import androidx.core.app.ActivityCompat;
+import androidx.core.util.Pair;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -894,7 +895,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         if (JsonFormConstants.CHECK_BOX.equals(fieldObject.getString(JsonFormConstants.TYPE))) {
                             value = String.valueOf(fieldObject.getJSONArray(JsonFormConstants.VALUES));
                             if (Utils.enabledProperty(NativeFormsProperties.KEY.WIDGET_VALUE_TRANSLATED)) {
-                                fieldObject.put(value, Utils.generateTranslatableValue(value, fieldObject));
+                                fieldObject.put(JsonFormConstants.VALUE, Utils.generateTranslatableValue(value, fieldObject));
                             } else {
                                 fieldObject.put(JsonFormConstants.VALUE, value);
                             }
@@ -958,11 +959,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         item.put(JsonFormConstants.VALUE, Utils.generateTranslatableValue(value, item));
                     }
                 } else {
-                    if (item.optString(JsonFormConstants.KEY).equalsIgnoreCase("reminders")) {
-                        item.put(JsonFormConstants.VALUE, value);
-                    } else {
-                        item.put(JsonFormConstants.VALUE, Utils.generateTranslatableValue(value, item));
-                    }
+                    item.put(JsonFormConstants.VALUE, Utils.generateTranslatableValue(value, item));
                 }
             } else {
                 item.put(JsonFormConstants.VALUE, value);
@@ -1847,8 +1844,12 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 }
                 return false;
             } else {
-                String curValue = String.valueOf(curValueMap.get(JsonFormConstants.VALUE));
-                return doComparison(curValue != null ? curValue : "", curRelevance);
+                Object currObjectValue = curValueMap.get(JsonFormConstants.VALUE);
+                if (currObjectValue != null) {
+                    String curValue = String.valueOf(currObjectValue);
+                    return doComparison(curValue, curRelevance);
+                }
+                return doComparison("", curRelevance);
             }
         }
         return false;
@@ -2145,8 +2146,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         Object value;
 
         if (object.has(JsonFormConstants.VALUE)) {
-            value = Utils.getValueFromTranslatedObject(object);
-//            value = object.opt(JsonFormConstants.VALUE);
+            value = Utils.getValueAfterTranslation(object);
             if (isNumberWidget(object)) {
                 value = TextUtils.isEmpty(object.optString(JsonFormConstants.VALUE)) ? 0 : processNumberValues(object.optString(JsonFormConstants.VALUE));
             } else if (value != null && !TextUtils.isEmpty(object.getString(JsonFormConstants.VALUE)) && canHaveNumber(object)) {

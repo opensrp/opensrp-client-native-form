@@ -1,9 +1,10 @@
 package com.vijay.jsonwizard.activities;
 
+import static org.junit.Assert.assertEquals;
+
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.util.Pair;
-import android.support.v7.widget.AppCompatRadioButton;
 import android.text.Html;
 import android.text.Spanned;
 import android.view.View;
@@ -12,6 +13,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+
+import androidx.appcompat.widget.AppCompatRadioButton;
+import androidx.core.util.Pair;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rey.material.util.ViewUtil;
@@ -34,6 +38,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
@@ -52,22 +57,24 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-
 public class JsonFormActivityTest extends BaseActivityTest {
     private JsonFormActivity activity;
     private ActivityController<JsonFormActivity> controller;
     private final TestUtils testUtils = new TestUtils();
 
+    @Mock
+    private Context context;
+    private Intent intent;
+
     @Before
     public void setUp() throws JSONException {
         MockitoAnnotations.initMocks(this);
-        Intent intent = new Intent();
+        intent = new Intent();
         intent.putExtra(JsonFormConstants.JSON_FORM_KEY.JSON, DUMMY_JSON_FORM_STRING);
         activity = getActivityWithIntent(intent);
         activity.getmJSONObject().put(JsonFormConstants.SKIP_BLANK_STEPS, true);
-
-        Assert.assertNotNull(activity);
+        Application application = Mockito.spy(Application.class);
+        Mockito.doReturn(context).when(application).getApplicationContext();
     }
 
     @Test
@@ -423,12 +430,13 @@ public class JsonFormActivityTest extends BaseActivityTest {
         Mockito.verify(mockUtils)
                 .enableExpansionPanelViews(ArgumentMatchers.eq(linearLayout));
     }
+
     @Test
     public void testGetRelevanceAddressReturnsExpectedAddressAndRelevancePair() throws JSONException {
         View view = new View(activity.getBaseContext());
         JSONObject curRelevance = new JSONObject();
         try {
-          curRelevance = new JSONObject("{ex-checkbox:[{\"or\":[\"other\"]}]}}");
+            curRelevance = new JSONObject("{ex-checkbox:[{\"or\":[\"other\"]}]}}");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -451,4 +459,163 @@ public class JsonFormActivityTest extends BaseActivityTest {
 
     }
 
+    @Test
+    public void testGetValueFromAddressReturnsNull() throws Exception {
+        String[] address = {"address1:one", "address2:two", "address3:three"};
+        JSONObject jsonObject = Mockito.mock(JSONObject.class);
+        activity = new JsonFormActivity();
+        Facts facts = Whitebox.invokeMethod(activity, "getValueFromAddress", address, true, jsonObject);
+        assertEquals(0, facts.asMap().size());
+
+    }
+
+
+    @Test
+    public void testUpdateUiByCalculationReturnsNullPair() throws JSONException {
+        activity = getActivityWithIntent(intent);
+        int id = ViewUtil.generateViewId();
+        String calculation = "{\"user_last_name\":" + new JSONObject("{\"user_last_name\":\"button\"}") + "}:user_last_name";
+        MaterialEditText view = Mockito.spy(new MaterialEditText(activity.getApplicationContext()));
+        view.setId(id);
+        view.setTag(R.id.calculation, calculation);
+        view.setTag(R.id.key, "form_key");
+        view.setTag(R.id.address, "step1:user_last_name");
+        Pair<String[], JSONObject> pair = activity.getCalculationAddressAndValue(view);
+        assertEquals(null, pair.first);
+    }
+
+    @Test
+    public void testUpdateUIByMaterialEditText() throws Exception {
+        View view = Mockito.mock(MaterialEditText.class);
+        String address = "test:key";
+        String childKey = "test";
+        String previous = "";
+        String errorMessage = "false";
+        String key = "yes";
+        Mockito.doReturn(address).when(view).getTag(R.id.address);
+        Mockito.doReturn(childKey).when(view).getTag(R.id.childKey);
+        Mockito.doReturn(previous).when(view).getTag(R.id.previous);
+        Mockito.doReturn(key).when(view).getTag(R.id.key);
+        Mockito.doReturn("edit_text").when(view).getTag(R.id.type);
+        String json = " {\n" +
+                "        \"key\": \"user_first_name\",\n" +
+                "        \"openmrs_entity_parent\": \"\",\n" +
+                "        \"openmrs_entity\": \"\",\n" +
+                "        \"openmrs_entity_id\": \"\",\n" +
+                "        \"type\": \"edit_text\",\n" +
+                "        \"hint\": \"User First name\",\n" +
+                "        \"edit_type\": \"name\",\n" +
+                "        \"v_required\": {\n" +
+                "          \"value\": \"true\",\n" +
+                "          \"err\": \"Please enter the first name\"\n" +
+                "        },\n" +
+                "        \"v_regex\": {\n" +
+                "          \"value\": \"[A-Za-z\\\\s\\\\.\\\\-]*\",\n" +
+                "          \"err\": \"Please enter a valid name\"\n" +
+                "        }\n" +
+                "      }";
+        Mockito.doReturn(new JSONObject(json)).when(view).getTag(R.id.json_object);
+        Whitebox.invokeMethod(activity, "updateUiByConstraints", view, true, errorMessage);
+        view.getTag(R.id.key);
+        assertEquals("yes", view.getTag(R.id.key));
+
+
+    }
+
+    @Test
+    public void testUpdateUIByConstraintsOfLinearLayoutReturnsNull() throws Exception {
+        View view = Mockito.mock(LinearLayout.class);
+        String address = "test:key";
+        String childKey = "test";
+        String previous = "";
+        String errorMessage = "false";
+        String key = "yes";
+        Mockito.doReturn(address).when(view).getTag(R.id.address);
+        Mockito.doReturn(childKey).when(view).getTag(R.id.childKey);
+        Mockito.doReturn(previous).when(view).getTag(R.id.previous);
+        Mockito.doReturn(key).when(view).getTag(R.id.key);
+        Mockito.doReturn("linear_layout").when(view).getTag(R.id.type);
+        String json = " {\n" +
+                "        \"key\": \"user_check_box\",\n" +
+                "        \"openmrs_entity_parent\": \"\",\n" +
+                "        \"openmrs_entity\": \"\",\n" +
+                "        \"openmrs_entity_id\": \"\",\n" +
+                "        \"openmrs_data_type\": \"select one\",\n" +
+                "        \"type\": \"check_box\",\n" +
+                "        \"label\": \"Do want to select any checkbox?\",\n" +
+                "        \"label_text_style\": \"bold\",\n" +
+                "        \"options\": [\n" +
+                "          {\n" +
+                "            \"key\": \"None\",\n" +
+                "            \"text\": \"None\",\n" +
+                "            \"value\": false,\n" +
+                "            \"openmrs_choice_id\": \"\"\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"key\": \"yes\",\n" +
+                "            \"text\": \"Yes\",\n" +
+                "            \"value\": false,\n" +
+                "            \"openmrs_choice_id\": \"\"\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"key\": \"no\",\n" +
+                "            \"text\": \"No\",\n" +
+                "            \"value\": false,\n" +
+                "            \"openmrs_choice_id\": \"\"\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"key\": \"other\",\n" +
+                "            \"text\": \"Other\",\n" +
+                "            \"value\": false,\n" +
+                "            \"openmrs_choice_id\": \"\"\n" +
+                "          }\n" +
+                "        ],\n" +
+                "        \"v_required\": {\n" +
+                "          \"value\": \"false\"\n" +
+                "        },\n" +
+                "        \"value\": \"[yes]\"\n" +
+                "      }";
+        Mockito.doReturn(new JSONObject(json)).when(view).getTag(R.id.json_object);
+        Whitebox.invokeMethod(activity, "updateUiByConstraints", view, true, errorMessage);
+        LinearLayout linearLayout = (LinearLayout) view;
+        assertEquals(null, linearLayout.getChildAt(0));
+    }
+
+    @Test
+    public void testUpdateUIByConstraintsOfRadioButton() throws Exception {
+        View view = Mockito.mock(RadioGroup.class);
+        String address = "test:key";
+        String childKey = "test";
+        String previous = "false";
+        String errorMessage = "false";
+        String key = "yes";
+        Mockito.doReturn(address).when(view).getTag(R.id.address);
+        Mockito.doReturn(childKey).when(view).getTag(R.id.childKey);
+        Mockito.doReturn(previous).when(view).getTag(R.id.previous);
+        Mockito.doReturn(key).when(view).getTag(R.id.key);
+        Mockito.doReturn("check_box").when(view).getTag(R.id.type);
+        String json = " {\n" +
+                "                \"key\": \"respiratory_exam_radio_button\",\n" +
+                "                \"type\": \"native_radio\",\n" +
+                "                \"values\": [\n" +
+                "                  \"3:Abnormal\"\n" +
+                "                ]\n" +
+                "              }";
+        Mockito.doReturn(new JSONObject(json)).when(view).getTag(R.id.json_object);
+        Whitebox.invokeMethod(activity, "updateUiByConstraints", view, true, errorMessage);
+        assertEquals(key, view.getTag(R.id.key));
+    }
+
+    @Test
+    public void testGetViewKey() throws Exception {
+        View view = Mockito.mock(View.class);
+        String key = "key";
+        String childKey = "childKey";
+        JsonFormActivity jsonFormActivity = Mockito.mock(JsonFormActivity.class);
+        Mockito.doReturn(childKey).when(view).getTag(R.id.childKey);
+        Mockito.doReturn(key).when(view).getTag(R.id.key);
+        String returnKey = Whitebox.invokeMethod(jsonFormActivity, "getViewKey", view);
+        assertEquals(key + ":" + childKey, returnKey);
+
+    }
 }

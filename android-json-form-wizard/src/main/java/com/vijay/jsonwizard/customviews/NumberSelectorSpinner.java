@@ -1,7 +1,7 @@
 package com.vijay.jsonwizard.customviews;
 
 import android.content.Context;
-import android.support.v7.widget.AppCompatSpinner;
+import androidx.appcompat.widget.AppCompatSpinner;
 import android.util.AttributeSet;
 
 /**
