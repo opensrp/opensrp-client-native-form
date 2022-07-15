@@ -827,11 +827,6 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     @Override
     public void onStop() {
         super.onStop();
-    }
-
-    @Override
-    public void onDestroy(){
-        super.onDestroy();
         presenter.cleanUp();
     }
 
