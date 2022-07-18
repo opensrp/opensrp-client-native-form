@@ -1266,5 +1266,9 @@ public class JsonFormFragmentPresenter extends
         }
 
     }
+    public void cleanUp() {
+        cleanupAndExit = true;
+        mJsonFormInteractor.cleanUp();
+    }
 
 }

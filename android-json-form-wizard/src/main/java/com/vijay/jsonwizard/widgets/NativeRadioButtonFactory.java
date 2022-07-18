@@ -894,6 +894,15 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         return customTranslatableWidgetFields;
     }
 
+    public void cleanUp() {
+        this.context = null;
+        this.formFragment = null;
+        this.radioButton = null;
+        this.extraInfoTextView = null;
+        this.specifyTextView = null;
+        this.reasonsTextView = null;
+    }
+
 
     private class CustomTextViewClickListener implements View.OnClickListener {
         @Override
