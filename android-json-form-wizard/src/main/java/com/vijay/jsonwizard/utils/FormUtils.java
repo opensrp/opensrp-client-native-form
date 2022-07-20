@@ -301,8 +301,8 @@ public class FormUtils {
 
     public static JSONObject createOptiBPDataObject(String clientId, String clientOpenSRPId) throws JSONException{
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put(JsonFormConstants.OptibpConstants.OPTIBP_KEY_CLIENT_ID, clientId);
-        jsonObject.put(JsonFormConstants.OptibpConstants.OPTIBP_KEY_CLIENT_OPENSRP_ID, clientOpenSRPId);
+        jsonObject.put(JsonFormConstants.OPTIBPCONSTANTS.OPTIBP_KEY_CLIENT_ID, clientId);
+        jsonObject.put(JsonFormConstants.OPTIBPCONSTANTS.OPTIBP_KEY_CLIENT_OPENSRP_ID, clientOpenSRPId);
         return jsonObject;
     }
 
@@ -690,8 +690,7 @@ public class FormUtils {
             if (formFields != null) {
                 for (int i = 0; i < formFields.length(); i++) {
                     JSONObject widget = formFields.getJSONObject(i);
-                    if (widget.has(JsonFormConstants.KEY) && key
-                            .equals(widget.getString(JsonFormConstants.KEY))) {
+                    if (widget.has(JsonFormConstants.KEY) && key.equals(widget.getString(JsonFormConstants.KEY))) {
                         field = widget;
                         break;
                     }

@@ -313,7 +313,7 @@ public class JsonFormConstants {
         public static final int RC_HANDLE_GMS = 9001;
     }
 
-    public static class OptibpConstants {
+    public static class OPTIBPCONSTANTS {
         public static final String OPTIBP_WIDGET = "optibp";
         public static final int OPTIBP_REQUEST_CODE = 301;
         public static final int OPTIBP_REPEAT_REQUEST_CODE = 302;
@@ -329,6 +329,21 @@ public class JsonFormConstants {
         public static final String OPTIBP_KEY_BUTTON_TEXT = "optibp_button_text";
         public static final String OPTIBP_KEY_CALIBRATION_DATA = "optibp_client_calibration_data";
         public static final String OPTIBP_KEY_CALIBRATION = "calibration";
+        public static final String DATE = "date";
+        public static final String VERSION = "version";
+        public static final String MODEL = "model";
+        public static final String HEIGHT = "height";
+        public static final String WEIGHT = "weight";
+        public static final String COMPERATIVES = "comperatives";
+        public static final String SYSTOLIC = "systolic";
+        public static final String DIASTOLIC = "diastolic";
+        public static final String BPSYSTOLIC = "bp_systolic";
+        public static final String BPDIASTOLIC = "bp_diastolic";
+        public static final String CUFFSYSTOLIC = "cuffSystolic";
+        public static final String CUFFDIASTOLIC = "cuffDiastolic";
+        public static final String FEATURES = "features";
+        public static final String CURRENTWEIGHT = "current_weight";
+
     }
 
     public static class EDIT_TEXT_TYPE {
@@ -380,4 +395,5 @@ public class JsonFormConstants {
     public interface MLS {
         String PROPERTIES_FILE_NAME = "properties_file_name";
     }
+
 }
