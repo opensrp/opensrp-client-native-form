@@ -9,12 +9,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import androidx.annotation.DrawableRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.AppCompatRadioButton;
-import androidx.appcompat.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
@@ -32,6 +26,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
+
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.AppCompatRadioButton;
+import androidx.appcompat.widget.Toolbar;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.vijay.jsonwizard.R;
@@ -71,23 +72,20 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         implements CommonListener, JsonFormFragmentView<JsonFormFragmentViewState>, Handler.Callback {
     private static final String TAG = "JsonFormFragment";
     private static final int GRAY_OUT_ACTIVE_WHAT = 1212;
-
+    private static NativeFormsProperties nativeFormProperties;
+    private final Map<String, List<View>> lookUpMap = new HashMap<>();
+    private final Handler handler = new Handler(Looper.getMainLooper(), this);
     public OnFieldsInvalid onFieldsInvalid;
     protected LinearLayout mMainView;
     protected ScrollView mScrollView;
     private Menu mMenu;
     private JsonApi mJsonApi;
-    private final Map<String, List<View>> lookUpMap = new HashMap<>();
     private Button previousButton;
     private Button nextButton;
     private String stepName;
     private LinearLayout bottomNavigation;
     private BottomNavigationListener navigationListener;
     private boolean shouldSkipStep = true;
-
-    private static NativeFormsProperties nativeFormProperties;
-
-    private final Handler handler = new Handler(Looper.getMainLooper(), this);
 
     public static JsonFormFragment getFormFragment(String stepName) {
         JsonFormFragment jsonFormFragment = new JsonFormFragment();
@@ -96,6 +94,13 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         jsonFormFragment.setArguments(bundle);
 
         return jsonFormFragment;
+    }
+
+    /**
+     * Getter for native form properties
+     */
+    public static NativeFormsProperties getNativeFormProperties() {
+        return nativeFormProperties;
     }
 
     @Override
@@ -827,7 +832,20 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
     @Override
     public void onStop() {
         super.onStop();
-        presenter.cleanUp();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getPresenter().cleanUp();
+    }
+
+    public OnFieldsInvalid getOnFieldsInvalidCallback() {
+        return onFieldsInvalid;
+    }
+
+    public void setOnFieldsInvalid(OnFieldsInvalid onFieldsInvalid) {
+        this.onFieldsInvalid = onFieldsInvalid;
     }
 
     protected class BottomNavigationListener implements View.OnClickListener {
@@ -846,20 +864,5 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
                 }
             }
         }
-    }
-
-    public OnFieldsInvalid getOnFieldsInvalidCallback() {
-        return onFieldsInvalid;
-    }
-
-    public void setOnFieldsInvalid(OnFieldsInvalid onFieldsInvalid) {
-        this.onFieldsInvalid = onFieldsInvalid;
-    }
-
-    /**
-     * Getter for native form properties
-     */
-    public static NativeFormsProperties getNativeFormProperties() {
-        return nativeFormProperties;
     }
 }
