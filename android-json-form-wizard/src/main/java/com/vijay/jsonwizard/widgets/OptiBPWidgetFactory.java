@@ -38,7 +38,6 @@ import com.rey.material.util.ViewUtil;
 import com.rey.material.widget.Button;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants.OPTIBPCONSTANTS;
-import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.WidgetArgs;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
@@ -207,7 +206,7 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
                                     try {
                                         String resultJson = data.getStringExtra(Intent.EXTRA_TEXT);
                                         Timber.d("Resultant OptiBP JSON: %s ", resultJson);
-                                        populateBPEditTextValues(resultJson, systolicEditText, diastolicEditText);
+                                        populateBPEditTextValues(resultJson, systolicEditText, diastolicEditText, widgetArgs);
                                         writeResult(jsonApi, rootLayout, resultJson, widgetArgs);
                                     } catch (JSONException e) {
                                         Timber.e(e);
@@ -265,7 +264,7 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
                 openMrsEntity, openMrsEntityId, widgetArgs.isPopup());
     }
 
-    protected void populateBPEditTextValues(String resultJsonJsonString, EditText systolicBPEditText, EditText diastolicBPEditText) throws JSONException {
+    protected void populateBPEditTextValues(String resultJsonJsonString, EditText systolicBPEditText, EditText diastolicBPEditText, WidgetArgs widgetArgs) throws JSONException {
         if (systolicBPEditText != null) {
             systolicBPEditText.setText(getBPValue(resultJsonJsonString, BPFieldType.SYSTOLIC_BP));
             toggleEditTextEnabled(systolicBPEditText, false);
@@ -273,6 +272,12 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
         if (diastolicBPEditText != null) {
             diastolicBPEditText.setText(getBPValue(resultJsonJsonString, BPFieldType.DIASTOLIC_BP));
             toggleEditTextEnabled(diastolicBPEditText, false);
+        }
+        if (FormUtils.getFieldFromForm(widgetArgs.getFormFragment().getJsonApi().getmJSONObject(), OPTIBPCONSTANTS.OPTIBP_KEY_CALIBRATION_DATA) != null) {
+            JSONObject calibrationObject = FormUtils.getFieldFromForm(widgetArgs.getFormFragment().getJsonApi().getmJSONObject(), OPTIBPCONSTANTS.OPTIBP_KEY_CALIBRATION_DATA);
+            JSONObject valueObject = new JSONObject();
+            valueObject.put(OPTIBPCONSTANTS.BPSYSTOLIC, getBPValue(resultJsonJsonString, BPFieldType.SYSTOLIC_BP)).put(OPTIBPCONSTANTS.DIASTOLIC, getBPValue(resultJsonJsonString, BPFieldType.DIASTOLIC_BP));
+            calibrationObject.put(VALUE, new JSONArray().put(valueObject));
         }
     }
 
@@ -340,11 +345,11 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
             if (calibrationData != null && StringUtils.isNotBlank(calibrationData.toString())) {
                 DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
                 df.setTimeZone(TimeZone.getTimeZone(ZoneId.of("Africa/Nairobi")));
-                JSONObject heightObject = getFieldJsonObjectFromStep(widgetArgs,FIELDS, STEP1, OPTIBPCONSTANTS.HEIGHT);
-                JSONObject pregestWeight = getFieldJsonObjectFromStep(widgetArgs, FIELDS,STEP1, OPTIBPCONSTANTS.CURRENTWEIGHT);
+                JSONObject heightObject = getSingleStepJsonObject(widgetArgs,FIELDS, STEP1, OPTIBPCONSTANTS.HEIGHT);
+                JSONObject pregestWeight = getSingleStepJsonObject(widgetArgs, FIELDS,STEP1, OPTIBPCONSTANTS.CURRENTWEIGHT);
                 String step2 = widgetArgs.getFormFragment().getJsonApi().getStep(STEP1).optString(NEXT);
-                JSONObject systolicObject = getFieldJsonObjectFromStep(widgetArgs, FIELDS, step2,OPTIBPCONSTANTS.BPSYSTOLIC);
-                JSONObject diastolicObject = getFieldJsonObjectFromStep(widgetArgs, FIELDS, step2, OPTIBPCONSTANTS.BPDIASTOLIC);
+                JSONObject systolicObject = getSingleStepJsonObject(widgetArgs, FIELDS, step2,OPTIBPCONSTANTS.BPSYSTOLIC);
+                JSONObject diastolicObject = getSingleStepJsonObject(widgetArgs, FIELDS, step2, OPTIBPCONSTANTS.BPDIASTOLIC);
                 if (heightObject != null && pregestWeight != null && systolicObject != null && diastolicObject != null) {
                     int systolic = Integer.parseInt(systolicObject.optString(VALUE));
                     int diastolic = Integer.parseInt(diastolicObject.optString(VALUE));
@@ -361,10 +366,12 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
                     comperativesObject.put(OPTIBPCONSTANTS.DIASTOLIC, diastolic);
                     comperativesObject.put(OPTIBPCONSTANTS.CUFFSYSTOLIC, systolic);
                     comperativesObject.put(OPTIBPCONSTANTS.CUFFDIASTOLIC, diastolic);
-                    comperativesObject.put(OPTIBPCONSTANTS.FEATURES, new JSONObject().put("bpMeasurementExists",isRepeatMeasurement(BPFieldType.SYSTOLIC_BP, BPFieldType.DIASTOLIC_BP)));
+                    comperativesObject.put(OPTIBPCONSTANTS.FEATURES, new JSONObject().put("isBPRepeat",isRepeatMeasurement(BPFieldType.SYSTOLIC_BP, BPFieldType.DIASTOLIC_BP)));
                     calibrationObject.put(OPTIBPCONSTANTS.COMPERATIVES, comperativesArray.put(comperativesObject));
                     calibrationArray.put(calibrationObject);
                     return calibrationArray;
+
+
                 }
             }
         } catch (JSONException e) {
@@ -373,7 +380,7 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
         return null;
     }
 
-    private static JSONObject getFieldJsonObjectFromStep(WidgetArgs widgetArgs, String fieldName, String stepName, String key) {
+    private static JSONObject getSingleStepJsonObject(WidgetArgs widgetArgs, String fieldName, String stepName, String key) {
         JSONArray jsonArray = widgetArgs.getFormFragment().getJsonApi().getStep(stepName).optJSONArray(fieldName);
         if (jsonArray != null) {
             for (int i = 0; i < jsonArray.length(); i++) {
