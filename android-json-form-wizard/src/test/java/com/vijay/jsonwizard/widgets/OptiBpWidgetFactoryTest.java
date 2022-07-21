@@ -53,6 +53,8 @@ public class OptiBpWidgetFactoryTest extends FactoryTest {
     @Mock
     private Button launchButton;
 
+    WidgetArgs widgetArgs;
+
     private final String optiBPWidgetString = "{\n" +
             "        \"key\": \"optipb_widget1\",\n" +
             "        \"openmrs_entity_parent\": \"\",\n" +
@@ -326,6 +328,7 @@ public class OptiBpWidgetFactoryTest extends FactoryTest {
         dbp.setTag(R.id.address, "step1:bp_diastolic");
         jsonFormActivity.addFormDataView(dbp);
         factory = new OptiBPWidgetFactory();
+        widgetArgs=new WidgetArgs();
     }
 
     @Test
@@ -399,7 +402,7 @@ public class OptiBpWidgetFactoryTest extends FactoryTest {
 
         EditText sbp = Mockito.mock(EditText.class);
         EditText dbp = Mockito.mock(EditText.class);
-        factorySpy.populateBPEditTextValues(resultJson, sbp, dbp);
+        factorySpy.populateBPEditTextValues(resultJson, sbp, dbp,widgetArgs);
 
         Mockito.verify(sbp).setEnabled(false);
         Mockito.verify(dbp).setEnabled(false);
