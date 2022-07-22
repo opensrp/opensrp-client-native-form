@@ -313,7 +313,7 @@ public class JsonFormConstants {
         public static final int RC_HANDLE_GMS = 9001;
     }
 
-    public static class OPTIBPCONSTANTS {
+    public static class OptiBPConstants {
         public static final String OPTIBP_WIDGET = "optibp";
         public static final int OPTIBP_REQUEST_CODE = 301;
         public static final int OPTIBP_REPEAT_REQUEST_CODE = 302;

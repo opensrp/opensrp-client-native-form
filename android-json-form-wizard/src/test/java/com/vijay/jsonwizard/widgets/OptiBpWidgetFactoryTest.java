@@ -402,6 +402,8 @@ public class OptiBpWidgetFactoryTest extends FactoryTest {
 
         EditText sbp = Mockito.mock(EditText.class);
         EditText dbp = Mockito.mock(EditText.class);
+        widgetArgs=Mockito.mock(WidgetArgs.class);
+        Mockito.doReturn(new JSONObject(formString)).when(widgetArgs).getFormFragment().getJsonApi().getmJSONObject();
         factorySpy.populateBPEditTextValues(resultJson, sbp, dbp,widgetArgs);
 
         Mockito.verify(sbp).setEnabled(false);
