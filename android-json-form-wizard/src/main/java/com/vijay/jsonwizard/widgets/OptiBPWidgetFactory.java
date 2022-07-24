@@ -45,6 +45,7 @@ import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.interfaces.OnActivityResultListener;
 import com.vijay.jsonwizard.utils.FormUtils;
+import com.vijay.jsonwizard.utils.Utils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -206,14 +207,17 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
                                     try {
                                         String resultJson = data.getStringExtra(Intent.EXTRA_TEXT);
                                         Timber.d("Resultant OptiBP JSON: %s ", resultJson);
-                                        populateBPEditTextValues(resultJson, systolicEditText, diastolicEditText, widgetArgs);
-                                        writeResult(jsonApi, rootLayout, resultJson, widgetArgs);
+                                        if (Utils.checkIfValidJsonArray(resultJson)) {
+                                            populateBPEditTextValues(resultJson, systolicEditText, diastolicEditText, widgetArgs);
+                                            writeResult(jsonApi, rootLayout, resultJson, widgetArgs);
+                                        } else {
+                                            Toast.makeText(context, "Invalid BP Response from Calibration App", Toast.LENGTH_SHORT).show();
+                                        }
                                     } catch (JSONException e) {
                                         Timber.e(e);
                                     }
-
                                 } else
-                                    Timber.i("NO RESULT FROM OPTIBP APP");
+                                    Timber.e("NO RESULT FROM OPTIBP APP");
                             } catch (Exception e) {
                                 Timber.e(e);
                             }
@@ -264,20 +268,20 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
                 openMrsEntity, openMrsEntityId, widgetArgs.isPopup());
     }
 
-    protected void populateBPEditTextValues(String resultJsonJsonString, EditText systolicBPEditText, EditText diastolicBPEditText, WidgetArgs widgetArgs) throws JSONException {
+    protected void populateBPEditTextValues(String resultJsonString, EditText systolicBPEditText, EditText diastolicBPEditText, WidgetArgs widgetArgs) throws JSONException {
         if (systolicBPEditText != null) {
-            systolicBPEditText.setText(getBPValue(resultJsonJsonString, BPFieldType.SYSTOLIC_BP));
+            systolicBPEditText.setText(getBPValue(resultJsonString, BPFieldType.SYSTOLIC_BP));
             toggleEditTextEnabled(systolicBPEditText, false);
         }
         if (diastolicBPEditText != null) {
-            diastolicBPEditText.setText(getBPValue(resultJsonJsonString, BPFieldType.DIASTOLIC_BP));
+            diastolicBPEditText.setText(getBPValue(resultJsonString, BPFieldType.DIASTOLIC_BP));
             toggleEditTextEnabled(diastolicBPEditText, false);
         }
         if (FormUtils.getFieldFromForm(widgetArgs.getFormFragment().getJsonApi().getmJSONObject(), OPTIBPCONSTANTS.OPTIBP_KEY_CALIBRATION_DATA) != null) {
             JSONObject calibrationObject = FormUtils.getFieldFromForm(widgetArgs.getFormFragment().getJsonApi().getmJSONObject(), OPTIBPCONSTANTS.OPTIBP_KEY_CALIBRATION_DATA);
-            JSONObject valueObject = new JSONObject();
-            valueObject.put(OPTIBPCONSTANTS.BPSYSTOLIC, getBPValue(resultJsonJsonString, BPFieldType.SYSTOLIC_BP)).put(OPTIBPCONSTANTS.DIASTOLIC, getBPValue(resultJsonJsonString, BPFieldType.DIASTOLIC_BP));
-            calibrationObject.put(VALUE, new JSONArray().put(valueObject));
+            if (getComparatives(resultJsonString) != null) {
+                calibrationObject.put(VALUE, getComparatives(resultJsonString));
+            }
         }
     }
 
@@ -297,6 +301,18 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
         JSONObject valueQuantity = bpComponent.getJSONObject(OPTIBPCONSTANTS.OPTIBP_REPORT_VALUE_QUANTITY);
         int value = valueQuantity.getInt(VALUE);
         return String.valueOf(value);
+    }
+
+    protected JSONArray getComparatives(String resultJsonString) throws JSONException {
+        JSONObject jsonObject = new JSONObject(resultJsonString);
+        JSONArray result = jsonObject.getJSONArray(OPTIBPCONSTANTS.OPTIBP_REPORT_RESULT);
+        JSONObject resultObject = result.getJSONObject(0);
+        JSONArray component = resultObject.getJSONArray(OPTIBPCONSTANTS.OPTIBP_REPORT_COMPONENT);
+        JSONObject secondIndex = component.optJSONObject(2);
+        String valueString = secondIndex.optString(OPTIBPCONSTANTS.OPTIBP_VALUE_STRING);
+        JSONObject valueObject = new JSONObject(valueString);
+        return valueObject.optJSONArray(OPTIBPCONSTANTS.COMPERATIVES);
+
     }
 
     protected EditText getBPEditTextField(WidgetArgs widgetArgs, BPFieldType field) {
@@ -345,11 +361,11 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
             if (calibrationData != null && StringUtils.isNotBlank(calibrationData.toString())) {
                 DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
                 df.setTimeZone(TimeZone.getTimeZone(ZoneId.of("Africa/Nairobi")));
-                JSONObject heightObject = getSingleStepJsonObject(widgetArgs,FIELDS, STEP1, OPTIBPCONSTANTS.HEIGHT);
-                JSONObject pregestWeight = getSingleStepJsonObject(widgetArgs, FIELDS,STEP1, OPTIBPCONSTANTS.CURRENTWEIGHT);
+                JSONObject heightObject = getSingleStepJsonObject(widgetArgs, STEP1, OPTIBPCONSTANTS.HEIGHT);
+                JSONObject pregestWeight = getSingleStepJsonObject(widgetArgs, STEP1, OPTIBPCONSTANTS.CURRENTWEIGHT);
                 String step2 = widgetArgs.getFormFragment().getJsonApi().getStep(STEP1).optString(NEXT);
-                JSONObject systolicObject = getSingleStepJsonObject(widgetArgs, FIELDS, step2,OPTIBPCONSTANTS.BPSYSTOLIC);
-                JSONObject diastolicObject = getSingleStepJsonObject(widgetArgs, FIELDS, step2, OPTIBPCONSTANTS.BPDIASTOLIC);
+                JSONObject systolicObject = getSingleStepJsonObject(widgetArgs, step2, OPTIBPCONSTANTS.BPSYSTOLIC);
+                JSONObject diastolicObject = getSingleStepJsonObject(widgetArgs, step2, OPTIBPCONSTANTS.BPDIASTOLIC);
                 if (heightObject != null && pregestWeight != null && systolicObject != null && diastolicObject != null) {
                     int systolic = Integer.parseInt(systolicObject.optString(VALUE));
                     int diastolic = Integer.parseInt(diastolicObject.optString(VALUE));
@@ -370,8 +386,6 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
                     calibrationObject.put(OPTIBPCONSTANTS.COMPERATIVES, comperativesArray.put(comperativesObject));
                     calibrationArray.put(calibrationObject);
                     return calibrationArray;
-
-
                 }
             }
         } catch (JSONException e) {
@@ -380,16 +394,10 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
         return null;
     }
 
-    private static JSONObject getSingleStepJsonObject(WidgetArgs widgetArgs, String fieldName, String stepName, String key) {
-        JSONArray jsonArray = widgetArgs.getFormFragment().getJsonApi().getStep(stepName).optJSONArray(fieldName);
-        if (jsonArray != null) {
-            for (int i = 0; i < jsonArray.length(); i++) {
-                if (jsonArray.optJSONObject(i).optString(KEY).equals(key)) {
-                    return jsonArray.optJSONObject(i);
-                }
-            }
-        }
-        return null;
+    private static JSONObject getSingleStepJsonObject(WidgetArgs widgetArgs, String stepName, String key) {
+        JSONArray jsonArray = widgetArgs.getFormFragment().getJsonApi().getStep(stepName).optJSONArray(FIELDS);
+        return Utils.getJsonObjectFromJsonArray(key, jsonArray);
+
     }
 
     private String getLabelText(Context context, JSONObject jsonObject) throws JSONException {

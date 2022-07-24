@@ -399,11 +399,9 @@ public class OptiBpWidgetFactoryTest extends FactoryTest {
         Assert.assertNotNull(factory);
         OptiBPWidgetFactory factorySpy = Mockito.spy(factory);
         Assert.assertNotNull(factorySpy);
-
         EditText sbp = Mockito.mock(EditText.class);
         EditText dbp = Mockito.mock(EditText.class);
         factorySpy.populateBPEditTextValues(resultJson, sbp, dbp,widgetArgs);
-
         Mockito.verify(sbp).setEnabled(false);
         Mockito.verify(dbp).setEnabled(false);
     }
