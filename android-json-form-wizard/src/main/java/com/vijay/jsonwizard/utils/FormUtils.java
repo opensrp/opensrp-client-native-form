@@ -13,11 +13,6 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.appcompat.widget.AppCompatEditText;
-import androidx.appcompat.widget.AppCompatTextView;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -33,6 +28,12 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatEditText;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.NativeFormLibrary;
@@ -307,7 +308,6 @@ public class FormUtils {
         jsonObject.put(JsonFormConstants.OPTIBPCONSTANTS.OPTIBP_KEY_CLIENT_OPENSRP_ID, clientOpenSRPId);
         return jsonObject;
     }
-
     public static int getValueFromSpOrDpOrPx(String spOrDpOrPx, Context context) {
         int px = 0;
         if (!TextUtils.isEmpty(spOrDpOrPx)) {
