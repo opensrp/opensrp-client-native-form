@@ -23,6 +23,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.robolectric.RuntimeEnvironment;
 
 import java.util.List;
 
@@ -376,7 +377,7 @@ public class OptiBpWidgetFactoryTest extends FactoryTest {
         Mockito.doReturn(jsonApi).when(formFragment).getJsonApi();
         Mockito.doReturn(new JSONObject(formString)).when(jsonApi).getmJSONObject();
 
-        String inputJson = factorySpy.getInputJsonString(jsonFormActivity, new JSONObject(optiBPWidgetString), widgetArgs);
+        String inputJson = factorySpy.getInputJsonString(RuntimeEnvironment.application.getApplicationContext(), new JSONObject(optiBPWidgetString), widgetArgs);
 
         Assert.assertEquals(inputJson, "{\"clientId\":\"sampleClientId\",\"clientOpenSRPId\":\"sampleClientOpenSRPId\",\"calibration\":[{\"date\":\"2019-03-26T11:20:33+0800\",\"model\":\"device model\",\"height\":70,\"weight\":180,\"comperatives\":[{\"systolic\":120,\"diastolic\":80,\"cuffSystolic\":120,\"cuffDiastolic\":80,\"features\":{\"$key\":\"0.2f\"}}]}]}");
     }

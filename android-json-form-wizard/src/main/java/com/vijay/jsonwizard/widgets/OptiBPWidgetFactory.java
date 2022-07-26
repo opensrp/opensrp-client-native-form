@@ -25,7 +25,6 @@ import android.os.Build;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -42,7 +41,6 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
-import com.vijay.jsonwizard.interfaces.OnActivityResultListener;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.Utils;
 
@@ -149,18 +147,15 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
         final JSONObject jsonObject = widgetArgs.getJsonObject();
         Button launchButton = rootLayout.findViewById(R.id.optibp_launch_button);
         formatButtonWidget(launchButton, widgetArgs.getJsonObject());
-        launchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    Timber.w(" ONCLICK WITH JSON %s", jsonObject);
-                    Intent intent = new Intent(OPTIBPCONSTANTS.OPTIBP_LAUNCH_INTENT);
-                    intent.setType("text/json");
-                    intent.putExtra(Intent.EXTRA_TEXT, getInputJsonString(context, jsonObject, widgetArgs));
-                    ((Activity) context).startActivityForResult(Intent.createChooser(intent, ""), requestCode);
-                } catch (Exception e) {
-                    Timber.e(e);
-                }
+        launchButton.setOnClickListener(view -> {
+            try {
+                Timber.w(" ONCLICK WITH JSON %s", jsonObject);
+                Intent intent = new Intent(OPTIBPCONSTANTS.OPTIBP_LAUNCH_INTENT);
+                intent.setType("text/json");
+                intent.putExtra(Intent.EXTRA_TEXT, getInputJsonString(context, jsonObject, widgetArgs));
+                ((Activity) context).startActivityForResult(Intent.createChooser(intent, ""), requestCode);
+            } catch (Exception e) {
+                Timber.e(e);
             }
         });
 
@@ -191,35 +186,33 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
 
     }
 
-    public void setUpOptiBpActivityResultListener(final WidgetArgs widgetArgs, int requestCode, final LinearLayout rootLayout, final EditText systolicEditText, final EditText diastolicEditText) {
+    public void setUpOptiBpActivityResultListener(final WidgetArgs widgetArgs, int requestCode, final LinearLayout rootLayout, EditText systolicEditText, final EditText diastolicEditText) {
         final Context context = widgetArgs.getContext();
         if (context instanceof JsonApi) {
             final JsonApi jsonApi = (JsonApi) context;
-            jsonApi.addOnActivityResultListener(requestCode, new OnActivityResultListener() {
-                @Override
-                public void onActivityResult(int requestCode, int resultCode, Intent data) {
-                    if (resultCode == Activity.RESULT_OK) {
-                        if (requestCode == OPTIBPCONSTANTS.OPTIBP_REQUEST_CODE ||
-                                requestCode == OPTIBPCONSTANTS.OPTIBP_REPEAT_REQUEST_CODE) {
-                            try {
-                                if (data != null) {
-                                    try {
-                                        String resultJson = data.getStringExtra(Intent.EXTRA_TEXT);
-                                        Timber.d("Resultant OptiBP JSON: %s ", resultJson);
-                                            populateBPEditTextValues(resultJson, systolicEditText, diastolicEditText, widgetArgs);
-                                        writeResult(jsonApi, rootLayout, getComparatives(resultJson), widgetArgs);
-                                    } catch (JSONException e) {
-                                        Timber.e(e);
-                                    }
-                                } else
-                                    Timber.e("NO RESULT FROM OPTIBP APP");
-                            } catch (Exception e) {
-                                Timber.e(e);
-                            }
+            jsonApi.addOnActivityResultListener(requestCode, (finalRequestCode, resultCode, data) -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    if (finalRequestCode == OPTIBPCONSTANTS.OPTIBP_REQUEST_CODE ||
+                            finalRequestCode == OPTIBPCONSTANTS.OPTIBP_REPEAT_REQUEST_CODE) {
+                        try {
+                            if (data != null) {
+                                String resultJson = data.getStringExtra(Intent.EXTRA_TEXT);
+                                Timber.d("Resultant OptiBP JSON: %s ", resultJson);
+                                populateBPEditTextValues(resultJson, systolicEditText, diastolicEditText, widgetArgs);
+                                String resultString = getComparatives(resultJson);
+                                if (StringUtils.isNotBlank(resultString)) {
+                                    writeResult(jsonApi, rootLayout, resultString, widgetArgs);
+                                } else {
+                                    Toast.makeText(context, context.getString(R.string.optibp_unable_to_receive), Toast.LENGTH_SHORT).show();
+                                }
+                            } else
+                                Timber.e("NO RESULT FROM OPTIBP APP");
+                        } catch (Exception e) {
+                            Timber.e(e);
                         }
-                    } else {
-                        Toast.makeText(context, context.getString(R.string.optibp_unable_to_receive), Toast.LENGTH_SHORT).show();
                     }
+                } else {
+                    Toast.makeText(context, context.getString(R.string.optibp_unable_to_receive), Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -227,16 +220,13 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
 
     private void setGlobalLayoutListener(final LinearLayout rootLayout, final EditText systolicBPEditText, final EditText diastolicBPEditText) {
         if (systolicBPEditText != null && diastolicBPEditText != null) {
-            rootLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    if (rootLayout.getVisibility() != View.VISIBLE
-                            && TextUtils.isEmpty(systolicBPEditText.getText())
-                            && TextUtils.isEmpty(diastolicBPEditText.getText())) {
-                        Timber.i("OptiBP widget not visible");
-                        toggleEditTextEnabled(systolicBPEditText, true);
-                        toggleEditTextEnabled(diastolicBPEditText, true);
-                    }
+            rootLayout.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+                if (rootLayout.getVisibility() != View.VISIBLE
+                        && TextUtils.isEmpty(systolicBPEditText.getText())
+                        && TextUtils.isEmpty(diastolicBPEditText.getText())) {
+                    Timber.i("OptiBP widget not visible");
+                    toggleEditTextEnabled(systolicBPEditText, true);
+                    toggleEditTextEnabled(diastolicBPEditText, true);
                 }
             });
         }
@@ -272,12 +262,6 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
             diastolicBPEditText.setText(getBPValue(resultJsonString, BPFieldType.DIASTOLIC_BP));
             toggleEditTextEnabled(diastolicBPEditText, false);
         }
-        JSONObject calibrationObject = FormUtils.getFieldFromForm(widgetArgs.getFormFragment().getJsonApi().getmJSONObject(), OPTIBPCONSTANTS.OPTIBP_KEY_CALIBRATION_DATA);
-        if (calibrationObject != null) {
-            if (getComparatives(resultJsonString) != null) {
-                calibrationObject.put(VALUE, getComparatives(resultJsonString));
-            }
-        }
     }
 
     private void toggleEditTextEnabled(EditText editText, boolean enabled) {
@@ -307,6 +291,7 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
         String valueString = secondIndex.optString(OPTIBPCONSTANTS.OPTIBP_VALUE_STRING);
         JSONObject valueObject = new JSONObject(valueString);
         JSONArray returnArray = valueObject.optJSONArray(OPTIBPCONSTANTS.COMPERATIVES);
+        Timber.d("Comparative Object: %s", returnArray.toString());
         return returnArray != null ? returnArray.toString() : "";
 
     }
@@ -346,14 +331,14 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
         }
         JSONArray optiBPCalibrationData = getCalibrationData(widgetArgs);
         if (optiBPCalibrationData != null) {
-            optiBPData.put(OPTIBPCONSTANTS.OPTIBP_KEY_CALIBRATION, optiBPCalibrationData);
+            optiBPData.put(OPTIBPCONSTANTS.CALIBRATION, optiBPCalibrationData);
         }
         return optiBPData.toString();
     }
 
     private JSONArray getCalibrationData(WidgetArgs widgetArgs) {
         try {
-            JSONObject calibrationData = FormUtils.getFieldFromForm(widgetArgs.getFormFragment().getJsonApi().getmJSONObject(), OPTIBPCONSTANTS.OPTIBP_KEY_CALIBRATION_DATA);
+            JSONObject calibrationData = FormUtils.getFieldFromForm(widgetArgs.getFormFragment().getJsonApi().getmJSONObject(), OPTIBPCONSTANTS.BP_USING_OPTIBP_BUTTON);
             if (calibrationData != null && StringUtils.isNotBlank(calibrationData.toString())) {
                 String valueString = calibrationData.optString(VALUE);
                 if (StringUtils.isBlank(valueString)) {
@@ -361,20 +346,20 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
                 }
                 DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
                 df.setTimeZone(TimeZone.getTimeZone(ZoneId.of("Africa/Nairobi")));
-                JSONObject heightObject = getSingleStepJsonObject(widgetArgs, STEP1, OPTIBPCONSTANTS.HEIGHT);
-                JSONObject pregestWeight = getSingleStepJsonObject(widgetArgs, STEP1, OPTIBPCONSTANTS.CURRENTWEIGHT);
-                if (heightObject != null && pregestWeight != null) {
+                JSONObject currentHeight = getSingleStepJsonObject(widgetArgs, STEP1, OPTIBPCONSTANTS.HEIGHT);
+                JSONObject currentWeight = getSingleStepJsonObject(widgetArgs, STEP1, OPTIBPCONSTANTS.CURRENTWEIGHT);
+                if (currentHeight != null && currentWeight != null) {
                     JSONArray calibrationArray = new JSONArray();
-                    JSONObject calibrationObject = new JSONObject();
-                    JSONObject comperativesObject = new JSONObject();
-                    calibrationObject.put(OPTIBPCONSTANTS.DATE, df.format(new Date()));
-                    calibrationObject.put(OPTIBPCONSTANTS.VERSION, 1);
-                    calibrationObject.put(OPTIBPCONSTANTS.MODEL, Build.MODEL);
-                    calibrationObject.put(OPTIBPCONSTANTS.HEIGHT, Integer.parseInt(heightObject.optString(VALUE)));
-                    calibrationObject.put(OPTIBPCONSTANTS.WEIGHT, Integer.parseInt(pregestWeight.optString(VALUE)));
+                    JSONObject calibrationJson = new JSONObject();
+                    JSONObject comparativesJson = new JSONObject();
+                    calibrationJson.put(OPTIBPCONSTANTS.DATE, df.format(new Date()));
+                    calibrationJson.put(OPTIBPCONSTANTS.VERSION, 1);
+                    calibrationJson.put(OPTIBPCONSTANTS.MODEL, Build.MODEL);
+                    calibrationJson.put(OPTIBPCONSTANTS.HEIGHT, Integer.parseInt(currentHeight.optString(VALUE)));
+                    calibrationJson.put(OPTIBPCONSTANTS.WEIGHT, Integer.parseInt(currentWeight.optString(VALUE)));
                     JSONArray retrievedCalibrationData = new JSONArray(valueString);
-                    comperativesObject.put(OPTIBPCONSTANTS.COMPERATIVES, retrievedCalibrationData);
-                    calibrationArray.put(calibrationObject);
+                    comparativesJson.put(OPTIBPCONSTANTS.COMPERATIVES, retrievedCalibrationData);
+                    calibrationArray.put(calibrationJson);
                     return calibrationArray;
                 }
             }
@@ -430,7 +415,7 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
         }
     }
 
-        protected enum BPFieldType {
+    protected enum BPFieldType {
         DIASTOLIC_BP("bp_diastolic"), SYSTOLIC_BP("bp_systolic");  // TODO -> Add these KEYS to explicit documentation
 
         private String key;

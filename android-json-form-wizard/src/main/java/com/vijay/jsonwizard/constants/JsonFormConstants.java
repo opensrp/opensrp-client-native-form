@@ -321,7 +321,6 @@ public class JsonFormConstants {
         public static final String OPTIBP_REPORT_RESULT = "result";
         public static final String OPTIBP_REPORT_COMPONENT = "component";
         public static final String OPTIBP_VALUE_STRING = "valueString";
-        public static final String OPTIBP_COMPARATIVES = "comperatives";
         public static final String OPTIBP_REPORT_VALUE_QUANTITY = "valueQuantity";
         public static final String OPTIBP_LAUNCH_INTENT = "android.intent.action.BLOOD_MEASURE";
         public static final String OPTIBP_KEY_DATA = "optibp_data";
@@ -330,21 +329,15 @@ public class JsonFormConstants {
         public static final String OPTIBP_KEY_BUTTON_BG_COLOR = "optibp_button_bg_color";
         public static final String OPTIBP_KEY_BUTTON_TEXT_COLOR = "optibp_button_text_color";
         public static final String OPTIBP_KEY_BUTTON_TEXT = "optibp_button_text";
-        public static final String OPTIBP_KEY_CALIBRATION_DATA = "optibp_client_calibration_data";
-        public static final String OPTIBP_KEY_CALIBRATION = "calibration";
+        public static final String BP_USING_OPTIBP_BUTTON = "record_bp_using_optibp_button";
+        public static final String BP_USING_SECOND_OPTIBP_BUTTON = "record_bp_using_optibp_button";
+        public static final String CALIBRATION = "calibration";
         public static final String DATE = "date";
         public static final String VERSION = "version";
         public static final String MODEL = "model";
         public static final String HEIGHT = "height";
         public static final String WEIGHT = "weight";
         public static final String COMPERATIVES = "comperatives";
-        public static final String SYSTOLIC = "systolic";
-        public static final String DIASTOLIC = "diastolic";
-        public static final String BPSYSTOLIC = "bp_systolic";
-        public static final String BPDIASTOLIC = "bp_diastolic";
-        public static final String CUFFSYSTOLIC = "cuffSystolic";
-        public static final String CUFFDIASTOLIC = "cuffDiastolic";
-        public static final String FEATURES = "features";
         public static final String CURRENTWEIGHT = "current_weight";
 
     }
