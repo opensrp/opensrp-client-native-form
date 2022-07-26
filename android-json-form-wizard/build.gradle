@@ -12,6 +12,7 @@ buildscript {
 apply plugin: 'com.android.library'
 apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
+apply plugin: 'checkstyle'
 
 jacoco {
     toolVersion = "0.8.8"
@@ -213,3 +214,50 @@ task javadoc(type: Javadoc) {
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
     classpath += configurations.compile
 }
+
+task checkstyle(type: Checkstyle) {
+    description 'Check code standard'
+    group 'verification'
+    configFile file('../checkstyle.xml')
+    source 'src'
+    include '**/*.kt'
+    include '**/*.java'
+    exclude '**/gen/**'
+    classpath = files()
+    ignoreFailures = false
+}
+
+/*apply plugin: 'findbugs'
+task findbugs(type: FindBugs) {
+    ignoreFailures = false
+    effort = "max"
+    reportLevel = "low"
+    classes = files("$project.buildDir/intermediates/javac")
+    excludeFilter = file("$rootProject.rootDir/tools/findbugs-exclude.xml")
+    source = fileTree('src/main/java/')
+    classpath = files()
+    reports {
+        xml.enabled = false
+        html.enabled = true
+        html.destination file("$project.buildDir/outputs/findbugs/findbugs-output.html")
+    }
+}*/
+
+apply plugin: 'pmd'
+task pmd(type: Pmd) {
+    ruleSetFiles = files("${project.rootDir}/pmd-ruleset.xml")
+    ignoreFailures = false
+    ruleSets = []
+    source 'src'
+    include '**/*.kt'
+    include '**/*.java'
+    exclude '**/gen/**'
+    reports {
+        xml.enabled = false
+        html.enabled = true
+        html.destination = file("$project.buildDir/outputs/pmd/pmd.html")
+    }
+}
+
+
+println checkstyle.toolVersion
