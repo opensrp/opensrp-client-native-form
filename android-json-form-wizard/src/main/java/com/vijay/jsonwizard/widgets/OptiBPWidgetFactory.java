@@ -272,27 +272,33 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
     }
 
     protected String getBPValue(String resultJsonString, BPFieldType field) throws JSONException {
-        JSONObject jsonObject = new JSONObject(resultJsonString);
-        JSONArray result = jsonObject.getJSONArray(OPTIBPCONSTANTS.OPTIBP_REPORT_RESULT);
-        JSONObject resultObject = result.getJSONObject(0);
-        JSONArray component = resultObject.getJSONArray(OPTIBPCONSTANTS.OPTIBP_REPORT_COMPONENT);
-        JSONObject bpComponent = ((JSONObject) component.get(BPFieldType.SYSTOLIC_BP.equals(field) ? 1 : 0));
-        JSONObject valueQuantity = bpComponent.getJSONObject(OPTIBPCONSTANTS.OPTIBP_REPORT_VALUE_QUANTITY);
-        int value = valueQuantity.getInt(VALUE);
-        return String.valueOf(value);
+        if (resultJsonString != null) {
+            JSONObject jsonObject = new JSONObject(resultJsonString);
+            JSONArray result = jsonObject.getJSONArray(OPTIBPCONSTANTS.OPTIBP_REPORT_RESULT);
+            JSONObject resultObject = result.getJSONObject(0);
+            JSONArray component = resultObject.getJSONArray(OPTIBPCONSTANTS.OPTIBP_REPORT_COMPONENT);
+            JSONObject bpComponent = ((JSONObject) component.get(BPFieldType.SYSTOLIC_BP.equals(field) ? 1 : 0));
+            JSONObject valueQuantity = bpComponent.getJSONObject(OPTIBPCONSTANTS.OPTIBP_REPORT_VALUE_QUANTITY);
+            int value = valueQuantity.getInt(VALUE);
+            return String.valueOf(value);
+        }
+        return null;
     }
 
     protected String getComparatives(String resultJsonString) throws JSONException {
-        JSONObject jsonObject = new JSONObject(resultJsonString);
-        JSONArray result = jsonObject.getJSONArray(OPTIBPCONSTANTS.OPTIBP_REPORT_RESULT);
-        JSONObject resultObject = result.getJSONObject(0);
-        JSONArray component = resultObject.getJSONArray(OPTIBPCONSTANTS.OPTIBP_REPORT_COMPONENT);
-        JSONObject secondIndex = component.optJSONObject(2);
-        String valueString = secondIndex.optString(OPTIBPCONSTANTS.OPTIBP_VALUE_STRING);
-        JSONObject valueObject = new JSONObject(valueString);
-        JSONArray returnArray = valueObject.optJSONArray(OPTIBPCONSTANTS.COMPERATIVES);
-        Timber.d("Comparative Object: %s", returnArray.toString());
-        return returnArray != null ? returnArray.toString() : "";
+        if (resultJsonString != null) {
+            JSONObject jsonObject = new JSONObject(resultJsonString);
+            JSONArray result = jsonObject.getJSONArray(OPTIBPCONSTANTS.OPTIBP_REPORT_RESULT);
+            JSONObject resultObject = result.getJSONObject(0);
+            JSONArray component = resultObject.getJSONArray(OPTIBPCONSTANTS.OPTIBP_REPORT_COMPONENT);
+            JSONObject secondIndex = component.optJSONObject(2);
+            String valueString = secondIndex.optString(OPTIBPCONSTANTS.OPTIBP_VALUE_STRING);
+            JSONObject valueObject = new JSONObject(valueString);
+            JSONArray returnArray = valueObject.optJSONArray(OPTIBPCONSTANTS.COMPERATIVES);
+            Timber.d("Comparative Object: %s", returnArray.toString());
+            return returnArray.toString();
+        }
+        return null;
 
     }
 
@@ -325,43 +331,46 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
                 || !optiBPData.has(OPTIBPCONSTANTS.OPTIBP_KEY_CLIENT_OPENSRP_ID)) {
             throw new JSONException(context.getString(R.string.missing_client_info));
         }
+        if (!optiBPData.has(OPTIBPCONSTANTS.CALIBRATION)) {
+            throw new JSONException(context.getString(R.string.calibration_data));
+        }
         if (TextUtils.isEmpty(optiBPData.getString(OPTIBPCONSTANTS.OPTIBP_KEY_CLIENT_ID))
                 || TextUtils.isEmpty(optiBPData.getString(OPTIBPCONSTANTS.OPTIBP_KEY_CLIENT_OPENSRP_ID))) {
             throw new JSONException(context.getString(R.string.missing_client_info));
         }
-        JSONArray optiBPCalibrationData = getCalibrationData(widgetArgs);
-        if (optiBPCalibrationData != null) {
-            optiBPData.put(OPTIBPCONSTANTS.CALIBRATION, optiBPCalibrationData);
-        }
+        JSONArray optiBPCalibrationData = getCalibrationData(widgetArgs, optiBPData.optString(OPTIBPCONSTANTS.CALIBRATION));
+        /***
+         * Removing the key and value to add add extra data
+         */
+        optiBPData.remove(OPTIBPCONSTANTS.CALIBRATION);
+        /***
+         * Adding new calibration data here
+         */
+        optiBPData.put(OPTIBPCONSTANTS.CALIBRATION, optiBPCalibrationData);
         return optiBPData.toString();
     }
 
-    private JSONArray getCalibrationData(WidgetArgs widgetArgs) {
+    private JSONArray getCalibrationData(WidgetArgs widgetArgs, String calibration) {
         try {
-            JSONObject calibrationData = FormUtils.getFieldFromForm(widgetArgs.getFormFragment().getJsonApi().getmJSONObject(), OPTIBPCONSTANTS.BP_USING_OPTIBP_BUTTON);
-            if (calibrationData != null && StringUtils.isNotBlank(calibrationData.toString())) {
-                String valueString = calibrationData.optString(VALUE);
-                if (StringUtils.isBlank(valueString)) {
-                    return null;
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+            df.setTimeZone(TimeZone.getTimeZone(ZoneId.of("Africa/Nairobi")));
+            JSONObject currentHeight = getSingleStepJsonObject(widgetArgs, STEP1, OPTIBPCONSTANTS.HEIGHT);
+            JSONObject currentWeight = getSingleStepJsonObject(widgetArgs, STEP1, OPTIBPCONSTANTS.CURRENTWEIGHT);
+            if (currentHeight != null && currentWeight != null) {
+                JSONArray calibrationArray = new JSONArray();
+                JSONObject calibrationJson = new JSONObject();
+                calibrationJson.put(OPTIBPCONSTANTS.DATE, df.format(new Date()));
+                calibrationJson.put(OPTIBPCONSTANTS.VERSION, 1);
+                calibrationJson.put(OPTIBPCONSTANTS.MODEL, Build.MODEL);
+                calibrationJson.put(OPTIBPCONSTANTS.HEIGHT, Integer.parseInt(currentHeight.optString(VALUE)));
+                calibrationJson.put(OPTIBPCONSTANTS.WEIGHT, Integer.parseInt(currentWeight.optString(VALUE)));
+                if (calibration != null && Utils.checkIfValidJsonArray(calibration)) {
+                    calibrationJson.put(OPTIBPCONSTANTS.COMPERATIVES, new JSONArray(calibration));
+                } else {
+                    calibrationJson.put(OPTIBPCONSTANTS.COMPERATIVES, new JSONArray());
                 }
-                DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-                df.setTimeZone(TimeZone.getTimeZone(ZoneId.of("Africa/Nairobi")));
-                JSONObject currentHeight = getSingleStepJsonObject(widgetArgs, STEP1, OPTIBPCONSTANTS.HEIGHT);
-                JSONObject currentWeight = getSingleStepJsonObject(widgetArgs, STEP1, OPTIBPCONSTANTS.CURRENTWEIGHT);
-                if (currentHeight != null && currentWeight != null) {
-                    JSONArray calibrationArray = new JSONArray();
-                    JSONObject calibrationJson = new JSONObject();
-                    JSONObject comparativesJson = new JSONObject();
-                    calibrationJson.put(OPTIBPCONSTANTS.DATE, df.format(new Date()));
-                    calibrationJson.put(OPTIBPCONSTANTS.VERSION, 1);
-                    calibrationJson.put(OPTIBPCONSTANTS.MODEL, Build.MODEL);
-                    calibrationJson.put(OPTIBPCONSTANTS.HEIGHT, Integer.parseInt(currentHeight.optString(VALUE)));
-                    calibrationJson.put(OPTIBPCONSTANTS.WEIGHT, Integer.parseInt(currentWeight.optString(VALUE)));
-                    JSONArray retrievedCalibrationData = new JSONArray(valueString);
-                    comparativesJson.put(OPTIBPCONSTANTS.COMPERATIVES, retrievedCalibrationData);
-                    calibrationArray.put(calibrationJson);
-                    return calibrationArray;
-                }
+                calibrationArray.put(calibrationJson);
+                return calibrationArray;
             }
         } catch (JSONException e) {
             Timber.e(e);

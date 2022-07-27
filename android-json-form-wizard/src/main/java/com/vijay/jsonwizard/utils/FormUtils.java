@@ -302,12 +302,14 @@ public class FormUtils {
     }
 
 
-    public static JSONObject createOptiBPDataObject(String clientId, String clientOpenSRPId) throws JSONException {
+    public static JSONObject createOptiBPDataObject(String clientId, String clientOpenSRPId, String calibration) throws JSONException {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put(JsonFormConstants.OPTIBPCONSTANTS.OPTIBP_KEY_CLIENT_ID, clientId);
         jsonObject.put(JsonFormConstants.OPTIBPCONSTANTS.OPTIBP_KEY_CLIENT_OPENSRP_ID, clientOpenSRPId);
+        jsonObject.put(JsonFormConstants.OPTIBPCONSTANTS.CALIBRATION, calibration);
         return jsonObject;
     }
+
     public static int getValueFromSpOrDpOrPx(String spOrDpOrPx, Context context) {
         int px = 0;
         if (!TextUtils.isEmpty(spOrDpOrPx)) {

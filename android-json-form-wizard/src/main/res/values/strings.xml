@@ -120,5 +120,6 @@
     <string name="missing_client_info">Missing client info</string>
     <string name="optibp_label">Measure the blood pressure using OptiBP</string>
     <string name="optibp_values_error">No fields defined to populate BP values</string>
+    <string name="calibration_data">Missing calibration Key</string>
 
 </resources>
