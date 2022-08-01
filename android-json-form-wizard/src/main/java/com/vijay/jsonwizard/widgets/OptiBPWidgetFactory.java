@@ -152,6 +152,7 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
                 Timber.w(" ONCLICK WITH JSON %s", jsonObject);
                 Intent intent = new Intent(OPTIBPCONSTANTS.OPTIBP_LAUNCH_INTENT);
                 intent.setType("text/json");
+                Timber.e("OptiBP Calibration Request: %s ", getInputJsonString(context, jsonObject, widgetArgs));
                 intent.putExtra(Intent.EXTRA_TEXT, getInputJsonString(context, jsonObject, widgetArgs));
                 ((Activity) context).startActivityForResult(Intent.createChooser(intent, ""), requestCode);
             } catch (Exception e) {
@@ -203,15 +204,17 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
                                 if (StringUtils.isNotBlank(resultString)) {
                                     writeResult(jsonApi, rootLayout, resultString, widgetArgs);
                                 } else {
-                                    Toast.makeText(context, context.getString(R.string.optibp_unable_to_receive), Toast.LENGTH_SHORT).show();
+                                    Timber.e("JSON Result  %s , Result String  %s", resultJson, resultString);
+                                    Toast.makeText(context, context.getString(R.string.invalid_optibp_data), Toast.LENGTH_SHORT).show();
                                 }
                             } else
-                                Timber.e("NO RESULT FROM OPTIBP APP");
+                                Timber.e("NO RESULT FROM OPTIBP APP finalRequestCode %s, resultCode %s", finalRequestCode, resultCode);
                         } catch (Exception e) {
                             Timber.e(e);
                         }
                     }
                 } else {
+                    Timber.e("final Request code: %s,  ResultCode : %s , Data from OptiBP: %s ", finalRequestCode, resultCode, data);
                     Toast.makeText(context, context.getString(R.string.optibp_unable_to_receive), Toast.LENGTH_SHORT).show();
                 }
             });
@@ -295,7 +298,7 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
             String valueString = secondIndex.optString(OPTIBPCONSTANTS.OPTIBP_VALUE_STRING);
             JSONObject valueObject = new JSONObject(valueString);
             JSONArray returnArray = valueObject.optJSONArray(OPTIBPCONSTANTS.COMPERATIVES);
-            Timber.d("Comparative Object: %s", returnArray.toString());
+            Timber.d("Comparative Array from OPtibp: %s", returnArray.toString());
             return returnArray.toString();
         }
         return null;
