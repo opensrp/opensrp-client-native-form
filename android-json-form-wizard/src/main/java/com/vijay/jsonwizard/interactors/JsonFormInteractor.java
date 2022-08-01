@@ -148,7 +148,7 @@ public class JsonFormInteractor {
         map.put(JsonFormConstants.EXTENDED_RADIO_BUTTON, new ExtendedRadioButtonWidgetFactory());
         map.put(JsonFormConstants.EXPANSION_PANEL, new ExpansionPanelFactory());
         map.put(JsonFormConstants.MULTI_SELECT_LIST, new MultiSelectListFactory());
-        map.put(JsonFormConstants.OptiBPConstants.OPTIBP_WIDGET, new OptiBPWidgetFactory());
+        map.put(JsonFormConstants.OPTIBPCONSTANTS.OPTIBP_WIDGET, new OptiBPWidgetFactory());
 
     }
 

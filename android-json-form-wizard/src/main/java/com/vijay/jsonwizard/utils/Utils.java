@@ -953,6 +953,21 @@ public class Utils {
         stepFields.put(repeatingGroupCountObj);
         return repeatingGroupCountObj;
     }
+    /***
+     *
+     * @param jsonArrayString
+     * @return
+     */
+    public static boolean checkIfValidJsonArray(String jsonArrayString) {
+        if (StringUtils.isNotBlank(jsonArrayString)) {
+            try {
+                return new JSONArray(jsonArrayString).length() > 0;
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        return false;
+    }
 }
 
 

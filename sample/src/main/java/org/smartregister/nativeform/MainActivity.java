@@ -189,12 +189,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         if (jsonObject.getString(KEY).equalsIgnoreCase("optipb_widget1")) {
-                            if (jsonObject.has(JsonFormConstants.OptiBPConstants.OPTIBP_KEY_DATA)) {
-                                jsonObject.remove(JsonFormConstants.OptiBPConstants.OPTIBP_KEY_DATA);
+                            if (jsonObject.has(JsonFormConstants.OPTIBPCONSTANTS.OPTIBP_KEY_DATA)) {
+                                jsonObject.remove(JsonFormConstants.OPTIBPCONSTANTS.OPTIBP_KEY_DATA);
                             }
                             JSONObject optiBPData = FormUtils.createOptiBPDataObject("46ccd2e0-bbec-4e4a-8f73-972a2f1f95ea",
                                     "1272326657");
-                            jsonObject.put(JsonFormConstants.OptiBPConstants.OPTIBP_KEY_DATA, optiBPData);
+                            jsonObject.put(JsonFormConstants.OPTIBPCONSTANTS.OPTIBP_KEY_DATA, optiBPData);
                             break;
                         }
                     }
