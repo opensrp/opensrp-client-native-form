@@ -21,7 +21,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.ShapeDrawable;
-import android.os.Build;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,15 +49,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TimeZone;
 
 import timber.log.Timber;
 
@@ -341,7 +335,7 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
                 || TextUtils.isEmpty(optiBPData.getString(OptibpConstants.OPTIBP_KEY_CLIENT_OPENSRP_ID))) {
             throw new JSONException(context.getString(R.string.missing_client_info));
         }
-        JSONArray optiBPCalibrationData = getCalibrationData(widgetArgs, optiBPData.optString(OptibpConstants.CALIBRATION));
+
         /***
          * Removing the key and value to add add extra data
          */
@@ -349,36 +343,41 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
         /***
          * Adding new calibration data here
          */
-        optiBPData.put(OptibpConstants.CALIBRATION, optiBPCalibrationData);
+        appendHealthData(optiBPData, widgetArgs);
+        optiBPData.put(OptibpConstants.CALIBRATION, getCalibrationData(optiBPData.optString(OptibpConstants.CALIBRATION)));
         return optiBPData.toString();
     }
 
-    private JSONArray getCalibrationData(WidgetArgs widgetArgs, String calibration) {
+    private JSONArray getCalibrationData(String calibration) {
         try {
-            DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-            df.setTimeZone(TimeZone.getTimeZone(ZoneId.of("Africa/Nairobi")));
+            if (StringUtils.isBlank(calibration)) {
+                return null;
+            }
+            JSONArray calibrationArray = new JSONArray();
+            JSONObject calibrationJson = new JSONObject();
+            if (Utils.checkIfValidJsonArray(calibration)) {
+                calibrationJson.put(OptibpConstants.COMPERATIVES, new JSONArray(calibration));
+            } else {
+                calibrationJson.put(OptibpConstants.COMPERATIVES, new JSONArray());
+            }
+            return calibrationArray.put(calibrationJson);
+        } catch (JSONException e) {
+            Timber.e(e);
+            return null;
+        }
+    }
+
+    private void appendHealthData(JSONObject returnObject, WidgetArgs widgetArgs) {
+        try {
             JSONObject currentHeight = getSingleStepJsonObject(widgetArgs, STEP1, OptibpConstants.HEIGHT);
             JSONObject currentWeight = getSingleStepJsonObject(widgetArgs, STEP1, OptibpConstants.CURRENTWEIGHT);
             if (currentHeight != null && currentWeight != null) {
-                JSONArray calibrationArray = new JSONArray();
-                JSONObject calibrationJson = new JSONObject();
-                calibrationJson.put(OptibpConstants.DATE, df.format(new Date()));
-                calibrationJson.put(OptibpConstants.VERSION, 1);
-                calibrationJson.put(OptibpConstants.MODEL, Build.MODEL);
-                calibrationJson.put(OptibpConstants.HEIGHT, Integer.parseInt(currentHeight.optString(VALUE)));
-                calibrationJson.put(OptibpConstants.WEIGHT, Integer.parseInt(currentWeight.optString(VALUE)));
-                if (calibration != null && Utils.checkIfValidJsonArray(calibration)) {
-                    calibrationJson.put(OptibpConstants.COMPERATIVES, new JSONArray(calibration));
-                } else {
-                    calibrationJson.put(OptibpConstants.COMPERATIVES, new JSONArray());
-                }
-                calibrationArray.put(calibrationJson);
-                return calibrationArray;
+                returnObject.put(OptibpConstants.HEIGHT, Integer.parseInt(currentHeight.optString(VALUE)));
+                returnObject.put(OptibpConstants.WEIGHT, Integer.parseInt(currentWeight.optString(VALUE)));
             }
         } catch (JSONException e) {
             Timber.e(e);
         }
-        return null;
     }
 
     private static JSONObject getSingleStepJsonObject(WidgetArgs widgetArgs, String stepName, String key) {
