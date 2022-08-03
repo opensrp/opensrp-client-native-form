@@ -67,7 +67,7 @@ public class OptiBpWidgetFactoryTest extends FactoryTest {
             "        \"read_only\": false,\n" +
             "        \"optibp_data\": {\n" +
             "          \"clientId\": \"sampleClientId\",\n" +
-            "          \"clientOpenSRPId\": \"sampleClientOpenSRPId\"\n" +
+            "          \"clientOpenSRPId\": \"sampleClientOpenSRPId\",\"calibration\":\"\"\n" +
             "        }," +
             "        \"fields_to_use_value\": [\n" +
             "          \"bp_systolic\",\n" +
@@ -375,9 +375,7 @@ public class OptiBpWidgetFactoryTest extends FactoryTest {
         Mockito.doReturn(formFragment).when(widgetArgs).getFormFragment();
         Mockito.doReturn(jsonApi).when(formFragment).getJsonApi();
         Mockito.doReturn(new JSONObject(formString)).when(jsonApi).getmJSONObject();
-
         String inputJson = factorySpy.getInputJsonString(jsonFormActivity, new JSONObject(optiBPWidgetString), widgetArgs);
-
         Assert.assertEquals(inputJson, "{\"clientId\":\"sampleClientId\",\"clientOpenSRPId\":\"sampleClientOpenSRPId\",\"calibration\":[{\"date\":\"2019-03-26T11:20:33+0800\",\"model\":\"device model\",\"height\":70,\"weight\":180,\"comperatives\":[{\"systolic\":120,\"diastolic\":80,\"cuffSystolic\":120,\"cuffDiastolic\":80,\"features\":{\"$key\":\"0.2f\"}}]}]}");
     }
 
