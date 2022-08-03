@@ -387,8 +387,8 @@ public class OptiBpWidgetFactoryTest extends FactoryTest {
         OptiBPWidgetFactory factorySpy = Mockito.spy(factory);
         Assert.assertNotNull(factorySpy);
 
-        String systolic = factorySpy.getBPValue(resultJson, OptiBPWidgetFactory.BPFieldType.SYSTOLIC_BP);
-        String diastolic = factorySpy.getBPValue(resultJson, OptiBPWidgetFactory.BPFieldType.DIASTOLIC_BP);
+        String systolic = factorySpy.getBPValue(resultJson, OptiBPWidgetFactory.BpFieldType.SYSTOLIC_BP);
+        String diastolic = factorySpy.getBPValue(resultJson, OptiBPWidgetFactory.BpFieldType.DIASTOLIC_BP);
 
         Assert.assertEquals(systolic, "110");
         Assert.assertEquals(diastolic, "70");
