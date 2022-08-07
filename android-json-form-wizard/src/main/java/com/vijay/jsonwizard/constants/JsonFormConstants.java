@@ -237,6 +237,7 @@ public class JsonFormConstants {
     public static final String PROPERTIES_FILE_EXTENSION = ".properties";
     public static final String JSON_FILE_EXTENSION = ".json";
     public static final String CLIENT_FORM_ASSET_VERSION = "base version";
+    public static final String TRANSLATION_TEXT = "translation_text";
 
     public interface MultiSelectUtils {
         String IS_HEADER = "isHeader";
@@ -319,6 +320,7 @@ public class JsonFormConstants {
         public static final int OPTIBP_REPEAT_REQUEST_CODE = 302;
         public static final String OPTIBP_REPORT_RESULT = "result";
         public static final String OPTIBP_REPORT_COMPONENT = "component";
+        public static final String OPTIBP_VALUE_STRING = "valueString";
         public static final String OPTIBP_REPORT_VALUE_QUANTITY = "valueQuantity";
         public static final String OPTIBP_LAUNCH_INTENT = "android.intent.action.BLOOD_MEASURE";
         public static final String OPTIBP_KEY_DATA = "optibp_data";
@@ -335,9 +337,7 @@ public class JsonFormConstants {
         public static final String MODEL = "model";
         public static final String HEIGHT = "height";
         public static final String WEIGHT = "weight";
-        public static final String COMPERATIVES = "comperatives";
         public static final String CURRENTWEIGHT = "current_weight";
-        public static final String OPTIBP_VALUE_STRING = "valueString";
 
     }
 

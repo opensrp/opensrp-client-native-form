@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.rey.material.widget.Button;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.WidgetArgs;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
@@ -21,8 +22,10 @@ import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.robolectric.RuntimeEnvironment;
 
 import java.util.List;
 
@@ -229,7 +232,7 @@ public class OptiBpWidgetFactoryTest extends FactoryTest {
             "        ]," +
             "        \"optibp_data\": {\n" +
             "          \"clientId\": \"sampleClientId\",\n" +
-            "          \"clientOpenSRPId\": \"sampleClientOpenSRPId\"\n" +
+            "          \"clientOpenSRPId\": \"sampleClientOpenSRPId\",\"calibration\":\"\"\n" +
             "        }\n" +
             "      },\n" +
             "      {\n" +
@@ -397,13 +400,11 @@ public class OptiBpWidgetFactoryTest extends FactoryTest {
         Assert.assertNotNull(factory);
         OptiBPWidgetFactory factorySpy = Mockito.spy(factory);
         Assert.assertNotNull(factorySpy);
-
         EditText sbp = Mockito.mock(EditText.class);
         EditText dbp = Mockito.mock(EditText.class);
         widgetArgs=Mockito.mock(WidgetArgs.class);
-        Mockito.doReturn(new JSONObject(formString)).when(widgetArgs).getFormFragment().getJsonApi().getmJSONObject();
+        Mockito.doReturn(new JSONObject(formString)).when(widgetArgs).getFormFragment().getJsonApi().getStep(ArgumentMatchers.anyString()).optString(JsonFormConstants.FIELDS);
         factorySpy.populateBPEditTextValues(resultJson, sbp, dbp,widgetArgs);
-
         Mockito.verify(sbp).setEnabled(false);
         Mockito.verify(dbp).setEnabled(false);
     }
