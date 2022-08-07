@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.rey.material.widget.Button;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.WidgetArgs;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
@@ -21,6 +22,7 @@ import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.robolectric.RuntimeEnvironment;
@@ -230,7 +232,7 @@ public class OptiBpWidgetFactoryTest extends FactoryTest {
             "        ]," +
             "        \"optibp_data\": {\n" +
             "          \"clientId\": \"sampleClientId\",\n" +
-            "          \"clientOpenSRPId\": \"sampleClientOpenSRPId\"\n" +
+            "          \"clientOpenSRPId\": \"sampleClientOpenSRPId\",\"calibration\":\"\"\n" +
             "        }\n" +
             "      },\n" +
             "      {\n" +
@@ -376,9 +378,7 @@ public class OptiBpWidgetFactoryTest extends FactoryTest {
         Mockito.doReturn(formFragment).when(widgetArgs).getFormFragment();
         Mockito.doReturn(jsonApi).when(formFragment).getJsonApi();
         Mockito.doReturn(new JSONObject(formString)).when(jsonApi).getmJSONObject();
-
-        String inputJson = factorySpy.getInputJsonString(RuntimeEnvironment.application.getApplicationContext(), new JSONObject(optiBPWidgetString), widgetArgs);
-
+        String inputJson = factorySpy.getInputJsonString(jsonFormActivity, new JSONObject(optiBPWidgetString), widgetArgs);
         Assert.assertEquals(inputJson, "{\"clientId\":\"sampleClientId\",\"clientOpenSRPId\":\"sampleClientOpenSRPId\",\"calibration\":[{\"date\":\"2019-03-26T11:20:33+0800\",\"model\":\"device model\",\"height\":70,\"weight\":180,\"comperatives\":[{\"systolic\":120,\"diastolic\":80,\"cuffSystolic\":120,\"cuffDiastolic\":80,\"features\":{\"$key\":\"0.2f\"}}]}]}");
     }
 
@@ -402,6 +402,8 @@ public class OptiBpWidgetFactoryTest extends FactoryTest {
         Assert.assertNotNull(factorySpy);
         EditText sbp = Mockito.mock(EditText.class);
         EditText dbp = Mockito.mock(EditText.class);
+        widgetArgs=Mockito.mock(WidgetArgs.class);
+        Mockito.doReturn(new JSONObject(formString)).when(widgetArgs).getFormFragment().getJsonApi().getStep(ArgumentMatchers.anyString()).optString(JsonFormConstants.FIELDS);
         factorySpy.populateBPEditTextValues(resultJson, sbp, dbp,widgetArgs);
         Mockito.verify(sbp).setEnabled(false);
         Mockito.verify(dbp).setEnabled(false);

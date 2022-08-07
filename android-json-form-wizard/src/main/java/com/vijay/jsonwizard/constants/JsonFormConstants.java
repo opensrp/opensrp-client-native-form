@@ -314,7 +314,7 @@ public class JsonFormConstants {
         public static final int RC_HANDLE_GMS = 9001;
     }
 
-    public static class OPTIBPCONSTANTS {
+    public static class OptibpConstants {
         public static final String OPTIBP_WIDGET = "optibp";
         public static final int OPTIBP_REQUEST_CODE = 301;
         public static final int OPTIBP_REPEAT_REQUEST_CODE = 302;
@@ -337,7 +337,6 @@ public class JsonFormConstants {
         public static final String MODEL = "model";
         public static final String HEIGHT = "height";
         public static final String WEIGHT = "weight";
-        public static final String COMPERATIVES = "comperatives";
         public static final String CURRENTWEIGHT = "current_weight";
 
     }

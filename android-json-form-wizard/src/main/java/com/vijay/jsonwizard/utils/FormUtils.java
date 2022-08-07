@@ -304,9 +304,9 @@ public class FormUtils {
 
     public static JSONObject createOptiBPDataObject(String clientId, String clientOpenSRPId, String calibration) throws JSONException {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put(JsonFormConstants.OPTIBPCONSTANTS.OPTIBP_KEY_CLIENT_ID, clientId);
-        jsonObject.put(JsonFormConstants.OPTIBPCONSTANTS.OPTIBP_KEY_CLIENT_OPENSRP_ID, clientOpenSRPId);
-        jsonObject.put(JsonFormConstants.OPTIBPCONSTANTS.CALIBRATION, calibration);
+        jsonObject.put(JsonFormConstants.OptibpConstants.OPTIBP_KEY_CLIENT_ID, clientId);
+        jsonObject.put(JsonFormConstants.OptibpConstants.OPTIBP_KEY_CLIENT_OPENSRP_ID, clientOpenSRPId);
+        jsonObject.put(JsonFormConstants.OptibpConstants.CALIBRATION, calibration);
         return jsonObject;
     }
 
