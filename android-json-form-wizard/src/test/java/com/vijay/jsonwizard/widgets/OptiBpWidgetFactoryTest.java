@@ -17,6 +17,7 @@ import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
@@ -371,13 +372,11 @@ public class OptiBpWidgetFactoryTest extends FactoryTest {
         Assert.assertNotNull(factory);
         OptiBPWidgetFactory factorySpy = Mockito.spy(factory);
         Assert.assertNotNull(factorySpy);
-
         WidgetArgs widgetArgs = Mockito.mock(WidgetArgs.class);
         JsonFormFragment formFragment = Mockito.mock(JsonFormFragment.class);
         JsonApi jsonApi = Mockito.mock(JsonApi.class);
         Mockito.doReturn(formFragment).when(widgetArgs).getFormFragment();
         Mockito.doReturn(jsonApi).when(formFragment).getJsonApi();
-        Mockito.doReturn(new JSONObject(formString)).when(jsonApi).getmJSONObject();
         String inputJson = factorySpy.getInputJsonString(jsonFormActivity, new JSONObject(optiBPWidgetString), widgetArgs);
         Assert.assertEquals(inputJson, "{\"clientId\":\"sampleClientId\",\"clientOpenSRPId\":\"sampleClientOpenSRPId\",\"calibration\":[{\"date\":\"2019-03-26T11:20:33+0800\",\"model\":\"device model\",\"height\":70,\"weight\":180,\"comperatives\":[{\"systolic\":120,\"diastolic\":80,\"cuffSystolic\":120,\"cuffDiastolic\":80,\"features\":{\"$key\":\"0.2f\"}}]}]}");
     }
@@ -387,10 +386,8 @@ public class OptiBpWidgetFactoryTest extends FactoryTest {
         Assert.assertNotNull(factory);
         OptiBPWidgetFactory factorySpy = Mockito.spy(factory);
         Assert.assertNotNull(factorySpy);
-
         String systolic = factorySpy.getBPValue(resultJson, OptiBPWidgetFactory.BpFieldType.SYSTOLIC_BP);
         String diastolic = factorySpy.getBPValue(resultJson, OptiBPWidgetFactory.BpFieldType.DIASTOLIC_BP);
-
         Assert.assertEquals(systolic, "110");
         Assert.assertEquals(diastolic, "70");
     }
@@ -403,7 +400,6 @@ public class OptiBpWidgetFactoryTest extends FactoryTest {
         EditText sbp = Mockito.mock(EditText.class);
         EditText dbp = Mockito.mock(EditText.class);
         widgetArgs=Mockito.mock(WidgetArgs.class);
-        Mockito.doReturn(new JSONObject(formString)).when(widgetArgs).getFormFragment().getJsonApi().getStep(ArgumentMatchers.anyString()).optString(JsonFormConstants.FIELDS);
         factorySpy.populateBPEditTextValues(resultJson, sbp, dbp,widgetArgs);
         Mockito.verify(sbp).setEnabled(false);
         Mockito.verify(dbp).setEnabled(false);

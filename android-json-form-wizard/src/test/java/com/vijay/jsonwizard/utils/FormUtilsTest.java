@@ -730,9 +730,9 @@ public class FormUtilsTest extends BaseTest {
 
     @Test
     public void testCreateOptiBPDataObject() throws JSONException {
-        JSONObject inputJson = FormUtils.createOptiBPDataObject("clientId", "clientOpenSRPId");
+        JSONObject inputJson = FormUtils.createOptiBPDataObject("clientId", "clientOpenSRPId","");
 
-        Assert.assertEquals(inputJson.toString(), "{\"clientId\":\"clientId\",\"clientOpenSRPId\":\"clientOpenSRPId\"}");
+        Assert.assertEquals(inputJson.toString(), "{\"clientId\":\"clientId\",\"clientOpenSRPId\":\"clientOpenSRPId\",\"calibration\":\"\"}");
     }
 
     @Test
