@@ -1,7 +1,6 @@
 package com.vijay.jsonwizard.customviews;
 
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -22,7 +21,7 @@ public class NumberSelectorAdapterTest extends BaseTest {
     @Mock
     private View view;
     @Mock
-    private LayoutInflater layoutInflater;
+
     private Context context;
     private final List<String> numbers = List.of("1", "2", "3", "4");
     private NumberSelectorAdapter numberSelectorAdapter;
@@ -30,7 +29,6 @@ public class NumberSelectorAdapterTest extends BaseTest {
 
     @Before
     public void setUp() {
-        layoutInflater = Mockito.mock(LayoutInflater.class);
         context = RuntimeEnvironment.application.getApplicationContext();
         view = Mockito.mock(View.class);
         numberSelectorAdapter = new NumberSelectorAdapter(context, numbers);
