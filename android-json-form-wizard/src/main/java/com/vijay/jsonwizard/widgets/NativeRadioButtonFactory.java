@@ -1,3 +1,4 @@
+
 package com.vijay.jsonwizard.widgets;
 
 import static com.vijay.jsonwizard.widgets.DatePickerFactory.DATE_FORMAT;
@@ -10,7 +11,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -66,6 +66,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
     private static final String TAG = NativeRadioButtonFactory.class.getCanonicalName();
     private final FormUtils formUtils = new FormUtils();
+    private final CustomTextViewClickListener customTextViewClickListener = new CustomTextViewClickListener();
     private RadioButton radioButton;
     private CustomTextView extraInfoTextView;
     private CustomTextView specifyTextView;
@@ -74,7 +75,6 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
     private JsonFormFragment formFragment;
     private String stepName;
     private JSONArray canvasIds;
-    private final CustomTextViewClickListener customTextViewClickListener = new CustomTextViewClickListener();
 
     public static void showDateDialog(View view) {
         Context context = (Context) view.getTag(R.id.specify_context);
@@ -110,7 +110,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
                 }
 
             } catch (JSONException e) {
-                Log.e(TAG, e.getMessage(), e);
+                Timber.e(e);
             }
 
         }
@@ -168,7 +168,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
                                     assignHiddenDateValue(widget, calendarDate);
                                 }
                             } catch (JSONException e) {
-                                Log.i(TAG, Log.getStackTraceString(e));
+                                Timber.e(e);
                             }
                         }
                     }
@@ -223,7 +223,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         try {
             widget.put(JsonFormConstants.VALUE, DATE_FORMAT.format(calendarDate.getTime()));
         } catch (Exception e) {
-            Log.i(TAG, Log.getStackTraceString(e));
+            Timber.e(e);
         }
     }
 
@@ -568,6 +568,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         final RadioButton radioButton = rootLayout.findViewById(R.id.mainRadioButton);
         if (radioButton != null) {
             setRadioButtonTags(rootLayout, jsonObject, item, extraInfo, radioButton);
+
             String valueString  = jsonObject.optString(JsonFormConstants.VALUE);
             if(valueString != null && valueString.startsWith("{"))
             {
@@ -630,6 +631,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         }
 
     }
+
 
     private void setRadioButtonTags(RelativeLayout rootLayout, JSONObject jsonObject, JSONObject item, String extraInfo,
                                     RadioButton radioButton) throws JSONException {
@@ -881,15 +883,6 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         this.radioButton = radioButton;
     }
 
-    private class CustomTextViewClickListener implements View.OnClickListener {
-        @Override
-        public void onClick(View view) {
-            RadioButton radioButton = (RadioButton) view.getTag(R.id.native_radio_button);
-            radioButton.setChecked(false);
-            radioButton.performClick();
-        }
-    }
-
     @Override
     @NonNull
     public Set<String> getCustomTranslatableWidgetFields() {
@@ -899,5 +892,24 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         customTranslatableWidgetFields.add(JsonFormConstants.LABEL_INFO_TEXT);
         customTranslatableWidgetFields.add(JsonFormConstants.LABEL_INFO_TITLE);
         return customTranslatableWidgetFields;
+    }
+
+    public void cleanUp() {
+        this.context = null;
+        this.formFragment = null;
+        this.radioButton = null;
+        this.extraInfoTextView = null;
+        this.specifyTextView = null;
+        this.reasonsTextView = null;
+    }
+
+
+    private class CustomTextViewClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            RadioButton radioButton = (RadioButton) view.getTag(R.id.native_radio_button);
+            radioButton.setChecked(false);
+            radioButton.performClick();
+        }
     }
 }

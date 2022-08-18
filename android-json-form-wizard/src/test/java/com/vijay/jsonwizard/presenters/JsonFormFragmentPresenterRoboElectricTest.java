@@ -729,4 +729,11 @@ public class JsonFormFragmentPresenterRoboElectricTest extends BaseTest {
         assertFalse(expectedField.optBoolean(JsonFormConstants.READ_ONLY));
     }
 
+    @Test
+    public void testCleanUp() {
+        presenter.cleanUp();
+        boolean cleanUpAndExit = Whitebox.getInternalState(presenter, "cleanupAndExit");
+        assertTrue(cleanUpAndExit);
+    }
+
 }
