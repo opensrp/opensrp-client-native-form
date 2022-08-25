@@ -1,8 +1,19 @@
 package com.vijay.jsonwizard.task;
 
+import static com.vijay.jsonwizard.constants.JsonFormConstants.CALCULATION;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.FIELDS;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.RELEVANCE;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.STEPNAME;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP_TITLE;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.TYPE;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUE;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.V_RELATIVE_MAX;
+import static com.vijay.jsonwizard.utils.Utils.hideProgressDialog;
+import static com.vijay.jsonwizard.utils.Utils.showProgressDialog;
+
 import android.content.Context;
 import android.graphics.Typeface;
-import android.os.AsyncTask;
 import android.text.SpannableString;
 import android.text.style.StyleSpan;
 import android.view.View;
@@ -20,6 +31,7 @@ import com.vijay.jsonwizard.domain.WidgetArgs;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.FormWidgetFactory;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.utils.AppExecutors;
 import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 
@@ -38,19 +50,7 @@ import java.util.UUID;
 
 import timber.log.Timber;
 
-import static com.vijay.jsonwizard.constants.JsonFormConstants.CALCULATION;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.FIELDS;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.RELEVANCE;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.STEPNAME;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP_TITLE;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.TYPE;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUE;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.V_RELATIVE_MAX;
-import static com.vijay.jsonwizard.utils.Utils.hideProgressDialog;
-import static com.vijay.jsonwizard.utils.Utils.showProgressDialog;
-
-public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> {
+public class AttachRepeatingGroupTask {
 
     protected final int REPEATING_GROUP_LABEL_TEXT_COLOR = R.color.black;
     private final ViewParent parent;
@@ -64,6 +64,7 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
     private Map<String, List<Map<String, Object>>> rulesFileMap = new HashMap<>();
     private Map<Integer, String> repeatingGroupLayouts;
     private int currNumRepeatingGroups;
+    private final AppExecutors appExecutors;
 
     public AttachRepeatingGroupTask(final ViewParent parent, int numRepeatingGroups, Map<Integer, String> repeatingGroupLayouts, WidgetArgs widgetArgs, ImageButton doneButton) {
         this.rootLayout = (LinearLayout) parent;
@@ -73,28 +74,34 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         this.doneButton = doneButton;
         this.repeatingGroupLayouts = repeatingGroupLayouts;
         currNumRepeatingGroups = ((ViewGroup) parent).getChildCount() - 1;
+        appExecutors = widgetArgs.getFormFragment().getJsonApi().getAppExecutors();
     }
 
-    @Override
+    public void init() {
+        appExecutors.mainThread().execute(this::onPreExecute);
+        appExecutors.diskIO().execute(() -> {
+            this.updateRepeatInBackground();
+            appExecutors.mainThread().execute(this::onPostExecute);
+        });
+        appExecutors.mainThread().execute(this::onCancelled);
+
+    }
+
+
     protected void onPreExecute() {
         showProgressDialog(R.string.please_wait_title, R.string.creating_repeating_group_message, widgetArgs.getFormFragment().getContext());
     }
 
-    @Override
-    protected List<View> doInBackground(Void... voids) {
+    protected List<View> updateRepeatInBackground() {
         diff = numRepeatingGroups - currNumRepeatingGroups;
         for (int i = 0; i < diff; i++) {
             try {
-
                 repeatingGroups.add(buildRepeatingGroupLayout(parent));
-
             } catch (Exception e) {
                 Timber.e(e);
             }
         }
-
         updateRepeatingGrpCountObject();
-
         return repeatingGroups;
     }
 
@@ -109,11 +116,9 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         }
     }
 
-    @Override
-    protected void onPostExecute(List<View> result) {
+    protected void onPostExecute() {
         if (diff < 0) {
             try {
-
                 JSONObject step = ((JsonApi) widgetArgs.getContext()).getmJSONObject().getJSONObject(widgetArgs.getStepName());
                 JSONArray fields = step.getJSONArray(FIELDS);
                 int currNumRepeatingGroups = rootLayout.getChildCount() - 1;
@@ -165,18 +170,15 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
 
         hideProgressDialog();
         doneButton.setImageResource(R.drawable.ic_done_green);
-
         //for validation
         validationCleanUp();
     }
 
     private void validationCleanUp() {
         doneButton.setTag(R.id.is_repeating_group_generated, true);
-
         LinearLayout referenceLayout = (LinearLayout) ((LinearLayout) parent).getChildAt(0);
         MaterialEditText materialEditText = (MaterialEditText) referenceLayout.getChildAt(0);
         materialEditText.setError(null);
-
         Map<String, ValidationStatus> validationStatusMap = widgetArgs.getFormFragment().getJsonApi().getInvalidFields();
         if (validationStatusMap != null) {
             String fieldKey = Utils.getFieldKeyPrefix(widgetArgs.getStepName(), widgetArgs.getFormFragment().getPresenter().getStepTitle()) + JsonFormConstants.REFERENCE_EDIT_TEXT;
@@ -186,20 +188,16 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
 
     private LinearLayout buildRepeatingGroupLayout(final ViewParent parent) throws Exception {
         Context context = widgetArgs.getContext();
-
         LinearLayout repeatingGroup = new LinearLayout(context);
         repeatingGroup.setLayoutParams(WIDTH_MATCH_PARENT_HEIGHT_WRAP_CONTENT);
         repeatingGroup.setOrientation(LinearLayout.VERTICAL);
-
         LinearLayout rootLayout = (LinearLayout) ((LinearLayout) parent).getChildAt(0);
         EditText referenceEditText = (EditText) rootLayout.getChildAt(0);
         TextView repeatingGroupLabel = new TextView(context);
         if (widgetArgs.getJsonObject().optBoolean(JsonFormConstants.RepeatingGroupFactory.SHOW_GROUP_LABEL, true)) {
             formatRepeatingGroupLabelText(referenceEditText, repeatingGroupLabel, context);
         }
-
         repeatingGroup.addView(repeatingGroupLabel);
-
         JSONArray repeatingGroupJson = new JSONArray(repeatingGroupLayouts.get(((LinearLayout) parent).getId()));
         String groupUniqueId = UUID.randomUUID().toString().replace("-", "");
         for (int i = 0; i < repeatingGroupJson.length(); i++) {
@@ -255,7 +253,6 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         }
     }
 
-    @Override
     protected void onCancelled() {
         hideProgressDialog();
     }

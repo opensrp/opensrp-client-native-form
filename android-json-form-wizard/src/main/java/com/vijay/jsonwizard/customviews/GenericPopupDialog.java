@@ -89,51 +89,49 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
                     "The Context is not set. Did you forget to set context with Generic Dialog setContext method?");
         }
 
-        getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
+        getJsonApi().getAppExecutors().diskIO().execute(() -> {
+            getJsonApi().getAppExecutors().mainThread.execute(()->{});
 
-                if (isDetached()) {
-                    return;
-                }
-                // support translation of sub-forms
-                // support translation of sub-forms
-                Intent activityIntent = getActivity().getIntent();
-                translateSubForm = activityIntent != null && activityIntent.hasExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION) ?
-                        activityIntent.getBooleanExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, false) :
-                        NativeFormLibrary.getInstance().isPerformFormTranslation();
-
-                try {
-                    setMainFormFields(formUtils.getFormFields(getStepName(), context));
-                    loadPartialSecondaryValues();
-                    createSecondaryValuesMap();
-
-                    loadSubForms();
-
-                    getJsonApi().updateGenericPopupSecondaryValues(specifyContent, stepName);
-                } catch (JSONException e) {
-                    Timber.e(e, " --> onCreate");
-                }
-
-                final List<View> views = initiateViews();
-                if (isDetached()) {
-                    return;
-                }
-                getJsonApi().initializeDependencyMaps();
-                getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (isDetached()) {
-                            return;
-                        }
-                        setViewList(views);
-                        getJsonApi().invokeRefreshLogic(null, true, null, null, getStepName(), false);
-                        if (getDialogView() != null) {
-                            addWidgetViews(getDialogView());
-                        }
-                    }
-                });
+            if (isDetached()) {
+                return;
             }
+            // support translation of sub-forms
+            // support translation of sub-forms
+            Intent activityIntent = getActivity().getIntent();
+            translateSubForm = activityIntent != null && activityIntent.hasExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION) ?
+                    activityIntent.getBooleanExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, false) :
+                    NativeFormLibrary.getInstance().isPerformFormTranslation();
+
+            try {
+                setMainFormFields(formUtils.getFormFields(getStepName(), context));
+                loadPartialSecondaryValues();
+                createSecondaryValuesMap();
+
+                loadSubForms();
+
+                getJsonApi().updateGenericPopupSecondaryValues(specifyContent, stepName);
+            } catch (JSONException e) {
+                Timber.e(e, " --> onCreate");
+            }
+
+            final List<View> views = initiateViews();
+            if (isDetached()) {
+                return;
+            }
+            getJsonApi().initializeDependencyMaps();
+            getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
+                @Override
+                public void run() {
+                    if (isDetached()) {
+                        return;
+                    }
+                    setViewList(views);
+                    getJsonApi().invokeRefreshLogic(null, true, null, null, getStepName(), false);
+                    if (getDialogView() != null) {
+                        addWidgetViews(getDialogView());
+                    }
+                }
+            });
         });
     }
 

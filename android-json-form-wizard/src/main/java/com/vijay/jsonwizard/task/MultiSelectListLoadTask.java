@@ -79,12 +79,7 @@ public class MultiSelectListLoadTask {
                 }
             }
 
-            appExecutors.mainThread().execute(new Runnable() {
-                @Override
-                public void run() {
-                    onPostExecute(multiSelectItems);
-                }
-            });
+            appExecutors.mainThread().execute(() -> onPostExecute(multiSelectItems));
         });
     }
 
