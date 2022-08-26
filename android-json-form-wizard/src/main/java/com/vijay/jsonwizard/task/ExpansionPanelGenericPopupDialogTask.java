@@ -38,7 +38,7 @@ public class ExpansionPanelGenericPopupDialogTask  {
     }
 
    public void init(){
-       appExecutors=new JsonFormFragment().getJsonApi().getAppExecutors();
+       appExecutors=new AppExecutors();
        appExecutors.mainThread().execute(this::onPreExecute);
        appExecutors.diskIO().execute(this::processViewOnBackground);
     }
