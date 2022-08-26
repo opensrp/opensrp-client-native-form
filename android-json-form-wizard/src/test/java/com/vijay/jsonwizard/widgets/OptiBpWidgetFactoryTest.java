@@ -60,25 +60,140 @@ public class OptiBpWidgetFactoryTest extends FactoryTest {
     WidgetArgs widgetArgs;
 
     private final String optiBPWidgetString = "{\n" +
-            "        \"key\": \"optipb_widget1\",\n" +
-            "        \"openmrs_entity_parent\": \"\",\n" +
-            "        \"openmrs_entity\": \"\",\n" +
-            "        \"openmrs_entity_id\": \"\",\n" +
-            "        \"type\": \"optibp\",\n" +
-            "        \"label\": \"Measure the blood pressure using OptiBP\",\n" +
-            "        \"optibp_button_bg_color\": \"#d32f2f\",\n" +
-            "        \"optibp_button_text_color\": \"#FFFFFF\",\n" +
-            "        \"read_only\": false,\n" +
-            "        \"optibp_data\": {\n" +
-            "          \"clientId\": \"sampleClientId\",\n" +
-            "          \"clientOpenSRPId\": \"sampleClientOpenSRPId\",\"calibration\":\"\"\n" +
-            "        }," +
-            "        \"fields_to_use_value\": [\n" +
-            "          \"bp_systolic\",\n" +
-            "          \"bp_diastolic\"\n" +
-            "        ]" +
-            "      }";
+            "            \"key\":\"optipb_widget1\",\n" +
+            "            \"openmrs_entity_parent\":\"\",\n" +
+            "            \"openmrs_entity\":\"\",\n" +
+            "            \"openmrs_entity_id\":\"\",\n" +
+            "            \"type\":\"optibp\",\n" +
+            "            \"label\":\"Measure the blood pressure using OptiBP\",\n" +
+            "            \"optibp_button_bg_color\":\"#d32f2f\",\n" +
+            "            \"optibp_button_text_color\":\"#FFFFFF\",\n" +
+            "            \"read_only\":false,\n" +
+            "            \"fields_to_use_value\":[\n" +
+            "               \"bp_systolic\",\n" +
+            "               \"bp_diastolic\"\n" +
+            "            ],\n" +
+            "            \"optibp_data\":{\n" +
+            "               \"clientId\":\"sampleClientId\",\n" +
+            "               \"clientOpenSRPId\":\"sampleClientOpenSRPId\",\n" +
+            "               \"calibration\":\"\"\n" +
+            "            }\n" +
+            "}";
 
+    private final String step1Json="{\n" +
+            "   \"title\":\"OptiBp Widget Demo\",\n" +
+            "   \"fields\":[\n" +
+            "      {\n" +
+            "         \"key\":\"enabled_label\",\n" +
+            "         \"type\":\"label\",\n" +
+            "         \"text\":\"OptiBP Scan\",\n" +
+            "         \"hint_on_text\":false,\n" +
+            "         \"text_color\":\"#FFC100\",\n" +
+            "         \"openmrs_entity_parent\":\"\",\n" +
+            "         \"openmrs_entity\":\"\",\n" +
+            "         \"openmrs_entity_id\":\"\",\n" +
+            "         \"label_info_text\":\"Checking out the functionality for OptiBP widget\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "         \"key\":\"bp_systolic_label\",\n" +
+            "         \"type\":\"label\",\n" +
+            "         \"label_text_style\":\"bold\",\n" +
+            "         \"text\":\"Systolic blood pressure (SBP) (mmHg)\",\n" +
+            "         \"text_color\":\"#000000\",\n" +
+            "         \"v_required\":{\n" +
+            "            \"value\":true\n" +
+            "         }\n" +
+            "      },\n" +
+            "      {\n" +
+            "         \"key\":\"bp_systolic\",\n" +
+            "         \"openmrs_entity_parent\":\"\",\n" +
+            "         \"openmrs_entity\":\"\",\n" +
+            "         \"openmrs_entity_id\":\"5090\",\n" +
+            "         \"type\":\"normal_edit_text\",\n" +
+            "         \"edit_text_style\":\"bordered\",\n" +
+            "         \"edit_type\":\"number\",\n" +
+            "         \"v_required\":{\n" +
+            "            \"value\":\"true\",\n" +
+            "            \"err\":\"Please enter BP systolic value\"\n" +
+            "         },\n" +
+            "         \"v_numeric\":{\n" +
+            "            \"value\":\"true\",\n" +
+            "            \"err\":\"\"\n" +
+            "         }\n" +
+            "      },\n" +
+            "      {\n" +
+            "         \"key\":\"spacer\",\n" +
+            "         \"openmrs_entity_parent\":\"\",\n" +
+            "         \"openmrs_entity\":\"\",\n" +
+            "         \"openmrs_entity_id\":\"spacer\",\n" +
+            "         \"type\":\"spacer\",\n" +
+            "         \"spacer_height\":\"10sp\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "         \"key\":\"bp_diastolic_label\",\n" +
+            "         \"type\":\"label\",\n" +
+            "         \"label_text_style\":\"bold\",\n" +
+            "         \"text\":\"Diastolic blood pressure (DBP) (mmHg)\",\n" +
+            "         \"text_color\":\"#000000\",\n" +
+            "         \"v_required\":{\n" +
+            "            \"value\":true\n" +
+            "         }\n" +
+            "      },\n" +
+            "      {\n" +
+            "         \"key\":\"bp_diastolic\",\n" +
+            "         \"openmrs_entity_parent\":\"\",\n" +
+            "         \"openmrs_entity\":\"\",\n" +
+            "         \"openmrs_entity_id\":\"5089\",\n" +
+            "         \"type\":\"normal_edit_text\",\n" +
+            "         \"edit_text_style\":\"bordered\",\n" +
+            "         \"edit_type\":\"number\",\n" +
+            "         \"v_numeric\":{\n" +
+            "            \"value\":\"true\",\n" +
+            "            \"err\":\"\"\n" +
+            "         },\n" +
+            "         \"v_required\":{\n" +
+            "            \"value\":\"true\",\n" +
+            "            \"err\":\"Please enter the BP diastolic value\"\n" +
+            "         }\n" +
+            "      },\n" +
+            "      {\n" +
+            "         \"key\":\"spacer\",\n" +
+            "         \"openmrs_entity_parent\":\"\",\n" +
+            "         \"openmrs_entity\":\"\",\n" +
+            "         \"openmrs_entity_id\":\"spacer\",\n" +
+            "         \"type\":\"spacer\",\n" +
+            "         \"spacer_height\":\"10sp\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "         \"key\":\"optipb_widget1\",\n" +
+            "         \"openmrs_entity_parent\":\"\",\n" +
+            "         \"openmrs_entity\":\"\",\n" +
+            "         \"openmrs_entity_id\":\"\",\n" +
+            "         \"type\":\"optibp\",\n" +
+            "         \"label\":\"Measure the blood pressure using OptiBP\",\n" +
+            "         \"optibp_button_bg_color\":\"#d32f2f\",\n" +
+            "         \"optibp_button_text_color\":\"#FFFFFF\",\n" +
+            "         \"read_only\":false,\n" +
+            "         \"fields_to_use_value\":[\n" +
+            "            \"bp_systolic\",\n" +
+            "            \"bp_diastolic\"\n" +
+            "         ],\n" +
+            "         \"optibp_data\":{\n" +
+            "            \"clientId\":\"sampleClientId\",\n" +
+            "            \"clientOpenSRPId\":\"sampleClientOpenSRPId\",\n" +
+            "            \"calibration\":\"\"\n" +
+            "         }\n" +
+            "      },\n" +
+            "      {\n" +
+            "         \"key\":\"optibp_client_calibration_data\",\n" +
+            "         \"openmrs_entity_parent\":\"\",\n" +
+            "         \"openmrs_entity\":\"\",\n" +
+            "         \"openmrs_entity_id\":\"\",\n" +
+            "         \"type\":\"hidden\",\n" +
+            "         \"value\":\"[{\\\"date\\\":\\\"2019-03-26T11:20:33+0800\\\",\\\"model\\\":\\\"device model\\\",\\\"height\\\":70,\\\"weight\\\":180,\\\"comperatives\\\":[{\\\"systolic\\\":120,\\\"diastolic\\\":80,\\\"cuffSystolic\\\":120,\\\"cuffDiastolic\\\":80,\\\"features\\\":{\\\"$key\\\":\\\"0.2f\\\"}}]}]\"\n" +
+            "      }\n" +
+            "   ]\n" +
+            "}";
     private final String formString = "{\n" +
             "  \"show_errors_on_submit\": true,\n" +
             "  \"encounter_type\": \"OptiBP Demo\",\n" +
@@ -377,8 +492,9 @@ public class OptiBpWidgetFactoryTest extends FactoryTest {
         JsonApi jsonApi = Mockito.mock(JsonApi.class);
         Mockito.doReturn(formFragment).when(widgetArgs).getFormFragment();
         Mockito.doReturn(jsonApi).when(formFragment).getJsonApi();
+        Mockito.doReturn(new JSONObject(step1Json)).when(jsonApi).getStep(ArgumentMatchers.anyString());
         String inputJson = factorySpy.getInputJsonString(jsonFormActivity, new JSONObject(optiBPWidgetString), widgetArgs);
-        Assert.assertEquals(inputJson, "{\"clientId\":\"sampleClientId\",\"clientOpenSRPId\":\"sampleClientOpenSRPId\",\"calibration\":[{\"date\":\"2019-03-26T11:20:33+0800\",\"model\":\"device model\",\"height\":70,\"weight\":180,\"comperatives\":[{\"systolic\":120,\"diastolic\":80,\"cuffSystolic\":120,\"cuffDiastolic\":80,\"features\":{\"$key\":\"0.2f\"}}]}]}");
+        Assert.assertEquals(inputJson, "{\"clientId\":\"sampleClientId\",\"clientOpenSRPId\":\"sampleClientOpenSRPId\"}");
     }
 
     @Test
