@@ -52,11 +52,11 @@ public class RulesEngineFactoryTest {
     @Test
     public void testGetDynamicRulesFromJsonArrayShouldReturnNonEmptyRulesList() throws Exception {
         String expected = "[" +
-                "{\"key\":\"c29afdf9843e4c909a793dafd70e045b\"}," +
+                "{\"key\":\"key\"}," +
                 "{" +
-                "\"condition\":\"step1_diagnostic_test_c29afdf9843e4c909a793dafd70e045b == 'Pregnancy Test'\"," +
-                "\"name\":\"step1_diagnostic_test_result_spinner_c29afdf9843e4c909a793dafd70e045b\"," +
-                "\"description\":\"diagnostic_test_result_spinner_c29afdf9843e4c909a793dafd70e045b\"," +
+                "\"condition\":\"step1_diagnostic_test_key == 'Pregnancy Test'\"," +
+                "\"name\":\"step1_diagnostic_test_result_spinner_key\"," +
+                "\"description\":\"diagnostic_test_result_spinner_key\"," +
                 "\"priority\":1," +
                 "\"actions\":\"isRelevant = true\"" +
                 "}" +
@@ -68,8 +68,8 @@ public class RulesEngineFactoryTest {
             WhiteboxImpl.setInternalState(rulesEngineFactory, "ruleMap", ruleMap);
             Rules result = WhiteboxImpl.invokeMethod(rulesEngineFactory, "getDynamicRulesFromJsonArray", jsonArray, JsonFormConstants.RELEVANCE);
             Rule ruleObject = result.iterator().next();
-            Assert.assertEquals("step1_diagnostic_test_result_spinner_c29afdf9843e4c909a793dafd70e045b", ruleObject.getName());
-            Assert.assertEquals("diagnostic_test_result_spinner_c29afdf9843e4c909a793dafd70e045b", ruleObject.getDescription());
+            Assert.assertEquals("step1_diagnostic_test_result_spinner_key", ruleObject.getName());
+            Assert.assertEquals("diagnostic_test_result_spinner_key", ruleObject.getDescription());
             Assert.assertEquals(1, ruleObject.getPriority());
         } catch (JSONException e) {
             Timber.e(e);
@@ -170,11 +170,11 @@ public class RulesEngineFactoryTest {
         rulesEngineFactory = new RulesEngineFactory(context, new HashMap<String, String>());
         Facts relevanceFacts = new Facts();
         String rulesStrObject = "[" +
-                "{\"key\":\"c29afdf9843e4c909a793dafd70e045b\"}," +
+                "{\"key\":\"key\"}," +
                 "{" +
-                "\"condition\":\"step1_diagnostic_test_c29afdf9843e4c909a793dafd70e045b == 'Pregnancy Test'\"," +
-                "\"name\":\"step1_diagnostic_test_result_spinner_c29afdf9843e4c909a793dafd70e045b\"," +
-                "\"description\":\"diagnostic_test_result_spinner_c29afdf9843e4c909a793dafd70e045b\"," +
+                "\"condition\":\"step1_diagnostic_test_key == 'Pregnancy Test'\"," +
+                "\"name\":\"step1_diagnostic_test_result_spinner_key\"," +
+                "\"description\":\"diagnostic_test_result_spinner_key\"," +
                 "\"priority\":1," +
                 "\"actions\":\"isRelevant = true\"" +
                 "}" +
@@ -211,18 +211,18 @@ public class RulesEngineFactoryTest {
         Facts relevanceFacts = new Facts();
         String specifiedString = "test";
         String rulesStrObject = "[" +
-                "{\"key\":\"c29afdf9843e4c909a793dafd70e045b\"}," +
+                "{\"key\":\"key\"}," +
                 "{" +
-                "\"condition\":\"step1_test_field_c29afdf9843e4c909a793dafd70e045b == 'test'\"," +
-                "\"name\":\"step1_test_field_c29afdf9843e4c909a793dafd70e045b\"," +
-                "\"description\":\"test_field_c29afdf9843e4c909a793dafd70e045b\"," +
+                "\"condition\":\"step1_test_field_key == 'test'\"," +
+                "\"name\":\"step1_test_field_key\"," +
+                "\"description\":\"test_field_key\"," +
                 "\"priority\":1," +
                 "\"actions\":\"calculation = '" + specifiedString + "'\"" +
                 "}" +
                 "]";
         JSONArray jsonArray = new JSONArray(rulesStrObject);
-        relevanceFacts.put(RuleConstant.SELECTED_RULE, "step1_test_field_c29afdf9843e4c909a793dafd70e045b");
-        relevanceFacts.put("step1_test_field_c29afdf9843e4c909a793dafd70e045b", "test");
+        relevanceFacts.put(RuleConstant.SELECTED_RULE, "step1_test_field_key");
+        relevanceFacts.put("step1_test_field_key", "test");
         String result = rulesEngineFactory.getDynamicCalculation(relevanceFacts, jsonArray);
         Assert.assertEquals(specifiedString, result);
     }
@@ -273,7 +273,7 @@ public class RulesEngineFactoryTest {
     }
 
     @Test
-    public void testGetRulesFromAssetShouldCallActivityHandleError() throws IOException {
+    public void testGetRulesFromAssetShouldCallActivityHandleError() {
         String ruleFileName = "rules/calculation_file.yml";
         JsonFormActivity jsonFormActivity = Mockito.mock(JsonFormActivity.class);
 
