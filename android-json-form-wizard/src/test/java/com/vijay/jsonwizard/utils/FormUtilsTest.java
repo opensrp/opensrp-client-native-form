@@ -23,7 +23,6 @@ import com.vijay.jsonwizard.model.DynamicLabelInfo;
 import com.vijay.jsonwizard.views.CustomTextView;
 
 import org.apache.commons.lang3.StringUtils;
-import org.fest.assertions.api.Assertions;
 import org.jeasy.rules.api.Facts;
 import org.json.JSONArray;
 import org.json.JSONException;
