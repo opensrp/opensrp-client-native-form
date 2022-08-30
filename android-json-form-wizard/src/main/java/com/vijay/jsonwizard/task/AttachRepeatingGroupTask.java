@@ -80,10 +80,10 @@ public class AttachRepeatingGroupTask {
     public void init() {
         appExecutors.mainThread().execute(this::onPreExecute);
         appExecutors.diskIO().execute(() -> {
-            this.updateRepeatInBackground();
+            this.updateRepeatingGrpInBackground();
             appExecutors.mainThread().execute(this::onPostExecute);
         });
-        appExecutors.mainThread().execute(this::onCancelled);
+        onCancelled();
 
     }
 
@@ -92,7 +92,7 @@ public class AttachRepeatingGroupTask {
         showProgressDialog(R.string.please_wait_title, R.string.creating_repeating_group_message, widgetArgs.getFormFragment().getContext());
     }
 
-    protected List<View> updateRepeatInBackground() {
+    protected List<View> updateRepeatingGrpInBackground() {
         diff = numRepeatingGroups - currNumRepeatingGroups;
         for (int i = 0; i < diff; i++) {
             try {
