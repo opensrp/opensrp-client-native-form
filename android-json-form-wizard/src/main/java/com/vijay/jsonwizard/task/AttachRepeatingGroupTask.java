@@ -74,7 +74,7 @@ public class AttachRepeatingGroupTask {
         this.doneButton = doneButton;
         this.repeatingGroupLayouts = repeatingGroupLayouts;
         currNumRepeatingGroups = ((ViewGroup) parent).getChildCount() - 1;
-        appExecutors = widgetArgs.getFormFragment().getJsonApi().getAppExecutors();
+        appExecutors = new AppExecutors();
     }
 
     public void init() {
