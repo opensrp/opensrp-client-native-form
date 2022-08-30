@@ -29,7 +29,6 @@ public class ExpansionPanelGenericPopupDialogTask  {
     private FormUtils formUtils = new FormUtils();
     private Utils utils = new Utils();
     private View view;
-    private AppExecutors appExecutors;
 
 
     public ExpansionPanelGenericPopupDialogTask(View view) {
@@ -38,7 +37,7 @@ public class ExpansionPanelGenericPopupDialogTask  {
     }
 
    public void init(){
-       appExecutors=new AppExecutors();
+       AppExecutors appExecutors = new AppExecutors();
        appExecutors.mainThread().execute(this::onPreExecute);
        appExecutors.diskIO().execute(this::processViewOnBackground);
     }
