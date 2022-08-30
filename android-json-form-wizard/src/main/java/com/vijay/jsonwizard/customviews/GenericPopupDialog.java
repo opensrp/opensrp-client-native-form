@@ -90,7 +90,7 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         }
 
         getJsonApi().getAppExecutors().diskIO().execute(() -> {
-            getJsonApi().getAppExecutors().mainThread.execute(()->{});
+            getJsonApi().getAppExecutors().mainThread().execute(()->{});
 
             if (isDetached()) {
                 return;
