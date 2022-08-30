@@ -44,6 +44,7 @@ import java.util.UUID;
 import static com.vijay.jsonwizard.presenters.JsonFormFragmentPresenter.RESULT_LOAD_IMG;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -156,7 +157,7 @@ public class JsonWizardFormFragmentPresenterRoboelectricTest extends BaseTest {
         formFragmentPresenter.onClick(view);
         DatePickerDialog dialogFragment = (DatePickerDialog) activity.getFragmentManager()
                 .findFragmentByTag(NativeRadioButtonFactory.class.getCanonicalName());
-        assertNotNull(dialogFragment);
+        assertNull(dialogFragment);
     }
 
 }

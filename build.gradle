@@ -9,6 +9,7 @@ buildscript {
         classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0"
         classpath 'com.android.tools.build:gradle:4.2.2'
         classpath 'gradle.plugin.org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.12.0'
+        classpath 'com.android.tools.lint:lint:25.3.0'
     }
 }
 configure(allprojects) { project ->
@@ -31,7 +32,7 @@ subprojects {
     group = 'org.smartregister'
 
     ext.androidToolsBuildGradle = '4.2.2'
-    ext.androidBuildToolsVersion = '30.0.2'
+    ext.androidBuildToolsVersion = '30.0.3'
     ext.androidMinSdkVersion = 18
     ext.androidCompileSdkVersion = 31
     ext.androidTargetSdkVersion = 31
@@ -52,9 +53,9 @@ subprojects {
     // Improve build server performance by allowing disabling of pre-dexing
     // (see http://tools.android.com/tech-docs/new-build-system/tips#TOC-Improving-Build-Server-performance.)
     project.plugins.whenPluginAdded { plugin ->
-        if ("com.android.build.gradle.AppPlugin".equals(plugin.class.name)) {
+        if ("com.android.build.gradle.AppPlugin" == plugin.class.name) {
             project.android.dexOptions.preDexLibraries = rootProject.ext.preDexLibs
-        } else if ("com.android.build.gradle.LibraryPlugin".equals(plugin.class.name)) {
+        } else if ("com.android.build.gradle.LibraryPlugin" == plugin.class.name) {
             project.android.dexOptions.preDexLibraries = rootProject.ext.preDexLibs
         }
     }

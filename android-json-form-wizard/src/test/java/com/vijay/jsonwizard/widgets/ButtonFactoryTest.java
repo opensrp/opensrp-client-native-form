@@ -1,5 +1,7 @@
 package com.vijay.jsonwizard.widgets;
 
+import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP1;
+
 import com.rey.material.widget.Button;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
@@ -14,8 +16,6 @@ import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-
-import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP1;
 
 /**
  * Created by Vincent Karuri on 25/08/2020

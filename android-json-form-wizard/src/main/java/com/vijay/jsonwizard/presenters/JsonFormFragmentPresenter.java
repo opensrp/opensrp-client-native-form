@@ -1079,8 +1079,7 @@ public class JsonFormFragmentPresenter extends
                 getView().writeValue(mStepName, parentKey, JsonFormConstants.OPTIONS_FIELD_NAME, childKey,
                         String.valueOf(compoundButton.isChecked()), openMrsEntityParent, openMrsEntity,
                         openMrsEntityId, popup);
-        } else if (
-                (compoundButton instanceof AppCompatRadioButton || compoundButton instanceof RadioButton)
+        } else if ((compoundButton instanceof AppCompatRadioButton || compoundButton instanceof RadioButton)
                         && isChecked) {
             String parentKey = (String) compoundButton.getTag(R.id.key);
             String openMrsEntityParent = (String) compoundButton.getTag(R.id.openmrs_entity_parent);
@@ -1267,9 +1266,9 @@ public class JsonFormFragmentPresenter extends
         }
 
     }
-
     public void cleanUp() {
         cleanupAndExit = true;
         mJsonFormInteractor.cleanUp();
     }
+
 }
