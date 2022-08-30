@@ -43,8 +43,6 @@ import java.util.Set;
 
 import timber.log.Timber;
 
-import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
-
 public class GenericPopupDialog extends DialogFragment implements GenericDialogInterface {
     private ViewGroup dialogView;
     private JsonFormInteractor jsonFormInteractor = JsonFormInteractor.getInstance();
@@ -90,7 +88,8 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
         }
 
         getJsonApi().getAppExecutors().diskIO().execute(() -> {
-            getJsonApi().getAppExecutors().mainThread().execute(()->{});
+            getJsonApi().getAppExecutors().mainThread().execute(() -> {
+            });
 
             if (isDetached()) {
                 return;
