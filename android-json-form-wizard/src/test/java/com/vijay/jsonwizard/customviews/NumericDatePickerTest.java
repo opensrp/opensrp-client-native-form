@@ -23,6 +23,7 @@ import org.robolectric.util.ReflectionHelpers;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * Created by ndegwamartin on 2020-02-03.
@@ -140,8 +141,7 @@ public class NumericDatePickerTest extends BaseTest {
         //Try set a date within min
         LocalDate dateFiveMonthsBeforeToday = localDate.minusMonths(6);
         datePicker.setDate(dateFiveMonthsBeforeToday.toDate());
-
-        Assert.assertEquals(localDate.getDayOfMonth(), datePicker.getDayOfMonth() + 2);
+        Assert.assertEquals(localDate.getDayOfMonth()-3, datePicker.getDayOfMonth());
         Assert.assertEquals(dateFiveMonthsBeforeToday.getMonthOfYear() - 1, datePicker.getMonth());
         Assert.assertEquals(dateFiveMonthsBeforeToday.getYear(), datePicker.getYear());
 
