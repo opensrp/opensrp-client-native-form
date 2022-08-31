@@ -141,7 +141,7 @@ public class NumericDatePickerTest extends BaseTest {
         LocalDate dateFiveMonthsBeforeToday = localDate.minusMonths(6);
         datePicker.setDate(dateFiveMonthsBeforeToday.toDate());
 
-        Assert.assertEquals(localDate.getDayOfMonth(), datePicker.getDayOfMonth() + 2);
+        Assert.assertEquals(localDate.getDayOfMonth() - 3, datePicker.getDayOfMonth());
         Assert.assertEquals(dateFiveMonthsBeforeToday.getMonthOfYear() - 1, datePicker.getMonth());
         Assert.assertEquals(dateFiveMonthsBeforeToday.getYear(), datePicker.getYear());
 
