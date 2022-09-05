@@ -57,7 +57,7 @@ public class NumberSelectorAdapter extends BaseAdapter {
         return view;
     }
 
-    private static class ViewHolder {
+    public static class ViewHolder {
         private TextView selectedNumber;
 
         ViewHolder(View view) {
