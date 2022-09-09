@@ -372,35 +372,42 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     @Override
     public void refreshCalculationLogic(String parentKey, String childKey, boolean popup, String stepName, boolean isForNextStep) {
-        Set<String> viewsIds = calculationDependencyMap.get(stepName + "_" + parentKey);
-        if (parentKey == null || viewsIds == null)
-            viewsIds = calculationLogicViews.keySet();
-        for (String viewId : viewsIds) {
-            try {
-                View curView = calculationLogicViews.get(viewId);
-                if (curView == null) {
-                    Timber.w("calculationLogicViews Missing %s", viewId);
-                    continue;
-                }
-                Pair<String[], JSONObject> addressAndValue = getCalculationAddressAndValue(curView);
-                if (addressAndValue != null && addressAndValue.first != null) {
-                    String[] address = addressAndValue.first;
-                    JSONObject valueSource = addressAndValue.second;
-                    Facts curValueMap;
-                    if (valueSource.length() > 0) {
-                        curValueMap = getValueFromAddress(address, popup, valueSource);
-                    } else {
-                        curValueMap = getValueFromAddress(address, popup);
+        appExecutors.diskIO().execute(() ->{
+            Set<String> viewsIds = calculationDependencyMap.get(stepName + "_" + parentKey);
+            if (parentKey == null || viewsIds == null)
+                viewsIds = calculationLogicViews.keySet();
+            for (String viewId : viewsIds) {
+                try {
+                    View curView = calculationLogicViews.get(viewId);
+                    if (curView == null) {
+                        Timber.w("calculationLogicViews Missing %s", viewId);
+                        continue;
                     }
-                    //update ui
-                    updateCalculation(curValueMap, curView, address, isForNextStep);
+                    Pair<String[], JSONObject> addressAndValue = getCalculationAddressAndValue(curView);
+                    if (addressAndValue != null && addressAndValue.first != null) {
+                        String[] address = addressAndValue.first;
+                        JSONObject valueSource = addressAndValue.second;
+                        Facts curValueMap;
+                        if (valueSource.length() > 0) {
+                            curValueMap = getValueFromAddress(address, popup, valueSource);
+                        } else {
+                            curValueMap = getValueFromAddress(address, popup);
+                        }
+                        //update ui
+                        appExecutors.mainThread().execute(() -> {
+                            updateCalculation(curValueMap, curView, address, isForNextStep);
+                        });
+
+                    }
+
+                } catch (Exception e) {
+                    Timber.e(e, "%s refreshCalculationLogic()", this.getClass().getCanonicalName());
+
                 }
-
-            } catch (Exception e) {
-                Timber.e(e, "%s refreshCalculationLogic()", this.getClass().getCanonicalName());
-
             }
-        }
+
+        });
+
     }
 
     @Override
