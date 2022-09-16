@@ -9,11 +9,11 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
-import android.support.v7.widget.AppCompatEditText;
-import android.support.v7.widget.AppCompatTextView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.appcompat.widget.AppCompatEditText;
+import androidx.appcompat.widget.AppCompatTextView;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -634,7 +634,12 @@ public class FormUtils {
 
     public static void setEditMode(JSONObject jsonObject, View editableView, ImageView editButton)
             throws JSONException {
-        if (jsonObject.has(JsonFormConstants.EDITABLE)) {
+        if (jsonObject.has(JsonFormConstants.EDITABLE) && jsonObject
+                .has(JsonFormConstants.READ_ONLY)) {
+            editButton.setVisibility(View.VISIBLE);
+            editableView.setEnabled(false);
+        }
+        else if (jsonObject.has(JsonFormConstants.EDITABLE)) {
             boolean editable = jsonObject.getBoolean(JsonFormConstants.EDITABLE);
             if (editable) {
                 editButton.setVisibility(View.VISIBLE);
@@ -646,10 +651,6 @@ public class FormUtils {
             boolean readyOnly = jsonObject.getBoolean(JsonFormConstants.READ_ONLY);
             editableView.setEnabled(!readyOnly);
             editButton.setVisibility(View.GONE);
-        } else if (jsonObject.has(JsonFormConstants.EDITABLE) && jsonObject
-                .has(JsonFormConstants.READ_ONLY)) {
-            editButton.setVisibility(View.VISIBLE);
-            editableView.setEnabled(false);
         }
     }
 
@@ -1047,7 +1048,7 @@ public class FormUtils {
                     }
                 }
             } catch (Exception e) {
-                Log.i(TAG, Log.getStackTraceString(e));
+                Timber.e(e);
             }
 
         }

@@ -8,6 +8,7 @@ import com.vijay.jsonwizard.utils.Utils;
 
 import org.jeasy.rules.api.Rules;
 import org.jeasy.rules.mvel.MVELRuleFactory;
+import org.jeasy.rules.support.YamlRuleDefinitionReader;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -21,14 +22,16 @@ import java.io.InputStreamReader;
 public class AssetsFileSource implements FormFileSource {
 
     public static AssetsFileSource INSTANCE = new AssetsFileSource();
+    private MVELRuleFactory mvelRuleFactory;
 
     private AssetsFileSource() {
+        this.mvelRuleFactory = new MVELRuleFactory(new YamlRuleDefinitionReader());
     }
 
     @Override
     public Rules getRulesFromFile(Context context, String fileName) throws Exception {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(context.getAssets().open(fileName)));
-        return MVELRuleFactory.createRulesFrom(bufferedReader);
+        return this.mvelRuleFactory.createRules(bufferedReader);
     }
 
     @Override

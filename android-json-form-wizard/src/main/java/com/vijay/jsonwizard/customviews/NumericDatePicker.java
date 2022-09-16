@@ -3,7 +3,7 @@ package com.vijay.jsonwizard.customviews;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
-import android.support.annotation.VisibleForTesting;
+import androidx.annotation.VisibleForTesting;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.DatePicker;
@@ -598,6 +598,11 @@ public class NumericDatePicker extends DatePicker {
             numberPicker.setMaxValue(cacheMax);
         }
 
+        // Avoid the case where minV and max cache value are same
+        if (cacheMax == cacheMin) {
+            numberPicker.setMinValue(value);
+            numberPicker.setMaxValue(value);
+        }
 
         if (numberPicker.getId() == R.id.year) {
 
@@ -657,7 +662,19 @@ public class NumericDatePicker extends DatePicker {
 
     private int getPreviousDay(int prevDay, int minDay) {
         if (prevDay > 0) {
-            return getMonth() + 1 == 2 ? Math.min(prevDay, (NumericDatePickerHelper.isLeapYear(getYear()) ? 29 : 28)) : prevDay;
+            int selectedMonth = getMonth() + 1;
+
+            switch (selectedMonth) {
+                case 2:
+                    return Math.min(prevDay, (NumericDatePickerHelper.isLeapYear(getYear()) ? 29 : 28));
+                case 4:
+                case 6:
+                case 9:
+                case 11:
+                    return Math.min(prevDay, 30);
+                default:
+                    return Math.min(prevDay, 31);
+            }
         } else {
             return minDay;
         }

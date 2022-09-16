@@ -145,6 +145,13 @@ public class UtilsTest extends BaseTest {
     }
 
     @Test
+    public void testGetDurationWithMonths() {
+        String duration = Utils.getDuration("10-01-2021", "01-12-2021");
+        Assert.assertNotNull(duration);
+        Assert.assertEquals("10m 3w", duration);
+    }
+
+    @Test
     public void testBuildRulesWithUniqueIdShouldUpdateRelevanceRulesEngineObjectAccordingly() throws JSONException, IOException {
         String ruleType = "relevance";
         JSONObject element = new JSONObject();
@@ -444,7 +451,7 @@ public class UtilsTest extends BaseTest {
     public void testGetFieldKeyPrefix() {
        String expectedString = "stepName#stepTitle:";
        String expectedStringWrong = "stepNamestepTitle";
-       Assert.assertEquals(expectedString, Utils.getFieldKeyPrefix("stepName", "stepTitle"));
-       Assert.assertNotEquals(expectedStringWrong, Utils.getFieldKeyPrefix("stepName", "stepTitle"));
+       Assert.assertEquals(expectedString, Utils.getFieldKeyPrefix(JsonFormConstants.STEPNAME, "stepTitle"));
+       Assert.assertNotEquals(expectedStringWrong, Utils.getFieldKeyPrefix(JsonFormConstants.STEPNAME, "stepTitle"));
     }
 }
