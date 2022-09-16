@@ -18,6 +18,19 @@ jacoco {
     reportsDir = file("$buildDir/reports/jacoco")
 }
 
+Properties properties = new Properties()
+if (project.rootProject.file("local.properties").exists()) {
+    properties.load(project.rootProject.file("local.properties").newDataInputStream())
+}
+ext.getLocalProperty = { key ->
+    if (properties != null && properties.containsKey(key)) {
+        println(key + ": " + properties[key])
+        return properties[key]
+    } else {
+        return "\"123\""
+    }
+}
+
 android {
     compileSdkVersion androidCompileSdkVersion
     buildToolsVersion androidBuildToolsVersion
@@ -39,6 +52,7 @@ android {
         }
 
         multiDexKeepProguard file('multidex-config.pro')
+        manifestPlaceholders += [ sentryDsnId:getLocalProperty("sentry.dsn")]
     }
 
     buildTypes {
@@ -225,3 +239,6 @@ task javadoc(type: Javadoc) {
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
     classpath += configurations.compile
 }
+
+
+

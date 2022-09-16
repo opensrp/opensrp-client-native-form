@@ -24,6 +24,7 @@
         android:theme="@style/NativeFormsAppTheme"
         tools:replace="android:theme">
 
+        <meta-data android:name="io.sentry.auto-init" android:value="false" />
         <activity
             android:name=".activities.JsonFormBarcodeScanActivity"
             android:configChanges="keyboardHidden|orientation"
@@ -36,14 +37,6 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-
-        <meta-data
-            android:name="io.sentry.dsn"
-            android:value="https://d4003cd0df6548b9aac50a9b709cbab3@sentry.k8s.onalabs.org/57" />
-
-        <meta-data
-            android:name="io.sentry.traces.sample-rate"
-            android:value="1.0" />
 
     </application>
 </manifest>
