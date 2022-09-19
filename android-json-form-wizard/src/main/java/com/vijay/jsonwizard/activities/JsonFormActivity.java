@@ -629,24 +629,27 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
      */
     @Override
     public void refreshConstraints(String parentKey, String childKey, boolean popup) {
-        initComparisons();
+        appExecutors.diskIO().execute(()->{
+            initComparisons();
 
-        // Priorities constraints on the view that has just been changed
-        String changedViewKey = parentKey;
-        if (changedViewKey != null && childKey != null) {
-            changedViewKey = changedViewKey + ":" + childKey;
-        }
-
-        if (changedViewKey != null && (constrainedViews != null && constrainedViews.containsKey(changedViewKey))) {
-            checkViewConstraints(constrainedViews.get(changedViewKey), popup);
-        }
-
-        for (View curView : constrainedViews.values()) {
-            String viewKey = getViewKey(curView);
-            if (changedViewKey == null || (!TextUtils.isEmpty(viewKey) && !viewKey.equals(changedViewKey))) {
-                checkViewConstraints(curView, popup);
+            // Priorities constraints on the view that has just been changed
+            String changedViewKey = parentKey;
+            if (changedViewKey != null && childKey != null) {
+                changedViewKey = changedViewKey + ":" + childKey;
             }
-        }
+
+            if (changedViewKey != null && (constrainedViews != null && constrainedViews.containsKey(changedViewKey))) {
+                checkViewConstraints(constrainedViews.get(changedViewKey), popup);
+            }
+
+            for (View curView : constrainedViews.values()) {
+                String viewKey = getViewKey(curView);
+                if (changedViewKey == null || (!TextUtils.isEmpty(viewKey) && !viewKey.equals(changedViewKey))) {
+                    checkViewConstraints(curView, popup);
+                }
+            }
+        });
+
     }
 
     @Override
