@@ -19,10 +19,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.AssetManager;
 import android.os.Looper;
-import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.core.util.TimeUtils;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +29,11 @@ import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
+import androidx.core.util.TimeUtils;
+
+import com.google.android.material.snackbar.Snackbar;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.CompoundButton;
@@ -481,22 +482,14 @@ public class Utils {
     }
 
     /**
-
      * Returns the value string value for special translated fields like the Native Radio Button, Spinner, Check Box e.tc
      *
      * @param jsonObject -- Widget #JSONObject
      * @return
-     * Gets the {@link androidx.fragment.app.FragmentTransaction} from the {@link Context} and removes any {@link androidx.fragment.app.Fragment} with the tag `GenericPopup` from the transaction.
-     * Then nullifies the stack by calling {@link androidx.fragment.app.FragmentTransaction#addToBackStack(String)} with a null value.
-     *
-     * @param context {@link Activity} The activity context where this transaction called from
-     * @return fragmentTransaction {@link androidx.fragment.app.FragmentTransaction}
      */
     public static String returnValue(JSONObject jsonObject) {
         String value = "";
-        NativeFormsProperties nativeFormsProperties = JsonFormFragment.getNativeFormProperties();
-        if (nativeFormsProperties != null && jsonObject.has(TYPE) && (jsonObject.optString(TYPE).equals(JsonFormConstants.NATIVE_RADIO_BUTTON) || jsonObject.optString(TYPE).equals(JsonFormConstants.SPINNER) || jsonObject.optString(TYPE).equals(JsonFormConstants.CHECK_BOX))
-                && nativeFormsProperties.isTrue(NativeFormsProperties.KEY.WIDGET_VALUE_TRANSLATED)) {
+        if (enabledProperty(NativeFormsProperties.KEY.WIDGET_VALUE_TRANSLATED) && jsonObject.has(TYPE) && jsonObject.optString(TYPE).equals(JsonFormConstants.NATIVE_RADIO_BUTTON)) {
             JSONObject valueObject = jsonObject.optJSONObject(VALUE);
             if (valueObject != null) {
                 value = valueObject.optString(VALUE, "");
