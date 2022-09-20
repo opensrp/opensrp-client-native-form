@@ -9,6 +9,7 @@ import com.vijay.jsonwizard.fragments.JsonWizardFormFragment;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.interfaces.OnFieldsInvalid;
+import com.vijay.jsonwizard.utils.AppExecutors;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 
 import org.json.JSONException;
@@ -19,6 +20,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -27,6 +29,7 @@ import org.powermock.reflect.Whitebox;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -64,6 +67,11 @@ public class JsonWizardFormFragmentPresenterTest {
     @Mock
     private Resources resources;
 
+    @Mock
+    private AppExecutors appExecutors;
+
+    Executor executor;
+
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
@@ -78,10 +86,22 @@ public class JsonWizardFormFragmentPresenterTest {
         Whitebox.setInternalState(presenter, "viewRef", new WeakReference<>(formFragment));
         doReturn("step1").when(mStepDetails).optString(anyString());
         Whitebox.setInternalState(presenter, "mStepDetails", mStepDetails);
+        executor = Mockito.mock(Executor.class);
+        appExecutors = Mockito.mock(AppExecutors.class);
     }
 
     @Test
-    public void testOnNextClickShouldPerformCorrectAction() throws JSONException {
+    public void testOnNextClickShouldPerformCorrectAction() throws JSONException, InterruptedException {
+
+        Mockito.doAnswer((Answer<Void>) invocation -> {
+            Runnable runnable = invocation.getArgument(0);
+            runnable.run();
+            return null;
+        }).when(executor).execute(Mockito.any(Runnable.class));
+        Mockito.when(formFragment.getJsonApi().getAppExecutors()).thenReturn(appExecutors);
+        Mockito.when(appExecutors.diskIO()).thenReturn(executor);
+        Thread.sleep(1000);
+
         mockStatic(JsonWizardFormFragment.class);
         PowerMockito.when(JsonWizardFormFragment.getFormFragment(anyString())).thenReturn(formFragment);
 
@@ -89,7 +109,9 @@ public class JsonWizardFormFragmentPresenterTest {
         // when no incorrectly formatted fields
         mJsonObject.put(JsonFormConstants.VALIDATE_ON_SUBMIT, true);
         presenter.onNextClick(mock(LinearLayout.class));
+
         verifyMovesToNextStep(1);
+
 
         // when form is valid
         mJsonObject.put(JsonFormConstants.VALIDATE_ON_SUBMIT, false);
