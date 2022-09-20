@@ -1,5 +1,16 @@
 package com.vijay.jsonwizard.presenters;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.verifyStatic;
+import static org.powermock.api.mockito.PowerMockito.when;
+
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.JsonApi;
@@ -22,17 +33,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import java.util.concurrent.Executor;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.verifyStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Created by Vincent Karuri on 18/02/2020
@@ -57,8 +57,8 @@ public class JsonFormFragmentPresenterTest {
         MockitoAnnotations.initMocks(this);
         setUpJsonFormFragment(true);
         jsonFormFragmentPresenter = new JsonFormFragmentPresenter(jsonFormFragment);
-        executor = Mockito.mock(Executor.class);
-        appExecutors = Mockito.mock(AppExecutors.class);
+        executor = mock(Executor.class);
+        appExecutors = mock(AppExecutors.class);
     }
 
     @Test
