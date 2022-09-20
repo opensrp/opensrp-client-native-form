@@ -38,6 +38,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
@@ -86,8 +87,8 @@ public class JsonWizardFormFragmentPresenterTest {
         Whitebox.setInternalState(presenter, "viewRef", new WeakReference<>(formFragment));
         doReturn("step1").when(mStepDetails).optString(anyString());
         Whitebox.setInternalState(presenter, "mStepDetails", mStepDetails);
-        executor = Mockito.mock(Executor.class);
-        appExecutors = Mockito.mock(AppExecutors.class);
+        executor = mock(Executor.class);
+        appExecutors = mock(AppExecutors.class);
     }
 
     @Test
@@ -98,8 +99,8 @@ public class JsonWizardFormFragmentPresenterTest {
             runnable.run();
             return null;
         }).when(executor).execute(Mockito.any(Runnable.class));
-        Mockito.when(formFragment.getJsonApi().getAppExecutors()).thenReturn(appExecutors);
-        Mockito.when(appExecutors.diskIO()).thenReturn(executor);
+        when(formFragment.getJsonApi().getAppExecutors()).thenReturn(appExecutors);
+        when(appExecutors.diskIO()).thenReturn(executor);
         Thread.sleep(1000);
 
         mockStatic(JsonWizardFormFragment.class);

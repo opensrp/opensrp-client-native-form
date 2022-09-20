@@ -49,6 +49,7 @@ import static com.vijay.jsonwizard.presenters.JsonFormFragmentPresenter.RESULT_L
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -87,8 +88,8 @@ public class JsonWizardFormFragmentPresenterRoboelectricTest extends BaseTest {
 
     @Before
     public void setUp() throws JSONException {
-        executor = Mockito.mock(Executor.class);
-        appExecutors = Mockito.mock(AppExecutors.class);
+        executor = mock(Executor.class);
+        appExecutors = mock(AppExecutors.class);
         when(formFragment.getJsonApi()).thenReturn(formActivity);
         when(formFragment.getOnFieldsInvalidCallback()).thenReturn(onFieldsInvalid);
         when(formActivity.getmJSONObject()).thenReturn(new JSONObject(TestConstants.BASIC_FORM));
