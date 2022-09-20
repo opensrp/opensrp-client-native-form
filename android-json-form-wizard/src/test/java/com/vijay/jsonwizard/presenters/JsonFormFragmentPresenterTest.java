@@ -3,6 +3,7 @@ package com.vijay.jsonwizard.presenters;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.utils.AppExecutors;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 import com.vijay.jsonwizard.widgets.CountDownTimerFactory;
 
@@ -13,10 +14,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.stubbing.Answer;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
+
+import java.util.concurrent.Executor;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -42,11 +47,18 @@ public class JsonFormFragmentPresenterTest {
     @Mock
     private JsonFormFragment jsonFormFragment;
 
+    @Mock
+    private AppExecutors appExecutors;
+
+    Executor executor;
+
     @Before
     public void setUp() throws JSONException {
         MockitoAnnotations.initMocks(this);
         setUpJsonFormFragment(true);
         jsonFormFragmentPresenter = new JsonFormFragmentPresenter(jsonFormFragment);
+        executor = Mockito.mock(Executor.class);
+        appExecutors = Mockito.mock(AppExecutors.class);
     }
 
     @Test
@@ -76,7 +88,15 @@ public class JsonFormFragmentPresenterTest {
     }
 
     @Test
-    public void testCheckAndStopCountdownAlarmShouldStopAlarm() throws JSONException {
+    public void testCheckAndStopCountdownAlarmShouldStopAlarm() throws JSONException, InterruptedException {
+        Mockito.doAnswer((Answer<Void>) invocation -> {
+            Runnable runnable = invocation.getArgument(0);
+            runnable.run();
+            return null;
+        }).when(executor).execute(Mockito.any(Runnable.class));
+        Mockito.when(jsonFormFragment.getJsonApi().getAppExecutors()).thenReturn(appExecutors);
+        Mockito.when(appExecutors.diskIO()).thenReturn(executor);
+        Thread.sleep(1000);
         bootStrapCurrentJsonState();
         mockStatic(CountDownTimerFactory.class);
         jsonFormFragmentPresenter.checkAndStopCountdownAlarm();
