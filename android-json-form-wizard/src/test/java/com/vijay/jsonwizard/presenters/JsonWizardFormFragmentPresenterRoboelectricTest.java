@@ -104,8 +104,8 @@ public class JsonWizardFormFragmentPresenterRoboelectricTest extends BaseTest {
             runnable.run();
             return null;
         }).when(executor).execute(Mockito.any(Runnable.class));
-        Mockito.when(formFragment.getJsonApi().getAppExecutors()).thenReturn(appExecutors);
-        Mockito.when(appExecutors.diskIO()).thenReturn(executor);
+        when(formFragment.getJsonApi().getAppExecutors()).thenReturn(appExecutors);
+        when(appExecutors.diskIO()).thenReturn(executor);
         Thread.sleep(1000);
 
         when(formActivity.nextStep()).thenReturn("step2");
