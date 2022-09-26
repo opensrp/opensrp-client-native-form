@@ -30,7 +30,7 @@ actions:
 name: step1_tobacco_cessation_toaster
 description: cease tobacco toaster
 priority: 1
-condition: "step1_hepb_immun_status > 10 && step1_hepb_immun_status < 30"
+condition: "((step1_hepb_immun_status > 10 && step1_hepb_immun_status < 30) && step1_next_of_kin == 'hero')"
 actions:
     - "isRelevant = true"
 
