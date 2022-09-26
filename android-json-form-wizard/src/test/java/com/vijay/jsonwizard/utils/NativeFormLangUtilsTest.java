@@ -1,5 +1,9 @@
 package com.vijay.jsonwizard.utils;
 
+import static com.vijay.jsonwizard.utils.Utils.getTranslatedYamlFile;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 import android.content.Context;
 import android.preference.PreferenceManager;
 
@@ -8,6 +12,8 @@ import com.vijay.jsonwizard.NativeFormLibrary;
 import com.vijay.jsonwizard.TestUtils;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.robolectric.RuntimeEnvironment;
@@ -16,16 +22,19 @@ import org.smartregister.client.utils.contract.ClientFormContract;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import static com.vijay.jsonwizard.utils.Utils.getTranslatedYamlFile;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-
 /**
  * Created by Vincent Karuri on 20/02/2020
  */
 public class NativeFormLangUtilsTest extends BaseTest {
 
     private final TestUtils testUtils = new TestUtils();
+    private Context context;
+
+    @Before
+    public void setUp() {
+        context = RuntimeEnvironment.application;
+
+    }
 
     @Test
     public void testJsonFormTranslationShouldTranslateForm() {
@@ -98,13 +107,13 @@ public class NativeFormLangUtilsTest extends BaseTest {
 
         clientForm.setJson(enProperties);
         Mockito.doReturn(clientForm).when(clientFormRepository).getActiveClientFormByIdentifier(Mockito.eq("form_strings.properties"));
-        assertEquals("SAVE AND EXIT",  NativeFormLangUtils.getResourceBundleFromRepository(RuntimeEnvironment.application, interpolatedJsonForm).getString("step1.previous_label"));
+        assertEquals("SAVE AND EXIT", NativeFormLangUtils.getResourceBundleFromRepository(RuntimeEnvironment.application, interpolatedJsonForm).getString("step1.previous_label"));
 
         String swProperties = "step1.title = Rekodi mpya\nstep1.previous_label = WEKA ALAFU ONDOKA";
         clientForm.setJson(swProperties);
         NativeFormLangUtils.setAppLocale(context, "sw");
         Mockito.doReturn(clientForm).when(clientFormRepository).getActiveClientFormByIdentifier(Mockito.eq("form_strings_sw.properties"));
-        assertEquals("Rekodi mpya",  NativeFormLangUtils.getResourceBundleFromRepository(RuntimeEnvironment.application, interpolatedJsonForm).getString("step1.title"));
+        assertEquals("Rekodi mpya", NativeFormLangUtils.getResourceBundleFromRepository(RuntimeEnvironment.application, interpolatedJsonForm).getString("step1.title"));
     }
 
     @Test
@@ -117,5 +126,29 @@ public class NativeFormLangUtilsTest extends BaseTest {
 
         ResourceBundle mlsResourceBundle = NativeFormLangUtils.getResourceBundleFromRepository(RuntimeEnvironment.application, interpolatedJsonForm);
         assertFalse(mlsResourceBundle.getKeys().hasMoreElements());
+    }
+
+    @Test
+    public void testGetDatabaseString() {
+        String stringToTranslate = "form_strings.step1.danger_signs.danger_bleeding.text";
+        String expectedString = "Danger Bleeding";
+        Locale locale = new Locale(Locale.ENGLISH.getLanguage());
+        ResourceBundle bundle = ResourceBundle.getBundle("form_strings", locale);
+        boolean keyIsFound = bundle.containsKey(stringToTranslate);
+        Assert.assertTrue(keyIsFound);
+        String actual = NativeFormLangUtils.translateDatabaseString(stringToTranslate, context);
+        assertEquals(expectedString, actual);
+
+    }
+    @Test
+    public void testInvalidDatabaseString() {
+        String stringToTranslate = "form_strings.step2.danger_signs.danger_bleeding.text";
+        Locale locale = new Locale(Locale.ENGLISH.getLanguage());
+        ResourceBundle bundle = ResourceBundle.getBundle("form_strings", locale);
+        boolean keyIsFound = bundle.containsKey(stringToTranslate);
+        String actual = NativeFormLangUtils.translateDatabaseString(stringToTranslate, context);
+        assertEquals("",actual);
+        assertFalse(keyIsFound);
+
     }
 }

@@ -24,6 +24,7 @@ import com.vijay.jsonwizard.interfaces.OnFieldsInvalid;
 import com.vijay.jsonwizard.shadow.ShadowFileProvider;
 import com.vijay.jsonwizard.shadow.ShadowIntent;
 import com.vijay.jsonwizard.shadow.ShadowPermissionUtils;
+import com.vijay.jsonwizard.utils.AppExecutors;
 import com.vijay.jsonwizard.views.CustomTextView;
 import com.vijay.jsonwizard.widgets.NativeRadioButtonFactory;
 
@@ -34,17 +35,21 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import java.io.File;
 import java.util.UUID;
+import java.util.concurrent.Executor;
 
 import static com.vijay.jsonwizard.presenters.JsonFormFragmentPresenter.RESULT_LOAD_IMG;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -69,6 +74,11 @@ public class JsonWizardFormFragmentPresenterRoboelectricTest extends BaseTest {
     @Mock
     private PackageManager packageManager;
 
+    @Mock
+    private AppExecutors appExecutors;
+
+    Executor executor;
+
     @Captor
     private ArgumentCaptor<Intent> intentArgumentCaptor;
 
@@ -78,6 +88,8 @@ public class JsonWizardFormFragmentPresenterRoboelectricTest extends BaseTest {
 
     @Before
     public void setUp() throws JSONException {
+        executor = mock(Executor.class);
+        appExecutors = mock(AppExecutors.class);
         when(formFragment.getJsonApi()).thenReturn(formActivity);
         when(formFragment.getOnFieldsInvalidCallback()).thenReturn(onFieldsInvalid);
         when(formActivity.getmJSONObject()).thenReturn(new JSONObject(TestConstants.BASIC_FORM));
@@ -87,7 +99,16 @@ public class JsonWizardFormFragmentPresenterRoboelectricTest extends BaseTest {
     }
 
     @Test
-    public void testOnNextClickShouldMoveToNextStep() throws JSONException {
+    public void testOnNextClickShouldMoveToNextStep() throws JSONException, InterruptedException {
+        Mockito.doAnswer((Answer<Void>) invocation -> {
+            Runnable runnable = invocation.getArgument(0);
+            runnable.run();
+            return null;
+        }).when(executor).execute(Mockito.any(Runnable.class));
+        when(formFragment.getJsonApi().getAppExecutors()).thenReturn(appExecutors);
+        when(appExecutors.diskIO()).thenReturn(executor);
+        Thread.sleep(1000);
+
         when(formActivity.nextStep()).thenReturn("step2");
         formFragmentPresenter.onNextClick(null);
         verify(jsonFormInteractor).fetchFormElements("step2", formFragment, formActivity.getmJSONObject().getJSONObject("step2"), null, false);

@@ -22,6 +22,8 @@ public class NativeFormsProperties extends Properties {
     public final static class KEY {
         //Widgets
         public static final String WIDGET_DATEPICKER_IS_NUMERIC = "widget.datepicker.is.numeric";
+        public static final String WIDGET_VALUE_TRANSLATED = "widget.value.translated";
+
 
     }
 }
