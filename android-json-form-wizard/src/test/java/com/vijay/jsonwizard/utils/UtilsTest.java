@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import com.google.gson.JsonObject;
 import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
@@ -519,6 +520,30 @@ public class UtilsTest extends BaseTest {
             JSONObject expectedJson = new JSONObject(expected);
             JSONObject item = new JSONObject(jsonForm);
             Assert.assertEquals(expectedJson.toString(), Utils.generateTranslatableValue(item.optString(JsonFormConstants.KEY), item).toString());
+        }
+
+        @Test
+        public void testValueAfterTranslation() throws JSONException
+        {
+           JSONObject jsonObject = new JSONObject();
+           jsonObject.put("value","translationValue");
+           Assert.assertEquals(Utils.getValueAfterTranslation(jsonObject),"translationValue");
+           JSONObject valueObject = new JSONObject(jsonObject.toString());
+           jsonObject.put("value",valueObject);
+           Assert.assertEquals(Utils.getValueAfterTranslation(jsonObject),valueObject.get("value"));
+
+
+        }
+
+        @Test
+        public void getJsonObjectFromArrayTest() throws JSONException
+        {
+            JSONArray jsonArray = new JSONArray();
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("testKey", "keyValue");
+            jsonArray.put(jsonObject);
+
+           Assert.assertEquals(Utils.getJsonObjectFromJsonArray("testKey",jsonArray),jsonObject);
         }
     }
 
