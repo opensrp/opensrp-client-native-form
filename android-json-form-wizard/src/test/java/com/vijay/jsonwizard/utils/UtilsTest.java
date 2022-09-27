@@ -543,5 +543,19 @@ public class UtilsTest extends BaseTest {
 
            Assert.assertEquals(Utils.getJsonObjectFromJsonArray("testKey",jsonArray),jsonObject);
         }
+
+        @Test
+        public void getValueTest() throws JSONException
+        {
+            Utils utils = new Utils();
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("value","translationValue");
+            jsonObject.put(JsonFormConstants.EDIT_TYPE,JsonFormConstants.EDIT_TEXT_TYPE.NUMBER);
+            Assert.assertEquals(utils.getValue(jsonObject),"translationValue");
+
+        }
+
+
+
     }
 
