@@ -15,8 +15,6 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-
-import com.google.gson.JsonObject;
 import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
