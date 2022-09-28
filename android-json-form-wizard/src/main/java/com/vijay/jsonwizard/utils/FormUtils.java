@@ -1,5 +1,8 @@
 package com.vijay.jsonwizard.utils;
 
+
+import static com.vijay.jsonwizard.utils.Utils.convertStreamToString;
+import static com.vijay.jsonwizard.utils.Utils.isEmptyJsonArray;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.FragmentTransaction;
@@ -48,7 +51,6 @@ import com.vijay.jsonwizard.model.DynamicLabelInfo;
 import com.vijay.jsonwizard.rules.RuleConstant;
 import com.vijay.jsonwizard.views.CustomTextView;
 
-import org.apache.commons.lang3.CharEncoding;
 import org.apache.commons.lang3.StringUtils;
 import org.jeasy.rules.api.Facts;
 import org.jetbrains.annotations.NotNull;
@@ -79,9 +81,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import timber.log.Timber;
-
-import static com.vijay.jsonwizard.utils.Utils.convertStreamToString;
-import static com.vijay.jsonwizard.utils.Utils.isEmptyJsonArray;
 
 /**
  * Created by vijay on 24-05-2015.
@@ -302,7 +301,8 @@ public class FormUtils {
     }
 
 
-    public static JSONObject createOptiBPDataObject(String clientId, String clientOpenSRPId, String calibration) throws JSONException {
+
+public static JSONObject createOptiBPDataObject(String clientId, String clientOpenSRPId, String calibration) throws JSONException {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put(JsonFormConstants.OptibpConstants.OPTIBP_KEY_CLIENT_ID, clientId);
         jsonObject.put(JsonFormConstants.OptibpConstants.OPTIBP_KEY_CLIENT_OPENSRP_ID, clientOpenSRPId);
@@ -1325,6 +1325,7 @@ public class FormUtils {
         }
         return result;
     }
+
 
     public static JSONObject getOptionFromOptionsUsingKey(JSONArray options, String key) throws JSONException {
         JSONObject option = new JSONObject();

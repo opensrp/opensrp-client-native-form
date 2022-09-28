@@ -244,7 +244,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 .equalsIgnoreCase(ZEIR_ID)) {
                             jsonObject.remove(VALUE);
                             jsonObject.put(VALUE, entityId);
-                            continue;
                         }
                     }
 
