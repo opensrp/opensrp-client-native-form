@@ -3,7 +3,6 @@ package com.vijay.jsonwizard.views;
 import android.app.Application;
 import android.content.Context;
 import android.graphics.Color;
-import android.text.SpannableString;
 
 import com.vijay.jsonwizard.BaseTest;
 
