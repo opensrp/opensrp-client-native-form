@@ -17,7 +17,6 @@ import androidx.core.content.ContextCompat;
 
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
-import com.vijay.jsonwizard.domain.WidgetArgs;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.AppExecutors;
 
