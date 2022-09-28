@@ -623,9 +623,9 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
             if (value.equals(item.getString(JsonFormConstants.KEY)) || (jsonObject != null && jsonObject.has(JsonFormConstants.VALUE) && jsonObject.optString(JsonFormConstants.VALUE).equals(item.getString(JsonFormConstants.KEY)))) {
                 ((Activity) context).runOnUiThread(() -> {
                     radioButton.setChecked(true);
-                    radioButton.setOnCheckedChangeListener(listener);
                 });
             }
+            radioButton.setOnCheckedChangeListener(listener);
         } else {
             radioButton.setOnCheckedChangeListener(listener);
         }
