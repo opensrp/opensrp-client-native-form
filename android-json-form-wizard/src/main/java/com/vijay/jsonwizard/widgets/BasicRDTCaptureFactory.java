@@ -17,6 +17,7 @@ import androidx.core.content.ContextCompat;
 
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.domain.WidgetArgs;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.AppExecutors;
 
@@ -50,7 +51,7 @@ public class BasicRDTCaptureFactory extends RDTCaptureFactory {
         }
 
         public void init() {
-            appExecutors = new AppExecutors();
+            appExecutors =new AppExecutors();
             appExecutors.mainThread().execute(this::onPreExecute);
             appExecutors.diskIO().execute(this::doInBackground);
         }

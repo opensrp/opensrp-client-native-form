@@ -22,12 +22,14 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.OnActivityResultListener;
 import com.vijay.jsonwizard.shadow.ShadowContextCompat;
+import com.vijay.jsonwizard.utils.AppExecutors;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
@@ -66,6 +68,7 @@ public class BasicRDTCaptureFactoryTest extends FactoryTest {
 
         List<View> viewList = basicRDTCaptureFactory.getViewsFromJson("step1",
                 jsonFormActivity, formFragment, rdtCapture, listener, false);
+        WidgetArgs widgetArgs = ReflectionHelpers.getField(basicRDTCaptureFactory, "widgetArgs");
         Thread.sleep(1000);
 
         ShadowContextCompat.setPermissionStatus(1);
@@ -75,7 +78,6 @@ public class BasicRDTCaptureFactoryTest extends FactoryTest {
         assertEquals(1, viewList.size());
 
         // verify widget args were populated
-        WidgetArgs widgetArgs = ReflectionHelpers.getField(basicRDTCaptureFactory, "widgetArgs");
         assertEquals(formFragment, widgetArgs.getFormFragment());
         assertEquals(listener, widgetArgs.getListener());
         assertFalse(widgetArgs.isPopup());
