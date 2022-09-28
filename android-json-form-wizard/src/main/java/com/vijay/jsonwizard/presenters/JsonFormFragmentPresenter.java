@@ -535,18 +535,21 @@ public class JsonFormFragmentPresenter extends
      * Check if alarm is ringing and stop it if so
      */
     public void checkAndStopCountdownAlarm() {
-        try {
-            JSONObject formJSONObject = new JSONObject(formFragment.getCurrentJsonState());
-            JSONArray fields = FormUtils.fields(formJSONObject, mStepName);
-            for (int i = 0; i < fields.length(); i++) {
-                JSONObject fieldObject = (JSONObject) fields.get(i);
-                if (fieldObject.has(JsonFormConstants.COUNTDOWN_TIME_VALUE)) {
-                    CountDownTimerFactory.stopAlarm();
+        formFragment.getJsonApi().getAppExecutors().diskIO().execute(()->{
+            try {
+                JSONObject formJSONObject = new JSONObject(formFragment.getCurrentJsonState());
+                JSONArray fields = FormUtils.fields(formJSONObject, mStepName);
+                for (int i = 0; i < fields.length(); i++) {
+                    JSONObject fieldObject = (JSONObject) fields.get(i);
+                    if (fieldObject.has(JsonFormConstants.COUNTDOWN_TIME_VALUE)) {
+                        CountDownTimerFactory.stopAlarm();
+                    }
                 }
+            } catch (Exception e) {
+                Timber.e(e, "Countdown alarm could not be stopped!");
             }
-        } catch (Exception e) {
-            Timber.e(e, "Countdown alarm could not be stopped!");
-        }
+        });
+
     }
 
     public boolean validateOnSubmit() {
@@ -1079,8 +1082,7 @@ public class JsonFormFragmentPresenter extends
                 getView().writeValue(mStepName, parentKey, JsonFormConstants.OPTIONS_FIELD_NAME, childKey,
                         String.valueOf(compoundButton.isChecked()), openMrsEntityParent, openMrsEntity,
                         openMrsEntityId, popup);
-        } else if (
-                (compoundButton instanceof AppCompatRadioButton || compoundButton instanceof RadioButton)
+        } else if ((compoundButton instanceof AppCompatRadioButton || compoundButton instanceof RadioButton)
                         && isChecked) {
             String parentKey = (String) compoundButton.getTag(R.id.key);
             String openMrsEntityParent = (String) compoundButton.getTag(R.id.openmrs_entity_parent);
@@ -1267,9 +1269,9 @@ public class JsonFormFragmentPresenter extends
         }
 
     }
-
     public void cleanUp() {
         cleanupAndExit = true;
         mJsonFormInteractor.cleanUp();
     }
+
 }

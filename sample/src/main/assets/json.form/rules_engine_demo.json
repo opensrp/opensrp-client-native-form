@@ -287,7 +287,6 @@
             "extra_info": "NOTE: kids are {kid_count} in number"
           }
         ],
-        "value": "none",
         "v_required": {
           "value": "true",
           "err": "Please select preferred gestational age"
