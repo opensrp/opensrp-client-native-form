@@ -50,7 +50,7 @@ public class BasicRDTCaptureFactory extends RDTCaptureFactory {
         }
 
         public void init() {
-            appExecutors = widgetArgs.getFormFragment().getJsonApi().getAppExecutors();
+            appExecutors = new AppExecutors();
             appExecutors.mainThread().execute(this::onPreExecute);
             appExecutors.diskIO().execute(this::doInBackground);
         }

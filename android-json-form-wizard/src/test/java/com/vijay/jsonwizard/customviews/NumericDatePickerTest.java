@@ -23,7 +23,6 @@ import org.robolectric.util.ReflectionHelpers;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 /**
  * Created by ndegwamartin on 2020-02-03.

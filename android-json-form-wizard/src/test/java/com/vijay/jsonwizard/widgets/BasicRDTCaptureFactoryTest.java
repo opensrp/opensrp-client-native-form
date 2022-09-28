@@ -1,5 +1,16 @@
 package com.vijay.jsonwizard.widgets;
 
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.RDT_CAPTURE_CODE;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.robolectric.Shadows.shadowOf;
+import static edu.washington.cs.ubicomplab.rdt_reader.core.Constants.SAVED_IMAGE_FILE_PATH;
+
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.view.View;
@@ -26,17 +37,6 @@ import java.util.List;
 import java.util.Set;
 
 import edu.washington.cs.ubicomplab.rdt_reader.activity.RDTCaptureActivity;
-
-import static android.app.Activity.RESULT_CANCELED;
-import static android.app.Activity.RESULT_OK;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.RDT_CAPTURE_CODE;
-import static edu.washington.cs.ubicomplab.rdt_reader.core.Constants.SAVED_IMAGE_FILE_PATH;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.robolectric.Shadows.shadowOf;
 
 @Config(shadows = {ShadowContextCompat.class})
 public class BasicRDTCaptureFactoryTest extends FactoryTest {
@@ -66,6 +66,7 @@ public class BasicRDTCaptureFactoryTest extends FactoryTest {
 
         List<View> viewList = basicRDTCaptureFactory.getViewsFromJson("step1",
                 jsonFormActivity, formFragment, rdtCapture, listener, false);
+        Thread.sleep(1000);
 
         ShadowContextCompat.setPermissionStatus(1);
 
