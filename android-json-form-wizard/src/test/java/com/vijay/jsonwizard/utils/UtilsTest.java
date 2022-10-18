@@ -520,5 +520,19 @@ public class UtilsTest extends BaseTest {
             JSONObject item = new JSONObject(jsonForm);
             Assert.assertEquals(expectedJson.toString(), Utils.generateTranslatableValue(item.optString(JsonFormConstants.KEY), item).toString());
         }
+        @Test
+        public void testExtractValueFromJson() throws JSONException
+        {
+            String value = JsonFormConstants.VALUE;
+            JSONObject object = new JSONObject();
+            object.put(JsonFormConstants.VALUE, value);
+
+            String result = Utils.extractValueFromJson(object.toString());
+            Assert.assertEquals(result,JsonFormConstants.VALUE);
+
+            String result2 = Utils.extractValueFromJson(value);
+            Assert.assertEquals(result2,value);
+
+        }
     }
 
