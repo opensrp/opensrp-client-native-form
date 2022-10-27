@@ -203,7 +203,7 @@ public class RepeatingGroupFactoryTest extends FactoryTest {
         childElement.put(JsonFormConstants.KEY, childElementKey);
 
         AttachRepeatingGroupTask attachRepeatingGroupTask = new AttachRepeatingGroupTask(mock(LinearLayout.class),
-                0, new HashMap<Integer, String>(), widgetArgs, mock(ImageButton.class));
+                0, new HashMap<>(), widgetArgs, mock(ImageButton.class));
 
         ReflectionHelpers.callInstanceMethod(attachRepeatingGroupTask,
                 "addUniqueIdentifiers",

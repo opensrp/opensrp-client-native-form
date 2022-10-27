@@ -5,9 +5,11 @@ import android.app.FragmentManager;
 import android.view.View;
 import android.widget.RadioButton;
 
+
 import com.vijay.jsonwizard.BaseTest;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.utils.FormUtils;
@@ -107,9 +109,13 @@ public class NativeRadioButtonFactoryTest extends BaseTest {
     public void testGetOptionTextWithSecondaryValue() throws Exception {
         JSONObject jsonObject = new JSONObject("{\"key\":\"user_sub_form\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"type\":\"native_radio\",\"label\":\"User sub forms?\",\"label_text_style\":\"bold\",\"text_color\":\"#000000\",\"extra_rel\":true,\"has_extra_rel\":\"yes\",\"options\":[{\"key\":\"yes\",\"text\":\"Yes\",\"value\":false,\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"specify_info\":\"User sub specify...\",\"specify_widget\":\"normal_edit_text\",\"specify_info_color\":\"#8C8C8C\",\"secondary_suffix\":\"bpm\",\"content_form\":\"user_native_sub_form\",\"secondary_value\":[{\"key\":\"yes\",\"type\":\"date_picker\",\"values\":[\"24-09-2020\"]}]},{\"key\":\"no\",\"text\":\"No\",\"value\":false,\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\"}],\"value\":\"yes\",\"v_required\":{\"value\":true,\"err\":\"Please specify user native form.\"}}");
         JSONObject item = new JSONObject("{\"key\":\"yes\",\"text\":\"Yes\",\"value\":false,\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"specify_info\":\"User sub specify...\",\"specify_widget\":\"normal_edit_text\",\"specify_info_color\":\"#8C8C8C\",\"secondary_suffix\":\"bpm\",\"content_form\":\"user_native_sub_form\",\"secondary_value\":[{\"key\":\"yes\",\"type\":\"date_picker\",\"values\":[\"24-09-2020\"]}]}");
+        JSONObject valueObject = new JSONObject();
+        valueObject.put(JsonFormConstants.VALUE,"yes");
+        valueObject.put(JsonFormConstants.TEXT,"");
 
+        jsonObject.put(JsonFormConstants.VALUE, valueObject);
         String optionText = Whitebox.invokeMethod(new NativeRadioButtonFactory(), "getOptionTextWithSecondaryValue", item, jsonObject);
-        Assert.assertEquals("Yes", optionText);
+        Assert.assertEquals("Yes:24-09-2020", optionText);
     }
 
     @Test

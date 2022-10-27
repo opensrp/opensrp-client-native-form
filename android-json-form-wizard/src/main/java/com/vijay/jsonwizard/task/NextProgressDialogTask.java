@@ -2,14 +2,15 @@ package com.vijay.jsonwizard.task;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.os.AsyncTask;
 
 import com.vijay.jsonwizard.fragments.JsonWizardFormFragment;
+import com.vijay.jsonwizard.utils.AppExecutors;
 
-public class NextProgressDialogTask extends AsyncTask<Void, Void, Void> {
+public class NextProgressDialogTask {
     private JsonWizardFormFragment formFragment;
     private Context context;
     private ProgressDialog progressDialog;
+    private AppExecutors appExecutors;
 
     private void showDialog() {
         setProgressDialog(new ProgressDialog(getContext()));
@@ -32,22 +33,13 @@ public class NextProgressDialogTask extends AsyncTask<Void, Void, Void> {
         }
     }
 
-    @Override
-    protected Void doInBackground(Void... voids) {
-        getFormFragment().next();
-        return null;
-    }
-
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        showDialog();
-    }
-
-    @Override
-    protected void onPostExecute(Void aVoid) {
-        super.onPostExecute(aVoid);
-        hideDialog();
+    public void init() {
+        appExecutors = getFormFragment().getJsonApi().getAppExecutors();
+        appExecutors.mainThread().execute(this::showDialog);
+        appExecutors.diskIO().execute(() -> {
+            getFormFragment().next();
+            appExecutors.mainThread().execute(this::hideDialog);
+        });
     }
 
     public JsonWizardFormFragment getFormFragment() {

@@ -848,7 +848,7 @@ public class JsonFormFragmentPresenter extends
                 .equals(JsonFormConstants.DATE_PICKER)) {
             NativeRadioButtonFactory.showDateDialog(view);
         } else if (JsonFormConstants.CONTENT_INFO.equals(type) && !specifyWidget.equals(JsonFormConstants.DATE_PICKER)) {
-            new ExpansionPanelGenericPopupDialogTask(view).execute();
+            new ExpansionPanelGenericPopupDialogTask(view).init();
         } else if (view.getId() == R.id.label_edit_button) {
             setRadioViewsEditable(view);
         } else {
