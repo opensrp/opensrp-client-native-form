@@ -151,7 +151,7 @@ dependencies {
     implementation "org.greenrobot:eventbus:3.2.0"
     implementation 'androidx.multidex:multidex:2.0.1'
 
-    implementation 'io.sentry:sentry-android:5.0.1'
+    api 'io.sentry:sentry-android:5.0.1'
 
     // PowerMock
     def powerMockVersion = '2.0.9'

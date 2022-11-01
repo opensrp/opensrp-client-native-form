@@ -19,6 +19,7 @@ public class NativeFormLibrary {
         if (instance == null) {
             instance = new NativeFormLibrary();
         }
+
         return instance;
     }
 

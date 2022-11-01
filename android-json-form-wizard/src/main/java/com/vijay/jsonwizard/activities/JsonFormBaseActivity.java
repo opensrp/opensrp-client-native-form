@@ -43,8 +43,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import io.sentry.ITransaction;
-import io.sentry.Sentry;
 import timber.log.Timber;
 
 import static com.vijay.jsonwizard.utils.NativeFormLangUtils.getTranslatedString;
@@ -84,7 +82,6 @@ public abstract class JsonFormBaseActivity extends MultiLanguageActivity impleme
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.native_form_activity_json_form);
-        ITransaction transaction = Sentry.startTransaction("revealFormOpening", "insideJsonFormBase oncreate");
         findViewById(R.id.native_form_activity).setFilterTouchesWhenObscured(true);
         mToolbar = findViewById(R.id.tb_top);
         setSupportActionBar(mToolbar);
@@ -112,8 +109,6 @@ public abstract class JsonFormBaseActivity extends MultiLanguageActivity impleme
         for (LifeCycleListener lifeCycleListener : lifeCycleListeners) {
             lifeCycleListener.onCreate(savedInstanceState);
         }
-
-        transaction.finish();
     }
 
     private String readDataSource() {

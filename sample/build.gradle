@@ -29,6 +29,8 @@ android {
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
+
+        buildConfigField("String", "SENTRY_DSN", "\"" + getProps("sentry.dsn") + "\"")
     }
 
     buildTypes {
@@ -59,4 +61,15 @@ dependencies {
     implementation 'org.greenrobot:eventbus:3.2.0'
 
     implementation 'org.smartregister:opensrp-client-utils:0.0.6-SNAPSHOT'
+}
+
+// get property from local.properties
+def getProps(String propName) {
+    def propsFile = rootProject.file('local.properties')
+    if (propsFile.exists()) {
+        def props = new Properties()
+        props.load(new FileInputStream(propsFile))
+        return props[propName]
+    }
+    return "";
 }

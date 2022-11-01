@@ -436,7 +436,6 @@ public class JsonFormFragmentPresenter extends
         return filled;
     }
 
-
     public void validateAndWriteValues() {
         for (View childView : formFragment.getJsonApi().getFormDataViews()) {
             ValidationStatus validationStatus = validateView(childView);

@@ -795,6 +795,7 @@ public class Utils {
      * @return
      * @throws JSONException
      */
+    @Nullable
     public static JSONObject getRepeatingGroupCountObj(@NotNull WidgetArgs widgetArgs) throws JSONException {
         String repeatingGroupCountObjKey = widgetArgs.getJsonObject().get(KEY) + "_count";
         JSONObject stepJsonObject = widgetArgs.getFormFragment().getStep(widgetArgs.getStepName());
