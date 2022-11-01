@@ -43,7 +43,7 @@ public class ExpansionPanelRecordButtonClickListener implements View.OnClickList
     }
 
     protected void initiateTask(View view) {
-        new ExpansionPanelGenericPopupDialogTask(view).execute();
+        new ExpansionPanelGenericPopupDialogTask(view).init();
     }
 
     /**

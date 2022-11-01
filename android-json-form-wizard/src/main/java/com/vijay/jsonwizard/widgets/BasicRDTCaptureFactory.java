@@ -1,21 +1,5 @@
 package com.vijay.jsonwizard.widgets;
 
-import android.Manifest;
-import android.app.Activity;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.AsyncTask;
-import androidx.core.content.ContextCompat;
-import android.util.Log;
-
-import com.vijay.jsonwizard.R;
-import com.vijay.jsonwizard.constants.JsonFormConstants;
-import com.vijay.jsonwizard.interfaces.JsonApi;
-
-import org.json.JSONException;
-
-import edu.washington.cs.ubicomplab.rdt_reader.activity.RDTCaptureActivity;
-
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUE;
@@ -23,15 +7,37 @@ import static com.vijay.jsonwizard.utils.Utils.hideProgressDialog;
 import static com.vijay.jsonwizard.utils.Utils.showProgressDialog;
 import static edu.washington.cs.ubicomplab.rdt_reader.core.Constants.SAVED_IMAGE_FILE_PATH;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.util.Log;
+
+import androidx.core.content.ContextCompat;
+
+import com.vijay.jsonwizard.R;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.utils.AppExecutors;
+
+import org.json.JSONException;
+
+import edu.washington.cs.ubicomplab.rdt_reader.activity.RDTCaptureActivity;
+
 /**
  * Created by Vincent Karuri on 17/06/2020
  */
 public class BasicRDTCaptureFactory extends RDTCaptureFactory {
     private static final String TAG = BasicRDTCaptureFactory.class.getName();
+    private AppExecutors appExecutors;
 
-    private class LaunchRDTCameraTask extends AsyncTask<Void, Void, Void> {
+    protected void launchRDTCaptureActivity() {
+        if (isPermissionGiven()) {
+            new LaunchRDTCameraTask().init();
+        }
+    }
 
-        @Override
+    private class LaunchRDTCameraTask {
         protected Void doInBackground(Void... voids) {
             Activity activity = (Activity) widgetArgs.getContext();
             Intent intent = new Intent(activity, RDTCaptureActivity.class);
@@ -39,15 +45,14 @@ public class BasicRDTCaptureFactory extends RDTCaptureFactory {
             return null;
         }
 
-        @Override
         protected void onPreExecute() {
             showProgressDialog(R.string.please_wait_title, R.string.launching_rdt_capture_message, widgetArgs.getContext());
         }
-    }
 
-    protected void launchRDTCaptureActivity() {
-        if (isPermissionGiven()) {
-            new LaunchRDTCameraTask().execute();
+        public void init() {
+            appExecutors =new AppExecutors();
+            appExecutors.mainThread().execute(this::onPreExecute);
+            appExecutors.diskIO().execute(this::doInBackground);
         }
     }
 

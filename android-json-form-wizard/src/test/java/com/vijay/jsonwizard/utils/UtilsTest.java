@@ -1,5 +1,9 @@
 package com.vijay.jsonwizard.utils;
 
+import static com.vijay.jsonwizard.utils.Utils.formatDateToPattern;
+import static com.vijay.jsonwizard.utils.Utils.isEmptyJsonArray;
+import static com.vijay.jsonwizard.utils.Utils.isEmptyJsonObject;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.FragmentTransaction;
@@ -48,10 +52,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import static com.vijay.jsonwizard.utils.Utils.formatDateToPattern;
-import static com.vijay.jsonwizard.utils.Utils.isEmptyJsonArray;
-import static com.vijay.jsonwizard.utils.Utils.isEmptyJsonObject;
 
 public class UtilsTest extends BaseTest {
 
@@ -449,9 +449,90 @@ public class UtilsTest extends BaseTest {
 
     @Test
     public void testGetFieldKeyPrefix() {
-       String expectedString = "stepName#stepTitle:";
-       String expectedStringWrong = "stepNamestepTitle";
-       Assert.assertEquals(expectedString, Utils.getFieldKeyPrefix(JsonFormConstants.STEPNAME, "stepTitle"));
-       Assert.assertNotEquals(expectedStringWrong, Utils.getFieldKeyPrefix(JsonFormConstants.STEPNAME, "stepTitle"));
+        String expectedString = "stepName#stepTitle:";
+        Assert.assertEquals(expectedString, Utils.getFieldKeyPrefix("stepName", "stepTitle"));
     }
-}
+
+    @Test
+    public void testGenerateTranslatableValueWithKeyContainingOptionsField() throws Exception {
+        String jsonForm = "{\n" +
+                "  \"key\": \"blood_type\",\n" +
+                "  \"openmrs_entity_parent\": \"\",\n" +
+                "  \"openmrs_entity\": \"concept\",\n" +
+                "  \"openmrs_entity_id\": \"163126AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
+                "  \"type\": \"native_radio\",\n" +
+                "  \"label\": \"Blood type\",\n" +
+                "  \"label_text_style\": \"bold\",\n" +
+                "  \"options\": [\n" +
+                "    {\n" +
+                "      \"key\": \"a\",\n" +
+                "      \"text\": \"A\",\n" +
+                "      \"translation_text\": \"anc_profile.values.a\",\n" +
+                "      \"openmrs_entity_parent\": \"\",\n" +
+                "      \"openmrs_entity\": \"concept\",\n" +
+                "      \"openmrs_entity_id\": \"163115AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+                "    }\n" +
+                "  ],\n" +
+                "  \"v_required\": {\n" +
+                "    \"value\": true,\n" +
+                "    \"err\": \"Please specify blood type\"\n" +
+                "  },\n" +
+                "  \"relevance\": {\n" +
+                "    \"rules-engine\": {\n" +
+                "      \"ex-rules\": {\n" +
+                "        \"rules-file\": \"tests_relevance_rules.yml\"\n" +
+                "      }\n" +
+                "    }\n" +
+                "  },\n" +
+                "  \"index\": \"4\",\n" +
+                "  \"value\": {\n" +
+                "    \"value\": \"ab\",\n" +
+                "    \"text\": \"\"\n" +
+                "  },\n" +
+                "  \"is_visible\": true\n" +
+                "}";
+        String expected = " {\n" +
+                "         \"value\":\"a\",\n" +
+                "         \"text\":\"anc_profile.values.a\"\n" +
+                "      }";
+        JSONObject expectedJson = new JSONObject(expected);
+        JSONObject item = new JSONObject(jsonForm);
+        Assert.assertEquals(expectedJson.toString(), Utils.generateTranslatableValue(item.optJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME).optJSONObject(0).optString(JsonFormConstants.KEY), item).toString());
+    }
+
+        @Test
+        public void testGenerateTranslatableValueWithoutOptionsField () throws Exception {
+            String jsonForm =
+                    "    {\n" +
+                            "  \"type\": \"native_radio\",\n" +
+                            "      \"key\": \"a\",\n" +
+                            "      \"text\": \"A\",\n" +
+                            "      \"translation_text\": \"anc_profile.values.a\",\n" +
+                            "      \"openmrs_entity_parent\": \"\",\n" +
+                            "      \"openmrs_entity\": \"concept\",\n" +
+                            "      \"openmrs_entity_id\": \"163115AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+                            "    }";
+            String expected = " {\n" +
+                    "         \"value\":\"a\",\n" +
+                    "         \"text\":\"anc_profile.values.a\"\n" +
+                    "      }";
+            JSONObject expectedJson = new JSONObject(expected);
+            JSONObject item = new JSONObject(jsonForm);
+            Assert.assertEquals(expectedJson.toString(), Utils.generateTranslatableValue(item.optString(JsonFormConstants.KEY), item).toString());
+        }
+        @Test
+        public void testExtractValueFromJson() throws JSONException
+        {
+            String value = JsonFormConstants.VALUE;
+            JSONObject object = new JSONObject();
+            object.put(JsonFormConstants.VALUE, value);
+
+            String result = Utils.extractValueFromJson(object.toString());
+            Assert.assertEquals(result,JsonFormConstants.VALUE);
+
+            String result2 = Utils.extractValueFromJson(value);
+            Assert.assertEquals(result2,value);
+
+        }
+    }
+
