@@ -85,6 +85,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.jeasy.rules.annotation.Fact;
 import org.jeasy.rules.api.Facts;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -1427,7 +1428,13 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     formObject.put(RuleConstant.IS_RULE_CHECK, true);
                     formObject.put(RuleConstant.STEP, formObject.getString(RuleConstant.STEP));
 
-                    result.asMap().putAll(getValueFromAddressCore(formObject).asMap());
+
+                    Facts resultFacts = getValueFromAddressCore(formObject);
+
+                    for (Map.Entry<String,Object> factEntry: resultFacts.asMap().entrySet()) {
+                        result.put(factEntry.getKey(),factEntry.getValue());
+                    }
+
                 }
 
                 result.put(RuleConstant.SELECTED_RULE, address[2]);
