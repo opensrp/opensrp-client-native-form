@@ -1941,14 +1941,19 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     conditionString.append(map.get(RuleConstant.CONDITION).toString());
 
                     List<String> fields = (List<String>) map.get(RuleConstant.ACTIONS);
+                    List<String> newFields = new ArrayList<>();
                     if (fields != null) {
                         for (String field : fields) {
                             if (field.trim().startsWith(RuleConstant.CALCULATION) ||
                                     field.trim().startsWith(RuleConstant.CONSTRAINT)) {
                                 conditionString.append(" " + field);
                             }
+
+                            newFields.add("facts." + field);
                         }
 
+                        fields.clear();
+                        fields.addAll(newFields);
                     }
 
                     actions.addAll(getConditionKeys(conditionString.toString()));

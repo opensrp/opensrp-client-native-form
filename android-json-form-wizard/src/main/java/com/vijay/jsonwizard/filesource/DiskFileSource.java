@@ -6,6 +6,7 @@ import androidx.annotation.VisibleForTesting;
 
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.interfaces.FormFileSource;
+import com.vijay.jsonwizard.rules.YamlRuleDefinitionReaderExt;
 import com.vijay.jsonwizard.utils.Utils;
 
 import org.jeasy.rules.api.Rules;
@@ -30,7 +31,7 @@ public class DiskFileSource implements FormFileSource {
     private MVELRuleFactory mvelRuleFactory;
 
     private DiskFileSource() {
-        this.mvelRuleFactory = new MVELRuleFactory(new YamlRuleDefinitionReader());
+        this.mvelRuleFactory = new MVELRuleFactory(new YamlRuleDefinitionReaderExt());
     }
 
     @Override

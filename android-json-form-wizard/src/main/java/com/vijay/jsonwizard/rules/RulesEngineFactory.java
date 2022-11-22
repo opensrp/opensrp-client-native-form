@@ -52,7 +52,7 @@ public class RulesEngineFactory implements RuleListener {
         this.ruleMap = new HashMap<>();
         gson = new Gson();
         this.rulesEngineHelper = new RulesEngineHelper();
-        this.mvelRuleFactory = new MVELRuleFactory(new YamlRuleDefinitionReader());
+        this.mvelRuleFactory = new MVELRuleFactory(new YamlRuleDefinitionReaderExt());
 
 
         if (globalValues != null) {
@@ -257,19 +257,31 @@ public class RulesEngineFactory implements RuleListener {
         //Overriden
     }
 
+
     @Override
     public void beforeExecute(Rule rule, Facts facts) {
-        //Overriden
+        Timber.e("Putting facts in beforeExecute");
+        HashMap<String, Object> myMap = new HashMap<>();
+        facts.put("facts", myMap);
     }
 
     @Override
     public void onSuccess(Rule rule, Facts facts) {
-        //Overriden
+        Timber.e("Putting facts in onSuccess");
+        HashMap<String, Object> myMap = facts.get("facts");
+
+        for (String key :
+                myMap.keySet()) {
+            facts.put(key, myMap.get(key));
+        }
+
+        facts.remove("facts");
     }
 
     @Override
     public void onFailure(Rule rule, Facts facts, Exception exception) {
-        //Overriden
+        Timber.e("Putting facts in onFailure");
+        facts.remove("facts");
     }
 
     public String getRulesFolderPath() {
