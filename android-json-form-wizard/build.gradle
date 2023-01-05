@@ -109,7 +109,7 @@ dependencies {
     implementation 'org.smartregister:opensrp-client-utils:0.0.6-SNAPSHOT'
     implementation 'androidx.test:core:1.4.0'
 
-    def easyRulesVersion = '4.1.0'
+    def easyRulesVersion = '4.1.1-SNAPSHOT'
     implementation "org.jeasy:easy-rules-core:$easyRulesVersion"
     implementation "org.jeasy:easy-rules-mvel:$easyRulesVersion"
 
