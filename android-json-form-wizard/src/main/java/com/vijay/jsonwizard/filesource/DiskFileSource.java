@@ -32,10 +32,7 @@ public class DiskFileSource implements FormFileSource {
     private MVELRuleFactory mvelRuleFactory;
 
     private DiskFileSource() {
-        if(Utils.enabledProperty(NativeFormsProperties.KEY.ENABLE_BACKWARD_COMPATIBILITY))
             this.mvelRuleFactory = new MVELRuleFactory(new YamlRuleDefinitionReaderExt());
-        else
-            this.mvelRuleFactory = new MVELRuleFactory(new YamlRuleDefinitionReader());
     }
 
     @Override

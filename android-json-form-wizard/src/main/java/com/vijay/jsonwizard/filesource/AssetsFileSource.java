@@ -27,10 +27,7 @@ public class AssetsFileSource implements FormFileSource {
     private MVELRuleFactory mvelRuleFactory;
 
     private AssetsFileSource() {
-        if(Utils.enabledProperty(NativeFormsProperties.KEY.ENABLE_BACKWARD_COMPATIBILITY))
             this.mvelRuleFactory = new MVELRuleFactory(new YamlRuleDefinitionReaderExt());
-        else
-            this.mvelRuleFactory = new MVELRuleFactory(new YamlRuleDefinitionReader());
     }
 
     @Override
