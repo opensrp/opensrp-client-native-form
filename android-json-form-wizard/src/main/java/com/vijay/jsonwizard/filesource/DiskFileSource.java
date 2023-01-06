@@ -22,6 +22,8 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import timber.log.Timber;
+
 /**
  * Returns forms rules and other files stored on the devices
  * hard disk
@@ -32,7 +34,15 @@ public class DiskFileSource implements FormFileSource {
     private MVELRuleFactory mvelRuleFactory;
 
     private DiskFileSource() {
+        if(Utils.enabledProperty(NativeFormsProperties.KEY.EASY_RULES_V3_COMPATIBILITY)){
             this.mvelRuleFactory = new MVELRuleFactory(new YamlRuleDefinitionReaderExt());
+            Timber.e("Disk File source Mvel backward compat engaged");
+
+        }
+        else {
+            this.mvelRuleFactory = new MVELRuleFactory(new YamlRuleDefinitionReader());
+            Timber.e("Disk File source Mvel backward compat  not engaged");
+        }
     }
 
     @Override

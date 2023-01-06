@@ -47,14 +47,22 @@ public class RulesEngineFactory implements RuleListener {
     private boolean backwardCompatibility = false;
     public RulesEngineFactory(Context context, Map<String, String> globalValues) {
         this.context = context;
-        backwardCompatibility = Utils.enabledProperty(NativeFormsProperties.KEY.ENABLE_BACKWARD_COMPATIBILITY);
+        backwardCompatibility = Utils.getProperties(context).getPropertyBoolean(NativeFormsProperties.KEY.EASY_RULES_V3_COMPATIBILITY);
         RulesEngineParameters parameters = new RulesEngineParameters().skipOnFirstAppliedRule(true);
         this.defaultRulesEngine = new DefaultRulesEngine(parameters);
         ((DefaultRulesEngine) this.defaultRulesEngine).registerRuleListener(this);
         this.ruleMap = new HashMap<>();
         gson = new Gson();
         this.rulesEngineHelper = new RulesEngineHelper();
-        this.mvelRuleFactory = new MVELRuleFactory(new YamlRuleDefinitionReaderExt());
+        if(backwardCompatibility) {
+            this.mvelRuleFactory = new MVELRuleFactory(new YamlRuleDefinitionReaderExt());
+            Timber.e("yaml ext Reader engaged : RulesEngineFactory");
+        }
+        else
+        {
+            this.mvelRuleFactory = new MVELRuleFactory(new YamlRuleDefinitionReader());
+            Timber.e("yaml ext Reader disengaged : RulesEngineFactory");
+        }
 
 
         if (globalValues != null) {
