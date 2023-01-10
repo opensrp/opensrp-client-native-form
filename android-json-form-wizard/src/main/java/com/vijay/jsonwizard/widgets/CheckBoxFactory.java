@@ -1,16 +1,23 @@
 package com.vijay.jsonwizard.widgets;
 
+import static com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT;
+import static com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT;
+import static com.vijay.jsonwizard.utils.FormUtils.getCurrentCheckboxValues;
+import static com.vijay.jsonwizard.utils.FormUtils.getLinearLayoutParams;
+import static com.vijay.jsonwizard.utils.FormUtils.getValueFromSpOrDpOrPx;
+
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
-import androidx.annotation.NonNull;
-import androidx.annotation.VisibleForTesting;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
@@ -20,6 +27,7 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
+import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
@@ -32,21 +40,16 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import timber.log.Timber;
-
-import static com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT;
-import static com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT;
-import static com.vijay.jsonwizard.utils.FormUtils.getCurrentCheckboxValues;
-import static com.vijay.jsonwizard.utils.FormUtils.getLinearLayoutParams;
-import static com.vijay.jsonwizard.utils.FormUtils.getValueFromSpOrDpOrPx;
 
 /**
  * Created by vijay on 24-05-2015.
  */
 public class CheckBoxFactory extends BaseFactory {
-    private FormUtils formUtils = new FormUtils();
+    private final FormUtils formUtils = new FormUtils();
 
     public static ValidationStatus validate(JsonFormFragmentView formFragmentView, LinearLayout checkboxLinearLayout) {
         String error = (String) checkboxLinearLayout.getTag(R.id.error);
@@ -59,7 +62,7 @@ public class CheckBoxFactory extends BaseFactory {
         return new ValidationStatus(true, null, formFragmentView, checkboxLinearLayout);
     }
 
-    public static boolean isValid(final LinearLayout checkboxLinearLayout){
+    public static boolean isValid(final LinearLayout checkboxLinearLayout) {
         boolean isRequired = checkboxLinearLayout.isEnabled() && checkboxLinearLayout.getTag(R.id.error) != null;
         return !isRequired || performValidation(checkboxLinearLayout);
     }
@@ -150,7 +153,7 @@ public class CheckBoxFactory extends BaseFactory {
             }
 
         }
-        formUtils.updateValueToJSONArray(jsonObject, jsonObject.optString(JsonFormConstants.VALUE, ""));
+        formUtils.updateValueToJSONArray(jsonObject, Utils.returnValue(jsonObject));
         attachRefreshLogic(jsonObject, context, rootLayout);
         rootLayout.setTag(R.id.canvas_ids, canvasIds.toString());
 
@@ -226,20 +229,25 @@ public class CheckBoxFactory extends BaseFactory {
                 @Override
                 public void run() {
                     if (StringUtils.isNotEmpty(item.optString(JsonFormConstants.VALUE))) {
-                        widgetArgs.getFormFragment().getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                checkBox.setChecked(Boolean.parseBoolean(item.optString(JsonFormConstants.VALUE)));
+                        widgetArgs.getFormFragment().getJsonApi().getAppExecutors().mainThread().execute(() -> checkBox.setChecked(Boolean.parseBoolean(item.optString(JsonFormConstants.VALUE))));
+                    } else {
+                        //Preselect values if they exist
+                        try {
+                            if (finalCheckBoxValues != null) {
+                                HashSet<String> translatedCheckBox = new HashSet<>();
+                                for (String checkBoxVal : Objects.requireNonNull(getCurrentCheckboxValues(finalCheckBoxValues))) {
+                                    if (checkBoxVal != null && checkBoxVal.startsWith("{")) {
+                                        JSONObject jsonObject = new JSONObject(checkBoxVal);
+                                        translatedCheckBox.add(jsonObject.optString(JsonFormConstants.VALUE));
+                                    }
+                                }
+                                if ((translatedCheckBox.size() > 0 && translatedCheckBox.contains(item.getString(JsonFormConstants.KEY))) || getCurrentCheckboxValues(finalCheckBoxValues).contains(item.getString(JsonFormConstants.KEY))) {
+                                    checkBox.setChecked(true);
+                                }
                             }
-                        });
-                    }
-                    //Preselect values if they exist
-                    try {
-                        if (finalCheckBoxValues != null && getCurrentCheckboxValues(finalCheckBoxValues).contains(item.getString(JsonFormConstants.KEY))) {
-                            checkBox.setChecked(true);
+                        } catch (JSONException e) {
+                            Timber.e(e);
                         }
-                    } catch (JSONException e) {
-                        Timber.e(e);
                     }
                 }
             });

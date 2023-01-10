@@ -35,62 +35,51 @@ public class MultiSelectListLoadTask {
         this.currentAdapterKey = multiSelectListFactory.currentAdapterKey;
         appExecutors = multiSelectListFactory.getJsonFormFragment().getJsonApi().getAppExecutors();
 
-        appExecutors.mainThread().execute(new Runnable() {
-            @Override
-            public void run() {
-                progressBar = new ProgressDialog(multiSelectListFactory.getContext());
-                progressBar.setMessage(multiSelectListFactory.getContext().getString(R.string.loading_multi_select_list));
-                progressBar.show();
-            }
+        appExecutors.mainThread().execute(() -> {
+            progressBar = new ProgressDialog(multiSelectListFactory.getContext());
+            progressBar.setMessage(multiSelectListFactory.getContext().getString(R.string.loading_multi_select_list));
+            progressBar.show();
         });
         init();
     }
 
     private void init() {
-        appExecutors.diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                String source = jsonObject.optString(JsonFormConstants.MultiSelectUtils.SOURCE);
-                final List<MultiSelectItem> multiSelectItems = multiSelectListFactory.loadListItems(source);
-                if (multiSelectItems == null) {
-                    return;
-                }
-                String strGroupingsArray = jsonObject.optString(JsonFormConstants.MultiSelectUtils.GROUPINGS);
-                boolean sort = jsonObject.optBoolean(JsonFormConstants.MultiSelectUtils.SORT);
-
-                if (!StringUtils.isBlank(strGroupingsArray) && sort) {//no grouping without sorting
-                    JSONArray jsonArray = null;
-                    try {
-                        jsonArray = new JSONArray(strGroupingsArray);
-                    } catch (JSONException e) {
-                        Timber.e(e);
-                    }
-                    MultiSelectListUtils.addGroupings(multiSelectItems, jsonArray);
-                }
-                if (sort) {
-                    String sortClass = jsonObject.optString(JsonFormConstants.MultiSelectUtils.SORTING_CLASS);
-                    if (StringUtils.isBlank(sortClass)) {
-                        sortClass = JsonFormConstants.MultiSelectUtils.ALPHABET_SORTING;
-                    }
-                    try {
-                        Class<?> aClass = Class.forName(sortClass);
-                        Collections.sort(multiSelectItems, (Comparator<? super MultiSelectItem>) aClass.newInstance());
-                    } catch (IllegalAccessException e) {
-                        Timber.e(e);
-                    } catch (InstantiationException e) {
-                        Timber.e(e);
-                    } catch (ClassNotFoundException e) {
-                        Timber.e(e);
-                    }
-                }
-
-                appExecutors.mainThread().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        onPostExecute(multiSelectItems);
-                    }
-                });
+        appExecutors.diskIO().execute(() -> {
+            String source = jsonObject.optString(JsonFormConstants.MultiSelectUtils.SOURCE);
+            final List<MultiSelectItem> multiSelectItems = multiSelectListFactory.loadListItems(source);
+            if (multiSelectItems == null) {
+                return;
             }
+            String strGroupingsArray = jsonObject.optString(JsonFormConstants.MultiSelectUtils.GROUPINGS);
+            boolean sort = jsonObject.optBoolean(JsonFormConstants.MultiSelectUtils.SORT);
+
+            if (!StringUtils.isBlank(strGroupingsArray) && sort) {//no grouping without sorting
+                JSONArray jsonArray = null;
+                try {
+                    jsonArray = new JSONArray(strGroupingsArray);
+                } catch (JSONException e) {
+                    Timber.e(e);
+                }
+                MultiSelectListUtils.addGroupings(multiSelectItems, jsonArray);
+            }
+            if (sort) {
+                String sortClass = jsonObject.optString(JsonFormConstants.MultiSelectUtils.SORTING_CLASS);
+                if (StringUtils.isBlank(sortClass)) {
+                    sortClass = JsonFormConstants.MultiSelectUtils.ALPHABET_SORTING;
+                }
+                try {
+                    Class<?> aClass = Class.forName(sortClass);
+                    Collections.sort(multiSelectItems, (Comparator<? super MultiSelectItem>) aClass.newInstance());
+                } catch (IllegalAccessException e) {
+                    Timber.e(e);
+                } catch (InstantiationException e) {
+                    Timber.e(e);
+                } catch (ClassNotFoundException e) {
+                    Timber.e(e);
+                }
+            }
+
+            appExecutors.mainThread().execute(() -> onPostExecute(multiSelectItems));
         });
     }
 

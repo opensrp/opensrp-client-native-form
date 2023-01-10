@@ -128,35 +128,32 @@ public class ButtonFactory implements FormWidgetFactory {
             jsonObject.put(JsonFormConstants.VALUE, Boolean.FALSE.toString());
             jsonObject.getJSONObject(JsonFormConstants.ACTION).put(JsonFormConstants.RESULT, false);
             final String behaviour = action.optString(JsonFormConstants.BEHAVIOUR);
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    try {
-                        String addressString = (String) v.getTag(R.id.address);
-                        if (!TextUtils.isEmpty(addressString)) {
-                            String[] address = addressString.split(":");
-                            JSONObject jsonObject = context
-                                    .getObjectUsingAddress(address, false);
-                            jsonObject.put(JsonFormConstants.VALUE, Boolean.TRUE.toString());
+            button.setOnClickListener(v -> {
+                try {
+                    String addressString = (String) v.getTag(R.id.address);
+                    if (!TextUtils.isEmpty(addressString)) {
+                        String[] address = addressString.split(":");
+                        JSONObject jsonObject1 = context
+                                .getObjectUsingAddress(address, false);
+                        jsonObject1.put(JsonFormConstants.VALUE, Boolean.TRUE.toString());
 
-                            switch (behaviour) {
-                                case JsonFormConstants.BEHAVIOUR_FINISH_FORM:
-                                    button.setTag(R.id.raw_value, Boolean.TRUE.toString());
-                                    formFragment.save(confirmationBtnSkipValidation);
-                                    break;
-                                case JsonFormConstants.BEHAVIOUR_NEXT_STEP:
-                                    formFragment.next();
-                                    break;
-                                default:
-                                    jsonObject.getJSONObject(JsonFormConstants.ACTION)
-                                            .put(JsonFormConstants.RESULT, false);
-                                    jsonObject.put(JsonFormConstants.VALUE, Boolean.FALSE.toString());
-                                    break;
-                            }
+                        switch (behaviour) {
+                            case JsonFormConstants.BEHAVIOUR_FINISH_FORM:
+                                button.setTag(R.id.raw_value, Boolean.TRUE.toString());
+                                formFragment.save(confirmationBtnSkipValidation);
+                                break;
+                            case JsonFormConstants.BEHAVIOUR_NEXT_STEP:
+                                formFragment.next();
+                                break;
+                            default:
+                                jsonObject1.getJSONObject(JsonFormConstants.ACTION)
+                                        .put(JsonFormConstants.RESULT, false);
+                                jsonObject1.put(JsonFormConstants.VALUE, Boolean.FALSE.toString());
+                                break;
                         }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
                     }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             });
         } else {

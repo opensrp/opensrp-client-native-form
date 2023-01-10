@@ -2,8 +2,6 @@ package com.vijay.jsonwizard.widgets;
 
 import android.content.Context;
 import android.graphics.Color;
-import androidx.annotation.NonNull;
-import androidx.annotation.VisibleForTesting;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -14,6 +12,9 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
@@ -26,6 +27,7 @@ import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,7 +42,7 @@ import java.util.Set;
  * Created by nipun on 30/05/15.
  */
 public class SpinnerFactory extends BaseFactory {
-    private FormUtils formUtils = new FormUtils();
+    private final FormUtils formUtils = new FormUtils();
 
     public static ValidationStatus validate(JsonFormFragmentView formFragmentView, MaterialSpinner spinner) {
         if (spinner.getTag(R.id.v_required) == null) {
@@ -166,6 +168,11 @@ public class SpinnerFactory extends BaseFactory {
                     indexToSelect = i;
                 } else if (keysJson != null && valueToSelect.equals(keysJson.optString(i))) {
                     indexToSelect = i;
+                } else if (keysJson != null && StringUtils.isNotBlank(valueToSelect) && valueToSelect.startsWith("{")) {
+                    JSONObject valueObject = new JSONObject(valueToSelect);
+                    if (valueObject.has(JsonFormConstants.VALUE) && valueObject.optString(JsonFormConstants.VALUE).equals(keysJson.optString(i))) {
+                        indexToSelect = i;
+                    }
                 }
             }
         }
