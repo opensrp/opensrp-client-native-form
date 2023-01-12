@@ -1,12 +1,13 @@
 package com.vijay.jsonwizard.customviews;
 
+import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
+
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,8 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
+
+import androidx.annotation.Nullable;
 
 import com.vijay.jsonwizard.NativeFormLibrary;
 import com.vijay.jsonwizard.R;
@@ -42,8 +45,6 @@ import java.util.Map;
 import java.util.Set;
 
 import timber.log.Timber;
-
-import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 
 public class GenericPopupDialog extends DialogFragment implements GenericDialogInterface {
     private ViewGroup dialogView;
@@ -89,51 +90,50 @@ public class GenericPopupDialog extends DialogFragment implements GenericDialogI
                     "The Context is not set. Did you forget to set context with Generic Dialog setContext method?");
         }
 
-        getJsonApi().getAppExecutors().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
+        getJsonApi().getAppExecutors().diskIO().execute(() -> {
+            getJsonApi().getAppExecutors().mainThread().execute(() -> {
+            });
 
-                if (isDetached()) {
-                    return;
-                }
-                // support translation of sub-forms
-                // support translation of sub-forms
-                Intent activityIntent = getActivity().getIntent();
-                translateSubForm = activityIntent != null && activityIntent.hasExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION) ?
-                        activityIntent.getBooleanExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, false) :
-                        NativeFormLibrary.getInstance().isPerformFormTranslation();
-
-                try {
-                    setMainFormFields(formUtils.getFormFields(getStepName(), context));
-                    loadPartialSecondaryValues();
-                    createSecondaryValuesMap();
-
-                    loadSubForms();
-
-                    getJsonApi().updateGenericPopupSecondaryValues(specifyContent, stepName);
-                } catch (JSONException e) {
-                    Timber.e(e, " --> onCreate");
-                }
-
-                final List<View> views = initiateViews();
-                if (isDetached()) {
-                    return;
-                }
-                getJsonApi().initializeDependencyMaps();
-                getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (isDetached()) {
-                            return;
-                        }
-                        setViewList(views);
-                        getJsonApi().invokeRefreshLogic(null, true, null, null, getStepName(), false);
-                        if (getDialogView() != null) {
-                            addWidgetViews(getDialogView());
-                        }
-                    }
-                });
+            if (isDetached()) {
+                return;
             }
+            // support translation of sub-forms
+            // support translation of sub-forms
+            Intent activityIntent = getActivity().getIntent();
+            translateSubForm = activityIntent != null && activityIntent.hasExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION) ?
+                    activityIntent.getBooleanExtra(JsonFormConstants.PERFORM_FORM_TRANSLATION, false) :
+                    NativeFormLibrary.getInstance().isPerformFormTranslation();
+
+            try {
+                setMainFormFields(formUtils.getFormFields(getStepName(), context));
+                loadPartialSecondaryValues();
+                createSecondaryValuesMap();
+
+                loadSubForms();
+
+                getJsonApi().updateGenericPopupSecondaryValues(specifyContent, stepName);
+            } catch (JSONException e) {
+                Timber.e(e, " --> onCreate");
+            }
+
+            final List<View> views = initiateViews();
+            if (isDetached()) {
+                return;
+            }
+            getJsonApi().initializeDependencyMaps();
+            getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
+                @Override
+                public void run() {
+                    if (isDetached()) {
+                        return;
+                    }
+                    setViewList(views);
+                    getJsonApi().invokeRefreshLogic(null, true, null, null, getStepName(), false);
+                    if (getDialogView() != null) {
+                        addWidgetViews(getDialogView());
+                    }
+                }
+            });
         });
     }
 

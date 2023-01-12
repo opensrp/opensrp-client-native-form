@@ -3,8 +3,6 @@ package com.vijay.jsonwizard.fragments;
 import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,6 +14,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
@@ -286,11 +287,11 @@ public class JsonWizardFormFragment extends JsonFormFragment {
                     getJsonApi().setPreviousPressed(false);
                     Object nextStateTag = view.getTag(R.id.NEXT_STATE);
                     if (nextStateTag == null) {
-                        new NextProgressDialogTask(getJsonFormFragment()).execute();
+                        new NextProgressDialogTask(getJsonFormFragment()).init();
                     } else {
                         boolean next = (boolean) nextStateTag;
                         if (next) {
-                            new NextProgressDialogTask(getJsonFormFragment()).execute();
+                            new NextProgressDialogTask(getJsonFormFragment()).init();
                         } else {
                             save();
                         }

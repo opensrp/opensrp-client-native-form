@@ -13,6 +13,7 @@ import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.customviews.ExpansionPanelGenericPopupDialog;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
+import com.vijay.jsonwizard.utils.AppExecutors;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.Utils;
 import com.vijay.jsonwizard.views.CustomTextView;
@@ -24,7 +25,7 @@ import timber.log.Timber;
 /**
  * The {@link AsyncTask} to start and set the required variables on the {@link ExpansionPanelGenericPopupDialog}
  */
-public class ExpansionPanelGenericPopupDialogTask extends AsyncTask<Void, Void, Void> {
+public class ExpansionPanelGenericPopupDialogTask  {
     private FormUtils formUtils = new FormUtils();
     private Utils utils = new Utils();
     private View view;
@@ -32,17 +33,20 @@ public class ExpansionPanelGenericPopupDialogTask extends AsyncTask<Void, Void, 
 
     public ExpansionPanelGenericPopupDialogTask(View view) {
         this.view = view;
+
     }
 
-    @Override
+   public void init(){
+       AppExecutors appExecutors = new AppExecutors();
+       appExecutors.mainThread().execute(this::onPreExecute);
+       appExecutors.diskIO().execute(this::processViewOnBackground);
+    }
     protected void onPreExecute() {
-        super.onPreExecute();
         Context context = (Context) view.getTag(R.id.specify_context);
         Utils.showProgressDialog(R.string.loading, R.string.loading_form_message, context);
     }
 
-    @Override
-    protected Void doInBackground(Void... voids) {
+    protected void processViewOnBackground(Void... voids) {
         Context context = (Context) view.getTag(R.id.specify_context);
         String specifyContent = (String) view.getTag(R.id.specify_content);
         String specifyContentForm = (String) view.getTag(R.id.specify_content_form);
@@ -88,6 +92,5 @@ public class ExpansionPanelGenericPopupDialogTask extends AsyncTask<Void, Void, 
             Toast.makeText(context, "Please specify the sub form to display ", Toast.LENGTH_LONG).show();
             Timber.e("No sub form specified. Please specify one in order to use the expansion panel.");
         }
-        return null;
     }
 }
