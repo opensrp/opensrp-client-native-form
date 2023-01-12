@@ -72,17 +72,14 @@ public class BarcodeFactory implements FormWidgetFactory {
         List<View> views = new ArrayList<>(1);
         final RelativeLayout rootLayout = getRootLayout(context);
         final int canvasId = ViewUtil.generateViewId();
-        formFragment.getJsonApi().getAppExecutors().mainThread().execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    rootLayout.setId(canvasId);
-                    final MaterialEditText editText = createEditText(rootLayout, jsonObject, canvasId, stepName, popup);
-                    attachJson(rootLayout, stepName, context, formFragment, jsonObject, editText);
-                    ((JsonApi) context).addFormDataView(editText);
-                } catch (JSONException e) {
-                    Timber.e(e);
-                }
+        formFragment.getJsonApi().getAppExecutors().mainThread().execute(() -> {
+            try {
+                rootLayout.setId(canvasId);
+                final MaterialEditText editText = createEditText(rootLayout, jsonObject, canvasId, stepName, popup);
+                attachJson(rootLayout, stepName, context, formFragment, jsonObject, editText);
+                ((JsonApi) context).addFormDataView(editText);
+            } catch (JSONException e) {
+                Timber.e(e);
             }
         });
         views.add(rootLayout);

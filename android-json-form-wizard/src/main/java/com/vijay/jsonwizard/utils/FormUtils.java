@@ -1569,7 +1569,7 @@ public class FormUtils {
                 if ((JsonFormConstants.NATIVE_RADIO_BUTTON.equals(item.getString(JsonFormConstants.TYPE)) ||
                         JsonFormConstants.EXTENDED_RADIO_BUTTON.equals(item.getString(JsonFormConstants.TYPE))) &&
                         item.has(JsonFormConstants.VALUE)) {
-                    String value = item.optString(JsonFormConstants.VALUE);
+                    String value =  Utils.extractValueFromJson(item.optString(JsonFormConstants.VALUE));
                     if (itemOption.has(JsonFormConstants.KEY) && value.equals(itemOption.getString(JsonFormConstants.KEY))) {
                         extractOptionOpenMRSAttributes(valueOpenMRSAttributes, itemOption,
                                 item.getString(JsonFormConstants.KEY));
@@ -1726,6 +1726,15 @@ public class FormUtils {
             valueOpenMRSObject.put(JsonFormConstants.OPENMRS_ENTITY_PARENT, openmrsEntityParent);
             valueOpenMRSObject.put(JsonFormConstants.OPENMRS_ENTITY, openmrsEntity);
             valueOpenMRSObject.put(JsonFormConstants.OPENMRS_ENTITY_ID, openmrsEntityId);
+            if(itemOption.has(JsonFormConstants.TEXT) && itemOption.has(JsonFormConstants.KEY)) {
+                valueOpenMRSObject.put(JsonFormConstants.VALUE, itemOption.getString(JsonFormConstants.KEY));
+                valueOpenMRSObject.put(JsonFormConstants.TEXT, itemOption.getString(JsonFormConstants.TEXT));
+                JSONArray options = new JSONArray();
+                options.put(itemOption);
+                // adds the selected option as an option array to fill the human readable value;
+                valueOpenMRSObject.put(JsonFormConstants.OPTIONS_FIELD_NAME,options);
+            }
+
 
             valueOpenMRSAttributes.put(valueOpenMRSObject);
         }

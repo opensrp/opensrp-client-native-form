@@ -1011,7 +1011,6 @@ public class Utils {
         okButton.setEnabled(true);
         okButton.setClickable(true);
     }
-
     /***
      *
      * @param jsonArrayString
@@ -1026,6 +1025,19 @@ public class Utils {
             }
         }
         return false;
+    public static String extractValueFromJson(String value)
+    {
+        try{
+            if(!StringUtils.isEmpty(value) && value.startsWith("{") && value.endsWith("}")) {
+                JSONObject object = new JSONObject(value);
+                return object.optString(VALUE);
+            }
+        }
+        catch (Exception e)
+        {
+            Timber.e(e);
+        }
+        return  value;
     }
 
 }

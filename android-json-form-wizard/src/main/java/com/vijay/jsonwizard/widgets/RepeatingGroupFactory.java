@@ -383,7 +383,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
         }
 
         new AttachRepeatingGroupTask(parent, numRepeatingGroups, repeatingGroupLayouts,
-                widgetArgs, doneButton).execute();
+                widgetArgs, doneButton).init();
     }
 
     protected int getLayout() {
