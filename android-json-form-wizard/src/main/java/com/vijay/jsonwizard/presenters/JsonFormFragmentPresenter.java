@@ -13,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.FragmentManager;
@@ -22,6 +23,7 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatRadioButton;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
@@ -385,7 +387,7 @@ public class JsonFormFragmentPresenter extends
 
             } else if (childView instanceof MaterialEditText) {
                 MaterialEditText editView = (MaterialEditText) childView;
-                boolean noValidation = (!childView.isEnabled() ||  !editView.hasValidators());
+                boolean noValidation = (!childView.isEnabled() || !editView.hasValidators());
                 boolean valid = true;
                 if (!noValidation && editView.getValidators() != null) {
                     for (METValidator validator : editView.getValidators()) {
@@ -520,7 +522,9 @@ public class JsonFormFragmentPresenter extends
         }
 
         //remove invalid fields not belonging to current step since formdata view are cleared when view is created
-        if (invalidFields != null && !invalidFields.isEmpty()) {
+        final String nextStep = getFormFragment().getJsonApi().nextStep();
+        // Check if this is the last step, then skip removing invalid fields from other steps, so that the final step has all invalid fields
+        if (StringUtils.isNotBlank(nextStep) && invalidFields != null && !invalidFields.isEmpty()) {
             for (Map.Entry<String, ValidationStatus> entry : invalidFields.entrySet()) {
                 String key = entry.getKey();
                 if (StringUtils.isNotBlank(key) && !key.startsWith(mStepName)) {
@@ -535,7 +539,7 @@ public class JsonFormFragmentPresenter extends
      * Check if alarm is ringing and stop it if so
      */
     public void checkAndStopCountdownAlarm() {
-        formFragment.getJsonApi().getAppExecutors().diskIO().execute(()->{
+        formFragment.getJsonApi().getAppExecutors().diskIO().execute(() -> {
             try {
                 JSONObject formJSONObject = new JSONObject(formFragment.getCurrentJsonState());
                 JSONArray fields = FormUtils.fields(formJSONObject, mStepName);
@@ -1083,7 +1087,7 @@ public class JsonFormFragmentPresenter extends
                         String.valueOf(compoundButton.isChecked()), openMrsEntityParent, openMrsEntity,
                         openMrsEntityId, popup);
         } else if ((compoundButton instanceof AppCompatRadioButton || compoundButton instanceof RadioButton)
-                        && isChecked) {
+                && isChecked) {
             String parentKey = (String) compoundButton.getTag(R.id.key);
             String openMrsEntityParent = (String) compoundButton.getTag(R.id.openmrs_entity_parent);
             String openMrsEntity = (String) compoundButton.getTag(R.id.openmrs_entity);
@@ -1269,6 +1273,7 @@ public class JsonFormFragmentPresenter extends
         }
 
     }
+
     public void cleanUp() {
         cleanupAndExit = true;
         mJsonFormInteractor.cleanUp();

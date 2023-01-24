@@ -47,4 +47,10 @@ public class CustomTextViewTest extends BaseTest {
         customTextView.setTextColor(expectedTextColor);
         Assert.assertEquals(expectedTextColor, customTextView.getTextColors().getDefaultColor());
     }
+
+    @Test
+    public void testIsHintOnText() {
+        boolean isHintOnText = customTextView.isHintOnText();
+        Assert.assertTrue(isHintOnText);
+    }
 }
