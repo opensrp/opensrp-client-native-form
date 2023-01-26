@@ -62,6 +62,8 @@ public class ImagePickerFactory implements FormWidgetFactory {
         Object path = imageView.getTag(R.id.imagePath);
         if (path instanceof String && !TextUtils.isEmpty((String) path)) {
             return new ValidationStatus(true, null, formFragmentView, imageView);
+        } else {
+            imageView.setImageDrawable(formFragmentView.getContext().getResources().getDrawable(R.mipmap.add_photo_background_required));
         }
         return new ValidationStatus(false, (String) imageView.getTag(R.id.error), formFragmentView, imageView);
     }
