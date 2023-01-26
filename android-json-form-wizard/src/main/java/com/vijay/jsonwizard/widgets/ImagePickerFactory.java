@@ -3,9 +3,13 @@ package com.vijay.jsonwizard.widgets;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.VisibleForTesting;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,6 +62,8 @@ public class ImagePickerFactory implements FormWidgetFactory {
         Object path = imageView.getTag(R.id.imagePath);
         if (path instanceof String && !TextUtils.isEmpty((String) path)) {
             return new ValidationStatus(true, null, formFragmentView, imageView);
+        } else {
+            imageView.setImageDrawable(formFragmentView.getContext().getResources().getDrawable(R.mipmap.add_photo_background_required));
         }
         return new ValidationStatus(false, (String) imageView.getTag(R.id.error), formFragmentView, imageView);
     }
@@ -82,7 +88,7 @@ public class ImagePickerFactory implements FormWidgetFactory {
         List<View> views = new ArrayList<>(1);
         createImageView(context, canvasIds, jsonObject, popup, stepName, listener, views);
         Button uploadButton = getButton(context);
-        uploadButton.setText(jsonObject.getString(JsonFormConstants.UPLOAD_BUTTON_TEXT));
+        setUploadButtonText(jsonObject, uploadButton);
         uploadButton.setBackgroundColor(context.getResources().getColor(R.color.primary));
         uploadButton.setMinHeight(0);
         uploadButton.setMinimumHeight(0);
@@ -130,6 +136,19 @@ public class ImagePickerFactory implements FormWidgetFactory {
             ((JsonApi) context).addSkipLogicView(uploadButton);
         }
         return views;
+    }
+
+    private void setUploadButtonText(JSONObject jsonObject, Button uploadButton) throws JSONException {
+        JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
+        if (requiredObject != null) {
+            String requiredValue = requiredObject.getString(JsonFormConstants.VALUE);
+            SpannableString hint = new SpannableString(jsonObject.getString(JsonFormConstants.UPLOAD_BUTTON_TEXT) + " *");
+            hint.setSpan(new ForegroundColorSpan(Color.RED), hint.length() - 1, hint.length(),
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            uploadButton.setText(hint);
+        } else {
+            uploadButton.setText(jsonObject.getString(JsonFormConstants.UPLOAD_BUTTON_TEXT));
+        }
     }
 
     @NotNull

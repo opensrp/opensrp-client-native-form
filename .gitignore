@@ -17,3 +17,7 @@ project.properties
 build/
 .gradle
 android-json-form-wizard/jacoco.exec
+caches/
+daemon/
+native/
+wrapper/

@@ -520,7 +520,9 @@ public class JsonFormFragmentPresenter extends
         }
 
         //remove invalid fields not belonging to current step since formdata view are cleared when view is created
-        if (invalidFields != null && !invalidFields.isEmpty()) {
+        final String nextStep = getFormFragment().getJsonApi().nextStep();
+        // Check if this is the last step, then skip removing invalid fields from other steps, so that the final step has all invalid fields
+        if (StringUtils.isNotBlank(nextStep) && invalidFields != null && !invalidFields.isEmpty()) {
             for (Map.Entry<String, ValidationStatus> entry : invalidFields.entrySet()) {
                 String key = entry.getKey();
                 if (StringUtils.isNotBlank(key) && !key.startsWith(mStepName)) {
