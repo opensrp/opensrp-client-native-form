@@ -55,12 +55,13 @@ public class PropertyManager {
     public PropertyManager(Context context) {
         mContext = context;
         mProperties = new HashMap<>();
-        grantPhoneStatePermission();
+        /*grantPhoneStatePermission();
         handleOnRequestPermissionResults();
         if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.READ_PHONE_STATE)
                 == PackageManager.PERMISSION_GRANTED) {
            addPhoneProperties();
-        }
+        }*/
+        addPhoneProperties();
     }
 
     public void grantPhoneStatePermission() {
@@ -79,16 +80,13 @@ public class PropertyManager {
 
     @SuppressLint("MissingPermission")
     private String getDeviceId() {
-        String deviceId = null;
-        if (mTelephonyManager != null) {
-            if (mTelephonyManager.getPhoneType() == TelephonyManager.PHONE_TYPE_NONE) { //For tablet
-                deviceId = Settings.Secure.getString(mContext.getApplicationContext().getContentResolver(),
-                        Settings.Secure.ANDROID_ID);
-            } else { //for normal phones
-                deviceId = mTelephonyManager.getDeviceId();
+            String deviceId = "";
+            try {
+                deviceId = Settings.Secure.getString(mContext.getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+            } catch (SecurityException se) {
+                se.printStackTrace();
             }
-        }
-        return deviceId;
+            return deviceId;
     }
 
     public String getSingularProperty(String propertyName) {
@@ -123,9 +121,9 @@ public class PropertyManager {
 
     @SuppressLint("MissingPermission")
     private void addPhoneProperties() {
-        mTelephonyManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
+        //mTelephonyManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
         String deviceId = getDeviceId();
-        if (deviceId == null) {
+       /* if (deviceId == null) {
             // no SIM -- WiFi only Retrieve WiFiManager
             WifiManager wifi = (WifiManager) mContext.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
             // Get WiFi status
@@ -133,11 +131,11 @@ public class PropertyManager {
             if (info != null && !ANDROID6_FAKE_MAC.equals(info.getMacAddress())) {
                 deviceId = info.getMacAddress();
             }
-        }
+        }*/
         if (deviceId != null) {
             mProperties.put(DEVICE_ID_PROPERTY, deviceId);
         }
-        String value;
+      /*  String value;
         value = mTelephonyManager.getSubscriberId();
         if (value != null) {
             mProperties.put(SUBSCRIBER_ID_PROPERTY, value);
@@ -149,7 +147,7 @@ public class PropertyManager {
         value = mTelephonyManager.getLine1Number();
         if (value != null) {
             mProperties.put(PHONE_NUMBER_PROPERTY, value);
-        }
+        }*/
     }
 
 }
