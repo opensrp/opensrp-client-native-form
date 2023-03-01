@@ -1,6 +1,7 @@
 package com.vijay.jsonwizard.rules;
 
 import android.content.Context;
+
 import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
@@ -18,7 +19,6 @@ import org.jeasy.rules.api.RulesEngineParameters;
 import org.jeasy.rules.core.DefaultRulesEngine;
 import org.jeasy.rules.mvel.MVELRule;
 import org.jeasy.rules.mvel.MVELRuleFactory;
-import org.jeasy.rules.support.reader.YamlRuleDefinitionReader;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.smartregister.client.utils.contract.ClientFormContract;
@@ -64,6 +64,7 @@ public class RulesEngineFactory implements RuleListener {
     }
 
     public RulesEngineFactory() {
+
     }
 
     private Rules getDynamicRulesFromJsonArray(@NonNull JSONArray jsonArray, @NonNull String type) {
@@ -99,7 +100,7 @@ public class RulesEngineFactory implements RuleListener {
             dynamicMvelRule.setDescription(jsonObjectDynamicRule.optString(RuleConstant.DESCRIPTION));
             dynamicMvelRule.setPriority(jsonObjectDynamicRule.optInt(RuleConstant.PRIORITY));
             dynamicMvelRule.when(jsonObjectDynamicRule.optString(RuleConstant.CONDITION));
-            dynamicMvelRule.then(jsonObjectDynamicRule.optString(RuleConstant.ACTIONS));
+            dynamicMvelRule.then("facts." + jsonObjectDynamicRule.optString(RuleConstant.ACTIONS));
             dynamicMvelRule.name(jsonObjectDynamicRule.optString(RuleConstant.NAME));
             return dynamicMvelRule;
         } catch (Exception e) {
@@ -249,6 +250,14 @@ public class RulesEngineFactory implements RuleListener {
 
     @Override
     public boolean beforeEvaluate(Rule rule, Facts facts) {
+
+        HashMap<String, Object> myMap = new HashMap<>();
+        Map<String, Object> iterationFacts = facts.asMap();
+        for (String key : iterationFacts.keySet()) {
+            myMap.put(key, iterationFacts.get(key));
+        }
+
+        facts.put("facts", myMap);
         return selectedRuleName != null && selectedRuleName.equals(rule.getName());
     }
 
