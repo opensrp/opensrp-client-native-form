@@ -9,7 +9,6 @@ import com.vijay.jsonwizard.utils.Utils;
 
 import org.jeasy.rules.api.Rules;
 import org.jeasy.rules.mvel.MVELRuleFactory;
-import org.jeasy.rules.support.reader.YamlRuleDefinitionReader;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
