@@ -20,7 +20,6 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import timber.log.Timber;
 
 /**
  * Returns forms rules and other files stored on the devices

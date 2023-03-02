@@ -20,7 +20,6 @@ import org.jeasy.rules.api.RulesEngineParameters;
 import org.jeasy.rules.core.DefaultRulesEngine;
 import org.jeasy.rules.mvel.MVELRule;
 import org.jeasy.rules.mvel.MVELRuleFactory;
-import org.jeasy.rules.support.reader.YamlRuleDefinitionReader;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.smartregister.client.utils.contract.ClientFormContract;
@@ -55,15 +54,8 @@ public class RulesEngineFactory implements RuleListener {
         this.ruleMap = new HashMap<>();
         gson = new Gson();
         this.rulesEngineHelper = new RulesEngineHelper();
-        if(backwardCompatibility) {
-            this.mvelRuleFactory = new MVELRuleFactory(new YamlRuleDefinitionReaderExt());
-            Timber.e("yaml ext Reader engaged : RulesEngineFactory");
-        }
-        else
-        {
-            this.mvelRuleFactory = new MVELRuleFactory(new YamlRuleDefinitionReader());
-            Timber.e("yaml ext Reader disengaged : RulesEngineFactory");
-        }
+        this.mvelRuleFactory = new MVELRuleFactory(new YamlRuleDefinitionReaderExt());
+        Timber.e("yaml ext Reader engaged : RulesEngineFactory");
 
 
         if (globalValues != null) {
