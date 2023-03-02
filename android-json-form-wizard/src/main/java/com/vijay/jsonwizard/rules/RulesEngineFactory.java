@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import com.vijay.jsonwizard.activities.JsonFormBaseActivity;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.factory.FileSourceFactoryHelper;
+import com.vijay.jsonwizard.utils.NativeFormsProperties;
 import com.vijay.jsonwizard.utils.Utils;
 
 import org.jeasy.rules.api.Facts;
@@ -43,16 +44,25 @@ public class RulesEngineFactory implements RuleListener {
     private RulesEngineHelper rulesEngineHelper;
     private Facts globalFacts;
     private MVELRuleFactory mvelRuleFactory;
-
+    private boolean backwardCompatibility = false;
     public RulesEngineFactory(Context context, Map<String, String> globalValues) {
         this.context = context;
+        backwardCompatibility = Utils.getProperties(context).getPropertyBoolean(NativeFormsProperties.KEY.EASY_RULES_V3_COMPATIBILITY);
         RulesEngineParameters parameters = new RulesEngineParameters().skipOnFirstAppliedRule(true);
         this.defaultRulesEngine = new DefaultRulesEngine(parameters);
         ((DefaultRulesEngine) this.defaultRulesEngine).registerRuleListener(this);
         this.ruleMap = new HashMap<>();
         gson = new Gson();
         this.rulesEngineHelper = new RulesEngineHelper();
-        this.mvelRuleFactory = new MVELRuleFactory(new YamlRuleDefinitionReaderExt());
+        if(backwardCompatibility) {
+            this.mvelRuleFactory = new MVELRuleFactory(new YamlRuleDefinitionReaderExt());
+            Timber.e("yaml ext Reader engaged : RulesEngineFactory");
+        }
+        else
+        {
+            this.mvelRuleFactory = new MVELRuleFactory(new YamlRuleDefinitionReader());
+            Timber.e("yaml ext Reader disengaged : RulesEngineFactory");
+        }
 
 
         if (globalValues != null) {
@@ -269,28 +279,34 @@ public class RulesEngineFactory implements RuleListener {
 
     @Override
     public void beforeExecute(Rule rule, Facts facts) {
-        Timber.e("Putting facts in beforeExecute");
-        HashMap<String, Object> myMap = new HashMap<>();
-        facts.put("facts", myMap);
+        if(backwardCompatibility) {
+            Timber.e("Putting facts in beforeExecute");
+            HashMap<String, Object> myMap = new HashMap<>();
+            facts.put("facts", myMap);
+        }
     }
 
     @Override
     public void onSuccess(Rule rule, Facts facts) {
-        Timber.e("Putting facts in onSuccess");
-        HashMap<String, Object> myMap = facts.get("facts");
+        if(backwardCompatibility) {
+            Timber.e("Putting facts in onSuccess");
+            HashMap<String, Object> myMap = facts.get("facts");
 
-        for (String key :
-                myMap.keySet()) {
-            facts.put(key, myMap.get(key));
+            for (String key :
+                    myMap.keySet()) {
+                facts.put(key, myMap.get(key));
+            }
+
+            facts.remove("facts");
         }
-
-        facts.remove("facts");
     }
 
     @Override
     public void onFailure(Rule rule, Facts facts, Exception exception) {
-        Timber.e("Putting facts in onFailure");
-        facts.remove("facts");
+        if(backwardCompatibility) {
+            Timber.e("Putting facts in onFailure");
+            facts.remove("facts");
+        }
     }
 
     public String getRulesFolderPath() {
