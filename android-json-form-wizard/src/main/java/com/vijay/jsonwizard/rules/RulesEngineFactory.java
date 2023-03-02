@@ -280,16 +280,14 @@ public class RulesEngineFactory implements RuleListener {
 
     @Override
     public void beforeExecute(Rule rule, Facts facts) {
-        if(backwardCompatibility) {
             Timber.e("Putting facts in beforeExecute");
             HashMap<String, Object> myMap = new HashMap<>();
             facts.put("facts", myMap);
-        }
+
     }
 
     @Override
     public void onSuccess(Rule rule, Facts facts) {
-        if(backwardCompatibility) {
             Timber.e("Putting facts in onSuccess");
             HashMap<String, Object> myMap = facts.get("facts");
 
@@ -299,15 +297,14 @@ public class RulesEngineFactory implements RuleListener {
             }
 
             facts.remove("facts");
-        }
     }
 
     @Override
     public void onFailure(Rule rule, Facts facts, Exception exception) {
-        if(backwardCompatibility) {
+
             Timber.e("Putting facts in onFailure");
             facts.remove("facts");
-        }
+
     }
 
     public String getRulesFolderPath() {
