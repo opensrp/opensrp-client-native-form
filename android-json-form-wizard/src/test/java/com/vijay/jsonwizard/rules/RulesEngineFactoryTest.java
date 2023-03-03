@@ -6,6 +6,9 @@ import android.content.res.AssetManager;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 
+import com.vijay.jsonwizard.utils.NativeFormsProperties;
+import com.vijay.jsonwizard.utils.Utils;
+
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rule;
 import org.jeasy.rules.api.Rules;
@@ -43,9 +46,13 @@ public class RulesEngineFactoryTest {
     @Mock
     private AssetManager assetManager;
 
+    private NativeFormsProperties nativeFormsProperties;
+
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+        nativeFormsProperties  = Utils.getProperties(context);
+        nativeFormsProperties.setProperty(NativeFormsProperties.KEY.EASY_RULES_V3_COMPATIBILITY,"true");
         rulesEngineFactory = new RulesEngineFactory();
     }
 

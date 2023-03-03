@@ -7,10 +7,12 @@ import androidx.annotation.VisibleForTesting;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.interfaces.FormFileSource;
 import com.vijay.jsonwizard.rules.YamlRuleDefinitionReaderExt;
+import com.vijay.jsonwizard.utils.NativeFormsProperties;
 import com.vijay.jsonwizard.utils.Utils;
 
 import org.jeasy.rules.api.Rules;
 import org.jeasy.rules.mvel.MVELRuleFactory;
+import org.jeasy.rules.support.reader.YamlRuleDefinitionReader;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -19,6 +21,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
+import timber.log.Timber;
 
 
 /**
@@ -31,7 +35,15 @@ public class DiskFileSource implements FormFileSource {
     private MVELRuleFactory mvelRuleFactory;
 
     private DiskFileSource() {
+        if(Utils.enabledProperty(NativeFormsProperties.KEY.EASY_RULES_V3_COMPATIBILITY)){
             this.mvelRuleFactory = new MVELRuleFactory(new YamlRuleDefinitionReaderExt());
+            Timber.e("Disk File source Mvel backward compat engaged");
+
+        }
+        else {
+            this.mvelRuleFactory = new MVELRuleFactory(new YamlRuleDefinitionReader());
+            Timber.e("Disk File source Mvel backward compat  not engaged");
+        }
     }
 
     @Override

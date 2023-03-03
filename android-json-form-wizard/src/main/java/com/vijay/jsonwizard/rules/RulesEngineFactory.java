@@ -20,6 +20,7 @@ import org.jeasy.rules.api.RulesEngineParameters;
 import org.jeasy.rules.core.DefaultRulesEngine;
 import org.jeasy.rules.mvel.MVELRule;
 import org.jeasy.rules.mvel.MVELRuleFactory;
+import org.jeasy.rules.support.reader.YamlRuleDefinitionReader;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.smartregister.client.utils.contract.ClientFormContract;
@@ -54,8 +55,15 @@ public class RulesEngineFactory implements RuleListener {
         this.ruleMap = new HashMap<>();
         gson = new Gson();
         this.rulesEngineHelper = new RulesEngineHelper();
-        this.mvelRuleFactory = new MVELRuleFactory(new YamlRuleDefinitionReaderExt());
-        Timber.e("yaml ext Reader engaged : RulesEngineFactory");
+        if(backwardCompatibility) {
+            this.mvelRuleFactory = new MVELRuleFactory(new YamlRuleDefinitionReaderExt());
+            Timber.e("yaml ext Reader engaged : RulesEngineFactory");
+        }
+        else
+        {
+            this.mvelRuleFactory = new MVELRuleFactory(new YamlRuleDefinitionReader());
+            Timber.e("yaml ext Reader disengaged : RulesEngineFactory");
+        }
 
 
         if (globalValues != null) {
@@ -272,23 +280,27 @@ public class RulesEngineFactory implements RuleListener {
 
     @Override
     public void beforeExecute(Rule rule, Facts facts) {
+        if(backwardCompatibility) {
             Timber.e("Putting facts in beforeExecute");
             HashMap<String, Object> myMap = new HashMap<>();
             facts.put("facts", myMap);
+        }
 
     }
 
     @Override
     public void onSuccess(Rule rule, Facts facts) {
-            Timber.e("Putting facts in onSuccess");
-            HashMap<String, Object> myMap = facts.get("facts");
+            if(backwardCompatibility) {
+                Timber.e("Putting facts in onSuccess");
+                HashMap<String, Object> myMap = facts.get("facts");
 
-            for (String key :
-                    myMap.keySet()) {
-                facts.put(key, myMap.get(key));
+                for (String key :
+                        myMap.keySet()) {
+                    facts.put(key, myMap.get(key));
+                }
+
+                facts.remove("facts");
             }
-
-            facts.remove("facts");
     }
 
     @Override
