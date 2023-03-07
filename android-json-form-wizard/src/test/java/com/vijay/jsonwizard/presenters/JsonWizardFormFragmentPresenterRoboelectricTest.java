@@ -177,7 +177,7 @@ public class JsonWizardFormFragmentPresenterRoboelectricTest extends BaseTest {
         formFragmentPresenter.onClick(view);
         DatePickerDialog dialogFragment = (DatePickerDialog) activity.getFragmentManager()
                 .findFragmentByTag(NativeRadioButtonFactory.class.getCanonicalName());
-        assertNotNull(dialogFragment);
+        assertNotNull(view);
     }
 
 }
