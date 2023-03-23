@@ -24,6 +24,7 @@
         android:theme="@style/NativeFormsAppTheme"
         tools:replace="android:theme">
 
+        <meta-data android:name="io.sentry.auto-init" android:value="false" />
         <activity
             android:name=".activities.JsonFormBarcodeScanActivity"
             android:configChanges="keyboardHidden|orientation"
@@ -36,5 +37,6 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
     </application>
 </manifest>

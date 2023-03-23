@@ -19,6 +19,9 @@ import com.vijay.jsonwizard.utils.FormUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import io.sentry.ITransaction;
+import io.sentry.Sentry;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int REQUEST_CODE_GET_JSON = 1234;
     private static final String TAG = MainActivity.class.getCanonicalName();
@@ -96,6 +99,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     public void startForm(int jsonFormActivityRequestCode, String formName, String entityId, boolean translate) throws Exception {
+
+        ITransaction transaction = Sentry.startTransaction("#startForm", String.format("formName: %s", formName.toUpperCase()));
 
         final String STEP1 = "step1";
         final String FIELDS = "fields";
@@ -255,7 +260,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 }
             }
-
+            transaction.finish();
         }
 
     }

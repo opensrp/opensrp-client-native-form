@@ -2224,3 +2224,34 @@ Alternatively, a different folder can be specified by setting the `MLS_ASSETS_FO
 For a form named `example_form` the generated assets will follow the following naming convention : `example_form.json` and `example_form.properties`.
 
 The properties file can then be copied over to the `resources` folder of your Android project under `src/main`. The placeholder-injected JsonForm will typically be copied over to the `assets` folder of your Android project (although not mandatory).
+
+## How to use Sentry for OpenSRP Client Performance Monitoring
+
+This section explains how to setup performance monitoring with Sentry on opensrp clients if you have added opensrp-native-forms library as a dependency. Instructions are given in this article on how to initialize Sentry in the opensrp client apps and how to check for the performance data or transactions on the Sentry dashboard.
+
+> ### Note
+>
+> * You need to have already setup a [project](https://docs.sentry.io/product/sentry-basics/integrate-frontend/create-new-project/) and dashboard with the necessary access permissions, and
+> * are able to obtain the dsn of this project through `[Project] > Settings > Client Keys (DSN)`. This will be required later for configuration and logging.
+
+### Instructions
+
+1.  Add and update opensrp-native-forms library to version above v3.0.4-SNAPSHOT
+
+2.  Sync and rebuild project to ensure new dependencies are loaded. Sentry would come as dependency to opensrp-native-forms and would load up automatically. Run your application, and confirm no logs are sent to the sentry dashboard
+
+3.  There are a couple of configurations that would need to be setup first for logs to. show up to the dashboard. These are:
+      * DSN (Data Source Name); you can find your DSN in your Sentry project settings by navigating to `[Project] > Settings > Client Keys (DSN)` in sentry.io.
+
+      * Environment; unique name that would be used to tag logs
+
+    In your app’s Application class, add the following code snippet in onCreate with the placeholder values replaced . Run your application once more
+
+    ```Java
+        SentryAndroid.init(this, options -> {
+          options.setEnvironment("YOUR_ENVIRONMENT_NAME");
+          options.setDsn("YOUR_DSN_NAME_LINK");
+        })
+    ```
+
+4.  Logs in performance monitoring should show up in the Sentry dashboard. Use the Environment tag set from the previous step to filter environment.

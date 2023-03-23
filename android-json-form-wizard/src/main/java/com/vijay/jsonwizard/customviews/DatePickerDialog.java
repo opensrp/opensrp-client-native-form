@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +29,10 @@ import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 
 public class DatePickerDialog extends DialogFragment {
     private DatePicker datePicker;
+
+    private Button okButton;
+
+    private Button cancelButton;
     private android.app.DatePickerDialog.OnDateSetListener onDateSetListener;
     private DialogInterface.OnShowListener onShowListener;
     private Date date;
@@ -66,9 +72,6 @@ public class DatePickerDialog extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup dialogView = (ViewGroup) inflater.inflate(R.layout.native_form_dialog_date_picker, container, false);
-
-        Button cancelButton;
-        Button okButton;
 
         setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
@@ -178,5 +181,15 @@ public class DatePickerDialog extends DialogFragment {
 
     public void setNumericDatePicker(boolean numericDatePicker) {
         isNumericDatePicker = numericDatePicker;
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
+    public Button getOkButton(){
+        return okButton;
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
+    public Button getCancelButton(){
+        return cancelButton;
     }
 }

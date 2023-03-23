@@ -64,7 +64,7 @@ import timber.log.Timber;
  */
 public class NativeRadioButtonFactory implements FormWidgetFactory {
 
-    private static final String TAG = NativeRadioButtonFactory.class.getCanonicalName();
+    public static final String TAG = NativeRadioButtonFactory.class.getCanonicalName();
     private final FormUtils formUtils = new FormUtils();
     private final CustomTextViewClickListener customTextViewClickListener = new CustomTextViewClickListener();
     private RadioButton radioButton;

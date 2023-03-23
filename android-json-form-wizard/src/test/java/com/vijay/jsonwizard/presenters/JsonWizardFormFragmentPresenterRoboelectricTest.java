@@ -1,12 +1,12 @@
 package com.vijay.jsonwizard.presenters;
 
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.provider.MediaStore;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -48,6 +48,7 @@ import java.util.concurrent.Executor;
 import static com.vijay.jsonwizard.presenters.JsonFormFragmentPresenter.RESULT_LOAD_IMG;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -159,10 +160,10 @@ public class JsonWizardFormFragmentPresenterRoboelectricTest extends BaseTest {
     }
 
     @Test
-    public void testOnClickShouldDisplayDatePickerDialog() {
+    public void testOnClickShouldDisplayDatePickerDialog() throws InterruptedException {
         LinearLayout view = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.native_form_compound_button_parent, null);
         CustomTextView customTextView = new CustomTextView(context);
-        Activity activity = Robolectric.buildActivity(AppCompatActivity.class).create().get();
+        Activity activity = Robolectric.buildActivity(Activity.class).create().get();
         RadioButton radioButton = new RadioButton(context);
         view.setTag(R.id.specify_textview, customTextView);
         view.setTag(R.id.native_radio_button, radioButton);
@@ -175,9 +176,17 @@ public class JsonWizardFormFragmentPresenterRoboelectricTest extends BaseTest {
         view.setTag(R.id.specify_widget, JsonFormConstants.DATE_PICKER);
         view.setTag(R.id.option_json_object, new JSONObject());
         formFragmentPresenter.onClick(view);
-        DatePickerDialog dialogFragment = (DatePickerDialog) activity.getFragmentManager()
-                .findFragmentByTag(NativeRadioButtonFactory.class.getCanonicalName());
-        assertNotNull(view);
+        Thread.sleep(3000);
+        DatePickerDialog dialogFragment = null;
+        FragmentManager fragmentManager = activity.getFragmentManager();
+        if (fragmentManager != null){
+            dialogFragment = (DatePickerDialog) fragmentManager.findFragmentByTag(NativeRadioButtonFactory.TAG);
+        }
+        assertNotNull(dialogFragment);
+
+        View okButton = dialogFragment.getOkButton();
+        okButton.performClick();
+        assertTrue(radioButton.getText().length() > 0);
     }
 
 }
