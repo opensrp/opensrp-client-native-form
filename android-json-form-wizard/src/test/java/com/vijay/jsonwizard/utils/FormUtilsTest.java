@@ -730,9 +730,9 @@ public class FormUtilsTest extends BaseTest {
 
     @Test
     public void testCreateOptiBPDataObject() throws JSONException {
-        JSONObject inputJson = FormUtils.createOptiBPDataObject("clientId", "clientOpenSRPId");
+        JSONObject inputJson = FormUtils.createOptiBPDataObject("clientId", "clientOpenSRPId","");
 
-        Assert.assertEquals(inputJson.toString(), "{\"clientId\":\"clientId\",\"clientOpenSRPId\":\"clientOpenSRPId\"}");
+        Assert.assertEquals(inputJson.toString(), "{\"clientId\":\"clientId\",\"clientOpenSRPId\":\"clientOpenSRPId\",\"calibration\":\"\"}");
     }
 
     public void testSetEditModeShouldShowEditBtnAndDisableEditableView() throws JSONException {
@@ -774,6 +774,16 @@ public class FormUtilsTest extends BaseTest {
     }
 
     @Test
+    public void testSetEditModeShouldShowEditBtnAndDisableEditableViewIfEditableAndReadOnlySet() throws JSONException {
+        View editableView = Mockito.mock(View.class);
+        ImageView editButton = Mockito.mock(ImageView.class);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(JsonFormConstants.READ_ONLY, false);
+        jsonObject.put(JsonFormConstants.EDITABLE, false);
+        FormUtils.setEditMode(jsonObject, editableView, editButton);
+        assertEquals(View.VISIBLE,editButton.getVisibility());
+        assertEquals(0,editableView.getVisibility());
+    }
     public void testUpdateValueToJsonArray() throws Exception {
         FormUtils mockedFormUtils = Mockito.mock(FormUtils.class);
         String item = "{\n" +

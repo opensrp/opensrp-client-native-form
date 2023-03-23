@@ -320,6 +320,7 @@ public class JsonFormConstants {
         public static final int OPTIBP_REPEAT_REQUEST_CODE = 302;
         public static final String OPTIBP_REPORT_RESULT = "result";
         public static final String OPTIBP_REPORT_COMPONENT = "component";
+        public static final String OPTIBP_VALUE_STRING = "valueString";
         public static final String OPTIBP_REPORT_VALUE_QUANTITY = "valueQuantity";
         public static final String OPTIBP_LAUNCH_INTENT = "android.intent.action.BLOOD_MEASURE";
         public static final String OPTIBP_KEY_DATA = "optibp_data";
@@ -328,6 +329,16 @@ public class JsonFormConstants {
         public static final String OPTIBP_KEY_BUTTON_BG_COLOR = "optibp_button_bg_color";
         public static final String OPTIBP_KEY_BUTTON_TEXT_COLOR = "optibp_button_text_color";
         public static final String OPTIBP_KEY_BUTTON_TEXT = "optibp_button_text";
+        public static final String BP_USING_OPTIBP_BUTTON = "record_bp_using_optibp_button";
+        public static final String BP_USING_SECOND_OPTIBP_BUTTON = "record_bp_using_optibp_button";
+        public static final String CALIBRATION = "calibration";
+        public static final String DATE = "date";
+        public static final String VERSION = "version";
+        public static final String MODEL = "model";
+        public static final String HEIGHT = "height";
+        public static final String WEIGHT = "weight";
+        public static final String CURRENTWEIGHT = "current_weight";
+
     }
 
     public static class EDIT_TEXT_TYPE {
@@ -379,4 +390,5 @@ public class JsonFormConstants {
     public interface MLS {
         String PROPERTIES_FILE_NAME = "properties_file_name";
     }
+
 }
