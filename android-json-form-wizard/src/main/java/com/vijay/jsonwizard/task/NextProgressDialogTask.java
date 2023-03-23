@@ -10,6 +10,7 @@ public class NextProgressDialogTask extends AsyncTask<Void, Void, Void> {
     private JsonWizardFormFragment formFragment;
     private Context context;
     private ProgressDialog progressDialog;
+    private Runnable runnableOnUiThread;
 
     private void showDialog() {
         setProgressDialog(new ProgressDialog(getContext()));
@@ -34,7 +35,7 @@ public class NextProgressDialogTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
-        getFormFragment().next();
+        runnableOnUiThread = getFormFragment().nextAsRunnable();
         return null;
     }
 
@@ -48,6 +49,10 @@ public class NextProgressDialogTask extends AsyncTask<Void, Void, Void> {
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
         hideDialog();
+
+        if (runnableOnUiThread != null) {
+            runnableOnUiThread.run();
+        }
     }
 
     public JsonWizardFormFragment getFormFragment() {

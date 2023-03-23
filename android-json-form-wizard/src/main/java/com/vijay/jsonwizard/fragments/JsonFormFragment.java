@@ -482,6 +482,21 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
         return false;
     }
 
+
+    public Runnable nextAsRunnable() {
+        return new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    presenter.onNextClick(mMainView);
+                } catch (Exception e) {
+                    Timber.e(e, " --> next");
+                }
+            }
+        };
+
+    }
+
     public void setShouldSkipStep(boolean shouldSkipStep) {
         this.shouldSkipStep = shouldSkipStep;
     }
