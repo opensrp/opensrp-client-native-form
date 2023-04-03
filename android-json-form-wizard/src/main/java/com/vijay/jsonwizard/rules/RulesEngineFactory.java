@@ -1,12 +1,14 @@
 package com.vijay.jsonwizard.rules;
 
 import android.content.Context;
+
 import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.vijay.jsonwizard.activities.JsonFormBaseActivity;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.factory.FileSourceFactoryHelper;
+import com.vijay.jsonwizard.utils.NativeFormsProperties;
 import com.vijay.jsonwizard.utils.Utils;
 
 import org.jeasy.rules.api.Facts;
@@ -14,11 +16,11 @@ import org.jeasy.rules.api.Rule;
 import org.jeasy.rules.api.RuleListener;
 import org.jeasy.rules.api.Rules;
 import org.jeasy.rules.api.RulesEngine;
+import org.jeasy.rules.api.RulesEngineParameters;
 import org.jeasy.rules.core.DefaultRulesEngine;
-import org.jeasy.rules.core.RulesEngineParameters;
 import org.jeasy.rules.mvel.MVELRule;
 import org.jeasy.rules.mvel.MVELRuleFactory;
-import org.jeasy.rules.support.YamlRuleDefinitionReader;
+import org.jeasy.rules.support.reader.YamlRuleDefinitionReader;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.smartregister.client.utils.contract.ClientFormContract;
@@ -43,16 +45,25 @@ public class RulesEngineFactory implements RuleListener {
     private RulesEngineHelper rulesEngineHelper;
     private Facts globalFacts;
     private MVELRuleFactory mvelRuleFactory;
-
+    private boolean backwardCompatibility = false;
     public RulesEngineFactory(Context context, Map<String, String> globalValues) {
         this.context = context;
+        backwardCompatibility = Utils.getProperties(context).getPropertyBoolean(NativeFormsProperties.KEY.EASY_RULES_V3_COMPATIBILITY);
         RulesEngineParameters parameters = new RulesEngineParameters().skipOnFirstAppliedRule(true);
         this.defaultRulesEngine = new DefaultRulesEngine(parameters);
         ((DefaultRulesEngine) this.defaultRulesEngine).registerRuleListener(this);
         this.ruleMap = new HashMap<>();
         gson = new Gson();
         this.rulesEngineHelper = new RulesEngineHelper();
-        this.mvelRuleFactory = new MVELRuleFactory(new YamlRuleDefinitionReader());
+        if(backwardCompatibility) {
+            this.mvelRuleFactory = new MVELRuleFactory(new YamlRuleDefinitionReaderExt());
+            Timber.e("yaml ext Reader engaged : RulesEngineFactory");
+        }
+        else
+        {
+            this.mvelRuleFactory = new MVELRuleFactory(new YamlRuleDefinitionReader());
+            Timber.e("yaml ext Reader disengaged : RulesEngineFactory");
+        }
 
 
         if (globalValues != null) {
@@ -64,6 +75,7 @@ public class RulesEngineFactory implements RuleListener {
     }
 
     public RulesEngineFactory() {
+
     }
 
     private Rules getDynamicRulesFromJsonArray(@NonNull JSONArray jsonArray, @NonNull String type) {
@@ -99,7 +111,7 @@ public class RulesEngineFactory implements RuleListener {
             dynamicMvelRule.setDescription(jsonObjectDynamicRule.optString(RuleConstant.DESCRIPTION));
             dynamicMvelRule.setPriority(jsonObjectDynamicRule.optInt(RuleConstant.PRIORITY));
             dynamicMvelRule.when(jsonObjectDynamicRule.optString(RuleConstant.CONDITION));
-            dynamicMvelRule.then(jsonObjectDynamicRule.optString(RuleConstant.ACTIONS));
+            dynamicMvelRule.then("facts." + jsonObjectDynamicRule.optString(RuleConstant.ACTIONS));
             dynamicMvelRule.name(jsonObjectDynamicRule.optString(RuleConstant.NAME));
             return dynamicMvelRule;
         } catch (Exception e) {
@@ -249,6 +261,14 @@ public class RulesEngineFactory implements RuleListener {
 
     @Override
     public boolean beforeEvaluate(Rule rule, Facts facts) {
+
+        HashMap<String, Object> myMap = new HashMap<>();
+        Map<String, Object> iterationFacts = facts.asMap();
+        for (String key : iterationFacts.keySet()) {
+            myMap.put(key, iterationFacts.get(key));
+        }
+
+        facts.put("facts", myMap);
         return selectedRuleName != null && selectedRuleName.equals(rule.getName());
     }
 
@@ -257,19 +277,38 @@ public class RulesEngineFactory implements RuleListener {
         //Overriden
     }
 
+
     @Override
     public void beforeExecute(Rule rule, Facts facts) {
-        //Overriden
+        if(backwardCompatibility) {
+            Timber.e("Putting facts in beforeExecute");
+            HashMap<String, Object> myMap = new HashMap<>();
+            facts.put("facts", myMap);
+        }
+
     }
 
     @Override
     public void onSuccess(Rule rule, Facts facts) {
-        //Overriden
+            if(backwardCompatibility) {
+                Timber.e("Putting facts in onSuccess");
+                HashMap<String, Object> myMap = facts.get("facts");
+
+                for (String key :
+                        myMap.keySet()) {
+                    facts.put(key, myMap.get(key));
+                }
+
+                facts.remove("facts");
+            }
     }
 
     @Override
     public void onFailure(Rule rule, Facts facts, Exception exception) {
-        //Overriden
+
+            Timber.e("Putting facts in onFailure");
+            facts.remove("facts");
+
     }
 
     public String getRulesFolderPath() {

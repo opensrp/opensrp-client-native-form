@@ -4,16 +4,20 @@ import android.content.Context;
 
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.interfaces.FormFileSource;
+import com.vijay.jsonwizard.rules.YamlRuleDefinitionReaderExt;
+import com.vijay.jsonwizard.utils.NativeFormsProperties;
 import com.vijay.jsonwizard.utils.Utils;
 
 import org.jeasy.rules.api.Rules;
 import org.jeasy.rules.mvel.MVELRuleFactory;
-import org.jeasy.rules.support.YamlRuleDefinitionReader;
+import org.jeasy.rules.support.reader.YamlRuleDefinitionReader;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
+import timber.log.Timber;
 
 /***
  * used to read files stored on the APP's asset folder
@@ -25,7 +29,16 @@ public class AssetsFileSource implements FormFileSource {
     private MVELRuleFactory mvelRuleFactory;
 
     private AssetsFileSource() {
-        this.mvelRuleFactory = new MVELRuleFactory(new YamlRuleDefinitionReader());
+        if(Utils.enabledProperty(NativeFormsProperties.KEY.EASY_RULES_V3_COMPATIBILITY))
+        {
+            this.mvelRuleFactory = new MVELRuleFactory(new YamlRuleDefinitionReaderExt());
+            Timber.e("AssetsFileSource Engaged");
+        }
+        else
+        {
+            this.mvelRuleFactory = new MVELRuleFactory(new YamlRuleDefinitionReader());
+            Timber.e("AssetsFileSource not Engaged");
+        }
     }
 
     @Override

@@ -1,9 +1,5 @@
 package com.vijay.jsonwizard.activities;
 
-import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
-import static com.vijay.jsonwizard.utils.FormUtils.getCheckboxValueJsonArray;
-import static com.vijay.jsonwizard.utils.FormUtils.getCurrentCheckboxValues;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -107,6 +103,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import timber.log.Timber;
+
+import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
+import static com.vijay.jsonwizard.utils.FormUtils.getCheckboxValueJsonArray;
+import static com.vijay.jsonwizard.utils.FormUtils.getCurrentCheckboxValues;
 
 public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
@@ -1427,7 +1427,14 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     formObject.put(RuleConstant.IS_RULE_CHECK, true);
                     formObject.put(RuleConstant.STEP, formObject.getString(RuleConstant.STEP));
 
-                    result.asMap().putAll(getValueFromAddressCore(formObject).asMap());
+                    if (Utils.enabledProperty(NativeFormsProperties.KEY.EASY_RULES_V3_COMPATIBILITY)) {
+                        Facts resultFacts = getValueFromAddressCore(formObject);
+
+                        for (Map.Entry<String, Object> factEntry : resultFacts.asMap().entrySet()) {
+                            result.put(factEntry.getKey(), factEntry.getValue());
+                        }
+                    }
+
                 }
 
                 result.put(RuleConstant.SELECTED_RULE, address[2]);
@@ -1932,16 +1939,24 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
                     StringBuilder conditionString = new StringBuilder();
                     conditionString.append(map.get(RuleConstant.CONDITION).toString());
+                    boolean  backwardCompatibility = Utils.enabledProperty(NativeFormsProperties.KEY.EASY_RULES_V3_COMPATIBILITY);
 
                     List<String> fields = (List<String>) map.get(RuleConstant.ACTIONS);
+                    List<String> newFields = new ArrayList<>();
                     if (fields != null) {
                         for (String field : fields) {
                             if (field.trim().startsWith(RuleConstant.CALCULATION) ||
                                     field.trim().startsWith(RuleConstant.CONSTRAINT)) {
                                 conditionString.append(" " + field);
                             }
+                            if(backwardCompatibility)
+                            newFields.add("facts." + field);
                         }
 
+                        if(backwardCompatibility) {
+                            fields.clear();
+                            fields.addAll(newFields);
+                        }
                     }
 
                     actions.addAll(getConditionKeys(conditionString.toString()));
