@@ -19,6 +19,7 @@ import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -117,7 +118,6 @@ public class EditTextFactory implements FormWidgetFactory {
         RelativeLayout editTextLayout = rootLayout.findViewById(R.id.edit_text_layout);
         MaterialEditText editText = editTextLayout.findViewById(R.id.edit_text);
         ImageView editButton = editTextLayout.findViewById(R.id.material_edit_text_edit_button);
-
         FormUtils.setEditButtonAttributes(jsonObject, editText, editButton, listener);
         attachLayout(stepName, context, formFragment, jsonObject, editText, editButton);
 
@@ -190,15 +190,21 @@ public class EditTextFactory implements FormWidgetFactory {
         addCumulativeTotalValidator(jsonObject, formFragment, editText, stepName, (JsonApi) context);
         // edit type check
         String editType = jsonObject.optString(JsonFormConstants.EDIT_TYPE);
+        editText.setSingleLine(false);
         if (!TextUtils.isEmpty(editType)) {
             if (JsonFormConstants.NUMBER.equals(editType)) {
                 editText.setRawInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
             } else if (JsonFormConstants.NAME.equals(editType)) {
                 editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
             }
+            else if (JsonFormConstants.PASSWORD.equals(editType))
+            {
+                editText.setTransformationMethod(PasswordTransformationMethod.getInstance());
+            }
+
         }
 
-        editText.setSingleLine(false);
+       
         editText.addTextChangedListener(new GenericTextWatcher(stepName, formFragment, editText));
         attachRefreshLogic(context, jsonObject, editText);
     }

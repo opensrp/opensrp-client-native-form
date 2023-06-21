@@ -148,6 +148,7 @@ public class JsonFormConstants {
     public static final String EXPANDED = "expanded";
     public static final String EXPAND_ON_TEXT_CHANGE = "expand_on_text_change";
     public static final String NUMBER = "number";
+    public static final String PASSWORD = "password";
     public static final String TOP_MARGIN = "top_margin";
     public static final String BOTTOM_MARGIN = "bottom_margin";
     public static final String LEFT_MARGIN = "left_margin";

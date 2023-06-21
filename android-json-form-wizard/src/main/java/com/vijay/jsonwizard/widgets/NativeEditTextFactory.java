@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Build;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -143,6 +144,10 @@ public class NativeEditTextFactory implements FormWidgetFactory {
                 editText.setRawInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
             } else if ("name".equals(editType)) {
                 editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+            }
+            else if ("password".equals(editType))
+            {
+                editText.setTransformationMethod(PasswordTransformationMethod.getInstance());
             }
         }
 
