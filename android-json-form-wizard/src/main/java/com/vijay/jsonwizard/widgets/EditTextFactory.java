@@ -1,18 +1,5 @@
 package com.vijay.jsonwizard.widgets;
 
-import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_CUMULATIVE_VALIDATION_ERR;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_RELATIVE_MAX_VALIDATION_ERR;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_RELATIVE_MIN_VALIDATION_ERR;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.RELATED_FIELDS;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.RELATIVE_VALIDATION_EXCEPTION;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP1;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.V_CUMULATIVE_TOTAL;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.V_RELATIVE_MAX;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.V_RELATIVE_MIN;
-import static com.vijay.jsonwizard.utils.FormUtils.fields;
-import static com.vijay.jsonwizard.utils.FormUtils.getFieldJSONObject;
-
 import android.content.Context;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -60,6 +47,19 @@ import java.util.List;
 import java.util.Set;
 
 import timber.log.Timber;
+
+import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_CUMULATIVE_VALIDATION_ERR;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_RELATIVE_MAX_VALIDATION_ERR;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_RELATIVE_MIN_VALIDATION_ERR;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.RELATED_FIELDS;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.RELATIVE_VALIDATION_EXCEPTION;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP1;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.V_CUMULATIVE_TOTAL;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.V_RELATIVE_MAX;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.V_RELATIVE_MIN;
+import static com.vijay.jsonwizard.utils.FormUtils.fields;
+import static com.vijay.jsonwizard.utils.FormUtils.getFieldJSONObject;
 
 public class EditTextFactory implements FormWidgetFactory {
 
@@ -203,8 +203,6 @@ public class EditTextFactory implements FormWidgetFactory {
             }
 
         }
-
-       
         editText.addTextChangedListener(new GenericTextWatcher(stepName, formFragment, editText));
         attachRefreshLogic(context, jsonObject, editText);
     }
