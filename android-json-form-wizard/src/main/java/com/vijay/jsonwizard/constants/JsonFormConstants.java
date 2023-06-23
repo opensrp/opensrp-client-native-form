@@ -57,6 +57,7 @@ public class JsonFormConstants {
     public static final String BEHAVIOUR = "behaviour";
     public static final String RESULT = "result";
     public static final String VALUE = "value";
+    public static final String V_EQUALS = "v_equals";
     public static final String KEYS = "keys";
     public static final String SECOND_VALUE = "second_value";
     public static final String OPENMRS_ENTITY_PARENT = "openmrs_entity_parent";

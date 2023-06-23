@@ -31,6 +31,7 @@ import com.vijay.jsonwizard.validators.edittext.MaxLengthValidator;
 import com.vijay.jsonwizard.validators.edittext.MaxNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.MinLengthValidator;
 import com.vijay.jsonwizard.validators.edittext.MinNumericValidator;
+import com.vijay.jsonwizard.validators.edittext.ReferenceFieldValidator;
 import com.vijay.jsonwizard.validators.edittext.ReferenceValidator;
 import com.vijay.jsonwizard.validators.edittext.RelativeNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
@@ -179,6 +180,7 @@ public class EditTextFactory implements FormWidgetFactory {
         FormUtils.toggleEditTextVisibility(jsonObject, editText);
 
         addRequiredValidator(jsonObject, editText);
+        addEqualsValidator(formFragment,jsonObject,editText);
         addLengthValidator(jsonObject, editText);
         addRegexValidator(jsonObject, editText);
         addEmailValidator(jsonObject, editText);
@@ -216,6 +218,15 @@ public class EditTextFactory implements FormWidgetFactory {
 
     }
 
+    private void addEqualsValidator(JsonFormFragment formFragment,JSONObject jsonObject, MaterialEditText editText) throws JSONException {
+        JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_EQUALS);
+        if (requiredObject != null) {
+            String referencedValue = requiredObject.optString(JsonFormConstants.VALUE,"");
+            MaterialEditText referencedEditText = (MaterialEditText) formFragment.getJsonApi().getFormDataView(referencedValue);
+            editText.addValidator(new ReferenceFieldValidator(requiredObject.getString(JsonFormConstants.ERR),referencedEditText));
+            FormUtils.setRequiredOnHint(editText);
+        }
+    }
     private void addRequiredValidator(JSONObject jsonObject, MaterialEditText editText) throws JSONException {
         JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
         if (requiredObject != null) {
