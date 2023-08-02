@@ -333,7 +333,7 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
          * Adding new calibration data here
          */
         appendHealthData(optiBPData, widgetArgs);
-        optiBPData.put(OptibpConstants.CALIBRATION, getCalibrationData(optiBPData.optString(OptibpConstants.CALIBRATION)));
+        optiBPData.put(OptibpConstants.CALIBRATION, getCalibrationData(Utils.decompress(optiBPData.optString(OptibpConstants.CALIBRATION),"UTF-8")));
         return optiBPData.toString();
     }
 
