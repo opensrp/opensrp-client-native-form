@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <item name="project_id" type="id" />
+    <item name="user_id" type="id" />
+    <item name="module_id" type="id" />
+    <item name="guid" type="id" />
+    <item name="finger_print_option" type="id" />
     <item name="label" type="id" />
     <item name="key" type="id" />
     <item name="address" type="id" />
@@ -72,5 +77,7 @@
     <item name="number_selector_dialog" type="id" />
     <item name="number_selector_main_textview" type="id" />
     <item name="submit" type="id" />
-  <item name="label_dialog_image_src" type="id"/>
+    <item name="label_dialog_image_src" type="id"/>
+    <item name="error_textView" type="id" />
+    <item name="maxSelectable" type="id"/>
 </resources>

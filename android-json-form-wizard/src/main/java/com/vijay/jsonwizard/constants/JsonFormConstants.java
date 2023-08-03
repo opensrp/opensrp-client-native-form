@@ -4,6 +4,13 @@ package com.vijay.jsonwizard.constants;
  * Created by vijay on 5/7/15.
  */
 public class JsonFormConstants {
+    public static final String SIMPRINTS_OPTION_REGISTER = "register";
+    public static final String SIMPRINTS_OPTION_VERIFY = "verify";
+    public static final String SIMPRINTS_PROJECT_ID = "project_id";
+    public static final String SIMPRINTS_USER_ID = "user_id";
+    public static final String SIMPRINTS_MODULE_ID = "module_id";
+    public static final String SIMPRINTS_GU_ID = "gu_id";
+    public static final String SIMPRINTS_OPTION = "finger_print_option";
     public static final String EDIT_TEXT_STYLE = "edit_text_style";
     public static final String BORDERED_EDIT_TEXT = "bordered";
     public static final String FIRST_STEP_NAME = "step1";
@@ -20,6 +27,7 @@ public class JsonFormConstants {
     public static final String LABEL_INFO_TITLE = "label_info_title";
     public static final String LABEL_NUMBER = "label_number";
     public static final String CHOOSE_IMAGE = "choose_image";
+    public static final String FINGER_PRINT = "finger_print";
     public static final String IMAGE_FILE = "image_file";
     public static final String IMAGE_FOLDER = "image_folder";
     public static final String IMAGE_VIEW = "image_view";
@@ -58,6 +66,7 @@ public class JsonFormConstants {
     public static final String V_REQUIRED = "v_required";
     public static final String V_MIN_LENGTH = "v_min_length";
     public static final String V_MAX_LENGTH = "v_max_length";
+    public static final String IS_FIXED_SIZE = "is_fixed_size";
     public static final String V_REGEX = "v_regex";
     public static final String V_EMAIL = "v_email";
     public static final String V_URL = "v_url";
@@ -117,10 +126,8 @@ public class JsonFormConstants {
     public static final String BTN_TEXT_COLOR = "btn_text_color";
     public static final String BTN_TEXT_SIZE = "btn_text_size";
     public static final String BTN_BG_COLOR = "btn_bg_color";
-
     public static final String STEPNAME = "stepName";
     public static final String DISPLAY_BACK_BUTTON = "display_back_button";
-
     public static final String COUNT = "count";
     public static final String CALCULATION = "calculation";
     public static final String HIDDEN = "hidden";
@@ -155,7 +162,7 @@ public class JsonFormConstants {
     public static final String OPENMRS_ATTRIBUTES = "openmrs_attributes";
     public static final String VALUE_OPENMRS_ATTRIBUTES = "value_openmrs_attributes";
     public static final String OPENMRS_CHOICE_IDS = "openmrs_choice_ids";
-    public static final String ANC_RADIO_BUTTON = "anc_radio_button";
+    public static final String EXTENDED_RADIO_BUTTON = "extended_radio_button";
     public static final String TRUE = "true";
     public static final String IS_VISIBLE = "is_visible";
     public static final String VALIDATE_ON_SUBMIT = "validate_on_submit";
@@ -167,6 +174,15 @@ public class JsonFormConstants {
     public static final String OPTION_KEY = "option_key";
     public static final String PARENT_KEY = "parent_key";
     public static final String IS_NUMBER_SELECTOR_MENU = "is_number_selector_menu";
+    public static final String COUNTDOWN_TIMER = "countdown_timer";
+    public static final String COUNTDOWN_TIME_UNIT = "countdown_time_unit";
+    public static final String COUNTDOWN_TIME_VALUE = "countdown_time_value";
+    public static final String COUNTDOWN_INTERVAL_SECONDS = "countdown_interval_seconds";
+    public static final String PROGRESSBAR_BACKGROUND_COLOR = "progressbar_background_color";
+    public static final String PROGRESSBAR_COLOR = "progressbar_color";
+    public static final String PROGRESSBAR_TEXT_COLOR = "progressbar_text_color";
+    public static final String DEFAULT_COUNTDOWN_TIME_UNIT = "seconds";
+    public static final String MINUTES_COUNTDOWN_TIME_UNIT = "minutes";
     public static final String PREVIOUS = "previous";
     public static final String PREVIOUS_LABEL = "previous_label";
     public static final String NEXT_LABEL = "next_label";
@@ -176,10 +192,66 @@ public class JsonFormConstants {
     public static final String BOTTOM_NAVIGATION_ORIENTATION = "bottom_navigation_orientation";
     public static final String BOTTOM_NAVIGATION = "bottom_navigation";
     public static final int RDT_CAPTURE_CODE = 3290;
+    public static final String INVISIBLE_REQUIRED_FIELDS = "invisible_required_fields";
     public static final String LABEL_INFO_HAS_IMAGE = "label_info_has_image";
     public static final String LABEL_INFO_IMAGE_SRC = "label_info_image_src";
+    public static final String ACCORDION_INFO_TEXT = "accordion_info_text";
+    public static final String ACCORDION_INFO_TITLE = "accordion_info_title";
+    public static final String DISPLAY_BOTTOM_SECTION = "display_bottom_section";
+    public static final String BOTTOM_SECTION = "bottom_section";
+    public static final String DISPLAY_RECORD_BUTTON = "display_record_button";
+    public static final String GLOBAL = "global";
+    public static final String REQUIRED_FIELDS = "required_fields";
+    public static final String INDEX = "index";
+    public static final String DATE_TODAY_HIDDEN = "date_today_hidden";
+    public static final String FALSE = "false";
+    public static final String DISPLAY_SCROLL_BARS = "display_scroll_bars";
+    public static final String SKIP_BLANK_STEPS = "skip_blank_steps";
+    public static final String MULTI_SELECT_LIST ="multi_select_list" ;
+    public static final String FORM_VERSION = "form_version";
+    public static final String LABEL_CONSTRAINT_LAYOUT = "label_constraint_layout";
 
-  public static class JSON_FORM_KEY {
+    public interface MultiSelectUtils {
+        String PROPERTY = "property";
+        String MAX_SELECTABLE = "maxSelectable";
+        String META = "meta";
+        String INFO = "info";
+        String BUTTON_TEXT = "buttonText";
+        String DIALOG_TITLE = "dialogTitle";
+        String SEARCH_HINT = "searchHint";
+    }
+
+    public static class Properties {
+        public static final String APP_VERSION_NAME = "appVersionName";
+        public static final String APP_FORM_VERSION = "formVersion";
+        public static final String DETAILS = "details";
+    }
+
+    public static class JsonFormConstantsUtils {
+        public static final String CONTACT_CONTAINER = "container";
+        public static final String ANC_TEST = "anc_test";
+        public static final String ANC_COUNSELLING_TREATMENT = "anc_counselling_treatment";
+    }
+
+    public static class AncRadioButtonOptionTypesUtils {
+        public static final String DONE_TODAY = "done_today";
+        public static final String DONE_EARLIER = "done_earlier";
+        public static final String ORDERED = "ordered";
+        public static final String NOT_DONE = "not_done";
+        public static final String DONE = "done";
+
+    }
+
+    public static class AncRadioButtonOptionTextUtils {
+        public static final String DONE_TODAY = "Done today";
+        public static final String DONE_EARLIER = "Done earlier";
+        public static final String ORDERED = "Ordered";
+        public static final String NOT_DONE = "Not done";
+        public static final String DONE = "Done";
+
+    }
+
+    public static class JSON_FORM_KEY {
         public static final String EX_RULES = "ex-rules";
         public static final String EX_CHECKBOX = "ex-checkbox";
         public static final String OR = "or";
@@ -221,5 +293,10 @@ public class JsonFormConstants {
 
     public static class MESSAGE_TYPE {
         public static final String GLOBAL_VALUES = "global_values";
+    }
+
+    public static class ACTIVITY_REQUEST_CODE {
+        public static final int REQUEST_CODE_REGISTER = 1222;
+        public static final int REQUEST_CODE_VERIFY = 1333;
     }
 }

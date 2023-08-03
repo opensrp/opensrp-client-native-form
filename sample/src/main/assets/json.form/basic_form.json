@@ -66,6 +66,39 @@
         "uploadButtonText": "Take a photo of the child"
       },
       {
+        "key": "finger_print",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "finger_print",
+        "project_id": "pcmqBbcaB4xWvfRHRELG",
+        "user_id": "01313048251",
+        "module_id": "test",
+        "finger_print_option": "register",
+        "uploadButtonText": "Take finger print",
+        "image_file": "",
+        "relevance": {
+          "step1:user_first_name": {
+            "type": "string",
+            "ex": "equalTo(., \"test\")"
+          }
+        }
+      },
+      {
+        "key": "finger_print",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "finger_print",
+        "project_id": "tZqJnw0ajK04LMYdZzyw",
+        "user_id": "test_user",
+        "module_id": "mpower",
+        "gu_id": "id",
+        "finger_print_option": "verify",
+        "uploadButtonText": "Verify finger print",
+        "image_file": ""
+      },
+      {
         "key": "user_first_name",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -97,6 +130,12 @@
         "v_regex": {
           "value": "[A-Za-z\\s\\.\\-]*",
           "err": "Please enter a valid name"
+        },
+        "relevance": {
+          "step1:user_first_name": {
+            "type": "string",
+            "ex": "equalTo(., \"test\")"
+          }
         }
       },
       {
@@ -246,7 +285,6 @@
   },
   "step3": {
     "title": "Basic Form Threes",
-    "next": "step4",
     "fields": [
       {
         "key": "user_date",
@@ -259,6 +297,7 @@
         "duration": {
           "label": "Age"
         },
+        "default": "12-12-2015",
         "min_date": "today-5y",
         "max_date": "today",
         "v_required": {
@@ -422,54 +461,8 @@
         ],
         "v_required": {
           "value": "false"
-        }
-      }
-    ]
-  },
-  "step4": {
-    "title": "Capture RDT image",
-    "display_back_button": "true",
-    "next": "step5",
-    "fields": [
-      {
-        "key": "rdt_capture",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "rdt_capture"
-      }
-    ]
-  },
-  "step5": {
-    "title": "Select RDT reader result",
-    "display_back_button": "true",
-    "fields": [
-      {
-        "key": "rdt_result",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "Select RDT reader result",
-        "options": [
-          {
-            "key": "positive",
-            "text": "positive"
-          },
-          {
-            "key": "negative",
-            "text": "negative"
-          },
-          {
-            "key": "invalid",
-            "text": "invalid"
-          }
-        ],
-        "value": "negative",
-        "v_required": {
-          "value": "true",
-          "err": "Please select the RDT reader result"
-        }
+        },
+        "value": "[yes]"
       }
     ]
   }

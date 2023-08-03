@@ -1,7 +1,5 @@
 package com.vijay.jsonwizard.widgets;
 
-import static com.vijay.jsonwizard.widgets.DatePickerFactory.DATE_FORMAT;
-
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
@@ -9,8 +7,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
+import android.support.constraint.ConstraintLayout;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +20,8 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
@@ -33,14 +35,18 @@ import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.CustomTextView;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+
+import static com.vijay.jsonwizard.widgets.DatePickerFactory.DATE_FORMAT;
 
 
 /**
@@ -242,9 +248,26 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
     public static ValidationStatus validate(JsonFormFragmentView formFragmentView, RadioGroup radioGroup) {
         String error = (String) radioGroup.getTag(R.id.error);
         if (radioGroup.isEnabled() && error != null) {
+            LinearLayout linearLayout = (LinearLayout) radioGroup.getParent();
             boolean isValid = performValidation(radioGroup);
+            TextView errorTv = linearLayout.findViewById(R.id.error_textView);
             if (!isValid) {
+                ConstraintLayout constraintLayout = (ConstraintLayout) linearLayout.getChildAt(0);
+                if (errorTv == null) {
+                    errorTv = new TextView(formFragmentView.getContext());
+                    errorTv.setId(R.id.error_textView);
+                    errorTv.setTextColor(formFragmentView.getContext().getResources().getColor(R.color.toaster_note_red_icon));
+                    errorTv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                    ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(constraintLayout.getLayoutParams());
+                    layoutParams.topToBottom = R.id.label_text;
+                    layoutParams.leftMargin = FormUtils.dpToPixels(formFragmentView.getContext(), 8);
+                    constraintLayout.addView(errorTv, new ConstraintLayout.LayoutParams(layoutParams));
+                }
+                errorTv.setVisibility(View.VISIBLE);
+                errorTv.setText(error);
                 return new ValidationStatus(false, error, formFragmentView, radioGroup);
+            } else if (errorTv != null) {
+                errorTv.setVisibility(View.GONE);
             }
         }
         return new ValidationStatus(true, null, formFragmentView, radioGroup);
@@ -312,7 +335,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
 
         LinearLayout rootLayout = (LinearLayout) LayoutInflater.from(context).inflate(getLayout(), null);
         Map<String, View> labelViews = FormUtils
-                .createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly, listener);
+                .createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly, listener, popup);
         View radioGroup =
                 addRadioButtonOptionsElements(jsonObject, context, stepName, rootLayout, listener,
                         popup);
@@ -381,7 +404,7 @@ public class NativeRadioButtonFactory implements FormWidgetFactory {
         for (int i = 0; i < options.length(); i++) {
             JSONObject item = options.getJSONObject(i);
 
-          RelativeLayout radioGroupLayout =
+            RelativeLayout radioGroupLayout =
                     (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.native_item_radio_button, null);
             radioGroupLayout.setId(ViewUtil.generateViewId());
             radioGroupLayout.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));

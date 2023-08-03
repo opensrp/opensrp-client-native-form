@@ -2,6 +2,7 @@
   "encounter_type": "Birth Registration",
   "show_errors_on_submit": true,
   "count": "1",
+  "display_scroll_bars": true,
   "mother": {
     "encounter_type": "New Woman Registration"
   },
@@ -232,6 +233,11 @@
         "v_regex": {
           "value": "[A-Za-z\\s\\.\\-]*",
           "err": "Please enter a valid name"
+        },
+        "v_max_length":{
+          "value":11,
+          "err":"length not more then 11",
+          "is_fixed_size":true
         }
       },
       {
@@ -359,7 +365,7 @@
         "openmrs_entity_id": "5916AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
         "openmrs_data_type": "text",
         "type": "edit_text",
-        "hint": "Hb test result - haemoglobinometer (g/dl)",
+        "hint": "Hb test result - haemoglobinometer\ncomplete test (g/dl)",
         "v_required": {
           "value": "true",
           "err": "Please enter cool text"

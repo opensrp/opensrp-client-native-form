@@ -153,6 +153,7 @@ public class RulesEngineDateUtil {
 
     /**
      * Returns a formatted age string from given date till today
+     *
      * @param date
      * @return String date
      */
@@ -162,6 +163,7 @@ public class RulesEngineDateUtil {
 
     /**
      * Returns a formatted age string from startdate to provided end date
+     *
      * @param date
      * @param endDate
      * @return String

@@ -12,4 +12,6 @@ public interface GenericDialogInterface {
     void setFormIdentity(String formIdentity);
 
     void setFormLocation(String formLocation);
+
+    String getWidgetType();
 }

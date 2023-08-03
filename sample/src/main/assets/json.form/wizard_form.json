@@ -58,6 +58,80 @@
     "next": "step2",
     "fields": [
       {
+        "key": "delivery_complications",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "concept",
+        "openmrs_entity_id": "161641AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "openmrs_data_type": "select one",
+        "type": "check_box",
+        "label": "Any delivery complications?",
+        "label_text_size": "18sp",
+        "label_text_color": "#FF9800",
+        "hint": "Any delivery complications?",
+        "read_only": true,
+        "editable": true,
+        "exclusive": [
+          "none"
+        ],
+        "options": [
+          {
+            "key": "none",
+            "text": "None",
+            "value": false,
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          },
+          {
+            "key": "severe_bleeding",
+            "text": "Severe bleeding/Hemorrhage",
+            "value": false,
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "text_color": "#000000"
+          },
+          {
+            "key": "placenta_previa",
+            "text": "Placenta previa",
+            "value": false,
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "text_size": "15sp"
+          },
+          {
+            "key": "cord_prolapse",
+            "text": "Cord prolapse",
+            "value": false,
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "text_size": "10sp"
+          },
+          {
+            "key": "prolonged_obstructed_labour",
+            "text": "Prolonged/obstructed labour",
+            "value": false,
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          },
+          {
+            "key": "abnormal_presentation",
+            "text": "Abnormal presentation",
+            "value": false,
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "text_color": "#FF9800"
+          },
+          {
+            "key": "perineal_tear",
+            "text": "Perineal tear (2, 3 or 4th degree)",
+            "value": false,
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          },
+          {
+            "key": "Other",
+            "text": "Other",
+            "value": false,
+            "openmrs_choice_id": "160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          }
+        ],
+        "v_required": {
+          "value": "false"
+        }
+      },
+      {
         "key": "first_name",
         "openmrs_entity_parent": "",
         "openmrs_entity": "person",
@@ -170,7 +244,12 @@
             "text": "No",
             "value": false,
             "openmrs_entity": "",
-            "openmrs_entity_id": ""
+            "openmrs_entity_id": "",
+            "specify_info": "specify fetal heart rate (bpm)...",
+            "specify_widget": "check_box",
+            "specify_info_color": "#8C8C8C",
+            "content_form": "fetal_heartbeat_sub_form"
+
           }
         ],
         "v_required": {
@@ -538,6 +617,28 @@
     ]
   },
   "step4": {
+    "title": "Countdown until results ready",
+    "next": "step5",
+    "fields": [
+      {
+        "key": "countdown_timer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "timer",
+        "type": "countdown_timer",
+        "label": "Read results in 10 seconds.",
+        "label_text_size": "8sp",
+        "label_text_color": "#535F67",
+        "countdown_time_unit": "seconds",
+        "countdown_time_value": "10",
+        "countdown_interval": "1",
+        "progressbar_background_color": "#e7b330",
+        "progressbar_color": "#e76130",
+        "progressbar_text_color": "#f9916b"
+      }
+    ]
+  },
+  "step5": {
     "title": "How to instructions",
     "fields": [
       {

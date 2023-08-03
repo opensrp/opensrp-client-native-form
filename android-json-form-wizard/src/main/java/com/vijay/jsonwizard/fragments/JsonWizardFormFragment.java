@@ -147,6 +147,13 @@ public class JsonWizardFormFragment extends JsonFormFragment {
                     previousButton.setText(form.getPreviousLabel());
                 }
             }
+
+            if (form != null && form.isHideNextButton()) {
+                nextButton.setVisibility(View.GONE);
+            }
+            if (form != null && form.isHidePreviousButton()) {
+                previousButton.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -250,6 +257,11 @@ public class JsonWizardFormFragment extends JsonFormFragment {
         return null;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
     public TextView getStepName() {
         return stepName;
     }
@@ -275,6 +287,7 @@ public class JsonWizardFormFragment extends JsonFormFragment {
 
             } else if (v.getId() == R.id.previous || v.getId() == R.id.previous_icon) {
                 assert getFragmentManager() != null;
+                presenter.checkAndStopCountdownAlarm();
                 getFragmentManager().popBackStack();
             }
         }

@@ -43,7 +43,7 @@ public class GpsDialog extends Dialog implements LocationListener, GoogleApiClie
         init();
     }
 
-    private void init() {
+    protected void init() {
         this.setContentView(R.layout.dialog_gps);
         setTitle(R.string.loading_location);
         this.setCancelable(false);
@@ -79,12 +79,12 @@ public class GpsDialog extends Dialog implements LocationListener, GoogleApiClie
         });
     }
 
-    private void saveAndDismiss() {
+    protected void saveAndDismiss() {
         updateLocationViews(lastLocation);
         GpsDialog.this.dismiss();
     }
 
-    private void initGoogleApiClient() {
+    protected void initGoogleApiClient() {
         if (googleApiClient == null) {
             googleApiClient = new GoogleApiClient.Builder(context)
                     .addApi(LocationServices.API)
@@ -147,5 +147,33 @@ public class GpsDialog extends Dialog implements LocationListener, GoogleApiClie
         if (lastLocation != null && lastLocation.getAccuracy() <= MIN_ACCURACY) {
             saveAndDismiss();
         }
+    }
+
+    public View getDataView() {
+        return dataView;
+    }
+
+    public TextView getLatitudeTV() {
+        return latitudeTV;
+    }
+
+    public TextView getLongitudeTV() {
+        return longitudeTV;
+    }
+
+    public TextView getAltitudeTV() {
+        return altitudeTV;
+    }
+
+    public TextView getAccuracyTV() {
+        return accuracyTV;
+    }
+
+    public TextView getDialogAccuracyTV() {
+        return dialogAccuracyTV;
+    }
+
+    public void setDialogAccuracyTV(TextView dialogAccuracyTV) {
+        this.dialogAccuracyTV = dialogAccuracyTV;
     }
 }

@@ -10,8 +10,8 @@
     <string name="ic_keyboard_arrow_left">&#xe0c6;</string>
     <string name="ic_keyboard_arrow_right">&#xe0c7;</string>
     <string name="ic_keyboard_arrow_up">&#xe0c8;</string>
-    <string name="confirm_form_close">تأكيد استمارة مغلقة</string>
-    <string name="confirm_form_close_explanation">هل أنت متأكد أنك تريد تسجيل الخروج؟ سيتم مسح جميع البيانات</string>
+    <string name="confirm_form_close">تأكيد غلق الإستمارة</string>
+    <string name="confirm_form_close_explanation">.هل أنت متأكد أنك تريد العودة؟ سيتم مسح جميع البيانات التي أدخلت في هذه الإستمارة</string>
     <string name="yes">نعم</string>
     <string name="no">لا</string>
     <string name="cancel">إلغاء</string>
@@ -78,4 +78,6 @@
     <string name="json_form_on_next_error_msg" >يرجى تصحيح الخطأ (الأخطاء) في الاستمارة للتقدم</string>
     <string name="go_to_step">اذهب إلى الخطوة</string>
   <string name="shows_image_on_dialog">shows Image on dialog</string>
+    <string name="simprints_guid">GUID not found</string>
+    <string name="simprints_init_fail">Project Id or user id or module id not found. can be use SimprintsLibrary.init</string>
 </resources>

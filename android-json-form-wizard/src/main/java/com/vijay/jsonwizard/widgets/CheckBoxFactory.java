@@ -1,13 +1,5 @@
 package com.vijay.jsonwizard.widgets;
 
-import static com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT;
-import static com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT;
-import static com.vijay.jsonwizard.utils.FormUtils.createRadioButtonAndCheckBoxLabel;
-import static com.vijay.jsonwizard.utils.FormUtils.getCurrentCheckboxValues;
-import static com.vijay.jsonwizard.utils.FormUtils.getLinearLayoutParams;
-import static com.vijay.jsonwizard.utils.FormUtils.getValueFromSpOrDpOrPx;
-import static com.vijay.jsonwizard.utils.FormUtils.showInfoIcon;
-
 import android.content.Context;
 import android.graphics.Color;
 import android.text.TextUtils;
@@ -16,6 +8,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
@@ -26,17 +19,29 @@ import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import static com.vijay.jsonwizard.utils.FormUtils.MATCH_PARENT;
+import static com.vijay.jsonwizard.utils.FormUtils.WRAP_CONTENT;
+import static com.vijay.jsonwizard.utils.FormUtils.createRadioButtonAndCheckBoxLabel;
+import static com.vijay.jsonwizard.utils.FormUtils.getCurrentCheckboxValues;
+import static com.vijay.jsonwizard.utils.FormUtils.getLinearLayoutParams;
+import static com.vijay.jsonwizard.utils.FormUtils.getValueFromSpOrDpOrPx;
+import static com.vijay.jsonwizard.utils.FormUtils.showInfoIcon;
 
 /**
  * Created by vijay on 24-05-2015.
  */
 public class CheckBoxFactory implements FormWidgetFactory {
+    private FormUtils formUtils = new FormUtils();
 
     public static ValidationStatus validate(JsonFormFragmentView formFragmentView, LinearLayout checkboxLinearLayout) {
         String error = (String) checkboxLinearLayout.getTag(R.id.error);
@@ -67,24 +72,16 @@ public class CheckBoxFactory implements FormWidgetFactory {
         return isChecked;
     }
 
-    private void showEditButton(JSONObject jsonObject, List<View> editableViews, ImageView editButton,
-                                CommonListener listener) throws JSONException {
-        editButton.setTag(R.id.editable_view, editableViews);
-        editButton.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
-        editButton.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
-        editButton.setOnClickListener(listener);
+    @Override
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
+                                       JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
+        return attachJson(stepName, context, jsonObject, listener, popup);
     }
 
     @Override
     public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
                                        JSONObject jsonObject, CommonListener listener) throws Exception {
         return attachJson(stepName, context, jsonObject, listener, false);
-    }
-
-    @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment,
-                                       JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
-        return attachJson(stepName, context, jsonObject, listener, popup);
     }
 
     private List<View> attachJson(String stepName, Context context, JSONObject jsonObject, CommonListener listener,
@@ -122,7 +119,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
         canvasIds.put(rootLayout.getId());
         addRequiredValidator(rootLayout, jsonObject);
 
-        Map<String, View> labelViews = createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly, listener);
+        Map<String, View> labelViews = createRadioButtonAndCheckBoxLabel(stepName, rootLayout, jsonObject, context, canvasIds, readOnly, listener, popup);
 
 
         ArrayList<View> editableCheckBoxes = addCheckBoxOptionsElements(jsonObject, context, readOnly, canvasIds, stepName,
@@ -132,41 +129,19 @@ public class CheckBoxFactory implements FormWidgetFactory {
             editButton = (ImageView) labelViews.get(JsonFormConstants.EDIT_BUTTON);
             if (editButton != null) {
                 showEditButton(jsonObject, editableCheckBoxes, editButton, listener);
+                editButton.setTag(R.id.extraPopup, popup);
                 if (editable) {
                     editButton.setVisibility(View.VISIBLE);
                 }
             }
 
         }
+        formUtils.updateValueToJSONArray(jsonObject, jsonObject.optString(JsonFormConstants.VALUE, ""));
         attachRefreshLogic(jsonObject, context, rootLayout);
         rootLayout.setTag(R.id.canvas_ids, canvasIds.toString());
         views.add(rootLayout);
         return views;
     }
-
-    private void attachRefreshLogic(JSONObject jsonObject, Context context, LinearLayout rootLayout) {
-        String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
-        String calculation = jsonObject.optString(JsonFormConstants.CALCULATION);
-        String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
-
-        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
-            rootLayout.setTag(R.id.relevance, relevance);
-            ((JsonApi) context).addSkipLogicView(rootLayout);
-        }
-
-        if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
-            rootLayout.setTag(R.id.constraints, constraints);
-            ((JsonApi) context).addConstrainedView(rootLayout);
-        }
-
-        if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
-            rootLayout.setTag(R.id.calculation, calculation);
-            ((JsonApi) context).addCalculationLogicView(rootLayout);
-        }
-
-        ((JsonApi) context).addFormDataView(rootLayout);
-    }
-
 
     protected int getLayout() {
         return R.layout.native_form_compound_button_parent;
@@ -190,7 +165,10 @@ public class CheckBoxFactory implements FormWidgetFactory {
         JSONArray checkBoxValues = null;
 
         if (jsonObject.has(JsonFormConstants.VALUE)) {
-            checkBoxValues = jsonObject.getJSONArray(JsonFormConstants.VALUE);
+            String checkBoxValue = jsonObject.optString(JsonFormConstants.VALUE, "");
+            if (StringUtils.isNotEmpty(checkBoxValue)) {
+                checkBoxValues = new JSONArray(checkBoxValue);
+            }
         }
 
         JSONArray options = jsonObject.getJSONArray(JsonFormConstants.OPTIONS_FIELD_NAME);
@@ -226,13 +204,12 @@ public class CheckBoxFactory implements FormWidgetFactory {
             checkboxLayout.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE) + JsonFormConstants.SUFFIX.PARENT);
             canvasIds.put(checkboxLayout.getId());
 
-            if (!TextUtils.isEmpty(item.optString(JsonFormConstants.VALUE))) {
+            if (StringUtils.isNotEmpty(item.optString(JsonFormConstants.VALUE))) {
                 checkBox.setChecked(Boolean.valueOf(item.optString(JsonFormConstants.VALUE)));
             }
 
             //Preselect values if they exist
-            if (checkBoxValues != null && getCurrentCheckboxValues(checkBoxValues)
-                    .contains(item.getString(JsonFormConstants.KEY))) {
+            if (checkBoxValues != null && getCurrentCheckboxValues(checkBoxValues).contains(item.getString(JsonFormConstants.KEY))) {
                 checkBox.setChecked(true);
             }
 
@@ -246,7 +223,7 @@ public class CheckBoxFactory implements FormWidgetFactory {
             //Displaying optional info alert dialog
             ImageView imageView = checkboxLayout.findViewById(R.id.checkbox_info_icon);
 
-            showInfoIcon(stepName, jsonObject, listener,  FormUtils.getInfoDialogAttributes(item), imageView, canvasIds);
+            showInfoIcon(stepName, jsonObject, listener, FormUtils.getInfoDialogAttributes(item), imageView, canvasIds);
 
             checkboxLayout.setTag(R.id.canvas_ids, canvasIds.toString());
             checkboxLayouts.add(checkboxLayout);
@@ -254,6 +231,37 @@ public class CheckBoxFactory implements FormWidgetFactory {
         }
 
         return checkboxLayouts;
+    }
+
+    private void showEditButton(JSONObject jsonObject, List<View> editableViews, ImageView editButton,
+                                CommonListener listener) throws JSONException {
+        editButton.setTag(R.id.editable_view, editableViews);
+        editButton.setTag(R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+        editButton.setTag(R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
+        editButton.setOnClickListener(listener);
+    }
+
+    private void attachRefreshLogic(JSONObject jsonObject, Context context, LinearLayout rootLayout) {
+        String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
+        String calculation = jsonObject.optString(JsonFormConstants.CALCULATION);
+        String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
+
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+            rootLayout.setTag(R.id.relevance, relevance);
+            ((JsonApi) context).addSkipLogicView(rootLayout);
+        }
+
+        if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
+            rootLayout.setTag(R.id.constraints, constraints);
+            ((JsonApi) context).addConstrainedView(rootLayout);
+        }
+
+        if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
+            rootLayout.setTag(R.id.calculation, calculation);
+            ((JsonApi) context).addCalculationLogicView(rootLayout);
+        }
+
+        ((JsonApi) context).addFormDataView(rootLayout);
     }
 
     /**

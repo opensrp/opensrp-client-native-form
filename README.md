@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/OpenSRP/opensrp-client-native-form.svg?branch=master)](https://travis-ci.org/OpenSRP/opensrp-client-native-form) [![Coverage Status](https://coveralls.io/repos/github/OpenSRP/opensrp-client-native-form/badge.svg?branch=master)](https://coveralls.io/github/OpenSRP/opensrp-client-native-form?branch=master) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/73c9d3b1fd9140fda8397ebe518825bc)](https://www.codacy.com/app/OpenSRP/opensrp-client-native-form?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=OpenSRP/opensrp-client-native-form&amp;utm_campaign=Badge_Grade)
+[![Build Status](https://travis-ci.org/OpenSRP/opensrp-client-native-form.svg?branch=master)](https://travis-ci.org/OpenSRP/opensrp-client-native-form) [![Coverage Status](https://coveralls.io/repos/github/OpenSRP/opensrp-client-native-form/badge.svg?branch=master)](https://coveralls.io/github/OpenSRP/opensrp-client-native-form?branch=master) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/bf52b1d28f8e4cd39243cff5f13ec395)](https://www.codacy.com/manual/OpenSRP/opensrp-client-native-form?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=OpenSRP/opensrp-client-native-form&amp;utm_campaign=Badge_Grade)
 
 [![Dristhi](https://raw.githubusercontent.com/OpenSRP/opensrp-client/master/opensrp-app/res/drawable-mdpi/login_logo.png)](https://smartregister.atlassian.net/wiki/dashboard.action)
 
@@ -29,7 +29,7 @@ Thanks to this [Android Native JSON Form Library](https://github.com/vijayrawats
 > **JSON Form** is written using **JSON (syntax)** which can be found [here](http://json.org/).
 
 
-# Features63
+# Features
 
 1. It enables definition of Android forms in JSON
 2. It enables one to define metadata for OpenMRS forms
@@ -1942,3 +1942,43 @@ The example below shows how to include the widget in a json form:
   }
 }
 ```
+### Date picker change year,month,date position programatically
+At DatePickerDialog added a method to set the ymdOrder called setYmdOrder.First at app side need to create a class which extend
+DatePickerFactory and override the method createDateDialog.Then set the order at method setYmdOrder()
+Example as below:
+  ````
+  public class CustomDatePickerFactory extends DatePickerFactory {
+    @Override
+    protected DatePickerDialog createDateDialog(Context context, TextView duration, MaterialEditText editText, JSONObject jsonObject) throws JSONException {
+        DatePickerDialog datePickerDialog = super.createDateDialog(context, duration, editText, jsonObject);
+        datePickerDialog.setYmdOrder(new char[]{'y', 'm', 'd'} );
+        return datePickerDialog;
+    }
+}
+and initialize this to create a CustomJsonFormInteractor extend JsonFormInteractor
+public class CustomJsonFormInteractor extends JsonFormInteractor {
+
+    private static final JsonFormInteractor INSTANCE = new CustomJsonFormInteractor();
+    private CustomJsonFormInteractor(){
+        super();
+    }
+
+    @Override
+    protected void registerWidgets() {
+        super.registerWidgets();
+        map.put(JsonFormConstants.DATE_PICKER, new CustomDatePickerFactory());
+    }
+
+    public static JsonFormInteractor getInstance() {
+        return INSTANCE;
+    }
+}
+adding this
+public class CustomJsonFormFragment extends JsonWizardFormFragment {
+.......
+@Override
+    protected JsonFormFragmentPresenter createPresenter() {
+        return new JsonFormFragmentPresenter(this, CustomJsonFormInteractor.getInstance());
+    }
+    .....
+ }
