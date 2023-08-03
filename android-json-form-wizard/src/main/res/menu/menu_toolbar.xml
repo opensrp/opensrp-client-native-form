@@ -11,5 +11,6 @@
         android:id="@+id/action_save"
         android:orderInCategory="100"
         android:title="@string/save"
+        android:visible="false"
         app:showAsAction="always" />
 </menu>

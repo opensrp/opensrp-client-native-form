@@ -3,8 +3,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/toolbar_container_form" />
-
     <ScrollView
         android:id="@+id/scroll_view"
         android:layout_width="match_parent"
@@ -17,6 +15,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <include android:visibility="gone" layout="@layout/toolbar_container_form" />
 
             <LinearLayout
                 android:id="@+id/main_layout"
@@ -42,15 +42,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toStartOf="@+id/next"
-                    android:paddingBottom="@dimen/form_container_top_bottom_navigation_padding"
-                    android:paddingEnd="@dimen/form_container_start_end_navigation_padding"
+                    android:background="@drawable/previous_btn"
                     android:paddingStart="@dimen/form_container_start_end_navigation_padding"
                     android:paddingTop="@dimen/form_container_top_bottom_navigation_padding"
+                    android:paddingEnd="@dimen/form_container_start_end_navigation_padding"
+                    android:paddingBottom="@dimen/form_container_top_bottom_navigation_padding"
                     android:text="@string/previous"
                     android:textAllCaps="true"
                     android:textAppearance="?android:textAppearanceMedium"
-                    android:textColor="@color/button_navy_blue"
-                    android:textSize="@dimen/form_container_navigation_text_size" />
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/form_container_navigation_text_size"
+                    android:textStyle="bold" />
 
                 <Button
                     android:id="@+id/next"
@@ -59,15 +61,17 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_marginStart="@dimen/form_container_default_margin"
-                    android:paddingBottom="@dimen/form_container_top_bottom_navigation_padding"
-                    android:paddingEnd="@dimen/form_container_start_end_navigation_padding"
+                    android:background="@drawable/btn_bg"
                     android:paddingStart="@dimen/form_container_start_end_navigation_padding"
                     android:paddingTop="@dimen/form_container_top_bottom_navigation_padding"
+                    android:paddingEnd="@dimen/form_container_start_end_navigation_padding"
+                    android:paddingBottom="@dimen/form_container_top_bottom_navigation_padding"
                     android:text="@string/next"
                     android:textAllCaps="true"
                     android:textAppearance="?android:textAppearanceMedium"
-                    android:textColor="@color/button_navy_blue"
-                    android:textSize="@dimen/form_container_navigation_text_size" />
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/form_container_navigation_text_size"
+                    android:textStyle="bold" />
             </RelativeLayout>
 
         </LinearLayout>
