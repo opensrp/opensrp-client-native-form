@@ -618,4 +618,9 @@ public class JsonFormActivityTest extends BaseActivityTest {
         assertEquals(key + ":" + childKey, returnKey);
 
     }
+
+    @Test
+    public void testGetCOuntSHouldReturnTheCorrectCount() {
+        assertEquals("1", activity.getCount());
+    }
 }
