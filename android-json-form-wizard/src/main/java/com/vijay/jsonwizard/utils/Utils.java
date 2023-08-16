@@ -255,11 +255,13 @@ public class Utils {
 
     public static JSONObject getJsonObjectFromJsonArray(String key, JSONArray jsonArray) {
         JSONObject jsonObject = null;
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject tempJsonObject = jsonArray.optJSONObject(i);
-            if (tempJsonObject != null && tempJsonObject.has(key)) {
-                jsonObject = tempJsonObject;
-                break;
+        if (jsonArray != null) {
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject tempJsonObject = jsonArray.optJSONObject(i);
+                if (tempJsonObject != null && tempJsonObject.optString(KEY).equals(key)) {
+                    jsonObject = tempJsonObject;
+                    break;
+                }
             }
         }
         return jsonObject;
@@ -1009,7 +1011,21 @@ public class Utils {
         okButton.setEnabled(true);
         okButton.setClickable(true);
     }
-
+    /***
+     *
+     * @param jsonArrayString
+     * @return
+     */
+    public static boolean checkIfValidJsonArray(String jsonArrayString) {
+        if (StringUtils.isNotBlank(jsonArrayString)) {
+            try {
+                return new JSONArray(jsonArrayString).length() > 0;
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        return false;
+    }
     public static String extractValueFromJson(String value)
     {
         try{

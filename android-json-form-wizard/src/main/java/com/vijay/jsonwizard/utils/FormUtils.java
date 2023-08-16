@@ -13,11 +13,6 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.appcompat.widget.AppCompatEditText;
-import androidx.appcompat.widget.AppCompatTextView;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -33,6 +28,12 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatEditText;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.rey.material.util.ViewUtil;
 import com.vijay.jsonwizard.NativeFormLibrary;
@@ -301,10 +302,11 @@ public class FormUtils {
     }
 
 
-    public static JSONObject createOptiBPDataObject(String clientId, String clientOpenSRPId) throws JSONException {
+    public static JSONObject createOptiBPDataObject(String clientId, String clientOpenSRPId, String calibration) throws JSONException {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put(JsonFormConstants.OptibpConstants.OPTIBP_KEY_CLIENT_ID, clientId);
         jsonObject.put(JsonFormConstants.OptibpConstants.OPTIBP_KEY_CLIENT_OPENSRP_ID, clientOpenSRPId);
+        jsonObject.put(JsonFormConstants.OptibpConstants.CALIBRATION, calibration);
         return jsonObject;
     }
 
@@ -548,8 +550,7 @@ public class FormUtils {
             if (formFields != null) {
                 for (int i = 0; i < formFields.length(); i++) {
                     JSONObject widget = formFields.getJSONObject(i);
-                    if (widget.has(JsonFormConstants.KEY) && key
-                            .equals(widget.getString(JsonFormConstants.KEY))) {
+                    if (widget.has(JsonFormConstants.KEY) && key.equals(widget.getString(JsonFormConstants.KEY))) {
                         field = widget;
                         break;
                     }

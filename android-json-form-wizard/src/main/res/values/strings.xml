@@ -116,9 +116,11 @@
     <string name="select_one_option">Please select one option</string>
     <string name="extended_radio_info_text_ensure_options_set">Please make sure you have set the radio button options</string>
     <string name="optibp_btn_get_started">Get Started</string>
-    <string name="optibp_unable_to_receive">Unable to receive any result</string>
+    <string name="optibp_unable_to_receive">Unable to receive any result From Calibration App</string>
     <string name="missing_client_info">Missing client info</string>
     <string name="optibp_label">Measure the blood pressure using OptiBP</string>
     <string name="optibp_values_error">No fields defined to populate BP values</string>
+    <string name="calibration_data">Missing calibration Key</string>
+    <string name="invalid_optibp_data">Cannot read BP values</string>
 
 </resources>
