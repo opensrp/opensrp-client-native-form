@@ -2,6 +2,7 @@ package com.vijay.jsonwizard.widgets;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -17,6 +18,7 @@ import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.interfaces.OnActivityResultListener;
 import com.vijay.jsonwizard.utils.FormUtils;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
@@ -564,14 +566,15 @@ public class OptiBpWidgetFactoryTest extends FactoryTest {
         factory.setUpOptiBpActivityResultListener(widgetArgs, requestCode, rootLayout, systolicBp, diastolicBp);
         ArgumentCaptor<OnActivityResultListener> resultListenerArgumentCaptor = ArgumentCaptor.forClass(OnActivityResultListener.class);
         verify(jsonFormActivity).addOnActivityResultListener(anyInt(), resultListenerArgumentCaptor.capture());
-        resultListenerArgumentCaptor.getValue().onActivityResult(requestCode,Activity.RESULT_OK,mockIntent);
+        resultListenerArgumentCaptor.getValue().onActivityResult(requestCode, Activity.RESULT_OK, mockIntent);
 
     }
+
     @Test
     public void testSetUpOptiBpActivityResultListenerShowsToast() {
         WidgetArgs widgetArgs = Mockito.mock(WidgetArgs.class);
         when(widgetArgs.getContext()).thenReturn(jsonFormActivity);
-        String badJson="{\n" +
+        String badJson = "{\n" +
                 "  \"identifier\": [\n" +
                 "    {\n" +
                 "      \"use\": \"official\",\n" +
@@ -663,5 +666,22 @@ public class OptiBpWidgetFactoryTest extends FactoryTest {
         Toast toast = ShadowToast.getLatestToast();
         assertEquals(Toast.LENGTH_SHORT, toast.getDuration());
 
+    }
+
+    @Test
+    public void testGetValueStringReturnsANonNullResult() throws JSONException {
+        String result = factory.getValueString(resultJson);
+        JSONArray jsonArray = new JSONArray(result);
+        assertNotNull(result);
+        String comperatives = jsonArray.optJSONObject(0).optString("comperatives");
+        assertNotNull(comperatives);
+        JSONObject object = new JSONArray(comperatives).getJSONObject(0);
+        assertEquals(180, object.optInt("cuffSystolic"));
+        assertEquals(85, object.optInt("diastolic"));
+    }
+    @Test
+    public void testGetValueStringReturnsANullResult() throws JSONException {
+        String result = factory.getValueString(null);
+        assertNull(result);
     }
 }
