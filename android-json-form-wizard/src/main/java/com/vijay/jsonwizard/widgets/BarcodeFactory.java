@@ -157,18 +157,14 @@ public class BarcodeFactory implements FormWidgetFactory {
         if (context instanceof JsonApi) {
             JsonApi jsonApi = (JsonApi) context;
             jsonApi.addOnActivityResultListener(JsonFormConstants.BARCODE_CONSTANTS.BARCODE_REQUEST_CODE,
-                    new OnActivityResultListener() {
-                        @Override
-                        public void onActivityResult(int requestCode,
-                                                     int resultCode, Intent data) {
-                            if (requestCode == JsonFormConstants.BARCODE_CONSTANTS.BARCODE_REQUEST_CODE && resultCode == RESULT_OK) {
-                                if (data != null) {
-                                    Barcode barcode = data.getParcelableExtra(JsonFormConstants.BARCODE_CONSTANTS.BARCODE_KEY);
-                                    Timber.d("Scanned QR Code %s ", barcode.displayValue);
-                                    editText.setText(barcode.displayValue);
-                                } else
-                                    Timber.i("NO RESULT FOR QR CODE");
-                            }
+                    (requestCode, resultCode, data) -> {
+                        if (requestCode == JsonFormConstants.BARCODE_CONSTANTS.BARCODE_REQUEST_CODE && resultCode == RESULT_OK) {
+                            if (data != null) {
+                                Barcode barcode = data.getParcelableExtra(JsonFormConstants.BARCODE_CONSTANTS.BARCODE_KEY);
+                                Timber.d("Scanned QR Code %s ", barcode.displayValue);
+                                editText.setText(barcode.displayValue);
+                            } else
+                                Timber.i("NO RESULT FOR QR CODE");
                         }
                     });
         }
