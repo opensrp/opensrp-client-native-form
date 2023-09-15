@@ -83,21 +83,17 @@ public class FingerPrintFactory implements FormWidgetFactory {
         if (context instanceof JsonApi) {
             JsonApi jsonApi = (JsonApi) context;
             jsonApi.addOnActivityResultListener(JsonFormConstants.ACTIVITY_REQUEST_CODE.REQUEST_CODE_REGISTER,
-                    new OnActivityResultListener() {
-                        @Override
-                        public void onActivityResult(int requestCode,
-                                                     int resultCode, Intent data) {
-                            if (requestCode == JsonFormConstants.ACTIVITY_REQUEST_CODE.REQUEST_CODE_REGISTER && resultCode == RESULT_OK) {
-                                if (data != null) {
+                    (requestCode, resultCode, data) -> {
+                        if (requestCode == JsonFormConstants.ACTIVITY_REQUEST_CODE.REQUEST_CODE_REGISTER && resultCode == RESULT_OK) {
+                            if (data != null) {
 
-                                    SimPrintsRegistration registration = (SimPrintsRegistration) data.getSerializableExtra(SimPrintsConstantHelper.INTENT_DATA);
-                                    imageView.setTag(R.id.simprints_guid, registration.getGuid());
-                                    setFingerprintDrawable(context, imageView, registration.getGuid(), true);
-                                    Timber.d("Scanned Fingerprint GUID %s ", registration.getGuid());
-                                } else {
-                                    Timber.i("NO RESULT FOR FINGERPRINT");
-                                    setFingerprintDrawable(context, imageView, "", true);
-                                }
+                                SimPrintsRegistration registration = (SimPrintsRegistration) data.getSerializableExtra(SimPrintsConstantHelper.INTENT_DATA);
+                                imageView.setTag(R.id.simprints_guid, registration.getGuid());
+                                setFingerprintDrawable(context, imageView, registration.getGuid(), true);
+                                Timber.d("Scanned Fingerprint GUID %s ", registration.getGuid());
+                            } else {
+                                Timber.i("NO RESULT FOR FINGERPRINT");
+                                setFingerprintDrawable(context, imageView, "", true);
                             }
                         }
                     });
