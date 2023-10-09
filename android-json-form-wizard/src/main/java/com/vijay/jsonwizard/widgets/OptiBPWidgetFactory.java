@@ -146,6 +146,7 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
                 Timber.w(" ONCLICK WITH JSON %s", jsonObject);
                 Intent intent = new Intent(OptibpConstants.OPTIBP_LAUNCH_INTENT);
                 intent.setType("text/json");
+                Timber.e("OptibpWidget factory sending request %s", getInputJsonString(context, jsonObject, widgetArgs));
                 intent.putExtra(Intent.EXTRA_TEXT, getInputJsonString(context, jsonObject, widgetArgs));
                 ((Activity) context).startActivityForResult(Intent.createChooser(intent, ""), requestCode);
             } catch (Exception e) {
@@ -182,9 +183,14 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
 
     public void setUpOptiBpActivityResultListener(final WidgetArgs widgetArgs, int requestCode, final LinearLayout rootLayout, EditText systolicEditText, final EditText diastolicEditText) {
         final Context context = widgetArgs.getContext();
+
         if (context instanceof JsonApi) {
             final JsonApi jsonApi = (JsonApi) context;
             jsonApi.addOnActivityResultListener(requestCode, (finalRequestCode, resultCode, data) -> {
+                Timber.e("OptibpWidgetFactory optib requestCode %s resultCode %s", requestCode, resultCode);
+                if(data != null)
+                    Timber.e("OptibpWidgetFactory data %s",data.getStringExtra(Intent.EXTRA_TEXT));
+                else Timber.e("OptibpWidgetFactory data is null");
                 if (resultCode == Activity.RESULT_OK) {
                     if (finalRequestCode == OptibpConstants.OPTIBP_REQUEST_CODE ||
                             finalRequestCode == OptibpConstants.OPTIBP_REPEAT_REQUEST_CODE) {

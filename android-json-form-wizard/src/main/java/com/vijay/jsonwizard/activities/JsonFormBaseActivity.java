@@ -188,6 +188,10 @@ public abstract class JsonFormBaseActivity extends MultiLanguageActivity impleme
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Timber.e("JsonFromBaseActivity optib requestCode %s resultCode %s", requestCode, resultCode);
+        if(data != null)
+            Timber.e(" data %s",data.getStringExtra(Intent.EXTRA_TEXT));
+        else Timber.e("JsonFormBaseActivity data is null");
         if (onActivityResultListeners.containsKey(requestCode)) {
             onActivityResultListeners.get(requestCode).onActivityResult(requestCode, resultCode, data);
         } else {
