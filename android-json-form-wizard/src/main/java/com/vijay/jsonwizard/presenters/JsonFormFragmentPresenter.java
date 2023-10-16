@@ -1,5 +1,8 @@
 package com.vijay.jsonwizard.presenters;
 
+import static com.vijay.jsonwizard.utils.FormUtils.dpToPixels;
+import static com.vijay.jsonwizard.utils.FormUtils.getDynamicLabelInfoList;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -91,9 +94,6 @@ import java.util.Set;
 import java.util.Stack;
 
 import timber.log.Timber;
-
-import static com.vijay.jsonwizard.utils.FormUtils.dpToPixels;
-import static com.vijay.jsonwizard.utils.FormUtils.getDynamicLabelInfoList;
 
 /**
  * Created by vijay on 5/14/15.
@@ -654,6 +654,32 @@ public class JsonFormFragmentPresenter extends
                         .getString(R.string.json_form_error_msg, getInvalidFields().size()));
 
             }
+        }
+    }
+
+    public boolean onSaveWithoutClosingForm(LinearLayout mainView) {
+        validateAndWriteValues();
+        checkAndStopCountdownAlarm();
+        boolean isFormValid = isFormValid();
+        if (isFormValid || Boolean.parseBoolean(mainView.getTag(R.id.skip_validation).toString())) {
+            Utils.removeGeneratedDynamicRules(formFragment);
+            Intent returnIntent = new Intent();
+            getView().onFormFinish();
+            returnIntent.putExtra("json", formUtils.addFormDetails(getView().getCurrentJsonState()));
+            returnIntent.putExtra(JsonFormConstants.SKIP_VALIDATION,
+                    Boolean.valueOf(mainView.getTag(R.id.skip_validation).toString()));
+            return true;
+        } else {
+            if (showErrorsOnSubmit()) {
+                launchErrorDialog();
+                getView().showToast(getView().getContext().getResources()
+                        .getString(R.string.json_form_error_msg, getInvalidFields().size()));
+            } else {
+                getView().showSnackBar(getView().getContext().getResources()
+                        .getString(R.string.json_form_error_msg, getInvalidFields().size()));
+
+            }
+            return false;
         }
     }
 

@@ -472,6 +472,17 @@ public class JsonFormFragment extends MvpFragment<JsonFormFragmentPresenter, Jso
 
         return false;
     }
+    public boolean saveWithoutClosingForm(boolean skipValidation) {
+        try {
+            mMainView.setTag(R.id.skip_validation, skipValidation);
+            return presenter.onSaveWithoutClosingForm(mMainView);
+        } catch (Exception e) {
+            Timber.e(e, " --> save");
+            return false;
+        }
+
+
+    }
 
     public boolean shouldSkipStep() {
         return shouldSkipStep;
