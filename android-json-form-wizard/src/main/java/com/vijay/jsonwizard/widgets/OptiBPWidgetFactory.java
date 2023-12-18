@@ -355,8 +355,8 @@ public class OptiBPWidgetFactory implements FormWidgetFactory {
             JSONObject currentHeight = getSingleStepJsonObject(widgetArgs, STEP1, OptibpConstants.HEIGHT);
             JSONObject currentWeight = getSingleStepJsonObject(widgetArgs, STEP1, OptibpConstants.CURRENTWEIGHT);
             if (currentHeight != null && currentWeight != null) {
-                returnObject.put(OptibpConstants.HEIGHT, Double.valueOf(currentHeight.optString(VALUE)));
-                returnObject.put(OptibpConstants.WEIGHT, Double.valueOf(currentWeight.optString(VALUE)));
+                returnObject.put(OptibpConstants.HEIGHT, (int) Double.parseDouble(currentHeight.optString(VALUE)));
+                returnObject.put(OptibpConstants.WEIGHT, (int) Double.parseDouble(currentWeight.optString(VALUE)));
             }
         } catch (JSONException e) {
             Timber.e(e);
