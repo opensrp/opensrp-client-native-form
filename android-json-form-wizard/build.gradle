@@ -72,6 +72,7 @@ repositories {
 }
 
 dependencies {
+    implementation files('libs/circleProgressbar.aar')
     implementation('org.smartregister:opensrp-client-simprints:1.1.0-SNAPSHOT@aar') {
         transitive = true
         exclude group: 'com.android.support', module: 'appcompat-v7'
@@ -126,13 +127,7 @@ dependencies {
     }
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
 
-    implementation('io.ona.CircleProgressbar:lib:0.1.0@aar') {
-        exclude group: 'com.android.support.constraint', module: 'constraint-layout'
-        exclude group: 'com.android.support', module: 'design'
-        exclude group: 'com.android.support', module: 'appcompat-v7'
-        exclude group: 'com.android.support.test', module: 'runner'
-        exclude group: 'com.android.support.test.espresso', module: 'espresso-core'
-    }
+
     implementation 'com.jakewharton.timber:timber:5.0.1'
     implementation "org.greenrobot:eventbus:3.2.0"
     implementation 'androidx.multidex:multidex:2.0.1'

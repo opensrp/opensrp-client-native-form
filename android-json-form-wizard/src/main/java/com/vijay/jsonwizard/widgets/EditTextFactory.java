@@ -1,24 +1,12 @@
 package com.vijay.jsonwizard.widgets;
 
-import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_CUMULATIVE_VALIDATION_ERR;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_RELATIVE_MAX_VALIDATION_ERR;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_RELATIVE_MIN_VALIDATION_ERR;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.RELATED_FIELDS;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.RELATIVE_VALIDATION_EXCEPTION;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP1;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.V_CUMULATIVE_TOTAL;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.V_RELATIVE_MAX;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.V_RELATIVE_MIN;
-import static com.vijay.jsonwizard.utils.FormUtils.fields;
-import static com.vijay.jsonwizard.utils.FormUtils.getFieldJSONObject;
-
 import android.content.Context;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,6 +31,7 @@ import com.vijay.jsonwizard.validators.edittext.MaxLengthValidator;
 import com.vijay.jsonwizard.validators.edittext.MaxNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.MinLengthValidator;
 import com.vijay.jsonwizard.validators.edittext.MinNumericValidator;
+import com.vijay.jsonwizard.validators.edittext.ReferenceFieldValidator;
 import com.vijay.jsonwizard.validators.edittext.ReferenceValidator;
 import com.vijay.jsonwizard.validators.edittext.RelativeNumericValidator;
 import com.vijay.jsonwizard.validators.edittext.RequiredValidator;
@@ -59,6 +48,19 @@ import java.util.List;
 import java.util.Set;
 
 import timber.log.Timber;
+
+import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_CUMULATIVE_VALIDATION_ERR;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_RELATIVE_MAX_VALIDATION_ERR;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.DEFAULT_RELATIVE_MIN_VALIDATION_ERR;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.RELATED_FIELDS;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.RELATIVE_VALIDATION_EXCEPTION;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.STEP1;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.V_CUMULATIVE_TOTAL;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.V_RELATIVE_MAX;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.V_RELATIVE_MIN;
+import static com.vijay.jsonwizard.utils.FormUtils.fields;
+import static com.vijay.jsonwizard.utils.FormUtils.getFieldJSONObject;
 
 public class EditTextFactory implements FormWidgetFactory {
 
@@ -117,7 +119,6 @@ public class EditTextFactory implements FormWidgetFactory {
         RelativeLayout editTextLayout = rootLayout.findViewById(R.id.edit_text_layout);
         MaterialEditText editText = editTextLayout.findViewById(R.id.edit_text);
         ImageView editButton = editTextLayout.findViewById(R.id.material_edit_text_edit_button);
-
         FormUtils.setEditButtonAttributes(jsonObject, editText, editButton, listener);
         attachLayout(stepName, context, formFragment, jsonObject, editText, editButton);
 
@@ -179,6 +180,7 @@ public class EditTextFactory implements FormWidgetFactory {
         FormUtils.toggleEditTextVisibility(jsonObject, editText);
 
         addRequiredValidator(jsonObject, editText);
+        addEqualsValidator(formFragment,jsonObject,editText);
         addLengthValidator(jsonObject, editText);
         addRegexValidator(jsonObject, editText);
         addEmailValidator(jsonObject, editText);
@@ -190,15 +192,19 @@ public class EditTextFactory implements FormWidgetFactory {
         addCumulativeTotalValidator(jsonObject, formFragment, editText, stepName, (JsonApi) context);
         // edit type check
         String editType = jsonObject.optString(JsonFormConstants.EDIT_TYPE);
+        editText.setSingleLine(false);
         if (!TextUtils.isEmpty(editType)) {
             if (JsonFormConstants.NUMBER.equals(editType)) {
                 editText.setRawInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
             } else if (JsonFormConstants.NAME.equals(editType)) {
                 editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
             }
-        }
+            else if (JsonFormConstants.PASSWORD.equals(editType))
+            {
+                editText.setTransformationMethod(PasswordTransformationMethod.getInstance());
+            }
 
-        editText.setSingleLine(false);
+        }
         editText.addTextChangedListener(new GenericTextWatcher(stepName, formFragment, editText));
         attachRefreshLogic(context, jsonObject, editText);
     }
@@ -212,6 +218,15 @@ public class EditTextFactory implements FormWidgetFactory {
 
     }
 
+    private void addEqualsValidator(JsonFormFragment formFragment,JSONObject jsonObject, MaterialEditText editText) throws JSONException {
+        JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_EQUALS);
+        if (requiredObject != null) {
+            String referencedValue = requiredObject.optString(JsonFormConstants.VALUE,"");
+            MaterialEditText referencedEditText = (MaterialEditText) formFragment.getJsonApi().getFormDataView(referencedValue);
+            editText.addValidator(new ReferenceFieldValidator(requiredObject.getString(JsonFormConstants.ERR),referencedEditText));
+            FormUtils.setRequiredOnHint(editText);
+        }
+    }
     private void addRequiredValidator(JSONObject jsonObject, MaterialEditText editText) throws JSONException {
         JSONObject requiredObject = jsonObject.optJSONObject(JsonFormConstants.V_REQUIRED);
         if (requiredObject != null) {

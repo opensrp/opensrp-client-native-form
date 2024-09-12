@@ -56,10 +56,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.yaml.snakeyaml.Yaml;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLDecoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -75,6 +78,7 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.GZIPInputStream;
 
 import timber.log.Timber;
 
@@ -1039,6 +1043,29 @@ public class Utils {
             Timber.e(e);
         }
         return  value;
+    }
+
+    public static String decompress(String str, String outEncoding) {
+        if (str == null || str.length() == 0) {
+            return str;
+        }
+
+        try {
+            String decode = URLDecoder.decode(str, "UTF-8");
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ByteArrayInputStream in = new ByteArrayInputStream(decode.getBytes("ISO-8859-1"));
+            GZIPInputStream gunzip = new GZIPInputStream(in);
+            byte[] buffer = new byte[256];
+            int n;
+            while ((n = gunzip.read(buffer)) >= 0) {
+                out.write(buffer, 0, n);
+            }
+            return out.toString(outEncoding);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

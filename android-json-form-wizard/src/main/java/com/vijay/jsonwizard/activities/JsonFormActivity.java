@@ -372,41 +372,37 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     @Override
     public void refreshCalculationLogic(String parentKey, String childKey, boolean popup, String stepName, boolean isForNextStep) {
-        appExecutors.diskIO().execute(() ->{
-            Set<String> viewsIds = calculationDependencyMap.get(stepName + "_" + parentKey);
-            if (parentKey == null || viewsIds == null)
-                viewsIds = calculationLogicViews.keySet();
-            for (String viewId : viewsIds) {
-                try {
-                    View curView = calculationLogicViews.get(viewId);
-                    if (curView == null) {
-                        Timber.w("calculationLogicViews Missing %s", viewId);
-                        continue;
+        Set<String> viewsIds = calculationDependencyMap.get(stepName + "_" + parentKey);
+        if (parentKey == null || viewsIds == null)
+            viewsIds = calculationLogicViews.keySet();
+        for (String viewId : viewsIds) {
+            try {
+                View curView = calculationLogicViews.get(viewId);
+                if (curView == null) {
+                    Timber.w("calculationLogicViews Missing %s", viewId);
+                    continue;
+                }
+                Pair<String[], JSONObject> addressAndValue = getCalculationAddressAndValue(curView);
+                if (addressAndValue != null && addressAndValue.first != null) {
+                    String[] address = addressAndValue.first;
+                    JSONObject valueSource = addressAndValue.second;
+                    Facts curValueMap;
+                    if (valueSource.length() > 0) {
+                        curValueMap = getValueFromAddress(address, popup, valueSource);
+                    } else {
+                        curValueMap = getValueFromAddress(address, popup);
                     }
-                    Pair<String[], JSONObject> addressAndValue = getCalculationAddressAndValue(curView);
-                    if (addressAndValue != null && addressAndValue.first != null) {
-                        String[] address = addressAndValue.first;
-                        JSONObject valueSource = addressAndValue.second;
-                        Facts curValueMap;
-                        if (valueSource.length() > 0) {
-                            curValueMap = getValueFromAddress(address, popup, valueSource);
-                        } else {
-                            curValueMap = getValueFromAddress(address, popup);
-                        }
-                        //update ui
-                        appExecutors.mainThread().execute(() -> {
-                            updateCalculation(curValueMap, curView, address, isForNextStep);
-                        });
-
-                    }
-
-                } catch (Exception e) {
-                    Timber.e(e, "%s refreshCalculationLogic()", this.getClass().getCanonicalName());
+                    //update ui
+                    updateCalculation(curValueMap, curView, address, isForNextStep);
 
                 }
-            }
 
-        });
+            } catch (Exception e) {
+                Timber.e(e, "%s refreshCalculationLogic()", this.getClass().getCanonicalName());
+
+            }
+        }
+
 
     }
 
@@ -629,26 +625,24 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
      */
     @Override
     public void refreshConstraints(String parentKey, String childKey, boolean popup) {
-        appExecutors.diskIO().execute(()->{
-            initComparisons();
+        initComparisons();
 
-            // Priorities constraints on the view that has just been changed
-            String changedViewKey = parentKey;
-            if (changedViewKey != null && childKey != null) {
-                changedViewKey = changedViewKey + ":" + childKey;
-            }
+        // Priorities constraints on the view that has just been changed
+        String changedViewKey = parentKey;
+        if (changedViewKey != null && childKey != null) {
+            changedViewKey = changedViewKey + ":" + childKey;
+        }
 
-            if (changedViewKey != null && (constrainedViews != null && constrainedViews.containsKey(changedViewKey))) {
-                checkViewConstraints(constrainedViews.get(changedViewKey), popup);
-            }
+        if (changedViewKey != null && (constrainedViews != null && constrainedViews.containsKey(changedViewKey))) {
+            checkViewConstraints(constrainedViews.get(changedViewKey), popup);
+        }
 
-            for (View curView : constrainedViews.values()) {
-                String viewKey = getViewKey(curView);
-                if (changedViewKey == null || (!TextUtils.isEmpty(viewKey) && !viewKey.equals(changedViewKey))) {
-                    checkViewConstraints(curView, popup);
-                }
+        for (View curView : constrainedViews.values()) {
+            String viewKey = getViewKey(curView);
+            if (changedViewKey == null || (!TextUtils.isEmpty(viewKey) && !viewKey.equals(changedViewKey))) {
+                checkViewConstraints(curView, popup);
             }
-        });
+        }
 
     }
 
