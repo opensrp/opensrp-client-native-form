@@ -1334,8 +1334,12 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
         String[] address = ((String) curView.getTag(R.id.address)).split(":");
         if (errorMessage != null) {
             if (curView instanceof MaterialEditText) {
-                ((MaterialEditText) curView).setText(null);
-                ((MaterialEditText) curView).setError(errorMessage);
+                // refreshConstraints evaluates constraints on diskIO. Mutating the view
+                // there can race TextView's layout lifecycle while it is being drawn.
+                appExecutors.mainThread().execute(() -> {
+                    ((MaterialEditText) curView).setText(null);
+                    ((MaterialEditText) curView).setError(errorMessage);
+                });
             } else if (curView instanceof CheckBox) {
                 ((CheckBox) curView).setChecked(false);
                 Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
