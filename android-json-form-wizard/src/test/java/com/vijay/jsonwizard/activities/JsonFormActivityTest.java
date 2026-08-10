@@ -27,6 +27,7 @@ import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.domain.Form;
 import com.vijay.jsonwizard.event.RefreshExpansionPanelEvent;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
+import com.vijay.jsonwizard.utils.AppExecutors;
 import com.vijay.jsonwizard.utils.FormUtils;
 import com.vijay.jsonwizard.utils.Utils;
 
@@ -486,7 +487,13 @@ public class JsonFormActivityTest extends BaseActivityTest {
 
     @Test
     public void testUpdateUIByMaterialEditText() throws Exception {
-        View view = Mockito.mock(MaterialEditText.class);
+        MaterialEditText view = Mockito.mock(MaterialEditText.class);
+        List<Runnable> mainThreadTasks = new ArrayList<>();
+        AppExecutors appExecutors = new AppExecutors(
+                Runnable::run,
+                Runnable::run,
+                mainThreadTasks::add);
+        Whitebox.setInternalState(activity, "appExecutors", appExecutors);
         String address = "test:key";
         String childKey = "test";
         String previous = "";
@@ -516,6 +523,15 @@ public class JsonFormActivityTest extends BaseActivityTest {
                 "      }";
         Mockito.doReturn(new JSONObject(json)).when(view).getTag(R.id.json_object);
         Whitebox.invokeMethod(activity, "updateUiByConstraints", view, true, errorMessage);
+
+        assertEquals(1, mainThreadTasks.size());
+        Mockito.verify(view, Mockito.never()).setText(null);
+        Mockito.verify(view, Mockito.never()).setError(errorMessage);
+
+        mainThreadTasks.get(0).run();
+
+        Mockito.verify(view).setText(null);
+        Mockito.verify(view).setError(errorMessage);
         view.getTag(R.id.key);
         assertEquals("yes", view.getTag(R.id.key));
 
